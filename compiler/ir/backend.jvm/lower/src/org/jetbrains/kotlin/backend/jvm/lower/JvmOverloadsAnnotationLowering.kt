@@ -58,8 +58,6 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
                 )
             is IrSimpleFunction ->
                 IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
-            else ->
-                error("unknown function kind: ${target.render()}")
         }
         for (arg in wrapperIrFunction.allTypeParameters) {
             call.putTypeArgument(arg.index, arg.defaultType)
@@ -105,12 +103,15 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
 
         }
 
-        wrapperIrFunction.body = if (target is IrConstructor) {
-            context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
-        } else {
-            context.irFactory.createExpressionBody(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, call
-            )
+        wrapperIrFunction.body = when (target) {
+            is IrConstructor -> {
+                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
+            }
+            is IrSimpleFunction -> {
+                context.irFactory.createExpressionBody(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, call
+                )
+            }
         }
 
         return wrapperIrFunction
@@ -140,7 +141,6 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
                 isInline = oldFunction.isInline
                 isSuspend = oldFunction.isSuspend
             }
-            else -> error("Unknown kind of IrFunction: $oldFunction")
         }
 
         res.parent = oldFunction.parent

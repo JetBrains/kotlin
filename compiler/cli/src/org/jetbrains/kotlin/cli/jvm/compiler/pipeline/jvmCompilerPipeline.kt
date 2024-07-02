@@ -198,7 +198,6 @@ fun FirResult.convertToIrAndActualizeForJvm(
         fir2IrConfiguration,
         irGeneratorExtensions,
         JvmIrMangler,
-        FirJvmKotlinMangler,
         FirJvmVisibilityConverter,
         DefaultBuiltIns.Instance,
         ::JvmIrTypeSystemContext,

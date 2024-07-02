@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import org.jetbrains.org.objectweb.asm.Type
 
-class KaFe10JavaInteroperabilityComponent(
+internal class KaFe10JavaInteroperabilityComponent(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaJavaInteroperabilityComponent, KaFe10SessionComponent {
     private val typeMapper by lazy { KaFe10JvmTypeMapperContext(analysisContext.resolveSession) }

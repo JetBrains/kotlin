@@ -230,8 +230,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     IrCallImpl.fromSymbolOwner(startOffset, endOffset, targetFun.symbol)
                 is IrConstructor ->
                     IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, targetFun.returnType, targetFun.symbol)
-                else ->
-                    throw AssertionError("Unexpected callable reference target: ${targetFun.render()}")
             }
 
         val proxyFun = context.irFactory.buildFun {

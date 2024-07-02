@@ -1,6 +1,14 @@
 KtCallExpression(96,130): 'install(CoroutineModule.builder())'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        CoroutineModule.builder() -> (KaVariableSignature:
+          name = builder
+          receiverType = null
+          returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+          symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -21,11 +29,3 @@ KtCallExpression(96,130): 'install(CoroutineModule.builder())'
           ]
           callableId = /AbstractModule.install
       typeArgumentsMapping = {}
-      argumentMapping = {
-        CoroutineModule.builder() -> (KaVariableSignature:
-          name = builder
-          receiverType = null
-          returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
-          symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
-          callableId = null)
-      }

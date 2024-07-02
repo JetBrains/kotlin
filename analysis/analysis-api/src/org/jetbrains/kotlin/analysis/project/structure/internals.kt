@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependenciesOfType
 import org.jetbrains.kotlin.analysis.api.projectStructure.danglingFileResolutionMode
@@ -23,16 +23,16 @@ internal fun isDanglingFile(file: KtFile): Boolean = file.isDangling
 
 internal fun getDanglingFileResolutionMode(file: KtFile): DanglingFileResolutionMode? = file.danglingFileResolutionMode
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 public inline fun <reified M : KtModule> KtModule.getDirectRegularDependenciesOfType(): Sequence<M> = directRegularDependenciesOfType()
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 public inline fun <reified M : KtModule> KtModule.getDirectFriendDependenciesOfType(): Sequence<M> = directFriendDependenciesOfType()
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 public inline fun <reified M : KtModule> KtModule.getDirectDependsOnDependenciesOfType(): Sequence<M> = directRegularDependenciesOfType()
 
 internal fun KtModule.getAllDirectDependencies(): Sequence<KtModule> = allDirectDependencies()
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 public inline fun <reified M : KtModule> KtModule.getAllDirectDependenciesOfType(): Sequence<M> = allDirectDependenciesOfType()

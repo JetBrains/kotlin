@@ -16,6 +16,14 @@ KtDeclarationModifierList(15,56): '@Target(AnnotationTarget.TYPE)'
 KtAnnotationEntry(15,45): '@Target(AnnotationTarget.TYPE)'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -33,18 +41,18 @@ KtAnnotationEntry(15,45): '@Target(AnnotationTarget.TYPE)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnotationTarget.TYPE -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(16,22): 'Target'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -62,14 +70,6 @@ KtConstructorCalleeExpression(16,22): 'Target'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        AnnotationTarget.TYPE -> (KaVariableSignature:
-          name = allowedTargets
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationTarget
-          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-          callableId = null)
-      }
 
 KtTypeReference(16,22): 'Target'
   null
@@ -179,6 +179,14 @@ KtDeclarationModifierList(148,177): '@Anno("parameter type $prop")'
 KtAnnotationEntry(148,177): '@Anno("parameter type $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -196,18 +204,18 @@ KtAnnotationEntry(148,177): '@Anno("parameter type $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(149,153): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -225,14 +233,6 @@ KtConstructorCalleeExpression(149,153): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(149,153): 'Anno'
   null
@@ -294,6 +294,14 @@ KtDeclarationModifierList(183,219): '@Anno("nested parameter type $prop")'
 KtAnnotationEntry(183,219): '@Anno("nested parameter type $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -311,18 +319,18 @@ KtAnnotationEntry(183,219): '@Anno("nested parameter type $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(184,188): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -340,14 +348,6 @@ KtConstructorCalleeExpression(184,188): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(184,188): 'Anno'
   null
@@ -409,6 +409,14 @@ KtDeclarationModifierList(231,274): '@Anno("nested nested parameter type $prop")
 KtAnnotationEntry(231,274): '@Anno("nested nested parameter type $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -426,18 +434,18 @@ KtAnnotationEntry(231,274): '@Anno("nested nested parameter type $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(232,236): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -455,14 +463,6 @@ KtConstructorCalleeExpression(232,236): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(232,236): 'Anno'
   null
@@ -518,6 +518,14 @@ KtDeclarationModifierList(286,313): '@Anno("defaultValue $prop")'
 KtAnnotationEntry(286,313): '@Anno("defaultValue $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "defaultValue $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -535,18 +543,18 @@ KtAnnotationEntry(286,313): '@Anno("defaultValue $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "defaultValue $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(287,291): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "defaultValue $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -564,14 +572,6 @@ KtConstructorCalleeExpression(287,291): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "defaultValue $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(287,291): 'Anno'
   null
@@ -627,6 +627,14 @@ KtDeclarationModifierList(321,368): '@Anno("anonymousFunction parameter type $pr
 KtAnnotationEntry(321,368): '@Anno("anonymousFunction parameter type $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "anonymousFunction parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -644,18 +652,18 @@ KtAnnotationEntry(321,368): '@Anno("anonymousFunction parameter type $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "anonymousFunction parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(322,326): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "anonymousFunction parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -673,14 +681,6 @@ KtConstructorCalleeExpression(322,326): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "anonymousFunction parameter type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(322,326): 'Anno'
   null
@@ -736,6 +736,14 @@ KtDeclarationModifierList(375,419): '@Anno("anonymousFunction return type $prop"
 KtAnnotationEntry(375,419): '@Anno("anonymousFunction return type $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "anonymousFunction return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -753,18 +761,18 @@ KtAnnotationEntry(375,419): '@Anno("anonymousFunction return type $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "anonymousFunction return type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(376,380): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "anonymousFunction return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -782,14 +790,6 @@ KtConstructorCalleeExpression(376,380): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "anonymousFunction return type $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(376,380): 'Anno'
   null
@@ -842,6 +842,7 @@ KtBlockExpression(424,426): '{}'
 KtConstructorDelegationCall(427,427): ''
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -853,11 +854,11 @@ KtConstructorDelegationCall(427,427): ''
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(427,427): ''
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -869,7 +870,6 @@ KtConstructorDelegationReferenceExpression(427,427): ''
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtClass(431,462): 'abstract class AbstractClass<T>'
   null
@@ -892,6 +892,7 @@ KtSuperTypeList(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("n
 KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -905,11 +906,11 @@ KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@An
       typeArgumentsMapping = {
         T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
       }
-      argumentMapping = {}
 
 KtConstructorCalleeExpression(480,616): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -923,7 +924,6 @@ KtConstructorCalleeExpression(480,616): '@Anno("super type call $prop") Abstract
       typeArgumentsMapping = {
         T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
       }
-      argumentMapping = {}
 
 KtTypeReference(480,616): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
   null
@@ -934,6 +934,14 @@ KtDeclarationModifierList(480,510): '@Anno("super type call $prop")'
 KtAnnotationEntry(480,510): '@Anno("super type call $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -951,18 +959,18 @@ KtAnnotationEntry(480,510): '@Anno("super type call $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "super type call $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(481,485): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -980,14 +988,6 @@ KtConstructorCalleeExpression(481,485): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "super type call $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(481,485): 'Anno'
   null
@@ -1049,6 +1049,14 @@ KtDeclarationModifierList(525,561): '@Anno("nested super type ref $prop")'
 KtAnnotationEntry(525,561): '@Anno("nested super type ref $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1066,18 +1074,18 @@ KtAnnotationEntry(525,561): '@Anno("nested super type ref $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(526,530): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1095,14 +1103,6 @@ KtConstructorCalleeExpression(526,530): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(526,530): 'Anno'
   null
@@ -1164,6 +1164,14 @@ KtDeclarationModifierList(567,610): '@Anno("nested nested super type ref $prop")
 KtAnnotationEntry(567,610): '@Anno("nested nested super type ref $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1181,18 +1189,18 @@ KtAnnotationEntry(567,610): '@Anno("nested nested super type ref $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(568,572): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1210,14 +1218,6 @@ KtConstructorCalleeExpression(568,572): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(568,572): 'Anno'
   null
@@ -1282,6 +1282,7 @@ KtSuperTypeList(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("n
 KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1295,11 +1296,11 @@ KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@An
       typeArgumentsMapping = {
         T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
       }
-      argumentMapping = {}
 
 KtConstructorCalleeExpression(653,789): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1313,7 +1314,6 @@ KtConstructorCalleeExpression(653,789): '@Anno("super type call $prop") Abstract
       typeArgumentsMapping = {
         T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
       }
-      argumentMapping = {}
 
 KtTypeReference(653,789): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
   null
@@ -1324,6 +1324,14 @@ KtDeclarationModifierList(653,683): '@Anno("super type call $prop")'
 KtAnnotationEntry(653,683): '@Anno("super type call $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1341,18 +1349,18 @@ KtAnnotationEntry(653,683): '@Anno("super type call $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "super type call $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(654,658): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1370,14 +1378,6 @@ KtConstructorCalleeExpression(654,658): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "super type call $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(654,658): 'Anno'
   null
@@ -1439,6 +1439,14 @@ KtDeclarationModifierList(698,734): '@Anno("nested super type ref $prop")'
 KtAnnotationEntry(698,734): '@Anno("nested super type ref $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1456,18 +1464,18 @@ KtAnnotationEntry(698,734): '@Anno("nested super type ref $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(699,703): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1485,14 +1493,6 @@ KtConstructorCalleeExpression(699,703): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(699,703): 'Anno'
   null
@@ -1554,6 +1554,14 @@ KtDeclarationModifierList(740,783): '@Anno("nested nested super type ref $prop")
 KtAnnotationEntry(740,783): '@Anno("nested nested super type ref $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1571,18 +1579,18 @@ KtAnnotationEntry(740,783): '@Anno("nested nested super type ref $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(741,745): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1600,14 +1608,6 @@ KtConstructorCalleeExpression(741,745): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(741,745): 'Anno'
   null
@@ -1678,6 +1678,14 @@ KtDeclarationModifierList(840,869): '@Anno("super type ref $prop")'
 KtAnnotationEntry(840,869): '@Anno("super type ref $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1695,18 +1703,18 @@ KtAnnotationEntry(840,869): '@Anno("super type ref $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(841,845): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1724,14 +1732,6 @@ KtConstructorCalleeExpression(841,845): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(841,845): 'Anno'
   null
@@ -1793,6 +1793,14 @@ KtDeclarationModifierList(875,911): '@Anno("nested super type ref $prop")'
 KtAnnotationEntry(875,911): '@Anno("nested super type ref $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1810,18 +1818,18 @@ KtAnnotationEntry(875,911): '@Anno("nested super type ref $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(876,880): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1839,14 +1847,6 @@ KtConstructorCalleeExpression(876,880): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(876,880): 'Anno'
   null
@@ -1908,6 +1908,14 @@ KtDeclarationModifierList(917,960): '@Anno("nested nested super type ref $prop")
 KtAnnotationEntry(917,960): '@Anno("nested nested super type ref $prop")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1925,18 +1933,18 @@ KtAnnotationEntry(917,960): '@Anno("nested nested super type ref $prop")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtConstructorCalleeExpression(918,922): 'Anno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -1954,14 +1962,6 @@ KtConstructorCalleeExpression(918,922): 'Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "nested nested super type ref $prop" -> (KaVariableSignature:
-          name = position
-          receiverType = null
-          returnType = kotlin.String
-          symbol = position: kotlin.String
-          callableId = null)
-      }
 
 KtTypeReference(918,922): 'Anno'
   null

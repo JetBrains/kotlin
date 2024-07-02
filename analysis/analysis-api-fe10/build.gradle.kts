@@ -48,7 +48,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
         optIn.addAll(
             listOf(
                 "kotlin.RequiresOptIn",
-                "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
                 "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
                 "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
                 "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",

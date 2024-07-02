@@ -1,6 +1,14 @@
 KtCallExpression(76,81): 'f("")'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "" -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: T
+          callableId = null)
+      }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -23,12 +31,4 @@ KtCallExpression(76,81): 'f("")'
           callableId = /Foo.invoke
       typeArgumentsMapping = {
         T -> (kotlin.String)
-      }
-      argumentMapping = {
-        "" -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = kotlin.String
-          symbol = t: T
-          callableId = null)
       }

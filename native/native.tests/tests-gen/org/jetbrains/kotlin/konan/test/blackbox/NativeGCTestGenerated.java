@@ -112,6 +112,12 @@ public class NativeGCTestGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
+  @TestMetadata("memoryDump.kt")
+  public void testMemoryDump() {
+    runTest("native/native.tests/testData/gc/memoryDump.kt");
+  }
+
+  @Test
   @TestMetadata("throwable.kt")
   public void testThrowable() {
     runTest("native/native.tests/testData/gc/throwable.kt");

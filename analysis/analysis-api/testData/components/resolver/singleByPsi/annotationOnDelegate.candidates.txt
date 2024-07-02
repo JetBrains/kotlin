@@ -1,6 +1,7 @@
 KtAnnotationEntry(0,18): '@delegate:Suppress'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -18,5 +19,4 @@ KtAnnotationEntry(0,18): '@delegate:Suppress'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

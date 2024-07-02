@@ -67,7 +67,18 @@ public open class Base64 private constructor(
      * An enumeration of the possible padding options for Base64 encoding and decoding.
      *
      * Constants of this enum class can be passed to the [withPadding] function to create a new Base64 instance
-     * with the specified padding option.
+     * with the specified padding option. Each padding option affects the encode and decode operations of the
+     * Base64 instance in the following way:
+     *
+     * | PaddingOption                    | On encode    | On decode                |
+     * |----------------------------------|--------------|--------------------------|
+     * | [PaddingOption.PRESENT]          | Emit padding | Padding is required      |
+     * | [PaddingOption.ABSENT]           | Omit padding | Padding must not present |
+     * | [PaddingOption.PRESENT_OPTIONAL] | Emit padding | Padding is optional      |
+     * | [PaddingOption.ABSENT_OPTIONAL]  | Omit padding | Padding is optional      |
+     *
+     * These options provide flexibility in handling the padding characters (`'='`) and enable compatibility with
+     * various Base64 libraries and protocols.
      *
      * @sample samples.io.encoding.Base64Samples.paddingOptionSample
      */
@@ -76,13 +87,13 @@ public open class Base64 private constructor(
         /**
          * Pad on encode, require padding on decode.
          *
-         * When encoding, the result is padded with '=' to reach an integral multiple of 4 symbols.
-         * When decoding, correctly padded input is required. The padding character '=' marks the end
+         * When encoding, the result is padded with `'='` to reach an integral multiple of 4 symbols.
+         * When decoding, correctly padded input is required. The padding character `'='` marks the end
          * of the encoded data, and subsequent symbols are prohibited.
          *
          * This represents the canonical form of Base64 encoding.
          *
-         * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+         * @sample samples.io.encoding.Base64Samples.paddingOptionPresentSample
          */
         PRESENT,
 
@@ -92,19 +103,19 @@ public open class Base64 private constructor(
          * When encoding, the result is not padded.
          * When decoding, the input must not contain any padding character.
          *
-         * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+         * @sample samples.io.encoding.Base64Samples.paddingOptionAbsentSample
          */
         ABSENT,
 
         /**
          * Pad on encode, allow optional padding on decode.
          *
-         * When encoding, the result is padded with '=' to reach an integral multiple of 4 symbols.
+         * When encoding, the result is padded with `'='` to reach an integral multiple of 4 symbols.
          * When decoding, the input may be either padded or unpadded. If the input contains a padding character,
-         * the correct amount of padding character(s) must be present. The padding character '='
+         * the correct amount of padding character(s) must be present. The padding character `'='`
          * marks the end of the encoded data, and subsequent symbols are prohibited.
          *
-         * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+         * @sample samples.io.encoding.Base64Samples.paddingOptionPresentOptionalSample
          */
         PRESENT_OPTIONAL,
 
@@ -113,10 +124,10 @@ public open class Base64 private constructor(
          *
          * When encoding, the result is not padded.
          * When decoding, the input may be either padded or unpadded. If the input contains a padding character,
-         * the correct amount of padding character(s) must be present. The padding character '='
+         * the correct amount of padding character(s) must be present. The padding character `'='`
          * marks the end of the encoded data, and subsequent symbols are prohibited.
          *
-         * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+         * @sample samples.io.encoding.Base64Samples.paddingOptionAbsentOptionalSample
          */
         ABSENT_OPTIONAL
     }
@@ -129,7 +140,7 @@ public open class Base64 private constructor(
      * padding option of this instance, this instance itself is returned. Otherwise, a new instance is created
      * using the same alphabet but configured with the new padding option.
      *
-     * @sample samples.io.encoding.Base64Samples.paddingOptionSample
+     * @sample samples.io.encoding.Base64Samples.withPaddingSample
      */
     @SinceKotlin("2.0")
     public fun withPadding(option: PaddingOption): Base64 {

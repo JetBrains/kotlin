@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
@@ -81,7 +81,7 @@ internal class KaFirAnnotationListForType private constructor(
     companion object {
         fun create(coneType: ConeKotlinType, builder: KaSymbolByFirBuilder): KaAnnotationList {
             return if (coneType.customAnnotations.isEmpty()) {
-                KaEmptyAnnotationList(builder.token)
+                KaBaseEmptyAnnotationList(builder.token)
             } else {
                 KaFirAnnotationListForType(coneType, builder)
             }

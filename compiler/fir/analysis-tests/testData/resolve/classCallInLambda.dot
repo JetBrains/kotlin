@@ -35,36 +35,38 @@ digraph classCallInLambda_kt {
                 }
                 13 [label="Function call arguments exit"];
             }
-            14 [label="Postponed exit from lambda"];
-            15 [label="Function call: R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(...)" style="filled" fillcolor=yellow];
-            16 [label="Jump: ^test R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/reflect/KClass<out kotlin/String>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            14 [label="Function call enter: R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(...)"];
+            15 [label="Postponed exit from lambda"];
+            16 [label="Function call exit: R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(...)" style="filled" fillcolor=yellow];
+            17 [label="Jump: ^test R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/reflect/KClass<out kotlin/String>| <inline=Inline, kind=EXACTLY_ONCE>  {
     ^ <getClass>(R|<local>/it|)
 }
 )"];
-            17 [label="Stub" style="filled" fillcolor=gray];
-            18 [label="Exit block" style="filled" fillcolor=gray];
+            18 [label="Stub" style="filled" fillcolor=gray];
+            19 [label="Exit block" style="filled" fillcolor=gray];
         }
-        19 [label="Exit function test" style="filled" fillcolor=red];
+        20 [label="Exit function test" style="filled" fillcolor=red];
     }
     2 -> {3};
     3 -> {4};
     4 -> {5};
     5 -> {6};
     6 -> {7 13};
-    6 -> {14} [style=dotted];
+    6 -> {15} [style=dotted];
     6 -> {7} [style=dashed];
     7 -> {8};
     8 -> {9};
     9 -> {10};
     10 -> {11};
     11 -> {12};
-    12 -> {14};
-    13 -> {15};
-    14 -> {15} [label="Postponed"];
-    15 -> {16};
-    16 -> {19};
-    16 -> {17} [style=dotted];
+    12 -> {15};
+    13 -> {14};
+    14 -> {16};
+    15 -> {16} [label="Postponed"];
+    16 -> {17};
+    17 -> {20};
     17 -> {18} [style=dotted];
     18 -> {19} [style=dotted];
+    19 -> {20} [style=dotted];
 
 }

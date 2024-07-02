@@ -1,0 +1,43 @@
+fun box(): String {
+  return test1(a = "test").plus(other = test1(a = 1)).plus(other = test2(a = 1))
+}
+
+fun test1(a: Any): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp_0: Any = a
+      val tmp_1: String? = tmp_0 as? String
+      val tmp_2: Int? = { // BLOCK
+        val tmp_3: String? = tmp_1
+        when {
+          EQEQ(arg0 = tmp_3, arg1 = null) -> null
+          else -> tmp_3.<get-length>()
+        }
+      }
+      val tmp_4: Boolean = EQEQ(arg0 = tmp_2, arg1 = 5)
+      assert(value = tmp_4, lazyMessage = local fun <anonymous>(): String {
+        return "\nassert((a as? String)?.length == 5)\n        | |            |      |" + "\n        | |            |      " + tmp_4 + "\n        | |            " + tmp_2 + "\n        | " + tmp_1 + "\n        " + tmp_0 + "\n"
+      }
+)
+    }
+  }
+)
+}
+
+fun test2(a: Any): String {
+  return expectThrowableMessage(block = local fun <anonymous>() {
+    { // BLOCK
+      val tmp_5: Any = a
+      val tmp_6: String? = tmp_5 as? String
+      requireNotNull<String>(value = tmp_6, lazyMessage = local fun <anonymous>(): String {
+        return local fun <anonymous>(): Any {
+          return ""
+        }
+.invoke() + "\nrequireNotNull(a as? String) { \"\" }\n               | |" + "\n               | " + tmp_6 + "\n               " + tmp_5 + "\n"
+      }
+)
+    } /*~> Unit */
+  }
+)
+}
+

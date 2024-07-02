@@ -9,25 +9,12 @@ public final class SimpleLock {
     private synthetic final method get_locked$volatile(): int
     private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
     private synthetic final method set_locked$volatile(p0: int): void
-    public final method withLock(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
-}
-
-@kotlin.Metadata
-final class SimpleLockTest$withLock$result$1 {
-    // source: 'SimpleLockTest.kt'
-    enclosing method SimpleLockTest.withLock()V
-    public final static field INSTANCE: SimpleLockTest$withLock$result$1
-    inner (anonymous) class SimpleLockTest$withLock$result$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.String
+    public final method withLock(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class SimpleLockTest {
     // source: 'SimpleLockTest.kt'
-    inner (anonymous) class SimpleLockTest$withLock$result$1
     public method <init>(): void
     public final method withLock(): void
 }

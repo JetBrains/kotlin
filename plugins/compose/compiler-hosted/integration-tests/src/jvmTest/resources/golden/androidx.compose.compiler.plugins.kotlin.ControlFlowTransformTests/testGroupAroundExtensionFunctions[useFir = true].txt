@@ -46,12 +46,15 @@ fun Test(start: Int, end: Int, %composer: Composer?, %changed: Int) {
     while (<iterator>.hasNext()) {
       val i = <iterator>.next()
       val b = a.get(bKey, %composer, 0b00110110)
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "<get(cK...>")
       if (i == 0b0010) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<get(cK...>")
         a.get(cKey, %composer, 0b00110110)
+        %composer.endReplaceGroup()
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
       }
-      %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {
       traceEventEnd()

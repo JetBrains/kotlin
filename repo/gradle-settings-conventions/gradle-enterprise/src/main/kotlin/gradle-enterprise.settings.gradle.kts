@@ -30,6 +30,9 @@ gradleEnterprise {
 
         val overridenName = (buildProperties.getOrNull("kotlin.build.scan.username") as? String)?.trim()
         val isTeamCity = buildProperties.isTeamcityBuild
+        if (buildProperties.isJpsBuildEnabled) {
+            tag("JPS")
+        }
         obfuscation {
             ipAddresses { _ -> listOf("0.0.0.0") }
             hostname { _ -> "concealed" }

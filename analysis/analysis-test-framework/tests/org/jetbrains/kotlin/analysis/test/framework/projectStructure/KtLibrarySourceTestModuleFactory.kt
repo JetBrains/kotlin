@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
@@ -45,6 +46,7 @@ object KtLibrarySourceTestModuleFactory : KtTestModuleFactory {
     }
 }
 
+@OptIn(KaImplementationDetail::class)
 fun createKtLibrarySourceModule(
     libraryJar: Path,
     librarySourcesJar: Path,

@@ -88,7 +88,6 @@ class Fir2IrJvmResultsConverter(
             fir2IrConfiguration,
             module.irGenerationExtensions(testServices),
             irMangler,
-            FirJvmKotlinMangler,
             FirJvmVisibilityConverter,
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,
@@ -128,8 +127,7 @@ class Fir2IrJvmResultsConverter(
             backendInput,
             sourceFiles,
             descriptorMangler = null,
-            irMangler = fir2irResult.components.manglers.irMangler,
-            firMangler = fir2irResult.components.manglers.firMangler,
+            irMangler = fir2irResult.components.irMangler,
         )
     }
 }

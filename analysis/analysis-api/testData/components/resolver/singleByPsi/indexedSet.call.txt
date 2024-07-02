@@ -1,6 +1,26 @@
 KtArrayAccessExpression(93,104): 'c[1, "foo"]'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null),
+        "foo" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          callableId = null),
+        false -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = value: kotlin.Boolean
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -34,23 +54,3 @@ KtArrayAccessExpression(93,104): 'c[1, "foo"]'
           ]
           callableId = /C.set
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          callableId = null),
-        "foo" -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.String
-          symbol = b: kotlin.String
-          callableId = null),
-        false -> (KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = value: kotlin.Boolean
-          callableId = null)
-      }

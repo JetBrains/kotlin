@@ -2,6 +2,7 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
   KaErrorCallInfo:
     candidateCalls = [
       KaDelegatedConstructorCall:
+        argumentMapping = {}
         kind = THIS_CALL
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -25,9 +26,9 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
                 callableId = null
             ]
             callableId = null
-        typeArgumentsMapping = {}
-        argumentMapping = {},
+        typeArgumentsMapping = {},
       KaDelegatedConstructorCall:
+        argumentMapping = {}
         kind = THIS_CALL
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -46,7 +47,6 @@ KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
             ]
             callableId = null
         typeArgumentsMapping = {}
-        argumentMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
     constructor(p: Int): Sub

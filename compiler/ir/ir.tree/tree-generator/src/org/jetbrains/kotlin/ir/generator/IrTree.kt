@@ -175,7 +175,7 @@ object IrTree : AbstractTreeBuilder() {
         but this is only for performance purposes (before it was done using simple maps).
         """.trimIndent()
     }
-    val overridableMember: Element by element(Declaration) {
+    val overridableMember: Element by sealedElement(Declaration) {
         parent(declaration)
         parent(declarationWithVisibility)
         parent(declarationWithName)
@@ -183,7 +183,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("modality", type<Modality>())
     }
-    val overridableDeclaration: Element by element(Declaration) {
+    val overridableDeclaration: Element by sealedElement(Declaration) {
         val s = +param("S", IrSymbolTree.rootElement)
 
         parent(overridableMember)
@@ -375,7 +375,7 @@ object IrTree : AbstractTreeBuilder() {
         +descriptor("FunctionDescriptor")
         +declaredSymbol(returnTargetSymbol)
     }
-    val function: Element by element(Declaration) {
+    val function: Element by sealedElement(Declaration) {
         parent(declarationBase)
         parent(possiblyExternalDeclaration)
         parent(declarationWithVisibility)
@@ -714,7 +714,7 @@ object IrTree : AbstractTreeBuilder() {
             )
         }
     }
-    val functionAccessExpression: Element by element(Expression) {
+    val functionAccessExpression: Element by sealedElement(Expression) {
         nameInVisitorMethod = "FunctionAccess"
         transformerReturnType = rootElement
 

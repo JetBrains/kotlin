@@ -18,6 +18,7 @@ standardPublicJars()
 
 dependencies {
     compileOnly(project(":kotlin-gradle-plugin"))
+    compileOnly(project(":compiler:cli"))
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation("org.junit.jupiter:junit-jupiter")

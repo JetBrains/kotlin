@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 
-class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KaBaseSimpleNameReference(expression), KtFe10Reference {
+internal class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KaBaseSimpleNameReference(expression), KtFe10Reference {
     override fun canBeReferenceTo(candidateTarget: PsiElement): Boolean {
         return element.containingFile == candidateTarget.containingFile ||
                 KtFe10ReferenceResolutionHelper.getInstance().isInProjectOrLibSource(element, includeScriptsOutsideSourceRoots = true)

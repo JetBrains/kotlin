@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
+import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -61,7 +62,16 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 internal class KaFirSymbolRelationProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaSymbolRelationProvider, KaFirSessionComponent {
-    override val KaSymbol.containingSymbol: KaDeclarationSymbol?
+    override val KaSymbol.containingSymbol: KaSymbol?
+        get() = withValidityAssertion {
+            when (this) {
+                is KaPackageSymbol -> null
+                is KaFileSymbol -> analysisSession.firSymbolBuilder.createPackageSymbol(kotlinPackageFqn)
+                else -> containingDeclaration ?: containingFile
+            }
+        }
+
+    override val KaSymbol.containingDeclaration: KaDeclarationSymbol?
         get() = withValidityAssertion {
             if (!hasParentSymbol(this)) {
                 return null
@@ -369,7 +379,7 @@ internal class KaFirSymbolRelationProvider(
 
             val unwrappedFirSymbol = unwrappedDeclaration.symbol
             val unwrappedKtSymbol = analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(unwrappedFirSymbol)
-            return with(analysisSession) { unwrappedKtSymbol.containingSymbol as? KaClassSymbol }
+            return with(analysisSession) { unwrappedKtSymbol.containingDeclaration as? KaClassSymbol }
         }
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {

@@ -91,6 +91,7 @@ KtConstantExpression(74,75): '1'
 KtDotQualifiedExpression(80,94): 'prop.action1()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -115,7 +116,6 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
           ]
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(80,84): 'prop'
@@ -137,6 +137,7 @@ KtNameReferenceExpression(80,84): 'prop'
 KtCallExpression(85,94): 'action1()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -161,7 +162,6 @@ KtCallExpression(85,94): 'action1()'
           ]
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(85,92): 'action1'
@@ -186,6 +186,7 @@ KtValueArgumentList(92,94): '()'
 KtCallExpression(99,112): 'action1(prop)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -210,7 +211,6 @@ KtCallExpression(99,112): 'action1(prop)'
           ]
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(99,106): 'action1'
@@ -282,6 +282,14 @@ KtValueArgumentList(130,132): '()'
 KtCallExpression(151,164): 'action2(prop)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        prop -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p1: P1
+          callableId = null)
+      }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -303,14 +311,6 @@ KtCallExpression(151,164): 'action2(prop)'
           ]
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-      argumentMapping = {
-        prop -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = p1: P1
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(151,158): 'action2'

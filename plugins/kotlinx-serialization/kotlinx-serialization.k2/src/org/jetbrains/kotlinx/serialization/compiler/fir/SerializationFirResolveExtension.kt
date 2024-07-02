@@ -291,7 +291,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                     )
                 }
             }.also {
-                it.containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(owner.classId)
+                it.containingClassForStaticMemberAttr = owner.toLookupTag()
             }.symbol
         }
         return result

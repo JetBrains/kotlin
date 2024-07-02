@@ -1,6 +1,14 @@
 KtCallExpression(81,85): 'x(1)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
+          symbol = p1: P1
+          callableId = null)
+      }
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,12 +30,4 @@ KtCallExpression(81,85): 'x(1)'
           ]
           callableId = kotlin/Function1.invoke
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
-          symbol = p1: P1
-          callableId = null)
-      }
     isInBestCandidates = true

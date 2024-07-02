@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
@@ -22,12 +24,31 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
 
-internal data class IrValidatorConfig(
+internal class IrValidatorConfig(
     val checkTypes: Boolean = true,
     val checkProperties: Boolean = false,
-    val checkScopes: Boolean = false, // TODO: Consider setting to true by default and deleting
+    val checkValueScopes: Boolean = false,
+    val checkTypeParameterScopes: Boolean = false,
     val checkVisibilities: Boolean = false,
+    val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
+
+fun interface InlineFunctionUseSiteChecker {
+    /**
+     * Check if the given use site of the inline function is permitted at the current phase of IR validation.
+     *
+     * Example 1: Check use sites after inlining all private functions.
+     *   It is permitted to have only use sites of non-private functions in the whole IR tree. So, for a use site
+     *   of a private inline function we should return `false` if it is met in the IR. For any other use site
+     *   we should return `true` (== permitted).
+     *
+     * Example 2: Check use sites after inlining all functions.
+     *   Normally, no use sites of inline functions should remain in the whole IR tree. So, if we met one we shall
+     *   return `false` (== not permitted). However, there are a few exceptions that are temporarily permitted.
+     *   For example, `inline external` intrinsics in Native (KT-66734).
+     */
+    fun isPermitted(inlineFunctionUseSite: IrMemberAccessExpression<IrFunctionSymbol>): Boolean
+}
 
 private class IrValidator(
     irBuiltIns: IrBuiltIns,
@@ -41,11 +62,17 @@ private class IrValidator(
     override fun visitFile(declaration: IrFile) {
         currentFile = declaration
         super.visitFile(declaration)
-        if (config.checkScopes) {
-            ScopeValidator(this::error, parentChain).check(declaration)
+        if (config.checkValueScopes) {
+            IrValueScopeValidator(this::error, parentChain).check(declaration)
+        }
+        if (config.checkTypeParameterScopes) {
+            IrTypeParameterScopeValidator(this::error, parentChain).check(declaration)
         }
         if (config.checkVisibilities) {
             declaration.acceptVoid(IrVisibilityChecker(declaration.module, declaration, reportError))
+        }
+        config.checkInlineFunctionUseSites?.let {
+            declaration.acceptVoid(NoInlineFunctionUseSitesValidator(declaration, reportError, it))
         }
     }
 
@@ -120,16 +147,9 @@ class DuplicateIrNodeError(element: IrElement) : IrValidationError(element.rende
 private fun performBasicIrValidation(
     element: IrElement,
     irBuiltIns: IrBuiltIns,
-    checkProperties: Boolean = false,
-    checkTypes: Boolean = false,
-    checkVisibilities: Boolean = false,
+    validatorConfig: IrValidatorConfig,
     reportError: ReportIrValidationError,
 ) {
-    val validatorConfig = IrValidatorConfig(
-        checkTypes = checkTypes,
-        checkProperties = checkProperties,
-        checkVisibilities = checkVisibilities,
-    )
     val validator = IrValidator(irBuiltIns, validatorConfig, reportError)
     try {
         element.acceptVoid(validator)
@@ -179,13 +199,21 @@ sealed interface IrValidationContext {
         checkProperties: Boolean = false,
         checkTypes: Boolean = false,
         checkVisibilities: Boolean = false,
+        checkValueScopes: Boolean = false,
+        checkTypeParameterScopes: Boolean = false,
+        checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
     ) {
         performBasicIrValidation(
             fragment,
             irBuiltIns,
-            checkProperties,
-            checkTypes,
-            checkVisibilities,
+            IrValidatorConfig(
+                checkTypes,
+                checkProperties,
+                checkValueScopes,
+                checkTypeParameterScopes,
+                checkVisibilities,
+                checkInlineFunctionUseSites,
+            ),
         ) { file, element, message, parentChain ->
             reportIrValidationError(file, element, message, phaseName, parentChain)
         }

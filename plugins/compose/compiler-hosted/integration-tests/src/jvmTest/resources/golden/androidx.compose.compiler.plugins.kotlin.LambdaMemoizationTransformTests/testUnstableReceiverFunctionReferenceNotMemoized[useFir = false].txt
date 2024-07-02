@@ -16,12 +16,20 @@ fun Something() {
 @Composable
 fun Something(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Something):Test.kt")
+  sourceInformation(%composer, "C(Something)<unstab...>:Test.kt")
   if (%changed != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val x = unstable::method
+    val x = <block>{
+      val tmp0 = unstable
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%composer.changedInstance(tmp0)) {
+        tmp0::method
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
     if (isTraceInProgress()) {
       traceEventEnd()
     }

@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
@@ -17,15 +13,13 @@ import org.jetbrains.kotlin.psi.KtExpression
 /**
  * A receiver value of a call.
  */
-public sealed class KaReceiverValue : KaLifetimeOwner {
+public sealed interface KaReceiverValue : KaLifetimeOwner {
     /**
-     * Returns inferred [KaType] of the receiver.
+     * Inferred [KaType] of the receiver.
      *
-     * In case of smart cast on the receiver returns smart cast type.
-     *
-     * For builder inference in FIR implementation it currently works incorrectly, see KT-50916.
+     * A smart cast type in the case of smart cast on the receiver.
      */
-    public abstract val type: KaType
+    public val type: KaType
 }
 
 
@@ -35,31 +29,24 @@ public sealed class KaReceiverValue : KaLifetimeOwner {
  *   "".length // explicit receiver `""`
  * ```
  */
-public class KaExplicitReceiverValue @KaImplementationDetail constructor(
-    expression: KtExpression,
-    type: KaType,
-    isSafeNavigation: Boolean,
-    override val token: KaLifetimeToken,
-) : KaReceiverValue() {
-    public val expression: KtExpression by validityAsserted(expression)
+public interface KaExplicitReceiverValue : KaReceiverValue {
+    public val expression: KtExpression
 
     /**
      * Whether safe navigation is used on this receiver. For example
-     * ```
+     * ```kotlin
      * fun test(s1: String?, s2: String) {
      *   s1?.length // explicit receiver `s1` has `isSafeNavigation = true`
      *   s2.length // explicit receiver `s2` has `isSafeNavigation = false`
      * }
      * ```
      */
-    public val isSafeNavigation: Boolean by validityAsserted(isSafeNavigation)
-
-    override val type: KaType by validityAsserted(type)
+    public val isSafeNavigation: Boolean
 }
 
 /**
  * An implicit receiver. For example
- * ```
+ * ```kotlin
  * class A {
  *   val i: Int = 1
  *   fun test() {
@@ -72,20 +59,16 @@ public class KaExplicitReceiverValue @KaImplementationDetail constructor(
  * }
  * ```
  */
-public class KaImplicitReceiverValue @KaImplementationDetail constructor(
-    symbol: KaSymbol,
-    type: KaType,
-) : KaReceiverValue() {
-    private val backingSymbol: KaSymbol = symbol
-
-    override val token: KaLifetimeToken get() = backingSymbol.token
-    public val symbol: KaSymbol get() = withValidityAssertion { backingSymbol }
-    override val type: KaType by validityAsserted(type)
+public interface KaImplicitReceiverValue : KaReceiverValue {
+    /**
+     * The symbol which represents the implicit receiver.
+     */
+    public val symbol: KaSymbol
 }
 
 /**
  * A smart-casted receiver. For example
- * ```
+ * ```kotlin
  * fun Any.test() {
  *   if (this is String) {
  *     length // smart-casted implicit receiver bound to the `KaReceiverParameterSymbol` of type `String` declared by `test`.
@@ -93,13 +76,9 @@ public class KaImplicitReceiverValue @KaImplementationDetail constructor(
  * }
  * ```
  */
-public class KaSmartCastedReceiverValue @KaImplementationDetail constructor(
-    original: KaReceiverValue,
-    smartCastType: KaType,
-) : KaReceiverValue() {
-    private val backingOriginal: KaReceiverValue = original
-
-    override val token: KaLifetimeToken get() = backingOriginal.token
-    public val original: KaReceiverValue get() = withValidityAssertion { backingOriginal }
-    public override val type: KaType by validityAsserted(smartCastType)
+public interface KaSmartCastedReceiverValue : KaReceiverValue {
+    /**
+     * The original [KaReceiverValue] to which the smart cast is applied.
+     */
+    public val original: KaReceiverValue
 }

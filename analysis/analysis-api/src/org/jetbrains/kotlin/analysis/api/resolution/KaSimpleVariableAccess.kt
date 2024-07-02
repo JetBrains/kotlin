@@ -5,17 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.psi.KtExpression
 
-public sealed class KaSimpleVariableAccess {
-    public object Read : KaSimpleVariableAccess()
+public sealed interface KaSimpleVariableAccess {
+    public interface Read : KaSimpleVariableAccess
 
-    public class Write @KaImplementationDetail constructor(
+    public interface Write : KaSimpleVariableAccess {
         /**
          * [KtExpression] that represents the new value that should be assigned to this variable. Or null if the assignment is incomplete
          * and misses the new value.
          */
-        public val value: KtExpression?,
-    ) : KaSimpleVariableAccess()
+        public val value: KtExpression?
+    }
 }

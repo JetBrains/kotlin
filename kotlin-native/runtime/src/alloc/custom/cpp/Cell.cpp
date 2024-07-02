@@ -17,7 +17,7 @@ Cell::Cell(uint32_t size) noexcept : isAllocated_(false), size_(size) {
     CustomAllocDebug("Cell@%p::Cell(%u)", this, size);
 }
 
-ALWAYS_INLINE uint8_t* Cell::TryAllocate(uint32_t cellsNeeded) noexcept {
+uint8_t* Cell::TryAllocate(uint32_t cellsNeeded) noexcept {
     CustomAllocDebug("Cell@%p{ allocated = %d, size = %u }::TryAllocate(%u)", this, isAllocated_, size_, cellsNeeded);
     if (isAllocated_ || cellsNeeded > size_) {
         CustomAllocDebug("Failed to allocate in Cell");

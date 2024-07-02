@@ -35,13 +35,13 @@ object Ui {
 fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
-  if (%changed and 0b01110000 == 0) {
+  if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(isError)) 0b00100000 else 0b00010000
   }
-  if (%changed and 0b001110000000 == 0) {
+  if (%changed and 0b000110000000 == 0) {
     %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(keyboardActions2)) 0b000100000000 else 0b10000000
   }
-  if (%dirty and 0b001011010001 != 0b10010000 || !%composer.skipping) {
+  if (%dirty and 0b10010001 != 0b10010000 || !%composer.skipping) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0001 != 0) {

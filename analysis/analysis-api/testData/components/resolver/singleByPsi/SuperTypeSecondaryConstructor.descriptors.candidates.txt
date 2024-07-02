@@ -1,6 +1,7 @@
 KtNameReferenceExpression(45,46): 'A'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -12,5 +13,4 @@ KtNameReferenceExpression(45,46): 'A'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

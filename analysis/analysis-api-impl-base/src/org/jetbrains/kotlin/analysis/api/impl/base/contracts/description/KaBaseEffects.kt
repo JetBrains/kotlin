@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.contracts.description
 
 import com.google.common.base.Objects
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractCallsInPlaceContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConditionalContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 
+@KaImplementationDetail
 class KaBaseContractCallsInPlaceContractEffectDeclaration(
     private val backingValueParameterReference: KaContractParameterValue,
     private val backingOccurrencesRange: EventOccurrencesRange,
@@ -38,6 +40,7 @@ class KaBaseContractCallsInPlaceContractEffectDeclaration(
     }
 }
 
+@KaImplementationDetail
 class KaBaseContractConditionalContractEffectDeclaration(
     private val backingEffect: KaContractEffectDeclaration,
     private val backingCondition: KaContractBooleanExpression,
@@ -56,6 +59,7 @@ class KaBaseContractConditionalContractEffectDeclaration(
     }
 }
 
+@KaImplementationDetail
 object KaBaseContractReturnsContractEffectDeclarations {
     class KaBaseContractReturnsNotNullEffectDeclaration(
         override val token: KaLifetimeToken

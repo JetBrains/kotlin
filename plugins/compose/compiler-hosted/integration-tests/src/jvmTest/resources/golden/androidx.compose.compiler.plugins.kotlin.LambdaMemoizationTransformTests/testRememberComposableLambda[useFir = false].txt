@@ -19,10 +19,10 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<rememb...>,<rememb...>,<curren...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(s)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -30,7 +30,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
     val tmp0_group = %composer.cache(false) {
       composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C<Text(s...>:Test.kt")
-        if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+        if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
           }
@@ -48,7 +48,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
     %composer.cache(false) {
       composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C<Text(s...>:Test.kt")
-        if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+        if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
           }

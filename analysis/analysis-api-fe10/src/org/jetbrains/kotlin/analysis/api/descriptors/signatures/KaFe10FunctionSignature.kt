@@ -19,7 +19,7 @@ internal class KaFe10FunctionSignature<out S : KaFunctionSymbol>(
     private val backingReturnType: KaType,
     private val backingReceiverType: KaType?,
     private val backingValueParameters: List<KaVariableSignature<KaValueParameterSymbol>>,
-) : KaFunctionSignature<S>() {
+) : KaFunctionSignature<S> {
     override val token: KaLifetimeToken get() = backingSymbol.token
     override val symbol: S get() = withValidityAssertion { backingSymbol }
     override val returnType: KaType get() = withValidityAssertion { backingReturnType }

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(62,69): 'getName'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -15,5 +16,4 @@ KtNameReferenceExpression(62,69): 'getName'
           valueParameters = []
           callableId = /JavaEnum.getName
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

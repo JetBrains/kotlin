@@ -358,7 +358,10 @@ private class Transformer(
         return leastCommonPrimitiveNumericType(symbols, argumentType, commonBoundType)?.getClass()
     }
 
-    private fun leastCommonPrimitiveNumericType(symbols: Symbols, t1: IrType, t2: IrType): IrType? {
+    private fun leastCommonPrimitiveNumericType(symbols: Symbols, type1: IrType, type2: IrType): IrType? {
+        // In case of type parameters, use their upper bounds instead
+        val t1 = (type1 as IrSimpleType).classifier.closestSuperClass()!!.defaultType
+        val t2 = (type2 as IrSimpleType).classifier.closestSuperClass()!!.defaultType
         val primitive1 = t1.getPrimitiveType()
         val primitive2 = t2.getPrimitiveType()
         val unsigned1 = t1.getUnsignedType()

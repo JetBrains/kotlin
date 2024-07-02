@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
@@ -27,7 +28,6 @@ public interface KotlinDirectInheritorsProvider : KotlinPlatformComponent {
     ): Iterable<KtClassOrObject>
 
     public companion object {
-        public fun getInstance(project: Project): KotlinDirectInheritorsProvider =
-            project.getService(KotlinDirectInheritorsProvider::class.java)
+        public fun getInstance(project: Project): KotlinDirectInheritorsProvider = project.service()
     }
 }

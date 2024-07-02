@@ -38,9 +38,6 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val context: C) : BodyLoweringPass {
-
-    private var IrFunction.coroutineConstructor by context.mapping.suspendFunctionToCoroutineConstructor
-
     companion object {
         val DECLARATION_ORIGIN_COROUTINE_IMPL = IrDeclarationOriginImpl("COROUTINE_IMPL")
     }
@@ -315,12 +312,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
                 val thisReceiver = this.dispatchReceiverParameter!!
 
-                val boundFields =
-                    context.mapping.capturedFields[coroutineClass]
-                        ?: compilationException(
-                            "No captured values",
-                            coroutineClass
-                        )
+                val boundFields = coroutineClass.capturedFields
+                    ?: compilationException(
+                        "No captured values",
+                        coroutineClass
+                    )
 
                 val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                 body = irBuilder.irBlockBody(startOffset, endOffset) {

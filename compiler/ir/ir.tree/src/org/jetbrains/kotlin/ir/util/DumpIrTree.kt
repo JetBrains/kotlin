@@ -67,6 +67,7 @@ data class DumpIrTreeOptions(
     val printTypeAbbreviations: Boolean = true,
     val printModuleName: Boolean = true,
     val printFilePath: Boolean = true,
+    val printExpectDeclarations: Boolean = true,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
 )
 
@@ -155,6 +156,7 @@ class DumpIrTreeVisitor(
 
     override fun visitClass(declaration: IrClass, data: String) {
         if (declaration.isHidden()) return
+        if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
@@ -181,6 +183,7 @@ class DumpIrTreeVisitor(
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
         if (declaration.isHidden()) return
+        if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")

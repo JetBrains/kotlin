@@ -3,16 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KaAnalysisApiInternals::class)
-
 package org.jetbrains.kotlin.analysis.api.platform.lifetime
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
-import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import kotlin.reflect.KClass
@@ -23,19 +19,12 @@ public class KotlinReadActionConfinementLifetimeToken(
 ) : KaLifetimeToken() {
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
-    /**
-     * Caches [KaAnalysisPermissionChecker] to avoid repeated [Project.getService] calls in validity assertions.
-     */
+    // We cache several services to avoid repeated `getService` calls in validity assertions.
     @KaCachedService
     private val permissionChecker = KaAnalysisPermissionChecker.getInstance(project)
 
-    /**
-     * Caches [KaLifetimeTracker] to avoid repeated [Project.getService] calls in validity assertions.
-     */
     @KaCachedService
     private val lifetimeTracker = KaLifetimeTracker.getInstance(project)
-
-    override val factory: KaLifetimeTokenFactory get() = KotlinReadActionConfinementLifetimeTokenFactory
 
     override fun isValid(): Boolean {
         return onCreatedTimeStamp == modificationTracker.modificationCount
@@ -66,15 +55,9 @@ public class KotlinReadActionConfinementLifetimeToken(
     }
 }
 
-public object KotlinReadActionConfinementLifetimeTokenFactory : KaLifetimeTokenFactory() {
+public class KotlinReadActionConfinementLifetimeTokenFactory : KotlinLifetimeTokenFactory {
     override val identifier: KClass<out KaLifetimeToken> = KotlinReadActionConfinementLifetimeToken::class
 
     override fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken =
         KotlinReadActionConfinementLifetimeToken(project, modificationTracker)
-}
-
-public class KotlinReadActionConfinementLifetimeTokenProvider : KotlinLifetimeTokenProvider() {
-    override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
-        return KotlinReadActionConfinementLifetimeTokenFactory
-    }
 }

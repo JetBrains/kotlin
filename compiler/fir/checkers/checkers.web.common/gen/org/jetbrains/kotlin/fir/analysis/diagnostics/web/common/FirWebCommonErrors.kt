@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 /**
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WEB_COMMON_DIAGNOSTICS_LIST]
  */
+@Suppress("IncorrectFormatting")
 object FirWebCommonErrors {
     // Annotations
     val WRONG_JS_QUALIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_QUALIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)

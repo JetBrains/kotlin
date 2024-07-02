@@ -93,12 +93,19 @@ public:
     // Test method
     std::vector<T*> GetElements() {
         std::vector<T*> elements;
+        TraverseElements([&](T* element) {
+            elements.push_back(element);
+        });
+        return elements;
+    }
+
+    template <typename F>
+    void TraverseElements(F process) noexcept(noexcept(process(std::declval<T*>()))) {
         T* elm = stack_.load();
         while (elm) {
-            elements.push_back(elm);
+            process(elm);
             elm = elm->next_;
         }
-        return elements;
     }
 
 private:

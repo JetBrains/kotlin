@@ -35,6 +35,8 @@ internal class JvmIrValidationBeforeLoweringPhase(
             phaseName,
             checkProperties = true,
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
+            checkValueScopes = true,
+            checkTypeParameterScopes = false, // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
             checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
         )
     }

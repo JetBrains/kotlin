@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
@@ -22,7 +22,7 @@ public interface KaErrorTypeRenderer {
     )
 
     public object AS_CODE_IF_POSSIBLE : KaErrorTypeRenderer {
-        @OptIn(KaAnalysisNonPublicApi::class)
+        @OptIn(KaNonPublicApi::class)
         override fun renderType(
             analysisSession: KaSession,
             type: KaErrorType,
@@ -49,7 +49,7 @@ public interface KaErrorTypeRenderer {
     }
 
     public object WITH_ERROR_MESSAGE : KaErrorTypeRenderer {
-        @OptIn(KaAnalysisNonPublicApi::class)
+        @OptIn(KaNonPublicApi::class)
         override fun renderType(
             analysisSession: KaSession,
             type: KaErrorType,

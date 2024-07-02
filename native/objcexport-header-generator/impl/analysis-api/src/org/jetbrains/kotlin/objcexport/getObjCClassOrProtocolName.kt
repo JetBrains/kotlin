@@ -49,14 +49,14 @@ private fun KaClassLikeSymbol.getObjCName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
-    val objCName = (resolvedObjCNameAnnotation?.objCName ?: nameOrAnonymous.asString()).toValidObjCSwiftIdentifier()
+    val objCName = (resolvedObjCNameAnnotation?.objCName ?: exportSessionSymbolNameOrAnonymous()).toValidObjCSwiftIdentifier()
 
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return objCName
             .handleSpecialNames("get")
     }
 
-    containingSymbol?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
+    containingDeclaration?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
         return containingClass.getObjCName() + objCName.capitalizeAsciiOnly()
     }
 
@@ -73,12 +73,12 @@ private fun KaClassLikeSymbol.getSwiftName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
-    val swiftName = (resolvedObjCNameAnnotation?.swiftName ?: nameOrAnonymous.asString()).toValidObjCSwiftIdentifier()
+    val swiftName = (resolvedObjCNameAnnotation?.swiftName ?: exportSessionSymbolNameOrAnonymous()).toValidObjCSwiftIdentifier()
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return swiftName
     }
 
-    containingSymbol?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
+    containingDeclaration?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
         val containingClassSwiftName = containingClass.getSwiftName()
         return buildString {
             if (canBeInnerSwift()) {

@@ -1,6 +1,14 @@
 KtNameReferenceExpression(248,251): 'add'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        s -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: T
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -34,11 +42,3 @@ KtNameReferenceExpression(248,251): 'add'
           ]
           callableId = test/Target.add
       typeArgumentsMapping = {}
-      argumentMapping = {
-        s -> (KaVariableSignature:
-          name = t
-          receiverType = null
-          returnType = kotlin.String
-          symbol = t: T
-          callableId = null)
-      }

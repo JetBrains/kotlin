@@ -100,7 +100,10 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
             +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
 
             // Don't run LLVM, stop after the last IR lowering.
-            TestDirectives.FREE_COMPILER_ARGS with listOf("-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker")
+            TestDirectives.FREE_COMPILER_ARGS with listOf(
+                "-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker",
+                "-Xklib-double-inlining"
+            )
         }
 
         Assumptions.assumeTrue(settings.get<CacheMode>() == CacheMode.WithoutCache)
@@ -486,7 +489,13 @@ object NativeTestSupport {
     private fun computeTestConfiguration(enclosingTestClass: Class<*>): ComputedTestConfiguration {
         val findTestConfiguration: Class<*>.() -> ComputedTestConfiguration? = {
             annotations.asSequence().mapNotNull { annotation ->
-                val testConfiguration = annotation.annotationClass.findAnnotation<TestConfiguration>() ?: return@mapNotNull null
+                val testConfiguration = try {
+                    annotation.annotationClass.findAnnotation<TestConfiguration>() ?: return@mapNotNull null
+                } catch (e: UnsupportedOperationException) {
+                    // For repeatable annotations we can't get the annotations of the annotation class,
+                    // this class is actually a synthetic container.
+                    return@mapNotNull null
+                }
                 ComputedTestConfiguration(testConfiguration, annotation)
             }.firstOrNull()
         }

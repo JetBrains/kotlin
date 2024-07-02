@@ -35,12 +35,15 @@ fun Label(test: Boolean, %composer: Composer?, %changed: Int) {
     Layout({ %composer: Composer?, %changed: Int ->
       sourceInformationMarkerStart(%composer, <>, "C<Box()>:Test.kt")
       Box(%composer, 0)
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "<Box()>")
       if (test) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<Box()>")
         Box(%composer, 0)
+        %composer.endReplaceGroup()
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
       }
-      %composer.endReplaceGroup()
       sourceInformationMarkerEnd(%composer)
     }, %composer, 0)
     if (isTraceInProgress()) {

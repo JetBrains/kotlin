@@ -49,26 +49,28 @@ digraph postponedLambdas_kt {
                 }
                 17 [label="Function call arguments exit"];
             }
-            18 [label="Postponed exit from lambda"];
-            19 [label="Function call: R|/foo|(...)" style="filled" fillcolor=yellow];
-            20 [label="Exit block"];
+            18 [label="Function call enter: R|/foo|(...)"];
+            19 [label="Postponed exit from lambda"];
+            20 [label="Function call exit: R|/foo|(...)" style="filled" fillcolor=yellow];
+            21 [label="Exit block"];
         }
-        21 [label="Exit function test" style="filled" fillcolor=red];
+        22 [label="Exit function test" style="filled" fillcolor=red];
     }
     6 -> {7};
     7 -> {8};
     8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {12 17 18};
+    11 -> {12 17 19};
     11 -> {12} [style=dashed];
     12 -> {13};
     13 -> {14};
     14 -> {15};
     15 -> {16};
-    17 -> {19};
-    18 -> {19} [label="Postponed"];
-    19 -> {20};
+    17 -> {18};
+    18 -> {20};
+    19 -> {20} [label="Postponed"];
     20 -> {21};
+    21 -> {22};
 
 }

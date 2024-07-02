@@ -469,15 +469,17 @@ abstract class FirDataFlowAnalyzer(
         val rightIsNull = rightIsNullConst || rightOperand.resolvedType.isNullableNothing && !leftIsNullConst
 
         node.mergeIncomingFlow { _, flow ->
-            when {
-                leftConst != null && rightConst != null -> return@mergeIncomingFlow
-                leftIsNull || rightIsNull -> {
-                    if (leftIsNull) processEqNull(flow, equalityOperatorCall, rightOperand, operation.isEq())
-                    if (rightIsNull) processEqNull(flow, equalityOperatorCall, leftOperand, operation.isEq())
+            if (leftIsNull || leftConst != null || rightIsNull || rightConst != null) {
+                when {
+                    leftIsNull -> processEqNull(flow, equalityOperatorCall, rightOperand, operation.isEq())
+                    leftConst != null -> processEqConst(flow, equalityOperatorCall, rightOperand, leftConst, operation.isEq())
                 }
-                leftConst != null -> processEqConst(flow, equalityOperatorCall, rightOperand, leftConst, operation.isEq())
-                rightConst != null -> processEqConst(flow, equalityOperatorCall, leftOperand, rightConst, operation.isEq())
-                else -> processEq(flow, lhsExitNode.flow, equalityOperatorCall, leftOperand, rightOperand, operation)
+                when {
+                    rightIsNull -> processEqNull(flow, equalityOperatorCall, leftOperand, operation.isEq())
+                    rightConst != null -> processEqConst(flow, equalityOperatorCall, leftOperand, rightConst, operation.isEq())
+                }
+            } else {
+                processEq(flow, lhsExitNode.flow, equalityOperatorCall, leftOperand, rightOperand, operation)
             }
         }
     }
@@ -929,11 +931,16 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitCallExplicitReceiver()
     }
 
+    fun enterFunctionCall(functionCall: FirFunctionCall) {
+        val enterNode = graphBuilder.enterFunctionCall(functionCall)
+        enterNode.mergeIncomingFlow()
+    }
+
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
         context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted)
         val node = graphBuilder.exitFunctionCall(functionCall, callCompleted)
         node.mergeIncomingFlow { _, flow ->
-            val callArgsExit = node.previousNodes.singleOrNull { it is FunctionCallArgumentsExitNode }
+            val callArgsExit = node.previousNodes.singleOrNull { it is FunctionCallEnterNode }
             processConditionalContract(flow, functionCall, callArgsExit?.flow)
         }
     }

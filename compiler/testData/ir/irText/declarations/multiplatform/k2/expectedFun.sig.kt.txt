@@ -1,0 +1,13 @@
+// FILE: platform.kt
+
+// CHECK JVM_IR:
+//   Mangled name: #f(){}kotlin.String
+//   Public signature: /f|9098388873611041001[0]
+//   Public signature debug description: f(){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #f(){}
+//   Public signature: /f|5316533450599009716[0]
+//   Public signature debug description: f(){}
+fun f(): String
+
+// FILE: common.kt

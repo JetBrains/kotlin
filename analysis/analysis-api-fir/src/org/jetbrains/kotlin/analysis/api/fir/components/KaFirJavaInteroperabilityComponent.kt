@@ -13,7 +13,6 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtil
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -125,7 +124,6 @@ internal class KaFirJavaInteroperabilityComponent(
         val psiType = typeElement.type
         if (!preserveAnnotations) return psiType
 
-        @OptIn(KaAnalysisNonPublicApi::class)
         return with(analysisSession) {
             annotateByKtType(
                 psiType = psiType,
@@ -270,10 +268,10 @@ internal class KaFirJavaInteroperabilityComponent(
 
                 val containingSymbolOrSelf = when (symbol) {
                     is KaValueParameterSymbol -> {
-                        symbol.containingSymbol as? KaFunctionSymbol ?: symbol
+                        symbol.containingDeclaration as? KaFunctionSymbol ?: symbol
                     }
                     is KaPropertyAccessorSymbol -> {
-                        symbol.containingSymbol as? KaPropertySymbol ?: symbol
+                        symbol.containingDeclaration as? KaPropertySymbol ?: symbol
                     }
                     is KaBackingFieldSymbol -> symbol.owningProperty
                     else -> symbol

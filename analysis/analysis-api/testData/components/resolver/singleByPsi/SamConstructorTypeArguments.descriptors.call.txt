@@ -1,6 +1,14 @@
 KtNameReferenceExpression(18,28): 'Comparator'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        { x, y -> 1 } -> (KaVariableSignature:
+          name = function
+          receiverType = null
+          returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
+          symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -20,12 +28,4 @@ KtNameReferenceExpression(18,28): 'Comparator'
           callableId = java/util/Comparator
       typeArgumentsMapping = {
         T -> (kotlin.Int!)
-      }
-      argumentMapping = {
-        { x, y -> 1 } -> (KaVariableSignature:
-          name = function
-          receiverType = null
-          returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
-          symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
-          callableId = null)
       }

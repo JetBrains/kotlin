@@ -369,7 +369,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
  * @param default True if the feature is enabled by default or false if it is not.
  */
 enum class FeatureFlag(val featureName: String, val default: Boolean) {
-    StrongSkipping("StrongSkipping", default = false),
+    StrongSkipping("StrongSkipping", default = true),
     IntrinsicRemember("IntrinsicRemember", default = true),
     OptimizeNonSkippingGroups("OptimizeNonSkippingGroups", default = false);
 

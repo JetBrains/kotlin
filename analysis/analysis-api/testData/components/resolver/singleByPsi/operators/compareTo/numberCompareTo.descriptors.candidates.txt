@@ -1,7 +1,14 @@
 KtNameReferenceExpression(20,29): 'compareTo'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -23,19 +30,19 @@ KtNameReferenceExpression(20,29): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
+          returnType = kotlin.Double
+          symbol = other: kotlin.Double
           callableId = null)
       }
-    isInBestCandidates = false
-  
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -57,19 +64,19 @@ KtNameReferenceExpression(20,29): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Double
-          symbol = other: kotlin.Double
+          returnType = kotlin.Float
+          symbol = other: kotlin.Float
           callableId = null)
       }
-    isInBestCandidates = false
-  
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -91,18 +98,19 @@ KtNameReferenceExpression(20,29): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Float
-          symbol = other: kotlin.Float
-          callableId = null)
-      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -124,19 +132,18 @@ KtNameReferenceExpression(20,29): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
           callableId = null)
       }
-    isInBestCandidates = true
-  
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -158,19 +165,19 @@ KtNameReferenceExpression(20,29): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         2 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
           callableId = null)
       }
-    isInBestCandidates = false
-  
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -192,12 +199,5 @@ KtNameReferenceExpression(20,29): 'compareTo'
           ]
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
-          callableId = null)
-      }
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     isInBestCandidates = false

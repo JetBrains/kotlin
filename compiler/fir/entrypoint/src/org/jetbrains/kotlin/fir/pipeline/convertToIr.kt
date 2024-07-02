@@ -74,7 +74,6 @@ fun FirResult.convertToIrAndActualize(
     fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
     irMangler: KotlinMangler.IrMangler,
-    firMangler: FirMangler,
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
     typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
@@ -88,7 +87,6 @@ fun FirResult.convertToIrAndActualize(
         fir2IrConfiguration,
         irGeneratorExtensions,
         irMangler,
-        firMangler,
         visibilityConverter,
         kotlinBuiltIns,
         typeSystemContextProvider,
@@ -105,7 +103,6 @@ private class Fir2IrPipeline(
     val fir2IrConfiguration: Fir2IrConfiguration,
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val irMangler: KotlinMangler.IrMangler,
-    val firMangler: FirMangler,
     val visibilityConverter: Fir2IrVisibilityConverter,
     val kotlinBuiltIns: KotlinBuiltIns,
     val typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
@@ -131,7 +128,7 @@ private class Fir2IrPipeline(
     }
 
     private fun runFir2IrConversion(): Fir2IrConversionResult {
-        val commonMemberStorage = Fir2IrCommonMemberStorage(firMangler)
+        val commonMemberStorage = Fir2IrCommonMemberStorage()
 
         val firProvidersWithGeneratedFiles: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
         for (firOutput in outputs) {

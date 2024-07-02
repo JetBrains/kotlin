@@ -40,6 +40,20 @@ void alloc::Allocator::ThreadData::clearForTests() noexcept {
     impl_->objectFactoryThreadQueue().ClearForTests();
 }
 
+void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept {
+    auto iter = impl_->objectFactory().LockForIter();
+    for (auto it = iter.begin(); it != iter.end();) {
+        fn(it->GetObjHeader());
+    }
+}
+
+void alloc::Allocator::TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept {
+    auto iter = impl_->extraObjectDataFactory().LockForIter();
+    for (auto it = iter.begin(); it != iter.end();) {
+        fn(&*it);
+    }
+}
+
 alloc::Allocator::Allocator() noexcept : impl_(std::make_unique<Impl>()) {}
 
 alloc::Allocator::~Allocator() = default;

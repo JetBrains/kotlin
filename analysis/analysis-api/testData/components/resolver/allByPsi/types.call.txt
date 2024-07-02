@@ -121,6 +121,7 @@ KtNameReferenceExpression(238,248): 'InnerAlias'
 KtCallExpression(251,263): 'InnerClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -142,11 +143,11 @@ KtCallExpression(251,263): 'InnerClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(251,261): 'InnerClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -168,7 +169,6 @@ KtNameReferenceExpression(251,261): 'InnerClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(261,263): '()'
   null

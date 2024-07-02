@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -26,7 +27,6 @@ public interface KotlinAnchorModuleProvider : KotlinOptionalPlatformComponent {
     public fun getAllAnchorModules(): Collection<KaSourceModule>
 
     public companion object {
-        public fun getInstance(project: Project): KotlinAnchorModuleProvider? =
-            project.getService(KotlinAnchorModuleProvider::class.java)
+        public fun getInstance(project: Project): KotlinAnchorModuleProvider? = project.serviceOrNull()
     }
 }

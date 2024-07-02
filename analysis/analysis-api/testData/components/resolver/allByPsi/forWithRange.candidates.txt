@@ -30,8 +30,15 @@ KtContainerNode(39,44): '1..<5'
 
 KtBinaryExpression(39,44): '1..<5'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        5 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -53,18 +60,19 @@ KtBinaryExpression(39,44): '1..<5'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         5 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
           callableId = null)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -86,19 +94,18 @@ KtBinaryExpression(39,44): '1..<5'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         5 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
           callableId = null)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -120,19 +127,19 @@ KtBinaryExpression(39,44): '1..<5'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         5 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
           callableId = null)
       }
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -154,14 +161,7 @@ KtBinaryExpression(39,44): '1..<5'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          callableId = null)
-      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
     isInBestCandidates = false
 
 KtConstantExpression(39,40): '1'
@@ -169,8 +169,15 @@ KtConstantExpression(39,40): '1'
 
 KtOperationReferenceExpression(40,43): '..<'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        5 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -192,18 +199,19 @@ KtOperationReferenceExpression(40,43): '..<'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         5 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Byte
-          symbol = other: kotlin.Byte
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
           callableId = null)
       }
-    isInBestCandidates = false
-
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -225,19 +233,18 @@ KtOperationReferenceExpression(40,43): '..<'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         5 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
           callableId = null)
       }
-    isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -259,19 +266,19 @@ KtOperationReferenceExpression(40,43): '..<'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
       argumentMapping = {
         5 -> (KaVariableSignature:
           name = other
           receiverType = null
-          returnType = kotlin.Short
-          symbol = other: kotlin.Short
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
           callableId = null)
       }
-    isInBestCandidates = false
-
-  KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
-    candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -293,14 +300,7 @@ KtOperationReferenceExpression(40,43): '..<'
           ]
           callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = other: kotlin.Long
-          callableId = null)
-      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
     isInBestCandidates = false
 
 KtConstantExpression(43,44): '5'

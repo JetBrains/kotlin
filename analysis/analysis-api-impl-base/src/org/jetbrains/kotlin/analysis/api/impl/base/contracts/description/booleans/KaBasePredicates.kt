@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans
 
 import com.google.common.base.Objects
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractParameterValue
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsInstancePredicateExpression
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsNullPredicateExpression
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
+@KaImplementationDetail
 class KaBaseContractIsInstancePredicateExpression(
     private val backingArgument: KaContractParameterValue,
     private val backingType: KaType,
@@ -40,6 +42,7 @@ class KaBaseContractIsInstancePredicateExpression(
     override fun hashCode(): Int = Objects.hashCode(backingArgument, backingType, backingIsNegated)
 }
 
+@KaImplementationDetail
 class KaBaseContractIsNullPredicateExpression(
     private val backingArgument: KaContractParameterValue,
     private val backingIsNegated: Boolean

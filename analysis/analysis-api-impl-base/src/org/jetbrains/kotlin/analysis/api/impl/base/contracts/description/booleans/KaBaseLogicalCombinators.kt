@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans
 
 import com.google.common.base.Objects
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBinaryLogicExpression.KaLogicOperation
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractBooleanExpression
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContra
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
+@KaImplementationDetail
 class KaBaseContractBinaryLogicExpression(
     private val backingLeft: KaContractBooleanExpression,
     private val backingRight: KaContractBooleanExpression,
@@ -41,6 +43,7 @@ class KaBaseContractBinaryLogicExpression(
     override fun hashCode(): Int = Objects.hashCode(backingLeft, backingRight, backingOperation)
 }
 
+@KaImplementationDetail
 class KaBaseContractLogicalNotExpression(private val backingArgument: KaContractBooleanExpression) : KaContractLogicalNotExpression {
     override val token: KaLifetimeToken get() = backingArgument.token
 

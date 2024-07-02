@@ -642,9 +642,6 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                         argumentStart++
                     }
                 }
-                else -> {
-                    throw AssertionError("Unexpected function: ${targetFun.render()}")
-                }
             }
 
             val samMethodValueParametersCount = samMethod.valueParameters.size +

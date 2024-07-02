@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -79,6 +80,7 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         }
     }
 
+    @OptIn(KaImplementationDetail::class)
     private fun isValidInheritor(
         candidate: KtClassOrObject,
         baseFirClass: FirClass,

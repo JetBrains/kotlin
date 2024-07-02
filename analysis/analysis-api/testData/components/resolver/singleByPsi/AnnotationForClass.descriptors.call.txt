@@ -1,6 +1,7 @@
 KtNameReferenceExpression(44,54): 'Annotation'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {}
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -11,4 +12,3 @@ KtNameReferenceExpression(44,54): 'Annotation'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}

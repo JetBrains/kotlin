@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -30,7 +29,7 @@ internal class KaFirResolveExtensionInfoProvider(
     override val resolveExtensionScopeWithTopLevelDeclarations: KaScope
         get() = withValidityAssertion {
             val tools = analysisSession.extensionTools
-            if (tools.isEmpty()) return KaEmptyScope(token)
+            if (tools.isEmpty()) return KaBaseEmptyScope(token)
             return KaFirResolveExtensionScope(analysisSession, tools)
         }
 
@@ -99,7 +98,6 @@ private class KaFirResolveExtensionScope(
     override val constructors: Sequence<KaConstructorSymbol>
         get() = withValidityAssertion { emptySequence() }
 
-    @KaExperimentalApi
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {
             // Only emit package symbols for top-level packages (subpackages of root). This matches the behavior
@@ -115,12 +113,10 @@ private class KaFirResolveExtensionScope(
         }
     }
 
-    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         tools.flatMapTo(mutableSetOf()) { it.declarationProvider.getTopLevelCallableNames() }
     }
 
-    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         tools.flatMapTo(mutableSetOf()) { it.declarationProvider.getTopLevelClassifierNames() }
     }

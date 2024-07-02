@@ -1,6 +1,14 @@
 KtBinaryExpression(56,71): '4 infixOp "str"'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = rhs
+          receiverType = null
+          returnType = kotlin.String
+          symbol = rhs: kotlin.String
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -22,11 +30,3 @@ KtBinaryExpression(56,71): '4 infixOp "str"'
           ]
           callableId = /infixOp
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "str" -> (KaVariableSignature:
-          name = rhs
-          receiverType = null
-          returnType = kotlin.String
-          symbol = rhs: kotlin.String
-          callableId = null)
-      }

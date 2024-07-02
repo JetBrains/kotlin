@@ -2,31 +2,31 @@ KtNameReferenceExpression(159,163): 'test'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = testing/test(): kotlin.Unit
-            valueParameters = []
-            callableId = testing/test
-        typeArgumentsMapping = {}
-        argumentMapping = {},
-      KaSimpleFunctionCall:
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = testing/test(): kotlin.Unit
-            valueParameters = []
-            callableId = testing/test
-        typeArgumentsMapping = {}
         argumentMapping = {}
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = testing/test(): kotlin.Unit
+            valueParameters = []
+            callableId = testing/test
+        typeArgumentsMapping = {},
+      KaSimpleFunctionCall:
+        argumentMapping = {}
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = testing/test(): kotlin.Unit
+            valueParameters = []
+            callableId = testing/test
+        typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
     fun test(): Unit

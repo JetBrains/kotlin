@@ -1,6 +1,14 @@
 KtEnumEntrySuperclassReferenceExpression(127,127): ''
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,11 +27,3 @@ KtEnumEntrySuperclassReferenceExpression(127,127): ''
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null)
-      }

@@ -10,9 +10,11 @@ var bar: Int = 20
 fun foobar(param: Int): Int = foo + bar + param
 
 // FILE: lateinit.kt
-class Foo()
 
-lateinit var foo: Foo
+private class Foo
+
+var foo: Any = Foo()
+lateinit var lateinit_foo: Any
 
 // FILE: constants.kt
 const val BOOLEAN_CONST: Boolean = true

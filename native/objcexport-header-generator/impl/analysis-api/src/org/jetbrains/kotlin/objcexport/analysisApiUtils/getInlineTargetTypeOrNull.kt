@@ -55,7 +55,7 @@ private fun KaNamedClassSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Bo
     val classId = classId ?: return false
 
     /* Top Level symbols can be special K/N types */
-    if (containingSymbol is KaClassSymbol) return false
+    if (containingDeclaration is KaClassSymbol) return false
 
     if (classId.packageFqName == KonanFqNames.internalPackageName && classId.shortClassName == KonanFqNames.nativePtr.shortName()) {
         return true

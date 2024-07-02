@@ -270,4 +270,8 @@ uint64_t getTimeMicros() {
   return duration_cast<microseconds>(steady_time_clock::now().time_since_epoch()).count();
 }
 
+bool isLittleEndian() {
+  return __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__;
+}
+
 }  // namespace konan

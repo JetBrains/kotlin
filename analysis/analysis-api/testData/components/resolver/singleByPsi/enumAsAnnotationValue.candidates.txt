@@ -1,6 +1,14 @@
 KtAnnotationEntry(90,110): '@Annotation(Color.R)'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        Color.R -> (KaVariableSignature:
+          name = color
+          receiverType = null
+          returnType = Color
+          symbol = color: Color
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -18,12 +26,4 @@ KtAnnotationEntry(90,110): '@Annotation(Color.R)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        Color.R -> (KaVariableSignature:
-          name = color
-          receiverType = null
-          returnType = Color
-          symbol = color: Color
-          callableId = null)
-      }
     isInBestCandidates = true

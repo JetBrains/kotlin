@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.konan.fir.test.cases.session.builder
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder.assertIsCallOf
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.junit.jupiter.api.Test
 
-@OptIn(KaAnalysisApiInternals::class)
+@OptIn(KaImplementationDetail::class)
 class NativeStandaloneSessionBuilderTest {
     @Test
     fun testResolveAgainstCommonKlib() {

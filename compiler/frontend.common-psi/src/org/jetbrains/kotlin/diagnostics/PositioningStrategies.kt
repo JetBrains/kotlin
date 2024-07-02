@@ -14,6 +14,7 @@ import com.intellij.psi.util.descendants
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.ENUM_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.*
@@ -150,17 +151,20 @@ object PositioningStrategies {
                 ?: DEFAULT.mark(element)
     }
 
+    private fun findStartingPsiElementForDeclarationName(
+        element: KtNamedDeclaration,
+    ): PsiElement =
+        element.getModifierList()?.getModifier(ENUM_KEYWORD)
+            ?: element.node.findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))?.psi
+            ?: element
+
     @JvmField
     val DECLARATION_NAME: PositioningStrategy<KtNamedDeclaration> = object : DeclarationHeader<KtNamedDeclaration>() {
         override fun mark(element: KtNamedDeclaration): List<TextRange> {
             val nameIdentifier = element.nameIdentifier
             if (nameIdentifier != null) {
                 if (element is KtClassOrObject) {
-                    val startElement =
-                        element.getModifierList()?.getModifier(KtTokens.ENUM_KEYWORD)
-                            ?: element.node.findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD))?.psi
-                            ?: element
-
+                    val startElement = findStartingPsiElementForDeclarationName(element)
                     return markRange(startElement, nameIdentifier)
                 }
                 return markElement(nameIdentifier)
@@ -1116,6 +1120,13 @@ object PositioningStrategies {
             if (element is KtBinaryExpression && element.operationToken == KtTokens.EQ) {
                 // Look for reference in LHS of variable assignment.
                 element.left?.let { return mark(it) }
+            }
+            if (element is KtClassOrObject) {
+                val nameIdentifier = (element as? KtNamedDeclaration)?.nameIdentifier
+                if (nameIdentifier != null) {
+                    val startElement = findStartingPsiElementForDeclarationName(element)
+                    return markRange(startElement, nameIdentifier)
+                }
             }
             var result: PsiElement = when (element) {
                 is KtQualifiedExpression -> {

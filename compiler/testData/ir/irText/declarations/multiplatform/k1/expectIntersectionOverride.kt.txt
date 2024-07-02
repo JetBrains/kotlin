@@ -1,13 +1,3 @@
-expect class C : I1, I2 {
-  expect override val p: Int
-    override get
-
-  expect constructor() /* primary */
-
-  expect override fun f(): String
-
-}
-
 class C : I1, I2 {
   override val p: Int
     field = 42

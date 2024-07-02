@@ -5,14 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.lifetime
 
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import kotlin.reflect.KClass
 
 public abstract class KaLifetimeToken {
-    public abstract val factory: KaLifetimeTokenFactory
-
     public abstract fun isValid(): Boolean
     public abstract fun getInvalidationReason(): String
 
@@ -22,15 +17,6 @@ public abstract class KaLifetimeToken {
 
 @Deprecated("Use 'KaLifetimeToken' instead", ReplaceWith("KaLifetimeToken"))
 public typealias KtLifetimeToken = KaLifetimeToken
-
-public abstract class KaLifetimeTokenFactory {
-    public abstract val identifier: KClass<out KaLifetimeToken>
-
-    public abstract fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken
-}
-
-@Deprecated("Use 'KaLifetimeTokenFactory' instead", ReplaceWith("KaLifetimeTokenFactory"))
-public typealias KtLifetimeTokenFactory = KaLifetimeTokenFactory
 
 @OptIn(KaImplementationDetail::class)
 @Suppress("NOTHING_TO_INLINE")

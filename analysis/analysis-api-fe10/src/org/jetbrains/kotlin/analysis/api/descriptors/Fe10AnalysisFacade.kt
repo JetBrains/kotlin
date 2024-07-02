@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
+@KaPlatformInterface
 interface Fe10AnalysisFacade {
     companion object {
         fun getInstance(project: Project): Fe10AnalysisFacade {
@@ -49,6 +51,7 @@ interface Fe10AnalysisFacade {
     }
 }
 
+@KaPlatformInterface
 class Fe10AnalysisContext(
     facade: Fe10AnalysisFacade,
     val resolveSession: ResolveSession,

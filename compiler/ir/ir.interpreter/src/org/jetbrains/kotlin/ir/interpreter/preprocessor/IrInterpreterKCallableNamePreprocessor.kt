@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.interpreter.preprocessor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -58,7 +59,7 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor {
         fun IrCall.isKCallableNameCall(irBuiltIns: IrBuiltIns): Boolean {
             if (this.dispatchReceiver !is IrCallableReference<*>) return false
 
-            val directMember = this.symbol.owner.let { it.property ?: it }
+            val directMember: IrOverridableMember = this.symbol.owner.let { it.property ?: it }
 
             val irClass = directMember.parent as? IrClass ?: return false
             if (!irClass.isSubclassOf(irBuiltIns.kCallableClass.owner)) return false
@@ -66,7 +67,6 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor {
             val name = when (directMember) {
                 is IrSimpleFunction -> directMember.name
                 is IrProperty -> directMember.name
-                else -> throw AssertionError("Should be IrSimpleFunction or IrProperty, got $directMember")
             }
             return name.asString() == "name"
         }

@@ -68,7 +68,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
     }
 
     private fun KaSession.renderDeclarationQualifiedName(symbol: KaCallableSymbol): String {
-        val parentsWithSelf = generateSequence<KaSymbol>(symbol) { it.containingSymbol }
+        val parentsWithSelf = generateSequence<KaSymbol>(symbol) { it.containingDeclaration }
             .toList()
             .asReversed()
 

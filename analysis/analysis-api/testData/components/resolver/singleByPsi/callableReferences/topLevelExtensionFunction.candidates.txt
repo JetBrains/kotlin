@@ -1,6 +1,7 @@
 KtCallableReferenceExpression(72,80): 'Foo::foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,5 +20,4 @@ KtCallableReferenceExpression(72,80): 'Foo::foo'
           ]
           callableId = /foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

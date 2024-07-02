@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 public abstract class KotlinPackageProviderBase(
     protected val project: Project,
     public val searchScope: GlobalSearchScope,
-) : KotlinPackageProvider() {
+) : KotlinPackageProvider {
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean {
         return doesPlatformSpecificPackageExist(packageFqName, platform) || doesKotlinOnlyPackageExist(packageFqName)
     }

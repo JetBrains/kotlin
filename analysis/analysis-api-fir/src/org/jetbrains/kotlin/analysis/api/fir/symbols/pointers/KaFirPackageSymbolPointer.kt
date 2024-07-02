@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.FqName
 
-class KaFirPackageSymbolPointer(private val fqName: FqName) : KaSymbolPointer<KaPackageSymbol>() {
+internal class KaFirPackageSymbolPointer(private val fqName: FqName) : KaSymbolPointer<KaPackageSymbol>() {
     @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): KaPackageSymbol? {
         check(analysisSession is KaFirSession)

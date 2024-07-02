@@ -5200,6 +5200,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           public void testUnitWithSideEffect() {
             runTest("compiler/testData/codegen/box/callableReference/function/local/unitWithSideEffect.kt");
           }
+
+          @Test
+          @TestMetadata("withValueArguments.kt")
+          public void testWithValueArguments() {
+            runTest("compiler/testData/codegen/box/callableReference/function/local/withValueArguments.kt");
+          }
         }
       }
 
@@ -10082,6 +10088,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @TestMetadata("for_loops_types.kt")
       public void testFor_loops_types() {
         runTest("compiler/testData/codegen/box/controlflow/for_loops_types.kt");
+      }
+
+      @Test
+      @TestMetadata("smartcastOnThisInInitializationSection.kt")
+      public void testSmartcastOnThisInInitializationSection() {
+        runTest("compiler/testData/codegen/box/controlflow/smartcastOnThisInInitializationSection.kt");
       }
 
       @Test
@@ -22233,6 +22245,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("equalityForIndyLambdaParameter.kt")
+      public void testEqualityForIndyLambdaParameter() {
+        runTest("compiler/testData/codegen/box/inlineClasses/equalityForIndyLambdaParameter.kt");
+      }
+
+      @Test
       @TestMetadata("equalsCallsLeftArgument.kt")
       public void testEqualsCallsLeftArgument() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -33310,6 +33328,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("BoundedGenericValueInRangeCheck.kt")
+      public void testBoundedGenericValueInRangeCheck() {
+        runTest("compiler/testData/codegen/box/operatorConventions/BoundedGenericValueInRangeCheck.kt");
+      }
+
+      @Test
       @TestMetadata("genericArrayAccessCall.kt")
       public void testGenericArrayAccessCall() {
         runTest("compiler/testData/codegen/box/operatorConventions/genericArrayAccessCall.kt");
@@ -35898,6 +35922,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         @TestMetadata("smartCastOnBothEnds.kt")
         public void testSmartCastOnBothEnds() {
           runTest("compiler/testData/codegen/box/ranges/contains/smartCastOnBothEnds.kt");
+        }
+
+        @Test
+        @TestMetadata("smartCastOnBothEndsGeneric.kt")
+        public void testSmartCastOnBothEndsGeneric() {
+          runTest("compiler/testData/codegen/box/ranges/contains/smartCastOnBothEndsGeneric.kt");
         }
 
         @Test
@@ -46453,6 +46483,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("unsignedInStringInterpolation.kt")
+      public void testUnsignedInStringInterpolation() {
+        runTest("compiler/testData/codegen/box/unsignedTypes/unsignedInStringInterpolation.kt");
+      }
+
+      @Test
       @TestMetadata("unsignedIntCompare.kt")
       public void testUnsignedIntCompare() {
         runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare.kt");
@@ -48517,6 +48553,18 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("kt69457.kt")
+      public void testKt69457() {
+        runTest("compiler/testData/codegen/boxInline/callableReference/kt69457.kt");
+      }
+
+      @Test
+      @TestMetadata("kt69470.kt")
+      public void testKt69470() {
+        runTest("compiler/testData/codegen/boxInline/callableReference/kt69470.kt");
+      }
+
+      @Test
       @TestMetadata("propertyIntrinsic.kt")
       public void testPropertyIntrinsic() {
         runTest("compiler/testData/codegen/boxInline/callableReference/propertyIntrinsic.kt");
@@ -50452,6 +50500,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @TestMetadata("localFunInLambdaCapturesAnotherFun.kt")
       public void testLocalFunInLambdaCapturesAnotherFun() {
         runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesAnotherFun.kt");
+      }
+
+      @Test
+      @TestMetadata("localFunInLambdaCapturesOuterVariable.kt")
+      public void testLocalFunInLambdaCapturesOuterVariable() {
+        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesOuterVariable.kt");
       }
     }
 

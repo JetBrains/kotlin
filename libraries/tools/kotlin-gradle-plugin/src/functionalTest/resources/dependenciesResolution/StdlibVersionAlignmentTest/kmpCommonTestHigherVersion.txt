@@ -23,10 +23,8 @@ jvmTest
   org.jetbrains:annotations
   test:lib:2.0
 linuxMain
-  org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
   test:lib:1.0
 linuxTest
-  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
   test:lib:2.0
 linuxX64Main
   org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
@@ -35,10 +33,8 @@ linuxX64Test
   org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
   test:lib:2.0
 nativeMain
-  org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
   test:lib:1.0
 nativeTest
-  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
   test:lib:2.0
 wasmJsMain
   org.jetbrains.kotlin:kotlin-stdlib-wasm-js:<CURRENT_KOTLIN_VERSION>

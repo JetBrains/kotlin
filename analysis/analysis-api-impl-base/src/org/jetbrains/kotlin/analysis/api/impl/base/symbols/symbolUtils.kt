@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (this) {
     ClassKind.INTERFACE -> KaClassKind.INTERFACE
     ClassKind.ENUM_CLASS -> KaClassKind.ENUM_CLASS
@@ -22,7 +21,7 @@ fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (thi
     ClassKind.ENUM_ENTRY -> invalidEnumEntryAsClassKind()
 }
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 fun invalidEnumEntryAsClassKind(): Nothing {
     error("KtClassKind is not applicable for enum entry, as enum entry is a callable, not a classifier")
 }

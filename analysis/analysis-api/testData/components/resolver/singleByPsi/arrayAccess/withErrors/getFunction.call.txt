@@ -2,6 +2,14 @@ KtArrayAccessExpression(44,48): '1[2]'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {
+          2 -> (KaVariableSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableId = null)
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -23,13 +31,5 @@ KtArrayAccessExpression(44,48): '1[2]'
             ]
             callableId = /get
         typeArgumentsMapping = {}
-        argumentMapping = {
-          2 -> (KaVariableSignature:
-            name = index
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = index: kotlin.Int
-            callableId = null)
-        }
     ]
     diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /get' in 'get'.>

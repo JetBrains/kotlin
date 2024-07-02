@@ -1,9 +1,8 @@
 KtPostfixExpression(182,190): 'm["a"]++'
   KaApplicableCallCandidateInfo:
     candidate = KaCompoundArrayAccessCall:
-      compoundAccess = IncOrDecOperation:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = m["a"]
@@ -16,6 +15,7 @@ KtPostfixExpression(182,190): 'm["a"]++'
             symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
             valueParameters = []
             callableId = kotlin/Int.inc
+        precedence = POSTFIX
       getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
           expression = m

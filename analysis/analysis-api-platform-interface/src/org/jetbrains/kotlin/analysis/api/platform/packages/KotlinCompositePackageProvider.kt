@@ -11,9 +11,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 
+/**
+ * A composite [KotlinPackageProvider] which combines all packages provided by its child [providers]. It should be created with
+ * [KotlinCompositePackageProvider.create].
+ */
 public class KotlinCompositePackageProvider private constructor(
     override val providers: List<KotlinPackageProvider>,
-) : KotlinPackageProvider(), KotlinCompositeProvider<KotlinPackageProvider> {
+) : KotlinPackageProvider, KotlinCompositeProvider<KotlinPackageProvider> {
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean {
         return providers.any { it.doesPackageExist(packageFqName, platform) }
     }

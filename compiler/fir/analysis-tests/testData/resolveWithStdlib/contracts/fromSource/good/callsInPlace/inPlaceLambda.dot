@@ -40,15 +40,16 @@ digraph inPlaceLambda_kt {
                         13 [label="Function call arguments enter"];
                         14 [label="Function call arguments exit"];
                     }
-                    15 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                    16 [label="Exit block"];
+                    15 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                    16 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                    17 [label="Exit block"];
                 }
-                17 [label="Exit when branch result"];
-                18 [label="Exit when"];
+                18 [label="Exit when branch result"];
+                19 [label="Exit when"];
             }
-            19 [label="Exit block"];
+            20 [label="Exit block"];
         }
-        20 [label="Exit function bar" style="filled" fillcolor=red];
+        21 [label="Exit function bar" style="filled" fillcolor=red];
     }
     2 -> {3};
     3 -> {4};
@@ -58,7 +59,7 @@ digraph inPlaceLambda_kt {
     7 -> {8};
     8 -> {9};
     9 -> {10 11};
-    10 -> {18};
+    10 -> {19};
     11 -> {12};
     12 -> {13};
     13 -> {14};
@@ -68,53 +69,56 @@ digraph inPlaceLambda_kt {
     17 -> {18};
     18 -> {19};
     19 -> {20};
+    20 -> {21};
 
     subgraph cluster_8 {
         color=red
-        21 [label="Enter function foo" style="filled" fillcolor=red];
+        22 [label="Enter function foo" style="filled" fillcolor=red];
         subgraph cluster_9 {
             color=blue
-            22 [label="Enter block"];
+            23 [label="Enter block"];
             subgraph cluster_10 {
                 color=blue
-                23 [label="Enter block"];
-                24 [label="Exit block"];
+                24 [label="Enter block"];
+                25 [label="Exit block"];
             }
             subgraph cluster_11 {
                 color=blue
-                25 [label="Function call arguments enter"];
-                26 [label="Function call arguments exit"];
+                26 [label="Function call arguments enter"];
+                27 [label="Function call arguments exit"];
             }
-            27 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            28 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+            29 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             subgraph cluster_12 {
                 color=blue
-                28 [label="Function call arguments enter"];
-                29 [label="Postponed enter to lambda"];
+                30 [label="Function call arguments enter"];
+                31 [label="Postponed enter to lambda"];
                 subgraph cluster_13 {
                     color=blue
-                    30 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                    32 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                     subgraph cluster_14 {
                         color=blue
-                        31 [label="Enter block"];
+                        33 [label="Enter block"];
                         subgraph cluster_15 {
                             color=blue
-                            32 [label="Function call arguments enter"];
-                            33 [label="Function call arguments exit"];
+                            34 [label="Function call arguments enter"];
+                            35 [label="Function call arguments exit"];
                         }
-                        34 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                        35 [label="Exit block"];
+                        36 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                        37 [label="Function call exit: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                        38 [label="Exit block"];
                     }
-                    36 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                    39 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                 }
-                37 [label="Function call arguments exit"];
+                40 [label="Function call arguments exit"];
             }
-            38 [label="Postponed exit from lambda"];
-            39 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
-            40 [label="Exit block"];
+            41 [label="Function call enter: R|/bar|(...)"];
+            42 [label="Postponed exit from lambda"];
+            43 [label="Function call exit: R|/bar|(...)" style="filled" fillcolor=yellow];
+            44 [label="Exit block"];
         }
-        41 [label="Exit function foo" style="filled" fillcolor=red];
+        45 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    21 -> {22};
     22 -> {23};
     23 -> {24};
     24 -> {25};
@@ -122,18 +126,22 @@ digraph inPlaceLambda_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    29 -> {30 37 38};
-    29 -> {30} [style=dashed];
+    29 -> {30};
     30 -> {31};
-    31 -> {32};
+    31 -> {32 40 42};
+    31 -> {32} [style=dashed];
     32 -> {33};
     33 -> {34};
     34 -> {35};
     35 -> {36};
-    36 -> {38};
-    37 -> {39};
-    38 -> {39} [label="Postponed"];
-    39 -> {40};
+    36 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {42};
     40 -> {41};
+    41 -> {43};
+    42 -> {43} [label="Postponed"];
+    43 -> {44};
+    44 -> {45};
 
 }

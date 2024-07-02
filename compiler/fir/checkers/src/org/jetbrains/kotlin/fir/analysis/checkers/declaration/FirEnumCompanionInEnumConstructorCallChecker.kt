@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -76,7 +76,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
             }
             val qualifiedAccess = when (node) {
                 is QualifiedAccessNode -> node.fir
-                is FunctionCallNode -> node.fir
+                is FunctionCallExitNode -> node.fir
                 else -> continue
             }
             val matchingReceiver = qualifiedAccess.allReceiverExpressions

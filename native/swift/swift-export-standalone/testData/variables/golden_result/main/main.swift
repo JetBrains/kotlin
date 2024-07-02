@@ -1,19 +1,7 @@
 @_exported import ExportedKotlinPackages
-import KotlinBridges_main
 import KotlinRuntime
+import KotlinBridges_main
 
-public class Foo : KotlinRuntime.KotlinBase {
-    public override init() {
-        let __kt = __root___Foo_init_allocate()
-        super.init(__externalRCRef: __kt)
-        __root___Foo_init_initialize__TypesOfArguments__uintptr_t__(__kt)
-    }
-    public override init(
-        __externalRCRef: Swift.UInt
-    ) {
-        super.init(__externalRCRef: __externalRCRef)
-    }
-}
 public var BOOLEAN_CONST: Swift.Bool {
     get {
         return __root___BOOLEAN_CONST_get()
@@ -84,12 +72,20 @@ public var baz: Swift.Int32 {
         return __root___baz_get()
     }
 }
-public var foo: main.Foo {
+public var foo: KotlinRuntime.KotlinBase {
     get {
-        return main.Foo(__externalRCRef: __root___foo_get())
+        return KotlinRuntime.KotlinBase(__externalRCRef: __root___foo_get())
     }
     set {
         return __root___foo_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
+    }
+}
+public var lateinit_foo: KotlinRuntime.KotlinBase {
+    get {
+        return KotlinRuntime.KotlinBase(__externalRCRef: __root___lateinit_foo_get())
+    }
+    set {
+        return __root___lateinit_foo_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
     }
 }
 public extension ExportedKotlinPackages.namespace.main {

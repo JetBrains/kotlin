@@ -14,34 +14,50 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 @ThreadSafeMutableState
 class FirMissingDependencyStorage(private val session: FirSession) : FirSessionComponent {
     private val cache =
-        session.firCachesFactory.createCache<FirClassSymbol<*>, Set<ConeKotlinType>, Nothing?> { symbol, _ ->
+        session.firCachesFactory.createCache<FirClassSymbol<*>, Set<TypeWithOrigin>, Nothing?> { symbol, _ ->
             findMissingSuperTypes(symbol)
         }
 
-    fun getMissingSuperTypes(declaration: FirClassSymbol<*>): Set<ConeKotlinType> {
+    enum class SupertypeOrigin {
+        TYPE_ARGUMENT,
+        OTHER
+    }
+
+    data class TypeWithOrigin(val type: ConeKotlinType, val origin: SupertypeOrigin)
+
+    fun getMissingSuperTypes(declaration: FirClassSymbol<*>): Set<TypeWithOrigin> {
         return cache.getValue(declaration, null)
     }
 
-    private fun findMissingSuperTypes(declaration: FirClassSymbol<*>): Set<ConeKotlinType> {
+    private fun findMissingSuperTypes(declaration: FirClassSymbol<*>): Set<TypeWithOrigin> {
         return declaration.collectSuperTypes(session)
-            .filterTo(mutableSetOf()) {
+            .filterTo(mutableSetOf()) { (type, _) ->
                 // Ignore types which are already errors.
-                it !is ConeErrorType && it !is ConeDynamicType && it.toSymbol(session) == null
+                type !is ConeErrorType && type !is ConeDynamicType && type.lowerBoundIfFlexible().let {
+                    it is ConeLookupTagBasedType && it.toSymbol(session) == null
+                }
             }
     }
 
-    private fun FirClassSymbol<*>.collectSuperTypes(session: FirSession): Set<ConeKotlinType> {
-        val superTypes = mutableSetOf<ConeKotlinType>()
-        fun collect(symbol: FirClassSymbol<*>) {
+    private fun FirClassSymbol<*>.collectSuperTypes(session: FirSession): Set<TypeWithOrigin> {
+        val result = mutableSetOf<TypeWithOrigin>()
+        fun collect(symbol: FirClassSymbol<*>, origin: SupertypeOrigin) {
             for (superTypeRef in symbol.resolvedSuperTypeRefs) {
                 val superType = superTypeRef.type
-                if (!superType.isAny && superTypes.add(superType)) {
-                    (superType.toSymbol(session) as? FirClassSymbol<*>)?.let(::collect)
+                if (!superType.isAny && result.add(TypeWithOrigin(superType, origin))) {
+                    (superType.toSymbol(session) as? FirClassSymbol<*>)?.let { collect(it, origin) }
+                }
+                for (typeArgument in superType.typeArguments) {
+                    if (typeArgument !is ConeKotlinTypeProjection) continue
+                    val type = typeArgument.type
+                    if (!type.isAny && result.add(TypeWithOrigin(type, SupertypeOrigin.TYPE_ARGUMENT))) {
+                        (type.toSymbol(session) as? FirClassSymbol<*>)?.let { collect(it, SupertypeOrigin.TYPE_ARGUMENT) }
+                    }
                 }
             }
         }
-        collect(this)
-        return superTypes
+        collect(this, SupertypeOrigin.OTHER)
+        return result
     }
 }
 

@@ -1,6 +1,14 @@
 KtBinaryExpression(199,207): 's1 == s2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        s2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,11 +30,3 @@ KtBinaryExpression(199,207): 's1 == s2'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        s2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }

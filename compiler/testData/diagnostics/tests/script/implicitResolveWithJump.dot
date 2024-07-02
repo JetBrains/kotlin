@@ -25,13 +25,14 @@ digraph implicitResolveWithJump_kts {
                 8 [label="Access variable R|/B.b| [3]"];
                 9 [label="Function call arguments exit [3]"];
             }
-            10 [label="Function call: Q|A|.R|/A.a|.R|kotlin/String.plus|(...) [3]" style="filled" fillcolor=yellow];
-            11 [label="Exit property [3]" style="filled" fillcolor=red];
+            10 [label="Function call enter: Q|A|.R|/A.a|.R|kotlin/String.plus|(...) [3]"];
+            11 [label="Function call exit: Q|A|.R|/A.a|.R|kotlin/String.plus|(...) [3]" style="filled" fillcolor=yellow];
+            12 [label="Exit property [3]" style="filled" fillcolor=red];
         }
-        12 [label="Exit class <script-implicitResolveWithJump.kts> [2]" style="filled" fillcolor=red];
+        13 [label="Exit class <script-implicitResolveWithJump.kts> [2]" style="filled" fillcolor=red];
     }
     2 -> {3} [color=green];
-    2 -> {12} [style=dotted];
+    2 -> {13} [style=dotted];
     2 -> {3} [style=dashed];
     3 -> {4};
     4 -> {5};
@@ -41,82 +42,87 @@ digraph implicitResolveWithJump_kts {
     8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {12} [color=green];
+    11 -> {12};
+    12 -> {13} [color=green];
 
     subgraph cluster_4 {
         color=red
-        13 [label="Enter class A [3]" style="filled" fillcolor=red];
+        14 [label="Enter class A [3]" style="filled" fillcolor=red];
         subgraph cluster_5 {
             color=blue
-            14 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            15 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
-            16 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+            15 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            16 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
+            17 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_6 {
             color=blue
-            17 [label="Enter property [4]" style="filled" fillcolor=red];
+            18 [label="Enter property [4]" style="filled" fillcolor=red];
             subgraph cluster_7 {
                 color=blue
-                18 [label="Function call arguments enter [4]"];
-                19 [label="Access variable R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args| [4]"];
-                20 [label="Const: Int(1) [4]"];
-                21 [label="Function call arguments exit [4]"];
+                19 [label="Function call arguments enter [4]"];
+                20 [label="Access variable R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args| [4]"];
+                21 [label="Const: Int(1) [4]"];
+                22 [label="Function call arguments exit [4]"];
             }
-            22 [label="Function call: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]" style="filled" fillcolor=yellow];
-            23 [label="Exit property [4]" style="filled" fillcolor=red];
+            23 [label="Function call enter: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]"];
+            24 [label="Function call exit: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]" style="filled" fillcolor=yellow];
+            25 [label="Exit property [4]" style="filled" fillcolor=red];
         }
-        24 [label="Exit class A [3]" style="filled" fillcolor=red];
+        26 [label="Exit class A [3]" style="filled" fillcolor=red];
     }
-    13 -> {14} [color=green];
-    13 -> {24} [style=dotted];
-    13 -> {14 17} [style=dashed];
-    14 -> {15};
+    14 -> {15} [color=green];
+    14 -> {26} [style=dotted];
+    14 -> {15 18} [style=dashed];
     15 -> {16};
-    16 -> {17} [color=green];
-    17 -> {18};
+    16 -> {17};
+    17 -> {18} [color=green];
     18 -> {19};
     19 -> {20};
     20 -> {21};
     21 -> {22};
     22 -> {23};
-    23 -> {24} [color=green];
+    23 -> {24};
+    24 -> {25};
+    25 -> {26} [color=green];
 
     subgraph cluster_8 {
         color=red
-        25 [label="Enter class B [3]" style="filled" fillcolor=red];
+        27 [label="Enter class B [3]" style="filled" fillcolor=red];
         subgraph cluster_9 {
             color=blue
-            26 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            27 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
-            28 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+            28 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            29 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
+            30 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_10 {
             color=blue
-            29 [label="Enter property [4]" style="filled" fillcolor=red];
+            31 [label="Enter property [4]" style="filled" fillcolor=red];
             subgraph cluster_11 {
                 color=blue
-                30 [label="Function call arguments enter [4]"];
-                31 [label="Access variable R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args| [4]"];
-                32 [label="Const: Int(2) [4]"];
-                33 [label="Function call arguments exit [4]"];
+                32 [label="Function call arguments enter [4]"];
+                33 [label="Access variable R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args| [4]"];
+                34 [label="Const: Int(2) [4]"];
+                35 [label="Function call arguments exit [4]"];
             }
-            34 [label="Function call: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]" style="filled" fillcolor=yellow];
-            35 [label="Exit property [4]" style="filled" fillcolor=red];
+            36 [label="Function call enter: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]"];
+            37 [label="Function call exit: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]" style="filled" fillcolor=yellow];
+            38 [label="Exit property [4]" style="filled" fillcolor=red];
         }
-        36 [label="Exit class B [3]" style="filled" fillcolor=red];
+        39 [label="Exit class B [3]" style="filled" fillcolor=red];
     }
-    25 -> {26} [color=green];
-    25 -> {36} [style=dotted];
-    25 -> {26 29} [style=dashed];
-    26 -> {27};
-    27 -> {28};
-    28 -> {29} [color=green];
+    27 -> {28} [color=green];
+    27 -> {39} [style=dotted];
+    27 -> {28 31} [style=dashed];
+    28 -> {29};
     29 -> {30};
-    30 -> {31};
+    30 -> {31} [color=green];
     31 -> {32};
     32 -> {33};
     33 -> {34};
     34 -> {35};
-    35 -> {36} [color=green];
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
+    38 -> {39} [color=green];
 
 }

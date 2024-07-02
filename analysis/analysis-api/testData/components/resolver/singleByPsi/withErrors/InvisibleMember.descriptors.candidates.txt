@@ -1,6 +1,5 @@
 KtNameReferenceExpression(63,64): 'i'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'i': it is private in 'A'>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -16,4 +15,5 @@ KtNameReferenceExpression(63,64): 'i'
           callableId = /A.i
       simpleAccess = Read
       typeArgumentsMapping = {}
+    diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'i': it is private in 'A'>
     isInBestCandidates = true

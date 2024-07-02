@@ -81,7 +81,7 @@ private fun KaClassSymbol.getEnumEntriesProperty(): ObjCProperty {
     )
 }
 
-context(KaSession)
+context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaEnumEntrySymbol.getEnumEntryName(forSwift: Boolean): String {
 

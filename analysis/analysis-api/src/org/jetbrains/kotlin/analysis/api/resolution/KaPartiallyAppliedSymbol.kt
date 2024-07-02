@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
@@ -20,29 +16,21 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
  * properties, the missing information is the type of access (read, write, or compound access) to this property. For functions, the missing
  * information is the value arguments for the call.
  */
-public class KaPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableSignature<S>> @KaImplementationDetail constructor(
-    signature: C,
-    dispatchReceiver: KaReceiverValue?,
-    extensionReceiver: KaReceiverValue?,
-) : KaLifetimeOwner {
-    private val backingSignature: C = signature
-
-    override val token: KaLifetimeToken get() = backingSignature.token
-
+public interface KaPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableSignature<S>> : KaLifetimeOwner {
     /**
      * The function or variable (property) declaration.
      */
-    public val signature: C get() = withValidityAssertion { backingSignature }
+    public val signature: C
 
     /**
      * The dispatch receiver for this symbol access. Dispatch receiver is available if the symbol is declared inside a class or object.
      */
-    public val dispatchReceiver: KaReceiverValue? by validityAsserted(dispatchReceiver)
+    public val dispatchReceiver: KaReceiverValue?
 
     /**
      * The extension receiver for this symbol access. Extension receiver is available if the symbol is declared with an extension receiver.
      */
-    public val extensionReceiver: KaReceiverValue? by validityAsserted(extensionReceiver)
+    public val extensionReceiver: KaReceiverValue?
 }
 
 public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaPartiallyAppliedSymbol<S, C>.symbol: S get() = signature.symbol

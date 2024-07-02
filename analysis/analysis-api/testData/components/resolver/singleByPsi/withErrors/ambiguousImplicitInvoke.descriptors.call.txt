@@ -2,6 +2,7 @@ KtCallExpression(134,137): 'x()'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {}
         isImplicitInvoke = true
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -22,9 +23,9 @@ KtCallExpression(134,137): 'x()'
                 callableId = null
             ]
             callableId = null
-        typeArgumentsMapping = {}
-        argumentMapping = {},
+        typeArgumentsMapping = {},
       KaSimpleFunctionCall:
+        argumentMapping = {}
         isImplicitInvoke = true
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -46,7 +47,6 @@ KtCallExpression(134,137): 'x()'
             ]
             callableId = null
         typeArgumentsMapping = {}
-        argumentMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     local final operator fun Int.invoke(b: Boolean): Unit defined in call

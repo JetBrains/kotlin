@@ -25,7 +25,7 @@ class IsTopLevelTests(
 
         analyze(ktFile) {
             assertTrue(ktFile.getFunctionOrFail("topFun").isTopLevel)
-            assertFalse (ktFile.getClassOrFail("TopClass").getFunctionOrFail("classFun").isTopLevel)
+            assertFalse(ktFile.getClassOrFail("TopClass").getFunctionOrFail("classFun").isTopLevel)
         }
     }
 }

@@ -1,6 +1,7 @@
 KtNameReferenceExpression(138,142): 'test'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -12,4 +13,3 @@ KtNameReferenceExpression(138,142): 'test'
           valueParameters = []
           callableId = /test
       typeArgumentsMapping = {}
-      argumentMapping = {}

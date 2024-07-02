@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.sam.createSamConstructorFunction
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 
-class KaFe10DescSamConstructorSymbolPointer(private val classId: ClassId) : KaSymbolPointer<KaSamConstructorSymbol>() {
+internal class KaFe10DescSamConstructorSymbolPointer(private val classId: ClassId) : KaSymbolPointer<KaSamConstructorSymbol>() {
     @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): KaSamConstructorSymbol? {
         check(analysisSession is KaFe10Session)

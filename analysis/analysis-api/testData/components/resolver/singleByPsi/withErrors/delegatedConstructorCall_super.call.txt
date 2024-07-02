@@ -1,6 +1,14 @@
 KtConstructorDelegationCall(118,130): 'super(i + j)'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {
+        i + j -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p1: kotlin.Int
+          callableId = null)
+      }
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,11 +27,3 @@ KtConstructorDelegationCall(118,130): 'super(i + j)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        i + j -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = p1: kotlin.Int
-          callableId = null)
-      }

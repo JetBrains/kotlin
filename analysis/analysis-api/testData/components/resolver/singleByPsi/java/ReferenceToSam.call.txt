@@ -1,6 +1,14 @@
 KtNameReferenceExpression(83,94): 'setListener'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        {} -> (KaVariableSignature:
+          name = listener
+          receiverType = null
+          returnType = JavaTest.SAMInterface!
+          symbol = listener: JavaTest.SAMInterface!
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,11 +30,3 @@ KtNameReferenceExpression(83,94): 'setListener'
           ]
           callableId = /JavaTest.SomeJavaClass.setListener
       typeArgumentsMapping = {}
-      argumentMapping = {
-        {} -> (KaVariableSignature:
-          name = listener
-          receiverType = null
-          returnType = JavaTest.SAMInterface!
-          symbol = listener: JavaTest.SAMInterface!
-          callableId = null)
-      }

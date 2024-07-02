@@ -1,6 +1,5 @@
 KtNameReferenceExpression(96,102): 'action'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNSAFE_CALL_ERROR with invoke>
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -16,4 +15,5 @@ KtNameReferenceExpression(96,102): 'action'
           callableId = test/action
       simpleAccess = Read
       typeArgumentsMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: UNSAFE_CALL_ERROR with invoke>
     isInBestCandidates = true

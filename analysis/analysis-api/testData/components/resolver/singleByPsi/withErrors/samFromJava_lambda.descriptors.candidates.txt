@@ -1,6 +1,20 @@
 KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        lambda -> (KaVariableSignature:
+          name = actor
+          receiverType = null
+          returnType = test.pkg.MyInterface!
+          symbol = actor: test.pkg.MyInterface!
+          callableId = null),
+        list -> (KaVariableSignature:
+          name = actors
+          receiverType = null
+          returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
+          symbol = actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -28,18 +42,4 @@ KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
           ]
           callableId = test/pkg/MyHandler.stash
       typeArgumentsMapping = {}
-      argumentMapping = {
-        lambda -> (KaVariableSignature:
-          name = actor
-          receiverType = null
-          returnType = test.pkg.MyInterface!
-          symbol = actor: test.pkg.MyInterface!
-          callableId = null),
-        list -> (KaVariableSignature:
-          name = actors
-          receiverType = null
-          returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
-          symbol = actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
-          callableId = null)
-      }
     isInBestCandidates = true

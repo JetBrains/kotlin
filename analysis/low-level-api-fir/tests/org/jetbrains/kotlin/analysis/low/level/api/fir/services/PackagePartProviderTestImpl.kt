@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 
 internal class PackagePartProviderTestImpl(
     private val testServices: TestServices,
-) : KotlinPackagePartProviderFactory() {
+) : KotlinPackagePartProviderFactory {
     override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
         val providers = testServices.moduleStructure.modules.map { module ->
             testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)(scope)

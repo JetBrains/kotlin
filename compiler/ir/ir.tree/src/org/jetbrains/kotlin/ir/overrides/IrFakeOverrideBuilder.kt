@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,7 +38,6 @@ class IrFakeOverrideBuilder(
         get() = when (this) {
             is IrSimpleFunction -> this.overriddenSymbols
             is IrProperty -> this.overriddenSymbols
-            else -> error("Unexpected declaration for overriddenSymbols: $this")
         }
         set(value) {
             when (this) {
@@ -55,7 +54,6 @@ class IrFakeOverrideBuilder(
                     }
                     this.overriddenSymbols = overriddenProperties
                 }
-                else -> error("Unexpected declaration for overriddenSymbols: $this")
             }
         }
 
@@ -160,7 +158,6 @@ class IrFakeOverrideBuilder(
             is IrProperty ->
                 backingField?.isStatic == true ||
                         getter?.let { it.dispatchReceiverParameter == null } == true
-            else -> error("Unknown overridable member: ${render()}")
         }
 
     private fun generateOverridesInFunctionGroup(
@@ -479,7 +476,6 @@ private val IrOverridableMember.typeParameters: List<IrTypeParameter>
     get() = when (this) {
         is IrSimpleFunction -> typeParameters
         is IrProperty -> getter?.typeParameters.orEmpty()
-        else -> error("Unexpected type of declaration: ${this::class.java}, $this")
     }
 
 private val IrOverridableMember.returnType: IrType
@@ -488,5 +484,4 @@ private val IrOverridableMember.returnType: IrType
         is IrProperty ->
             getter?.returnType ?: backingField?.type
             ?: error("Property has neither getter nor backing field: ${render()}")
-        else -> error("Unexpected type of declaration: ${this::class.java}, $this")
     }

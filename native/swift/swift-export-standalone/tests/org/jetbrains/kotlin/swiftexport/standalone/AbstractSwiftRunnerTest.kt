@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.flatMapToNullableSet
 import java.io.File
 import kotlin.io.path.*
 import kotlin.test.assertSame
@@ -24,11 +26,11 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest(
     override fun runCompiledTest(
         testPathFull: File,
         testCase: TestCase,
-        swiftExportOutput: SwiftExportModule,
+        swiftExportOutputs: Set<SwiftExportModule>,
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     ) {
-        val flattenModules = setOfNotNull(swiftExportOutput, swiftExportOutput.dependencies.firstOrNull())
+        val flattenModules = swiftExportOutputs.flatMapToSet { it.dependencies.toSet() + it }
 
         flattenModules.forEach {
             when (it) {

@@ -73,7 +73,6 @@ internal abstract class JvmValueClassAbstractLowering(
         return when (function) {
             is IrSimpleFunction -> transformSimpleFunctionFlat(function, replacement)
             is IrConstructor -> transformSecondaryConstructorFlat(function, replacement)
-            else -> throw IllegalStateException()
         }
     }
 

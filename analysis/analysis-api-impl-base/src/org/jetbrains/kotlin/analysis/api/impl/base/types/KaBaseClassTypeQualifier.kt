@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.types
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaUnresolvedClassTypeQualifier
 import org.jetbrains.kotlin.name.Name
 
+@KaImplementationDetail
 class KaBaseResolvedClassTypeQualifier(
     private val backingSymbol: KaClassifierSymbol,
     typeArguments: List<KaTypeProjection>,
@@ -28,6 +30,7 @@ class KaBaseResolvedClassTypeQualifier(
     override val typeArguments: List<KaTypeProjection> by validityAsserted(typeArguments)
 }
 
+@KaImplementationDetail
 class KaBaseUnresolvedClassTypeQualifier(
     name: Name,
     typeArguments: List<KaTypeProjection>,

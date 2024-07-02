@@ -49,7 +49,7 @@ context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KtResolvedObjCExportFile.translateToObjCTopLevelFacade(): ObjCInterface? {
     val extensions = callableSymbols
-        .filter { !it.isExtension || it.isExtensionOfMappedObjCType }
+        .filter { it.getClassIfCategory() == null }
         .toList()
         .sortedWith(StableCallableOrder)
         .ifEmpty { return null }

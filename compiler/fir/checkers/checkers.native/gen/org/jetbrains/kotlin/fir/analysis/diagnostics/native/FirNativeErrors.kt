@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtElement
 /**
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST]
  */
+@Suppress("IncorrectFormatting")
 object FirNativeErrors {
     // All
     val THROWS_LIST_EMPTY: KtDiagnosticFactory0 = KtDiagnosticFactory0("THROWS_LIST_EMPTY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)

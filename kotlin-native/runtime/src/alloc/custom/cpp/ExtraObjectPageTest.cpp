@@ -7,7 +7,6 @@
 #include <cstdint>
 
 #include "AtomicStack.hpp"
-#include "CustomAllocConstants.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
 #include "gtest/gtest.h"
@@ -19,11 +18,11 @@ using Cell = typename kotlin::alloc::ExtraObjectCell;
 using Page = typename kotlin::alloc::ExtraObjectPage;
 
 Data* alloc(Page* page) {
-    uint8_t* ptr = page->TryAllocate();
+    Data* ptr = page->TryAllocate();
     if (ptr) {
-        return new(ptr) Data();
+        memset(ptr, 0, sizeof(Data));
     }
-    return nullptr;
+    return ptr;
 }
 
 TEST(CustomAllocTest, ExtraObjectPageConsequtiveAlloc) {
@@ -55,7 +54,7 @@ TEST(CustomAllocTest, ExtraObjectPageSweepFullFinalizedPage) {
         ptr->setFlag(Data::FLAGS_SWEEPABLE);
         ++count;
     }
-    EXPECT_EQ(count, EXTRA_OBJECT_COUNT);
+    EXPECT_EQ(count, Page::extraObjectCount());
     kotlin::alloc::FinalizerQueue finalizerQueue;
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweepExtraObjects();

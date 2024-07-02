@@ -1,6 +1,14 @@
 KtNameReferenceExpression(23,31): 'Suppress'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
+      argumentMapping = {
+        "" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -18,12 +26,4 @@ KtNameReferenceExpression(23,31): 'Suppress'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          callableId = null)
-      }
     isInBestCandidates = true

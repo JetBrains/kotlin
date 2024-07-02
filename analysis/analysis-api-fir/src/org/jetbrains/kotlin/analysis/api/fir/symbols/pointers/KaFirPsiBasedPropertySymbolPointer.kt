@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-class KaFirPsiBasedPropertySymbolPointer(
+internal class KaFirPsiBasedPropertySymbolPointer(
     private val variableSymbolPointer: KaPsiBasedSymbolPointer<KaVariableSymbol>,
 ) : KaSymbolPointer<KaKotlinPropertySymbol>() {
     @KaImplementationDetail

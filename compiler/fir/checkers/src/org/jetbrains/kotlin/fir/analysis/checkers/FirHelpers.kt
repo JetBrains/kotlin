@@ -29,16 +29,19 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.BlockExitNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FinallyBlockEnterNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FinallyBlockExitNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastPreviousNode
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -50,12 +53,12 @@ import org.jetbrains.kotlin.resolve.AnnotationTargetList
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -857,3 +860,23 @@ fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =
     source != null && source.kind !is KtFakeSourceElementKind.ImplicitTypeArgument
 
 val FirTypeProjection.isExplicit: Boolean get() = isExplicitTypeArgumentSource(source)
+
+fun FirAnonymousFunction.getReturnedExpressions(): List<FirExpression> {
+    val exitNode = controlFlowGraphReference?.controlFlowGraph?.exitNode ?: return emptyList()
+
+    fun extractReturnedExpression(it: CFGNode<*>): FirExpression? {
+        return when (it) {
+            is JumpNode -> (it.fir as? FirReturnExpression)?.result
+            is BlockExitNode -> (it.fir.statements.lastOrNull() as? FirReturnExpression)?.result
+            is FinallyBlockExitNode -> {
+                val finallyBlockEnterNode =
+                    generateSequence(it, CFGNode<*>::lastPreviousNode).firstIsInstanceOrNull<FinallyBlockEnterNode>() ?: return null
+                finallyBlockEnterNode.previousNodes.firstOrNull { x -> finallyBlockEnterNode.edgeFrom(x) == exitNode.edgeFrom(it) }
+                    ?.let(::extractReturnedExpression)
+            }
+            else -> null
+        }
+    }
+
+    return exitNode.previousNodes.mapNotNull(::extractReturnedExpression)
+}

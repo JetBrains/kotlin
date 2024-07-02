@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.konan.file.File as KonanFile
  * Reads through the declarations provided in the .klib and renders their `klibSourceFile`
  */
 abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest() {
-    @OptIn(KaAnalysisNonPublicApi::class)
     override fun doTest(testServices: TestServices) {
         val mainModule = testServices.ktTestModuleStructure.mainModules
             .let { modules -> if (modules.size == 1) modules.first() else fail("Expected single main module. Found $modules") }

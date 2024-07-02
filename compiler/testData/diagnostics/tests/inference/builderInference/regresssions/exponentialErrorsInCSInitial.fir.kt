@@ -10,7 +10,7 @@ public fun <E> List<E>.permutations1(k: Int = size) {
         if (collection.size < k) return@sequence
 
         val size = collection.size
-        val references = <!UNRESOLVED_REFERENCE!>MutableList234<!>(size + 1) <!OVERLOAD_RESOLUTION_AMBIGUITY!>{ <!UNRESOLVED_REFERENCE!>it<!> + 1 }<!>.<!CANNOT_INFER_PARAMETER_TYPE!>apply<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
+        val references = <!UNRESOLVED_REFERENCE!>MutableList234<!>(size + 1) { <!UNRESOLVED_REFERENCE!>it<!> + 1 }.<!CANNOT_INFER_PARAMETER_TYPE!>apply<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
             <!CANNOT_INFER_PARAMETER_TYPE!>this<!>[1] = k+1
             for (t in 1..k) <!CANNOT_INFER_PARAMETER_TYPE!>this<!>[t] = 1
         }<!>

@@ -8,8 +8,6 @@ See new context parameters proposal: https://github.com/Kotlin/KEEP/blob/context
 
 /contextReceiverAmbiguity.fir.kt:(212,216): error: Cannot infer type for this parameter. Please specify it explicitly.
 
-/contextReceiverAmbiguity.fir.kt:(221,243): error: Cannot infer type for this parameter. Please specify it explicitly.
-
 /contextReceiverAmbiguity.fir.kt:(231,234): error: Overload resolution ambiguity between candidates:
 context(String) fun foo(x: Comparable<*>): Unit
 context(String) fun foo(x: Number): Unit

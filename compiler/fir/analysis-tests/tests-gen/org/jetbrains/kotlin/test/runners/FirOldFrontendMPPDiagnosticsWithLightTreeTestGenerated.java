@@ -188,6 +188,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("expectConstructors.kt")
+  public void testExpectConstructors() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/expectConstructors.kt");
+  }
+
+  @Test
   @TestMetadata("expectDataObject.kt")
   public void testExpectDataObject() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/expectDataObject.kt");
@@ -1519,9 +1525,21 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("expectEnumIntersection.kt")
+    public void testExpectEnumIntersection() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectEnumIntersection.kt");
+    }
+
+    @Test
     @TestMetadata("expectSealedClass.kt")
     public void testExpectSealedClass() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("expectSealedClassIntersection.kt")
+    public void testExpectSealedClassIntersection() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/exhaustiveness/expectSealedClassIntersection.kt");
     }
 
     @Test

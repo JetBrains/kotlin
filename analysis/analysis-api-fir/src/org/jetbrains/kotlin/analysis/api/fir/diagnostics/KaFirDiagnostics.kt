@@ -119,6 +119,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OtherError::class
     }
 
+    interface OtherErrorWithReason : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OtherErrorWithReason::class
+        val reason: String
+    }
+
     interface IllegalConstExpression : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = IllegalConstExpression::class
     }
@@ -363,6 +368,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface MissingDependencySuperclass : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = MissingDependencySuperclass::class
+        val missingType: KaType
+        val declarationType: KaType
+    }
+
+    interface MissingDependencySuperclassInTypeArgument : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingDependencySuperclassInTypeArgument::class
         val missingType: KaType
         val declarationType: KaType
     }
@@ -1985,6 +1996,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface NothingToOverride : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = NothingToOverride::class
         val declaration: KaCallableSymbol
+        val candidates: List<KaCallableSymbol>
     }
 
     interface CannotOverrideInvisibleMember : KaFirDiagnostic<KtNamedDeclaration> {

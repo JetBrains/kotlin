@@ -97,8 +97,8 @@ object TestReferenceResolveResultRenderer {
             FqName.ROOT -> return "ROOT"
             else -> return nonLocalFqName.asString()
         }
-        val container = symbol.containingSymbol ?: return null
-        val parents = generateSequence(container) { it.containingSymbol }.toList().asReversed()
+        val container = symbol.containingDeclaration ?: return null
+        val parents = generateSequence(container) { it.containingDeclaration }.toList().asReversed()
         return "<local>: " + parents.joinToString(separator = ".") { it.name?.asString() ?: "<no name>" }
     }
 }

@@ -1,6 +1,6 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:3:1: error: cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies.
 class SubSub : Sub()
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:4:14: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
 class Client<T : Sub>(val prop: T)
              ^^^^^^^

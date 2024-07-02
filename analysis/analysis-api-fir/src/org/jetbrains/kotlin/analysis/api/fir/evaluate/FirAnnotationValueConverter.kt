@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
@@ -47,7 +46,6 @@ internal object FirAnnotationValueConverter {
         )
     }
 
-    @OptIn(KaImplementationDetail::class)
     private fun FirLiteralExpression.convertConstantExpression(
         analysisSession: KaSession
     ): KaAnnotationValue.ConstantValue? {

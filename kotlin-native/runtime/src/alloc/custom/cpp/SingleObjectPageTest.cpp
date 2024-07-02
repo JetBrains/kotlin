@@ -6,9 +6,9 @@
 #include <cstdint>
 #include <random>
 
-#include "CustomAllocConstants.hpp"
 #include "ExtraObjectPage.hpp"
 #include "gtest/gtest.h"
+#include "NextFitPage.hpp"
 #include "SingleObjectPage.hpp"
 #include "TypeInfo.h"
 
@@ -18,7 +18,7 @@ using SingleObjectPage = typename kotlin::alloc::SingleObjectPage;
 
 TypeInfo fakeType = {.typeInfo_ = &fakeType, .flags_ = 0}; // a type without a finalizer
 
-#define MIN_BLOCK_SIZE NEXT_FIT_PAGE_CELL_COUNT
+#define MIN_BLOCK_SIZE kotlin::alloc::NextFitPage::cellCount()
 
 void mark(void* obj) {
     reinterpret_cast<uint64_t*>(obj)[0] = 1;

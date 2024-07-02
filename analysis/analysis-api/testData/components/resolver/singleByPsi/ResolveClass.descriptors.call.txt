@@ -1,6 +1,7 @@
 KtNameReferenceExpression(556,560): 'Test'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -12,4 +13,3 @@ KtNameReferenceExpression(556,560): 'Test'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}

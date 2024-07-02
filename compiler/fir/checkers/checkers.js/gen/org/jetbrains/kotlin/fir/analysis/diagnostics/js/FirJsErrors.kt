@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 /**
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LIST]
  */
+@Suppress("IncorrectFormatting")
 object FirJsErrors {
     // Annotations
     val JS_MODULE_PROHIBITED_ON_VAR: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_VAR", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class)

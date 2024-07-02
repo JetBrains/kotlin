@@ -1,6 +1,14 @@
 KtOperationReferenceExpression(184,186): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        b2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,12 +30,4 @@ KtOperationReferenceExpression(184,186): '=='
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        b2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true

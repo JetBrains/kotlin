@@ -44,13 +44,13 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal fun FirBasedSymbol<*>.isInvokeFunction() =
     (this as? FirNamedFunctionSymbol)?.fir?.name == OperatorNameConventions.INVOKE
 
-fun FirFunctionCall.getCalleeSymbol(): FirBasedSymbol<*>? =
+internal fun FirFunctionCall.getCalleeSymbol(): FirBasedSymbol<*>? =
     calleeReference.getResolvedSymbolOfNameReference()
 
-fun FirFunctionCall.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
+internal fun FirFunctionCall.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
     calleeReference.getCandidateSymbols()
 
-fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
+internal fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
     (this as? FirResolvedNamedReference)?.resolvedSymbol
 
 internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KaSymbolByFirBuilder): KaSymbol? =
@@ -136,7 +136,7 @@ private fun findAnnotationConstructor(annotation: FirAnnotation, session: LLFirS
 internal val FirResolvedQualifier.isImplicitDispatchReceiver: Boolean
     get() = source?.kind == KtFakeSourceElementKind.ImplicitReceiver
 
-fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {
+internal fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {
     val annotationCalls = getAnnotationsByClassId(JvmStandardClassIds.Annotations.JvmName, session)
     return annotationCalls.firstNotNullOfOrNull { call ->
         call.getStringArgument(StandardNames.NAME, session)

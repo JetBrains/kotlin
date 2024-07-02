@@ -21,7 +21,7 @@ import com.intellij.util.lang.ZipFilePool
 import com.intellij.util.messages.ListenerDescriptor
 import com.intellij.util.messages.impl.MessageBusEx
 import com.intellij.util.xml.dom.NoOpXmlInterner
-import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.utils.SmartList
 import java.io.InputStream
@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap
  * This class provides a way to register such definitions to avoid manual registration in [AnalysisApiServiceRegistrar].
  */
 @Suppress("UnstableApiUsage")
-@KaAnalysisNonPublicApi
+@KaImplementationDetail
 object PluginStructureProvider {
     /**
      * This fake plugin is required to provide it as a required parameter.

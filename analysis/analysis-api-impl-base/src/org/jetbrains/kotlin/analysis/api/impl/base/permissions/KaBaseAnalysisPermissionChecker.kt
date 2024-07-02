@@ -13,19 +13,12 @@ import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissi
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions
 
 internal class KaBaseAnalysisPermissionChecker : KaAnalysisPermissionChecker {
-    /**
-     * Caches [KaAnalysisPermissionRegistry] to avoid repeated `getService` calls in [analyze][org.jetbrains.kotlin.analysis.api.analyze]
-     * and validity assertions.
-     */
+    // We cache several services to avoid repeated `getService` calls in `analyze` and validity assertions.
     @KaCachedService
     private val permissionRegistry by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaAnalysisPermissionRegistry.getInstance()
     }
 
-    /**
-     * Caches [KotlinAnalysisPermissionOptions] to avoid repeated `getService` calls in [analyze][org.jetbrains.kotlin.analysis.api.analyze]
-     * and validity assertions.
-     */
     @KaCachedService
     private val permissionOptions by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KotlinAnalysisPermissionOptions.getInstance()

@@ -67,6 +67,7 @@ data class KotlinLikeDumpOptions(
     val printUnitReturnType: Boolean = false,
     val stableOrder: Boolean = false,
     val normalizeNames: Boolean = false,
+    val printExpectDeclarations: Boolean = true,
     /*
     TODO add more options:
      always print visibility?
@@ -107,7 +108,7 @@ interface CustomKotlinLikeDumpStrategy {
 
     fun shouldPrintAnnotation(annotation: IrConstructorCall, container: IrAnnotationContainer): Boolean = true
 
-    fun willPrintElement(element: IrElement, container: IrDeclaration?, printer: Printer): Boolean = true
+    fun willPrintElement(element: IrElement, container: IrDeclaration?, printer: Printer, options: KotlinLikeDumpOptions): Boolean = true
 
     fun didPrintElement(element: IrElement, container: IrDeclaration?, printer: Printer) {}
 
@@ -232,7 +233,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     private inline fun wrap(element: IrElement, container: IrDeclaration?, block: () -> Unit) {
-        if (!options.customDumpStrategy.willPrintElement(element, container, p)) return
+        if (!options.customDumpStrategy.willPrintElement(element, container, p, options)) return
         try {
             block()
         } finally {
@@ -279,6 +280,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO omit Companion name for companion objects?
         // TODO do we need to print info about `thisReceiver`?
         // TODO special support for objects?
+        if (declaration.isExpect && !options.printExpectDeclarations) return
 
         declaration.printlnAnnotations()
         p.printIndent()
@@ -602,6 +604,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
+        if (declaration.isExpect && !options.printExpectDeclarations) return
         declaration.printSimpleFunction(
             data,
             "fun ",

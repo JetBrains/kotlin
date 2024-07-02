@@ -30,6 +30,10 @@ package namespace1
 
 fun bar(): Int = 123
 
+// FILE: any.kt
+
+fun return_any_should_append_runtime_import(): Any = TODO()
+
 // FILE: foo.kt
 package namespace2
 

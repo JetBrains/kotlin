@@ -28,7 +28,9 @@ public:
 
     ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept;
 
-    mm::ExtraObjectData* CreateExtraObjectDataForObject(
+    mm::ExtraObjectData* CreateExtraObject() noexcept;
+
+    mm::ExtraObjectData& CreateExtraObjectDataForObject(
             ObjHeader* baseObject, const TypeInfo* info) noexcept;
 
     void PrepareForGC() noexcept;
@@ -43,22 +45,13 @@ public:
 
 private:
     uint8_t* Allocate(uint64_t cellCount) noexcept;
-
     uint8_t* AllocateInSingleObjectPage(uint64_t cellCount) noexcept;
-
     uint8_t* AllocateInNextFitPage(uint32_t cellCount) noexcept;
-    uint8_t* AllocateInNextFitPageSlowPath(uint32_t cellCount) noexcept;
-
     uint8_t* AllocateInFixedBlockPage(uint32_t cellCount) noexcept;
-    uint8_t* AllocateInFixedBlockPageSlowPath(FixedBlockPage* overflownPage, uint32_t cellCount) noexcept;
-
-    uint8_t* AllocateExtraObject() noexcept;
-    uint8_t* AllocateExtraObjectSlowPath() noexcept;
-
 
     Heap& heap_;
     NextFitPage* nextFitPage_;
-    FixedBlockPage* fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
+    FixedBlockPage* fixedBlockPages_[FixedBlockPage::MAX_BLOCK_SIZE + 1];
     ExtraObjectPage* extraObjectPage_;
     FinalizerQueue finalizerQueue_;
 };

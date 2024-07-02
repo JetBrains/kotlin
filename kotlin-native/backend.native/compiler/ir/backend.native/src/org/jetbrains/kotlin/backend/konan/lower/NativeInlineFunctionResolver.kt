@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
@@ -16,20 +17,23 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 
 internal class InlineFunctionsSupport(mapping: NativeMapping) {
-    // Inline functions lowered up to just before the inliner.
-    private val partiallyLoweredInlineFunctions = mapping.partiallyLoweredInlineFunctions
+    /**
+     * This is the cache of the inline functions that have already been lowered.
+     * It is helpful to avoid re-lowering the same function multiple times.
+     */
+    private val loweredInlineFunctions = mapping.loweredInlineFunctions
 
-    fun savePartiallyLoweredInlineFunction(function: IrFunction) =
-            function.deepCopyWithSymbols(function.parent).also {
-                partiallyLoweredInlineFunctions[function] = it
-            }
+    fun saveLoweredInlineFunction(function: IrFunction): IrFunction = getLoweredInlineFunction(function)
+            ?: function.deepCopyWithSymbols(function.parent).also { loweredInlineFunctions[function] = it }
 
-    fun getPartiallyLoweredInlineFunction(function: IrFunction) =
-            partiallyLoweredInlineFunctions[function]
+    fun getLoweredInlineFunction(function: IrFunction): IrFunction? = loweredInlineFunctions[function]
 }
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
-internal class NativeInlineFunctionResolver(override val context: Context, val generationState: NativeGenerationState) : InlineFunctionResolverReplacingCoroutineIntrinsics(context) {
+internal class NativeInlineFunctionResolver(
+        private val generationState: NativeGenerationState,
+        override val inlineOnlyPrivateFunctions: Boolean
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(generationState.context) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
@@ -47,7 +51,7 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
             function to firstAccess
         } else {
             irFile = packageFragment as IrFile
-            val partiallyLoweredFunction = context.inlineFunctionsSupport.getPartiallyLoweredInlineFunction(function)
+            val partiallyLoweredFunction = context.inlineFunctionsSupport.getLoweredInlineFunction(function)
             if (partiallyLoweredFunction == null)
                 function to true
             else {
@@ -61,7 +65,7 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
             lower(possiblyLoweredFunction, irFile, functionIsCached)
             if (!functionIsCached) {
                 generationState.inlineFunctionOrigins[function] =
-                        InlineFunctionOriginInfo(context.inlineFunctionsSupport.savePartiallyLoweredInlineFunction(possiblyLoweredFunction),
+                        InlineFunctionOriginInfo(context.inlineFunctionsSupport.saveLoweredInlineFunction(possiblyLoweredFunction),
                                 irFile, function.startOffset, function.endOffset)
             }
         }
@@ -92,6 +96,14 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
         NativeInlineCallableReferenceToLambdaPhase(generationState).lower(function)
         ArrayConstructorLowering(context).lower(body, function)
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
+
+        if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
+            NativeIrInliner(generationState, inlineOnlyPrivateFunctions = true).lower(body, function)
+        }
+
+        // TODO KT-69174: the placeholder for synthetic accessors lowering - it should generate accessors only for
+        //  private declarations references from the lowered non-private inline function; the rest of IR file
+        //  should not be lowered at this stage
     }
 
     private fun DeclarationTransformer.lowerWithLocalDeclarations(function: IrFunction) {

@@ -208,20 +208,10 @@ class IdeStdlibResolutionTest {
         project.evaluate()
 
         project.assertStdlibDependencies(
-            linuxSharedMain, listOf(
-                nativeStdlibDependency(kotlin),
-
-                /* See: KT-56278: We still need stdlib-common for shared native source sets */
-                stdlibCommonMainDependency(kotlin)
-            )
+            linuxSharedMain, listOf(nativeStdlibDependency(kotlin))
         )
         project.assertStdlibDependencies(
-            linuxSharedTest, listOf(
-                nativeStdlibDependency(kotlin),
-
-                /* See: KT-56278: We still need stdlib-common for shared native source sets */
-                stdlibCommonMainDependency(kotlin)
-            )
+            linuxSharedTest, listOf(nativeStdlibDependency(kotlin))
         )
     }
 

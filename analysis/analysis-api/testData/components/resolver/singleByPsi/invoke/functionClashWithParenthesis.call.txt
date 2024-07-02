@@ -1,6 +1,7 @@
 KtCallExpression(202,209): '(foo)()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = true
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -15,4 +16,3 @@ KtCallExpression(202,209): '(foo)()'
           valueParameters = []
           callableId = r/MyClass.invoke
       typeArgumentsMapping = {}
-      argumentMapping = {}

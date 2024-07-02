@@ -824,6 +824,7 @@ tasks {
             dependsOn(":kotlin-native:Interop:Indexer:check")
             dependsOn(":kotlin-native:Interop:StubGenerator:check")
             dependsOn(":kotlin-native:backend.native:check")
+            dependsOn(":kotlin-native:tools:kdumputil:check")
         }
     }
 

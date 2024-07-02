@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -64,7 +65,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
     }
 
     private fun IrFunction.introduceDefaultResolution(): IrFunction {
-        context.mapping.defaultArgumentsDispatchFunction[this]?.let { return it }
+        this.defaultArgumentsDispatchFunction?.let { return it }
         val irBuilder = context.createIrBuilder(symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 
         val variables = hashMapOf<IrValueParameter, IrValueParameter>()
@@ -85,7 +86,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         }
 
         return also {
-            context.mapping.defaultArgumentsDispatchFunction[it] = it
+            it.defaultArgumentsDispatchFunction = it
         }
     }
 

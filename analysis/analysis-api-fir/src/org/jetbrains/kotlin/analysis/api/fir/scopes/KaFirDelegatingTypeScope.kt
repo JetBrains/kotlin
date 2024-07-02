@@ -3,11 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KaExperimentalApi::class)
-
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -29,15 +26,12 @@ internal open class KaFirDelegatingTypeScope(
         getPossibleCallableNames() + getPossibleClassifierNames()
     }
 
-    @KaExperimentalApi
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { allNamesCached }
 
-    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         firScope.getCallableNames()
     }
 
-    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         firScope.getClassifierNames()
     }
@@ -62,7 +56,6 @@ internal open class KaFirDelegatingTypeScope(
         firScope.getConstructors(builder)
     }
 
-    @KaExperimentalApi
     override fun mayContainName(name: Name): Boolean = withValidityAssertion {
         name in getAllPossibleNames()
     }

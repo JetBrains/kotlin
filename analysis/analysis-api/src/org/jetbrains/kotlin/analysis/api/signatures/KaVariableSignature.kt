@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 /**
  * A signature of a variable-like symbol. This includes properties, enum entries local variables, etc.
  */
-public abstract class KaVariableSignature<out S : KaVariableSymbol> : KaCallableSignature<S>() {
+public interface KaVariableSignature<out S : KaVariableSymbol> : KaCallableSignature<S> {
     /**
      * A name of the variable with respect to the `@ParameterName` annotation. Can be different from the [KaVariableSymbol.name].
      *

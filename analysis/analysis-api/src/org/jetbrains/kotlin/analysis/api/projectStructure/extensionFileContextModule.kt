@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.api.projectStructure
 
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.psi.UserDataProperty
 
 /**
  * Used by [KtResolveExtensionProvider][org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider] implementations to
  * store the references on the [KaModule] for which the [VirtualFile] was generated.
  */
-@KaAnalysisApiInternals
+@KaImplementationDetail
 public var VirtualFile.analysisExtensionFileContextModule: KaModule? by UserDataProperty(Key.create("ANALYSIS_CONTEXT_MODULE"))

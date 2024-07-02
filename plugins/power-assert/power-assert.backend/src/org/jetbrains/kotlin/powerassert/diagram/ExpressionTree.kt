@@ -183,9 +183,15 @@ fun buildTree(expression: IrExpression): Node? {
 
                 expression.acceptChildren(this, chainNode)
 
-                if (expression.operator in setOf(IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF)) {
-                    // Only include `is` and `!is` checks
-                    chainNode.addChild(ExpressionNode(expression))
+                when (expression.operator) {
+                    // Only include `is` and `!is` checks and `as?` casts in the diagram.
+                    IrTypeOperator.INSTANCEOF,
+                    IrTypeOperator.NOT_INSTANCEOF,
+                    IrTypeOperator.SAFE_CAST,
+                        -> chainNode.addChild(ExpressionNode(expression))
+
+                    // Do not diagram other type operations.
+                    else -> chainNode.addChild(ConstantNode(expression))
                 }
             }
 

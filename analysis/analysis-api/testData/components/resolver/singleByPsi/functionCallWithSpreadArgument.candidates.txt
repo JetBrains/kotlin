@@ -1,6 +1,14 @@
 KtCallExpression(84,99): 'function(*args)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        args -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg a: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,12 +27,4 @@ KtCallExpression(84,99): 'function(*args)'
           ]
           callableId = /function
       typeArgumentsMapping = {}
-      argumentMapping = {
-        args -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = vararg a: kotlin.Int
-          callableId = null)
-      }
     isInBestCandidates = true

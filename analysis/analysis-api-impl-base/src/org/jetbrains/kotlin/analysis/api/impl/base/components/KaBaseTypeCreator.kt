@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
@@ -23,10 +24,12 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
+@KaImplementationDetail
 abstract class KaBaseTypeCreator<T : KaSession> : KaSessionComponent<T>(), KaTypeCreator {
     override fun buildStarTypeProjection(): KaStarTypeProjection = KaBaseStarTypeProjection(token)
 }
 
+@KaImplementationDetail
 sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
 
@@ -55,6 +58,7 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     }
 }
 
+@KaImplementationDetail
 sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
     override var nullability: KaTypeNullability = KaTypeNullability.NULLABLE
         get() = withValidityAssertion { field }

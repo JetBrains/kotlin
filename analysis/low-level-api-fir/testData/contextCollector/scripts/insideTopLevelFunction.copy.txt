@@ -25,10 +25,10 @@ Tower Data Context:
                 FirNamedFunctionSymbol public? final? fun before_Fun(): R|kotlin/Unit|
                 FirNamedFunctionSymbol public final fun usage(foo: R|kotlin/Int|): R|kotlin/Unit|
             Properties:
-                FirPropertySymbol public final val after_Val: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
-                FirPropertySymbol public final val before_Val: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
+                FirPropertySymbol public? final? val after_Val: <implicit>
+                    public? get(): <implicit>
+                FirPropertySymbol public? final? val before_Val: <implicit>
+                    public? get(): <implicit>
     Element 9
         Scope: FirLocalScope
             Functions
@@ -40,14 +40,14 @@ Tower Data Context:
                 lval args: R|kotlin/Array<kotlin/String>|
             
                 public? final? fun before_Fun(): R|kotlin/Unit|
-                public final val before_Val: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
+                public? final? val before_Val: <implicit>
+                    public? get(): <implicit>
             
                 public final? class Before_OtherClass : R|kotlin/Any|
                 public final fun usage(foo: R|kotlin/Int|): R|kotlin/Unit|
                 public? final? fun after_Fun(): R|kotlin/Unit|
-                public final val after_Val: R|kotlin/Int|
-                    public get(): R|kotlin/Int|
+                public? final? val after_Val: <implicit>
+                    public? get(): <implicit>
             
                 public final? class After_OtherClass : R|kotlin/Any|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs

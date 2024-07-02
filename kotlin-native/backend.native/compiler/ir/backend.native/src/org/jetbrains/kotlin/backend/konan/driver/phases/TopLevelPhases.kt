@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -340,8 +341,23 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
     // (like IR visibility checks).
     // This is what we call a 'lowering synchronization point'.
     runIrValidationPhase(validateIrBeforeLowering, allModulesToLower)
-    runLowerings(getLoweringsUpToAndIncludingInlining(), allModulesToLower)
-    runIrValidationPhase(validateIrAfterInlining, allModulesToLower)
+    run {
+        // This is a so-called "KLIB Common Lowerings Prefix".
+        //
+        // Note: All lowerings up to but excluding "InlineAllFunctions" are supposed to modify only the lowered file.
+        // By contrast, "InlineAllFunctions" may mutate multiple files at the same time, and some files can be even
+        // mutated several times by little pieces. Which is a completely different behavior as compared to other lowerings.
+        // "InlineAllFunctions" expects that for an inlined function all preceding lowerings (including generation of
+        // synthetic accessors) have been already applied.
+        // To avoid overcomplicating things and to keep running the preceding lowerings with "modify-only-lowered-file"
+        // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
+        runLowerings(getLoweringsUpToAndIncludingSyntheticAccessors(), allModulesToLower)
+        if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
+            runIrValidationPhase(validateIrAfterInliningOnlyPrivateFunctions, allModulesToLower)
+        }
+        runLowerings(listOf(inlineAllFunctionsPhase), allModulesToLower)
+    }
+    runIrValidationPhase(validateIrAfterInliningAllFunctions, allModulesToLower)
     runLowerings(getLoweringsAfterInlining(), allModulesToLower)
     runIrValidationPhase(validateIrAfterLowering, allModulesToLower)
 

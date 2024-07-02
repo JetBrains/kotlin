@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCast
 import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCastKind
 import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import java.util.Objects
 
+@KaImplementationDetail
 class KaBaseSmartCastInfo(
     private val backingSmartCastType: KaType,
     private val backingIsStable: Boolean,
@@ -33,6 +35,7 @@ class KaBaseSmartCastInfo(
     override fun hashCode(): Int = Objects.hash(backingSmartCastType, backingIsStable)
 }
 
+@KaImplementationDetail
 class KaBaseImplicitReceiverSmartCast(
     private val backingType: KaType,
     private val backingKind: KaImplicitReceiverSmartCastKind,

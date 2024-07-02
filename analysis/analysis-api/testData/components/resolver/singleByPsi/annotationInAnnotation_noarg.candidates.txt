@@ -1,6 +1,7 @@
 KtCallExpression(131,143): 'Annotation()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,5 +20,4 @@ KtCallExpression(131,143): 'Annotation()'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

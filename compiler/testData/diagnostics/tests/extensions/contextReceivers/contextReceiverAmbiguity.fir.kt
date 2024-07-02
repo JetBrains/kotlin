@@ -9,7 +9,7 @@ context(String)
 fun foo(x: Number) {}
 
 fun test() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") <!CANNOT_INFER_PARAMETER_TYPE!>{
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1)
-    }<!>
+    }
 }

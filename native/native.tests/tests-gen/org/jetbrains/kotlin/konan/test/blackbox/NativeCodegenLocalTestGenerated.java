@@ -1834,6 +1834,35 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
         runTest("native/native.tests/testData/codegen/reflection/collectReferenceFieldValues/callOnValueOverPrimitiveClass.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/codegen/reflection/objc")
+    @TestDataPath("$PROJECT_ROOT")
+    @UseExtTestCaseGroupProvider()
+    public class Objc {
+      @Test
+      public void testAllFilesPresentInObjc() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/reflection/objc"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("class.kt")
+      public void testClass() {
+        runTest("native/native.tests/testData/codegen/reflection/objc/class.kt");
+      }
+
+      @Test
+      @TestMetadata("platformClass.kt")
+      public void testPlatformClass() {
+        runTest("native/native.tests/testData/codegen/reflection/objc/platformClass.kt");
+      }
+
+      @Test
+      @TestMetadata("protocol.kt")
+      public void testProtocol() {
+        runTest("native/native.tests/testData/codegen/reflection/objc/protocol.kt");
+      }
+    }
   }
 
   @Nested

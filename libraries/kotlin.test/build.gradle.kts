@@ -7,6 +7,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import plugins.publishing.configureMultiModuleMavenPublishing
@@ -94,8 +95,7 @@ kotlin {
         }
         nodejs {}
         compilations["main"].compileTaskProvider.configure {
-            // TODO: Use the KOTLINTEST_MODULE_NAME from :kotlin-util-klib after bootstrap advance
-            compilerOptions.freeCompilerArgs.add("-Xir-module-name=kotlin-test")
+            compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
         }
     }
 
@@ -123,8 +123,7 @@ kotlin {
     wasmJs {
         nodejs()
         compilations["main"].compileTaskProvider.configure {
-            // TODO: Use the KOTLINTEST_MODULE_NAME from :kotlin-util-klib after bootstrap advance
-            compilerOptions.freeCompilerArgs.add("-Xir-module-name=kotlin-test")
+            compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
         }
     }
 
@@ -134,8 +133,7 @@ kotlin {
     wasmWasi {
         nodejs()
         compilations["main"].compileTaskProvider.configure {
-            // TODO: Use the KOTLINTEST_MODULE_NAME from :kotlin-util-klib after bootstrap advance
-            compilerOptions.freeCompilerArgs.add("-Xir-module-name=kotlin-test")
+            compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
         }
     }
 

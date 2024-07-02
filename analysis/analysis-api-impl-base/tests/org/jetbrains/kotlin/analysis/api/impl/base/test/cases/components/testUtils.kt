@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -43,7 +43,6 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
-@OptIn(KaAnalysisApiInternals::class)
 internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
     fun KaType.render() = toString().replace('/', '.')
     return when (this) {
@@ -111,10 +110,10 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is CallableId -> toString()
         is KaCallableSignature<*> -> stringRepresentation(this)
         else -> buildString {
-            val clazz = this@with::class
-            val className = clazz.simpleName
+            val className = renderFrontendIndependentKClassNameOf(this@with)
             append(className)
-            clazz.memberProperties
+
+            this@with::class.memberProperties
                 .filter {
                     it.name != "token" && it.visibility == KVisibility.PUBLIC && !it.hasAnnotation<Deprecated>()
                 }.ifNotEmpty {
@@ -137,10 +136,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
 }
 
 private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): String = buildString {
-    when (signature) {
-        is KaFunctionSignature<*> -> append(KaFunctionSignature::class.simpleName)
-        is KaVariableSignature<*> -> append(KaVariableSignature::class.simpleName)
-    }
+    append(renderFrontendIndependentKClassNameOf(signature))
 
     val memberProperties = listOfNotNull(
         KaVariableSignature<*>::name.takeIf { signature is KaVariableSignature<*> },
@@ -194,13 +190,13 @@ internal fun KaSession.sortedCalls(collection: Collection<KaCall>): Collection<K
 internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
     is KaCompoundVariableAccessCall -> listOfNotNull(
         variablePartiallyAppliedSymbol.symbol,
-        compoundAccess.operationPartiallyAppliedSymbol.symbol,
+        compoundOperation.operationPartiallyAppliedSymbol.symbol,
     )
 
     is KaCompoundArrayAccessCall -> listOfNotNull(
         getPartiallyAppliedSymbol.symbol,
         setPartiallyAppliedSymbol.symbol,
-        compoundAccess.operationPartiallyAppliedSymbol.symbol,
+        compoundOperation.operationPartiallyAppliedSymbol.symbol,
     )
 
     is KaCallableMemberCall<*, *> -> listOf(symbol)
@@ -298,7 +294,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
     }
 
     printCollection(scope.declarations.toList(), separator = "\n\n") { symbol ->
-        val containingDeclaration = symbol.containingSymbol as KaClassLikeSymbol
+        val containingDeclaration = symbol.containingDeclaration as KaClassLikeSymbol
         append(symbol.render(renderer))
         append(" fromClass ")
         append(containingDeclaration.classId?.asString())
@@ -306,7 +302,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
             appendLine()
             withIndent {
                 printCollection(symbol.typeParameters, separator = "\n") { typeParameter ->
-                    val containingDeclarationForTypeParameter = typeParameter.containingSymbol
+                    val containingDeclarationForTypeParameter = typeParameter.containingDeclaration
                     append(typeParameter.render(renderer))
                     append(" from ")
                     append(containingDeclarationForTypeParameter?.qualifiedNameString())
@@ -318,7 +314,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
             appendLine()
             withIndent {
                 printCollection(symbol.valueParameters, separator = "\n") { typeParameter ->
-                    val containingDeclarationForValueParameter = typeParameter.containingSymbol
+                    val containingDeclarationForValueParameter = typeParameter.containingDeclaration
                     append(typeParameter.render(renderer))
                     append(" from ")
                     append(containingDeclarationForValueParameter?.qualifiedNameString())
@@ -329,10 +325,6 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
 }
 
 internal fun renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any): String {
-    var classToRender: Class<*> = instanceOfClassToRender::class.java
-    while (classToRender.simpleName.let { it.contains("Fir") || it.contains("Fe10") || it.contains("Base") } == true) {
-        classToRender = classToRender.superclass
-    }
-
-    return classToRender.simpleName
+    val classToRender = getApiKClassOf(instanceOfClassToRender)
+    return classToRender.simpleName!!
 }

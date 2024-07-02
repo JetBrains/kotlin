@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
@@ -65,7 +65,7 @@ internal class KaFirAnnotationListForDeclaration private constructor(
                 firSymbol is FirBackingFieldSymbol && firSymbol.propertySymbol.annotations.any { it.useSiteTarget == null } ->
                     KaFirAnnotationListForDeclaration(firSymbol, builder)
                 firSymbol.annotations.isEmpty() ->
-                    KaEmptyAnnotationList(builder.token)
+                    KaBaseEmptyAnnotationList(builder.token)
                 else ->
                     KaFirAnnotationListForDeclaration(firSymbol, builder)
             }

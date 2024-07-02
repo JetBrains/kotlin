@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
-import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -58,17 +57,15 @@ internal class KaFe10FunctionalType(
     override val arity: Int
         get() = withValidityAssertion { descriptor.arity }
 
-    @KaExperimentalApi
     override val hasContextReceivers: Boolean
         get() = withValidityAssertion { fe10Type.contextFunctionTypeParamsCount() > 0 }
 
-    @OptIn(KaAnalysisApiInternals::class)
     @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion {
             fe10Type.getContextReceiverTypesFromFunctionType().map { receiverType ->
                 // Context receivers in function types may not have labels, hence the `null` label.
-                KaContextReceiverImpl(
+                KaBaseContextReceiver(
                     receiverType.toKtType(analysisContext),
                     label = null,
                     analysisContext.token,

@@ -6,15 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.getModule
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -70,7 +68,6 @@ internal class KaFirPsiJavaClassSymbol(
             }
         }
 
-    @OptIn(KaAnalysisApiInternals::class)
     override val classKind: KaClassKind
         get() = withValidityAssertion { javaClass.classKind.toKtClassKind(isCompanionObject = false) }
 
@@ -116,7 +113,6 @@ internal class KaFirPsiJavaClassSymbol(
 
     override val companionObject: KaNamedClassSymbol? get() = withValidityAssertion { null }
 
-    @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +133,6 @@ internal class KaFirPsiJavaClassSymbol(
 
     override val annotations: KaAnnotationList by cached {
         if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-        else KaEmptyAnnotationList(token)
+        else KaBaseEmptyAnnotationList(token)
     }
 }

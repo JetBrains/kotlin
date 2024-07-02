@@ -1,6 +1,20 @@
 KtBinaryExpression(93,108): 'variable[0] = 4'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null),
+        4 -> (KaVariableSignature:
+          name = v
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = v: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -28,17 +42,3 @@ KtBinaryExpression(93,108): 'variable[0] = 4'
           ]
           callableId = /MyClass.set
       typeArgumentsMapping = {}
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          callableId = null),
-        4 -> (KaVariableSignature:
-          name = v
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = v: kotlin.Int
-          callableId = null)
-      }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 
-interface KaFe10Symbol : KaSymbol {
+internal interface KaFe10Symbol : KaSymbol {
     val analysisContext: Fe10AnalysisContext
 
     override val token: KaLifetimeToken

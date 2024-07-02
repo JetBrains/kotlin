@@ -24,7 +24,7 @@ ALWAYS_INLINE ArrayHeader* alloc::Allocator::ThreadData::allocateArray(const Typ
 
 ALWAYS_INLINE mm::ExtraObjectData& alloc::Allocator::ThreadData::allocateExtraObjectData(
         ObjHeader* object, const TypeInfo* typeInfo) noexcept {
-    return *impl_->alloc().CreateExtraObjectDataForObject(object, typeInfo);
+    return impl_->alloc().CreateExtraObjectDataForObject(object, typeInfo);
 }
 
 ALWAYS_INLINE void alloc::Allocator::ThreadData::destroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
@@ -49,6 +49,14 @@ void alloc::Allocator::prepareForGC() noexcept {
 
 void alloc::Allocator::clearForTests() noexcept {
     impl_->heap().ClearForTests();
+}
+
+void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept {
+    impl_->heap().TraverseAllocatedObjects(fn);
+}
+
+void alloc::Allocator::TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept {
+    impl_->heap().TraverseAllocatedExtraObjects(fn);
 }
 
 void alloc::initObjectPool() noexcept {}

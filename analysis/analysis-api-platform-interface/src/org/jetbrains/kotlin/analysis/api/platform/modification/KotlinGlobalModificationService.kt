@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.modification
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
@@ -20,28 +21,27 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * - [KotlinModificationTrackerFactory]
  * - [KotlinModificationTopics] via [analysisMessageBus][org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus]
  */
-public abstract class KotlinGlobalModificationService : KotlinPlatformComponent {
+public interface KotlinGlobalModificationService : KotlinPlatformComponent {
     /**
      * Publishes an event of global modification of the module state of all [KaModule]s.
      */
     @TestOnly
-    public abstract fun publishGlobalModuleStateModification()
+    public fun publishGlobalModuleStateModification()
 
     /**
      * Publishes an event of global modification of the module state of all source [KaModule]s.
      */
     @TestOnly
-    public abstract fun publishGlobalSourceModuleStateModification()
+    public fun publishGlobalSourceModuleStateModification()
 
     /**
      * Publishes an event of global out-of-block modification of all source [KaModule]s. The event does not invalidate module state like
      * [publishGlobalSourceModuleStateModification], so some module structure-specific caches might persist.
      */
     @TestOnly
-    public abstract fun publishGlobalSourceOutOfBlockModification()
+    public fun publishGlobalSourceOutOfBlockModification()
 
     public companion object {
-        public fun getInstance(project: Project): KotlinGlobalModificationService =
-            project.getService(KotlinGlobalModificationService::class.java)
+        public fun getInstance(project: Project): KotlinGlobalModificationService = project.service()
     }
 }

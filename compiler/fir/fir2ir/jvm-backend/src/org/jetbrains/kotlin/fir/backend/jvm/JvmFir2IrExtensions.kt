@@ -116,8 +116,8 @@ class JvmFir2IrExtensions(
     }
 
     // See FirJvmDelegatedMembersFilter for reference
-    override fun shouldGenerateDelegatedMember(delegateMemberCandidate: IrOverridableDeclaration<*>): Boolean {
-        val original = delegateMemberCandidate.resolveFakeOverride() ?: return true
+    override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean {
+        val original = delegateMemberFromBaseType.resolveFakeOverride() ?: return true
 
         fun IrOverridableDeclaration<*>.isNonAbstractJavaMethod(): Boolean {
             return origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && modality != Modality.ABSTRACT

@@ -43,9 +43,9 @@ fun test_CM1_CCM1_RetFun(condition: Boolean, %composer: Composer?, %changed: Int
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C<Text("...>,<Text("...>:Test.kt")
       Text("M1 - begin", %composer, 0b0110)
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "<Text("...>,<M1>")
       if (condition) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<Text("...>,<M1>")
         Text("if - begin", %composer, 0b0110)
         M1({ %composer: Composer?, %changed: Int ->
           %composer.startReplaceGroup(<>)
@@ -61,8 +61,11 @@ fun test_CM1_CCM1_RetFun(condition: Boolean, %composer: Composer?, %changed: Int
           return
           %composer.endReplaceGroup()
         }, %composer, 0)
+        %composer.endReplaceGroup()
+      } else {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
       }
-      %composer.endReplaceGroup()
       Text("M1 - end", %composer, 0b0110)
       %composer.endReplaceGroup()
     }, %composer, 0)

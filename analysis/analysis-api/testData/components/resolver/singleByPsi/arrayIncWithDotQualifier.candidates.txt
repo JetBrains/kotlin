@@ -1,6 +1,7 @@
 KtCallExpression(105,111): 'peek()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -15,5 +16,4 @@ KtCallExpression(105,111): 'peek()'
           valueParameters = []
           callableId = /F.peek
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

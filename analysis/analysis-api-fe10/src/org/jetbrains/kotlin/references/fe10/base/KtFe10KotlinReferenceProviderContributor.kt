@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.references.fe10.base
 
 import com.intellij.psi.PsiReference
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.references.fe10.*
 import org.jetbrains.kotlin.idea.references.KotlinPsiReferenceRegistrar
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
+@KaImplementationDetail
 class KtFe10KotlinReferenceProviderContributor : KotlinReferenceProviderContributor {
     override fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar) {
         with(registrar) {

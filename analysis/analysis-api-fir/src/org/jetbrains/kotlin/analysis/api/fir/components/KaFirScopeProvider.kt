@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
+import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
@@ -14,12 +15,10 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
-import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
-import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeTypeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeTypeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
@@ -228,7 +227,7 @@ internal class KaFirScopeProvider(
         }
 
     private fun createEmptyScope(): KaScope {
-        return KaEmptyScope(token)
+        return KaBaseEmptyScope(token)
     }
 
     override val KaPackageSymbol.packageScope: KaScope
@@ -237,10 +236,9 @@ internal class KaFirScopeProvider(
         }
 
     override fun List<KaScope>.asCompositeScope(): KaScope = withValidityAssertion {
-        return KaCompositeScope.create(this, token)
+        return KaBaseCompositeScope.create(this, token)
     }
 
-    @KaExperimentalApi
     override val KaType.scope: KaTypeScope?
         get() = withValidityAssertion {
             check(this is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${this::class} was provided" }
@@ -249,17 +247,15 @@ internal class KaFirScopeProvider(
                 ?.let { convertToKtTypeScope(it) }
         }
 
-    @KaExperimentalApi
     override val KaTypeScope.declarationScope: KaScope
         get() = withValidityAssertion {
             return when (this) {
                 is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
-                is KaCompositeTypeScope -> KaCompositeScope.create(subScopes.map { it.declarationScope }, token)
+                is KaBaseCompositeTypeScope -> KaBaseCompositeScope.create(subScopes.map { it.declarationScope }, token)
                 else -> unexpectedElementError<KaTypeScope>(this)
             }
         }
 
-    @KaExperimentalApi
     override val KaType.syntheticJavaPropertiesScope: KaTypeScope?
         get() = withValidityAssertion {
             check(this is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${this::class} was provided" }
@@ -378,7 +374,6 @@ internal class KaFirScopeProvider(
         return KaFirPackageScope(fqName, analysisSession)
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun convertToKtTypeScope(firScope: FirScope): KaTypeScope {
         return when (firScope) {
             is FirContainingNamesAwareScope -> KaFirDelegatingTypeScope(firScope, analysisSession.firSymbolBuilder)

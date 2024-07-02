@@ -14,6 +14,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.arrayTypes
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaCallableSymbol.isArrayConstructor: Boolean
-    get() = this is KaConstructorSymbol && containingSymbol
+    get() = this is KaConstructorSymbol && containingDeclaration
         ?.let { containingSymbol -> containingSymbol as? KaClassSymbol }
         ?.let { classSymbol -> classSymbol.classId?.asFqNameString() in arrayTypes } ?: false

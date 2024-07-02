@@ -2,6 +2,8 @@
 
 int32_t __root___foo();
 
+uintptr_t __root___return_any_should_append_runtime_import();
+
 int32_t namespace1_bar();
 
 void namespace1_local_functions_foo();
@@ -15,3 +17,4 @@ int32_t namespace2_foo__TypesOfArguments__int32_t__(int32_t arg1);
 int32_t overload_foo__TypesOfArguments__int32_t__(int32_t arg1);
 
 int32_t overload_foo__TypesOfArguments__double__(double arg1);
+

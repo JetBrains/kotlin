@@ -1,4 +1,4 @@
-// ISSUE: KT-66691
+// ISSUE: KT-64474, KT-66751
 // MODULE: a
 // FILE: a.kt
 

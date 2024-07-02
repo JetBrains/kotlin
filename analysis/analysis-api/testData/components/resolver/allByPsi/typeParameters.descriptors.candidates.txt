@@ -124,6 +124,7 @@ KtSuperTypeList(186,195): 'Base<C>()'
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -135,12 +136,12 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(186,193): 'Base<C>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -152,7 +153,6 @@ KtConstructorCalleeExpression(186,193): 'Base<C>'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(186,193): 'Base<C>'
@@ -164,6 +164,7 @@ KtUserType(186,193): 'Base<C>'
 KtNameReferenceExpression(186,190): 'Base'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -175,7 +176,6 @@ KtNameReferenceExpression(186,190): 'Base'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtTypeArgumentList(190,193): '<C>'
@@ -349,6 +349,7 @@ KtNameReferenceExpression(378,389): 'NestedClass'
 KtCallExpression(392,405): 'NestedClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -360,12 +361,12 @@ KtCallExpression(392,405): 'NestedClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(392,403): 'NestedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -377,7 +378,6 @@ KtNameReferenceExpression(392,403): 'NestedClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(403,405): '()'
@@ -389,6 +389,7 @@ KtProperty(410,432): 'val inner = c1.Inner()'
 KtDotQualifiedExpression(422,432): 'c1.Inner()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -403,7 +404,6 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(422,424): 'c1'
@@ -425,6 +425,7 @@ KtNameReferenceExpression(422,424): 'c1'
 KtCallExpression(425,432): 'Inner()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -439,12 +440,12 @@ KtCallExpression(425,432): 'Inner()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(425,430): 'Inner'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -459,7 +460,6 @@ KtNameReferenceExpression(425,430): 'Inner'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(430,432): '()'

@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 /**
  * Temporary helper that allows FE1.0 KtReferences to use some IDE functionality.
  */
+@KaPlatformInterface
 interface KtFe10ReferenceResolutionHelper {
     fun isInProjectOrLibSource(element: PsiElement, includeScriptsOutsideSourceRoots: Boolean): Boolean
 

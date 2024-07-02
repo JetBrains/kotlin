@@ -320,7 +320,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
 If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = []), level = <null>)
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = <null>)
         DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3", hiddenSince = <null>)
       overridden:
         public open fun toChar (): kotlin.Char declared in <root>.Java1
@@ -368,7 +368,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
       annotations:
         Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
 If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = []), level = <null>)
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = <null>)
         DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3", hiddenSince = <null>)
       overridden:
         public open fun toChar (): kotlin.Char declared in <root>.Java1
@@ -430,7 +430,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
       annotations:
         Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
 If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = []), level = <null>)
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = <null>)
         DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3", hiddenSince = <null>)
       overridden:
         public open fun toChar (): kotlin.Char declared in <root>.Java3
@@ -486,7 +486,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
       annotations:
         Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
 If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = []), level = <null>)
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = <null>)
         DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3", hiddenSince = <null>)
       overridden:
         public open fun toChar (): kotlin.Char declared in <root>.Java3
@@ -863,7 +863,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
       annotations:
         Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
 If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = []), level = <null>)
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = <null>)
         DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3", hiddenSince = <null>)
       overridden:
         public open fun toChar (): kotlin.Char declared in <root>.Java1
@@ -922,7 +922,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
       annotations:
         Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
 If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
-See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = []), level = <null>)
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", replaceWith = ReplaceWith(expression = "this.toInt().toChar()", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = <null>)
         DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3", hiddenSince = <null>)
       overridden:
         public open fun toChar (): kotlin.Char declared in <root>.Java1

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.pipeline.collectLostDiagnosticsOnFile
 import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -695,9 +696,30 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                     ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.METADATA) } }
                 }
             }
+
+            val lostDiagnostics = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
+            for (file in allFiles) {
+                val diagnostics = result[file]
+                if (diagnostics.none { it.diagnostic.severity == Severity.ERROR } && !hasSyntaxDiagnostics(file)) {
+                    platformPart.session.collectLostDiagnosticsOnFile(
+                        platformPart.firAnalyzerFacade.scopeSession,
+                        file,
+                        DiagnosticReporterFactory.createPendingReporter()
+                    ).forEach { lostDiagnostics.put(file, DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM)) }
+                }
+            }
+            for ((file, diagnostics) in lostDiagnostics) {
+                diagnostics.forEach { result.put(file, it) }
+            }
         }
 
         return result
+    }
+
+    private fun hasSyntaxDiagnostics(firFile: FirFile): Boolean {
+        return firFile.psi?.let {
+            AnalyzingUtils.getSyntaxErrorRanges(it).isNotEmpty()
+        } ?: (testServices.lightTreeSyntaxDiagnosticsReporterHolder?.reporter?.diagnosticsByFilePath?.isNotEmpty() == true)
     }
 }
 

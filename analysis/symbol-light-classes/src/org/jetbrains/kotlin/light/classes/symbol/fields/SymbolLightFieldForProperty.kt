@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import kotlinx.collections.immutable.persistentHashMapOf
 import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
@@ -182,7 +181,6 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    @OptIn(KaExperimentalApi::class)
     private val _initializerValue: KaConstantValue? by lazyPub {
         withPropertySymbol { propertySymbol ->
             if (propertySymbol !is KaKotlinPropertySymbol) return@withPropertySymbol null

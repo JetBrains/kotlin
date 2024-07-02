@@ -206,8 +206,8 @@ FILE fqName:ann fileName:/genericAnnotationClasses.kt
       Test1<ann.ARG>(x = 42)
       Test2<kotlin.String, kotlin.String>(x = 38)
       Test3<kotlin.String, ann.C<kotlin.String>>(x = Test1<ann.I<ann.C<kotlin.String>>>(x = 39))
-      Test4(x = [Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 40)), Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 50)), Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 60))])
-      Test5<ann.ARG>(xs = [Test3<ann.ARG, ann.C<ann.ARG>>(x = Test1<ann.I<ann.C<ann.ARG>>>(x = 70)), Test3<ann.ARG, ann.C<ann.ARG>>(x = Test1<ann.I<ann.C<ann.ARG>>>(x = 80))])
+      Test4(x = [Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 40)), Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 50)), Test3<kotlin.Int, ann.C<kotlin.Int>>(x = Test1<ann.I<ann.C<kotlin.Int>>>(x = 60))] type=kotlin.Array<ann.Test3<kotlin.Int, ann.C<kotlin.Int>>> varargElementType=ann.Test3<kotlin.Int, ann.C<kotlin.Int>>)
+      Test5<ann.ARG>(xs = [Test3<ann.ARG, ann.C<ann.ARG>>(x = Test1<ann.I<ann.C<ann.ARG>>>(x = 70)), Test3<ann.ARG, ann.C<ann.ARG>>(x = Test1<ann.I<ann.C<ann.ARG>>>(x = 80))] type=kotlin.Array<out ann.Test3<ann.ARG, ann.C<ann.ARG>>> varargElementType=ann.Test3<ann.ARG, ann.C<ann.ARG>>)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:ann.CC
     CONSTRUCTOR visibility:public <> () returnType:ann.CC [primary]
       BLOCK_BODY

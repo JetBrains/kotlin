@@ -28,6 +28,7 @@ KtProperty(34,53): 'val negative = -one'
 KtPrefixExpression(49,53): '-one'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -42,11 +43,11 @@ KtPrefixExpression(49,53): '-one'
           valueParameters = []
           callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtOperationReferenceExpression(49,50): '-'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -61,7 +62,6 @@ KtOperationReferenceExpression(49,50): '-'
           valueParameters = []
           callableId = kotlin/Int.unaryMinus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(50,53): 'one'
   KaSuccessCallInfo:
@@ -84,6 +84,7 @@ KtProperty(58,77): 'val positive = +one'
 KtPrefixExpression(73,77): '+one'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -98,11 +99,11 @@ KtPrefixExpression(73,77): '+one'
           valueParameters = []
           callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtOperationReferenceExpression(73,74): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -117,7 +118,6 @@ KtOperationReferenceExpression(73,74): '+'
           valueParameters = []
           callableId = kotlin/Int.unaryPlus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(74,77): 'one'
   KaSuccessCallInfo:
@@ -137,6 +137,7 @@ KtNameReferenceExpression(74,77): 'one'
 KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -151,11 +152,11 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
           valueParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtOperationReferenceExpression(83,84): '!'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -170,7 +171,6 @@ KtOperationReferenceExpression(83,84): '!'
           valueParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
   null
@@ -178,6 +178,7 @@ KtParenthesizedExpression(84,118): '(+(-MyClass().unaryMinus().not()))'
 KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -192,11 +193,11 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
           valueParameters = []
           callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtOperationReferenceExpression(85,86): '+'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -211,7 +212,6 @@ KtOperationReferenceExpression(85,86): '+'
           valueParameters = []
           callableId = /MyClass.unaryPlus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
   null
@@ -219,6 +219,7 @@ KtParenthesizedExpression(86,117): '(-MyClass().unaryMinus().not())'
 KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -233,11 +234,11 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
           valueParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtOperationReferenceExpression(87,88): '-'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -252,11 +253,11 @@ KtOperationReferenceExpression(87,88): '-'
           valueParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -271,11 +272,11 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
           valueParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -290,11 +291,11 @@ KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
           valueParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtCallExpression(88,97): 'MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -306,11 +307,11 @@ KtCallExpression(88,97): 'MyClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(88,95): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -322,7 +323,6 @@ KtNameReferenceExpression(88,95): 'MyClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(95,97): '()'
   null
@@ -330,6 +330,7 @@ KtValueArgumentList(95,97): '()'
 KtCallExpression(98,110): 'unaryMinus()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -344,11 +345,11 @@ KtCallExpression(98,110): 'unaryMinus()'
           valueParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(98,108): 'unaryMinus'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -363,7 +364,6 @@ KtNameReferenceExpression(98,108): 'unaryMinus'
           valueParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(108,110): '()'
   null
@@ -371,6 +371,7 @@ KtValueArgumentList(108,110): '()'
 KtCallExpression(111,116): 'not()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -385,11 +386,11 @@ KtCallExpression(111,116): 'not()'
           valueParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(111,114): 'not'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -404,7 +405,6 @@ KtNameReferenceExpression(111,114): 'not'
           valueParameters = []
           callableId = /MyClass.not
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(114,116): '()'
   null

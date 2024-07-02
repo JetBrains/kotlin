@@ -383,12 +383,10 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         project("kt-61466-lenient-dependency-resolution", gradleVersion) {
             resolveIdeDependencies(":consumer") { dependencies ->
                 dependencies["commonMain"].assertMatches(
-                    kotlinStdlibDependencies,
                     kotlinNativeDistributionDependencies,
                 )
 
                 dependencies["linuxMain"].assertMatches(
-                    kotlinStdlibDependencies,
                     kotlinNativeDistributionDependencies,
                     dependsOnDependency(":consumer/commonMain"),
                     dependsOnDependency(":consumer/nativeMain")

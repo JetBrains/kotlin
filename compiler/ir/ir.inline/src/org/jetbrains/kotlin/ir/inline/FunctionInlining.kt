@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -54,7 +54,12 @@ abstract class InlineFunctionResolver {
     }
 }
 
-open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver() {
+abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBackendContext>(
+    protected val context: Ctx
+) : InlineFunctionResolver() {
+    protected open val inlineOnlyPrivateFunctions: Boolean
+        get() = false
+
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
@@ -67,6 +72,11 @@ open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: 
 
             else -> function
         }
+    }
+
+    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
+        return super.shouldExcludeFunctionFromInlining(symbol) ||
+                (inlineOnlyPrivateFunctions && !symbol.owner.isConsideredAsPrivateForInlining())
     }
 }
 
@@ -144,9 +154,10 @@ open class FunctionInlining(
 
         val copyIrElement = run {
             val typeParameters =
-                if (callee is IrConstructor)
-                    callee.parentAsClass.typeParameters
-                else callee.typeParameters
+                when (callee) {
+                    is IrConstructor -> callee.parentAsClass.typeParameters
+                    is IrSimpleFunction -> callee.typeParameters
+                }
             val typeArguments =
                 (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
@@ -354,7 +365,6 @@ open class FunctionInlining(
                             inlinedFunction.valueParameters.size,
                             INLINED_FUNCTION_REFERENCE
                         )
-                    else -> error("Unknown function kind : ${inlinedFunction.render()}")
                 }.apply {
                     for (parameter in functionParameters) {
                         val argument =
@@ -761,3 +771,9 @@ open class FunctionInlining(
 enum class NonReifiedTypeParameterRemappingMode {
     LEAVE_AS_IS, SUBSTITUTE, ERASE
 }
+
+/**
+ * Checks if the given function should be treated by 1st phase of inlining (inlining of private functions).
+ */
+fun IrFunction.isConsideredAsPrivateForInlining(): Boolean =
+    DescriptorVisibilities.isPrivate(visibility) || visibility == DescriptorVisibilities.LOCAL

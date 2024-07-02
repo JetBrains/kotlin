@@ -148,6 +148,7 @@ KtReturnExpression(239,258): 'return MyDelegate()'
 KtCallExpression(246,258): 'MyDelegate()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -161,11 +162,11 @@ KtCallExpression(246,258): 'MyDelegate()'
       typeArgumentsMapping = {
         T -> (T)
       }
-      argumentMapping = {}
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -179,7 +180,6 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
       typeArgumentsMapping = {
         T -> (T)
       }
-      argumentMapping = {}
 
 KtValueArgumentList(256,258): '()'
   null
@@ -325,6 +325,7 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
 KtCallExpression(446,463): 'ResourceID<Int>()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -338,11 +339,11 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-      argumentMapping = {}
 
 KtNameReferenceExpression(446,456): 'ResourceID'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -356,7 +357,6 @@ KtNameReferenceExpression(446,456): 'ResourceID'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-      argumentMapping = {}
 
 KtTypeArgumentList(456,461): '<Int>'
   null

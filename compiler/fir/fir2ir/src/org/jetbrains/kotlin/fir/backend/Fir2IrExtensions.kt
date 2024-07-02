@@ -47,7 +47,7 @@ interface Fir2IrExtensions {
 
     fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable)
 
-    fun shouldGenerateDelegatedMember(delegateMemberCandidate: IrOverridableDeclaration<*>): Boolean
+    fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean
 
     object Default : Fir2IrExtensions {
         override val irNeedsDeserialization: Boolean
@@ -62,6 +62,6 @@ interface Fir2IrExtensions {
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField
         override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
         override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
-        override fun shouldGenerateDelegatedMember(delegateMemberCandidate: IrOverridableDeclaration<*>): Boolean = true
+        override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true
     }
 }

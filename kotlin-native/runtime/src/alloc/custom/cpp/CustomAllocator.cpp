@@ -10,9 +10,9 @@
 #include <cstdlib>
 #include <cinttypes>
 #include <cstring>
+#include <unistd.h>
 #include <new>
 
-#include "CustomAllocConstants.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
@@ -24,7 +24,6 @@
 #include "Memory.h"
 #include "FixedBlockPage.hpp"
 #include "GCApi.hpp"
-#include "TypeInfo.h"
 
 namespace kotlin::alloc {
 
@@ -37,14 +36,14 @@ CustomAllocator::~CustomAllocator() {
     heap_.AddToFinalizerQueue(std::move(finalizerQueue_));
 }
 
-ALWAYS_INLINE ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
+ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
     auto descriptor = HeapObject::make_descriptor(typeInfo);
     auto& heapObject = *descriptor.construct(Allocate(descriptor.size()));
     ObjHeader* object = heapObject.header(descriptor).object();
     if (typeInfo->flags_ & TF_HAS_FINALIZER) {
-        auto* extraObject = CreateExtraObjectDataForObject(object, typeInfo);
-        object->typeInfoOrMeta_ = reinterpret_cast<TypeInfo*>(extraObject);
+        auto* extraObject = CreateExtraObject();
+        object->typeInfoOrMeta_ = reinterpret_cast<TypeInfo*>(new (extraObject) mm::ExtraObjectData(object, typeInfo));
         CustomAllocDebug("CustomAllocator: %p gets extraObject %p", object, extraObject);
         CustomAllocDebug("CustomAllocator: %p->BaseObject == %p", extraObject, extraObject->GetBaseObject());
     } else {
@@ -53,7 +52,7 @@ ALWAYS_INLINE ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo)
     return object;
 }
 
-ALWAYS_INLINE ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
+ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
     CustomAllocDebug("CustomAllocator@%p::CreateArray(%d)", this ,count);
     RuntimeAssert(typeInfo->IsArray(), "Must be an array");
     auto descriptor = HeapArray::make_descriptor(typeInfo, count);
@@ -64,10 +63,32 @@ ALWAYS_INLINE ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo
     return array;
 }
 
-ALWAYS_INLINE mm::ExtraObjectData* CustomAllocator::CreateExtraObjectDataForObject(
+mm::ExtraObjectData* CustomAllocator::CreateExtraObject() noexcept {
+    CustomAllocDebug("CustomAllocator::CreateExtraObject()");
+    ExtraObjectPage* page = extraObjectPage_;
+    if (page) {
+        mm::ExtraObjectData* block = page->TryAllocate();
+        if (block) {
+            memset(block, 0, sizeof(mm::ExtraObjectData));
+            return block;
+        }
+    }
+    CustomAllocDebug("Failed to allocate in current ExtraObjectPage");
+    while ((page = heap_.GetExtraObjectPage(finalizerQueue_))) {
+        mm::ExtraObjectData* block = page->TryAllocate();
+        if (block) {
+            extraObjectPage_ = page;
+            memset(block, 0, sizeof(mm::ExtraObjectData));
+            return block;
+        }
+    }
+    return nullptr;
+}
+
+mm::ExtraObjectData& CustomAllocator::CreateExtraObjectDataForObject(
         ObjHeader* baseObject, const TypeInfo* info) noexcept {
-    auto* extraObjectMemory = AllocateExtraObject();
-    return new (extraObjectMemory) mm::ExtraObjectData(baseObject, info);
+    mm::ExtraObjectData* extraObject = CreateExtraObject();
+    return *new (extraObject) mm::ExtraObjectData(baseObject, info);
 }
 
 FinalizerQueue CustomAllocator::ExtractFinalizerQueue() noexcept {
@@ -92,13 +113,13 @@ size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
     }
 }
 
-ALWAYS_INLINE uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
+uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     RuntimeAssert(size, "CustomAllocator::Allocate cannot allocate 0 bytes");
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
     uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
-    if (cellCount <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE) {
+    if (cellCount <= FixedBlockPage::MAX_BLOCK_SIZE) {
         return AllocateInFixedBlockPage(cellCount);
-    } else if (cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE) {
+    } else if (cellCount > NextFitPage::maxBlockSize()) {
         return AllocateInSingleObjectPage(cellCount);
     } else {
         return AllocateInNextFitPage(cellCount);
@@ -111,16 +132,12 @@ uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcep
     return block;
 }
 
-ALWAYS_INLINE uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
+uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInNextFitPage(%u)", cellCount);
     if (nextFitPage_) {
         uint8_t* block = nextFitPage_->TryAllocate(cellCount);
         if (block) return block;
     }
-    return AllocateInNextFitPageSlowPath(cellCount);
-}
-
-NO_INLINE uint8_t* CustomAllocator::AllocateInNextFitPageSlowPath(uint32_t cellCount) noexcept {
     CustomAllocDebug("Failed to allocate in curPage");
     while (true) {
         nextFitPage_ = heap_.GetNextFitPage(cellCount, finalizerQueue_);
@@ -129,47 +146,18 @@ NO_INLINE uint8_t* CustomAllocator::AllocateInNextFitPageSlowPath(uint32_t cellC
     }
 }
 
-ALWAYS_INLINE uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept {
+uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInFixedBlockPage(%u)", cellCount);
     FixedBlockPage* page = fixedBlockPages_[cellCount];
     if (page) {
-        uint8_t* block = page->TryAllocate(cellCount);
+        uint8_t* block = page->TryAllocate();
         if (block) return block;
     }
-    return AllocateInFixedBlockPageSlowPath(page, cellCount);
-}
-
-NO_INLINE uint8_t* CustomAllocator::AllocateInFixedBlockPageSlowPath(FixedBlockPage* overflownPage, uint32_t cellCount) noexcept {
-    CustomAllocDebug("Failed to allocate in current FixedBlockPage(%p)", overflownPage);
-    if (overflownPage != nullptr) {
-        overflownPage->OnPageOverflow();
-    }
-    while (auto* page = heap_.GetFixedBlockPage(cellCount, finalizerQueue_)) {
-        uint8_t* block = page->TryAllocate(cellCount);
+    CustomAllocDebug("Failed to allocate in current FixedBlockPage");
+    while ((page = heap_.GetFixedBlockPage(cellCount, finalizerQueue_))) {
+        uint8_t* block = page->TryAllocate();
         if (block) {
             fixedBlockPages_[cellCount] = page;
-            return block;
-        }
-    }
-    return nullptr;
-}
-
-ALWAYS_INLINE uint8_t* CustomAllocator::AllocateExtraObject() noexcept {
-    CustomAllocDebug("CustomAllocator::AllocateExtraObject()");
-    ExtraObjectPage* page = extraObjectPage_;
-    if (page) {
-        uint8_t* block = page->TryAllocate();
-        if (block) return block;
-    }
-    return AllocateExtraObjectSlowPath();
-}
-
-NO_INLINE uint8_t* CustomAllocator::AllocateExtraObjectSlowPath() noexcept {
-    CustomAllocDebug("Failed to allocate in current ExtraObjectPage");
-    while (ExtraObjectPage* page = heap_.GetExtraObjectPage(finalizerQueue_)) {
-        uint8_t* block = page->TryAllocate();
-        if (block) {
-            extraObjectPage_ = page;
             return block;
         }
     }

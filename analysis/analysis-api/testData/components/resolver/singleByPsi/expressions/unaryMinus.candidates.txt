@@ -1,6 +1,7 @@
 KtPrefixExpression(191,200): '-variable'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -15,5 +16,4 @@ KtPrefixExpression(191,200): '-variable'
           valueParameters = []
           callableId = /MyClass.unaryMinus
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 
-class CliFe10AnalysisFacade : Fe10AnalysisFacade {
+internal class CliFe10AnalysisFacade : Fe10AnalysisFacade {
     override fun getAnalysisContext(element: KtElement, token: KaLifetimeToken): Fe10AnalysisContext {
         val handler = getHandler(element)
         return getAnalysisContext(handler, token)
@@ -78,7 +78,7 @@ class CliFe10AnalysisFacade : Fe10AnalysisFacade {
         this ?: error("Resolution is not performed")
 }
 
-class KaFe10AnalysisHandlerExtension(
+internal class KaFe10AnalysisHandlerExtension(
     private val useSiteModule: KaSourceModule? = null
 ) : AnalysisHandlerExtension {
     internal companion object {

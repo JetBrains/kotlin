@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
@@ -84,7 +84,7 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
         get() = withValidityAssertion { propertyDescriptor.ktVisibility }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { KaEmptyAnnotationList(token) }
+        get() = withValidityAssertion { KaBaseEmptyAnnotationList(token) }
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
         KaFe10NeverRestoringSymbolPointer()
@@ -137,7 +137,7 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
             get() = withValidityAssertion { null }
 
         override val annotations: KaAnnotationList
-            get() = withValidityAssertion { KaEmptyAnnotationList(token) }
+            get() = withValidityAssertion { KaBaseEmptyAnnotationList(token) }
 
         override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
             KaFe10NeverRestoringSymbolPointer()

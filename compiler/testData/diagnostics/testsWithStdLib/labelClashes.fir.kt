@@ -4,28 +4,28 @@
 // FIR_DUMP
 
 fun Int.with() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") <!CANNOT_INFER_PARAMETER_TYPE!>{
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") {
         this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
-    }<!>
+    }
 }
 
 fun Int.bar() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") bar@<!CANNOT_INFER_PARAMETER_TYPE!>{
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") bar@{
         this<!LABEL_NAME_CLASH!>@bar<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
-    }<!>
+    }
 }
 
 fun foo(f: with.() -> Unit) {}
 
 class with {
     fun foo() {
-        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") <!CANNOT_INFER_PARAMETER_TYPE!>{
+        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") {
             this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        }<!>
+        }
 
-        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") with@<!CANNOT_INFER_PARAMETER_TYPE!>{
+        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") with@{
             this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        }<!>
+        }
 
         with("") other@{
             this@with.foo()
@@ -47,11 +47,11 @@ class TypedThis {
 
 object OtherTests {
     fun Int.with() {
-        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") <!CANNOT_INFER_PARAMETER_TYPE!>{
+        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") {
             this<!LABEL_NAME_CLASH!>@with<!>.toString()
             this<!LABEL_NAME_CLASH!>@with<!>.length
             this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
-        }<!>
+        }
     }
 }
 

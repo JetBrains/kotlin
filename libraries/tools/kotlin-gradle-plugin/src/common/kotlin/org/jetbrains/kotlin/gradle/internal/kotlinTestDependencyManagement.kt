@@ -23,7 +23,7 @@ import org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions
 import org.gradle.api.tasks.testing.testng.TestNGOptions
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
-import org.jetbrains.kotlin.gradle.internal.KotlinTestJvmFramework.junit
+import org.jetbrains.kotlin.gradle.internal.KotlinTestJvmFramework.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -192,8 +192,8 @@ private enum class KotlinTestJvmFramework {
 
 private fun testFrameworkOf(testTask: Test): KotlinTestJvmFramework = when (testTask.options) {
     is JUnitOptions -> junit
-    is JUnitPlatformOptions -> KotlinTestJvmFramework.junit5
-    is TestNGOptions -> KotlinTestJvmFramework.testng
+    is JUnitPlatformOptions -> junit5
+    is TestNGOptions -> testng
     else -> // failed to detect, fallback to junit
         junit
 }

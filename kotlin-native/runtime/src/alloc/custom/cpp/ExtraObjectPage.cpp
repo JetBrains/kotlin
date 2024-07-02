@@ -7,10 +7,10 @@
 
 #include <atomic>
 #include <cstdint>
+#include <cstring>
 #include <random>
 
 #include "AtomicStack.hpp"
-#include "CustomAllocConstants.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "GCApi.hpp"
@@ -19,39 +19,39 @@ namespace kotlin::alloc {
 
 ExtraObjectPage* ExtraObjectPage::Create(uint32_t ignored) noexcept {
     CustomAllocInfo("ExtraObjectPage::Create()");
-    return new (SafeAlloc(EXTRA_OBJECT_PAGE_SIZE)) ExtraObjectPage();
+    return new (SafeAlloc(SIZE)) ExtraObjectPage();
 }
 
 ExtraObjectPage::ExtraObjectPage() noexcept {
     CustomAllocInfo("ExtraObjectPage(%p)::ExtraObjectPage()", this);
     nextFree_.store(cells_, std::memory_order_relaxed);
-    ExtraObjectCell* end = cells_ + EXTRA_OBJECT_COUNT;
+    ExtraObjectCell* end = cells_ + extraObjectCount();
     for (ExtraObjectCell* cell = cells_; cell < end; cell = cell->next_.load(std::memory_order_relaxed)) {
         cell->next_.store(cell + 1, std::memory_order_relaxed);
     }
 }
 
 void ExtraObjectPage::Destroy() noexcept {
-    Free(this, EXTRA_OBJECT_PAGE_SIZE);
+    Free(this, SIZE);
 }
 
-ALWAYS_INLINE uint8_t* ExtraObjectPage::TryAllocate() noexcept {
+mm::ExtraObjectData* ExtraObjectPage::TryAllocate() noexcept {
     auto* next = nextFree_.load(std::memory_order_relaxed);
-    if (next >= cells_ + EXTRA_OBJECT_COUNT) {
-        allocatedSizeTracker_.onPageOverflow(EXTRA_OBJECT_COUNT * sizeof(mm::ExtraObjectData));
+    if (next >= cells_ + extraObjectCount()) {
+        allocatedSizeTracker_.onPageOverflow(extraObjectCount() * sizeof(mm::ExtraObjectData));
         return nullptr;
     }
     ExtraObjectCell* freeBlock = next;
     nextFree_.store(freeBlock->next_.load(std::memory_order_relaxed), std::memory_order_relaxed);
-    CustomAllocDebug("ExtraObjectPage(%p)::TryAllocate() = %p", this, freeBlock->data_);
-    return freeBlock->data_;
+    CustomAllocDebug("ExtraObjectPage(%p)::TryAllocate() = %p", this, freeBlock->Data());
+    return freeBlock->Data();
 }
 
 bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocInfo("ExtraObjectPage(%p)::Sweep()", this);
     // `end` is after the last legal allocation of a block, but does not
     // necessarily match an actual block starting point.
-    ExtraObjectCell* end = cells_ + EXTRA_OBJECT_COUNT;
+    ExtraObjectCell* end = cells_ + extraObjectCount();
     std::atomic<ExtraObjectCell*>* nextFree = &nextFree_;
     std::size_t aliveBytes = 0;
     for (ExtraObjectCell* cell = cells_; cell < end; ++cell) {
@@ -60,7 +60,7 @@ bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizer
             nextFree = &cell->next_;
             continue;
         }
-        if (SweepExtraObject(cell->extraObject(), sweepHandle)) {
+        if (SweepExtraObject(cell->Data(), sweepHandle)) {
             // If the current cell was marked, it's alive
             aliveBytes += sizeof(mm::ExtraObjectData);
         } else {

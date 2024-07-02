@@ -34,146 +34,150 @@ digraph delegatedConstructorArguments_kt {
                 }
                 12 [label="Function call arguments exit"];
             }
-            13 [label="Postponed exit from lambda"];
-            14 [label="Function call: R|<local>/set|.R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
-            15 [label="Delegated constructor call: this<R|Test|>(...)" style="filled" fillcolor=yellow];
+            13 [label="Function call enter: R|<local>/set|.R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/String|>(...)"];
+            14 [label="Postponed exit from lambda"];
+            15 [label="Function call exit: R|<local>/set|.R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+            16 [label="Delegated constructor call: this<R|Test|>(...)" style="filled" fillcolor=yellow];
             subgraph cluster_6 {
                 color=blue
-                16 [label="Enter function <init>" style="filled" fillcolor=red];
+                17 [label="Enter function <init>" style="filled" fillcolor=red];
                 subgraph cluster_7 {
                     color=blue
-                    17 [label="Function call arguments enter"];
-                    18 [label="Access variable R|<local>/map|"];
-                    19 [label="Access variable R|SubstitutionOverride<kotlin/collections/Map.values: R|kotlin/collections/Collection<kotlin/String>|>|"];
-                    20 [label="Postponed enter to lambda"];
+                    18 [label="Function call arguments enter"];
+                    19 [label="Access variable R|<local>/map|"];
+                    20 [label="Access variable R|SubstitutionOverride<kotlin/collections/Map.values: R|kotlin/collections/Collection<kotlin/String>|>|"];
+                    21 [label="Postponed enter to lambda"];
                     subgraph cluster_8 {
                         color=blue
-                        21 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                        22 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                         subgraph cluster_9 {
                             color=blue
-                            22 [label="Enter block"];
-                            23 [label="Access variable R|<local>/it|"];
-                            24 [label="Exit block"];
+                            23 [label="Enter block"];
+                            24 [label="Access variable R|<local>/it|"];
+                            25 [label="Exit block"];
                         }
-                        25 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                        26 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                     }
-                    26 [label="Function call arguments exit"];
+                    27 [label="Function call arguments exit"];
                 }
-                27 [label="Postponed exit from lambda"];
-                28 [label="Function call: R|<local>/map|.R|SubstitutionOverride<kotlin/collections/Map.values: R|kotlin/collections/Collection<kotlin/String>|>|.R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
-                29 [label="Delegated constructor call: this<R|Test|>(...)" style="filled" fillcolor=yellow];
+                28 [label="Function call enter: R|<local>/map|.R|SubstitutionOverride<kotlin/collections/Map.values: R|kotlin/collections/Collection<kotlin/String>|>|.R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/String|>(...)"];
+                29 [label="Postponed exit from lambda"];
+                30 [label="Function call exit: R|<local>/map|.R|SubstitutionOverride<kotlin/collections/Map.values: R|kotlin/collections/Collection<kotlin/String>|>|.R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/String|>(...)" style="filled" fillcolor=yellow];
+                31 [label="Delegated constructor call: this<R|Test|>(...)" style="filled" fillcolor=yellow];
                 subgraph cluster_10 {
                     color=blue
-                    30 [label="Enter init block" style="filled" fillcolor=red];
+                    32 [label="Enter init block" style="filled" fillcolor=red];
                     subgraph cluster_11 {
                         color=blue
-                        31 [label="Enter block"];
-                        32 [label="Access variable this@R|/Test|"];
-                        33 [label="Const: Int(0)"];
-                        34 [label="Assignment: R|/Test.size|"];
-                        35 [label="Exit block"];
+                        33 [label="Enter block"];
+                        34 [label="Access variable this@R|/Test|"];
+                        35 [label="Const: Int(0)"];
+                        36 [label="Assignment: R|/Test.size|"];
+                        37 [label="Exit block"];
                     }
-                    36 [label="Exit init block" style="filled" fillcolor=red];
+                    38 [label="Exit init block" style="filled" fillcolor=red];
                 }
                 subgraph cluster_12 {
                     color=blue
-                    37 [label="Enter function <init>" style="filled" fillcolor=red];
-                    38 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+                    39 [label="Enter function <init>" style="filled" fillcolor=red];
+                    40 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
                     subgraph cluster_13 {
                         color=blue
-                        39 [label="Enter block"];
-                        40 [label="Access variable this@R|/Test|"];
-                        41 [label="Access variable R|<local>/list|"];
-                        42 [label="Assignment: R|/Test.values|"];
-                        43 [label="Exit block"];
+                        41 [label="Enter block"];
+                        42 [label="Access variable this@R|/Test|"];
+                        43 [label="Access variable R|<local>/list|"];
+                        44 [label="Assignment: R|/Test.values|"];
+                        45 [label="Exit block"];
                     }
-                    44 [label="Exit function <init>" style="filled" fillcolor=red];
+                    46 [label="Exit function <init>" style="filled" fillcolor=red];
                 }
                 subgraph cluster_14 {
                     color=blue
-                    45 [label="Enter block"];
-                    46 [label="Access variable this@R|/Test|"];
-                    47 [label="Access variable R|/Test.size|"];
+                    47 [label="Enter block"];
                     48 [label="Access variable this@R|/Test|"];
-                    49 [label="Access variable R|/Test.values|"];
-                    50 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
-                    51 [label="Function call: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
-                    52 [label="Assignment: R|/Test.size|"];
-                    53 [label="Exit block"];
+                    49 [label="Access variable R|/Test.size|"];
+                    50 [label="Access variable this@R|/Test|"];
+                    51 [label="Access variable R|/Test.values|"];
+                    52 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
+                    53 [label="Function call enter: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)"];
+                    54 [label="Function call exit: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
+                    55 [label="Assignment: R|/Test.size|"];
+                    56 [label="Exit block"];
                 }
-                54 [label="Exit function <init>" style="filled" fillcolor=red];
+                57 [label="Exit function <init>" style="filled" fillcolor=red];
             }
             subgraph cluster_15 {
                 color=blue
-                55 [label="Enter block"];
-                56 [label="Access variable this@R|/Test|"];
-                57 [label="Access variable R|/Test.size|"];
-                58 [label="Access variable this@R|/Test|"];
-                59 [label="Access variable R|/Test.values|"];
-                60 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
-                61 [label="Function call: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
-                62 [label="Assignment: R|/Test.size|"];
-                63 [label="Exit block"];
+                58 [label="Enter block"];
+                59 [label="Access variable this@R|/Test|"];
+                60 [label="Access variable R|/Test.size|"];
+                61 [label="Access variable this@R|/Test|"];
+                62 [label="Access variable R|/Test.values|"];
+                63 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
+                64 [label="Function call enter: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)"];
+                65 [label="Function call exit: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
+                66 [label="Assignment: R|/Test.size|"];
+                67 [label="Exit block"];
             }
-            64 [label="Exit function <init>" style="filled" fillcolor=red];
+            68 [label="Exit function <init>" style="filled" fillcolor=red];
         }
-        65 [label="Exit class Test" style="filled" fillcolor=red];
+        69 [label="Exit class Test" style="filled" fillcolor=red];
     }
-    2 -> {3 16 30} [color=green];
-    2 -> {65} [style=dotted];
-    2 -> {3 16 30 37} [style=dashed];
+    2 -> {3 17 32} [color=green];
+    2 -> {69} [style=dotted];
+    2 -> {3 17 32 39} [style=dashed];
     3 -> {4};
     4 -> {5};
     5 -> {6};
-    6 -> {7 12 13};
+    6 -> {7 12 14};
     6 -> {7} [style=dashed];
     7 -> {8};
     8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {13};
-    12 -> {14};
-    13 -> {6} [color=green style=dashed];
-    13 -> {14} [color=green];
-    13 -> {15} [color=red label="Postponed"];
-    14 -> {15};
-    15 -> {30} [color=green];
-    15 -> {45} [color=red];
-    16 -> {17};
+    11 -> {14};
+    12 -> {13};
+    13 -> {15};
+    14 -> {6} [color=green style=dashed];
+    14 -> {15} [color=green];
+    14 -> {16} [color=red label="Postponed"];
+    15 -> {16};
+    16 -> {32} [color=green];
+    16 -> {47} [color=red];
     17 -> {18};
     18 -> {19};
     19 -> {20};
-    20 -> {21 26 27};
-    20 -> {21} [style=dashed];
-    21 -> {22};
+    20 -> {21};
+    21 -> {22 27 29};
+    21 -> {22} [style=dashed];
     22 -> {23};
     23 -> {24};
     24 -> {25};
-    25 -> {27};
-    26 -> {28};
-    27 -> {20} [color=green style=dashed];
-    27 -> {28} [color=green];
-    27 -> {29} [color=red label="Postponed"];
-    28 -> {29};
+    25 -> {26};
+    26 -> {29};
+    27 -> {28};
+    28 -> {30};
+    29 -> {21} [color=green style=dashed];
     29 -> {30} [color=green];
-    29 -> {55} [color=red];
+    29 -> {31} [color=red label="Postponed"];
     30 -> {31};
-    31 -> {32};
+    31 -> {32} [color=green];
+    31 -> {58} [color=red];
     32 -> {33};
     33 -> {34};
     34 -> {35};
     35 -> {36};
-    36 -> {37} [color=green];
+    36 -> {37};
     37 -> {38};
-    38 -> {39};
+    38 -> {39} [color=green];
     39 -> {40};
     40 -> {41};
     41 -> {42};
     42 -> {43};
     43 -> {44};
-    44 -> {45 55 65} [color=green];
+    44 -> {45};
     45 -> {46};
-    46 -> {47};
+    46 -> {47 58 69} [color=green];
     47 -> {48};
     48 -> {49};
     49 -> {50};
@@ -181,16 +185,20 @@ digraph delegatedConstructorArguments_kt {
     51 -> {52};
     52 -> {53};
     53 -> {54};
-    54 -> {65} [color=green];
+    54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {58};
+    57 -> {69} [color=green];
     58 -> {59};
     59 -> {60};
     60 -> {61};
     61 -> {62};
     62 -> {63};
     63 -> {64};
-    64 -> {65} [color=green];
+    64 -> {65};
+    65 -> {66};
+    66 -> {67};
+    67 -> {68};
+    68 -> {69} [color=green];
 
 }

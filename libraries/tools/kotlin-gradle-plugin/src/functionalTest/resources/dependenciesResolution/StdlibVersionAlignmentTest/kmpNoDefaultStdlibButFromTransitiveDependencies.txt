@@ -26,10 +26,8 @@ jvmTest
   test:lib2:1.0
   test:lib:1.0
 linuxMain
-  org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
   test:lib:1.0
 linuxTest
-  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
   test:lib2:1.0
   test:lib:1.0
 linuxX64Main
@@ -41,10 +39,8 @@ linuxX64Test
   test:lib2:1.0
   test:lib:1.0
 nativeMain
-  org.jetbrains.kotlin:kotlin-stdlib:<CURRENT_KOTLIN_VERSION>
   test:lib:1.0
 nativeTest
-  org.jetbrains.kotlin:kotlin-stdlib:<FUTURE_KOTLIN_VERSION>
   test:lib2:1.0
   test:lib:1.0
 wasmJsMain

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.permissions
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.KaExplicitAnalysisRestriction
 
 /**
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistr
  * [KaAnalysisPermissionRegistry] is an *application service* because we want users to call permission functions without having to pass a
  * project, which would be required if this class was a project service.
  */
-@KaAnalysisApiInternals
+@KaImplementationDetail
 public interface KaAnalysisPermissionRegistry {
     public class KaExplicitAnalysisRestriction(public val description: String)
 
@@ -39,7 +39,7 @@ public interface KaAnalysisPermissionRegistry {
 /**
  * This implementation is a workaround for KT-68386, as we currently cannot register it as an application service in Standalone mode.
  */
-@OptIn(KaAnalysisApiInternals::class)
+@OptIn(KaImplementationDetail::class)
 private class KaAnalysisPermissionRegistryImpl : KaAnalysisPermissionRegistry {
     private val threadLocalExplicitAnalysisRestriction: ThreadLocal<KaExplicitAnalysisRestriction?> =
         ThreadLocal.withInitial { null }

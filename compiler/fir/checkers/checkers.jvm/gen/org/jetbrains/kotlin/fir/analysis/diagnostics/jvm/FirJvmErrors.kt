@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 /**
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST]
  */
+@Suppress("IncorrectFormatting")
 object FirJvmErrors {
     // Declarations
     val OVERRIDE_CANNOT_BE_STATIC: KtDiagnosticFactory0 = KtDiagnosticFactory0("OVERRIDE_CANNOT_BE_STATIC", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

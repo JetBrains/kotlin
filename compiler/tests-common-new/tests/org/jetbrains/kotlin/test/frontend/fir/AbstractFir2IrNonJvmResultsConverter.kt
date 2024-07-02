@@ -43,7 +43,6 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
     BackendKinds.IrBackend
 ) {
     protected abstract fun createIrMangler(): KotlinMangler.IrMangler
-    protected abstract fun createFirMangler(): FirMangler
     protected abstract fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary>
     protected abstract val klibFactories: KlibMetadataFactories
 
@@ -86,7 +85,6 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
             fir2IrConfiguration,
             module.irGenerationExtensions(testServices),
             irMangler,
-            createFirMangler(),
             Fir2IrVisibilityConverter.Default,
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
             ::IrTypeSystemContextImpl,

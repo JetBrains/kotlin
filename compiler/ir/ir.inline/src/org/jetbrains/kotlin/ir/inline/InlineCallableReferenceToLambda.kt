@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -57,7 +56,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
         if (inlineFunctionResolver.needsInlining(function)) {
             for (parameter in function.valueParameters) {
                 if (parameter.isInlineParameter()) {
-                    expression.putValueArgument(parameter.index, expression.getValueArgument(parameter.index)?.transform(data))
+                    expression.putValueArgument(parameter.index, expression.getValueArgument(parameter.index)?.transformToLambda(data))
                 }
             }
         }
@@ -65,7 +64,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
         return expression
     }
 
-    protected fun IrExpression.transform(scope: IrDeclarationParent?) = when {
+    protected fun IrExpression.transformToLambda(scope: IrDeclarationParent?) = when {
         this is IrBlock && origin.isInlinable -> apply {
             // Already a lambda or similar, just mark it with an origin.
             val reference = statements.last() as IrFunctionReference
@@ -129,28 +128,44 @@ abstract class InlineCallableReferenceToLambdaPhase(
             isInline = true
         }.apply {
             body = context.createIrBuilder(symbol, startOffset, endOffset).run {
-                // TODO: could there be a star projection here?
-                val argumentTypes = (type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }
                 val boundReceiver = dispatchReceiver ?: extensionReceiver
                 val boundReceiverParameter = when {
                     dispatchReceiver != null -> referencedFunction.dispatchReceiverParameter
                     extensionReceiver != null -> referencedFunction.extensionReceiverParameter
                     else -> null
                 }
+
+                // TODO: could there be a star projection here?
+                val unboundArgumentTypes = (type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }
+                val argumentTypes = getAllArgumentsWithIr()
+                    .filter { it.first != boundReceiverParameter }
+                    .map { it.second }
+                    .let { boundArguments ->
+                        var i = 0
+                        // if the argument is bound, then use the argument's type, otherwise take a type from reference's return type
+                        boundArguments.map { it?.type ?: unboundArgumentTypes[i++] }
+                    }
+
                 irBlockBody {
                     val exprToReturn = irCall(referencedFunction.symbol, returnType).apply {
                         copyTypeArgumentsFrom(this@wrapFunction)
                         for (parameter in referencedFunction.explicitParameters) {
                             val next = valueParameters.size
-                            when {
+                            val getOnNewParameter = when {
                                 boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))
-                                parameter.isVararg && next < argumentTypes.size && parameter.type == argumentTypes[next] ->
+                                next >= argumentTypes.size ->
+                                    error(
+                                        "The number of parameters for reference and referenced function is different\n" +
+                                                "Reference: ${this@wrapFunction.render()}\n" +
+                                                "Referenced function: ${referencedFunction.render()}\n"
+                                    )
+                                parameter.isVararg && parameter.type == argumentTypes[next] ->
                                     irGet(addValueParameter("p$next", argumentTypes[next]))
-                                parameter.isVararg && (next < argumentTypes.size || !parameter.hasDefaultValue()) ->
+                                parameter.isVararg && !parameter.hasDefaultValue() ->
                                     error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
-                                next >= argumentTypes.size -> null
                                 else -> irGet(addValueParameter("p$next", argumentTypes[next]))
-                            }?.let { putArgument(referencedFunction, parameter, it) }
+                            }
+                            putArgument(referencedFunction, parameter, getOnNewParameter)
                         }
                     }
                     +irReturn(exprToReturn)
@@ -168,6 +183,12 @@ abstract class InlineCallableReferenceToLambdaPhase(
                 origin = LoweredStatementOrigins.INLINE_LAMBDA
             ).apply {
                 copyAttributes(original)
+                if (original is IrFunctionReference) {
+                    // It is required to copy value arguments if any
+                    copyValueArgumentsFrom(original, this@toLambda)
+                    // Don't need to copy the dispatch receiver because it was remapped on extension receiver
+                    dispatchReceiver = null
+                }
                 extensionReceiver = original.dispatchReceiver ?: original.extensionReceiver
             }
         }

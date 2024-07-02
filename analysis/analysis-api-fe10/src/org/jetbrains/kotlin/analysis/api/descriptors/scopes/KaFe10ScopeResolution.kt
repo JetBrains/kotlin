@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.scopes
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
@@ -50,7 +49,6 @@ internal abstract class KaFe10ScopeResolution : KaScope, KaLifetimeOwner {
         return classifiers { it in namesSet }
     }
 
-    @KaExperimentalApi
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
@@ -63,12 +61,10 @@ internal class KaFe10ScopeLexical(
     override val scope: LexicalScope,
     override val analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeResolution(), KaLifetimeOwner {
-    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         return emptySet()
     }
 
-    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         return emptySet()
     }
@@ -88,12 +84,10 @@ internal open class KaFe10ScopeMember(
     private val constructorDescriptors: Collection<ConstructorDescriptor>,
     override val analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeResolution() {
-    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         return scope.getFunctionNames() + scope.getVariableNames()
     }
 
-    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         return scope.getClassifierNames() ?: emptySet()
     }
@@ -129,12 +123,10 @@ internal class KaFe10ScopeImporting(
     override val scope: ImportingScope,
     override val analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeResolution() {
-    @KaExperimentalApi
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         return callables.mapNotNullTo(mutableSetOf()) { it.name }
     }
 
-    @KaExperimentalApi
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         return classifiers.mapNotNullTo(mutableSetOf()) { it.name }
     }

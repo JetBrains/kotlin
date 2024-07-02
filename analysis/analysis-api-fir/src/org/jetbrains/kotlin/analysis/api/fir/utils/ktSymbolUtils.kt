@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -39,7 +40,7 @@ internal val KaClassLikeSymbol.firSymbol: FirClassLikeSymbol<*> get() = (this as
 internal val KaClassSymbol.firSymbol: FirClassSymbol<*> get() = (this as KaFirSymbol<*>).firSymbol as FirClassSymbol<*>
 
 
-fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSession): KaModule {
+internal fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSession): KaModule {
     val target = when (this) {
         is FirCallableSymbol -> {
             // callable fake overrides have use-site FirModuleData
@@ -50,12 +51,13 @@ fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirResolveSessi
     return target.llFirModuleData.ktModule
 }
 
-fun KaSymbol.getContainingKtModule(firResolveSession: LLFirResolveSession): KaModule = when (this) {
+internal fun KaSymbol.getContainingKtModule(firResolveSession: LLFirResolveSession): KaModule = when (this) {
     is KaFirSymbol<*> -> firSymbol.getContainingKtModule(firResolveSession)
     is KaReceiverParameterSymbol -> owningCallableSymbol.getContainingKtModule(firResolveSession)
     else -> TODO("${this::class}")
 }
 
+@KaImplementationDetail
 fun KaSymbol.getActualAnnotationTargets(): List<KotlinTarget>? {
     val firSymbol = this.firSymbol.fir as? FirAnnotationContainer ?: return null
     return getActualTargetList(firSymbol).defaultTargets

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public object KotlinEmptyDeclarationProvider : KotlinDeclarationProvider() {
+public object KotlinEmptyDeclarationProvider : KotlinDeclarationProvider {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? = null
     override fun getAllClassesByClassId(classId: ClassId): List<KtClassOrObject> = emptyList()
     override fun getAllTypeAliasesByClassId(classId: ClassId): List<KtTypeAlias> = emptyList()

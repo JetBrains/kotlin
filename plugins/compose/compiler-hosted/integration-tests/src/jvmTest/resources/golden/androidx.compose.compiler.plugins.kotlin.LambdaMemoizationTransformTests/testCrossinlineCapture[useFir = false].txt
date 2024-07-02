@@ -39,7 +39,7 @@ fun Test(crossinline content: Function0<Unit>, %composer: Composer?, %changed: I
     Lazy({
       val items = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C:Test.kt")
-        if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+        if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
           }
@@ -62,7 +62,7 @@ fun TestComposable(crossinline content: Function2<Composer, Int, Unit>, %compose
     Lazy({
       val items = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
         sourceInformation(%composer, "C<conten...>:Test.kt")
-        if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+        if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
           }

@@ -64,7 +64,7 @@ public interface KaRendererModalityModifierProvider {
                 }
 
                 if (symbol.location == KaSymbolLocation.CLASS) {
-                    if ((symbol.containingSymbol as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE) return null
+                    if ((symbol.containingDeclaration as? KaClassSymbol)?.classKind == KaClassKind.INTERFACE) return null
                 }
 
                 return when (symbol.modality) {

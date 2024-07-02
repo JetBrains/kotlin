@@ -133,6 +133,7 @@ class FirTowerDataContext private constructor(
     // i.e. implicitReceiverStack == towerDataElements.mapNotNull { it.receiver }
     // i.e. localScopes == towerDataElements.mapNotNull { it.scope?.takeIf { it.isLocal } }
     val implicitReceiverStack: PersistentImplicitReceiverStack,
+    val classesUnderInitialization: PersistentList<FirClassSymbol<*>>,
     val localScopes: FirLocalScopes,
     val nonLocalTowerDataElements: PersistentList<FirTowerDataElement>
 ) {
@@ -140,6 +141,7 @@ class FirTowerDataContext private constructor(
     constructor() : this(
         persistentListOf(),
         PersistentImplicitReceiverStack(),
+        persistentListOf(),
         persistentListOf(),
         persistentListOf()
     )
@@ -151,6 +153,7 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.set(indexOfLastLocalScope, newLastScope.asTowerDataElement(isLocal = true)),
             implicitReceiverStack,
+            classesUnderInitialization,
             localScopes.set(localScopes.lastIndex, newLastScope),
             nonLocalTowerDataElements
         )
@@ -162,6 +165,7 @@ class FirTowerDataContext private constructor(
             implicitReceiverStack
                 .addAll(newElements.mapNotNull { it.implicitReceiver })
                 .addAllContextReceivers(newElements.flatMap { it.contextReceiverGroup.orEmpty() }),
+            classesUnderInitialization,
             localScopes,
             nonLocalTowerDataElements.addAll(newElements)
         )
@@ -171,6 +175,7 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.add(localScope.asTowerDataElement(isLocal = true)),
             implicitReceiverStack,
+            classesUnderInitialization,
             localScopes.add(localScope),
             nonLocalTowerDataElements
         )
@@ -181,6 +186,7 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.add(element),
             implicitReceiverStack.add(name, implicitReceiverValue, additionalLabName),
+            classesUnderInitialization,
             localScopes,
             nonLocalTowerDataElements.add(element)
         )
@@ -193,8 +199,20 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.add(element),
             contextReceiverGroup.fold(implicitReceiverStack, PersistentImplicitReceiverStack::addContextReceiver),
+            classesUnderInitialization,
             localScopes,
             nonLocalTowerDataElements.add(element)
+        )
+    }
+
+    fun addAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer): FirTowerDataContext {
+        val correspondingClass = anonymousInitializer.containingDeclarationSymbol as? FirClassSymbol<*> ?: return this
+        return FirTowerDataContext(
+            towerDataElements,
+            implicitReceiverStack,
+            classesUnderInitialization.add(correspondingClass),
+            localScopes,
+            nonLocalTowerDataElements
         )
     }
 
@@ -223,6 +241,7 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.add(element),
             implicitReceiverStack,
+            classesUnderInitialization,
             localScopes,
             nonLocalTowerDataElements.add(element)
         )
@@ -232,6 +251,7 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.addAll(elements),
             implicitReceiverStack,
+            classesUnderInitialization,
             localScopes,
             nonLocalTowerDataElements.addAll(elements)
         )
@@ -241,6 +261,7 @@ class FirTowerDataContext private constructor(
         return FirTowerDataContext(
             towerDataElements.map { it.createSnapshot(keepMutable) }.toPersistentList(),
             implicitReceiverStack.createSnapshot(keepMutable),
+            classesUnderInitialization,
             localScopes.toPersistentList(),
             nonLocalTowerDataElements.map { it.createSnapshot(keepMutable) }.toPersistentList()
         )

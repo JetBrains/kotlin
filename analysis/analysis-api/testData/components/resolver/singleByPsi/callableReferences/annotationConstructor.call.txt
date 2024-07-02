@@ -1,6 +1,7 @@
 KtCallableReferenceExpression(114,120): '::Anno'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -19,4 +20,3 @@ KtCallableReferenceExpression(114,120): '::Anno'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}

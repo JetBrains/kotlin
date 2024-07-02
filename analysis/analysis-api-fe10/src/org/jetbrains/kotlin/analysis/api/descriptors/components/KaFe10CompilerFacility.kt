@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaCodeCompilationException
 import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.InlineFunctionAnalyze
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.collectReachableInlineDelegatedPropertyAccessors
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.impl.base.util.KaCompiledFileForOutputFile
+import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.FacadeClassSourceShimForFragmentCompilation
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfN
  * This should be enabled if the compiled file could refer to symbols defined in another file of the same module.
  * Such symbols are not compiled (only the file is passed to the backend) and so they cannot be linked from a dependency.
  */
+@KaNonPublicApi
 val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey<Boolean>("stub unbound IR symbols")
 
 internal class KaFe10CompilerFacility(
@@ -145,7 +147,7 @@ internal class KaFe10CompilerFacility(
                 return KaCompilationResult.Failure(backendErrors)
             }
 
-            val outputFiles = state.factory.asList().map(::KaCompiledFileForOutputFile)
+            val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
             return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
         } finally {
             state.destroy()

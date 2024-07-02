@@ -23,10 +23,10 @@ fun Test(count: Int) {
 fun Test(count: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(count)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     Row(null, null, null, { %composer: Composer?, %changed: Int ->
       %composer.startReplaceGroup(<>)
       repeat(count) { it: Int ->

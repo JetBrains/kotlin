@@ -1,6 +1,20 @@
 KtCallExpression(146,220): 'arrayOf(Annotation("v1", "v2"), Annotation(strings = arrayOf("v3", "v4")))'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Annotation("v1", "v2") -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = Annotation
+          symbol = vararg elements: T
+          callableId = null),
+        Annotation(strings = arrayOf("v3", "v4")) -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = Annotation
+          symbol = vararg elements: T
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -20,19 +34,5 @@ KtCallExpression(146,220): 'arrayOf(Annotation("v1", "v2"), Annotation(strings =
           callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (Annotation)
-      }
-      argumentMapping = {
-        Annotation("v1", "v2") -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = Annotation
-          symbol = vararg elements: T
-          callableId = null),
-        Annotation(strings = arrayOf("v3", "v4")) -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = Annotation
-          symbol = vararg elements: T
-          callableId = null)
       }
     isInBestCandidates = true

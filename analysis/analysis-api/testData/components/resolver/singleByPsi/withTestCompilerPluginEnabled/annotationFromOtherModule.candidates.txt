@@ -1,6 +1,7 @@
 KtNameReferenceExpression(140,151): 'materialize'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -15,5 +16,4 @@ KtNameReferenceExpression(140,151): 'materialize'
           valueParameters = []
           callableId = test/MyClass.materialize
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true

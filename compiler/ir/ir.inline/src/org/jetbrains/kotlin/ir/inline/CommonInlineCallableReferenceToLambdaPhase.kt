@@ -26,7 +26,7 @@ abstract class CommonInlineCallableReferenceToLambdaPhase(
             for (parameter in declaration.valueParameters) {
                 if (parameter.isInlineParameter()) {
                     val defaultExpression = parameter.defaultValue?.expression ?: continue
-                    parameter.defaultValue?.expression = defaultExpression.transform(declaration)
+                    parameter.defaultValue?.expression = defaultExpression.transformToLambda(declaration)
                 }
             }
         }
@@ -40,6 +40,6 @@ abstract class CommonInlineCallableReferenceToLambdaPhase(
         val owner = expression.symbol.owner
         if (!owner.isInlineArrayConstructor(context.irBuiltIns)) return expression
 
-        return expression.transform(data)
+        return expression.transformToLambda(data)
     }
 }

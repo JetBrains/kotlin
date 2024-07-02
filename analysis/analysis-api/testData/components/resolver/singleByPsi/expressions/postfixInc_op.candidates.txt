@@ -1,9 +1,8 @@
 KtOperationReferenceExpression(146,148): '++'
   KaApplicableCallCandidateInfo:
-    candidate = KaCompoundVariableAccessCallImpl:
-      compoundAccess = IncOrDecOperation:
+    candidate = KaCompoundVariableAccessCall:
+      compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        precedence = POSTFIX
         operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaExplicitReceiverValue:
             expression = variable
@@ -16,6 +15,7 @@ KtOperationReferenceExpression(146,148): '++'
             symbol = /MyClass.inc(<dispatch receiver>: MyClass): MyClass
             valueParameters = []
             callableId = /MyClass.inc
+        precedence = POSTFIX
       variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null

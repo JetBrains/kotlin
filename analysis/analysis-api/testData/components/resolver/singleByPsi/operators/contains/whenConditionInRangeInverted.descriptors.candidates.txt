@@ -1,6 +1,14 @@
 KtOperationReferenceExpression(177,180): '!in'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        f -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -23,13 +31,5 @@ KtOperationReferenceExpression(177,180): '!in'
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
-      }
-      argumentMapping = {
-        f -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
       }
     isInBestCandidates = true

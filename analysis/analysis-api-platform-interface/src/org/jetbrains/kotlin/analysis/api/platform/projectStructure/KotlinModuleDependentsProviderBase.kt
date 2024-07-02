@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
-public abstract class KotlinModuleDependentsProviderBase : KotlinModuleDependentsProvider() {
+public abstract class KotlinModuleDependentsProviderBase : KotlinModuleDependentsProvider {
     override fun getTransitiveDependents(module: KaModule): Set<KaModule> = computeTransitiveDependents(module)
 
     protected fun computeTransitiveDependents(module: KaModule): Set<KaModule> = buildSet {

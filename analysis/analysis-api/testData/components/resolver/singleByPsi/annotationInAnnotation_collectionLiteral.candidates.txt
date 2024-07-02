@@ -1,7 +1,14 @@
 KtCallExpression(131,155): 'Annotation(["v1", "v2"])'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Array<kotlin.String>', but 'kotlin.String' was expected.>
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        ["v1", "v2"] -> (KaVariableSignature:
+          name = strings
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg strings: kotlin.String
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -20,12 +27,5 @@ KtCallExpression(131,155): 'Annotation(["v1", "v2"])'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        ["v1", "v2"] -> (KaVariableSignature:
-          name = strings
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg strings: kotlin.String
-          callableId = null)
-      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Array<kotlin.String>', but 'kotlin.String' was expected.>
     isInBestCandidates = true

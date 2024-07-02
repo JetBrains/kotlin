@@ -2,6 +2,7 @@ KtConstructorDelegationCall(106,118): 'super(1, "")'
   KaErrorCallInfo:
     candidateCalls = [
       KaDelegatedConstructorCall:
+        argumentMapping = {}
         kind = SUPER_CALL
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -13,6 +14,5 @@ KtConstructorDelegationCall(106,118): 'super(1, "")'
             valueParameters = []
             callableId = null
         typeArgumentsMapping = {}
-        argumentMapping = {}
     ]
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Any() defined in kotlin.Any>

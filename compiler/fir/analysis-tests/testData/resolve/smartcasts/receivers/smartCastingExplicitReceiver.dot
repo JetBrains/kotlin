@@ -69,10 +69,11 @@ digraph smartCastingExplicitReceiver_kt {
                 20 [label="Type operator: (this@R|/bar| as R|C|)"];
                 21 [label="Function call arguments exit"];
             }
-            22 [label="Function call: (this@R|/bar|, (this@R|/bar| as R|C|)).R|/C.foo|()" style="filled" fillcolor=yellow];
-            23 [label="Exit block"];
+            22 [label="Function call enter: (this@R|/bar|, (this@R|/bar| as R|C|)).R|/C.foo|()"];
+            23 [label="Function call exit: (this@R|/bar|, (this@R|/bar| as R|C|)).R|/C.foo|()" style="filled" fillcolor=yellow];
+            24 [label="Exit block"];
         }
-        24 [label="Exit function bar" style="filled" fillcolor=red];
+        25 [label="Exit function bar" style="filled" fillcolor=red];
     }
     16 -> {17};
     17 -> {18};
@@ -82,5 +83,6 @@ digraph smartCastingExplicitReceiver_kt {
     21 -> {22};
     22 -> {23};
     23 -> {24};
+    24 -> {25};
 
 }

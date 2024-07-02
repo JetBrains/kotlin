@@ -1,6 +1,14 @@
 KtAnnotationEntry(54,78): '@Suppress("DEPRECATION")'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
+      argumentMapping = {
+        "DEPRECATION" -> (KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          callableId = null)
+      }
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
@@ -18,11 +26,3 @@ KtAnnotationEntry(54,78): '@Suppress("DEPRECATION")'
           ]
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {
-        "DEPRECATION" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          callableId = null)
-      }

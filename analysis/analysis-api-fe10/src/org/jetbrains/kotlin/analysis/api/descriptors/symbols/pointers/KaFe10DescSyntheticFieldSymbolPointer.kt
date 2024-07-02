@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 
-class KaFe10DescSyntheticFieldSymbolPointer(
+internal class KaFe10DescSyntheticFieldSymbolPointer(
     private val psiPointer: KaPsiBasedSymbolPointer<KaPropertyAccessorSymbol>
 ) : KaSymbolPointer<KaBackingFieldSymbol>() {
     @KaImplementationDetail

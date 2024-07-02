@@ -10,7 +10,7 @@ import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.SimpleModificationTracker
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
 
-class KotlinStandaloneModificationTrackerFactory : KotlinModificationTrackerFactory() {
+class KotlinStandaloneModificationTrackerFactory : KotlinModificationTrackerFactory {
     private val projectWide = SimpleModificationTracker()
     private val librariesWide = SimpleModificationTracker()
 

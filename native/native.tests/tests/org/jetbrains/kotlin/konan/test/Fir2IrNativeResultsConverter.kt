@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.backend.FirMangler
-import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -32,10 +30,6 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrN
         return KonanManglerIr
     }
 
-    override fun createFirMangler(): FirMangler {
-        return FirNativeKotlinMangler
-    }
-
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {
         return resolveLibraries(
             compilerConfiguration,
@@ -53,14 +47,12 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrN
         fir2IrResult: Fir2IrActualizedResult,
         fir2KlibMetadataSerializer: Fir2KlibMetadataSerializer,
     ): IrBackendInput {
-        val manglers = fir2IrResult.components.manglers
         return IrBackendInput.NativeBackendInput(
             fir2IrResult.irModuleFragment,
             fir2IrResult.pluginContext,
             diagnosticReporter = diagnosticReporter,
             descriptorMangler = null,
-            irMangler = manglers.irMangler,
-            firMangler = manglers.firMangler,
+            irMangler = fir2IrResult.components.irMangler,
             metadataSerializer = fir2KlibMetadataSerializer
         )
     }

@@ -148,6 +148,7 @@ KtReturnExpression(239,258): 'return MyDelegate()'
 KtCallExpression(246,258): 'MyDelegate()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -159,12 +160,12 @@ KtCallExpression(246,258): 'MyDelegate()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -176,7 +177,6 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(256,258): '()'
@@ -323,6 +323,7 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
 KtCallExpression(446,463): 'ResourceID<Int>()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -334,12 +335,12 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(446,456): 'ResourceID'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -351,7 +352,6 @@ KtNameReferenceExpression(446,456): 'ResourceID'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtTypeArgumentList(456,461): '<Int>'

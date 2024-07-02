@@ -199,6 +199,7 @@ KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
 KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -213,7 +214,6 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
           valueParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(415,429): 'TopLevelObject'
@@ -222,6 +222,7 @@ KtNameReferenceExpression(415,429): 'TopLevelObject'
 KtCallExpression(430,435): 'foo()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -236,12 +237,12 @@ KtCallExpression(430,435): 'foo()'
           valueParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(430,433): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -256,7 +257,6 @@ KtNameReferenceExpression(430,433): 'foo'
           valueParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(433,435): '()'
@@ -268,6 +268,7 @@ KtProperty(440,463): 'val importedFoo = foo()'
 KtCallExpression(458,463): 'foo()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -281,12 +282,12 @@ KtCallExpression(458,463): 'foo()'
           valueParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(458,461): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -300,7 +301,6 @@ KtNameReferenceExpression(458,461): 'foo'
           valueParameters = []
           callableId = one/two/TopLevelObject.foo
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(461,463): '()'
@@ -395,6 +395,7 @@ KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
 KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -409,7 +410,6 @@ KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
           valueParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
@@ -424,6 +424,7 @@ KtNameReferenceExpression(674,686): 'NestedObject'
 KtCallExpression(687,692): 'baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -438,12 +439,12 @@ KtCallExpression(687,692): 'baz()'
           valueParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(687,690): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -458,7 +459,6 @@ KtNameReferenceExpression(687,690): 'baz'
           valueParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(690,692): '()'
@@ -470,6 +470,7 @@ KtProperty(697,739): 'val explicitNestedBaz = NestedObject.baz()'
 KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -484,7 +485,6 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
           valueParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(721,733): 'NestedObject'
@@ -493,6 +493,7 @@ KtNameReferenceExpression(721,733): 'NestedObject'
 KtCallExpression(734,739): 'baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -507,12 +508,12 @@ KtCallExpression(734,739): 'baz()'
           valueParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(734,737): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -527,7 +528,6 @@ KtNameReferenceExpression(734,737): 'baz'
           valueParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(737,739): '()'
@@ -539,6 +539,7 @@ KtProperty(744,767): 'val importedBaz = baz()'
 KtCallExpression(762,767): 'baz()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -552,12 +553,12 @@ KtCallExpression(762,767): 'baz()'
           valueParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(762,765): 'baz'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
@@ -571,7 +572,6 @@ KtNameReferenceExpression(762,765): 'baz'
           valueParameters = []
           callableId = one/two/TopLevelObject.NestedObject.baz
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(765,767): '()'

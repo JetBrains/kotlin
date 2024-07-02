@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaDelegatedConstructorCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
@@ -303,10 +303,10 @@ public typealias KtCompoundArrayAccessCall = KaCompoundArrayAccessCall
     "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
     level = DeprecationLevel.HIDDEN,
 )
-public typealias KaCompoundAccess = KaCompoundAccess
+public typealias KaCompoundAccess = KaCompoundOperation
 
 @Deprecated("Use 'KaCompoundAccess' instead", ReplaceWith("KaCompoundAccess"))
-public typealias KtCompoundAccess = KaCompoundAccess
+public typealias KtCompoundAccess = KaCompoundOperation
 
 @Deprecated(
     "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",

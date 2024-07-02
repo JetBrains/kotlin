@@ -14,9 +14,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.flatMapToNullableSet
 
+/**
+ * A composite [KotlinDeclarationProvider] which combines all declarations provided by its child [providers]. It should be created with
+ * [KotlinCompositeDeclarationProvider.create].
+ */
 public class KotlinCompositeDeclarationProvider private constructor(
     override val providers: List<KotlinDeclarationProvider>
-) : KotlinDeclarationProvider(), KotlinCompositeProvider<KotlinDeclarationProvider> {
+) : KotlinDeclarationProvider, KotlinCompositeProvider<KotlinDeclarationProvider> {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
         return providers.firstNotNullOfOrNull { it.getClassLikeDeclarationByClassId(classId) }
     }

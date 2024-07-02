@@ -46,6 +46,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     }
 
     private fun SmartPrinter.printErrorsObject(diagnosticList: DiagnosticList) {
+        println("""@Suppress("IncorrectFormatting")""")
         inBracketsWithIndent("object ${diagnosticList.objectName}") {
             for (group in diagnosticList.groups) {
                 printDiagnosticGroup(group.name, group.diagnostics)

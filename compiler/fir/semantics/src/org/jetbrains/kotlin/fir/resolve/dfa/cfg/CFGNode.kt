@@ -726,13 +726,20 @@ class FunctionCallArgumentsExitNode(
     }
 }
 
-class FunctionCallNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int)
+class FunctionCallEnterNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int)
+    : CFGNode<FirFunctionCall>(owner, level) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitFunctionCallEnterNode(this, data)
+    }
+}
+
+class FunctionCallExitNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int)
     : CFGNode<FirFunctionCall>(owner, level) {
     override val isUnion: Boolean
         get() = true
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitFunctionCallNode(this, data)
+        return visitor.visitFunctionCallExitNode(this, data)
     }
 }
 

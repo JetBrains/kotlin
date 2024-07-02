@@ -37,15 +37,16 @@ digraph smartcastOnLambda_kt {
                         13 [label="Function call arguments enter"];
                         14 [label="Function call arguments exit"];
                     }
-                    15 [label="Function call: R|<local>/func|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                    16 [label="Exit block"];
+                    15 [label="Function call enter: R?C|kotlin/Function0.invoke|()"];
+                    16 [label="Function call exit: R|<local>/func|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                    17 [label="Exit block"];
                 }
-                17 [label="Exit when branch result"];
-                18 [label="Exit when"];
+                18 [label="Exit when branch result"];
+                19 [label="Exit when"];
             }
-            19 [label="Exit block"];
+            20 [label="Exit block"];
         }
-        20 [label="Exit function test" style="filled" fillcolor=red];
+        21 [label="Exit function test" style="filled" fillcolor=red];
     }
     2 -> {3};
     3 -> {4};
@@ -55,7 +56,7 @@ digraph smartcastOnLambda_kt {
     7 -> {8};
     8 -> {9};
     9 -> {10 11};
-    10 -> {18};
+    10 -> {19};
     11 -> {12};
     12 -> {13};
     13 -> {14};
@@ -65,5 +66,6 @@ digraph smartcastOnLambda_kt {
     17 -> {18};
     18 -> {19};
     19 -> {20};
+    20 -> {21};
 
 }

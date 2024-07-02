@@ -58,6 +58,8 @@ class IrPrettyKotlinDumpHandler(
                 printFakeOverridesStrategy = FakeOverridesStrategy.NONE,
                 normalizeNames = true, // KT-61983: K1 and K2 kotlin-like dumps are closer to each other when tempvar names are normalized
                 stableOrder = true,
+                // Expect declarations exist in K1 IR just before serialization, but won't be serialized. Though, dumps should be same before and after
+                printExpectDeclarations = module.languageVersionSettings.languageVersion.usesK2,
             ),
         )
     }

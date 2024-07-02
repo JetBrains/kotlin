@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
 import org.jetbrains.kotlin.fir.backend.native.interop.isExternalObjCClassProperty
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -61,7 +60,7 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
 
     override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
     override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
-    override fun shouldGenerateDelegatedMember(delegateMemberCandidate: IrOverridableDeclaration<*>): Boolean = true
+    override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true
 }
 
 internal fun PhaseContext.fir2Ir(
@@ -101,7 +100,6 @@ internal fun PhaseContext.fir2Ir(
             fir2IrConfiguration,
             IrGenerationExtension.getInstances(config.project),
             irMangler = KonanManglerIr,
-            firMangler = FirNativeKotlinMangler,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             specialAnnotationsProvider = null,

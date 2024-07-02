@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object KaFirArrayOfSymbolProvider {
+internal object KaFirArrayOfSymbolProvider {
     internal fun KaFirSession.arrayOfSymbol(identifier: Name): KaFirNamedFunctionSymbol? {
         val firSymbol = firSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
             /* choose (for byte array)

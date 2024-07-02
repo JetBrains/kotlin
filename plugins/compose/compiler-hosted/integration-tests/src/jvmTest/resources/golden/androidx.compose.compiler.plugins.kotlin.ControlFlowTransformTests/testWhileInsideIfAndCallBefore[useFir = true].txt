@@ -29,15 +29,18 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  %composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "<A()>,*<A()>")
   if (x > 0) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<A()>,*<A()>")
     A(%composer, 0)
     while (x > 0) {
       A(%composer, 0)
     }
+    %composer.endReplaceGroup()
+  } else {
+    %composer.startReplaceGroup(<>)
+    %composer.endReplaceGroup()
   }
-  %composer.endReplaceGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }

@@ -40,6 +40,7 @@ KtNameReferenceExpression(37,40): 'Int'
 KtConstructorDelegationCall(43,49): 'this()'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -51,11 +52,11 @@ KtConstructorDelegationCall(43,49): 'this()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtConstructorDelegationReferenceExpression(43,47): 'this'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = THIS_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -67,7 +68,6 @@ KtConstructorDelegationReferenceExpression(43,47): 'this'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(47,49): '()'
   null
@@ -132,6 +132,14 @@ KtBlockExpression(120,300): '{'
 KtBinaryExpression(126,140): '1 in MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -154,14 +162,6 @@ KtBinaryExpression(126,140): '1 in MyClass()'
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
-      }
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
       }
 
 KtConstantExpression(126,127): '1'
@@ -170,29 +170,6 @@ KtConstantExpression(126,127): '1'
 KtOperationReferenceExpression(128,130): 'in'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = MyClass()
-          isSafeNavigation = false
-          type = MyClass
-        signature = KaFunctionSignature:
-          receiverType = MyClass
-          returnType = kotlin.Boolean
-          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = int
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = int: kotlin.Int
-              callableId = null
-          ]
-          callableId = /contains
-      typeArgumentsMapping = {
-        T -> (MyClass)
-      }
       argumentMapping = {
         1 -> (KaVariableSignature:
           name = int
@@ -201,10 +178,34 @@ KtOperationReferenceExpression(128,130): 'in'
           symbol = int: kotlin.Int
           callableId = null)
       }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
 
 KtCallExpression(131,140): 'MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -216,11 +217,11 @@ KtCallExpression(131,140): 'MyClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(131,138): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -232,7 +233,6 @@ KtNameReferenceExpression(131,138): 'MyClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(138,140): '()'
   null
@@ -240,6 +240,14 @@ KtValueArgumentList(138,140): '()'
 KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -263,18 +271,11 @@ KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
-      }
 
 KtCallExpression(145,154): 'MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -286,11 +287,11 @@ KtCallExpression(145,154): 'MyClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(145,152): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -302,7 +303,6 @@ KtNameReferenceExpression(145,152): 'MyClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(152,154): '()'
   null
@@ -310,6 +310,14 @@ KtValueArgumentList(152,154): '()'
 KtCallExpression(155,166): 'contains(2)'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -332,19 +340,19 @@ KtCallExpression(155,166): 'contains(2)'
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
-      }
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
       }
 
 KtNameReferenceExpression(155,163): 'contains'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -367,14 +375,6 @@ KtNameReferenceExpression(155,163): 'contains'
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
-      }
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
       }
 
 KtValueArgumentList(163,166): '(2)'
@@ -389,6 +389,14 @@ KtConstantExpression(164,165): '2'
 KtBinaryExpression(171,186): '2 !in MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -411,14 +419,6 @@ KtBinaryExpression(171,186): '2 !in MyClass()'
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
-      }
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
       }
 
 KtConstantExpression(171,172): '2'
@@ -427,6 +427,14 @@ KtConstantExpression(171,172): '2'
 KtOperationReferenceExpression(173,176): '!in'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -450,18 +458,11 @@ KtOperationReferenceExpression(173,176): '!in'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
-      }
 
 KtCallExpression(177,186): 'MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -473,11 +474,11 @@ KtCallExpression(177,186): 'MyClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(177,184): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -489,7 +490,6 @@ KtNameReferenceExpression(177,184): 'MyClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(184,186): '()'
   null
@@ -506,6 +506,14 @@ KtWhenEntry(211,231): 'in MyClass() -> true'
 KtWhenConditionInRange(211,223): 'in MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -528,19 +536,19 @@ KtWhenConditionInRange(211,223): 'in MyClass()'
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
-      }
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
       }
 
 KtOperationReferenceExpression(211,213): 'in'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -564,18 +572,11 @@ KtOperationReferenceExpression(211,213): 'in'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
-      }
 
 KtCallExpression(214,223): 'MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -587,11 +588,11 @@ KtCallExpression(214,223): 'MyClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(214,221): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -603,7 +604,6 @@ KtNameReferenceExpression(214,221): 'MyClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(221,223): '()'
   null
@@ -626,6 +626,14 @@ KtWhenEntry(270,292): '!in MyClass() -> false'
 KtWhenConditionInRange(270,283): '!in MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        3 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -648,19 +656,19 @@ KtWhenConditionInRange(270,283): '!in MyClass()'
           callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
-      }
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
       }
 
 KtOperationReferenceExpression(270,273): '!in'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        3 -> (KaVariableSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -684,18 +692,11 @@ KtOperationReferenceExpression(270,273): '!in'
       typeArgumentsMapping = {
         T -> (MyClass)
       }
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = int
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = int: kotlin.Int
-          callableId = null)
-      }
 
 KtCallExpression(274,283): 'MyClass()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -707,11 +708,11 @@ KtCallExpression(274,283): 'MyClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtNameReferenceExpression(274,281): 'MyClass'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -723,7 +724,6 @@ KtNameReferenceExpression(274,281): 'MyClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
 
 KtValueArgumentList(281,283): '()'
   null

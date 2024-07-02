@@ -1,6 +1,14 @@
 KtOperationReferenceExpression(159,161): '+='
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        foo -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = test.Foo
+          symbol = f: test.Foo
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -22,11 +30,3 @@ KtOperationReferenceExpression(159,161): '+='
           ]
           callableId = test/WithOperator.plusAssign
       typeArgumentsMapping = {}
-      argumentMapping = {
-        foo -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = test.Foo
-          symbol = f: test.Foo
-          callableId = null)
-      }

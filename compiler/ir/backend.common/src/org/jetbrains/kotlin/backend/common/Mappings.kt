@@ -14,17 +14,26 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 
+var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(followAttributeOwner = false)
+
+var IrClass.capturedFields: Collection<IrField>? by irAttribute(followAttributeOwner = false)
+
+var IrClass.reflectedNameAccessor: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
+/**
+ * If this is a `suspend` function, returns its corresponding function with continuations.
+ */
+var IrSimpleFunction.functionWithContinuations: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
+/**
+ * If this is a function with continuation, returns its corresponding `suspend` function.
+ */
+var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
 open class Mapping {
-    val defaultArgumentsDispatchFunction: DeclarationMapping<IrFunction, IrFunction> by AttributeBasedMappingDelegate()
     val defaultArgumentsOriginalFunction: MapBasedMapping<IrFunction, IrFunction> = MapBasedMapping()
-    val suspendFunctionToCoroutineConstructor: DeclarationMapping<IrFunction, IrConstructor> by AttributeBasedMappingDelegate()
     val lateInitFieldToNullableField: DeclarationMapping<IrField, IrField> by AttributeBasedMappingDelegate()
-    val inlineClassMemberToStatic: DeclarationMapping<IrFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
-    val capturedFields: DeclarationMapping<IrClass, Collection<IrField>> by AttributeBasedMappingDelegate()
     val capturedConstructors: MapBasedMapping<IrConstructor, IrConstructor> = MapBasedMapping()
-    val reflectedNameAccessor: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
-    val suspendFunctionsToFunctionWithContinuations: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
-    val functionWithContinuationsToSuspendFunctions: DeclarationMapping<IrSimpleFunction, IrSimpleFunction> by AttributeBasedMappingDelegate()
 
     abstract class DeclarationMapping<K : IrDeclaration, V> {
         abstract operator fun get(declaration: K): V?

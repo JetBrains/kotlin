@@ -2,6 +2,26 @@ KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {
+          "a" -> (KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.String
+            symbol = a: A
+            callableId = null),
+          "b" -> (KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: B
+            callableId = null),
+          "c" -> (KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: C
+            callableId = null)
+        }
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -35,26 +55,6 @@ KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
           A -> (kotlin.String),
           B -> (kotlin.String),
           C -> (kotlin.String)
-        }
-        argumentMapping = {
-          "a" -> (KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.String
-            symbol = a: A
-            callableId = null),
-          "b" -> (KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.String
-            symbol = b: B
-            callableId = null),
-          "c" -> (KaVariableSignature:
-            name = c
-            receiverType = null
-            returnType = kotlin.String
-            symbol = c: C
-            callableId = null)
         }
     ]
     diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A, B, C> generic(a: A, b: B, c: C): Unit>

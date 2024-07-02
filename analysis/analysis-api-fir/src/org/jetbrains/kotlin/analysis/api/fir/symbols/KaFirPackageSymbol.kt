@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.name.FqName
 
-class KaFirPackageSymbol(
+internal class KaFirPackageSymbol(
     override val fqName: FqName,
     private val project: Project,
     override val token: KaLifetimeToken

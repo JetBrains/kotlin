@@ -22,8 +22,7 @@ val x: Boolean /* by */
 
 // CHECK JVM_IR:
 //   Mangled name: #main(){}
-//   Mangled name for the signature by IR:       main(){}
-//   Mangled name for the signature by Frontend: main(){}%test.kt
 //   Public signature: /main|-4284757841571462650[0]
 //   Public signature debug description: main(){}
 fun main(): Unit
+

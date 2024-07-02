@@ -38,7 +38,7 @@ size_t installType(uint8_t* obj, TypeInfo* typeInfo) {
 TEST(CustomAllocTest, HeapReuseFixedBlockPages) {
     Heap heap;
     const int MIN = MIN_BLOCK_SIZE;
-    const int MAX = FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1;
+    const int MAX = FixedBlockPage::MAX_BLOCK_SIZE + 1;
     TypeInfo fakeTypes[MAX];
     for (int i = MIN; i < MAX; ++i) {
         fakeTypes[i] = {.typeInfo_ = &fakeTypes[i], .instanceSize_ = 8 * (i - 1), .flags_ = 0};
@@ -47,7 +47,7 @@ TEST(CustomAllocTest, HeapReuseFixedBlockPages) {
     kotlin::alloc::FinalizerQueue finalizerQueue;
     for (int blocks = MIN; blocks < MAX; ++blocks) {
         pages[blocks] = heap.GetFixedBlockPage(blocks, finalizerQueue);
-        uint8_t* obj = pages[blocks]->TryAllocate(blocks);
+        uint8_t* obj = pages[blocks]->TryAllocate();
         size_t size = installType(obj, &fakeTypes[blocks]);
         EXPECT_EQ(size, static_cast<size_t>(blocks * 8));
         mark(obj); // to make the page survive a sweep
@@ -62,7 +62,7 @@ TEST(CustomAllocTest, HeapReuseFixedBlockPages) {
 
 TEST(CustomAllocTest, HeapReuseNextFitPages) {
     Heap heap;
-    const uint32_t BLOCKSIZE = FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 42;
+    const uint32_t BLOCKSIZE = FixedBlockPage::MAX_BLOCK_SIZE + 42;
     kotlin::alloc::FinalizerQueue finalizerQueue;
     NextFitPage* page = heap.GetNextFitPage(BLOCKSIZE, finalizerQueue);
     uint8_t* obj = page->TryAllocate(BLOCKSIZE);

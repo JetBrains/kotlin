@@ -8,9 +8,9 @@ package org.jetbrains.kotlinx.atomicfu
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathJsProvider
@@ -34,13 +34,26 @@ open class AbstractAtomicfuJsIrTest : AbstractJsIrTest(
     }
 }
 
-class AtomicfuEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+open class AbstractAtomicfuJsFirTest : AbstractFirJsTest(
+    pathToTestDir = "plugins/atomicfu/atomicfu-compiler/testData/box/",
+    testGroupOutputDirPrefix = "box/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            useConfigurators(::AtomicfuEnvironmentConfigurator)
+            useCustomRuntimeClasspathProviders(::AtomicfuJsRuntimeClasspathProvider)
+        }
+    }
+}
+
+private class AtomicfuEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         IrGenerationExtension.registerExtension(project, AtomicfuLoweringExtension())
     }
 }
 
-class AtomicfuJsRuntimeClasspathProvider(
+private class AtomicfuJsRuntimeClasspathProvider(
     testServices: TestServices
 ) : RuntimeClasspathJsProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {

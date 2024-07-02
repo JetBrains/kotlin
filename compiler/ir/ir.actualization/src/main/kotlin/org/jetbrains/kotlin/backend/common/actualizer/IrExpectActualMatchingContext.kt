@@ -311,7 +311,6 @@ internal abstract class IrExpectActualMatchingContext(
                 // the returned descriptors are compared by `equals`. And `equals` for fake-overrides is weird.
                 // I didn't manage to invent a test that would check this condition
                 .filter { !it.asIr().isFakeOverride }
-            else -> error("Unknown IR node: $node")
         }
 
     override val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>

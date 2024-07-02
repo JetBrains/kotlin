@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DynamicFunctionDescValueParameterSymbol
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.java.sam.JvmSamConversionOracle
 import org.jetbrains.kotlin.load.kotlin.*
@@ -58,7 +60,16 @@ import java.nio.file.Paths
 internal class KaFe10SymbolRelationProvider(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaSymbolRelationProvider, KaFe10SessionComponent {
-    override val KaSymbol.containingSymbol: KaDeclarationSymbol?
+    override val KaSymbol.containingSymbol: KaSymbol?
+        get() = withValidityAssertion {
+            when (this) {
+                is KaPackageSymbol -> null
+                is KaFileSymbol -> KaFe10PackageSymbol(kotlinPackageFqn, analysisContext)
+                else -> containingDeclaration ?: containingFile
+            }
+        }
+
+    override val KaSymbol.containingDeclaration: KaDeclarationSymbol?
         get() = withValidityAssertion {
             if (isTopLevel) {
                 return null
@@ -277,10 +288,10 @@ internal fun computeContainingSymbolOrSelf(symbol: KaSymbol, analysisSession: Ka
     with(analysisSession) {
         return when (symbol) {
             is KaValueParameterSymbol -> {
-                symbol.containingSymbol as? KaFunctionSymbol ?: symbol
+                symbol.containingDeclaration as? KaFunctionSymbol ?: symbol
             }
             is KaPropertyAccessorSymbol -> {
-                symbol.containingSymbol as? KaPropertySymbol ?: symbol
+                symbol.containingDeclaration as? KaPropertySymbol ?: symbol
             }
             is KaBackingFieldSymbol -> symbol.owningProperty
             else -> symbol

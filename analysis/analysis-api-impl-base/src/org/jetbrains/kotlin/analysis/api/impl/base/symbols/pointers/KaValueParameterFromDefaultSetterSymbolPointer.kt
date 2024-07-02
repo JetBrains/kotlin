@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-@KaAnalysisApiInternals
+@KaImplementationDetail
 class KaValueParameterFromDefaultSetterSymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaPropertySymbol>,
 ) : KaSymbolPointer<KaValueParameterSymbol>() {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.ir.backend.js.IrModuleInfo
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -52,17 +51,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
      */
     abstract val irMangler: KotlinMangler.IrMangler
 
-    /**
-     * The mangler instance that was used to build declaration signatures from K2 (FIR) declarations for this backend, or `null` if
-     * this artifact was compiled using the classic frontend.
-     *
-     * This instance can be used to verify signatures in tests.
-     *
-     * @see org.jetbrains.kotlin.fir.backend.FirMangleComputer
-     * @see org.jetbrains.kotlin.ir.util.IdSignature
-     */
-    abstract val firMangler: FirMangler?
-
     abstract val diagnosticReporter: BaseDiagnosticsCollector
 
     sealed class JsIrBackendInput : IrBackendInput()
@@ -75,7 +63,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         val hasErrors: Boolean,
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
-        override val firMangler: FirMangler?,
         val metadataSerializer: KlibSingleFileMetadataSerializer<*>,
     ) : JsIrBackendInput()
 
@@ -93,9 +80,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
 
         override val irMangler: KotlinMangler.IrMangler
             get() = moduleInfo.deserializer.fakeOverrideBuilder.mangler
-
-        override val firMangler: FirMangler?
-            get() = null
     }
 
     sealed class WasmBackendInput : IrBackendInput()
@@ -108,7 +92,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         val hasErrors: Boolean,
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
-        override val firMangler: FirMangler?,
         val metadataSerializer: KlibSingleFileMetadataSerializer<*>,
     ) : WasmBackendInput()
 
@@ -127,9 +110,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
 
         override val irMangler: KotlinMangler.IrMangler
             get() = moduleInfo.deserializer.fakeOverrideBuilder.mangler
-
-        override val firMangler: FirMangler?
-            get() = null
     }
 
     class JvmIrBackendInput(
@@ -139,7 +119,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         val sourceFiles: List<KtSourceFile>,
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
-        override val firMangler: FirMangler?,
     ) : IrBackendInput() {
         override val irModuleFragment: IrModuleFragment
             get() = backendInput.irModuleFragment
@@ -162,7 +141,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val diagnosticReporter: BaseDiagnosticsCollector,
         override val descriptorMangler: KotlinMangler.DescriptorMangler?,
         override val irMangler: KotlinMangler.IrMangler,
-        override val firMangler: FirMangler?,
         val metadataSerializer: KlibSingleFileMetadataSerializer<*>?,
     ) : IrBackendInput()
 }

@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.copyAsImplicitInvokeCall
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -42,12 +41,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressions
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.doesResolutionResultOverrideOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -585,7 +582,9 @@ class FirCallResolver(
         val reference = annotation.calleeReference as? FirSimpleNamedReference ?: return null
         val annotationClassSymbol = annotation.getCorrespondingClassSymbolOrNull(session)
         val resolvedReference = if (annotationClassSymbol != null && annotationClassSymbol.fir.classKind == ClassKind.ANNOTATION_CLASS) {
-            val constructorSymbol = getConstructorSymbol(annotationClassSymbol)
+            val immediateSymbol = annotation.annotationTypeRef.coneType.abbreviatedTypeOrSelf.toSymbol(session) as? FirClassLikeSymbol<*>
+                ?: annotationClassSymbol // Shouldn't be the case for green code
+            val constructorSymbol = getConstructorSymbol(immediateSymbol)
             constructorSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
 
             if (constructorSymbol != null && annotation.arguments.isNotEmpty()) {
@@ -688,15 +687,17 @@ class FirCallResolver(
         resolutionMode = ResolutionMode.ContextIndependent,
     )
 
-    private fun getConstructorSymbol(annotationClassSymbol: FirRegularClassSymbol): FirConstructorSymbol? {
+    private fun getConstructorSymbol(annotationClassSymbol: FirClassLikeSymbol<*>): FirConstructorSymbol? {
         var constructorSymbol: FirConstructorSymbol? = null
-        annotationClassSymbol.fir.unsubstitutedScope(
-            session,
-            components.scopeSession,
-            withForcedTypeCalculator = false,
-            memberRequiredPhase = null,
-        ).processDeclaredConstructors {
-            if (it.fir.isPrimary && constructorSymbol == null) {
+        val (_, constructorsScope) = annotationClassSymbol.expandedClassWithConstructorsScope(
+            session, components.scopeSession,
+            memberRequiredPhaseForRegularClasses = null,
+        ) ?: return null
+
+        constructorsScope.processDeclaredConstructors {
+            // Typealias constructors & SO override constructors of primary constructors are not marked as primary
+            val unwrappedConstructor = it.fir.originalConstructorIfTypeAlias?.unwrapSubstitutionOverrides() ?: it.fir
+            if (unwrappedConstructor.isPrimary && constructorSymbol == null) {
                 constructorSymbol = it
             }
         }

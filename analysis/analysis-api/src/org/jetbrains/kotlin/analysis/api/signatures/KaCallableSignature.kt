@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,26 +24,26 @@ import org.jetbrains.kotlin.name.CallableId
  *
  * Equality of [KaCallableSignature] is derived from its content.
  */
-public sealed class KaCallableSignature<out S : KaCallableSymbol> : KaLifetimeOwner {
+public sealed interface KaCallableSignature<out S : KaCallableSymbol> : KaLifetimeOwner {
     /**
      * The original symbol for this signature.
      */
-    public abstract val symbol: S
+    public val symbol: S
 
     /**
      * The use-site-substituted return type.
      */
-    public abstract val returnType: KaType
+    public val returnType: KaType
 
     /**
      * The use-site-substituted extension receiver type.
      */
-    public abstract val receiverType: KaType?
+    public val receiverType: KaType?
 
     /**
      * A [CallableId] of a substituted symbol
      */
-    public open val callableId: CallableId? get() = withValidityAssertion { symbol.callableId }
+    public val callableId: CallableId? get() = withValidityAssertion { symbol.callableId }
 
     @Deprecated("Use `callableId` instead.", ReplaceWith("callableId"))
     public val callableIdIfNonLocal: CallableId? get() = callableId
@@ -54,7 +54,7 @@ public sealed class KaCallableSignature<out S : KaCallableSymbol> : KaLifetimeOw
      * @see KaSubstitutor.substitute
      */
     @KaExperimentalApi
-    public abstract fun substitute(substitutor: KaSubstitutor): KaCallableSignature<S>
+    public fun substitute(substitutor: KaSubstitutor): KaCallableSignature<S>
 
     abstract override fun equals(other: Any?): Boolean
     abstract override fun hashCode(): Int

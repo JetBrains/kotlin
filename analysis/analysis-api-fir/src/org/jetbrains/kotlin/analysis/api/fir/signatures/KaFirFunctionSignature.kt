@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
-internal sealed class KaFirFunctionSignature<out S : KaFunctionSymbol> : KaFunctionSignature<S>(), FirSymbolBasedSignature {
+internal sealed class KaFirFunctionSignature<out S : KaFunctionSymbol> : KaFunctionSignature<S>, FirSymbolBasedSignature {
     abstract override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S>
 
     override fun equals(other: Any?): Boolean {

@@ -1,6 +1,14 @@
 KtNameReferenceExpression(18,28): 'Comparator'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        { x, y -> 1 } -> (KaVariableSignature:
+          name = function
+          receiverType = null
+          returnType = kotlin.Function2<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!, ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!, kotlin.Int>
+          symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -20,13 +28,5 @@ KtNameReferenceExpression(18,28): 'Comparator'
           callableId = java/util/Comparator
       typeArgumentsMapping = {
         T -> (ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!)
-      }
-      argumentMapping = {
-        { x, y -> 1 } -> (KaVariableSignature:
-          name = function
-          receiverType = null
-          returnType = kotlin.Function2<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!, ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int) kotlin.Int!, kotlin.Int>
-          symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
-          callableId = null)
       }
     isInBestCandidates = true

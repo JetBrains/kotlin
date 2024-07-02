@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -263,24 +264,6 @@ class Fir2IrDeclarationStorage(
     fun getIrFile(firFile: FirFile): IrFile {
         return fileCache[firFile]!!
     }
-
-    @OptIn(IrImplementationDetail::class)
-    internal class NonCachedSourceFileFacadeClass(
-        origin: IrDeclarationOrigin,
-        name: Name,
-        source: SourceElement,
-    ) : IrClassImpl(
-        startOffset = UNDEFINED_OFFSET,
-        endOffset = UNDEFINED_OFFSET,
-        origin = origin,
-        symbol = IrClassSymbolImpl(),
-        name = name,
-        kind = ClassKind.CLASS,
-        visibility = DescriptorVisibilities.PUBLIC,
-        modality = Modality.FINAL,
-        source = source,
-        factory = IrFactoryImpl,
-    )
 
     private class NonCachedSourceFacadeContainerSource(
         override val className: JvmClassName,
@@ -1353,9 +1336,20 @@ class Fir2IrDeclarationStorage(
 
                     val facadeShortName = className.fqNameForClassNameWithoutDollars.shortName()
                     val containerSource = NonCachedSourceFacadeContainerSource(className, facadeClassName)
-                    return NonCachedSourceFileFacadeClass(declarationOrigin, facadeShortName, containerSource).apply {
+                    return IrFactoryImpl.createClass(
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET,
+                        origin = declarationOrigin,
+                        symbol = IrClassSymbolImpl(),
+                        name = facadeShortName,
+                        kind = ClassKind.CLASS,
+                        visibility = DescriptorVisibilities.PUBLIC,
+                        modality = Modality.FINAL,
+                        source = containerSource
+                    ).apply {
                         parent = parentPackage
                         createParameterDeclarations()
+                        this.isNonCachedSourceFileFacade = true
                     }
                 }
             }
@@ -1410,6 +1404,8 @@ private fun FirCallableDeclaration.isFakeOverrideImpl(fakeOverrideOwnerLookupTag
 private object IsStubPropertyForPureFieldKey : FirDeclarationDataKey()
 
 internal var FirProperty.isStubPropertyForPureField: Boolean? by FirDeclarationDataRegistry.data(IsStubPropertyForPureFieldKey)
+
+internal var IrClass.isNonCachedSourceFileFacade: Boolean by irFlag(followAttributeOwner = false)
 
 /**
  * Opt-in to this annotation indicates that some code uses annotated function but it actually shouldn't

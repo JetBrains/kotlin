@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 enum class ProcessResult {
@@ -110,7 +112,10 @@ class MemberScopeTowerLevel(
             }
 
             for (candidateFromSmartCast in candidates) {
-                val existing = map[candidateFromSmartCast.member]
+                val memberFromSmartcast = candidateFromSmartCast.member
+                val keyMember = unwrapSubstitutionOverrideForSmartcastedThisAccessInAnonymousInitializer(memberFromSmartcast)
+                    ?: memberFromSmartcast
+                val existing = map[keyMember]
 
                 // If both scopes return the same symbol, we want to prefer the candidate from the original scope without smartcast
                 // with two exceptions:
@@ -177,6 +182,42 @@ class MemberScopeTowerLevel(
             }
         }
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
+    }
+
+    /**
+     * Inside `init` blocks we want to prefer the candidate from the original scope if the candidate from the smartcast is regular
+     *   substitution override to support cases like this:
+     *
+     * ```
+     * open class Base<T> {
+     *     val x: Int
+     *
+     *     init {
+     *         if (this is Derived) {
+     *             x = 1 // <--------
+     *         } else {
+     *             x = 2
+     *         }
+     *     }
+     * }
+     *
+     * class Derived : Base<String>()
+     * ```
+     *
+     * It's important to resolve to `Base.x` in the highlighted place instead of `Derived.x`, so fir2ir will generate proper
+     *   SetField call instead of setter call, which breaks the initialization of the class
+     */
+    private fun <T : FirCallableSymbol<*>> unwrapSubstitutionOverrideForSmartcastedThisAccessInAnonymousInitializer(
+        candidateFromSmartCast: T
+    ): T? {
+        if (!candidateFromSmartCast.isSubstitutionOverride) return null
+        val smartcastedReceiver = dispatchReceiverValue.receiverExpression as? FirSmartCastExpression ?: return null
+        val thisReceiver = smartcastedReceiver.originalExpression as? FirThisReceiverExpression ?: return null
+        val classSymbol = thisReceiver.calleeReference.boundSymbol as? FirClassSymbol<*> ?: return null
+        return runIf(classSymbol in bodyResolveComponents.towerDataContext.classesUnderInitialization) {
+            @Suppress("UNCHECKED_CAST")
+            candidateFromSmartCast.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() as T
+        }
     }
 
     private enum class DispatchReceiverToUse(val unwrapSmartcast: Boolean) {

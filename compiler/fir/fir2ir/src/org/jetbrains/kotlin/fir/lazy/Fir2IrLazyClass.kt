@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyClass(
@@ -44,11 +44,15 @@ class Fir2IrLazyClass(
     override val symbol: IrClassSymbol,
     parent: IrDeclarationParent,
 ) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass>, Fir2IrTypeParametersContainer,
-    IrMaybeDeserializedClass, DeserializableClass, Fir2IrComponents by c {
+    IrMaybeDeserializedClass, Fir2IrComponents by c {
     init {
         this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
+        this.deserializedIr = lazy {
+            assert(parent is IrPackageFragment)
+            extensions.deserializeToplevelClass(this, this)
+        }
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
@@ -259,11 +263,4 @@ class Fir2IrLazyClass(
 
     override val isNewPlaceForBodyGeneration: Boolean
         get() = fir.isNewPlaceForBodyGeneration == true
-
-    private var irLoaded: Boolean? = null
-
-    override fun loadIr(): Boolean {
-        assert(parent is IrPackageFragment)
-        return irLoaded ?: extensions.deserializeToplevelClass(this, this).also { irLoaded = it }
-    }
 }

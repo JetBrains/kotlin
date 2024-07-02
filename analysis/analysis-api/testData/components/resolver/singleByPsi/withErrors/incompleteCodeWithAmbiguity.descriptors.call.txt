@@ -2,6 +2,7 @@ KtCallExpression(89,100): 'Foo<String>'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleFunctionCall:
+        argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -19,9 +20,9 @@ KtCallExpression(89,100): 'Foo<String>'
                 callableId = null
             ]
             callableId = null
-        typeArgumentsMapping = {}
-        argumentMapping = {},
+        typeArgumentsMapping = {},
       KaSimpleFunctionCall:
+        argumentMapping = {}
         isImplicitInvoke = false
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = null
@@ -40,7 +41,6 @@ KtCallExpression(89,100): 'Foo<String>'
             ]
             callableId = null
         typeArgumentsMapping = {}
-        argumentMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public constructor Foo<T>(len: Int) defined in Foo

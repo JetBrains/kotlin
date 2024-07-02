@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.util.DeserializableClass
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -70,7 +70,7 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
             if (!isDeserializationEnabled) return false
             if (!isInline || isFakeOverride) return false
             val topLevelDeclaration = getTopLevelDeclaration()
-            if (topLevelDeclaration is DeserializableClass) return true
+            if (topLevelDeclaration is IrClass && topLevelDeclaration.deserializedIr != null) return true
             return when (firEnabled) {
                 // In compilation with FIR parents of external top-levels functions are replaced
                 //   in lowerings, not in fir2ir converter

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.projectStructure
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -24,7 +24,7 @@ public enum class KaDanglingFileResolutionMode {
     IGNORE_SELF
 }
 
-@OptIn(KaAnalysisApiInternals::class)
+@OptIn(KaImplementationDetail::class)
 public val KtFile.isDangling: Boolean
     get() = when {
         this is KtCodeFragment -> true
@@ -53,7 +53,7 @@ public val KtFile.danglingFileResolutionMode: KaDanglingFileResolutionMode?
  *
  * Avoid using this function in client-side code. Use `analyzeCopy {}` from Analysis API instead.
  */
-@KaAnalysisApiInternals
+@KaImplementationDetail
 public fun <R> withDanglingFileResolutionMode(file: KtFile, mode: KaDanglingFileResolutionMode, action: () -> R): R {
     require(file.isDangling) { "'withDanglingFileResolutionMode()' is only available to dangling files" }
     require(file.originalFile != file) { "'withDanglingFileResolutionMode()' is only available to file copies" }

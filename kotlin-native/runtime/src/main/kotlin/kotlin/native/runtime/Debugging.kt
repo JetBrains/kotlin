@@ -37,6 +37,13 @@ public object Debugging {
     @InternalForKotlinNative
     public val isThreadStateRunnable: Boolean
         get() = Debugging_isThreadStateRunnable()
+
+    /**
+     * Dump memory in binary format to the given POSIX file descriptor and
+     * returns success flag.
+     */
+    @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemory")
+    public external fun dumpMemory(fd: Long): Boolean
 }
 
 

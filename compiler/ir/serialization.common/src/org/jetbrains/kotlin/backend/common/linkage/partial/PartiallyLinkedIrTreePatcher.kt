@@ -785,11 +785,11 @@ internal class PartiallyLinkedIrTreePatcher(
             // Default values are not kept in value parameters of fake override/delegated/override functions.
             // So we need to look up for default value across all overridden functions.
             val functionsToCheckDefaultValues by lazy {
-                if (function !is IrSimpleFunction)
-                    listOf(function)
-                else
-                    function.allOverridden(includeSelf = true)
+                when (function) {
+                    is IrConstructor -> listOf(function)
+                    is IrSimpleFunction -> function.allOverridden(includeSelf = true)
                         .filterNot { it.isFakeOverride || it.origin == IrDeclarationOrigin.DELEGATED_MEMBER }
+                }
             }
 
             val expressionValueArgumentCount = (0 until valueArgumentsCount).count { index ->

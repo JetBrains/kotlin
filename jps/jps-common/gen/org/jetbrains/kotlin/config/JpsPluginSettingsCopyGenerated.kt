@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.config
 
 @OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyJpsPluginSettings(from: JpsPluginSettings, to: JpsPluginSettings): JpsPluginSettings {
+    to.externalSystemId = from.externalSystemId
     to.version = from.version
 
     return to

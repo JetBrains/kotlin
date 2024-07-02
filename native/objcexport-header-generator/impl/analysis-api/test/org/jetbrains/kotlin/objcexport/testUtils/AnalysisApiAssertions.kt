@@ -71,3 +71,10 @@ context(KaSession)
 fun KaClassSymbol.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
     return this.memberScope.getFunctionOrFail(name)
 }
+
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+fun KaClassSymbol.getPropertyOrFail(name: String): KaPropertySymbol {
+    return this.memberScope.getPropertyOrFail(name)
+}
+

@@ -39,7 +39,7 @@ internal fun <L : Any> L.invalidAccess(): Nothing =
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaDeclarationSymbol.getContainingSymbolsWithSelf(): Sequence<KaDeclarationSymbol> =
-    generateSequence(this) { it.containingSymbol }
+    generateSequence(this) { it.containingDeclaration }
 
 internal fun KaSession.mapType(
     type: KaType,

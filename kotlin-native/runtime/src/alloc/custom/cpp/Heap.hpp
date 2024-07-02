@@ -11,14 +11,15 @@
 #include <cstring>
 
 #include "AtomicStack.hpp"
-#include "CustomAllocConstants.hpp"
 #include "ExtraObjectPage.hpp"
+#include "ExtraObjectData.hpp"
 #include "GCStatistics.hpp"
 #include "Memory.h"
 #include "SingleObjectPage.hpp"
 #include "NextFitPage.hpp"
 #include "PageStore.hpp"
 #include "FixedBlockPage.hpp"
+#include "GCApi.hpp"
 
 namespace kotlin::alloc {
 
@@ -46,8 +47,36 @@ public:
 
     auto& allocatedSizeTracker() noexcept { return allocatedSizeTracker_; }
 
+    template <typename T>
+    void TraverseAllocatedObjects(T process) noexcept(noexcept(process(std::declval<ObjHeader*>()))) {
+        for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
+            fixedBlockPages_[blockSize].TraversePages([process](auto *page) {
+                page->TraverseAllocatedBlocks([process](auto *block) {
+                    process(reinterpret_cast<HeapObjHeader*>(block)->object());
+                });
+            });
+        }
+        nextFitPages_.TraversePages([process](auto *page) {
+            page->TraverseAllocatedBlocks([process](auto *block) {
+                process(reinterpret_cast<HeapObjHeader*>(block)->object());
+            });
+        });
+        singleObjectPages_.TraversePages([process](auto *page) {
+            page->TraverseAllocatedBlocks([process](auto *block) {
+                process(reinterpret_cast<HeapObjHeader*>(block)->object());
+            });
+        });
+    }
+
+    template <typename T>
+    void TraverseAllocatedExtraObjects(T process) noexcept(noexcept(process(std::declval<kotlin::mm::ExtraObjectData*>()))) {
+        extraObjectPages_.TraversePages([process](auto *page) {
+            page->TraverseAllocatedObjects(process);
+        });
+    }
+
 private:
-    PageStore<FixedBlockPage> fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
+    PageStore<FixedBlockPage> fixedBlockPages_[FixedBlockPage::MAX_BLOCK_SIZE + 1];
     PageStore<NextFitPage> nextFitPages_;
     PageStore<SingleObjectPage> singleObjectPages_;
     PageStore<ExtraObjectPage> extraObjectPages_;

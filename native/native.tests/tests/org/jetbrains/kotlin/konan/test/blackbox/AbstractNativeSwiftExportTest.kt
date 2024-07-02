@@ -50,7 +50,7 @@ abstract class AbstractNativeSwiftExportTest {
     protected abstract fun runCompiledTest(
         testPathFull: File,
         testCase: TestCase,
-        swiftExportOutput: SwiftExportModule,
+        swiftExportOutputs: Set<SwiftExportModule>,
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
     )
@@ -69,25 +69,32 @@ abstract class AbstractNativeSwiftExportTest {
             ?.getByName(testCaseId)!!
 
         // run swift export
-        val (swiftExportInput, klibDeps) = originalTestCase.constructSwiftInput()
-        val swiftExportOutput = runSwiftExport(
-            swiftExportInput,
-            klibDeps,
-            constructSwiftExportConfig(originalTestCase.rootModules.first())
-        ).getOrThrow().first() as SwiftExportModule.BridgesToKotlin
+        val swiftExportOutputs = originalTestCase.rootModules.flatMapToSet { rootModule ->
+            val (swiftExportInput, klibDeps) = rootModule.constructSwiftInput(originalTestCase.freeCompilerArgs)
+            val swiftExportOutputs = runSwiftExport(
+                swiftExportInput,
+                klibDeps,
+                constructSwiftExportConfig(rootModule)
+            ).getOrThrow().mapToSet { it as SwiftExportModule.BridgesToKotlin }
+            swiftExportOutputs
+        }
+
 
         // compile kotlin into binary
         val additionalKtFiles: Set<Path> = mutableSetOf<Path>()
-            .apply { swiftExportOutput.collectKotlinBridgeFilesRecursively(into = this) }
+            .apply { swiftExportOutputs.collectKotlinBridgeFilesRecursively(into = this) }
 
-        val kotlinFiles = originalTestCase.rootModules.first().files.map { it.location }
+        val kotlinFiles = originalTestCase.rootModules.flatMapToSet { it.files.map { it.location } }
         val kotlinBinaryLibraryName = testPathFull.name + "Kotlin"
 
         val resultingTestCase = generateSwiftExportTestCase(
             testPathFull,
             kotlinBinaryLibraryName,
-            kotlinFiles + additionalKtFiles.map { it.toFile() },
-            dependencies = originalTestCase.rootModules.first().allRegularDependencies.filterIsInstance<TestModule.Exclusive>().toSet(),
+            kotlinFiles.toList() + additionalKtFiles.map { it.toFile() },
+            dependencies = originalTestCase.rootModules
+                .flatMapToSet {
+                    it.allRegularDependencies.filterIsInstance<TestModule.Exclusive>().toSet()
+                },
         )
 
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
@@ -96,17 +103,19 @@ abstract class AbstractNativeSwiftExportTest {
         ).result.assertSuccess().resultingArtifact
 
         // compile swift into binary
-        val swiftModules = swiftExportOutput.compile(
-            compiledKotlinLibrary = kotlinBinaryLibrary,
-            testPathFull,
-        )
+        val swiftModules = swiftExportOutputs.flatMapToSet {
+            it.compile(
+                compiledKotlinLibrary = kotlinBinaryLibrary,
+                testPathFull,
+            )
+        }
 
         // at this point we know that the generated code from SwiftExport can be compiled into library
         // and we are ready to perform other checks
         runCompiledTest(
             testPathFull,
             resultingTestCase,
-            swiftExportOutput,
+            swiftExportOutputs,
             swiftModules,
             kotlinBinaryLibrary
         )
@@ -117,9 +126,8 @@ abstract class AbstractNativeSwiftExportTest {
         val dependencies: List<InputModule.Binary>
     )
 
-    private fun TestCase.constructSwiftInput(): SwiftInputModules {
-        val moduleToTranslate =
-            if (rootModules.count() == 1) rootModules.first() else error("We are not ready to consume more than one module: $rootModules")
+    private fun TestModule.Exclusive.constructSwiftInput(freeCompilerArgs: TestCompilerArgs): SwiftInputModules {
+        val moduleToTranslate = this
         val klibToTranslate = testCompilationFactory.modulesToKlib(
             sourceModules = setOf(moduleToTranslate),
             freeCompilerArgs = freeCompilerArgs,
@@ -146,7 +154,7 @@ abstract class AbstractNativeSwiftExportTest {
         )
     }
 
-    private fun List<SwiftExportModule.BridgesToKotlin>.collectKotlinBridgeFilesRecursively(into: MutableSet<Path>) =
+    private fun Collection<SwiftExportModule.BridgesToKotlin>.collectKotlinBridgeFilesRecursively(into: MutableSet<Path>) =
         forEach { module -> module.collectKotlinBridgeFilesRecursively(into) }
 
     private fun SwiftExportModule.BridgesToKotlin.collectKotlinBridgeFilesRecursively(into: MutableSet<Path>) {

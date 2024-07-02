@@ -39,7 +39,7 @@ internal class NativeMapping : Mapping() {
     val enumValueGetters: DeclarationMapping<IrClass, IrFunction> by AttributeBasedMappingDelegate()
     val enumEntriesMaps: DeclarationMapping<IrClass, Map<Name, LoweredEnumEntryDescription>> by AttributeBasedMappingDelegate()
     val bridges: DeclarationMapping<IrSimpleFunction, MutableMap<BridgeDirections, IrSimpleFunction>> by AttributeBasedMappingDelegate()
-    val partiallyLoweredInlineFunctions: DeclarationMapping<IrFunction, IrFunction> by AttributeBasedMappingDelegate()
+    val loweredInlineFunctions: DeclarationMapping<IrFunction, IrFunction> by AttributeBasedMappingDelegate()
     val outerThisCacheAccessors: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val lateinitPropertyCacheAccessors: DeclarationMapping<IrProperty, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val topLevelFieldCacheAccessors: DeclarationMapping<IrField, IrSimpleFunction> by AttributeBasedMappingDelegate()

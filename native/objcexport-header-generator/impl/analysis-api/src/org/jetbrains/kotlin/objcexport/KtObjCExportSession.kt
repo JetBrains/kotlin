@@ -5,11 +5,18 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridgeValueParameter
 import org.jetbrains.kotlin.utils.getOrPutNullable
 
 
 sealed interface KtObjCExportSession {
     val configuration: KtObjCExportConfiguration
+
+    val useSiteExportSession: KtObjCExportSession
+        get() = this
 }
 
 /**
@@ -28,6 +35,12 @@ internal val KtObjCExportSession.internal: KtObjCExportSessionInternal
         is KtObjCExportSessionInternal -> this
     }
 
+internal class KtObjCExportSymbolOverride(
+    val name: String,
+    val returnType: KaType?,
+    val valueParametersAssociated: List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>?,
+)
+
 /**
  * Private representation of [withKtObjCExportSession].
  * All *private* accessible data shall only be added here and potentially
@@ -35,6 +48,7 @@ internal val KtObjCExportSession.internal: KtObjCExportSessionInternal
  */
 private interface KtObjCExportSessionPrivate : KtObjCExportSessionInternal {
     val cache: MutableMap<Any, Any?>
+    val overrides: Map<KaSymbol, KtObjCExportSymbolOverride>
 }
 
 private val KtObjCExportSession.private: KtObjCExportSessionPrivate
@@ -52,16 +66,18 @@ inline fun <T> withKtObjCExportSession(
         configuration = configuration,
         moduleNaming = moduleNaming,
         moduleClassifier = moduleClassifier,
-        cache = hashMapOf()
+        cache = hashMapOf(),
+        overrides = hashMapOf(),
     ).block()
 }
 
 @PublishedApi
-internal class KtObjCExportSessionImpl(
+internal data class KtObjCExportSessionImpl(
     override val configuration: KtObjCExportConfiguration,
     override val moduleNaming: KtObjCExportModuleNaming,
     override val moduleClassifier: KtObjCExportModuleClassifier,
     override val cache: MutableMap<Any, Any?>,
+    override val overrides: Map<KaSymbol, KtObjCExportSymbolOverride>,
 ) : KtObjCExportSessionPrivate
 
 
@@ -96,3 +112,54 @@ private fun <T> cached(typeOfT: Class<T>, key: Any, computation: () -> T): T {
 
     return typeOfT.cast(value)
 }
+
+/**
+ * Temporarily overrides the function signature and executes the lambda with the applied change.
+ * Within that lambda, the translation API will take into account the overrides.
+ * The [name], [returnType] and [valueParametersAssociated] properties, however, will still return the original values
+ */
+context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+fun <T> KaFunctionSymbol.withOverriddenSignature(
+    name: String,
+    returnType: KaType?,
+    valueParametersAssociated: List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>?,
+    block: context(KtObjCExportSession, KaFunctionSymbol) () -> T,
+): T = runWithOverride(KtObjCExportSymbolOverride(name, returnType, valueParametersAssociated), block)
+
+/**
+ * Temporarily overrides the symbol name and executes the lambda with the applied change.
+ * Within that lambda, the translation API will take into account the overridden name.
+ * The [name] property, however, will still return the original name
+ */
+context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+fun <T> KaNamedSymbol.withOverriddenName(name: String, block: context(KtObjCExportSession, KaNamedSymbol) () -> T): T =
+    runWithOverride(KtObjCExportSymbolOverride(name, null, null), block)
+
+context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private fun <T, S : KaSymbol> S.runWithOverride(override: KtObjCExportSymbolOverride, block: context(KtObjCExportSession) S.() -> T): T {
+    val session = (private as KtObjCExportSessionImpl).let { it.copy(overrides = it.overrides + (this to override)) }
+    return block(session, this)
+}
+
+context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun KaCallableSymbol.exportSessionReturnType(): KaType =
+    private.overrides[this]?.returnType ?: returnType
+
+context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun KaFunctionSymbol.exportSessionValueParameters(): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>? =
+    private.overrides[this]?.valueParametersAssociated
+
+context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun KaNamedSymbol.exportSessionSymbolName(): String =
+    private.overrides[this]?.name ?: name.asString()
+
+context(KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun KaClassifierSymbol.exportSessionSymbolNameOrAnonymous(): String =
+    private.overrides[this]?.name ?: nameOrAnonymous.asString()

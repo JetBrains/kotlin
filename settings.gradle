@@ -940,6 +940,7 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:libllvmext'
     include ':kotlin-native:llvmDebugInfoC'
     include ':kotlin-native:utilities'
+    include ':kotlin-native:tools:kdumputil'
     include ':kotlin-native:platformLibs'
     include ':kotlin-native:libclangext'
     include ':kotlin-native:llvmInterop'

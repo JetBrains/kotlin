@@ -63,11 +63,11 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      TestAnnWithIntArray(x = [1, 2, 3])
-      TestAnnWithStringArray(x = ["a", "b", "c"])
+      TestAnnWithIntArray(x = [1, 2, 3] type=kotlin.IntArray varargElementType=kotlin.Int)
+      TestAnnWithStringArray(x = ["a", "b", "c"] type=kotlin.Array<kotlin.String> varargElementType=kotlin.String)
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      TestAnnWithIntArray(x = [4, 5, 6])
-      TestAnnWithStringArray(x = ["d", "e", "f"])
+      TestAnnWithIntArray(x = [4, 5, 6] type=kotlin.IntArray varargElementType=kotlin.Int)
+      TestAnnWithStringArray(x = ["d", "e", "f"] type=kotlin.Array<kotlin.String> varargElementType=kotlin.String)
     BLOCK_BODY

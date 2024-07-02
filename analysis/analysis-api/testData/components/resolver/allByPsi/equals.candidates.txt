@@ -55,6 +55,14 @@ KtReturnExpression(72,98): 'return super.equals(other)'
 KtDotQualifiedExpression(79,98): 'super.equals(other)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -76,14 +84,6 @@ KtDotQualifiedExpression(79,98): 'super.equals(other)'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtSuperExpression(79,84): 'super'
@@ -95,6 +95,14 @@ KtNameReferenceExpression(79,84): 'super'
 KtCallExpression(85,98): 'equals(other)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -116,19 +124,19 @@ KtCallExpression(85,98): 'equals(other)'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(85,91): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -150,14 +158,6 @@ KtNameReferenceExpression(85,91): 'equals'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(91,98): '(other)'
@@ -197,6 +197,7 @@ KtSuperTypeList(142,151): 'Another()'
 KtSuperTypeCallEntry(142,151): 'Another()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -208,12 +209,12 @@ KtSuperTypeCallEntry(142,151): 'Another()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtConstructorCalleeExpression(142,149): 'Another'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
+      argumentMapping = {}
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -225,7 +226,6 @@ KtConstructorCalleeExpression(142,149): 'Another'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtTypeReference(142,149): 'Another'
@@ -285,6 +285,14 @@ KtReturnExpression(210,236): 'return super.equals(other)'
 KtDotQualifiedExpression(217,236): 'super.equals(other)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -306,14 +314,6 @@ KtDotQualifiedExpression(217,236): 'super.equals(other)'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtSuperExpression(217,222): 'super'
@@ -325,6 +325,14 @@ KtNameReferenceExpression(217,222): 'super'
 KtCallExpression(223,236): 'equals(other)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -346,19 +354,19 @@ KtCallExpression(223,236): 'equals(other)'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(223,229): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -380,14 +388,6 @@ KtNameReferenceExpression(223,229): 'equals'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        other -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(229,236): '(other)'
@@ -524,6 +524,14 @@ KtNameReferenceExpression(311,313): 'm2'
 KtBinaryExpression(318,326): 'm1 == m2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -545,14 +553,6 @@ KtBinaryExpression(318,326): 'm1 == m2'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(318,320): 'm1'
@@ -574,6 +574,14 @@ KtNameReferenceExpression(318,320): 'm1'
 KtOperationReferenceExpression(321,323): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -595,14 +603,6 @@ KtOperationReferenceExpression(321,323): '=='
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(324,326): 'm2'
@@ -624,6 +624,14 @@ KtNameReferenceExpression(324,326): 'm2'
 KtBinaryExpression(331,339): 'm1 != m2'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -645,14 +653,6 @@ KtBinaryExpression(331,339): 'm1 != m2'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(331,333): 'm1'
@@ -674,6 +674,14 @@ KtNameReferenceExpression(331,333): 'm1'
 KtOperationReferenceExpression(334,336): '!='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -695,14 +703,6 @@ KtOperationReferenceExpression(334,336): '!='
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(337,339): 'm2'
@@ -724,6 +724,14 @@ KtNameReferenceExpression(337,339): 'm2'
 KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -745,14 +753,6 @@ KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(344,346): 'm1'
@@ -774,6 +774,14 @@ KtNameReferenceExpression(344,346): 'm1'
 KtCallExpression(347,357): 'equals(m2)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -795,19 +803,19 @@ KtCallExpression(347,357): 'equals(m2)'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(347,353): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -829,14 +837,6 @@ KtNameReferenceExpression(347,353): 'equals'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(353,357): '(m2)'
@@ -940,6 +940,14 @@ KtNameReferenceExpression(384,386): 'm1'
 KtBinaryExpression(391,399): 'm2 == m1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -961,14 +969,6 @@ KtBinaryExpression(391,399): 'm2 == m1'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(391,393): 'm2'
@@ -990,6 +990,14 @@ KtNameReferenceExpression(391,393): 'm2'
 KtOperationReferenceExpression(394,396): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1011,14 +1019,6 @@ KtOperationReferenceExpression(394,396): '=='
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(397,399): 'm1'
@@ -1040,6 +1040,14 @@ KtNameReferenceExpression(397,399): 'm1'
 KtBinaryExpression(404,412): 'm2 != m1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1061,14 +1069,6 @@ KtBinaryExpression(404,412): 'm2 != m1'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(404,406): 'm2'
@@ -1090,6 +1090,14 @@ KtNameReferenceExpression(404,406): 'm2'
 KtOperationReferenceExpression(407,409): '!='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1111,14 +1119,6 @@ KtOperationReferenceExpression(407,409): '!='
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(410,412): 'm1'
@@ -1140,6 +1140,14 @@ KtNameReferenceExpression(410,412): 'm1'
 KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1161,14 +1169,6 @@ KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(417,419): 'm2'
@@ -1190,6 +1190,14 @@ KtNameReferenceExpression(417,419): 'm2'
 KtCallExpression(420,430): 'equals(m1)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1211,19 +1219,19 @@ KtCallExpression(420,430): 'equals(m1)'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(420,426): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1245,14 +1253,6 @@ KtNameReferenceExpression(420,426): 'equals'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        m1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(426,430): '(m1)'
@@ -1292,6 +1292,7 @@ KtProperty(454,477): 'val another = Another()'
 KtCallExpression(468,477): 'Another()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1303,12 +1304,12 @@ KtCallExpression(468,477): 'Another()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(468,475): 'Another'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1320,7 +1321,6 @@ KtNameReferenceExpression(468,475): 'Another'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(475,477): '()'
@@ -1405,6 +1405,14 @@ KtNameReferenceExpression(518,525): 'another'
 KtBinaryExpression(530,550): 'another == Another()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1426,14 +1434,6 @@ KtBinaryExpression(530,550): 'another == Another()'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(530,537): 'another'
@@ -1455,6 +1455,14 @@ KtNameReferenceExpression(530,537): 'another'
 KtOperationReferenceExpression(538,540): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1476,19 +1484,12 @@ KtOperationReferenceExpression(538,540): '=='
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtCallExpression(541,550): 'Another()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1500,12 +1501,12 @@ KtCallExpression(541,550): 'Another()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(541,548): 'Another'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1517,7 +1518,6 @@ KtNameReferenceExpression(541,548): 'Another'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(548,550): '()'
@@ -1526,6 +1526,14 @@ KtValueArgumentList(548,550): '()'
 KtBinaryExpression(555,575): 'another != Another()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1547,14 +1555,6 @@ KtBinaryExpression(555,575): 'another != Another()'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(555,562): 'another'
@@ -1576,6 +1576,14 @@ KtNameReferenceExpression(555,562): 'another'
 KtOperationReferenceExpression(563,565): '!='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1597,19 +1605,12 @@ KtOperationReferenceExpression(563,565): '!='
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtCallExpression(566,575): 'Another()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1621,12 +1622,12 @@ KtCallExpression(566,575): 'Another()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(566,573): 'Another'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1638,7 +1639,6 @@ KtNameReferenceExpression(566,573): 'Another'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(573,575): '()'
@@ -1647,6 +1647,14 @@ KtValueArgumentList(573,575): '()'
 KtDotQualifiedExpression(580,605): 'another.equals(Another())'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1668,14 +1676,6 @@ KtDotQualifiedExpression(580,605): 'another.equals(Another())'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(580,587): 'another'
@@ -1697,6 +1697,14 @@ KtNameReferenceExpression(580,587): 'another'
 KtCallExpression(588,605): 'equals(Another())'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1718,19 +1726,19 @@ KtCallExpression(588,605): 'equals(Another())'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(588,594): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1752,14 +1760,6 @@ KtNameReferenceExpression(588,594): 'equals'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        Another() -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(594,605): '(Another())'
@@ -1771,6 +1771,7 @@ KtValueArgument(595,604): 'Another()'
 KtCallExpression(595,604): 'Another()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1782,12 +1783,12 @@ KtCallExpression(595,604): 'Another()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(595,602): 'Another'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1799,7 +1800,6 @@ KtNameReferenceExpression(595,602): 'Another'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(602,604): '()'
@@ -1811,6 +1811,7 @@ KtProperty(611,630): 'val child = Child()'
 KtCallExpression(623,630): 'Child()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1822,12 +1823,12 @@ KtCallExpression(623,630): 'Child()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(623,628): 'Child'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1839,7 +1840,6 @@ KtNameReferenceExpression(623,628): 'Child'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(628,630): '()'
@@ -1851,6 +1851,7 @@ KtProperty(635,658): 'val myClass = MyClass()'
 KtCallExpression(649,658): 'MyClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1862,12 +1863,12 @@ KtCallExpression(649,658): 'MyClass()'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(649,656): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -1879,7 +1880,6 @@ KtNameReferenceExpression(649,656): 'MyClass'
           valueParameters = []
           callableId = null
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtValueArgumentList(656,658): '()'
@@ -1964,6 +1964,14 @@ KtNameReferenceExpression(697,702): 'child'
 KtBinaryExpression(708,724): 'child == myClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -1985,14 +1993,6 @@ KtBinaryExpression(708,724): 'child == myClass'
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(708,713): 'child'
@@ -2014,6 +2014,14 @@ KtNameReferenceExpression(708,713): 'child'
 KtOperationReferenceExpression(714,716): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2035,14 +2043,6 @@ KtOperationReferenceExpression(714,716): '=='
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(717,724): 'myClass'
@@ -2064,6 +2064,14 @@ KtNameReferenceExpression(717,724): 'myClass'
 KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2085,14 +2093,6 @@ KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(729,734): 'child'
@@ -2114,6 +2114,14 @@ KtNameReferenceExpression(729,734): 'child'
 KtCallExpression(735,750): 'equals(myClass)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2135,19 +2143,19 @@ KtCallExpression(735,750): 'equals(myClass)'
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(735,741): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2169,14 +2177,6 @@ KtNameReferenceExpression(735,741): 'equals'
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(741,750): '(myClass)'
@@ -2204,6 +2204,14 @@ KtNameReferenceExpression(742,749): 'myClass'
 KtBinaryExpression(755,771): 'myClass != child'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2225,14 +2233,6 @@ KtBinaryExpression(755,771): 'myClass != child'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(755,762): 'myClass'
@@ -2254,6 +2254,14 @@ KtNameReferenceExpression(755,762): 'myClass'
 KtOperationReferenceExpression(763,765): '!='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2275,14 +2283,6 @@ KtOperationReferenceExpression(763,765): '!='
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(766,771): 'child'
@@ -2304,6 +2304,7 @@ KtNameReferenceExpression(766,771): 'child'
 KtPrefixExpression(776,798): '!myClass.equals(child)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2318,12 +2319,12 @@ KtPrefixExpression(776,798): '!myClass.equals(child)'
           valueParameters = []
           callableId = kotlin/Boolean.not
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(776,777): '!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2338,12 +2339,19 @@ KtOperationReferenceExpression(776,777): '!'
           valueParameters = []
           callableId = kotlin/Boolean.not
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2365,14 +2373,6 @@ KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(777,784): 'myClass'
@@ -2394,6 +2394,14 @@ KtNameReferenceExpression(777,784): 'myClass'
 KtCallExpression(785,798): 'equals(child)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2415,19 +2423,19 @@ KtCallExpression(785,798): 'equals(child)'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(785,791): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2449,14 +2457,6 @@ KtNameReferenceExpression(785,791): 'equals'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(791,798): '(child)'
@@ -2484,6 +2484,14 @@ KtNameReferenceExpression(792,797): 'child'
 KtBinaryExpression(804,820): 'another == child'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2505,14 +2513,6 @@ KtBinaryExpression(804,820): 'another == child'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(804,811): 'another'
@@ -2534,6 +2534,14 @@ KtNameReferenceExpression(804,811): 'another'
 KtOperationReferenceExpression(812,814): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2555,14 +2563,6 @@ KtOperationReferenceExpression(812,814): '=='
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(815,820): 'child'
@@ -2584,6 +2584,14 @@ KtNameReferenceExpression(815,820): 'child'
 KtDotQualifiedExpression(825,846): 'another.equals(child)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2605,14 +2613,6 @@ KtDotQualifiedExpression(825,846): 'another.equals(child)'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(825,832): 'another'
@@ -2634,6 +2634,14 @@ KtNameReferenceExpression(825,832): 'another'
 KtCallExpression(833,846): 'equals(child)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2655,19 +2663,19 @@ KtCallExpression(833,846): 'equals(child)'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(833,839): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2689,14 +2697,6 @@ KtNameReferenceExpression(833,839): 'equals'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        child -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(839,846): '(child)'
@@ -2724,6 +2724,14 @@ KtNameReferenceExpression(840,845): 'child'
 KtBinaryExpression(851,867): 'child == another'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2745,14 +2753,6 @@ KtBinaryExpression(851,867): 'child == another'
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(851,856): 'child'
@@ -2774,6 +2774,14 @@ KtNameReferenceExpression(851,856): 'child'
 KtOperationReferenceExpression(857,859): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2795,14 +2803,6 @@ KtOperationReferenceExpression(857,859): '=='
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(860,867): 'another'
@@ -2824,6 +2824,14 @@ KtNameReferenceExpression(860,867): 'another'
 KtDotQualifiedExpression(872,893): 'child.equals(another)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2845,14 +2853,6 @@ KtDotQualifiedExpression(872,893): 'child.equals(another)'
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(872,877): 'child'
@@ -2874,6 +2874,14 @@ KtNameReferenceExpression(872,877): 'child'
 KtCallExpression(878,893): 'equals(another)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2895,19 +2903,19 @@ KtCallExpression(878,893): 'equals(another)'
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(878,884): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2929,14 +2937,6 @@ KtNameReferenceExpression(878,884): 'equals'
           ]
           callableId = /Child.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(884,893): '(another)'
@@ -2964,6 +2964,14 @@ KtNameReferenceExpression(885,892): 'another'
 KtBinaryExpression(899,917): 'another == myClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -2985,14 +2993,6 @@ KtBinaryExpression(899,917): 'another == myClass'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(899,906): 'another'
@@ -3014,6 +3014,14 @@ KtNameReferenceExpression(899,906): 'another'
 KtOperationReferenceExpression(907,909): '=='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3035,14 +3043,6 @@ KtOperationReferenceExpression(907,909): '=='
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(910,917): 'myClass'
@@ -3064,6 +3064,14 @@ KtNameReferenceExpression(910,917): 'myClass'
 KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3085,14 +3093,6 @@ KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(922,929): 'another'
@@ -3114,6 +3114,14 @@ KtNameReferenceExpression(922,929): 'another'
 KtCallExpression(930,945): 'equals(myClass)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3135,19 +3143,19 @@ KtCallExpression(930,945): 'equals(myClass)'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(930,936): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3169,14 +3177,6 @@ KtNameReferenceExpression(930,936): 'equals'
           ]
           callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        myClass -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(936,945): '(myClass)'
@@ -3204,6 +3204,14 @@ KtNameReferenceExpression(937,944): 'myClass'
 KtBinaryExpression(950,968): 'myClass != another'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3225,14 +3233,6 @@ KtBinaryExpression(950,968): 'myClass != another'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(950,957): 'myClass'
@@ -3254,6 +3254,14 @@ KtNameReferenceExpression(950,957): 'myClass'
 KtOperationReferenceExpression(958,960): '!='
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3275,14 +3283,6 @@ KtOperationReferenceExpression(958,960): '!='
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(961,968): 'another'
@@ -3304,6 +3304,7 @@ KtNameReferenceExpression(961,968): 'another'
 KtPrefixExpression(973,997): '!myClass.equals(another)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3318,12 +3319,12 @@ KtPrefixExpression(973,997): '!myClass.equals(another)'
           valueParameters = []
           callableId = kotlin/Boolean.not
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(973,974): '!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3338,12 +3339,19 @@ KtOperationReferenceExpression(973,974): '!'
           valueParameters = []
           callableId = kotlin/Boolean.not
       typeArgumentsMapping = {}
-      argumentMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3365,14 +3373,6 @@ KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(974,981): 'myClass'
@@ -3394,6 +3394,14 @@ KtNameReferenceExpression(974,981): 'myClass'
 KtCallExpression(982,997): 'equals(another)'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3415,19 +3423,19 @@ KtCallExpression(982,997): 'equals(another)'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtNameReferenceExpression(982,988): 'equals'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
@@ -3449,14 +3457,6 @@ KtNameReferenceExpression(982,988): 'equals'
           ]
           callableId = /MyClass.equals
       typeArgumentsMapping = {}
-      argumentMapping = {
-        another -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = other: kotlin.Any?
-          callableId = null)
-      }
     isInBestCandidates = true
 
 KtValueArgumentList(988,997): '(another)'

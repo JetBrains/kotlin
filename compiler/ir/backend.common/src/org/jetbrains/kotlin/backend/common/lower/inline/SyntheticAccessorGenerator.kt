@@ -149,9 +149,9 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
                 IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
             )
 
-            accessor.body = context.irFactory.createExpressionBody(
+            accessor.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                createConstructorCall(accessor, source.symbol)
+                listOf(createConstructorCall(accessor, source.symbol))
             )
         }
     }

@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.types.ConstantValueKind
 
+@KaImplementationDetail
 object KaConstantValueFactory {
-    @OptIn(KaImplementationDetail::class)
     fun createConstantValue(value: Any?, expression: KtElement? = null): KaConstantValue? = when (value) {
         null -> KaNullConstantValueImpl(expression)
         is Boolean -> KaBooleanConstantValueImpl(value, expression)

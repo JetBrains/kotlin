@@ -15,17 +15,27 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.util.ImplementationStatus
 
 public interface KaSymbolRelationProvider {
     /**
-     * Returns containing declaration for symbol:
-     *   for top-level declarations returns null
-     *   for class members returns containing class
-     *   for local declaration returns declaration it was declared it
+     * A containing declaration for symbol:
+     *   for top-level declarations, a [KaFileSymbol], or a [KaScriptSymbol] if the file is a script file;
+     *   for scripts, a [KaFileSymbol];
+     *   for class members, a containing class;
+     *   for local declarations, a declaration it was declared it.
      */
-    public val KaSymbol.containingSymbol: KaDeclarationSymbol?
+    public val KaSymbol.containingSymbol: KaSymbol?
+
+    /**
+     * A containing declaration for symbol:
+     *   for top-level declarations, a containing [KaScriptSymbol] or `null` for non-script declarations;
+     *   for class members, a containing class;
+     *   for local declarations, a declaration it was declared it.
+     */
+    public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
 
     /**
      * Returns containing [KtFile] as [KaFileSymbol]

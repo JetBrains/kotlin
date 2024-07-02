@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 
-@KaAnalysisApiInternals
 @KaPlatformInterface
+@KaImplementationDetail
 class KaBuiltinsModuleImpl(
     override val targetPlatform: TargetPlatform,
     override val project: Project,

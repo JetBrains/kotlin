@@ -5,37 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 
 /**
  * Call information at call site.
  */
-public sealed class KaCallInfo : KaLifetimeOwner
+public sealed interface KaCallInfo : KaLifetimeOwner
 
 /**
  * Successfully resolved call.
  */
-public class KaSuccessCallInfo @KaImplementationDetail constructor(private val backingCall: KaCall) : KaCallInfo() {
-    override val token: KaLifetimeToken get() = backingCall.token
-    public val call: KaCall get() = withValidityAssertion { backingCall }
+public interface KaSuccessCallInfo : KaCallInfo {
+    public val call: KaCall
 }
 
 /**
  * Call that contains errors.
  */
-public class KaErrorCallInfo @KaImplementationDetail constructor(
-    candidateCalls: List<KaCall>,
-    diagnostic: KaDiagnostic,
-    override val token: KaLifetimeToken,
-) : KaCallInfo() {
-    public val candidateCalls: List<KaCall> by validityAsserted(candidateCalls)
-    public val diagnostic: KaDiagnostic by validityAsserted(diagnostic)
+public interface KaErrorCallInfo : KaCallInfo {
+    public val candidateCalls: List<KaCall>
+    public val diagnostic: KaDiagnostic
 }
 
 public val KaCallInfo.calls: List<KaCall>

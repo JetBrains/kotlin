@@ -1,6 +1,20 @@
 KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
+      argumentMapping = {
+        AnnoWithKClass::class -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = vararg elements: T
+          callableId = null),
+        one.AnnoWithKClass::class -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = vararg elements: T
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -20,18 +34,4 @@ KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKCl
           callableId = kotlin/arrayOf
       typeArgumentsMapping = {
         T -> (kotlin.reflect.KClass<*>)
-      }
-      argumentMapping = {
-        AnnoWithKClass::class -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.reflect.KClass<*>
-          symbol = vararg elements: T
-          callableId = null),
-        one.AnnoWithKClass::class -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.reflect.KClass<*>
-          symbol = vararg elements: T
-          callableId = null)
       }

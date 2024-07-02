@@ -12,7 +12,7 @@ package org.jetbrains.kotlin.analysis.api.platform
  * intended to support platform implementations. They are defined in the Platform Interface, as opposed to the user-facing Analysis API,
  * because they are intended for the consumption of platform implementations, but not Analysis API users.
  *
- * As an example, a platform's lifetime token implementation (see [KotlinLifetimeTokenProvider][org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenProvider])
+ * As an example, a platform's lifetime token implementation (see [KotlinLifetimeTokenFactory][org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory])
  * can make use of the [KaLifetimeTracker][org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTracker] engine service to retrieve
  * the currently active lifetime token for comparison.
  *

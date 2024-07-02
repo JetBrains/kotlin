@@ -16,6 +16,6 @@ context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(KaExperimentalApi::class)
 internal fun KaPropertyAccessorSymbol.getPropertySymbol(): KaPropertySymbol {
-    return this.linearClosure<KaSymbol> { it.containingSymbol }.filterIsInstance<KaPropertySymbol>().firstOrNull()
+    return this.linearClosure<KaSymbol> { it.containingDeclaration }.filterIsInstance<KaPropertySymbol>().firstOrNull()
         ?: error("Missing '${KaPropertySymbol::class} on ${this.render()}")
 }

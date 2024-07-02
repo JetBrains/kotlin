@@ -153,7 +153,7 @@ class LLFirResolveExtensionToolPackageFilter(
 class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     private val extensionProvider: LLFirResolveExtensionsFileProvider,
     private val ktModule: KaModule,
-) : KotlinDeclarationProvider() {
+) : KotlinDeclarationProvider {
 
     private val extensionFileToDeclarationProvider: ConcurrentHashMap<KaResolveExtensionFile, KotlinFileBasedDeclarationProvider> =
         ConcurrentHashMap()
@@ -336,7 +336,7 @@ internal class LLFirResolveExtensionsFileProvider(
 
 private class LLFirResolveExtensionToolPackageProvider(
     private val packageFilter: LLFirResolveExtensionToolPackageFilter,
-) : KotlinPackageProvider() {
+) : KotlinPackageProvider {
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean =
         doesKotlinOnlyPackageExist(packageFqName)
 

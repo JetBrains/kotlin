@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 
-class KaFe10DescNamedClassSymbolPointer(private val classId: ClassId) : KaSymbolPointer<KaNamedClassSymbol>() {
+internal class KaFe10DescNamedClassSymbolPointer(private val classId: ClassId) : KaSymbolPointer<KaNamedClassSymbol>() {
     @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): KaNamedClassSymbol? {
         check(analysisSession is KaFe10Session)

@@ -178,33 +178,34 @@ digraph kt44814_kt {
                     51 [label="Function call arguments enter [4]"];
                     52 [label="Function call arguments exit [4]"];
                 }
-                53 [label="Function call: R|kotlin/collections/emptyList|<R|LighterASTNode?|>() [4]" style="filled" fillcolor=yellow];
-                54 [label="Exit default value of _children [4]" style="filled" fillcolor=red];
+                53 [label="Function call enter: R|kotlin/collections/emptyList|<R|LighterASTNode?|>() [4]"];
+                54 [label="Function call exit: R|kotlin/collections/emptyList|<R|LighterASTNode?|>() [4]" style="filled" fillcolor=yellow];
+                55 [label="Exit default value of _children [4]" style="filled" fillcolor=red];
             }
-            55 [label="Exit default value of _children [3]"];
-            56 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
-            57 [label="Exit function <init> [3]" style="filled" fillcolor=red];
+            56 [label="Exit default value of _children [3]"];
+            57 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
+            58 [label="Exit function <init> [3]" style="filled" fillcolor=red];
         }
         subgraph cluster_22 {
             color=blue
-            58 [label="Enter property [3]" style="filled" fillcolor=red];
-            59 [label="Access variable R|<local>/_children| [3]"];
-            60 [label="Exit property [3]" style="filled" fillcolor=red];
+            59 [label="Enter property [3]" style="filled" fillcolor=red];
+            60 [label="Access variable R|<local>/_children| [3]"];
+            61 [label="Exit property [3]" style="filled" fillcolor=red];
         }
         subgraph cluster_23 {
             color=blue
-            61 [label="Enter property [3]" style="filled" fillcolor=red];
-            62 [label="Access qualifier /TokenType [3]"];
-            63 [label="Access variable R|/TokenType.Companion.MODIFIER_LIST| [3]"];
-            64 [label="Exit property [3]" style="filled" fillcolor=red];
+            62 [label="Enter property [3]" style="filled" fillcolor=red];
+            63 [label="Access qualifier /TokenType [3]"];
+            64 [label="Access variable R|/TokenType.Companion.MODIFIER_LIST| [3]"];
+            65 [label="Exit property [3]" style="filled" fillcolor=red];
         }
-        65 [label="Exit class LighterASTNode [2]" style="filled" fillcolor=red];
+        66 [label="Exit class LighterASTNode [2]" style="filled" fillcolor=red];
     }
     47 -> {48} [color=green];
-    47 -> {65} [style=dotted];
-    47 -> {48 58 61} [style=dashed];
+    47 -> {66} [style=dotted];
+    47 -> {48 59 62} [style=dashed];
     48 -> {49};
-    49 -> {50 55};
+    49 -> {50 56};
     49 -> {50} [style=dashed];
     50 -> {51};
     51 -> {52};
@@ -213,501 +214,513 @@ digraph kt44814_kt {
     54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {58} [color=green];
-    58 -> {59};
+    57 -> {58};
+    58 -> {59} [color=green];
     59 -> {60};
-    60 -> {61} [color=green];
-    61 -> {62};
+    60 -> {61};
+    61 -> {62} [color=green];
     62 -> {63};
     63 -> {64};
-    64 -> {65} [color=green];
+    64 -> {65};
+    65 -> {66} [color=green];
 
     subgraph cluster_24 {
         color=red
-        66 [label="Enter function getChildren [3]" style="filled" fillcolor=red];
+        67 [label="Enter function getChildren [3]" style="filled" fillcolor=red];
         subgraph cluster_25 {
             color=blue
-            67 [label="Enter block [3]"];
-            68 [label="Access variable R|/LighterASTNode._children| [3]"];
-            69 [label="Jump: ^getChildren this@R|/LighterASTNode|.R|/LighterASTNode._children| [3]"];
-            70 [label="Stub [3]" style="filled" fillcolor=gray];
-            71 [label="Exit block [3]" style="filled" fillcolor=gray];
+            68 [label="Enter block [3]"];
+            69 [label="Access variable R|/LighterASTNode._children| [3]"];
+            70 [label="Jump: ^getChildren this@R|/LighterASTNode|.R|/LighterASTNode._children| [3]"];
+            71 [label="Stub [3]" style="filled" fillcolor=gray];
+            72 [label="Exit block [3]" style="filled" fillcolor=gray];
         }
-        72 [label="Exit function getChildren [3]" style="filled" fillcolor=red];
+        73 [label="Exit function getChildren [3]" style="filled" fillcolor=red];
     }
-    66 -> {67};
     67 -> {68};
     68 -> {69};
-    69 -> {72};
-    69 -> {70} [style=dotted];
+    69 -> {70};
+    70 -> {73};
     70 -> {71} [style=dotted];
     71 -> {72} [style=dotted];
+    72 -> {73} [style=dotted];
 
     subgraph cluster_26 {
         color=red
-        73 [label="Enter class TokenType [2]" style="filled" fillcolor=red];
+        74 [label="Enter class TokenType [2]" style="filled" fillcolor=red];
         subgraph cluster_27 {
             color=blue
-            74 [label="Enter function <init> [3]" style="filled" fillcolor=red];
-            75 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
-            76 [label="Exit function <init> [3]" style="filled" fillcolor=red];
+            75 [label="Enter function <init> [3]" style="filled" fillcolor=red];
+            76 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
+            77 [label="Exit function <init> [3]" style="filled" fillcolor=red];
         }
-        77 [label="Exit class TokenType [2]" style="filled" fillcolor=red];
+        78 [label="Exit class TokenType [2]" style="filled" fillcolor=red];
     }
-    73 -> {74} [color=green];
-    73 -> {77} [style=dotted];
-    73 -> {74} [style=dashed];
-    74 -> {75};
+    74 -> {75} [color=green];
+    74 -> {78} [style=dotted];
+    74 -> {75} [style=dashed];
     75 -> {76};
-    76 -> {77} [color=green];
+    76 -> {77};
+    77 -> {78} [color=green];
 
     subgraph cluster_28 {
         color=red
-        78 [label="Enter class Companion [3]" style="filled" fillcolor=red];
+        79 [label="Enter class Companion [3]" style="filled" fillcolor=red];
         subgraph cluster_29 {
             color=blue
-            79 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            80 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
-            81 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+            80 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            81 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
+            82 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_30 {
             color=blue
-            82 [label="Enter property [4]" style="filled" fillcolor=red];
+            83 [label="Enter property [4]" style="filled" fillcolor=red];
             subgraph cluster_31 {
                 color=blue
-                83 [label="Function call arguments enter [4]"];
-                84 [label="Function call arguments exit [4]"];
+                84 [label="Function call arguments enter [4]"];
+                85 [label="Function call arguments exit [4]"];
             }
-            85 [label="Function call: R|/TokenType.TokenType|() [4]" style="filled" fillcolor=yellow];
-            86 [label="Exit property [4]" style="filled" fillcolor=red];
+            86 [label="Function call enter: R|/TokenType.TokenType|() [4]"];
+            87 [label="Function call exit: R|/TokenType.TokenType|() [4]" style="filled" fillcolor=yellow];
+            88 [label="Exit property [4]" style="filled" fillcolor=red];
         }
-        87 [label="Exit class Companion [3]" style="filled" fillcolor=red];
+        89 [label="Exit class Companion [3]" style="filled" fillcolor=red];
     }
-    78 -> {79} [color=green];
-    78 -> {87} [style=dotted];
-    78 -> {79 82} [style=dashed];
-    79 -> {80};
+    79 -> {80} [color=green];
+    79 -> {89} [style=dotted];
+    79 -> {80 83} [style=dashed];
     80 -> {81};
-    81 -> {82} [color=green];
-    82 -> {83};
+    81 -> {82};
+    82 -> {83} [color=green];
     83 -> {84};
     84 -> {85};
     85 -> {86};
-    86 -> {87} [color=green];
+    86 -> {87};
+    87 -> {88};
+    88 -> {89} [color=green];
 
     subgraph cluster_32 {
         color=red
-        88 [label="Enter class KtModifierKeywordToken [2]" style="filled" fillcolor=red];
+        90 [label="Enter class KtModifierKeywordToken [2]" style="filled" fillcolor=red];
         subgraph cluster_33 {
             color=blue
-            89 [label="Enter function <init> [3]" style="filled" fillcolor=red];
-            90 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
-            91 [label="Exit function <init> [3]" style="filled" fillcolor=red];
+            91 [label="Enter function <init> [3]" style="filled" fillcolor=red];
+            92 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
+            93 [label="Exit function <init> [3]" style="filled" fillcolor=red];
         }
-        92 [label="Exit class KtModifierKeywordToken [2]" style="filled" fillcolor=red];
+        94 [label="Exit class KtModifierKeywordToken [2]" style="filled" fillcolor=red];
     }
-    88 -> {89} [color=green];
-    88 -> {92} [style=dotted];
-    88 -> {89} [style=dashed];
-    89 -> {90};
-    90 -> {91};
-    91 -> {92} [color=green];
+    90 -> {91} [color=green];
+    90 -> {94} [style=dotted];
+    90 -> {91} [style=dashed];
+    91 -> {92};
+    92 -> {93};
+    93 -> {94} [color=green];
 
     subgraph cluster_34 {
         color=red
-        93 [label="Enter class KtModifierList [2]" style="filled" fillcolor=red];
+        95 [label="Enter class KtModifierList [2]" style="filled" fillcolor=red];
         subgraph cluster_35 {
             color=blue
-            94 [label="Enter function <init> [3]" style="filled" fillcolor=red];
-            95 [label="Delegated constructor call: super<R|PsiElement|>() [3]" style="filled" fillcolor=yellow];
-            96 [label="Exit function <init> [3]" style="filled" fillcolor=red];
+            96 [label="Enter function <init> [3]" style="filled" fillcolor=red];
+            97 [label="Delegated constructor call: super<R|PsiElement|>() [3]" style="filled" fillcolor=yellow];
+            98 [label="Exit function <init> [3]" style="filled" fillcolor=red];
         }
-        97 [label="Exit class KtModifierList [2]" style="filled" fillcolor=red];
+        99 [label="Exit class KtModifierList [2]" style="filled" fillcolor=red];
     }
-    93 -> {94} [color=green];
-    93 -> {97} [style=dotted];
-    93 -> {94} [style=dashed];
-    94 -> {95};
-    95 -> {96};
-    96 -> {97} [color=green];
+    95 -> {96} [color=green];
+    95 -> {99} [style=dotted];
+    95 -> {96} [style=dashed];
+    96 -> {97};
+    97 -> {98};
+    98 -> {99} [color=green];
 
     subgraph cluster_36 {
         color=red
-        98 [label="Enter class KtModifierListOwner [2]" style="filled" fillcolor=red];
+        100 [label="Enter class KtModifierListOwner [2]" style="filled" fillcolor=red];
         subgraph cluster_37 {
             color=blue
-            99 [label="Enter function <init> [3]" style="filled" fillcolor=red];
-            100 [label="Delegated constructor call: super<R|PsiElement|>() [3]" style="filled" fillcolor=yellow];
-            101 [label="Exit function <init> [3]" style="filled" fillcolor=red];
+            101 [label="Enter function <init> [3]" style="filled" fillcolor=red];
+            102 [label="Delegated constructor call: super<R|PsiElement|>() [3]" style="filled" fillcolor=yellow];
+            103 [label="Exit function <init> [3]" style="filled" fillcolor=red];
         }
         subgraph cluster_38 {
             color=blue
-            102 [label="Enter property [3]" style="filled" fillcolor=red];
+            104 [label="Enter property [3]" style="filled" fillcolor=red];
             subgraph cluster_39 {
                 color=blue
-                103 [label="Function call arguments enter [3]"];
-                104 [label="Function call arguments exit [3]"];
+                105 [label="Function call arguments enter [3]"];
+                106 [label="Function call arguments exit [3]"];
             }
-            105 [label="Function call: R|/KtModifierList.KtModifierList|() [3]" style="filled" fillcolor=yellow];
-            106 [label="Exit property [3]" style="filled" fillcolor=red];
+            107 [label="Function call enter: R|/KtModifierList.KtModifierList|() [3]"];
+            108 [label="Function call exit: R|/KtModifierList.KtModifierList|() [3]" style="filled" fillcolor=yellow];
+            109 [label="Exit property [3]" style="filled" fillcolor=red];
         }
-        107 [label="Exit class KtModifierListOwner [2]" style="filled" fillcolor=red];
+        110 [label="Exit class KtModifierListOwner [2]" style="filled" fillcolor=red];
     }
-    98 -> {99} [color=green];
-    98 -> {107} [style=dotted];
-    98 -> {99 102} [style=dashed];
-    99 -> {100};
-    100 -> {101};
-    101 -> {102} [color=green];
+    100 -> {101} [color=green];
+    100 -> {110} [style=dotted];
+    100 -> {101 104} [style=dashed];
+    101 -> {102};
     102 -> {103};
-    103 -> {104};
+    103 -> {104} [color=green];
     104 -> {105};
     105 -> {106};
-    106 -> {107} [color=green];
+    106 -> {107};
+    107 -> {108};
+    108 -> {109};
+    109 -> {110} [color=green];
 
     subgraph cluster_40 {
         color=red
-        108 [label="Enter class FirModifier [2]" style="filled" fillcolor=red];
+        111 [label="Enter class FirModifier [2]" style="filled" fillcolor=red];
         subgraph cluster_41 {
             color=blue
-            109 [label="Enter function <init> [3]" style="filled" fillcolor=red];
-            110 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
-            111 [label="Exit function <init> [3]" style="filled" fillcolor=red];
+            112 [label="Enter function <init> [3]" style="filled" fillcolor=red];
+            113 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
+            114 [label="Exit function <init> [3]" style="filled" fillcolor=red];
         }
         subgraph cluster_42 {
             color=blue
-            112 [label="Enter property [3]" style="filled" fillcolor=red];
-            113 [label="Access variable R|<local>/node| [3]"];
-            114 [label="Exit property [3]" style="filled" fillcolor=red];
+            115 [label="Enter property [3]" style="filled" fillcolor=red];
+            116 [label="Access variable R|<local>/node| [3]"];
+            117 [label="Exit property [3]" style="filled" fillcolor=red];
         }
         subgraph cluster_43 {
             color=blue
-            115 [label="Enter property [3]" style="filled" fillcolor=red];
-            116 [label="Access variable R|<local>/token| [3]"];
-            117 [label="Exit property [3]" style="filled" fillcolor=red];
+            118 [label="Enter property [3]" style="filled" fillcolor=red];
+            119 [label="Access variable R|<local>/token| [3]"];
+            120 [label="Exit property [3]" style="filled" fillcolor=red];
         }
-        118 [label="Exit class FirModifier [2]" style="filled" fillcolor=red];
+        121 [label="Exit class FirModifier [2]" style="filled" fillcolor=red];
     }
-    108 -> {109} [color=green];
-    108 -> {118} [style=dotted];
-    108 -> {109 112 115} [style=dashed];
-    109 -> {110};
-    110 -> {111};
     111 -> {112} [color=green];
+    111 -> {121} [style=dotted];
+    111 -> {112 115 118} [style=dashed];
     112 -> {113};
     113 -> {114};
     114 -> {115} [color=green];
     115 -> {116};
     116 -> {117};
     117 -> {118} [color=green];
+    118 -> {119};
+    119 -> {120};
+    120 -> {121} [color=green];
 
     subgraph cluster_44 {
         color=red
-        119 [label="Enter class FirPsiModifier [3]" style="filled" fillcolor=red];
+        122 [label="Enter class FirPsiModifier [3]" style="filled" fillcolor=red];
         subgraph cluster_45 {
             color=blue
-            120 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            121 [label="Access variable R|<local>/node| [4]"];
-            122 [label="Access variable R|<local>/token| [4]"];
-            123 [label="Delegated constructor call: super<R|FirModifier<ASTNode>|>(...) [4]" style="filled" fillcolor=yellow];
-            124 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+            123 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            124 [label="Access variable R|<local>/node| [4]"];
+            125 [label="Access variable R|<local>/token| [4]"];
+            126 [label="Delegated constructor call: super<R|FirModifier<ASTNode>|>(...) [4]" style="filled" fillcolor=yellow];
+            127 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
-        125 [label="Exit class FirPsiModifier [3]" style="filled" fillcolor=red];
+        128 [label="Exit class FirPsiModifier [3]" style="filled" fillcolor=red];
     }
-    119 -> {120} [color=green];
-    119 -> {125} [style=dotted];
-    119 -> {120} [style=dashed];
-    120 -> {121};
-    121 -> {122};
-    122 -> {123};
+    122 -> {123} [color=green];
+    122 -> {128} [style=dotted];
+    122 -> {123} [style=dashed];
     123 -> {124};
-    124 -> {125} [color=green];
+    124 -> {125};
+    125 -> {126};
+    126 -> {127};
+    127 -> {128} [color=green];
 
     subgraph cluster_46 {
         color=red
-        126 [label="Enter class FirLightModifier [3]" style="filled" fillcolor=red];
+        129 [label="Enter class FirLightModifier [3]" style="filled" fillcolor=red];
         subgraph cluster_47 {
             color=blue
-            127 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            128 [label="Access variable R|<local>/node| [4]"];
-            129 [label="Access variable R|<local>/token| [4]"];
-            130 [label="Delegated constructor call: super<R|FirModifier<LighterASTNode>|>(...) [4]" style="filled" fillcolor=yellow];
-            131 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+            130 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            131 [label="Access variable R|<local>/node| [4]"];
+            132 [label="Access variable R|<local>/token| [4]"];
+            133 [label="Delegated constructor call: super<R|FirModifier<LighterASTNode>|>(...) [4]" style="filled" fillcolor=yellow];
+            134 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_48 {
             color=blue
-            132 [label="Enter property [4]" style="filled" fillcolor=red];
-            133 [label="Access variable R|<local>/tree| [4]"];
-            134 [label="Exit property [4]" style="filled" fillcolor=red];
+            135 [label="Enter property [4]" style="filled" fillcolor=red];
+            136 [label="Access variable R|<local>/tree| [4]"];
+            137 [label="Exit property [4]" style="filled" fillcolor=red];
         }
-        135 [label="Exit class FirLightModifier [3]" style="filled" fillcolor=red];
+        138 [label="Exit class FirLightModifier [3]" style="filled" fillcolor=red];
     }
-    126 -> {127} [color=green];
-    126 -> {135} [style=dotted];
-    126 -> {127 132} [style=dashed];
-    127 -> {128};
-    128 -> {129};
-    129 -> {130};
+    129 -> {130} [color=green];
+    129 -> {138} [style=dotted];
+    129 -> {130 135} [style=dashed];
     130 -> {131};
-    131 -> {132} [color=green];
+    131 -> {132};
     132 -> {133};
     133 -> {134};
     134 -> {135} [color=green];
+    135 -> {136};
+    136 -> {137};
+    137 -> {138} [color=green];
 
     subgraph cluster_49 {
         color=red
-        136 [label="Enter class FirModifierList [2]" style="filled" fillcolor=red];
+        139 [label="Enter class FirModifierList [2]" style="filled" fillcolor=red];
         subgraph cluster_50 {
             color=blue
-            137 [label="Enter function <init> [3]" style="filled" fillcolor=red];
-            138 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
-            139 [label="Exit function <init> [3]" style="filled" fillcolor=red];
+            140 [label="Enter function <init> [3]" style="filled" fillcolor=red];
+            141 [label="Delegated constructor call: super<R|kotlin/Any|>() [3]" style="filled" fillcolor=yellow];
+            142 [label="Exit function <init> [3]" style="filled" fillcolor=red];
         }
         subgraph cluster_51 {
             color=blue
-            140 [label="Enter property [3]" style="filled" fillcolor=red];
+            143 [label="Enter property [3]" style="filled" fillcolor=red];
             subgraph cluster_52 {
                 color=blue
-                141 [label="Function call arguments enter [3]"];
-                142 [label="Function call arguments exit [3]"];
+                144 [label="Function call arguments enter [3]"];
+                145 [label="Function call arguments exit [3]"];
             }
-            143 [label="Function call: R|kotlin/collections/emptyList|<R|FirModifier<*>|>() [3]" style="filled" fillcolor=yellow];
-            144 [label="Exit property [3]" style="filled" fillcolor=red];
+            146 [label="Function call enter: R|kotlin/collections/emptyList|<R|FirModifier<*>|>() [3]"];
+            147 [label="Function call exit: R|kotlin/collections/emptyList|<R|FirModifier<*>|>() [3]" style="filled" fillcolor=yellow];
+            148 [label="Exit property [3]" style="filled" fillcolor=red];
         }
-        145 [label="Exit class FirModifierList [2]" style="filled" fillcolor=red];
+        149 [label="Exit class FirModifierList [2]" style="filled" fillcolor=red];
     }
-    136 -> {137} [color=green];
-    136 -> {145} [style=dotted];
-    136 -> {137 140} [style=dashed];
-    137 -> {138};
-    138 -> {139};
     139 -> {140} [color=green];
+    139 -> {149} [style=dotted];
+    139 -> {140 143} [style=dashed];
     140 -> {141};
     141 -> {142};
-    142 -> {143};
+    142 -> {143} [color=green];
     143 -> {144};
-    144 -> {145} [color=green];
+    144 -> {145};
+    145 -> {146};
+    146 -> {147};
+    147 -> {148};
+    148 -> {149} [color=green];
 
     subgraph cluster_53 {
         color=red
-        146 [label="Enter class FirPsiModifierList [3]" style="filled" fillcolor=red];
+        150 [label="Enter class FirPsiModifierList [3]" style="filled" fillcolor=red];
         subgraph cluster_54 {
             color=blue
-            147 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            148 [label="Delegated constructor call: super<R|FirModifierList|>() [4]" style="filled" fillcolor=yellow];
-            149 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+            151 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            152 [label="Delegated constructor call: super<R|FirModifierList|>() [4]" style="filled" fillcolor=yellow];
+            153 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_55 {
             color=blue
-            150 [label="Enter property [4]" style="filled" fillcolor=red];
-            151 [label="Access variable R|<local>/modifierList| [4]"];
-            152 [label="Exit property [4]" style="filled" fillcolor=red];
+            154 [label="Enter property [4]" style="filled" fillcolor=red];
+            155 [label="Access variable R|<local>/modifierList| [4]"];
+            156 [label="Exit property [4]" style="filled" fillcolor=red];
         }
-        153 [label="Exit class FirPsiModifierList [3]" style="filled" fillcolor=red];
+        157 [label="Exit class FirPsiModifierList [3]" style="filled" fillcolor=red];
     }
-    146 -> {147} [color=green];
-    146 -> {153} [style=dotted];
-    146 -> {147 150} [style=dashed];
-    147 -> {148};
-    148 -> {149};
-    149 -> {150} [color=green];
-    150 -> {151};
+    150 -> {151} [color=green];
+    150 -> {157} [style=dotted];
+    150 -> {151 154} [style=dashed];
     151 -> {152};
-    152 -> {153} [color=green];
+    152 -> {153};
+    153 -> {154} [color=green];
+    154 -> {155};
+    155 -> {156};
+    156 -> {157} [color=green];
 
     subgraph cluster_56 {
         color=red
-        154 [label="Enter class FirLightModifierList [3]" style="filled" fillcolor=red];
+        158 [label="Enter class FirLightModifierList [3]" style="filled" fillcolor=red];
         subgraph cluster_57 {
             color=blue
-            155 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            156 [label="Delegated constructor call: super<R|FirModifierList|>() [4]" style="filled" fillcolor=yellow];
-            157 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+            159 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            160 [label="Delegated constructor call: super<R|FirModifierList|>() [4]" style="filled" fillcolor=yellow];
+            161 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_58 {
             color=blue
-            158 [label="Enter property [4]" style="filled" fillcolor=red];
-            159 [label="Access variable R|<local>/modifierList| [4]"];
-            160 [label="Exit property [4]" style="filled" fillcolor=red];
+            162 [label="Enter property [4]" style="filled" fillcolor=red];
+            163 [label="Access variable R|<local>/modifierList| [4]"];
+            164 [label="Exit property [4]" style="filled" fillcolor=red];
         }
         subgraph cluster_59 {
             color=blue
-            161 [label="Enter property [4]" style="filled" fillcolor=red];
-            162 [label="Access variable R|<local>/tree| [4]"];
-            163 [label="Exit property [4]" style="filled" fillcolor=red];
+            165 [label="Enter property [4]" style="filled" fillcolor=red];
+            166 [label="Access variable R|<local>/tree| [4]"];
+            167 [label="Exit property [4]" style="filled" fillcolor=red];
         }
-        164 [label="Exit class FirLightModifierList [3]" style="filled" fillcolor=red];
+        168 [label="Exit class FirLightModifierList [3]" style="filled" fillcolor=red];
     }
-    154 -> {155} [color=green];
-    154 -> {164} [style=dotted];
-    154 -> {155 158 161} [style=dashed];
-    155 -> {156};
-    156 -> {157};
-    157 -> {158} [color=green];
-    158 -> {159};
+    158 -> {159} [color=green];
+    158 -> {168} [style=dotted];
+    158 -> {159 162 165} [style=dashed];
     159 -> {160};
-    160 -> {161} [color=green];
-    161 -> {162};
+    160 -> {161};
+    161 -> {162} [color=green];
     162 -> {163};
-    163 -> {164} [color=green];
+    163 -> {164};
+    164 -> {165} [color=green];
+    165 -> {166};
+    166 -> {167};
+    167 -> {168} [color=green];
 
     subgraph cluster_60 {
         color=red
-        165 [label="Enter class Companion [3]" style="filled" fillcolor=red];
+        169 [label="Enter class Companion [3]" style="filled" fillcolor=red];
         subgraph cluster_61 {
             color=blue
-            166 [label="Enter function <init> [4]" style="filled" fillcolor=red];
-            167 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
-            168 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+            170 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            171 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
+            172 [label="Exit function <init> [4]" style="filled" fillcolor=red];
         }
-        169 [label="Exit class Companion [3]" style="filled" fillcolor=red];
+        173 [label="Exit class Companion [3]" style="filled" fillcolor=red];
     }
-    165 -> {166} [color=green];
-    165 -> {169} [style=dotted];
-    165 -> {166} [style=dashed];
-    166 -> {167};
-    167 -> {168};
-    168 -> {169} [color=green];
+    169 -> {170} [color=green];
+    169 -> {173} [style=dotted];
+    169 -> {170} [style=dashed];
+    170 -> {171};
+    171 -> {172};
+    172 -> {173} [color=green];
 
     subgraph cluster_62 {
         color=red
-        170 [label="Enter function getModifierList [4]" style="filled" fillcolor=red];
+        174 [label="Enter function getModifierList [4]" style="filled" fillcolor=red];
         subgraph cluster_63 {
             color=blue
-            171 [label="Enter block [4]"];
+            175 [label="Enter block [4]"];
             subgraph cluster_64 {
                 color=blue
-                172 [label="Enter when [4]"];
-                173 [label="Access variable this@R|/FirModifierList.Companion.getModifierList| [4]"];
+                176 [label="Enter when [4]"];
+                177 [label="Access variable this@R|/FirModifierList.Companion.getModifierList| [4]"];
                 subgraph cluster_65 {
                     color=blue
-                    174 [label="Enter when branch condition  [4]"];
-                    175 [label="Exit $subj [4]"];
-                    176 [label="Const: Null(null) [4]"];
-                    177 [label="Equality operator == [4]"];
-                    178 [label="Exit when branch condition [4]"];
+                    178 [label="Enter when branch condition  [4]"];
+                    179 [label="Exit $subj [4]"];
+                    180 [label="Const: Null(null) [4]"];
+                    181 [label="Equality operator == [4]"];
+                    182 [label="Exit when branch condition [4]"];
                 }
                 subgraph cluster_66 {
                     color=blue
-                    179 [label="Enter when branch condition  [4]"];
-                    180 [label="Exit $subj [4]"];
-                    181 [label="Type operator: ($subj$ is R|FirPsiSourceElement|) [4]"];
-                    182 [label="Exit when branch condition [4]"];
+                    183 [label="Enter when branch condition  [4]"];
+                    184 [label="Exit $subj [4]"];
+                    185 [label="Type operator: ($subj$ is R|FirPsiSourceElement|) [4]"];
+                    186 [label="Exit when branch condition [4]"];
                 }
                 subgraph cluster_67 {
                     color=blue
-                    183 [label="Enter when branch condition  [4]"];
-                    184 [label="Exit $subj [4]"];
-                    185 [label="Type operator: ($subj$ is R|FirLightSourceElement|) [4]"];
-                    186 [label="Exit when branch condition [4]"];
+                    187 [label="Enter when branch condition  [4]"];
+                    188 [label="Exit $subj [4]"];
+                    189 [label="Type operator: ($subj$ is R|FirLightSourceElement|) [4]"];
+                    190 [label="Exit when branch condition [4]"];
                 }
-                187 [label="Enter when branch result [4]"];
+                191 [label="Enter when branch result [4]"];
                 subgraph cluster_68 {
                     color=blue
-                    188 [label="Enter block [4]"];
+                    192 [label="Enter block [4]"];
                     subgraph cluster_69 {
                         color=blue
-                        189 [label="Function call arguments enter [4]"];
+                        193 [label="Function call arguments enter [4]"];
                         subgraph cluster_70 {
                             color=blue
-                            190 [label="Function call arguments enter [4]"];
-                            191 [label="Access variable R|/FirLightSourceElement.lighterASTNode| [4]"];
-                            192 [label="Access variable R|/FirLightSourceElement.treeStructure| [4]"];
-                            193 [label="Function call arguments exit [4]"];
+                            194 [label="Function call arguments enter [4]"];
+                            195 [label="Access variable R|/FirLightSourceElement.lighterASTNode| [4]"];
+                            196 [label="Access variable R|/FirLightSourceElement.treeStructure| [4]"];
+                            197 [label="Function call arguments exit [4]"];
                         }
-                        194 [label="Function call: this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(...) [4]" style="filled" fillcolor=yellow];
-                        195 [label="Postponed enter to lambda [4]"];
+                        198 [label="Function call enter: this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(...) [4]"];
+                        199 [label="Function call exit: this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(...) [4]" style="filled" fillcolor=yellow];
+                        200 [label="Postponed enter to lambda [4]"];
                         subgraph cluster_71 {
                             color=blue
-                            196 [label="Enter function <anonymous> [5]" style="filled" fillcolor=red];
+                            201 [label="Enter function <anonymous> [5]" style="filled" fillcolor=red];
                             subgraph cluster_72 {
                                 color=blue
-                                197 [label="Enter block [5]"];
-                                198 [label="Access variable R|<local>/it| [5]"];
-                                199 [label="Enter safe call [5]"];
-                                200 [label="Access variable R|/LighterASTNode.tokenType| [5]"];
-                                201 [label="Exit safe call [5]"];
-                                202 [label="Access qualifier /TokenType [5]"];
-                                203 [label="Access variable R|/TokenType.Companion.MODIFIER_LIST| [5]"];
-                                204 [label="Equality operator == [5]"];
-                                205 [label="Exit block [5]"];
+                                202 [label="Enter block [5]"];
+                                203 [label="Access variable R|<local>/it| [5]"];
+                                204 [label="Enter safe call [5]"];
+                                205 [label="Access variable R|/LighterASTNode.tokenType| [5]"];
+                                206 [label="Exit safe call [5]"];
+                                207 [label="Access qualifier /TokenType [5]"];
+                                208 [label="Access variable R|/TokenType.Companion.MODIFIER_LIST| [5]"];
+                                209 [label="Equality operator == [5]"];
+                                210 [label="Exit block [5]"];
                             }
-                            206 [label="Exit function <anonymous> [5]" style="filled" fillcolor=red];
+                            211 [label="Exit function <anonymous> [5]" style="filled" fillcolor=red];
                         }
-                        207 [label="Function call arguments exit [4]"];
+                        212 [label="Function call arguments exit [4]"];
                     }
-                    208 [label="Postponed exit from lambda [4]"];
-                    209 [label="Function call: this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(...).R|kotlin/collections/find|<R|LighterASTNode?|>(...) [4]" style="filled" fillcolor=yellow];
-                    210 [label="Exit lhs of ?: [4]"];
-                    211 [label="Enter rhs of ?: [4]"];
-                    212 [label="Const: Null(null) [4]"];
-                    213 [label="Jump: ^getModifierList Null(null) [4]"];
-                    214 [label="Stub [4]" style="filled" fillcolor=gray];
-                    215 [label="Lhs of ?: is not null [4]"];
-                    216 [label="Exit ?: [4]"];
-                    217 [label="Variable declaration: lval modifierListNode: R|LighterASTNode| [4]"];
+                    213 [label="Function call enter: this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(...).R|kotlin/collections/find|<R|LighterASTNode?|>(...) [4]"];
+                    214 [label="Postponed exit from lambda [4]"];
+                    215 [label="Function call exit: this@R|/FirModifierList.Companion.getModifierList|.R|/FirLightSourceElement.lighterASTNode|.R|/LighterASTNode.getChildren|(...).R|kotlin/collections/find|<R|LighterASTNode?|>(...) [4]" style="filled" fillcolor=yellow];
+                    216 [label="Exit lhs of ?: [4]"];
+                    217 [label="Enter rhs of ?: [4]"];
+                    218 [label="Const: Null(null) [4]"];
+                    219 [label="Jump: ^getModifierList Null(null) [4]"];
+                    220 [label="Stub [4]" style="filled" fillcolor=gray];
+                    221 [label="Lhs of ?: is not null [4]"];
+                    222 [label="Exit ?: [4]"];
+                    223 [label="Variable declaration: lval modifierListNode: R|LighterASTNode| [4]"];
                     subgraph cluster_73 {
                         color=blue
-                        218 [label="Function call arguments enter [4]"];
-                        219 [label="Access variable R|<local>/modifierListNode| [4]"];
-                        220 [label="Access variable R|/FirLightSourceElement.treeStructure| [4]"];
-                        221 [label="Function call arguments exit [4]"];
+                        224 [label="Function call arguments enter [4]"];
+                        225 [label="Access variable R|<local>/modifierListNode| [4]"];
+                        226 [label="Access variable R|/FirLightSourceElement.treeStructure| [4]"];
+                        227 [label="Function call arguments exit [4]"];
                     }
-                    222 [label="Function call: R|/FirModifierList.FirLightModifierList.FirLightModifierList|(...) [4]" style="filled" fillcolor=yellow];
-                    223 [label="Exit block [4]"];
+                    228 [label="Function call enter: R|/FirModifierList.FirLightModifierList.FirLightModifierList|(...) [4]"];
+                    229 [label="Function call exit: R|/FirModifierList.FirLightModifierList.FirLightModifierList|(...) [4]" style="filled" fillcolor=yellow];
+                    230 [label="Exit block [4]"];
                 }
-                224 [label="Exit when branch result [4]"];
-                225 [label="Enter when branch result [4]"];
+                231 [label="Exit when branch result [4]"];
+                232 [label="Enter when branch result [4]"];
                 subgraph cluster_74 {
                     color=blue
-                    226 [label="Enter block [4]"];
-                    227 [label="Access variable R|/FirPsiSourceElement.psi| [4]"];
-                    228 [label="Type operator: (this@R|/FirModifierList.Companion.getModifierList|.R|/FirPsiSourceElement.psi| as? R|KtModifierListOwner|) [4]"];
-                    229 [label="Enter safe call [4]"];
-                    230 [label="Access variable R|/KtModifierListOwner.modifierList| [4]"];
-                    231 [label="Enter safe call [4]"];
+                    233 [label="Enter block [4]"];
+                    234 [label="Access variable R|/FirPsiSourceElement.psi| [4]"];
+                    235 [label="Type operator: (this@R|/FirModifierList.Companion.getModifierList|.R|/FirPsiSourceElement.psi| as? R|KtModifierListOwner|) [4]"];
+                    236 [label="Enter safe call [4]"];
+                    237 [label="Access variable R|/KtModifierListOwner.modifierList| [4]"];
+                    238 [label="Enter safe call [4]"];
                     subgraph cluster_75 {
                         color=blue
-                        232 [label="Function call arguments enter [4]"];
-                        233 [label="Postponed enter to lambda [4]"];
+                        239 [label="Function call arguments enter [4]"];
+                        240 [label="Postponed enter to lambda [4]"];
                         subgraph cluster_76 {
                             color=blue
-                            234 [label="Enter function <anonymous> [5]" style="filled" fillcolor=red];
+                            241 [label="Enter function <anonymous> [5]" style="filled" fillcolor=red];
                             subgraph cluster_77 {
                                 color=blue
-                                235 [label="Enter block [5]"];
+                                242 [label="Enter block [5]"];
                                 subgraph cluster_78 {
                                     color=blue
-                                    236 [label="Function call arguments enter [5]"];
-                                    237 [label="Access variable R|<local>/it| [5]"];
-                                    238 [label="Function call arguments exit [5]"];
+                                    243 [label="Function call arguments enter [5]"];
+                                    244 [label="Access variable R|<local>/it| [5]"];
+                                    245 [label="Function call arguments exit [5]"];
                                 }
-                                239 [label="Function call: R|/FirModifierList.FirPsiModifierList.FirPsiModifierList|(...) [5]" style="filled" fillcolor=yellow];
-                                240 [label="Exit block [5]"];
+                                246 [label="Function call enter: R|/FirModifierList.FirPsiModifierList.FirPsiModifierList|(...) [5]"];
+                                247 [label="Function call exit: R|/FirModifierList.FirPsiModifierList.FirPsiModifierList|(...) [5]" style="filled" fillcolor=yellow];
+                                248 [label="Exit block [5]"];
                             }
-                            241 [label="Exit function <anonymous> [5]" style="filled" fillcolor=red];
+                            249 [label="Exit function <anonymous> [5]" style="filled" fillcolor=red];
                         }
-                        242 [label="Function call arguments exit [4]"];
+                        250 [label="Function call arguments exit [4]"];
                     }
-                    243 [label="Postponed exit from lambda [4]"];
-                    244 [label="Function call: $subj$.R|kotlin/let|<R|KtModifierList|, R|FirModifierList.FirPsiModifierList|>(...) [4]" style="filled" fillcolor=yellow];
-                    245 [label="Exit safe call [4]"];
-                    246 [label="Exit safe call [4]"];
-                    247 [label="Exit block [4]"];
+                    251 [label="Function call enter: $subj$.R|kotlin/let|<R|KtModifierList|, R|FirModifierList.FirPsiModifierList|>(...) [4]"];
+                    252 [label="Postponed exit from lambda [4]"];
+                    253 [label="Function call exit: $subj$.R|kotlin/let|<R|KtModifierList|, R|FirModifierList.FirPsiModifierList|>(...) [4]" style="filled" fillcolor=yellow];
+                    254 [label="Exit safe call [4]"];
+                    255 [label="Exit safe call [4]"];
+                    256 [label="Exit block [4]"];
                 }
-                248 [label="Exit when branch result [4]"];
-                249 [label="Merge postponed lambda exits [4]"];
-                250 [label="Enter when branch result [4]"];
+                257 [label="Exit when branch result [4]"];
+                258 [label="Merge postponed lambda exits [4]"];
+                259 [label="Enter when branch result [4]"];
                 subgraph cluster_79 {
                     color=blue
-                    251 [label="Enter block [4]"];
-                    252 [label="Const: Null(null) [4]"];
-                    253 [label="Exit block [4]"];
+                    260 [label="Enter block [4]"];
+                    261 [label="Const: Null(null) [4]"];
+                    262 [label="Exit block [4]"];
                 }
-                254 [label="Exit when branch result [4]"];
-                255 [label="Exit when [4]"];
+                263 [label="Exit when branch result [4]"];
+                264 [label="Exit when [4]"];
             }
-            256 [label="Jump: ^getModifierList when (this@R|/FirModifierList.Companion.getModifierList|) {
+            265 [label="Jump: ^getModifierList when (this@R|/FirModifierList.Companion.getModifierList|) {
     ==($subj$, Null(null)) ->  {
         Null(null)
     }
@@ -726,28 +739,24 @@ digraph kt44814_kt {
     }
 }
  [4]"];
-            257 [label="Stub [4]" style="filled" fillcolor=gray];
-            258 [label="Exit block [4]" style="filled" fillcolor=gray];
+            266 [label="Stub [4]" style="filled" fillcolor=gray];
+            267 [label="Exit block [4]" style="filled" fillcolor=gray];
         }
-        259 [label="Exit function getModifierList [4]" style="filled" fillcolor=red];
+        268 [label="Exit function getModifierList [4]" style="filled" fillcolor=red];
     }
-    170 -> {171};
-    171 -> {172};
-    172 -> {173};
-    173 -> {174};
     174 -> {175};
     175 -> {176};
     176 -> {177};
     177 -> {178};
-    178 -> {179 250};
+    178 -> {179};
     179 -> {180};
     180 -> {181};
     181 -> {182};
-    182 -> {183 225};
+    182 -> {183 259};
     183 -> {184};
     184 -> {185};
     185 -> {186};
-    186 -> {187};
+    186 -> {187 232};
     187 -> {188};
     188 -> {189};
     189 -> {190};
@@ -756,158 +765,173 @@ digraph kt44814_kt {
     192 -> {193};
     193 -> {194};
     194 -> {195};
-    195 -> {196 207 208};
-    195 -> {196} [style=dashed];
+    195 -> {196};
     196 -> {197};
     197 -> {198};
-    198 -> {199 201};
+    198 -> {199};
     199 -> {200};
-    200 -> {201};
+    200 -> {201 212 214};
+    200 -> {201} [style=dashed];
     201 -> {202};
     202 -> {203};
-    203 -> {204};
+    203 -> {204 206};
     204 -> {205};
     205 -> {206};
-    206 -> {208};
-    207 -> {209};
-    208 -> {195} [color=green style=dashed];
-    208 -> {209} [color=green];
-    208 -> {216} [style=dotted label="Postponed"];
+    206 -> {207};
+    207 -> {208};
+    208 -> {209};
     209 -> {210};
-    210 -> {211 215};
-    211 -> {212};
+    210 -> {211};
+    211 -> {214};
     212 -> {213};
-    213 -> {259};
-    213 -> {214} [style=dotted];
-    214 -> {216} [style=dotted];
+    213 -> {215};
+    214 -> {200} [color=green style=dashed];
+    214 -> {215} [color=green];
+    214 -> {222} [style=dotted label="Postponed"];
     215 -> {216};
-    216 -> {217};
+    216 -> {217 221};
     217 -> {218};
     218 -> {219};
-    219 -> {220};
-    220 -> {221};
+    219 -> {268};
+    219 -> {220} [style=dotted];
+    220 -> {222} [style=dotted];
     221 -> {222};
     222 -> {223};
     223 -> {224};
-    224 -> {255};
+    224 -> {225};
     225 -> {226};
     226 -> {227};
     227 -> {228};
-    228 -> {229 245};
+    228 -> {229};
     229 -> {230};
-    230 -> {231 245};
-    231 -> {232};
+    230 -> {231};
+    231 -> {264};
     232 -> {233};
-    233 -> {234 242};
-    233 -> {243} [style=dotted];
-    233 -> {234} [style=dashed];
+    233 -> {234};
     234 -> {235};
-    235 -> {236};
+    235 -> {236 254};
     236 -> {237};
-    237 -> {238};
+    237 -> {238 254};
     238 -> {239};
     239 -> {240};
-    240 -> {241};
-    241 -> {243};
-    242 -> {244};
-    243 -> {244} [color=green];
-    243 -> {249} [color=red];
-    244 -> {246};
+    240 -> {241 250};
+    240 -> {252} [style=dotted];
+    240 -> {241} [style=dashed];
+    241 -> {242};
+    242 -> {243};
+    243 -> {244};
+    244 -> {245};
     245 -> {246};
-    246 -> {247 249};
+    246 -> {247};
     247 -> {248};
-    248 -> {255};
-    249 -> {255} [color=red label="Postponed"];
+    248 -> {249};
+    249 -> {252};
     250 -> {251};
-    251 -> {252};
-    252 -> {253};
-    253 -> {254};
+    251 -> {253};
+    252 -> {253} [color=green];
+    252 -> {258} [color=red];
+    253 -> {255};
     254 -> {255};
-    255 -> {256};
-    256 -> {259};
-    256 -> {257} [style=dotted];
-    257 -> {258} [style=dotted];
-    258 -> {259} [style=dotted];
+    255 -> {256 258};
+    256 -> {257};
+    257 -> {264};
+    258 -> {264} [color=red label="Postponed"];
+    259 -> {260};
+    260 -> {261};
+    261 -> {262};
+    262 -> {263};
+    263 -> {264};
+    264 -> {265};
+    265 -> {268};
+    265 -> {266} [style=dotted];
+    266 -> {267} [style=dotted];
+    267 -> {268} [style=dotted];
 
     subgraph cluster_80 {
         color=red
-        260 [label="Enter function boxImpl [4]" style="filled" fillcolor=red];
+        269 [label="Enter function boxImpl [4]" style="filled" fillcolor=red];
         subgraph cluster_81 {
             color=blue
-            261 [label="Enter block [4]"];
+            270 [label="Enter block [4]"];
             subgraph cluster_82 {
                 color=blue
-                262 [label="Function call arguments enter [4]"];
+                271 [label="Function call arguments enter [4]"];
                 subgraph cluster_83 {
                     color=blue
-                    263 [label="Function call arguments enter [4]"];
+                    272 [label="Function call arguments enter [4]"];
                     subgraph cluster_84 {
                         color=blue
-                        264 [label="Function call arguments enter [4]"];
+                        273 [label="Function call arguments enter [4]"];
                         subgraph cluster_85 {
                             color=blue
-                            265 [label="Function call arguments enter [4]"];
-                            266 [label="Function call arguments exit [4]"];
+                            274 [label="Function call arguments enter [4]"];
+                            275 [label="Function call arguments exit [4]"];
                         }
-                        267 [label="Function call: R|/LighterASTNode.LighterASTNode|() [4]" style="filled" fillcolor=yellow];
-                        268 [label="Function call arguments exit [4]"];
+                        276 [label="Function call enter: R|/LighterASTNode.LighterASTNode|() [4]"];
+                        277 [label="Function call exit: R|/LighterASTNode.LighterASTNode|() [4]" style="filled" fillcolor=yellow];
+                        278 [label="Function call arguments exit [4]"];
                     }
-                    269 [label="Function call: R|kotlin/collections/listOf|<R|LighterASTNode|>(...) [4]" style="filled" fillcolor=yellow];
-                    270 [label="Function call arguments exit [4]"];
+                    279 [label="Function call enter: R|kotlin/collections/listOf|<R|LighterASTNode|>(...) [4]"];
+                    280 [label="Function call exit: R|kotlin/collections/listOf|<R|LighterASTNode|>(...) [4]" style="filled" fillcolor=yellow];
+                    281 [label="Function call arguments exit [4]"];
                 }
-                271 [label="Function call: R|/LighterASTNode.LighterASTNode|(...) [4]" style="filled" fillcolor=yellow];
+                282 [label="Function call enter: R|/LighterASTNode.LighterASTNode|(...) [4]"];
+                283 [label="Function call exit: R|/LighterASTNode.LighterASTNode|(...) [4]" style="filled" fillcolor=yellow];
                 subgraph cluster_86 {
                     color=blue
-                    272 [label="Function call arguments enter [4]"];
-                    273 [label="Function call arguments exit [4]"];
+                    284 [label="Function call arguments enter [4]"];
+                    285 [label="Function call arguments exit [4]"];
                 }
-                274 [label="Function call: R|/FlyweightCapableTreeStructure.FlyweightCapableTreeStructure|() [4]" style="filled" fillcolor=yellow];
-                275 [label="Function call arguments exit [4]"];
+                286 [label="Function call enter: R|/FlyweightCapableTreeStructure.FlyweightCapableTreeStructure|() [4]"];
+                287 [label="Function call exit: R|/FlyweightCapableTreeStructure.FlyweightCapableTreeStructure|() [4]" style="filled" fillcolor=yellow];
+                288 [label="Function call arguments exit [4]"];
             }
-            276 [label="Function call: R|/FirLightSourceElement.FirLightSourceElement|(...) [4]" style="filled" fillcolor=yellow];
-            277 [label="Variable declaration: lval sourceElement: R|FirSourceElement?| [4]"];
+            289 [label="Function call enter: R|/FirLightSourceElement.FirLightSourceElement|(...) [4]"];
+            290 [label="Function call exit: R|/FirLightSourceElement.FirLightSourceElement|(...) [4]" style="filled" fillcolor=yellow];
+            291 [label="Variable declaration: lval sourceElement: R|FirSourceElement?| [4]"];
             subgraph cluster_87 {
                 color=blue
-                278 [label="Function call arguments enter [4]"];
-                279 [label="Access variable R|<local>/sourceElement| [4]"];
-                280 [label="Function call arguments exit [4]"];
+                292 [label="Function call arguments enter [4]"];
+                293 [label="Access variable R|<local>/sourceElement| [4]"];
+                294 [label="Function call arguments exit [4]"];
             }
-            281 [label="Function call: (this@R|/FirModifierList.Companion|, R|<local>/sourceElement|).R|/FirModifierList.Companion.getModifierList|() [4]" style="filled" fillcolor=yellow];
-            282 [label="Variable declaration: lval result: R|FirModifierList?| [4]"];
+            295 [label="Function call enter: (this@R|/FirModifierList.Companion|, R|<local>/sourceElement|).R|/FirModifierList.Companion.getModifierList|() [4]"];
+            296 [label="Function call exit: (this@R|/FirModifierList.Companion|, R|<local>/sourceElement|).R|/FirModifierList.Companion.getModifierList|() [4]" style="filled" fillcolor=yellow];
+            297 [label="Variable declaration: lval result: R|FirModifierList?| [4]"];
             subgraph cluster_88 {
                 color=blue
-                283 [label="Enter when [4]"];
+                298 [label="Enter when [4]"];
                 subgraph cluster_89 {
                     color=blue
-                    284 [label="Enter when branch condition  [4]"];
-                    285 [label="Access variable R|<local>/result| [4]"];
-                    286 [label="Type operator: (R|<local>/result| is R|FirModifierList.FirLightModifierList|) [4]"];
-                    287 [label="Exit when branch condition [4]"];
+                    299 [label="Enter when branch condition  [4]"];
+                    300 [label="Access variable R|<local>/result| [4]"];
+                    301 [label="Type operator: (R|<local>/result| is R|FirModifierList.FirLightModifierList|) [4]"];
+                    302 [label="Exit when branch condition [4]"];
                 }
                 subgraph cluster_90 {
                     color=blue
-                    288 [label="Enter when branch condition else [4]"];
-                    289 [label="Exit when branch condition [4]"];
+                    303 [label="Enter when branch condition else [4]"];
+                    304 [label="Exit when branch condition [4]"];
                 }
-                290 [label="Enter when branch result [4]"];
+                305 [label="Enter when branch result [4]"];
                 subgraph cluster_91 {
                     color=blue
-                    291 [label="Enter block [4]"];
-                    292 [label="Const: String(Fail) [4]"];
-                    293 [label="Exit block [4]"];
+                    306 [label="Enter block [4]"];
+                    307 [label="Const: String(Fail) [4]"];
+                    308 [label="Exit block [4]"];
                 }
-                294 [label="Exit when branch result [4]"];
-                295 [label="Enter when branch result [4]"];
+                309 [label="Exit when branch result [4]"];
+                310 [label="Enter when branch result [4]"];
                 subgraph cluster_92 {
                     color=blue
-                    296 [label="Enter block [4]"];
-                    297 [label="Const: String(OK) [4]"];
-                    298 [label="Exit block [4]"];
+                    311 [label="Enter block [4]"];
+                    312 [label="Const: String(OK) [4]"];
+                    313 [label="Exit block [4]"];
                 }
-                299 [label="Exit when branch result [4]"];
-                300 [label="Exit when [4]"];
+                314 [label="Exit when branch result [4]"];
+                315 [label="Exit when [4]"];
             }
-            301 [label="Jump: ^boxImpl when () {
+            316 [label="Jump: ^boxImpl when () {
     (R|<local>/result| is R|FirModifierList.FirLightModifierList|) ->  {
         String(OK)
     }
@@ -916,20 +940,11 @@ digraph kt44814_kt {
     }
 }
  [4]"];
-            302 [label="Stub [4]" style="filled" fillcolor=gray];
-            303 [label="Exit block [4]" style="filled" fillcolor=gray];
+            317 [label="Stub [4]" style="filled" fillcolor=gray];
+            318 [label="Exit block [4]" style="filled" fillcolor=gray];
         }
-        304 [label="Exit function boxImpl [4]" style="filled" fillcolor=red];
+        319 [label="Exit function boxImpl [4]" style="filled" fillcolor=red];
     }
-    260 -> {261};
-    261 -> {262};
-    262 -> {263};
-    263 -> {264};
-    264 -> {265};
-    265 -> {266};
-    266 -> {267};
-    267 -> {268};
-    268 -> {269};
     269 -> {270};
     270 -> {271};
     271 -> {272};
@@ -948,53 +963,70 @@ digraph kt44814_kt {
     284 -> {285};
     285 -> {286};
     286 -> {287};
-    287 -> {288 295};
+    287 -> {288};
     288 -> {289};
     289 -> {290};
     290 -> {291};
     291 -> {292};
     292 -> {293};
     293 -> {294};
-    294 -> {300};
+    294 -> {295};
     295 -> {296};
     296 -> {297};
     297 -> {298};
     298 -> {299};
     299 -> {300};
     300 -> {301};
-    301 -> {304};
-    301 -> {302} [style=dotted];
-    302 -> {303} [style=dotted];
-    303 -> {304} [style=dotted];
-
-    subgraph cluster_93 {
-        color=red
-        305 [label="Enter function box [2]" style="filled" fillcolor=red];
-        subgraph cluster_94 {
-            color=blue
-            306 [label="Enter block [2]"];
-            subgraph cluster_95 {
-                color=blue
-                307 [label="Function call arguments enter [2]"];
-                308 [label="Access qualifier /FirModifierList [2]"];
-                309 [label="Function call arguments exit [2]"];
-            }
-            310 [label="Function call: Q|FirModifierList|.R|/FirModifierList.Companion.boxImpl|() [2]" style="filled" fillcolor=yellow];
-            311 [label="Jump: ^box Q|FirModifierList|.R|/FirModifierList.Companion.boxImpl|() [2]"];
-            312 [label="Stub [2]" style="filled" fillcolor=gray];
-            313 [label="Exit block [2]" style="filled" fillcolor=gray];
-        }
-        314 [label="Exit function box [2]" style="filled" fillcolor=red];
-    }
+    301 -> {302};
+    302 -> {303 310};
+    303 -> {304};
+    304 -> {305};
     305 -> {306};
     306 -> {307};
     307 -> {308};
     308 -> {309};
-    309 -> {310};
+    309 -> {315};
     310 -> {311};
-    311 -> {314};
-    311 -> {312} [style=dotted];
-    312 -> {313} [style=dotted];
-    313 -> {314} [style=dotted];
+    311 -> {312};
+    312 -> {313};
+    313 -> {314};
+    314 -> {315};
+    315 -> {316};
+    316 -> {319};
+    316 -> {317} [style=dotted];
+    317 -> {318} [style=dotted];
+    318 -> {319} [style=dotted];
+
+    subgraph cluster_93 {
+        color=red
+        320 [label="Enter function box [2]" style="filled" fillcolor=red];
+        subgraph cluster_94 {
+            color=blue
+            321 [label="Enter block [2]"];
+            subgraph cluster_95 {
+                color=blue
+                322 [label="Function call arguments enter [2]"];
+                323 [label="Access qualifier /FirModifierList [2]"];
+                324 [label="Function call arguments exit [2]"];
+            }
+            325 [label="Function call enter: Q|FirModifierList|.R|/FirModifierList.Companion.boxImpl|() [2]"];
+            326 [label="Function call exit: Q|FirModifierList|.R|/FirModifierList.Companion.boxImpl|() [2]" style="filled" fillcolor=yellow];
+            327 [label="Jump: ^box Q|FirModifierList|.R|/FirModifierList.Companion.boxImpl|() [2]"];
+            328 [label="Stub [2]" style="filled" fillcolor=gray];
+            329 [label="Exit block [2]" style="filled" fillcolor=gray];
+        }
+        330 [label="Exit function box [2]" style="filled" fillcolor=red];
+    }
+    320 -> {321};
+    321 -> {322};
+    322 -> {323};
+    323 -> {324};
+    324 -> {325};
+    325 -> {326};
+    326 -> {327};
+    327 -> {330};
+    327 -> {328} [style=dotted];
+    328 -> {329} [style=dotted];
+    329 -> {330} [style=dotted];
 
 }

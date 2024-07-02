@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.FirSession
@@ -19,7 +20,13 @@ import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 /**
  * Returns whether [subClass] is a strict subtype of [superClass]. Resolves [subClass] to [FirResolvePhase.SUPER_TYPES].
  */
-fun isSubClassOf(subClass: FirClass, superClass: FirClass, useSiteSession: FirSession, allowIndirectSubtyping: Boolean = true): Boolean {
+@KaImplementationDetail
+fun isSubClassOf(
+    subClass: FirClass,
+    superClass: FirClass,
+    useSiteSession: FirSession,
+    allowIndirectSubtyping: Boolean = true,
+): Boolean {
     subClass.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
 
     if (subClass.superConeTypes.any { it.toRegularClassSymbol(useSiteSession) == superClass.symbol }) return true

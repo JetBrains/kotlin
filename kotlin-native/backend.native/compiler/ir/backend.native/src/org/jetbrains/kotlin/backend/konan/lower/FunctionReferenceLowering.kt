@@ -359,7 +359,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                     transformedSuperMethod = functionClass.invokeFun!!
                 }
             }
-            val originalSuperMethod = context.mapping.functionWithContinuationsToSuspendFunctions[transformedSuperMethod] ?: transformedSuperMethod
+            val originalSuperMethod = transformedSuperMethod.suspendFunction ?: transformedSuperMethod
             buildInvokeMethod(originalSuperMethod)
 
             functionReferenceClass.superTypes += superTypes
