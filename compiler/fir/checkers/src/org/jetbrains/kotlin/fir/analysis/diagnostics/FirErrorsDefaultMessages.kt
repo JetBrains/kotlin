@@ -792,7 +792,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ILLEGAL_UNDERSCORE, "Incorrect usage of underscore in numeric literal.")
 //            map.put(EXPRESSION_REQUIRED, ...) // &
         map.put(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP, "'break' and 'continue' are only allowed inside loops.")
-        map.put(NOT_A_LOOP_LABEL, "Label does not denote a loop.") // *
+        map.put(NOT_A_LOOP_LABEL, "Label does not denote a reachable loop.") // *
         map.put(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY, "'break' or 'continue' crosses a function or class boundary.")
         map.put(VARIABLE_EXPECTED, "Variable expected.")
         map.put(DELEGATION_IN_INTERFACE, "Delegation cannot be used in interfaces.")
