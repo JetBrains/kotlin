@@ -152,11 +152,9 @@ private class ConeCapturedTypePointer(
     private val constructorSupertypePointers = coneType.constructor.supertypes?.map { it.createPointer(builder) }
     private val isProjectionNotNull = coneType.isProjectionNotNull
 
-    private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>?
-
-    init {
+    private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>? = run {
         val typeParameterLookupTag = coneType.constructor.typeParameterMarker as? ConeTypeParameterLookupTag
-        typeParameterSymbolPointer = if (typeParameterLookupTag != null) {
+        if (typeParameterLookupTag != null) {
             builder.classifierBuilder.buildTypeParameterSymbol(typeParameterLookupTag.symbol).createPointer()
         } else {
             null
