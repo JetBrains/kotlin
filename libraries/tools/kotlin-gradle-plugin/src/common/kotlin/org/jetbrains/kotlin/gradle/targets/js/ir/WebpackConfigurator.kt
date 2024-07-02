@@ -30,10 +30,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.archivesName
-import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
-import org.jetbrains.kotlin.gradle.utils.domainObjectSet
-import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTargetConfigurator<KotlinWebpack, KotlinWebpack> {
@@ -96,7 +92,10 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
                 val distributionTask = subTarget.registerSubTargetTask<Copy>(
                     subTarget.disambiguateCamelCased(
-                        if (binary.mode == KotlinJsBinaryMode.PRODUCTION) "" else binary.name,
+                        if (binary.mode == KotlinJsBinaryMode.PRODUCTION && binary.compilation.isMain())
+                            ""
+                        else
+                            binary.name,
                         DISTRIBUTION_TASK_NAME
                     )
                 ) { copy ->
@@ -117,7 +116,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     copy.into(binary.distribution.outputDirectory)
                 }
 
-                if (mode == KotlinJsBinaryMode.PRODUCTION) {
+                if (mode == KotlinJsBinaryMode.PRODUCTION && binary.compilation.isMain()) {
                     assembleTaskProvider.dependsOn(distributionTask)
                 }
             }
@@ -143,7 +142,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
                 subTarget.registerSubTargetTask<KotlinWebpack>(
                     subTarget.disambiguateCamelCased(
-                        if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT && compilation.isMain()) "" else binary.executeTaskBaseName,
+                        binary.executeTaskBaseName,
                         RUN_TASK_NAME
                     ),
                     listOf(compilation)

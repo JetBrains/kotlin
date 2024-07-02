@@ -17,7 +17,7 @@ class D8EnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
 
     override fun configureBinaryRun(binary: JsIrBinary): TaskProvider<D8Exec> {
         val binaryRunName = subTarget.disambiguateCamelCased(
-            if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT) "" else binary.mode.name.toLowerCaseAsciiOnly(),
+            binary.mode.name.toLowerCaseAsciiOnly(),
             RUN_TASK_NAME
         )
         val locateTask = project.locateTask<D8Exec>(binaryRunName)

@@ -20,7 +20,7 @@ class NodeJsEnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
 
     override fun configureBinaryRun(binary: JsIrBinary): TaskProvider<NodeJsExec> {
         val binaryRunName = subTarget.disambiguateCamelCased(
-            if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT) "" else binary.mode.name.toLowerCaseAsciiOnly(),
+            binary.mode.name.toLowerCaseAsciiOnly(),
             RUN_TASK_NAME
         )
 
