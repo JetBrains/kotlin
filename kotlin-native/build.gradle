@@ -120,7 +120,9 @@ dependencies {
     compilationDatabase project(":kotlin-native:runtime")
     runtimeBitcode project(":kotlin-native:runtime")
     objcExportApi project(":kotlin-native:runtime")
-    embeddableJar project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')
+    embeddableJar(project(path: ':kotlin-native:prepare:kotlin-native-compiler-embeddable', configuration: 'runtimeElements')) {
+        transitive = false // temporary hack to keep dist as is
+    }
     nativeLibs project(path: ':kotlin-native:common', configuration: 'nativeLibs')
     nativeLibs project(path: ':kotlin-native:llvmInterop', configuration: 'nativeLibs')
     use(RepoDependencies) {
