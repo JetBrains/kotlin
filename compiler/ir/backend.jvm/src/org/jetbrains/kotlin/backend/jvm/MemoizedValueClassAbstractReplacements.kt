@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isInt
@@ -24,7 +25,7 @@ abstract class MemoizedValueClassAbstractReplacements(
     protected val context: JvmBackendContext,
     protected val storageManager: LockBasedStorageManager
 ) {
-    private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
+    private val propertyMap by irAttribute<IrProperty, IrProperty>(false).asMap()
 
     /**
      * Get a replacement for a function or a constructor.
@@ -85,7 +86,7 @@ abstract class MemoizedValueClassAbstractReplacements(
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
                 val oldProperty = propertySymbol.owner
-                val property = propertyMap.getOrPut(propertySymbol) {
+                val property = propertyMap.getOrPut(oldProperty) {
                     irFactory.buildProperty {
                         name = oldProperty.name
                         updateFrom(oldProperty)
