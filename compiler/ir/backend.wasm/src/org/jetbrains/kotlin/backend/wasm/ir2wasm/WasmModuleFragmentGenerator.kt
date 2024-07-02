@@ -71,10 +71,14 @@ internal fun compileIrFile(
     }
 
     fileContext.classAssociatedObjects.forEach { (klass, associatedObjects) ->
-        val associatedObjectsInstanceGettersSignatures = associatedObjects.map { (key, obj) ->
-            key.symbol to backendContext.mapping.objectToGetInstanceFunction[obj]!!.symbol
+        val associatedObjectsInstanceGetters = associatedObjects.map { (key, obj) ->
+            backendContext.mapping.objectToGetInstanceFunction[obj]?.let {
+                AssociatedObjectBySymbols(key.symbol, it.symbol, false)
+            } ?: backendContext.mapping.wasmExternalObjectToGetInstanceFunction[obj]?.let {
+                AssociatedObjectBySymbols(key.symbol, it.symbol, true)
+            } ?: error("Could not find instance getter for $obj")
         }
-        wasmFileCodegenContext.addClassAssociatedObjects(klass.symbol, associatedObjectsInstanceGettersSignatures)
+        wasmFileCodegenContext.addClassAssociatedObjects(klass.symbol, associatedObjectsInstanceGetters)
     }
 
     fileContext.jsModuleAndQualifierReferences.forEach { reference ->
@@ -84,6 +88,13 @@ internal fun compileIrFile(
     val tryGetAssociatedObjectFunction = backendContext.wasmSymbols.tryGetAssociatedObject
     if (irFile == tryGetAssociatedObjectFunction.owner.fileOrNull) {
         wasmFileCodegenContext.defineTryGetAssociatedObjectFun(tryGetAssociatedObjectFunction)
+    }
+
+    if (backendContext.isWasmJsTarget) {
+        val jsToKotlinAnyAdapter = backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
+        if (irFile == jsToKotlinAnyAdapter.owner.fileOrNull) {
+            wasmFileCodegenContext.defineJsToKotlinAnyAdapterFun(jsToKotlinAnyAdapter)
+        }
     }
 
     return wasmFileFragment

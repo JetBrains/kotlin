@@ -52,6 +52,7 @@ class WasmCompiledFileFragment(
     val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = mutableSetOf(),
     val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
     var tryGetAssociatedObjectFun: IdSignature? = null,
+    var jsToKotlinAnyAdapterFun: IdSignature? = null,
 ) : IrProgramFragment()
 
 class WasmCompiledModuleFragment(
@@ -59,7 +60,6 @@ class WasmCompiledModuleFragment(
     private val generateTrapsInsteadOfExceptions: Boolean,
     private val itsPossibleToCatchJsErrorSeparately: Boolean
 ) {
-
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
@@ -72,12 +72,18 @@ class WasmCompiledModuleFragment(
     private val startUnitTestsFunction = WasmFunction.Defined("kotlin.test.startUnitTests", WasmSymbol(parameterlessNoReturnFunctionType))
     private var memory: WasmMemory = WasmMemory(WasmLimits(0U, 0U), null)
     private var currentDataSectionAddress = 0
-    private val tryGetAssociatedObjectFunction = run {
+
+    private fun tryGetAssociatedObjectFunction(): WasmFunction.Defined? {
         // If null, then removed by DCE
         val fragment = wasmCompiledFileFragments.firstOrNull { it.tryGetAssociatedObjectFun != null }
-        fragment?.functions?.defined?.get(fragment.tryGetAssociatedObjectFun)
-    } as? WasmFunction.Defined
+        return fragment?.functions?.defined?.get(fragment.tryGetAssociatedObjectFun) as? WasmFunction.Defined
+    }
 
+    private fun jsToKotlinAnyAdapterFunction(): WasmFunction.Defined {
+        val fragment = wasmCompiledFileFragments.firstOrNull { it.jsToKotlinAnyAdapterFun != null }
+        check(fragment != null) { "jsToKotlinAnyAdapterFun function not found" }
+        return fragment.functions.defined[fragment.jsToKotlinAnyAdapterFun] as WasmFunction.Defined
+    }
 
     class JsCodeSnippet(val importName: WasmSymbol<String>, val jsCode: String)
 
@@ -358,38 +364,38 @@ class WasmCompiledModuleFragment(
     }
 
     private fun createTryGetAssociatedObjectFunction() {
-        if (tryGetAssociatedObjectFunction == null) {
-            // Removed by DCE
-            return
-        }
-        val location = serviceCodeLocation
+        val tryGetAssociatedObject = tryGetAssociatedObjectFunction() ?: return // Removed by DCE
+        val jsToKotlinAnyAdapter by lazy(::jsToKotlinAnyAdapterFunction)
 
         val allDefinedFunctions = mutableMapOf<IdSignature, WasmFunction>()
         wasmCompiledFileFragments.forEach { allDefinedFunctions.putAll(it.functions.defined) }
 
-        tryGetAssociatedObjectFunction.instructions.clear()
-        with(WasmIrExpressionBuilder(tryGetAssociatedObjectFunction.instructions)) {
+        tryGetAssociatedObject.instructions.clear()
+        with(WasmIrExpressionBuilder(tryGetAssociatedObject.instructions)) {
             wasmCompiledFileFragments.forEach { fragment ->
                 for ((klass, associatedObjectsInstanceGetters) in fragment.classAssociatedObjectsInstanceGetters) {
                     val klassId = classIds[klass]!!
-                    buildGetLocal(WasmLocal(0, "classId", WasmI32, true), location)
-                    buildConstI32(klassId, location)
-                    buildInstr(WasmOp.I32_EQ, location)
+                    buildGetLocal(WasmLocal(0, "classId", WasmI32, true), serviceCodeLocation)
+                    buildConstI32(klassId, serviceCodeLocation)
+                    buildInstr(WasmOp.I32_EQ, serviceCodeLocation)
                     buildIf("Class matches")
-                    associatedObjectsInstanceGetters.forEach { (obj, getter) ->
+                    associatedObjectsInstanceGetters.forEach { (obj, getter, isExternal) ->
                         val keyId = classIds[obj]!!
-                        buildGetLocal(WasmLocal(1, "keyId", WasmI32, true), location)
-                        buildConstI32(keyId, location)
-                        buildInstr(WasmOp.I32_EQ, location)
+                        buildGetLocal(WasmLocal(1, "keyId", WasmI32, true), serviceCodeLocation)
+                        buildConstI32(keyId, serviceCodeLocation)
+                        buildInstr(WasmOp.I32_EQ, serviceCodeLocation)
                         buildIf("Object matches")
-                        buildCall(WasmSymbol(allDefinedFunctions[getter]!!), location)
-                        buildInstr(WasmOp.RETURN, location)
+                        buildCall(WasmSymbol(allDefinedFunctions[getter]!!), serviceCodeLocation)
+                        if (isExternal) {
+                            buildCall(WasmSymbol(jsToKotlinAnyAdapter), serviceCodeLocation)
+                        }
+                        buildInstr(WasmOp.RETURN, serviceCodeLocation)
                         buildEnd()
                     }
                     buildEnd()
                 }
             }
-            buildRefNull(WasmHeapType.Simple.None, location)
+            buildRefNull(WasmHeapType.Simple.None, serviceCodeLocation)
             buildInstr(WasmOp.RETURN, serviceCodeLocation)
         }
     }
@@ -686,4 +692,5 @@ data class ClassAssociatedObjects(
 data class AssociatedObject(
     val obj: IdSignature,
     val getterFunc: IdSignature,
+    val isExternal: Boolean,
 )

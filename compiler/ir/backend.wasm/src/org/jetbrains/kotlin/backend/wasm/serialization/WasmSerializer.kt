@@ -642,6 +642,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serialize(jsModuleAndQualifierReferences, ::serialize)
             serialize(classAssociatedObjectsInstanceGetters, ::serialize)
             serializeNullable(tryGetAssociatedObjectFun, ::serialize)
+            serializeNullable(jsToKotlinAnyAdapterFun, ::serialize)
         }
 
     private fun serialize(fieldInitializer: FieldInitializer) {
@@ -656,7 +657,7 @@ class WasmSerializer(outputStream: OutputStream) {
         serialize(classAssociatedObjects.objects, ::serialize)
     }
 
-    private fun serialize(associatedObject: AssociatedObject) {
+    private fun serialize(associatedObject: AssociatedObject) = withFlags(associatedObject.isExternal) {
         serialize(associatedObject.obj)
         serialize(associatedObject.getterFunc)
     }

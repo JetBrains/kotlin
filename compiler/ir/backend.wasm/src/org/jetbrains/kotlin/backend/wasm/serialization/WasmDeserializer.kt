@@ -627,7 +627,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         closureCallExports = deserializeClosureCallExports(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
-        tryGetAssociatedObjectFun = deserializeTryGetAssociatedObject()
+        tryGetAssociatedObjectFun = deserializeTryGetAssociatedObject(),
+        jsToKotlinAnyAdapterFun = deserializeJsToKotlinAnyAdapter(),
     )
 
     private fun deserializeFunctions() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
@@ -662,6 +663,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeJsModuleAndQualifierReferences() = deserializeSet(::deserializeJsModuleAndQualifierReference)
     private fun deserializeClassAssociatedObjectInstanceGetters() = deserializeList(::deserializeClassAssociatedObjects)
     private fun deserializeTryGetAssociatedObject() = deserializeNullable(::deserializeIdSignature)
+    private fun deserializeJsToKotlinAnyAdapter() = deserializeNullable(::deserializeIdSignature)
 
     private fun deserializeFieldInitializer(): FieldInitializer = withFlags {
         val field = deserializeIdSignature()
@@ -670,10 +672,10 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         FieldInitializer(field, initializer, isObjectInstanceField)
     }
 
-    private fun deserializeAssociatedObject(): AssociatedObject {
+    private fun deserializeAssociatedObject(): AssociatedObject = withFlags {
         val obj = deserializeIdSignature()
         val getterFunc = deserializeIdSignature()
-        return AssociatedObject(obj, getterFunc)
+        return AssociatedObject(obj, getterFunc, it.consume())
     }
 
     private fun deserializeClassAssociatedObjects(): ClassAssociatedObjects {
