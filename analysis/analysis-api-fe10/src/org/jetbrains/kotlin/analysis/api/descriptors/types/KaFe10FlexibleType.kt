@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -41,7 +40,6 @@ internal class KaFe10FlexibleType(
     }
 
     @KaExperimentalApi
-    @KaImplementationDetail
     override fun createPointer(): KaTypePointer<KaFlexibleType> = withValidityAssertion {
         throw NotImplementedError("Type pointers are not implemented for FE 1.0")
     }

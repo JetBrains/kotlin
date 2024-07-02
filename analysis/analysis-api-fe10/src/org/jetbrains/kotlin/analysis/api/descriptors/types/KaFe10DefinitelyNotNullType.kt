@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
@@ -33,7 +32,6 @@ internal class KaFe10DefinitelyNotNullType(
     }
 
     @KaExperimentalApi
-    @KaImplementationDetail
     override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType> = withValidityAssertion {
         throw NotImplementedError("Type pointers are not implemented for FE 1.0")
     }

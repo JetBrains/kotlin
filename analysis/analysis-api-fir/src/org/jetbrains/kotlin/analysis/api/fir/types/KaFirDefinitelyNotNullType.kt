@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -42,7 +41,6 @@ internal class KaFirDefinitelyNotNullType(
     override fun toString() = coneType.renderForDebugging()
 
     @KaExperimentalApi
-    @KaImplementationDetail
     override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType> = withValidityAssertion {
         return KaFirDefinitelyNotNullTypePointer(coneType, builder)
     }

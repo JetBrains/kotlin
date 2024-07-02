@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
@@ -44,7 +43,6 @@ internal class KaFe10TypeParameterType(
     }
 
     @KaExperimentalApi
-    @KaImplementationDetail
     override fun createPointer(): KaTypePointer<KaTypeParameterType> = withValidityAssertion {
         throw NotImplementedError("Type pointers are not implemented for FE 1.0")
     }

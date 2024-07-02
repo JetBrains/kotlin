@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
@@ -94,7 +93,6 @@ public sealed interface KaType : KaLifetimeOwner, KaAnnotated {
     }
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public fun createPointer(): KaTypePointer<KaType>
 }
 
@@ -126,7 +124,6 @@ public interface KaErrorType : KaType {
     public fun tryRenderAsNonErrorType(): String? = presentableText
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public override fun createPointer(): KaTypePointer<KaErrorType>
 }
 
@@ -155,7 +152,6 @@ public sealed class KaClassType : KaType {
         get() = typeArguments
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaClassType>
 }
 
@@ -179,7 +175,6 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
     public abstract val returnType: KaType
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaFunctionType>
 }
 
@@ -191,7 +186,6 @@ public typealias KtFunctionalType = KaFunctionType
 
 public abstract class KaUsualClassType : KaClassType() {
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaUsualClassType>
 }
 
@@ -208,7 +202,6 @@ public abstract class KaClassErrorType : KaErrorType {
         get() = candidateSymbols
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaClassErrorType>
 }
 
@@ -220,7 +213,6 @@ public abstract class KaTypeParameterType : KaType {
     public abstract val symbol: KaTypeParameterSymbol
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaTypeParameterType>
 }
 
@@ -231,7 +223,6 @@ public abstract class KaCapturedType : KaType {
     public abstract val projection: KaTypeProjection
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaCapturedType>
 }
 
@@ -244,7 +235,6 @@ public abstract class KaDefinitelyNotNullType : KaType {
     final override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType>
 }
 
@@ -259,7 +249,6 @@ public abstract class KaFlexibleType : KaType {
     public abstract val upperBound: KaType
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaFlexibleType>
 }
 
@@ -270,7 +259,6 @@ public abstract class KaIntersectionType : KaType {
     public abstract val conjuncts: List<KaType>
 
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaIntersectionType>
 }
 
@@ -285,7 +273,6 @@ public typealias KtIntersectionType = KaIntersectionType
  */
 public abstract class KaDynamicType : KaType {
     @KaExperimentalApi
-    @KaImplementationDetail
     public abstract override fun createPointer(): KaTypePointer<KaDynamicType>
 }
 
