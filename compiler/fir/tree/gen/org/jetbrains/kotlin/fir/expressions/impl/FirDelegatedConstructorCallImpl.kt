@@ -14,17 +14,18 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
+import org.jetbrains.kotlin.name.StandardClassIds
 
 internal class FirDelegatedConstructorCallImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
@@ -36,6 +37,8 @@ internal class FirDelegatedConstructorCallImpl(
     override var source: KtSourceElement?,
     override val isThis: Boolean,
 ) : FirDelegatedConstructorCall() {
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    override val coneTypeOrNull: ConeKotlinType? = ConeClassLikeTypeImpl(StandardClassIds.Unit.toLookupTag(), typeArguments = emptyArray(), isNullable = false)
     override val isSuper: Boolean
         get() = !isThis
 
@@ -82,6 +85,8 @@ internal class FirDelegatedConstructorCallImpl(
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
         contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
     }
+
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
     override fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef) {
         constructedTypeRef = newConstructedTypeRef

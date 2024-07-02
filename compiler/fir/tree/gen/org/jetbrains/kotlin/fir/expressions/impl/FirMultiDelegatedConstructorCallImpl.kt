@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -28,6 +29,9 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
         get() = delegatedConstructorCalls.last().argumentList
     override val contextReceiverArguments: List<FirExpression>
         get() = delegatedConstructorCalls.last().contextReceiverArguments
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = delegatedConstructorCalls.last().coneTypeOrNull
     override val constructedTypeRef: FirTypeRef
         get() = delegatedConstructorCalls.last().constructedTypeRef
     override val dispatchReceiver: FirExpression?
@@ -72,6 +76,8 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {}
 
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {}
+
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
     override fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef) {}
 

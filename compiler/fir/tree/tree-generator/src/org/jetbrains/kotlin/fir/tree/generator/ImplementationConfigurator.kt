@@ -116,7 +116,14 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "!isThis"
                 withGetter = true
             }
-            additionalImports(explicitThisReferenceType, explicitSuperReferenceType)
+            default("coneTypeOrNull") {
+                value = "ConeClassLikeTypeImpl(StandardClassIds.Unit.toLookupTag(), typeArguments = emptyArray(), isNullable = false)"
+                isMutable = false
+            }
+            additionalImports(
+                explicitThisReferenceType, explicitSuperReferenceType, coneClassLikeTypeImplType,
+                standardClassIdsType, toSymbolUtilityFunction
+            )
         }
 
         impl(multiDelegatedConstructorCall) {
@@ -154,6 +161,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
             default("isSuper") {
                 value = "!isThis"
+                withGetter = true
+            }
+            default("coneTypeOrNull") {
+                value = "delegatedConstructorCalls.last().coneTypeOrNull"
                 withGetter = true
             }
             publicImplementation()

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.TypeRef
 import org.jetbrains.kotlin.generators.tree.withArgs
@@ -54,6 +55,7 @@ val coneKotlinTypeType = type<ConeKotlinType>()
 val coneErrorTypeType = type<ConeErrorType>()
 val coneSimpleKotlinTypeType = type<ConeSimpleKotlinType>()
 val coneClassLikeTypeType = type<ConeClassLikeType>()
+val coneClassLikeTypeImplType = type<ConeClassLikeTypeImpl>()
 val standardClassIdsType = type<StandardClassIds>()
 
 val whenRefType = generatedType("", "FirExpressionRef")
@@ -148,3 +150,5 @@ val unresolvedExpressionTypeAccessAnnotation = type("fir.expressions", "Unresolv
 val rawFirApi = type("fir.expressions", "RawFirApi", kind = TypeKind.Class)
 val firBuilderDslAnnotation = type("fir.builder", "FirBuilderDsl", kind = TypeKind.Class)
 val firResolvedArgumentListType = type("fir.expressions.impl", "FirResolvedArgumentList", kind = TypeKind.Class)
+
+val toSymbolUtilityFunction = type("fir.types", "toLookupTag")

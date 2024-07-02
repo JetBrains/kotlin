@@ -18,10 +18,11 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirDelegatedConstructorCallImpl
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 @FirBuilderDsl
-class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder {
+class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
@@ -44,6 +45,13 @@ class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContaine
         )
     }
 
+
+    @Deprecated("Modification of 'coneTypeOrNull' has no impact for FirDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
+    override var coneTypeOrNull: ConeKotlinType?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
 }
 
 @OptIn(ExperimentalContracts::class)

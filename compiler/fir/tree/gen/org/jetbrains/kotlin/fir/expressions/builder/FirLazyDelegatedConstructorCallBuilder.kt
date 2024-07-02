@@ -19,10 +19,12 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 @FirBuilderDsl
-class FirLazyDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder {
+class FirLazyDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
+    override var coneTypeOrNull: ConeKotlinType? = null
     lateinit var constructedTypeRef: FirTypeRef
     lateinit var calleeReference: FirReference
     var isThis: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -30,11 +32,13 @@ class FirLazyDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder {
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirDelegatedConstructorCall {
         return FirLazyDelegatedConstructorCall(
+            coneTypeOrNull,
             constructedTypeRef,
             calleeReference,
             isThis,
         )
     }
+
 
     @Deprecated("Modification of 'annotations' has no impact for FirLazyDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
