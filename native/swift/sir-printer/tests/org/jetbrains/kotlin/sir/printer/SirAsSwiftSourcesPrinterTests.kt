@@ -905,7 +905,8 @@ class SirAsSwiftSourcesPrinterTests {
         module.updateImports(
             listOf(
                 SirImport(moduleName = "DEMO_PACKAGE"),
-                SirImport(moduleName = "ExportedModule", isExported = true),
+                SirImport(moduleName = "ExportedModule", mode = SirImport.Mode.Exported),
+                SirImport(moduleName = "PrivateModule", mode = SirImport.Mode.ImplementationOnly),
             )
         )
 
