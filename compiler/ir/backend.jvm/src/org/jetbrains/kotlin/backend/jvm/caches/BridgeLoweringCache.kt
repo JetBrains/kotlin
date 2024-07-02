@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.name.Name
@@ -25,10 +26,10 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
     // It might benefit performance, but can lead to confusing behavior if some declarations are changed along the way.
     // For example, adding an override for a declaration whose signature is already cached can result in incorrect signature
     // if its return type is a primitive type, and the new override's return type is an object type.
-    private val signatureCache = ConcurrentHashMap<IrFunctionSymbol, Method>()
+    private val signatureCache by irAttribute<IrFunction, Method>(false).asMap()
 
     fun computeJvmMethod(function: IrFunction): Method =
-        signatureCache.getOrPut(function.symbol) { context.defaultMethodSignatureMapper.mapAsmMethod(function) }
+        signatureCache.getOrPut(function) { context.defaultMethodSignatureMapper.mapAsmMethod(function) }
 
     private fun canHaveSpecialBridge(function: IrSimpleFunction): Boolean {
         if (function.name in specialBridgeMethods.specialMethodNames)
