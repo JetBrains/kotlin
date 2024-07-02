@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
+import java.nio.channels.FileChannel
+import java.nio.file.*
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
     val allDependencies = mutableSetOf<KotlinLibrary>()
@@ -236,9 +238,9 @@ class CacheBuilder(
         configuration.report(CompilerMessageSeverity.LOGGING, "CACHING ${library.libraryName}")
         filesToCache.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "    $it") }
 
-        val stdlib = konanConfig.distribution.stdlib
+        //val stdlib = konanConfig.distribution.stdlib
         // Produce monolithic caches for external libraries for now.
-        val makePerFileCache = (!isExternal && !library.isCInteropLibrary()) || library.libraryName.startsWith(stdlib)
+        val makePerFileCache = (!isExternal && !library.isCInteropLibrary())// || library.libraryName.startsWith(stdlib)
 
         val libraryCacheDirectory = when {
             library.isDefault -> konanConfig.systemCacheDirectory
@@ -252,49 +254,82 @@ class CacheBuilder(
                 else
                     CachedLibraries.getCachedLibraryName(library)
         )
+
+
+        val lockFileName = "${libraryCacheDirectory.absolutePath}.lock"
+        val lockFile = File(lockFileName)
+        var channel: FileChannel? = null
         try {
-            // TODO: Run monolithic cache builds in parallel.
-            libraryCacheDirectory.mkdirs()
-            compilationSpawner.spawn(konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
-                val libraryPath = library.libraryFile.absolutePath
-                val libraries = dependencies.filter { !it.isDefault }.map { it.libraryFile.absolutePath }
-                val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }
-                configuration.report(CompilerMessageSeverity.LOGGING, "    dependencies:\n        " +
-                        libraries.joinToString("\n        "))
-                configuration.report(CompilerMessageSeverity.LOGGING, "    caches used:\n        " +
-                        cachedLibraries.entries.joinToString("\n        ") { "${it.key}: ${it.value}" })
-                configuration.report(CompilerMessageSeverity.LOGGING, "    cache dir: " +
-                        libraryCacheDirectory.absolutePath)
-
-                setupCommonOptionsForCaches(konanConfig)
-                put(KonanConfigKeys.PRODUCE, CompilerOutputKind.STATIC_CACHE)
-                // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
-                // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
-                put(KonanConfigKeys.CHECK_DEPENDENCIES, true)
-                put(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE, libraryPath)
-                put(KonanConfigKeys.NODEFAULTLIBS, true)
-                put(KonanConfigKeys.NOENDORSEDLIBS, true)
-                put(KonanConfigKeys.NOSTDLIB, true)
-                put(KonanConfigKeys.LIBRARY_FILES, libraries)
-                if (generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries) {
-                    put(KonanConfigKeys.GENERATE_TEST_RUNNER, generateTestRunner)
-                    put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(libraryPath))
-                    configuration.get(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH)?.let { put(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH, it) }
-                }
-                put(KonanConfigKeys.CACHED_LIBRARIES, cachedLibraries)
-                put(KonanConfigKeys.CACHE_DIRECTORIES, listOf(libraryCacheDirectory.absolutePath))
-                put(KonanConfigKeys.MAKE_PER_FILE_CACHE, makePerFileCache)
-                if (filesToCache.isNotEmpty())
-                    put(KonanConfigKeys.FILES_TO_CACHE, filesToCache)
+            if (!makePerFileCache) {
+                lockFile.mkdirs()
+                channel = FileChannel.open(Paths.get(lockFileName), StandardOpenOption.TRUNCATE_EXISTING)
             }
-            cacheRootDirectories[library] = libraryCache.absolutePath
-        } catch (t: Throwable) {
-            configuration.report(CompilerMessageSeverity.LOGGING, "${t.message}\n${t.stackTraceToString()}")
-            configuration.report(CompilerMessageSeverity.WARNING,
-                    "Failed to build cache: ${t.message}\n${t.stackTraceToString()}\n" +
-                            "Falling back to not use cache for ${library.libraryName}")
+            try {
+                // TODO: Run monolithic cache builds in parallel.
+                libraryCacheDirectory.mkdirs()
+                compilationSpawner.spawn(konanConfig.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
+                    val libraryPath = library.libraryFile.absolutePath
+                    val libraries = dependencies.filter { !it.isDefault }.map { it.libraryFile.absolutePath }
+                    val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }
+                    configuration.report(CompilerMessageSeverity.LOGGING, "    dependencies:\n        " +
+                            libraries.joinToString("\n        "))
+                    configuration.report(CompilerMessageSeverity.LOGGING, "    caches used:\n        " +
+                            cachedLibraries.entries.joinToString("\n        ") { "${it.key}: ${it.value}" })
+                    configuration.report(CompilerMessageSeverity.LOGGING, "    cache dir: " +
+                            libraryCacheDirectory.absolutePath)
 
-            libraryCache.deleteRecursively()
+                    setupCommonOptionsForCaches(konanConfig)
+                    put(KonanConfigKeys.PRODUCE, CompilerOutputKind.STATIC_CACHE)
+                    // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
+                    // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
+                    put(KonanConfigKeys.CHECK_DEPENDENCIES, true)
+                    put(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE, libraryPath)
+                    put(KonanConfigKeys.NODEFAULTLIBS, true)
+                    put(KonanConfigKeys.NOENDORSEDLIBS, true)
+                    put(KonanConfigKeys.NOSTDLIB, true)
+                    put(KonanConfigKeys.LIBRARY_FILES, libraries)
+                    if (generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries) {
+                        put(KonanConfigKeys.GENERATE_TEST_RUNNER, generateTestRunner)
+                        put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(libraryPath))
+                        configuration.get(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH)?.let { put(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH, it) }
+                    }
+                    put(KonanConfigKeys.CACHED_LIBRARIES, cachedLibraries)
+                    put(KonanConfigKeys.CACHE_DIRECTORIES, listOf(libraryCacheDirectory.absolutePath))
+                    put(KonanConfigKeys.MAKE_PER_FILE_CACHE, makePerFileCache)
+                    if (filesToCache.isNotEmpty())
+                        put(KonanConfigKeys.FILES_TO_CACHE, filesToCache)
+                }
+                cacheRootDirectories[library] = libraryCache.absolutePath
+            } catch (t: Throwable) {
+                configuration.report(CompilerMessageSeverity.LOGGING, "${t.message}\n${t.stackTraceToString()}")
+                configuration.report(CompilerMessageSeverity.WARNING,
+                        "Failed to build cache: ${t.message}\n${t.stackTraceToString()}\n" +
+                                "Falling back to not use cache for ${library.libraryName}")
+
+                libraryCache.deleteRecursively()
+            }
+            try {
+                channel?.close()
+            } catch (_: Throwable) {
+            } finally {
+                lockFile.delete()
+            }
+        } catch (t: Throwable) {
+            var ok = false
+            for (i in 0..<120) {
+                Thread.sleep(1000)
+                if (!lockFile.exists) {
+                    ok = true
+                    break
+                }
+            }
+            if (ok && libraryCache.exists) {
+                cacheRootDirectories[library] = libraryCache.absolutePath
+            } else {
+                configuration.report(CompilerMessageSeverity.WARNING,
+                        "Failed to wait for cache to be built\n" +
+                                "Falling back to not use cache for ${library.libraryName}")
+            }
         }
     }
 }
