@@ -56,12 +56,6 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
   }
 
   @Test
-  @TestMetadata("Multiline.kt")
-  public void testMultiline() {
-    runTest("plugins/power-assert/testData/codegen/Multiline.kt");
-  }
-
-  @Test
   @TestMetadata("RequireCustomMessage.kt")
   public void testRequireCustomMessage() {
     runTest("plugins/power-assert/testData/codegen/RequireCustomMessage.kt");
@@ -282,6 +276,40 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     @TestMetadata("IfExpression.kt")
     public void testIfExpression() {
       runTest("plugins/power-assert/testData/codegen/expressions/IfExpression.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("plugins/power-assert/testData/codegen/format")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Format {
+    @Test
+    public void testAllFilesPresentInFormat() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/power-assert/testData/codegen/format"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("ChainedMultiline.kt")
+    public void testChainedMultiline() {
+      runTest("plugins/power-assert/testData/codegen/format/ChainedMultiline.kt");
+    }
+
+    @Test
+    @TestMetadata("Multiline.kt")
+    public void testMultiline() {
+      runTest("plugins/power-assert/testData/codegen/format/Multiline.kt");
+    }
+
+    @Test
+    @TestMetadata("Tabs.kt")
+    public void testTabs() {
+      runTest("plugins/power-assert/testData/codegen/format/Tabs.kt");
+    }
+
+    @Test
+    @TestMetadata("Whitespace.kt")
+    public void testWhitespace() {
+      runTest("plugins/power-assert/testData/codegen/format/Whitespace.kt");
     }
   }
 

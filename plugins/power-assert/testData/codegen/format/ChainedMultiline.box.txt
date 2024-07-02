@@ -1,0 +1,17 @@
+---
+assert(
+    listOf("Hello", "World")
+    |
+    false
+    [Hello, World]
+        .map { it.lowercase() }
+         |
+         [hello, world]
+        .first { it.startsWith("w") }
+         |
+         world
+        .length == 4
+         |
+         5
+)
+---
