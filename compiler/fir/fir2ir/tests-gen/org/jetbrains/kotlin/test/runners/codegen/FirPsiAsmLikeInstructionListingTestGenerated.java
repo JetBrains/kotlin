@@ -201,6 +201,12 @@ public class FirPsiAsmLikeInstructionListingTestGenerated extends AbstractFirPsi
     }
 
     @Test
+    @TestMetadata("simple2TypeArguments.kt")
+    public void testSimple2TypeArguments() {
+      runTest("compiler/testData/codegen/asmLike/typeAnnotations/simple2TypeArguments.kt");
+    }
+
+    @Test
     @TestMetadata("staticNested.kt")
     public void testStaticNested() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/staticNested.kt");

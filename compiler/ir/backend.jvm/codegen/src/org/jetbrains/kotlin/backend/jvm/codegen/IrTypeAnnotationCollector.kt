@@ -68,14 +68,12 @@ internal class IrTypeAnnotationCollector(private val context: JvmBackendContext)
                 // There's no syntax in Kotlin to annotate a wildcard.
             },
             processTypeArgument = { index, type, projectionKind, _, newMode ->
-                if (isArray() || isNullableArray()) {
-                    state.addStep("[")
-                } else {
-                    state.addStep("$index;")
-                    if (projectionKind != Variance.INVARIANT) {
-                        state.addStep("*")
-                    }
+                val step = when {
+                    isArray() || isNullableArray() -> "["
+                    projectionKind == Variance.INVARIANT -> "$index;"
+                    else -> "$index;*"
                 }
+                state.addStep(step)
                 (type as IrType).gatherTypeAnnotations(newMode)
                 state.removeStep()
             },
