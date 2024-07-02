@@ -19,19 +19,15 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * However, some annotations e.g. [kotlin.native.ObjCName], whilst annotated with `@MustBeDocumented` shall not be exported for ObjC
  * documentation.
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KaAnnotation> {
-    return annotations.getObjCDocumentedAnnotations()
+internal fun KaSession.getObjCDocumentedAnnotations(symbol: KaAnnotatedSymbol): List<KaAnnotation> {
+    return getObjCDocumentedAnnotations(symbol.annotations)
 }
 
 /**
  * See [getObjCDocumentedAnnotations]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaAnnotationList.getObjCDocumentedAnnotations(): List<KaAnnotation> {
-    return this
+internal fun KaSession.getObjCDocumentedAnnotations(list: KaAnnotationList): List<KaAnnotation> {
+    return list
         .filter { annotation ->
             val annotationClassId = annotation.classId ?: return@filter false
             if (annotationClassId.asSingleFqName() in mustBeDocumentedAnnotationsStopList) return@filter false

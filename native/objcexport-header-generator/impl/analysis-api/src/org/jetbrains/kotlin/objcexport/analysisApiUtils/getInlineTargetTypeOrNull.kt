@@ -14,27 +14,25 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaType.getInlineTargetTypeOrNull(): KaType? {
-    if (this !is KaClassType) return null
-    val classSymbol = symbol as? KaNamedClassSymbol ?: return null
-    return classSymbol.getInlineTargetTypeOrNull()?.markNullableIf(isMarkedNullable)
+
+internal fun KaSession.getInlineTargetTypeOrNull(type: KaType): KaType? {
+    if (type !is KaClassType) return null
+    val classSymbol = type.symbol as? KaNamedClassSymbol ?: return null
+    val inlinedType = getInlineTargetTypeOrNull(classSymbol) ?: return null
+    return markNullableIf(inlinedType, type.isMarkedNullable)
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaNamedClassSymbol.getInlineTargetTypeOrNull(): KaType? {
-    if (!isInlineIncludingKotlinNativeSpecialClasses()) return null
+internal fun KaSession.getInlineTargetTypeOrNull(symbol: KaNamedClassSymbol): KaType? {
+    if (!isInlineIncludingKotlinNativeSpecialClasses(symbol)) return null
 
-    val constructor = declaredMemberScope.constructors
+    val constructor = symbol.declaredMemberScope.constructors
         .find { constructor -> constructor.isPrimary && constructor.valueParameters.size == 1 }
         ?: return null
 
     val inlinedType = constructor.valueParameters.single().returnType
 
     /* What if this type is also inline type? */
-    val inlineInlineType = inlinedType.getInlineTargetTypeOrNull()
+    val inlineInlineType = getInlineTargetTypeOrNull(inlinedType)
     if (inlineInlineType != null) {
         return inlineInlineType
     }
@@ -48,14 +46,12 @@ internal fun KaNamedClassSymbol.getInlineTargetTypeOrNull(): KaType? {
  * However, there seemingly exist classes like 'kotlin.native.internal.NativePtr' which shall also be considered 'inline'
  * despite no modifier being present. This is considered a 'special Kotlin Native' class in the context of this function.
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaNamedClassSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Boolean {
-    if (this.isInline) return true
-    val classId = classId ?: return false
+private fun KaSession.isInlineIncludingKotlinNativeSpecialClasses(symbol: KaNamedClassSymbol): Boolean {
+    if (symbol.isInline) return true
+    val classId = symbol.classId ?: return false
 
     /* Top Level symbols can be special K/N types */
-    if (containingDeclaration is KaClassSymbol) return false
+    if (symbol.containingDeclaration is KaClassSymbol) return false
 
     if (classId.packageFqName == KonanFqNames.internalPackageName && classId.shortClassName == KonanFqNames.nativePtr.shortName()) {
         return true
@@ -68,15 +64,11 @@ private fun KaNamedClassSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Bo
     return false
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaType.markNullable(): KaType {
-    if (this.nullability == KaTypeNullability.NULLABLE) return this
-    return this.withNullability(KaTypeNullability.NULLABLE)
+private fun KaSession.markNullable(type: KaType): KaType {
+    if (type.nullability == KaTypeNullability.NULLABLE) return type
+    return type.withNullability(KaTypeNullability.NULLABLE)
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaType.markNullableIf(shouldMarkNullable: Boolean): KaType {
-    return if (shouldMarkNullable) markNullable() else this
+private fun KaSession.markNullableIf(type: KaType, shouldMarkNullable: Boolean): KaType {
+    return if (shouldMarkNullable) markNullable(type) else type
 }

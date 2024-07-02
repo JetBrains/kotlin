@@ -28,22 +28,20 @@ class HasExportForCompilerAnnotationTest(
 
         analyze(ktFile) {
             assertTrue(
-                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("array"))
+                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("array", this))
             )
             assertFalse(
-                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("iterator"))
+                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("iterator", this))
             )
             assertFalse(
-                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("foo"))
+                verifyHasExportForCompilerAnnotation(ktFile.getPropertyOrFail("foo", this))
             )
         }
     }
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(KaExperimentalApi::class)
-private fun verifyHasExportForCompilerAnnotation(property: KaPropertySymbol): Boolean {
+private fun KaSession.verifyHasExportForCompilerAnnotation(property: KaPropertySymbol): Boolean {
     return property
         .returnType
         .scope?.getConstructors()?.toList()?.any { it.hasExportForCompilerAnnotation }

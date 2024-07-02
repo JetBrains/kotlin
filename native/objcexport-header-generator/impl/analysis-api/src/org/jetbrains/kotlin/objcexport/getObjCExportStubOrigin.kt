@@ -14,14 +14,12 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getKDocString
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubFactoriesKt.ObjCExportStubOrigin]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaSymbol.getObjCExportStubOrigin(): ObjCExportStubOrigin {
+fun KaSession.getObjCExportStubOrigin(symbol: KaSymbol): ObjCExportStubOrigin {
     // TODO: Differentiate origins
     // TODO: Extract kdoc from deserialized symbols
     return ObjCExportStubOrigin.Source(
-        name = name,
-        psi = psi,
-        kdoc = getKDocString()
+        name = symbol.name,
+        psi = symbol.psi,
+        kdoc = symbol.getKDocString()
     )
 }

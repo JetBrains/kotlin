@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaType.isObjCObjectType(): Boolean {
-    val symbol = this.symbol
+
+internal fun KaSession.isObjCObjectType(type: KaType): Boolean {
+    val symbol = type.symbol
 
     if (symbol != null) {
         if (symbol.classId == NativeStandardInteropNames.objCObjectClassId) {
@@ -22,7 +21,7 @@ internal fun KaType.isObjCObjectType(): Boolean {
         }
 
         if (symbol is KaClassSymbol) {
-            return symbol.superTypes.any { it.isObjCObjectType() }
+            return symbol.superTypes.any { isObjCObjectType(it) }
         }
     }
 

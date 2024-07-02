@@ -12,25 +12,21 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getInlineTargetTypeOrNul
  * [ObjCNonNullReferenceType] must be converted into [ObjCNullableReferenceType] if type is nullable
  * So types could be marked with "_Nullable" in Objective-C
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun ObjCNonNullReferenceType.withNullabilityOf(kotlinType: KaType): ObjCReferenceType {
-    return if (kotlinType.isBinaryRepresentationNullable()) {
-        ObjCNullableReferenceType(this)
+internal fun KaSession.withNullabilityOf(objType: ObjCNonNullReferenceType, kotlinType: KaType): ObjCReferenceType {
+    return if (isBinaryRepresentationNullable(kotlinType)) {
+        ObjCNullableReferenceType(objType)
     } else {
-        this
+        objType
     }
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaType.isBinaryRepresentationNullable(): Boolean {
+internal fun KaSession.isBinaryRepresentationNullable(type: KaType): Boolean {
     /* Convention to match K1 implementation */
-    if (this is KaErrorType) return false
+    if (type is KaErrorType) return false
 
-    if (fullyExpandedType.canBeNull) return true
+    if (type.fullyExpandedType.canBeNull) return true
 
-    getInlineTargetTypeOrNull()?.let { inlineTargetType ->
+    getInlineTargetTypeOrNull(type)?.let { inlineTargetType ->
         if (inlineTargetType.canBeNull) return true
     }
 

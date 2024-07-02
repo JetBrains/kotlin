@@ -31,11 +31,11 @@ class GetSuperInterfacesTest(
         )
 
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
 
             assertEquals(
-                listOf(file.getClassOrFail("X"), file.getClassOrFail("Y")),
-                foo.getDeclaredSuperInterfaceSymbols()
+                listOf(getClassOrFail(file, "X"), getClassOrFail(file, "Y")),
+                getDeclaredSuperInterfaceSymbols(foo)
             )
         }
     }
@@ -53,8 +53,8 @@ class GetSuperInterfacesTest(
 
         analyze(file) {
             assertEquals(
-                listOf(file.getClassOrFail("A"), file.getClassOrFail("B")),
-                file.getClassOrFail("Foo").getDeclaredSuperInterfaceSymbols()
+                listOf(getClassOrFail(file, "A"), getClassOrFail(file, "B")),
+                getDeclaredSuperInterfaceSymbols(getClassOrFail(file, "Foo"))
             )
         }
     }
@@ -71,8 +71,8 @@ class GetSuperInterfacesTest(
 
         analyze(file) {
             assertEquals(
-                listOf(file.getClassOrFail("A"), file.getClassOrFail("B")),
-                file.getClassOrFail("Foo").getDeclaredSuperInterfaceSymbols()
+                listOf(getClassOrFail(file, "A"), getClassOrFail(file, "B")),
+                getDeclaredSuperInterfaceSymbols(getClassOrFail(file, "Foo"))
             )
         }
     }

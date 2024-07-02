@@ -3,11 +3,9 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFileName
 
 
-context(KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun String.getObjCFileName(): ObjCExportFileName {
+internal fun KtObjCExportSession.getObjCFileName(fileName: String): ObjCExportFileName {
     return ObjCExportFileName(
-        swiftName = this,
-        objCName = "${configuration.frameworkName.orEmpty()}$this"
+        swiftName = fileName,
+        objCName = "${configuration.frameworkName.orEmpty()}$fileName"
     )
 }

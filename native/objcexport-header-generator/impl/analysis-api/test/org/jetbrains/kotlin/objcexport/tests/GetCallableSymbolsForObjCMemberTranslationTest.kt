@@ -33,10 +33,10 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
+            val fooSymbol = getClassOrFail(file, "Foo")
             assertEquals(
                 listOf("bar", "abstractFun"),
-                fooSymbol.getCallableSymbolsForObjCMemberTranslation()
+                getCallableSymbolsForObjCMemberTranslation(fooSymbol)
                     .map { it as KaNamedFunctionSymbol }
                     .map { it.name.asString() }
             )
@@ -51,10 +51,10 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
             assertEquals(
                 listOf("component1", "copy", "equals", "hashCode", "toString", "a"),
-                foo.getCallableSymbolsForObjCMemberTranslation()
+                getCallableSymbolsForObjCMemberTranslation(foo)
                     .sortedWith(StableCallableOrder)
                     .map { it as KaNamedSymbol }
                     .map { it.name.asString() }
@@ -72,10 +72,10 @@ class GetCallableSymbolsForObjCMemberTranslationTest(
             """.trimIndent()
         )
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
+            val foo = getClassOrFail(file, "Foo")
             assertEquals(
                 emptyList(),
-                foo.getCallableSymbolsForObjCMemberTranslation()
+                getCallableSymbolsForObjCMemberTranslation(foo)
                     .sortedWith(StableCallableOrder)
                     .map { it as KaNamedSymbol }
                     .map { it.name.asString() }

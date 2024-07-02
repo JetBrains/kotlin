@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
@@ -19,13 +18,12 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
  * If object class has companion object it needs to have property which returns this companion.
  * To check whether class has companion object see [needsCompanionProperty]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassSymbol.buildCompanionProperty(): ObjCProperty {
-    val companion = this.staticMemberScope.classifiers.toList()
-        .firstOrNull { (it as? KaClassSymbol)?.isCompanion == true }
+internal fun ObjCExportContext.buildCompanionProperty(classSymbol: KaClassSymbol): ObjCProperty {
+    val companion = with(analysisSession) {
+        classSymbol.staticMemberScope
+    }.classifiers.toList().firstOrNull { (it as? KaClassSymbol)?.isCompanion == true }
 
-    val typeName = (companion as KaClassSymbol).getObjCClassOrProtocolName()
+    val typeName = getObjCClassOrProtocolName(companion as KaClassSymbol)
     val propertyName = ObjCPropertyNames.companionObjectPropertyName
 
     return ObjCProperty(

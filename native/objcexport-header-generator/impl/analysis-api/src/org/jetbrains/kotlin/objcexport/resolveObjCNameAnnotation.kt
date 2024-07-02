@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
-import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
-import org.jetbrains.kotlin.analysis.api.base.KaConstantValue.StringValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue.BooleanValue
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue.StringValue
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 
@@ -45,8 +43,6 @@ internal class KtResolvedObjCNameAnnotation(
     val isExact: Boolean,
 )
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaAnnotatedSymbol.resolveObjCNameAnnotation(): KtResolvedObjCNameAnnotation? {
     val annotation = annotations.find { it.classId?.asSingleFqName() == KonanFqNames.objCName } ?: return null
 

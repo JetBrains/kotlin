@@ -25,27 +25,23 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
  *
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderGenerator.collectClasses]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaFileSymbol.getAllClassOrObjectSymbols(): List<KaClassSymbol> {
-    return fileScope.classifiers
+internal fun KaSession.getAllClassOrObjectSymbols(file: KaFileSymbol): List<KaClassSymbol> {
+    return file.fileScope.classifiers
         .filterIsInstance<KaClassSymbol>()
         .flatMap { classSymbol ->
-            if (classSymbol.isVisibleInObjC()) listOf(classSymbol) + classSymbol.getAllClassOrObjectSymbols()
+            if (isVisibleInObjC(classSymbol)) listOf(classSymbol) + getAllClassOrObjectSymbols(classSymbol)
             else emptyList()
         }
         .toList()
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaClassSymbol.getAllClassOrObjectSymbols(): Sequence<KaClassSymbol> {
+private fun KaSession.getAllClassOrObjectSymbols(symbol: KaClassSymbol): Sequence<KaClassSymbol> {
     return sequence {
-        val nestedClasses = memberScope.classifiers.filterIsInstance<KaClassSymbol>()
+        val nestedClasses = symbol.memberScope.classifiers.filterIsInstance<KaClassSymbol>()
         yieldAll(nestedClasses)
 
         nestedClasses.forEach { nestedClass ->
-            yieldAll(nestedClass.getAllClassOrObjectSymbols())
+            yieldAll(getAllClassOrObjectSymbols(nestedClass))
         }
     }
 }

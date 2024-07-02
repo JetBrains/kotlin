@@ -10,26 +10,19 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.renderAsSourceCode
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridge
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCComment
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 import org.jetbrains.kotlin.backend.konan.objcexport.plus
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.effectiveThrows
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getEffectiveThrows
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getObjCDocumentedAnnotations
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isSuspend
 
-
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaAnnotationList.translateToObjCComment(): ObjCComment? {
-    val annotations = getObjCDocumentedAnnotations()
+internal fun KaSession.translateToObjCComment(list: KaAnnotationList): ObjCComment? {
+    val annotations = getObjCDocumentedAnnotations(list)
         .mapNotNull { annotation -> renderAnnotation(annotation) }
 
     if (annotations.isEmpty()) return null
@@ -39,11 +32,13 @@ internal fun KaAnnotationList.translateToObjCComment(): ObjCComment? {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.buildComment]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaFunctionSymbol.translateToObjCComment(bridge: MethodBridge, parameters: List<ObjCParameter>): ObjCComment? {
-    val throwsComments = if (isSuspend || bridge.returnsError) {
-        val effectiveThrows = effectiveThrows.toSet()
+internal fun KaSession.translateToObjCComment(
+    function: KaFunctionSymbol,
+    bridge: MethodBridge,
+    parameters: List<ObjCParameter>,
+): ObjCComment? {
+    val throwsComments = if (function.isSuspend || bridge.returnsError) {
+        val effectiveThrows = getEffectiveThrows(function).toSet()
         when {
             effectiveThrows.contains(StandardClassIds.Throwable) -> {
                 listOf("@note This method converts all Kotlin exceptions to errors.")
@@ -67,27 +62,25 @@ internal fun KaFunctionSymbol.translateToObjCComment(bridge: MethodBridge, param
         }
     } else emptyList()
 
-    val visibilityComments = buildObjCVisibilityComment("method")
+    val visibilityComments = function.buildObjCVisibilityComment("method")
 
-    val paramComments = valueParameters.mapNotNull { parameterSymbol ->
-        parameters.find { parameter -> parameter.name == parameterSymbol.name.asString() }
-            ?.renderedObjCDocumentedParamAnnotations(parameterSymbol)
+    val paramComments = function.valueParameters.mapNotNull { parameterSymbol ->
+        val param = parameters.find { parameter -> parameter.name == parameterSymbol.name.asString() }
+        param?.let { renderedObjCDocumentedParamAnnotations(it, parameterSymbol) }
     }
-    val annotationsComments = annotations.translateToObjCComment()
+    val annotationsComments = translateToObjCComment(function.annotations)
     return annotationsComments + paramComments + throwsComments + visibilityComments
 }
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mustBeDocumentedParamAttributeList]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun ObjCParameter.renderedObjCDocumentedParamAnnotations(parameterSymbol: KaValueParameterSymbol): String? {
-    val renderedAnnotationsString = parameterSymbol.getObjCDocumentedAnnotations()
+private fun KaSession.renderedObjCDocumentedParamAnnotations(parameter: ObjCParameter, parameterSymbol: KaValueParameterSymbol): String? {
+    val renderedAnnotationsString = getObjCDocumentedAnnotations(parameterSymbol)
         .mapNotNull { annotation -> renderAnnotation(annotation) }
         .ifEmpty { return null }
         .joinToString(" ")
-    return "@param $name annotations $renderedAnnotationsString"
+    return "@param ${parameter.name} annotations $renderedAnnotationsString"
 }
 
 

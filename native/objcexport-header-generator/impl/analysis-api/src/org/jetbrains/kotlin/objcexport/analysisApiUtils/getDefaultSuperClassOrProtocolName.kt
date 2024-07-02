@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.objcexport.getObjCKotlinStdlibClassOrProtocolName
  * + (NSString *)myTopLevelFunction __attribute__((swift_name("myTopLevelFunction()")));
  * @end
  */
-context(KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun getDefaultSuperClassOrProtocolName(): ObjCExportClassOrProtocolName {
-    return "Base".getObjCKotlinStdlibClassOrProtocolName()
+internal fun KtObjCExportSession.getDefaultSuperClassOrProtocolName(): ObjCExportClassOrProtocolName {
+    return getObjCKotlinStdlibClassOrProtocolName("Base")
 }

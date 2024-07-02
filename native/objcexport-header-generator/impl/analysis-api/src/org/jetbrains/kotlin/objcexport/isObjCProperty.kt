@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 /**
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.isObjCProperty]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaPropertySymbol.isObjCProperty: Boolean
-    get() {
-        return this.receiverParameter?.type == null || getClassIfCategory() != null
-    }
+internal fun KaSession.isObjCProperty(symbol: KaPropertySymbol): Boolean {
+    return symbol.receiverParameter?.type == null || getClassIfCategory(symbol) != null
+}

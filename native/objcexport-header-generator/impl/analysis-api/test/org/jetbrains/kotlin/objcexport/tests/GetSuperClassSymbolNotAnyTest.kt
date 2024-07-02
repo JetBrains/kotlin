@@ -21,8 +21,8 @@ class GetSuperClassSymbolNotAnyTest(
     fun `test - no declared superclass - returns null`() {
         val file = inlineSourceCodeAnalysis.createKtFile("""class Foo""")
         analyze(file) {
-            val foo = file.getClassOrFail("Foo")
-            assertNull(foo.getSuperClassSymbolNotAny())
+            val foo = getClassOrFail(file, "Foo")
+            assertNull(getSuperClassSymbolNotAny(foo))
         }
     }
 
@@ -36,9 +36,9 @@ class GetSuperClassSymbolNotAnyTest(
         )
 
         analyze(file) {
-            val fooSymbol = file.getClassOrFail("Foo")
-            val barSymbol = fooSymbol.getSuperClassSymbolNotAny()
-            assertEquals(barSymbol, file.getClassOrFail("Bar"))
+            val fooSymbol = getClassOrFail(file, "Foo")
+            val barSymbol = getSuperClassSymbolNotAny(fooSymbol)
+            assertEquals(barSymbol, getClassOrFail(file, "Bar"))
         }
     }
 
@@ -53,13 +53,13 @@ class GetSuperClassSymbolNotAnyTest(
         )
 
         analyze(file) {
-            val aSymbol = file.getClassOrFail("A")
-            val bSymbol = file.getClassOrFail("B")
-            val cSymbol = file.getClassOrFail("C")
+            val aSymbol = getClassOrFail(file, "A")
+            val bSymbol = getClassOrFail(file, "B")
+            val cSymbol = getClassOrFail(file, "C")
 
-            assertEquals(cSymbol.getSuperClassSymbolNotAny(), bSymbol)
-            assertEquals(bSymbol.getSuperClassSymbolNotAny(), aSymbol)
-            assertNull(aSymbol.getSuperClassSymbolNotAny())
+            assertEquals(getSuperClassSymbolNotAny(cSymbol), bSymbol)
+            assertEquals(getSuperClassSymbolNotAny(bSymbol), aSymbol)
+            assertNull(getSuperClassSymbolNotAny(aSymbol))
         }
     }
 
@@ -75,14 +75,14 @@ class GetSuperClassSymbolNotAnyTest(
         )
 
         analyze(file) {
-            val aSymbol = file.getClassOrFail("A")
-            val i1Symbol = file.getClassOrFail("I1")
-            val i2Symbol = file.getClassOrFail("I2")
-            val fooSymbol = file.getClassOrFail("Foo")
+            val aSymbol = getClassOrFail(file, "A")
+            val i1Symbol = getClassOrFail(file, "I1")
+            val i2Symbol = getClassOrFail(file, "I2")
+            val fooSymbol = getClassOrFail(file, "Foo")
 
-            assertEquals(fooSymbol.getSuperClassSymbolNotAny(), aSymbol)
-            assertNull(i1Symbol.getSuperClassSymbolNotAny())
-            assertNull(i2Symbol.getSuperClassSymbolNotAny())
+            assertEquals(getSuperClassSymbolNotAny(fooSymbol), aSymbol)
+            assertNull(getSuperClassSymbolNotAny(i1Symbol))
+            assertNull(getSuperClassSymbolNotAny(i2Symbol))
         }
     }
 }

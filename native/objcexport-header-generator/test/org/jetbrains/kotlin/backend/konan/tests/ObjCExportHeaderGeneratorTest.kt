@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.konan.testUtils.headersTestDataDir
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
 import java.io.File
-import kotlin.reflect.KTypeProjection
 import kotlin.test.fail
 
 /**
@@ -457,14 +456,13 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    fun `test - internalPublicApi`() {
-        KTypeProjection.Companion
-        doTest(headersTestDataDir.resolve("internalPublicApi"))
+    fun `test - top level interface extension property`() {
+        doTest(headersTestDataDir.resolve("topLevelInterfaceExtensionProperty"))
     }
 
     @Test
-    fun `test - top level interface extension property`() {
-        doTest(headersTestDataDir.resolve("topLevelInterfaceExtensionProperty"))
+    fun `test - internalPublicApi`() {
+        doTest(headersTestDataDir.resolve("internalPublicApi"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

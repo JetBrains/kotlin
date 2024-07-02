@@ -28,12 +28,12 @@ class GetClassIfCategoryTests(
         )
 
         analyze(file) {
-            val fooClass = file.getClassOrFail("Foo")
+            val fooClass = file.getClassOrFail("Foo", this)
 
-            assertNull(fooClass.getFunctionOrFail("memberFoo").getClassIfCategory())
-            assertNull(fooClass.getFunctionOrFail("memberBarExtension").getClassIfCategory())
-            assertNull(fooClass.getFunctionOrFail("memberStringExtension").getClassIfCategory())
-            assertNull(fooClass.getPropertyOrFail("prop").getClassIfCategory())
+            assertNull(getClassIfCategory(fooClass.getFunctionOrFail("memberFoo", this)))
+            assertNull(getClassIfCategory(fooClass.getFunctionOrFail("memberBarExtension", this)))
+            assertNull(getClassIfCategory(fooClass.getFunctionOrFail("memberStringExtension", this)))
+            assertNull(getClassIfCategory(getPropertyOrFail(fooClass, "prop")))
         }
     }
 
@@ -46,8 +46,8 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(file.getFunctionOrFail("topLevelFoo").getClassIfCategory())
-            assertNull(file.getPropertyOrFail("prop").getClassIfCategory())
+            assertNull(getClassIfCategory(file.getFunctionOrFail("topLevelFoo", this)))
+            assertNull(getClassIfCategory(file.getPropertyOrFail("prop", this)))
         }
     }
 
@@ -60,7 +60,7 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(file.getFunctionOrFail("foo").getClassIfCategory())
+            assertNull(getClassIfCategory(file.getFunctionOrFail("foo", this)))
         }
     }
 
@@ -73,7 +73,7 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(file.getFunctionOrFail("foo").getClassIfCategory())
+            assertNull(getClassIfCategory(file.getFunctionOrFail("foo", this)))
         }
     }
 
@@ -87,7 +87,7 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(file.getFunctionOrFail("foo").getClassIfCategory())
+            assertNull(getClassIfCategory(file.getFunctionOrFail("foo", this)))
         }
     }
 
@@ -102,10 +102,10 @@ class GetClassIfCategoryTests(
         """.trimMargin()
         )
         analyze(file) {
-            assertNull(file.getFunctionOrFail("anyFoo").getClassIfCategory())
-            assertNull(file.getFunctionOrFail("listFoo").getClassIfCategory())
-            assertNull(file.getFunctionOrFail("stringFoo").getClassIfCategory())
-            assertNull(file.getFunctionOrFail("fooFun").getClassIfCategory())
+            assertNull(getClassIfCategory(file.getFunctionOrFail("anyFoo", this)))
+            assertNull(getClassIfCategory(file.getFunctionOrFail("listFoo", this)))
+            assertNull(getClassIfCategory(file.getFunctionOrFail("stringFoo", this)))
+            assertNull(getClassIfCategory(file.getFunctionOrFail("fooFun", this)))
         }
     }
 
@@ -119,8 +119,8 @@ class GetClassIfCategoryTests(
         )
         analyze(file) {
 
-            val foo = checkNotNull(file.getClassOrFail("Foo").defaultType.getClassIfCategory())
-            val bar = checkNotNull(file.getFunctionOrFail("bar").getClassIfCategory())
+            val foo = checkNotNull(getClassIfCategory(file.getClassOrFail("Foo", this).defaultType))
+            val bar = checkNotNull(getClassIfCategory(file.getFunctionOrFail("bar", this)))
 
             assertEquals("Foo", foo.name?.identifier)
             assertEquals("Foo", bar.name?.identifier)

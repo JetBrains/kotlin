@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
@@ -15,29 +14,29 @@ import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
 import org.jetbrains.kotlin.objcexport.extras.originClassId
 import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KaClassSymbol.translateToObjCObject(): ObjCClass? {
-    require(classKind == KaClassKind.OBJECT || classKind == KaClassKind.COMPANION_OBJECT)
-    if (!isVisibleInObjC()) return null
+fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? {
+    require(symbol.classKind == KaClassKind.OBJECT || symbol.classKind == KaClassKind.COMPANION_OBJECT)
+    if (!analysisSession.isVisibleInObjC(symbol)) return null
 
-    val enumKind = this.classKind == KaClassKind.ENUM_CLASS
-    val final = this.modality == KaSymbolModality.FINAL
-    val name = getObjCClassOrProtocolName()
+    val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
+    val final = symbol.modality == KaSymbolModality.FINAL
+    val name = getObjCClassOrProtocolName(symbol)
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
-    val comment: ObjCComment? = annotations.translateToObjCComment()
-    val origin = getObjCExportStubOrigin()
-    val superProtocols: List<String> = superProtocols()
+    val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
+    val origin = analysisSession.getObjCExportStubOrigin(symbol)
+    val superProtocols: List<String> = superProtocols(symbol)
     val categoryName: String? = null
     val generics: List<ObjCGenericTypeDeclaration> = emptyList()
-    val superClass = translateSuperClass()
+    val superClass = translateSuperClass(symbol)
 
     val objectMembers = mutableListOf<ObjCExportStub>()
-    objectMembers += translateToObjCConstructors()
-    objectMembers += getDefaultMembers()
-    objectMembers += declaredMemberScope.callables
-        .sortedWith(StableCallableOrder)
-        .flatMap { it.translateToObjCExportStub() }
+    objectMembers += translateToObjCConstructors(symbol)
+    objectMembers += getDefaultMembers(symbol)
+    objectMembers += with(analysisSession) {
+        symbol.declaredMemberScope.callables
+            .sortedWith(StableCallableOrder)
+            .flatMap { translateToObjCExportStub(it) }
+    }
 
     return ObjCInterfaceImpl(
         name = name.objCName,
@@ -53,9 +52,7 @@ fun KaClassSymbol.translateToObjCObject(): ObjCClass? {
     )
 }
 
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaClassSymbol.getDefaultMembers(): List<ObjCExportStub> {
+private fun ObjCExportContext.getDefaultMembers(symbol: KaClassSymbol): List<ObjCExportStub> {
 
     val result = mutableListOf<ObjCExportStub>()
 
@@ -65,7 +62,7 @@ private fun KaClassSymbol.getDefaultMembers(): List<ObjCExportStub> {
             null,
             false,
             ObjCInstanceType,
-            listOf(getObjectInstanceSelector(this)),
+            listOf(getObjectInstanceSelector(symbol)),
             emptyList(),
             listOf(swiftNameAttribute("init()"))
         )
@@ -75,9 +72,9 @@ private fun KaClassSymbol.getDefaultMembers(): List<ObjCExportStub> {
         ObjCProperty(
             name = ObjCPropertyNames.objectPropertyName,
             comment = null,
-            type = toPropertyType(),
+            type = toPropertyType(symbol),
             propertyAttributes = listOf("class", "readonly"),
-            getterName = getObjectPropertySelector(this),
+            getterName = getObjectPropertySelector(symbol),
             declarationAttributes = listOf(swiftNameAttribute(ObjCPropertyNames.objectPropertyName)),
             origin = null
         )
@@ -90,24 +87,20 @@ private fun KaClassSymbol.getDefaultMembers(): List<ObjCExportStub> {
  * Use translateToObjCReferenceType() to make type
  * See also: [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceType]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun KaClassSymbol.toPropertyType() = ObjCClassType(
-    className = getObjCClassOrProtocolName().objCName,
+private fun ObjCExportContext.toPropertyType(symbol: KaClassSymbol) = ObjCClassType(
+    className = getObjCClassOrProtocolName(symbol).objCName,
     typeArguments = emptyList(),
     extras = objCTypeExtras {
         requiresForwardDeclaration = true
-        originClassId = classId
+        originClassId = symbol.classId
     }
 )
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectInstanceSelector]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun getObjectInstanceSelector(objectSymbol: KaClassSymbol): String {
-    return objectSymbol.getObjCClassOrProtocolName(bareName = true)
+private fun ObjCExportContext.getObjectInstanceSelector(objectSymbol: KaClassSymbol): String {
+    return getObjCClassOrProtocolName(objectSymbol, bareName = true)
         .objCName
         .replaceFirstChar(Char::lowercaseChar)
         .mangleIfReservedObjCName()
@@ -116,9 +109,7 @@ private fun getObjectInstanceSelector(objectSymbol: KaClassSymbol): String {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectPropertySelector]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-private fun getObjectPropertySelector(descriptor: KaClassSymbol): String {
+private fun ObjCExportContext.getObjectPropertySelector(descriptor: KaClassSymbol): String {
     val collides = ObjCPropertyNames.objectPropertyName == getObjectInstanceSelector(descriptor)
     return ObjCPropertyNames.objectPropertyName + (if (collides) "_" else "")
 }

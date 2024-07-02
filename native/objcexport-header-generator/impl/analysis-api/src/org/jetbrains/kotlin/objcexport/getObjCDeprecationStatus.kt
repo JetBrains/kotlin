@@ -17,12 +17,10 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
  *
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.getDeprecation]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 @OptIn(KaExperimentalApi::class)
-internal fun KaSymbol.getObjCDeprecationStatus(): String? {
-    return deprecationStatus?.toDeprecationAttribute() ?: if (this.isConstructor) {
-        this.containingDeclaration?.deprecationStatus?.toDeprecationAttribute()
+internal fun KaSession.getObjCDeprecationStatus(symbol: KaSymbol): String? {
+    return symbol.deprecationStatus?.toDeprecationAttribute() ?: if (symbol.isConstructor) {
+        symbol.containingDeclaration?.deprecationStatus?.toDeprecationAttribute()
     } else null
 }
 

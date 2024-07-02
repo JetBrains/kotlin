@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 
@@ -46,16 +45,14 @@ internal val ObjCInterface.isExtensionsFacade: Boolean
  *
  * See related [translateToObjCTopLevelFacade]
  */
-context(KaSession, KtObjCExportSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-fun KtResolvedObjCExportFile.translateToObjCExtensionFacades(): List<ObjCInterface> {
-    val extensions = callableSymbols
-        .filter { it.getClassIfCategory() != null && it.isExtension }
+fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExportFile): List<ObjCInterface> {
+    val extensions = file.callableSymbols
+        .filter { analysisSession.getClassIfCategory(it) != null && it.isExtension }
         .sortedWith(StableCallableOrder)
         .ifEmpty { return emptyList() }
         .groupBy {
             val type = it.receiverParameter?.type
-            if (type?.isMappedObjCType == true) return@groupBy null
+            if (analysisSession.isMappedObjCType(type)) return@groupBy null
             else {
                 /**
                  * Mapped types extensions should be handled as top level facades
@@ -63,7 +60,9 @@ fun KtResolvedObjCExportFile.translateToObjCExtensionFacades(): List<ObjCInterfa
                  * @see [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.getClassIfCategory] which K1 uses
                  * to differentiate extensions and top level callables
                  */
-                type?.expandedSymbol?.getObjCClassOrProtocolName()?.objCName
+                val expandedSymbol = with(analysisSession) { type?.expandedSymbol }
+                if (expandedSymbol == null) return@groupBy null
+                else getObjCClassOrProtocolName(expandedSymbol).objCName
             }
         }
 
@@ -74,7 +73,7 @@ fun KtResolvedObjCExportFile.translateToObjCExtensionFacades(): List<ObjCInterfa
             origin = null,
             attributes = emptyList(),
             superProtocols = emptyList(),
-            members = extensionSymbols.flatMap { ext -> ext.translateToObjCExportStub() },
+            members = extensionSymbols.flatMap { ext -> translateToObjCExportStub(ext) },
             categoryName = extensionsCategoryName,
             generics = emptyList(),
             superClass = null,

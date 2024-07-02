@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.name.ClassId
  * See [definedThrows]
  * See K1: [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.getEffectiveThrows]
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal val KaFunctionSymbol.effectiveThrows: List<ClassId>
-    get() {
-        allOverriddenSymbols.firstOrNull()?.let { return (it as KaFunctionSymbol).effectiveThrows }
-        return definedThrows
-    }
+internal fun KaSession.getEffectiveThrows(symbol: KaFunctionSymbol): List<ClassId> {
+    symbol.allOverriddenSymbols.firstOrNull()?.let { return getEffectiveThrows((it as KaFunctionSymbol)) }
+    return getDefinedThrows(symbol)
+}

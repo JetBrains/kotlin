@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
 /**
  * @return The **declared** super interfaces (**not the transitive closure**)
  */
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun KaClassSymbol.getDeclaredSuperInterfaceSymbols(): List<KaClassSymbol> {
-    return superTypes
+internal fun KaSession.getDeclaredSuperInterfaceSymbols(symbol: KaClassSymbol): List<KaClassSymbol> {
+    return symbol.superTypes
         .asSequence()
         .mapNotNull { type -> type.symbol as? KaClassSymbol }
         .filter { !it.isCloneable } // TODO: Write unit test for this
