@@ -609,10 +609,13 @@ class BooleanOperatorEnterRightOperandNode(owner: ControlFlowGraph, override val
     }
 }
 
-class BooleanOperatorExitNode(owner: ControlFlowGraph, override val fir: FirBinaryLogicExpression, level: Int) : CFGNode<FirBinaryLogicExpression>(owner, level), ExitNodeMarker {
-    val leftOperandNode: CFGNode<*>? get() = if (previousNodes.size > 1) firstPreviousNode else null
-    val rightOperandNode: CFGNode<*> get() = lastPreviousNode
-
+class BooleanOperatorExitNode(
+    owner: ControlFlowGraph,
+    override val fir: FirBinaryLogicExpression,
+    val leftOperandNode: CFGNode<*>,
+    val rightOperandNode: CFGNode<*>,
+    level: Int,
+) : CFGNode<FirBinaryLogicExpression>(owner, level), ExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitBooleanOperatorExitNode(this, data)
     }

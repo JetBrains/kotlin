@@ -73,8 +73,12 @@ fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction): FunctionEx
 fun ControlFlowGraphBuilder.createLocalFunctionDeclarationNode(fir: FirFunction): LocalFunctionDeclarationNode =
     LocalFunctionDeclarationNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createBooleanOperatorExitNode(fir: FirBinaryLogicExpression): BooleanOperatorExitNode =
-    BooleanOperatorExitNode(currentGraph, fir, levelCounter)
+fun ControlFlowGraphBuilder.createBooleanOperatorExitNode(
+    fir: FirBinaryLogicExpression,
+    leftOperandNode: CFGNode<*>,
+    rightOperandNode: CFGNode<*>,
+): BooleanOperatorExitNode =
+    BooleanOperatorExitNode(currentGraph, fir, leftOperandNode, rightOperandNode, levelCounter)
 
 fun ControlFlowGraphBuilder.createBooleanOperatorEnterNode(fir: FirBinaryLogicExpression): BooleanOperatorEnterNode =
     BooleanOperatorEnterNode(currentGraph, fir, levelCounter)

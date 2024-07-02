@@ -1028,9 +1028,9 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression): BooleanOperatorExitNode {
-        val exitNode = createBooleanOperatorExitNode(binaryLogicExpression)
         val rightNode = lastNodes.pop()
         val leftNode = lastNodes.pop()
+        val exitNode = createBooleanOperatorExitNode(binaryLogicExpression, leftNode, rightNode)
         val rhsAlwaysExecuted =
             binaryLogicExpression.leftOperand.booleanLiteralValue == (binaryLogicExpression.kind == LogicOperationKind.AND)
         if (rhsAlwaysExecuted) {
