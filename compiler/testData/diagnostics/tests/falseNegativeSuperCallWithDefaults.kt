@@ -1,6 +1,5 @@
 // ISSUE: KT-69463
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_NON_REVERSED_RESOLVE
 
 // MODULE: common
 // FILE: common.kt
