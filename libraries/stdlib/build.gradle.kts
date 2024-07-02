@@ -208,11 +208,6 @@ kotlin {
                                 "-Xexpect-actual-classes",
                             )
                         )
-                        // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
-                        val currentFreeArgs = freeCompilerArgs.get()
-                        freeCompilerArgs
-                            .value(currentFreeArgs.filter { it != "-Xno-optimized-callable-references" })
-                            .finalizeValue()
                     }
                 }
             }

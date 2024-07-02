@@ -173,7 +173,6 @@ fun Project.configureKotlinCompilationOptions() {
         }
 
         val jvmCompilerArgs = listOf(
-            "-Xno-optimized-callable-references",
             "-Xno-kotlin-nothing-value-exception",
         )
 

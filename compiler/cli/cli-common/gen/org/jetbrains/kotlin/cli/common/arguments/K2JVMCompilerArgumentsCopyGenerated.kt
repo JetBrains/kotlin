@@ -52,7 +52,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.noKotlinNothingValueException = from.noKotlinNothingValueException
     to.noNewJavaAnnotationTargets = from.noNewJavaAnnotationTargets
     to.noOptimize = from.noOptimize
-    to.noOptimizedCallableReferences = from.noOptimizedCallableReferences
     to.noParamAssertions = from.noParamAssertions
     to.noReceiverAssertions = from.noReceiverAssertions
     to.noReflect = from.noReflect

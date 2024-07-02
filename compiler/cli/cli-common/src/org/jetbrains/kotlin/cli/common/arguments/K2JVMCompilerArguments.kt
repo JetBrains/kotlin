@@ -614,16 +614,6 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         }
 
     @Argument(
-        value = "-Xno-optimized-callable-references",
-        description = "Don't use optimized callable reference superclasses, which have been available since 1.4."
-    )
-    var noOptimizedCallableReferences = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xno-kotlin-nothing-value-exception",
         description = "Don't use KotlinNothingValueException, which has been available since 1.4."
     )

@@ -58,11 +58,6 @@ class IrInlineIntrinsicsSupport(
         when (val parent = typeParameter.owner.parent) {
             is IrClass -> putClassInstance(v, parent.defaultType).also { AsmUtil.wrapJavaClassIntoKClass(v) }
             is IrSimpleFunction -> {
-                check(classCodegen.context.config.generateOptimizedCallableReferenceSuperClasses) {
-                    "typeOf() of a non-reified type parameter is only allowed if optimized callable references are enabled.\n" +
-                            "Please make sure API version is set to 1.4, and -Xno-optimized-callable-references is NOT used.\n" +
-                            "Container: $parent"
-                }
                 val property = parent.correspondingPropertySymbol
                 if (property != null) {
                     generatePropertyReference(v, property.owner)

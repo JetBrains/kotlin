@@ -45,10 +45,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     val stableTypeOf: Boolean =
         languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_6
 
-    val generateOptimizedCallableReferenceSuperClasses: Boolean =
-        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
-                !configuration.getBoolean(JVMConfigurationKeys.NO_OPTIMIZED_CALLABLE_REFERENCES)
-
     val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
     val isReceiverAssertionsDisabled: Boolean =
         configuration.getBoolean(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS) ||

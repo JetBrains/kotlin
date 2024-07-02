@@ -49,7 +49,6 @@ compileKotlin {
     compilerOptions {
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
-                "-Xno-optimized-callable-references",
                 "-Xno-kotlin-nothing-value-exception",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction",

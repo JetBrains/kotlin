@@ -79,8 +79,6 @@ class JvmSymbols(
      */
     val kotlinJvmInternalInvokeDynamicPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal.invokeDynamic"))
 
-    private val generateOptimizedCallableReferenceSuperClasses = context.config.generateOptimizedCallableReferenceSuperClasses
-
     private fun createPackage(fqName: FqName): IrPackageFragment =
         createEmptyExternalPackageFragment(context.state.module, fqName)
 
@@ -386,17 +384,10 @@ class JvmSymbols(
             generateCallableReferenceMethods(klass)
         }
 
-    val functionReferenceGetSignature: IrSimpleFunctionSymbol = functionReference.functionByName("getSignature")
-    val functionReferenceGetName: IrSimpleFunctionSymbol = functionReference.functionByName("getName")
-    val functionReferenceGetOwner: IrSimpleFunctionSymbol = functionReference.functionByName("getOwner")
-
     val functionReferenceImpl: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.FunctionReferenceImpl"), classModality = Modality.OPEN) { klass ->
             klass.superTypes = listOf(functionReference.defaultType)
-
-            if (generateOptimizedCallableReferenceSuperClasses) {
-                klass.generateCallableReferenceSuperclassConstructors(withArity = true)
-            }
+            klass.generateCallableReferenceSuperclassConstructors(withArity = true)
         }
 
     val adaptedFunctionReference: IrClassSymbol =
@@ -502,15 +493,7 @@ class JvmSymbols(
                 classModality = if (impl) Modality.FINAL else Modality.ABSTRACT
             ) { klass ->
                 if (impl) {
-                    klass.addConstructor().apply {
-                        addValueParameter("owner", kDeclarationContainer.defaultType)
-                        addValueParameter("name", irBuiltIns.stringType)
-                        addValueParameter("string", irBuiltIns.stringType)
-                    }
-
-                    if (generateOptimizedCallableReferenceSuperClasses) {
-                        klass.generateCallableReferenceSuperclassConstructors(withArity = false)
-                    }
+                    klass.generateCallableReferenceSuperclassConstructors(withArity = false)
 
                     klass.superTypes += getPropertyReferenceClass(mutable, parameterCount, false).defaultType
                 } else {

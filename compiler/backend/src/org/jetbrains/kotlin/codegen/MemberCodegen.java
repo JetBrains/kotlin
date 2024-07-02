@@ -693,24 +693,16 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         iv.dup();
 
         List<Type> superCtorArgTypes = new ArrayList<>();
-        if (state.getConfig().getGenerateOptimizedCallableReferenceSuperClasses()) {
-            CallableReferenceUtilKt.generateCallableReferenceDeclarationContainerClass(iv, property, state);
-            superCtorArgTypes.add(JAVA_CLASS_TYPE);
-        } else {
-            // TODO: generate the container once and save to a local field instead (KT-10495)
-            CallableReferenceUtilKt.generateCallableReferenceDeclarationContainer(iv, property, state);
-            superCtorArgTypes.add(K_DECLARATION_CONTAINER_TYPE);
-        }
+        CallableReferenceUtilKt.generateCallableReferenceDeclarationContainerClass(iv, property, state);
+        superCtorArgTypes.add(JAVA_CLASS_TYPE);
 
         iv.aconst(property.getName().asString());
         CallableReferenceUtilKt.generatePropertyReferenceSignature(iv, property, state);
         superCtorArgTypes.add(JAVA_STRING_TYPE);
         superCtorArgTypes.add(JAVA_STRING_TYPE);
 
-        if (state.getConfig().getGenerateOptimizedCallableReferenceSuperClasses()) {
-            iv.aconst(CallableReferenceUtilKt.getCallableReferenceTopLevelFlag(property));
-            superCtorArgTypes.add(Type.INT_TYPE);
-        }
+        iv.aconst(CallableReferenceUtilKt.getCallableReferenceTopLevelFlag(property));
+        superCtorArgTypes.add(Type.INT_TYPE);
 
         iv.invokespecial(
                 implType.getInternalName(), "<init>",

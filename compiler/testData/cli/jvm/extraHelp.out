@@ -91,8 +91,6 @@ where advanced options include:
   -Xno-new-java-annotation-targets
                              Don't generate Java 1.8+ targets for Kotlin annotation classes.
   -Xno-optimize              Disable optimizations.
-  -Xno-optimized-callable-references
-                             Don't use optimized callable reference superclasses, which have been available since 1.4.
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java.
   -Xno-receiver-assertions   Don't generate not-null assertions for extension receiver arguments of platform types.
   -Xno-reset-jar-timestamps  Don't reset jar entry timestamps to a fixed date.

@@ -20,17 +20,14 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
-import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictsSuspensionReceiver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-
 class JvmRuntimeTypes(
     module: ModuleDescriptor,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val generateOptimizedCallableReferenceSuperClasses: Boolean
 ) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
     private val kotlinCoroutinesJvmInternalPackage = MutablePackageFragmentDescriptor(module, COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME)
@@ -63,8 +60,6 @@ class JvmRuntimeTypes(
 
     private fun createCoroutineSuperClass(className: String): ClassDescriptor = createClass(kotlinCoroutinesJvmInternalPackage, className)
 
-    private val propertyReferences: List<ClassDescriptor> by propertyClasses("PropertyReference", "")
-    private val mutablePropertyReferences: List<ClassDescriptor> by propertyClasses("MutablePropertyReference", "")
     private val propertyReferenceImpls: List<ClassDescriptor> by propertyClasses("PropertyReference", "Impl")
     private val mutablePropertyReferenceImpls: List<ClassDescriptor> by propertyClasses("MutablePropertyReference", "Impl")
 
@@ -155,11 +150,8 @@ class JvmRuntimeTypes(
 
         val suspendFunctionType = if (referencedFunction.isSuspend || isSuspendConversion) suspendFunctionInterface?.defaultType else null
         val superClass = when {
-            generateOptimizedCallableReferenceSuperClasses -> when {
-                isAdaptedCallableReference || isSuspendConversion -> adaptedFunctionReference
-                else -> functionReferenceImpl
-            }
-            else -> functionReference
+            isAdaptedCallableReference || isSuspendConversion -> adaptedFunctionReference
+            else -> functionReferenceImpl
         }
         return listOfNotNull(superClass.defaultType, functionType, suspendFunctionType)
     }
@@ -174,10 +166,7 @@ class JvmRuntimeTypes(
                     (if (descriptor.dispatchReceiverParameter != null) 1 else 0) -
                     if (isBound) 1 else 0
 
-        val classes = when {
-            generateOptimizedCallableReferenceSuperClasses -> if (isMutable) mutablePropertyReferenceImpls else propertyReferenceImpls
-            else -> if (isMutable) mutablePropertyReferences else propertyReferences
-        }
+        val classes = if (isMutable) mutablePropertyReferenceImpls else propertyReferenceImpls
 
         return if (arity >= 0) {
             classes[arity].defaultType
