@@ -46,7 +46,7 @@ internal class KaFirFunctionalType(
 
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override val abbreviatedType: KaUsualClassType?
+    override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }
 
     override val isSuspend: Boolean get() = withValidityAssertion { coneType.isSuspendOrKSuspendFunctionType(builder.rootSession) }

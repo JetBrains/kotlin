@@ -31,28 +31,28 @@ public sealed interface KaType : KaLifetimeOwner, KaAnnotated {
      * `typealias MyList<A> = List<A>`, for an application `MyList<String>`, `MyList<String>` would be the abbreviated type for such a type
      * alias application, not simply `MyList`.
      *
-     * If this [KaType] is an unexpanded type alias application, [abbreviatedType] is `null`. Not all type alias applications are currently
+     * If this [KaType] is an unexpanded type alias application, [abbreviation] is `null`. Not all type alias applications are currently
      * expanded right away and the Analysis API makes no guarantees about the specific circumstances.
      *
-     * While [abbreviatedType] is available for all [KaType]s, it can currently only be present in [KaClassType]s. However, abbreviated
+     * While [abbreviation] is available for all [KaType]s, it can currently only be present in [KaClassType]s. However, abbreviated
      * types are a general concept and if the type system changes (e.g. with denotable union/intersection types), other kinds of types may
      * also be expanded from a type alias. This would allow more kinds of types to carry an abbreviated type.
      *
-     * The [abbreviatedType] itself is always a [KaUsualClassType], as the application of a type alias is always a class type. It cannot be
-     * a [KaClassErrorType] because [abbreviatedType] would then be `null`.
+     * The [abbreviation] itself is always a [KaUsualClassType], as the application of a type alias is always a class type. It cannot be
+     * a [KaClassErrorType] because [abbreviation] would then be `null`.
      *
      *
      * ### Resolvability
      *
      * Even when this [KaType] is an expansion, the abbreviated type may be `null` if it is not resolvable from this type's use-site module.
      * This can occur when the abbreviated type from a module `M1` was expanded at some declaration `D` in module `M2`, and the use-site
-     * module uses `D`, but only has a dependency on `M2`. Then the type alias of `M1` remains unresolved and [abbreviatedType] is `null`.
+     * module uses `D`, but only has a dependency on `M2`. Then the type alias of `M1` remains unresolved and [abbreviation] is `null`.
      *
      *
      * ### Type arguments and nested abbreviated types
      *
      * The type arguments of an abbreviated type are not converted to abbreviated types automatically. That is, if a type argument is a type
-     * expansion, its [abbreviatedType] doesn't automatically replace the expanded type. For example:
+     * expansion, its [abbreviation] doesn't automatically replace the expanded type. For example:
      *
      * ```
      * typealias MyString = String
@@ -68,7 +68,7 @@ public sealed interface KaType : KaLifetimeOwner, KaAnnotated {
      * ### Transitive expansion
      *
      * Types are always expanded to their final form. That is, if we have a chain of type alias expansions, the [KaType] only represents the
-     * final expanded type, and its [abbreviatedType] the initial type alias application. For example:
+     * final expanded type, and its [abbreviation] the initial type alias application. For example:
      *
      * ```
      * typealias Inner = String
@@ -79,7 +79,11 @@ public sealed interface KaType : KaLifetimeOwner, KaAnnotated {
      *
      * Here, `outer`'s type would be expanded to `String`, but its abbreviated type would be `Outer`. `Inner` would be lost.
      */
+    public val abbreviation: KaUsualClassType?
+
+    @Deprecated("Use 'abbreviation' instead", ReplaceWith("abbreviation"))
     public val abbreviatedType: KaUsualClassType?
+        get() = abbreviation
 
     @Deprecated("Use 'toString()' instead.", replaceWith = ReplaceWith("toString()"))
     public fun asStringForDebugging(): String {
@@ -209,7 +213,7 @@ public abstract class KaDefinitelyNotNullType : KaType {
 public typealias KtDefinitelyNotNullType = KaDefinitelyNotNullType
 
 /**
- * A flexible type's [abbreviatedType] is always `null`, as only [lowerBound] and [upperBound] may actually be expanded types.
+ * A flexible type's [abbreviation] is always `null`, as only [lowerBound] and [upperBound] may actually be expanded types.
  */
 public abstract class KaFlexibleType : KaType {
     public abstract val lowerBound: KaType

@@ -27,7 +27,7 @@ internal class KaFe10CapturedType(
     override val projection: KaTypeProjection
         get() = withValidityAssertion { fe10Type.typeProjection.toKtTypeProjection(analysisContext) }
 
-    override val abbreviatedType: KaUsualClassType?
+    override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }
 
     override fun toString(): String {

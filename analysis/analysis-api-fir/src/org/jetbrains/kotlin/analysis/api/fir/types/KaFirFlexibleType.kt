@@ -31,7 +31,7 @@ internal class KaFirFlexibleType(
     }
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override val abbreviatedType: KaUsualClassType?
+    override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }
 
     override fun equals(other: Any?) = typeEquals(other)

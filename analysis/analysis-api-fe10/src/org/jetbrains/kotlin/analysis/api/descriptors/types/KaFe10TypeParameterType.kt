@@ -33,7 +33,7 @@ internal class KaFe10TypeParameterType(
     override val symbol: KaTypeParameterSymbol
         get() = withValidityAssertion { KaFe10DescTypeParameterSymbol(parameter, analysisContext) }
 
-    override val abbreviatedType: KaUsualClassType?
+    override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }
 
     override fun toString(): String {

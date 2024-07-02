@@ -81,7 +81,7 @@ public class SirTypeProviderImpl(
             }
         }
 
-        return ktType.abbreviatedType?.let { buildRegularType(it) }
+        return ktType.abbreviation?.let { buildRegularType(it) }
             ?: buildPrimitiveType(ktType)
             ?: buildRegularType(ktType)
     }
