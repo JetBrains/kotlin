@@ -785,7 +785,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
     @Argument(
         value = "-Xwhen-guards",
-        description = "Enable language support for when guards."
+        description = "Enable experimental language support for when guards."
     )
     var whenGuards = false
         set(value) {
