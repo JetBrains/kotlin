@@ -4067,6 +4067,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val message: String
     }
 
+    interface SynchronizedBlockOnValueClassOrPrimitiveError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = SynchronizedBlockOnValueClassOrPrimitiveError::class
+        val valueClassOrPrimitive: KaType
+    }
+
+    interface SynchronizedBlockOnValueClassOrPrimitiveWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = SynchronizedBlockOnValueClassOrPrimitiveWarning::class
+        val valueClassOrPrimitive: KaType
+    }
+
     interface JvmSyntheticOnDelegate : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = JvmSyntheticOnDelegate::class
     }

@@ -333,6 +333,7 @@ enum class LanguageFeature(
     ImprovedVarianceInCst(KOTLIN_2_1, kind = OTHER), // KT-68970
     InferMoreImplicationsFromBooleanExpressions(KOTLIN_2_1, kind = OTHER), // KT-64193
     ExhaustivenessChecksOnTypeParameterBounds(KOTLIN_2_1, kind = OTHER), // KT-21908
+    ProhibitSynchronizationByValueClassesAndPrimitives(KOTLIN_2_1, kind = OTHER), // KT-67791
 
     // 2.2
 

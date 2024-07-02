@@ -4907,6 +4907,18 @@ internal class InapplicableJvmFieldWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.InapplicableJvmFieldWarning
 
+internal class SynchronizedBlockOnValueClassOrPrimitiveErrorImpl(
+    override val valueClassOrPrimitive: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SynchronizedBlockOnValueClassOrPrimitiveError
+
+internal class SynchronizedBlockOnValueClassOrPrimitiveWarningImpl(
+    override val valueClassOrPrimitive: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SynchronizedBlockOnValueClassOrPrimitiveWarning
+
 internal class JvmSyntheticOnDelegateImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

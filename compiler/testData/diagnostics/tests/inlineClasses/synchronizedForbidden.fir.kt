@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // SKIP_TXT
 // KT-49339
+// LANGUAGE: +ProhibitSynchronizationByValueClassesAndPrimitives
 
 @JvmInline
 value class A(val a: Int) {
@@ -66,23 +67,23 @@ val A.f14
 
 fun main() {
     val a = A(2)
-    synchronized(a) {}
-    synchronized(2) {}
-    synchronized(0x2) {}
-    synchronized(2U) {}
-    synchronized(true) {}
-    synchronized(2L) {}
-    synchronized(2.to(1).first) {}
-    synchronized(2.toByte()) {}
-    synchronized(2UL) {}
-    synchronized(2F) {}
-    synchronized(2.0) {}
-    synchronized('2') {}
-    synchronized(block={}, lock='2')
-    synchronized(block={}, lock=a)
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>0x2<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2U<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>true<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2L<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2.to(1).first<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2.toByte()<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2UL<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2F<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2.0<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>'2'<!>) {}
+    synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>'2'<!>)
+    synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>)
     for (b in listOf(a)) {
-        synchronized(b) {}
-        synchronized(b.to(1).first) {}
-        synchronized(block={}, lock=a)
+        synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>b<!>) {}
+        synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>b.to(1).first<!>) {}
+        synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>)
     }
 }
