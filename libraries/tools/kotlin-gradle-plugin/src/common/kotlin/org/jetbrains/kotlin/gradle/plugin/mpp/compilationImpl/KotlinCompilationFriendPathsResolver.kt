@@ -62,17 +62,18 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
     object DefaultFriendArtifactResolver : FriendArtifactResolver {
         override fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection {
             return with(compilation.project) {
-                val friendArtifactsTaskProvider = resolveFriendArtifactsTask(compilation) ?: return files()
-                filesProvider { friendArtifactsTaskProvider.flatMap { it.archiveFile } }
+                //val friendArtifactsTaskProvider = resolveFriendArtifactsTask(compilation) ?:
+                files()
+                // filesProvider { friendArtifactsTaskProvider.flatMap { it.archiveFile } }
             }
         }
 
-        private fun resolveFriendArtifactsTask(compilation: InternalKotlinCompilation<*>): TaskProvider<AbstractArchiveTask>? {
-            if (compilation.allAssociatedCompilations.none { it.isMain() }) return null
-            val archiveTasks = compilation.project.tasks.withType(AbstractArchiveTask::class.java)
-            if (compilation.target.artifactsTaskName !in archiveTasks.names) return null
-            return archiveTasks.named(compilation.target.artifactsTaskName)
-        }
+//        private fun resolveFriendArtifactsTask(compilation: InternalKotlinCompilation<*>): TaskProvider<AbstractArchiveTask>? {
+//            if (compilation.allAssociatedCompilations.none { it.isMain() }) return null
+//            val archiveTasks = compilation.project.tasks.withType(AbstractArchiveTask::class.java)
+//            if (compilation.target.artifactsTaskName !in archiveTasks.names) return null
+//            return archiveTasks.named(compilation.target.artifactsTaskName)
+//        }
     }
 
     object AdditionalMetadataFriendArtifactResolver : FriendArtifactResolver {
