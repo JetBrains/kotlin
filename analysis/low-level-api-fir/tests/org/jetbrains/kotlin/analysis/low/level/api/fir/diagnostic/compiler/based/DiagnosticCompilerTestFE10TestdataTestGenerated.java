@@ -22123,6 +22123,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("kt51366.kt")
+      public void testKt51366() {
+        runTest("compiler/testData/diagnostics/tests/inlineClasses/kt51366.kt");
+      }
+
+      @Test
       @TestMetadata("lateinitInlineClassesOff.kt")
       public void testLateinitInlineClassesOff() {
         runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClassesOff.kt");
@@ -42572,6 +42578,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       @TestMetadata("jvmInlineApplicability.kt")
       public void testJvmInlineApplicability() {
         runTest("compiler/testData/diagnostics/tests/valueClasses/jvmInlineApplicability.kt");
+      }
+
+      @Test
+      @TestMetadata("kt51366.kt")
+      public void testKt51366() {
+        runTest("compiler/testData/diagnostics/tests/valueClasses/kt51366.kt");
       }
 
       @Test

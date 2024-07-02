@@ -73,9 +73,9 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
 
         for (supertypeEntry in declaration.superTypeRefs) {
-            if (supertypeEntry !is FirImplicitAnyTypeRef && supertypeEntry.toRegularClassSymbol(context.session)?.isInterface != true) {
-                reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
-            }
+            if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
+            if (supertypeEntry.toRegularClassSymbol(context.session)?.isInterface == true) continue
+            reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES, context)
         }
 
         if (declaration.isSubtypeOfCloneable(context.session)) {

@@ -22123,6 +22123,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("kt51366.kt")
+      public void testKt51366() {
+        runTest("compiler/testData/diagnostics/tests/inlineClasses/kt51366.kt");
+      }
+
+      @Test
       @TestMetadata("lateinitInlineClassesOff.kt")
       public void testLateinitInlineClassesOff() {
         runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClassesOff.kt");
@@ -40048,6 +40054,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       @TestMetadata("jvmInlineApplicability.kt")
       public void testJvmInlineApplicability() {
         runTest("compiler/testData/diagnostics/tests/valueClasses/jvmInlineApplicability.kt");
+      }
+
+      @Test
+      @TestMetadata("kt51366.kt")
+      public void testKt51366() {
+        runTest("compiler/testData/diagnostics/tests/valueClasses/kt51366.kt");
       }
 
       @Test
