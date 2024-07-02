@@ -1,0 +1,24 @@
+<A:Ljava/lang/Object;B:Ljava/lang/Object;>Ljava/lang/Object;
+public final class foo/C : java/lang/Object {
+    public void <init>()
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    (Lfoo/C<Ljava/lang/String;Ljava/lang/Integer;>;)V
+    public final void foo(foo.C s)
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, 0;
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_FORMAL_PARAMETER 0, 1;
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    (Lfoo/C<-Ljava/lang/String;+Ljava/lang/Integer;>;)V
+    public final void fooVariance(foo.C s)
+      @Lfoo/TypeAnn;([name="3"]) : METHOD_FORMAL_PARAMETER 0, 0;*
+      @Lfoo/TypeAnn;([name="4"]) : METHOD_FORMAL_PARAMETER 0, 1;*
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
