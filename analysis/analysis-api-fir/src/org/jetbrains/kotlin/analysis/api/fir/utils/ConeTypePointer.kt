@@ -124,11 +124,9 @@ private class ConeTypeVariableTypePointer(
     private val debugName = coneType.typeConstructor.debugName
     private val nullability = coneType.nullability
 
-    private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>?
-
-    init {
+    private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>? = run {
         val typeParameterLookupTag = coneType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag
-        typeParameterSymbolPointer = if (typeParameterLookupTag != null) {
+        if (typeParameterLookupTag != null) {
             builder.classifierBuilder.buildTypeParameterSymbol(typeParameterLookupTag.symbol).createPointer()
         } else {
             null
