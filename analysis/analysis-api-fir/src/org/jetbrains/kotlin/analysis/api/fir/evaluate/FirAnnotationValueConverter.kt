@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.*
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.*
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.analysis.checkers.classKind
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -102,6 +106,7 @@ internal object FirAnnotationValueConverter {
     ): KaAnnotationValue? = firExpression.convertConstantExpression(builder)
 
     private fun FirExpression.convertConstantExpression(builder: KaSymbolByFirBuilder): KaAnnotationValue? {
+        val session = builder.rootSession
         val token = builder.analysisSession.token
         val sourcePsi = psi as? KtElement
 
@@ -131,29 +136,13 @@ internal object FirAnnotationValueConverter {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
                     is FirConstructorSymbol -> {
-                        val classSymbol = resolvedSymbol.getContainingClassSymbol() ?: return null
-                        if ((classSymbol.fir as? FirClass)?.classKind == ClassKind.ANNOTATION_CLASS) {
-                            val resultMap = mutableMapOf<Name, FirExpression>()
-                            resolvedArgumentMapping?.entries?.forEach { (arg, param) ->
-                                resultMap[param.name] = arg
+                        val argumentMapping = buildMap {
+                            for ((argumentExpression, valueParameter) in resolvedArgumentMapping?.entries.orEmpty()) {
+                                put(valueParameter.name, argumentExpression)
                             }
+                        }
 
-                            KaNestedAnnotationAnnotationValueImpl(
-                                KaAnnotationImpl(
-                                    classId = resolvedSymbol.callableId.classId,
-                                    psi = psi as? KtCallElement,
-                                    useSiteTarget = null,
-                                    hasArguments = arguments.isNotEmpty(),
-                                    lazyArguments = lazy { toNamedConstantValue(builder.analysisSession, resultMap, builder) },
-                                    index = null,
-                                    constructorSymbol = with(builder.analysisSession) {
-                                        builder.functionBuilder.buildConstructorSymbol(resolvedSymbol)
-                                    },
-                                    token = token
-                                ),
-                                token
-                            )
-                        } else null
+                        createNestedAnnotation(builder, psi, resolvedSymbol, argumentMapping)
                     }
 
                     is FirNamedFunctionSymbol -> {
@@ -172,6 +161,12 @@ internal object FirAnnotationValueConverter {
                 }
             }
 
+            is FirAnnotation -> {
+                val annotationSymbol = annotationTypeRef.toRegularClassSymbol(session) ?: return null
+                val constructorSymbol = annotationSymbol.primaryConstructorSymbol(session) ?: return null
+                createNestedAnnotation(builder, psi, constructorSymbol, argumentMapping.mapping)
+            }
+
             is FirPropertyAccessExpression -> {
                 val reference = calleeReference as? FirResolvedNamedReference ?: return null
                 when (val resolvedSymbol = reference.resolvedSymbol) {
@@ -188,7 +183,7 @@ internal object FirAnnotationValueConverter {
             }
 
             is FirGetClassCall -> {
-                val coneType = getTargetType()?.fullyExpandedType(builder.rootSession)
+                val coneType = getTargetType()?.fullyExpandedType(session)
 
                 if (coneType is ConeClassLikeType && coneType !is ConeErrorType) {
                     val classId = coneType.lookupTag.classId
@@ -205,6 +200,36 @@ internal object FirAnnotationValueConverter {
             else -> null
         } ?: FirCompileTimeConstantEvaluator.evaluate(this)
             ?.convertConstantExpression(builder.analysisSession)
+    }
+
+    private fun createNestedAnnotation(
+        builder: KaSymbolByFirBuilder,
+        psi: PsiElement?,
+        resolvedSymbol: FirConstructorSymbol,
+        argumentMapping: Map<Name, FirExpression>
+    ): KaAnnotationValue? {
+        val classSymbol = resolvedSymbol.getContainingClassSymbol() ?: return null
+        if (classSymbol.classKind != ClassKind.ANNOTATION_CLASS) {
+            return null
+        }
+
+        val token = builder.analysisSession.token
+
+        return KaNestedAnnotationAnnotationValueImpl(
+            KaAnnotationImpl(
+                classId = resolvedSymbol.callableId.classId,
+                psi = psi as? KtCallElement,
+                useSiteTarget = null,
+                hasArguments = argumentMapping.isNotEmpty(),
+                lazyArguments = lazy { toNamedConstantValue(builder.analysisSession, argumentMapping, builder) },
+                index = null,
+                constructorSymbol = with(builder.analysisSession) {
+                    builder.functionBuilder.buildConstructorSymbol(resolvedSymbol)
+                },
+                token = token
+            ),
+            token
+        )
     }
 
     private fun computeErrorCallClassId(call: FirGetClassCall): ClassId? {
