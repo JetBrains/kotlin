@@ -38,8 +38,8 @@ kotlin {
         }
         org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec.create(compilation, "checkConfigDevelopmentRun") {
             inputFileProperty.set(provider { compilation.npmProject.require("webpack/bin/webpack.js") }.map { RegularFile { File(it) } })
-            dependsOn("browserRun")
-            val configFile = tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserRun").flatMap { it.configFile }
+            dependsOn("browserDevelopmentRun")
+            val configFile = tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserDevelopmentRun").flatMap { it.configFile }
             args("configtest")
             doFirst {
                 args(configFile.get().absolutePath)

@@ -37,15 +37,15 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
             gradleVersion,
             dependencyManagement = DependencyManagement.DisabledDependencyManagement // :d8Download adds custom ivy repository during build
         ) {
-            build("wasmJsD8Run", buildOptions = buildOptions) {
-                assertTasksExecuted(":wasmJsD8Run")
+            build("wasmJsD8DevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":wasmJsD8DevelopmentRun")
                 if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
                     assertOutputContains(
-                        "Calculating task graph as no configuration cache is available for tasks: wasmJsD8Run"
+                        "Calculating task graph as no configuration cache is available for tasks: wasmJsD8DevelopmentRun"
                     )
                 } else {
                     assertOutputContains(
-                        "Calculating task graph as no cached configuration is available for tasks: wasmJsD8Run"
+                        "Calculating task graph as no cached configuration is available for tasks: wasmJsD8DevelopmentRun"
                     )
                 }
 
@@ -55,8 +55,8 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
             build("clean", buildOptions = buildOptions)
 
             // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-            build("wasmJsD8Run", buildOptions = buildOptions) {
-                assertTasksExecuted(":wasmJsD8Run")
+            build("wasmJsD8DevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":wasmJsD8DevelopmentRun")
                 assertConfigurationCacheReused()
             }
         }

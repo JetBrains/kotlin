@@ -98,7 +98,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
-            build(":wasmWasiNodeRun") {
+            build(":wasmWasiNodeDevelopmentRun") {
                 assertOutputContains("Hello from Wasi")
             }
         }

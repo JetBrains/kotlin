@@ -55,7 +55,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 |}
                """.trimMargin()
             )
-            build("nodeRun") {
+            build("nodeDevelopmentRun") {
                 assertOutputContains("ACCEPTED: test;'Hello, World'")
             }
         }

@@ -145,15 +145,15 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testNodeJsRun(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
-            build("nodeRun", buildOptions = buildOptions) {
-                assertTasksExecuted(":nodeRun")
+            build("nodeDevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":nodeDevelopmentRun")
                 if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
                     assertOutputContains(
-                        "Calculating task graph as no configuration cache is available for tasks: nodeRun"
+                        "Calculating task graph as no configuration cache is available for tasks: nodeDevelopmentRun"
                     )
                 } else {
                     assertOutputContains(
-                        "Calculating task graph as no cached configuration is available for tasks: nodeRun"
+                        "Calculating task graph as no cached configuration is available for tasks: nodeDevelopmentRun"
                     )
                 }
 
@@ -163,8 +163,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             build("clean", buildOptions = buildOptions)
 
             // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-            build("nodeRun", buildOptions = buildOptions) {
-                assertTasksExecuted(":nodeRun")
+            build("nodeDevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":nodeDevelopmentRun")
                 assertConfigurationCacheReused()
             }
         }
