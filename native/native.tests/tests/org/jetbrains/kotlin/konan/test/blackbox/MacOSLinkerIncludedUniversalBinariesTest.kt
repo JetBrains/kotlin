@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.isSimulator
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.lipoCreate
 import org.junit.jupiter.api.Assumptions
@@ -115,21 +118,28 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
         val emptySource = buildDir.resolve("stub.c")
         assert(emptySource.createNewFile())
 
+        val configurables = testRunSettings.configurables
+
         val armImage = compileWithArch(
             inputFile = emptySource,
             arch = "arm64",
             imageType = imageType,
         )
-        val intelImage = compileWithArch(
+        val otherImage = compileWithArch(
             inputFile = emptySource,
-            arch = "x86_64",
+            arch = if (configurables.target.family == Family.OSX || configurables.targetTriple.isSimulator) {
+                "x86_64"
+            } else {
+                // Apple devices SDKs don't support x86_64, but support arm64e.
+                "arm64e"
+            },
             imageType = imageType,
         )
 
         val outputImage = buildDir.resolve("output.a")
         if (outputImage.exists()) outputImage.delete()
         return lipoCreate(
-            inputFiles = listOf(armImage, intelImage),
+            inputFiles = listOf(armImage, otherImage),
             outputFile = outputImage,
         ).assertSuccess().resultingArtifact.libraryFile
     }
