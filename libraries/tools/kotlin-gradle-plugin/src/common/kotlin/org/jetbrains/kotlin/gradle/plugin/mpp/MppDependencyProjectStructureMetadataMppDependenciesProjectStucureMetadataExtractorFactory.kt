@@ -87,7 +87,6 @@ private constructor(
         moduleId: ComponentIdentifier?,
     ) = resolvedMetadataConfiguration.resolvedArtifacts
         .filter { it.id.componentIdentifier == moduleId }
-        .filter { it.file.name == "kotlin-project-structure-metadata.json" }
         .map { it.file }
         .singleOrNull()
 

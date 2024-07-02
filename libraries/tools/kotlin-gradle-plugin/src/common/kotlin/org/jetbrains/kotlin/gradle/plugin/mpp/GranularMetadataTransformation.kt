@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.*
 import java.util.*
@@ -101,6 +102,7 @@ internal class GranularMetadataTransformation(
         val projectStructureMetadataExtractorFactory: IMppDependenciesProjectStucureMetadataExtractorFactory,
         val projectData: Map<String, ProjectData>,
         val platformCompilationSourceSets: Set<String>,
+        val projectStructureMetadataResolvableConfiguration: LazyResolvedConfiguration,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet) : this(
             build = project.currentBuild,
@@ -110,6 +112,7 @@ internal class GranularMetadataTransformation(
             projectStructureMetadataExtractorFactory = if (project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) project.kotlinMppDependencyProjectStructureMetadataExtractorFactory else project.kotlinMppDependencyProjectStructureMetadataExtractorFactoryDeprecated,
             projectData = project.allProjectsData,
             platformCompilationSourceSets = project.multiplatformExtension.platformCompilationSourceSets,
+            projectStructureMetadataResolvableConfiguration = LazyResolvedConfiguration(kotlinSourceSet.internal.projectStructureMetadataResolvableConfiguration),
         )
     }
 
@@ -216,7 +219,7 @@ internal class GranularMetadataTransformation(
         val compositeMetadataArtifact = params
             .resolvedMetadataConfiguration
             .getArtifacts(dependency)
-            .singleOrNull { it.file.extension != "json" }
+            .singleOrNull()
             // Make sure that resolved metadata artifact is actually Multiplatform one
             ?.takeIf { it.variant.attributes.containsMultiplatformMetadataAttributes }
         // expected only ony Composite Metadata Klib, but if dependency got resolved into platform variant
@@ -227,7 +230,7 @@ internal class GranularMetadataTransformation(
         logger.debug("Transform composite metadata artifact: '${compositeMetadataArtifact.file}'")
 
         val mppDependencyMetadataExtractor =
-            params.projectStructureMetadataExtractorFactory.create(compositeMetadataArtifact, params.resolvedMetadataConfiguration)
+            params.projectStructureMetadataExtractorFactory.create(compositeMetadataArtifact, params.projectStructureMetadataResolvableConfiguration)
         val projectStructureMetadata = mppDependencyMetadataExtractor.getProjectStructureMetadata()
             ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
 

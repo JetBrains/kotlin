@@ -53,17 +53,12 @@ internal fun Project.setupProjectStructureMetadataOutgoingArtifacts() {
             project,
             project.configurations.getByName(metadataTarget.apiElementsConfigurationName)
         )
-
-        project.artifacts.add(
-            metadataTarget.apiElementsConfigurationName,
-            generateProjectStructureMetadata.map { task -> task.resultFile }
-        )
     }
 
 }
 
 internal val InternalKotlinSourceSet.projectStructureMetadataResolvableConfiguration: Configuration by extrasStoredProperty {
-    project.configurations.detachedResolvable().apply {
+    project.configurations.maybeCreateResolvable(projectStructureMetadataConfigurationName) {
         copyDependenciesLazy(project, resolvableMetadataConfiguration)
         configurePsmDependenciesAttributes(project)
     }
