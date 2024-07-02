@@ -18,16 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
-import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
-import org.jetbrains.kotlin.fir.types.FirQualifierPart
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
-import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
-import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
-import org.jetbrains.kotlin.fir.types.toConeTypeProjection
 
 internal interface ConeDiagnosticPointer {
     companion object {
@@ -70,7 +60,7 @@ private class ConeTypeVariableTypeIsNotInferredDiagnosticPointer(
     private val reason = coneDiagnostic.reason
 
     override fun restore(session: KaFirSession): ConeDiagnostic? {
-        val typeVariableType = typePointer.restore(session) as? ConeTypeVariableType ?: return null
+        val typeVariableType = typePointer.restore(session) ?: return null
         return ConeTypeVariableTypeIsNotInferred(typeVariableType, reason)
     }
 }
@@ -107,35 +97,6 @@ private class ConeUnresolvedTypeQualifierErrorDiagnosticPointer(
         }
 
         return ConeUnresolvedTypeQualifierError(qualifiers, isNullable)
-    }
-}
-
-private class FirQualifierPartPointer(qualifierPart: FirQualifierPart, builder: KaSymbolByFirBuilder) {
-    private val name = qualifierPart.name
-    private val typeArgumentPointers = qualifierPart.typeArgumentList.typeArguments
-        .map { ConeTypeProjectionPointer(it.toConeTypeProjection(), builder) }
-
-    fun restore(session: KaFirSession): FirQualifierPart? {
-        val firTypeArgumentList = FirTypeArgumentListImpl(source = null).apply {
-            for (typeArgumentPointer in typeArgumentPointers) {
-                val coneTypeArgument = typeArgumentPointer.restore(session) ?: return null
-
-                val typeArgument = when (coneTypeArgument) {
-                    ConeStarProjection -> buildStarProjection()
-                    is ConeKotlinTypeProjection -> {
-                        buildTypeProjectionWithVariance {
-                            typeRef = buildResolvedTypeRef { this.type = coneTypeArgument.type }
-                            variance = coneTypeArgument.kind.toVariance()
-                        }
-                    }
-                    else -> error("Unexpected type argument kind: $coneTypeArgument")
-                }
-
-                typeArguments.add(typeArgument)
-            }
-        }
-
-        return FirQualifierPartImpl(source = null, name, firTypeArgumentList)
     }
 }
 
