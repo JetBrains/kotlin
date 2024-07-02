@@ -18,9 +18,14 @@ internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFus
     private val log = Logging.getLogger(this.javaClass)
 
     override fun close() {
-        val reportFile = File(parameters.fusStatisticsRootDirPath.get(), STATISTICS_FOLDER_NAME)
-            .also { Files.createDirectories(it.toPath()) }
-            .resolve(parameters.buildId.get())
+        val reportDir = File(parameters.fusStatisticsRootDirPath.get(), STATISTICS_FOLDER_NAME)
+        try {
+            Files.createDirectories(reportDir.toPath())
+        } catch (e: Exception) {
+            log.warn("Failed to create directory '$reportDir' for FUS report. FUS report won't be created", e)
+            return
+        }
+        val reportFile = reportDir.resolve(parameters.buildId.get())
         reportFile.createNewFile()
         FileOutputStream(reportFile, true).bufferedWriter().use {
             for ((key, value) in metrics) {
