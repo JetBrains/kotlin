@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -138,7 +139,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
     override fun lower(irFile: IrFile) {
         if (!context.isWasmJsTarget) return
         for (declaration in irFile.declarations) {
-            if (declaration is IrFunction && declaration.isExported()) {
+            if (declaration is IrFunction && declaration.isJsExport()) {
                 processExportFunction(declaration)
             }
         }

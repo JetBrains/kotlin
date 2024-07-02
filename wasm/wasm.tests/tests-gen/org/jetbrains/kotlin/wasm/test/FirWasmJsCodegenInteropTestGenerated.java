@@ -211,6 +211,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("wasmExportWithExceptions.kt")
+  public void testWasmExportWithExceptions() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/wasmExportWithExceptions.kt");
+  }
+
+  @Test
   @TestMetadata("wasmImport.kt")
   public void testWasmImport() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/wasmImport.kt");
