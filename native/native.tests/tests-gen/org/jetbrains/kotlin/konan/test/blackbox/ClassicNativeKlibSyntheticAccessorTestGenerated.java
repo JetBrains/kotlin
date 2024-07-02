@@ -844,6 +844,12 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       }
 
       @Test
+      @TestMetadata("leakingPrivateClassFromLocalObjectInsideInternalInline.kt")
+      public void testLeakingPrivateClassFromLocalObjectInsideInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassFromLocalObjectInsideInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassThroughGenericType.kt")
       public void testLeakingPrivateClassThroughGenericType() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughGenericType.kt");
@@ -992,6 +998,12 @@ public class ClassicNativeKlibSyntheticAccessorTestGenerated extends AbstractNat
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateClassFromLocalObjectInsideInternalInline.kt")
+      public void testLeakingPrivateClassFromLocalObjectInsideInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassFromLocalObjectInsideInternalInline.kt");
       }
 
       @Test
