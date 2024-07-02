@@ -481,7 +481,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val anonymousFunctionExpression: Element by element(Expression) {
         parent(expression)
 
-        +field(anonymousFunction, withTransform = true)
+        +field(anonymousFunction, withTransform = true, withReplace = true)
         +field("isTrailingLambda", boolean, withReplace = true) {
             replaceOptInAnnotation = rawFirApi
         }
