@@ -18,7 +18,7 @@ class IsMappedObjCTypeTests(
     fun `test - basic class`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo".trimMargin())
         analyze(file) {
-            assertFalse(file.getClassOrFail("Foo").defaultType.isMappedObjCType)
+            assertFalse(isMappedObjCType(file.getClassOrFail("Foo", this).defaultType))
         }
     }
 
@@ -26,7 +26,7 @@ class IsMappedObjCTypeTests(
     fun `test - list`() {
         val file = inlineSourceCodeAnalysis.createKtFile("fun List<Any>.listFoo() = Unit")
         analyze(file) {
-            assertTrue(file.getFunctionOrFail("listFoo").receiverType.isMappedObjCType)
+            assertTrue(isMappedObjCType(file.getFunctionOrFail("listFoo", this).receiverType))
         }
     }
 }

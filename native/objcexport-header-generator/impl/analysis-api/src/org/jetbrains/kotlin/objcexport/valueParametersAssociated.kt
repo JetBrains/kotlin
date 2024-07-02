@@ -133,10 +133,10 @@ internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol?): KaType? {
         val isExtension = property.isExtension
         val receiverType = property.receiverType
         if (isExtension) {
-            if (receiverType?.getClassIfCategory() == null) {
+            if (getClassIfCategory(receiverType) == null) {
                 receiverType
             } else {
-                if (isMappedObjCType(receiverType)) receiverType else null
+                null
             }
         } else null
 

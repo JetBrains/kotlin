@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  */
 fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFile): ObjCInterface? {
     val extensions = file.callableSymbols
-        .filter { it.getClassIfCategory() == null }
+        .filter { kaSession.getClassIfCategory(it) == null }
         .toList()
         .sortedWith(StableCallableOrder)
         .ifEmpty { return null }

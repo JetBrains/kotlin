@@ -47,7 +47,7 @@ internal val ObjCInterface.isExtensionsFacade: Boolean
  */
 fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExportFile): List<ObjCInterface> {
     val extensions = file.callableSymbols
-        .filter { getClassIfCategory(it) != null && it.isExtension }
+        .filter { kaSession.getClassIfCategory(it) != null && it.isExtension }
         .sortedWith(StableCallableOrder)
         .ifEmpty { return emptyList() }
         .groupBy {

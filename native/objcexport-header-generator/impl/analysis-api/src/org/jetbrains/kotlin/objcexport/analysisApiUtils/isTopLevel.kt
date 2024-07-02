@@ -7,4 +7,4 @@ import org.jetbrains.kotlin.objcexport.getClassIfCategory
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal val KaCallableSymbol.isTopLevel: Boolean
-    get() = callableId?.classId == null && getClassIfCategory() == null
+    get() = callableId?.classId == null && getClassIfCategory(this) == null
