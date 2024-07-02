@@ -22,7 +22,7 @@ internal class KaFe10DefinitelyNotNullType(
     override val original: KaType
         get() = withValidityAssertion { fe10Type.original.toKtType(analysisContext) }
 
-    override val abbreviatedType: KaUsualClassType?
+    override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }
 
     override fun toString(): String {

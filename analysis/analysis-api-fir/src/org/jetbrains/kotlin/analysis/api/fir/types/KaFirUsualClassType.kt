@@ -48,7 +48,7 @@ internal class KaFirUsualClassType(
 
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override val abbreviatedType: KaUsualClassType? by cached {
+    override val abbreviation: KaUsualClassType? by cached {
         builder.buildAbbreviatedType(coneType)
     }
 

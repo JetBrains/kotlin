@@ -35,7 +35,7 @@ internal class KaFe10FunctionalType(
     override val nullability: KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 
-    override val abbreviatedType: KaUsualClassType?
+    override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }
 
     override val qualifiers: List<KaResolvedClassTypeQualifier>

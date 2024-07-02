@@ -40,7 +40,7 @@ fun isSubClassOf(
 }
 
 /**
- * @see org.jetbrains.kotlin.analysis.api.types.KaType.abbreviatedType
+ * @see org.jetbrains.kotlin.analysis.api.types.KaType.abbreviation
  */
 internal fun KaSymbolByFirBuilder.buildAbbreviatedType(coneType: ConeClassLikeType): KaUsualClassType? {
     return coneType.abbreviatedType?.let { abbreviatedConeType ->

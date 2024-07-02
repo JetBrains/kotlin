@@ -64,7 +64,7 @@ internal class KaFirClassErrorType(
         symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it) }
     }
 
-    override val abbreviatedType: KaUsualClassType? by cached {
+    override val abbreviation: KaUsualClassType? by cached {
         builder.buildAbbreviatedType(coneType)
     }
 

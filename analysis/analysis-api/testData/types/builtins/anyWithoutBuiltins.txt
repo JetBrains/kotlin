@@ -1,5 +1,5 @@
 KaClassErrorType:
-  abbreviatedType: null
+  abbreviation: null
   annotations: []
   candidateSymbols: []
   errorMessage: Symbol not found for kotlin/Any

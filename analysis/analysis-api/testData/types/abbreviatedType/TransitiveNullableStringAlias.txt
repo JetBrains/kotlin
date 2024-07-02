@@ -1,6 +1,6 @@
 KaUsualClassType:
-  abbreviatedType: KaUsualClassType:
-    abbreviatedType: null
+  abbreviation: KaUsualClassType:
+    abbreviation: null
     annotations: []
     classId: expansion/TransitiveStringAlias
     nullability: NON_NULLABLE

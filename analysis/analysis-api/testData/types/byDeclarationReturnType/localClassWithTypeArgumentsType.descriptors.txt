@@ -1,5 +1,5 @@
 KaUsualClassType:
-  abbreviatedType: null
+  abbreviation: null
   annotations: []
   classId: B
   nullability: NON_NULLABLE
@@ -9,7 +9,7 @@ KaUsualClassType:
       symbol: KaNamedClassSymbol(<local>/B)
       typeArguments: [
         KaUsualClassType:
-          abbreviatedType: null
+          abbreviation: null
           annotations: []
           classId: kotlin/Int
           nullability: NON_NULLABLE
@@ -26,7 +26,7 @@ KaUsualClassType:
   symbol: KaNamedClassSymbol(<local>/B)
   typeArguments: [
     KaUsualClassType:
-      abbreviatedType: null
+      abbreviation: null
       annotations: []
       classId: kotlin/Int
       nullability: NON_NULLABLE

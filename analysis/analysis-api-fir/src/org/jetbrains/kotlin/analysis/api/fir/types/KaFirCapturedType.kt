@@ -32,7 +32,7 @@ internal class KaFirCapturedType(
         KaFirAnnotationListForType.create(coneType, builder)
     }
 
-    override val abbreviatedType: KaUsualClassType?
+    override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }
 
     override fun equals(other: Any?) = typeEquals(other)
