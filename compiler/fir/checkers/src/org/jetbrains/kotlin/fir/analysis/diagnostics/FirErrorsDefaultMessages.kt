@@ -1423,7 +1423,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(RECURSION_IN_IMPLICIT_TYPES, "Recursion in implicit types.")
         map.put(INFERENCE_ERROR, "Inference error.")
         map.put(ILLEGAL_PROJECTION_USAGE, "Illegal projection usage.")
-        map.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections on type arguments of functions and properties are prohibited.")
+        map.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions calls.")
         map.put(
             UPPER_BOUND_VIOLATED,
             "Type argument is not within its bounds: should be subtype of ''{0}''.{2}",
