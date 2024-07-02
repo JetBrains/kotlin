@@ -247,35 +247,19 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
 
     // ----------------------------------- Boolean operators -----------------------------------
 
-    open fun visitBinaryAndEnterNode(node: BinaryAndEnterNode, data: D): R {
+    open fun visitBooleanOperatorEnterNode(node: BooleanOperatorEnterNode, data: D): R {
         return visitNode(node, data)
     }
 
-    open fun visitBinaryAndExitLeftOperandNode(node: BinaryAndExitLeftOperandNode, data: D): R {
+    open fun visitBooleanOperatorExitLeftOperandNode(node: BooleanOperatorExitLeftOperandNode, data: D): R {
         return visitNode(node, data)
     }
 
-    open fun visitBinaryAndEnterRightOperandNode(node: BinaryAndEnterRightOperandNode, data: D): R {
+    open fun visitBooleanOperatorEnterRightOperandNode(node: BooleanOperatorEnterRightOperandNode, data: D): R {
         return visitNode(node, data)
     }
 
-    open fun visitBinaryAndExitNode(node: BinaryAndExitNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitBinaryOrEnterNode(node: BinaryOrEnterNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitBinaryOrExitLeftOperandNode(node: BinaryOrExitLeftOperandNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitBinaryOrEnterRightOperandNode(node: BinaryOrEnterRightOperandNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitBinaryOrExitNode(node: BinaryOrExitNode, data: D): R {
+    open fun visitBooleanOperatorExitNode(node: BooleanOperatorExitNode, data: D): R {
         return visitNode(node, data)
     }
 

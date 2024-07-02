@@ -1157,10 +1157,10 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
-        graphBuilder.exitBinaryLogicExpression(binaryLogicExpression).mergeBinaryLogicOperatorFlow()
+        graphBuilder.exitBinaryLogicExpression(binaryLogicExpression).mergeBooleanLogicOperatorFlow()
     }
 
-    private fun AbstractBinaryExitNode<FirBinaryLogicExpression>.mergeBinaryLogicOperatorFlow() = mergeIncomingFlow { path, flow ->
+    private fun BooleanOperatorExitNode.mergeBooleanLogicOperatorFlow() = mergeIncomingFlow { path, flow ->
         val inferMoreImplications =
             components.session.languageVersionSettings.supportsFeature(LanguageFeature.InferMoreImplicationsFromBooleanExpressions)
 

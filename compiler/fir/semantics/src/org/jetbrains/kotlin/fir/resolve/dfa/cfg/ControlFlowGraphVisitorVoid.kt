@@ -167,35 +167,19 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     // ----------------------------------- Boolean operators -----------------------------------
 
-    open fun visitBinaryAndEnterNode(node: BinaryAndEnterNode) {
+    open fun visitBooleanOperatorEnterNode(node: BooleanOperatorEnterNode) {
         visitNode(node)
     }
 
-    open fun visitBinaryAndExitLeftOperandNode(node: BinaryAndExitLeftOperandNode) {
+    open fun visitBooleanOperatorExitLeftOperandNode(node: BooleanOperatorExitLeftOperandNode) {
         visitNode(node)
     }
 
-    open fun visitBinaryAndEnterRightOperandNode(node: BinaryAndEnterRightOperandNode) {
+    open fun visitBooleanOperatorEnterRightOperandNode(node: BooleanOperatorEnterRightOperandNode) {
         visitNode(node)
     }
 
-    open fun visitBinaryAndExitNode(node: BinaryAndExitNode) {
-        visitNode(node)
-    }
-
-    open fun visitBinaryOrEnterNode(node: BinaryOrEnterNode) {
-        visitNode(node)
-    }
-
-    open fun visitBinaryOrExitLeftOperandNode(node: BinaryOrExitLeftOperandNode) {
-        visitNode(node)
-    }
-
-    open fun visitBinaryOrEnterRightOperandNode(node: BinaryOrEnterRightOperandNode) {
-        visitNode(node)
-    }
-
-    open fun visitBinaryOrExitNode(node: BinaryOrExitNode) {
+    open fun visitBooleanOperatorExitNode(node: BooleanOperatorExitNode) {
         visitNode(node)
     }
 
@@ -452,36 +436,20 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     // ----------------------------------- Boolean operators -----------------------------------
 
-    final override fun visitBinaryAndEnterNode(node: BinaryAndEnterNode, data: Nothing?) {
-        visitBinaryAndEnterNode(node)
+    final override fun visitBooleanOperatorEnterNode(node: BooleanOperatorEnterNode, data: Nothing?) {
+        visitBooleanOperatorEnterNode(node)
     }
 
-    final override fun visitBinaryAndExitLeftOperandNode(node: BinaryAndExitLeftOperandNode, data: Nothing?) {
-        visitBinaryAndExitLeftOperandNode(node)
+    final override fun visitBooleanOperatorExitLeftOperandNode(node: BooleanOperatorExitLeftOperandNode, data: Nothing?) {
+        visitBooleanOperatorExitLeftOperandNode(node)
     }
 
-    final override fun visitBinaryAndEnterRightOperandNode(node: BinaryAndEnterRightOperandNode, data: Nothing?) {
-        visitBinaryAndEnterRightOperandNode(node)
+    final override fun visitBooleanOperatorEnterRightOperandNode(node: BooleanOperatorEnterRightOperandNode, data: Nothing?) {
+        visitBooleanOperatorEnterRightOperandNode(node)
     }
 
-    final override fun visitBinaryAndExitNode(node: BinaryAndExitNode, data: Nothing?) {
-        visitBinaryAndExitNode(node)
-    }
-
-    final override fun visitBinaryOrEnterNode(node: BinaryOrEnterNode, data: Nothing?) {
-        visitBinaryOrEnterNode(node)
-    }
-
-    final override fun visitBinaryOrExitLeftOperandNode(node: BinaryOrExitLeftOperandNode, data: Nothing?) {
-        visitBinaryOrExitLeftOperandNode(node)
-    }
-
-    final override fun visitBinaryOrEnterRightOperandNode(node: BinaryOrEnterRightOperandNode, data: Nothing?) {
-        visitBinaryOrEnterRightOperandNode(node)
-    }
-
-    final override fun visitBinaryOrExitNode(node: BinaryOrExitNode, data: Nothing?) {
-        visitBinaryOrExitNode(node)
+    final override fun visitBooleanOperatorExitNode(node: BooleanOperatorExitNode, data: Nothing?) {
+        visitBooleanOperatorExitNode(node)
     }
 
     // ----------------------------------- Operator call -----------------------------------
