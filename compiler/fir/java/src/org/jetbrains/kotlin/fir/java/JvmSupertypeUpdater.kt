@@ -95,7 +95,9 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             ) return delegatedConstructorCall
             val constructedTypeRef = delegatedConstructorCall.constructedTypeRef
             if (constructedTypeRef is FirImplicitTypeRef || constructedTypeRef.coneTypeSafe<ConeKotlinType>()?.isAny == true) {
-                delegatedConstructorCall.replaceConstructedTypeRef(constructedTypeRef.resolvedTypeFromPrototype(recordType))
+                val resolvedConstructedTypeRef = constructedTypeRef.resolvedTypeFromPrototype(recordType)
+                delegatedConstructorCall.replaceConstructedTypeRef(resolvedConstructedTypeRef)
+                delegatedConstructorCall.replaceConeTypeOrNull(resolvedConstructedTypeRef.type)
             }
 
             val recordConstructorSymbol = recordType.lookupTag.toFirRegularClassSymbol(session)

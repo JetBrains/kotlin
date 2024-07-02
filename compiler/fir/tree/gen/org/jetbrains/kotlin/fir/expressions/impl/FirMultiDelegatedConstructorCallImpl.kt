@@ -14,12 +14,16 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
+@OptIn(UnresolvedExpressionTypeAccess::class)
 class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
+    @property:UnresolvedExpressionTypeAccess
+    override var coneTypeOrNull: ConeKotlinType?,
     override val delegatedConstructorCalls: MutableList<FirDelegatedConstructorCall>,
 ) : FirMultiDelegatedConstructorCall() {
     override val annotations: List<FirAnnotation>
@@ -72,6 +76,10 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {}
 
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {}
+
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
+        coneTypeOrNull = newConeTypeOrNull
+    }
 
     override fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef) {}
 

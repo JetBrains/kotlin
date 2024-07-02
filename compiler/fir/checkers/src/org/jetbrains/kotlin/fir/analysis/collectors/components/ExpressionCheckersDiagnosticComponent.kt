@@ -189,6 +189,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allCallCheckers.check(delegatedConstructorCall, data)
     }
 
+    override fun visitMultiDelegatedConstructorCall(multiDelegatedConstructorCall: FirMultiDelegatedConstructorCall, data: CheckerContext) {
+        checkers.allCallCheckers.check(multiDelegatedConstructorCall, data)
+    }
+
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: CheckerContext) {
         checkers.allThrowExpressionCheckers.check(throwExpression, data)
     }

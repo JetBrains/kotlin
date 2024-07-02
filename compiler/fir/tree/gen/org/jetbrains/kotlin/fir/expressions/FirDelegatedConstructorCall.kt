@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.delegatedConstructorCall]
  */
-abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolvable, FirCall, FirContextReceiverArgumentListOwner {
+abstract class FirDelegatedConstructorCall : FirExpression(), FirResolvable, FirCall, FirContextReceiverArgumentListOwner {
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
     abstract override val contextReceiverArguments: List<FirExpression>
+    @UnresolvedExpressionTypeAccess
+    abstract override val coneTypeOrNull: ConeKotlinType?
     abstract val constructedTypeRef: FirTypeRef
     abstract val dispatchReceiver: FirExpression?
     abstract override val calleeReference: FirReference
@@ -43,6 +45,8 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
+
+    abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef)
 

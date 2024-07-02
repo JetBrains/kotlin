@@ -617,6 +617,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(resolvable)
         parent(call)
         parent(contextReceiverArgumentListOwner)
+        parent(expression)
 
         +field("constructedTypeRef", typeRef, withReplace = true)
         +field("dispatchReceiver", expression, nullable = true, withReplace = true, withTransform = true)

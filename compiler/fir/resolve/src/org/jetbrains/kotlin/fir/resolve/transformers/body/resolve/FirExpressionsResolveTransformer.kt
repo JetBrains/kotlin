@@ -1337,6 +1337,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
             } as FirResolvedTypeRef? ?: session.builtinTypes.anyType
             delegatedConstructorCall.replaceConstructedTypeRef(superClass)
+            delegatedConstructorCall.replaceConeTypeOrNull(superClass.type)
             delegatedConstructorCall.replaceCalleeReference(buildExplicitSuperReference {
                 source = delegatedConstructorCall.calleeReference.source
                 superTypeRef = superClass

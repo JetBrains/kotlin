@@ -533,7 +533,12 @@ open class FirTypeResolveTransformer(
     private fun resolveConstructedTypeRefForDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall
     ) {
-        delegatedConstructorCall.replaceConstructedTypeRef(delegatedConstructorCall.constructedTypeRef.transformSingle(this, null))
+        val transformedConstructedTypeRef = delegatedConstructorCall.constructedTypeRef
+            .transformSingle(this, null)
+        delegatedConstructorCall.replaceConstructedTypeRef(transformedConstructedTypeRef)
+        if (transformedConstructedTypeRef is FirResolvedTypeRef) {
+            delegatedConstructorCall.replaceConeTypeOrNull(transformedConstructedTypeRef.type)
+        }
         delegatedConstructorCall.transformCalleeReference(this, null)
     }
 

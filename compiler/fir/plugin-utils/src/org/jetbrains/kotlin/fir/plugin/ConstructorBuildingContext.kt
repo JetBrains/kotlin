@@ -161,6 +161,7 @@ private fun FirConstructor.generateNoArgDelegatingConstructorCall(session: FirSe
             else -> error("Object $owner has more than one class supertypes: $superClasses")
         }
         constructedTypeRef = singleSupertype.toFirResolvedTypeRef()
+        coneTypeOrNull = singleSupertype
         val superSymbol = singleSupertype.toRegularClassSymbol(session) ?: error("Symbol for supertype $singleSupertype not found")
         val superConstructorSymbol = superSymbol.declaredMemberScope(session, memberRequiredPhase = null)
             .getDeclaredConstructors()
