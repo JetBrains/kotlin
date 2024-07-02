@@ -43,11 +43,11 @@ internal class KaFirDynamicType(
 
     @KaExperimentalApi
     override fun createPointer(): KaTypePointer<KaDynamicType> = withValidityAssertion {
-        return KaFirDynamicTypePointer()
+        return KaFirDynamicTypePointer
     }
 }
 
-private class KaFirDynamicTypePointer : KaTypePointer<KaDynamicType> {
+private object KaFirDynamicTypePointer : KaTypePointer<KaDynamicType> {
     @KaImplementationDetail
     override fun restore(session: KaSession): KaDynamicType = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)

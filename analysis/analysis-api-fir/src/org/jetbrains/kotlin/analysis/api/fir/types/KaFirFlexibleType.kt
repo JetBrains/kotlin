@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
+import org.jetbrains.kotlin.analysis.api.fir.utils.createTypePointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
@@ -21,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
@@ -47,21 +43,6 @@ internal class KaFirFlexibleType(
 
     @KaExperimentalApi
     override fun createPointer(): KaTypePointer<KaFlexibleType> = withValidityAssertion {
-        return KaFirFlexibleTypePointer(coneType, builder)
-    }
-}
-
-private class KaFirFlexibleTypePointer(
-    coneType: ConeFlexibleType,
-    builder: KaSymbolByFirBuilder
-) : KaTypePointer<KaFlexibleType> {
-    private val coneTypePointer = coneType.createPointer(builder)
-
-    @KaImplementationDetail
-    override fun restore(session: KaSession): KaFlexibleType? = session.withValidityAssertion {
-        requireIsInstance<KaFirSession>(session)
-
-        val coneType = coneTypePointer.restore(session) ?: return null
-        return KaFirFlexibleType(coneType, session.firSymbolBuilder)
+        return createTypePointer(coneType, builder, ::KaFirFlexibleType)
     }
 }
