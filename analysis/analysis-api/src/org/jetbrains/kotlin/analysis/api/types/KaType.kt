@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-public sealed interface KaType : KaLifetimeOwner, KaAnnotated {
+public interface KaType : KaLifetimeOwner, KaAnnotated {
     public val nullability: KaTypeNullability
 
     /**
