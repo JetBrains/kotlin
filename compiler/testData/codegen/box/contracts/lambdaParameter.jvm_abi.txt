@@ -1,0 +1,21 @@
+MODULE main
+	CLASS LambdaParameterKt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				lambdaParameter.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 lambdaParameter.kt
+				LambdaParameterKt
+				+ 2 fake.kt
+				kotlin/jvm/internal/FakeKt
+				*L
+				1#1,37:1
+				1#2:38
+				*E
+				 } )
+			K2
+				---
+

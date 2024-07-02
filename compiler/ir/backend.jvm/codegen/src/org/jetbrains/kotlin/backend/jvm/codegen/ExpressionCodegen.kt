@@ -732,11 +732,15 @@ class ExpressionCodegen(
 
         val initializer = declaration.initializer
         if (initializer != null) {
-            val value = initializer.accept(this, data)
-            initializer.markLineNumber(startOffset = true)
-            value.materializeAt(varType, declaration.type)
-            declaration.markLineNumber(startOffset = true)
-            mv.store(index, varType)
+            val shouldNotGenerateLineNumber =
+                declaration.origin == IrDeclarationOrigin.IR_DESTRUCTURED_PARAMETER_VARIABLE
+            lineNumberMapper.noLineNumberScopeWithCondition(shouldNotGenerateLineNumber) {
+                val value = initializer.accept(this, data)
+                initializer.markLineNumber(startOffset = true)
+                value.materializeAt(varType, declaration.type)
+                declaration.markLineNumber(startOffset = true)
+                mv.store(index, varType)
+            }
         } else if (declaration.isVisibleInLVT) {
             declaration.markLineNumber(startOffset = true)
             pushDefaultValueOnStack(varType, mv)

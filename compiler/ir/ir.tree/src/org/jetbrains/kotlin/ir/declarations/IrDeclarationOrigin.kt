@@ -60,6 +60,7 @@ interface IrDeclarationOrigin {
         val DESTRUCTURED_OBJECT_PARAMETER by IrDeclarationOriginImpl
         val INSTANCE_RECEIVER by IrDeclarationOriginImpl
         val PRIMARY_CONSTRUCTOR_PARAMETER by IrDeclarationOriginImpl
+        val IR_DESTRUCTURED_PARAMETER_VARIABLE by IrDeclarationOriginImpl
         val IR_TEMPORARY_VARIABLE by IrDeclarationOriginImpl
         val IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER by IrDeclarationOriginImpl
         val IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER by IrDeclarationOriginImpl

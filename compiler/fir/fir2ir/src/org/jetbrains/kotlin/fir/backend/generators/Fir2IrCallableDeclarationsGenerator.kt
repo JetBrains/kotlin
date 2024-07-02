@@ -850,6 +850,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             givenOrigin != null -> givenOrigin
             variable.name == SpecialNames.ITERATOR -> IrDeclarationOrigin.FOR_LOOP_ITERATOR
             variable.name.isSpecial -> IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            variable.isDestructuredParameter() -> IrDeclarationOrigin.IR_DESTRUCTURED_PARAMETER_VARIABLE
             else -> IrDeclarationOrigin.DEFINED
         }
         val isLateInit = if (variable is FirProperty) variable.isLateInit else false
