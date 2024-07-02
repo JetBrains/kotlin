@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -52,6 +53,7 @@ private class KaFirDefinitelyNotNullTypePointer(
 ) : KaTypePointer<KaDefinitelyNotNullType> {
     private val coneTypePointer = coneType.createPointer(builder)
 
+    @KaImplementationDetail
     override fun restore(session: KaSession): KaDefinitelyNotNullType? = session.withValidityAssertion {
         requireIsInstance<KaFirSession>(session)
 

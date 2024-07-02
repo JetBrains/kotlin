@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.name.Name
 
 @KaExperimentalApi
 public interface KaTypePointer<out T : KaType> {
+    @KaImplementationDetail
     public fun restore(session: KaSession): T?
 }
 
