@@ -868,6 +868,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       }
 
       @Test
+      @TestMetadata("leakingPrivateClassThroughGenericType.kt")
+      public void testLeakingPrivateClassThroughGenericType() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughGenericType.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassThroughtKlass.kt")
       public void testLeakingPrivateClassThroughtKlass() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassThroughtKlass.kt");
@@ -1015,6 +1021,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       }
 
       @Test
+      @TestMetadata("leakingPrivateClassThroughGenericType.kt")
+      public void testLeakingPrivateClassThroughGenericType() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughGenericType.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassThroughtKlass.kt")
       public void testLeakingPrivateClassThroughtKlass() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateClassThroughtKlass.kt");
@@ -1159,6 +1171,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       @Test
       public void testAllFilesPresentInSingleFile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("usePrivateClassThroughGenericType.kt")
+      public void testUsePrivateClassThroughGenericType() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateClassThroughGenericType.kt");
       }
 
       @Test
