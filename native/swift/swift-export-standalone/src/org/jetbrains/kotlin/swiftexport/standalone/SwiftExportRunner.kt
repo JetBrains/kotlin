@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
+import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.*
@@ -140,12 +141,22 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
     }
 }
 
+// temporal HACK.
+// Otherwise SirModule becomes part of public API and there is no reason to actually do that in long run.
+// fixme: KT-68864
+public fun runSwiftExport(
+    input: InputModule.Binary,
+    dependencies: List<InputModule.Binary> = emptyList(),
+    config: SwiftExportConfig,
+): Result<List<SwiftExportModule>> = runSwiftExport(input, dependencies, null, config)
+
 /**
  * A root function for running Swift Export from build tool
  */
 public fun runSwiftExport(
     input: InputModule.Binary,
     dependencies: List<InputModule.Binary> = emptyList(),
+    moduleForPackages: SirModule?,
     config: SwiftExportConfig,
 ): Result<List<SwiftExportModule>> = runCatching {
     val stableDeclarationsOrder = config.settings.containsKey(STABLE_DECLARATIONS_ORDER)
@@ -158,7 +169,13 @@ public fun runSwiftExport(
         DEFAULT_BRIDGE_MODULE_NAME
     }
     val unsupportedDeclarationReporter = config.unsupportedDeclarationReporterKind.toReporter()
-    val buildResult = buildSwiftModule(input, dependencies, config, unsupportedDeclarationReporter)
+    val buildResult = buildSwiftModule(
+        input,
+        dependencies,
+        moduleForPackages,
+        config,
+        unsupportedDeclarationReporter,
+    )
     val bridgeGenerator = createBridgeGenerator(object : SirTypeNamer {
         override fun swiftFqName(type: SirType): String = type.swiftName
         override fun kotlinFqName(type: SirType): String {
@@ -184,7 +201,13 @@ public fun runSwiftExport(
             it.updateImports(listOf(SirImport(moduleName = bridgesModuleName)))
         }
         it.dumpResultToFiles(
-            output = it.createOutputFiles(config.outputPath),
+            output = it.createOutputFiles(
+                // because packageModule actually shared between modules, we need to write it into parent directory.
+                // this way the write location of packageModule is shared between runs of `runSwiftExport`.
+                // SHOULD BE MOVED during KT-68864
+                if (moduleForPackages == it) config.outputPath.parent
+                else config.outputPath
+            ),
             bridgeGenerator = bridgeGenerator,
             requests = bridgeRequests,
             stableDeclarationsOrder = stableDeclarationsOrder,
@@ -199,7 +222,7 @@ public fun runSwiftExport(
                 SwiftExportModule.SwiftOnly(
                     name = buildResult.moduleForPackageEnums.name,
                     dependencies = emptyList(),
-                    swiftApi = buildResult.moduleForPackageEnums.createOutputFiles(config.outputPath).swiftApi,
+                    swiftApi = buildResult.moduleForPackageEnums.createOutputFiles(config.outputPath.parent).swiftApi,
                 )
             ),
             bridgeName = bridgesModuleName,

@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.flatMapToNullableSet
 import java.io.File
 import kotlin.io.path.*
-import kotlin.test.assertSame
 
 abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest() {
 

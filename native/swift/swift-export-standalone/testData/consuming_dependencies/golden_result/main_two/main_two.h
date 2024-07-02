@@ -1,4 +1,4 @@
 #include <stdint.h>
 
-uintptr_t __root___deps_instance_2_get();
+uintptr_t org_main_second_deps_instance_2_get();
 

@@ -61,6 +61,13 @@ public extension main.org.kotlin.foo {
         return org_kotlin_foo_function__TypesOfArguments__int32_t__(arg)
     }
 }
+public extension main.demo.shared {
+    public typealias Integer = Swift.Int32
+}
+public enum demo {
+    public enum shared {
+    }
+}
 public enum org {
     public enum kotlin {
         public enum baz {

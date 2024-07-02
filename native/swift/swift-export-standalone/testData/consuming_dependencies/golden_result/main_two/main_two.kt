@@ -1,8 +1,8 @@
 import kotlin.native.internal.ExportedBridge
 
-@ExportedBridge("__root___deps_instance_2_get")
-public fun __root___deps_instance_2_get(): kotlin.native.internal.NativePtr {
-    val _result = deps_instance_2
+@ExportedBridge("org_main_second_deps_instance_2_get")
+public fun org_main_second_deps_instance_2_get(): kotlin.native.internal.NativePtr {
+    val _result = org.main.second.deps_instance_2
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

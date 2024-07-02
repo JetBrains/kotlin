@@ -1,6 +1,15 @@
 // KIND: STANDALONE
+// MODULE: main2
+// FILE: main.kt
+package demo.shared
+
+fun foo2() = 6
 // MODULE: main(dependency)
 // SWIFT_EXPORT_CONFIG: multipleModulesHandlingStrategy=IntoSingleModule, packageRoot=org.kotlin.foo
+// FILE: shared.kt
+package demo.shared
+
+typealias Integer = Int
 // FILE: baz.kt
 package org.kotlin.baz
 

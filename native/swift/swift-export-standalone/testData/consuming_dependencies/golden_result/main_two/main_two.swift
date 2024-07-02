@@ -1,8 +1,11 @@
+@_exported import ExportedKotlinPackages
 import KotlinRuntime
 import KotlinBridges_main_two
 
-public var deps_instance_2: KotlinRuntime.KotlinBase {
-    get {
-        return KotlinRuntime.KotlinBase(__externalRCRef: __root___deps_instance_2_get())
+public extension ExportedKotlinPackages.org.main.second {
+    public static var deps_instance_2: KotlinRuntime.KotlinBase {
+        get {
+            return KotlinRuntime.KotlinBase(__externalRCRef: org_main_second_deps_instance_2_get())
+        }
     }
 }

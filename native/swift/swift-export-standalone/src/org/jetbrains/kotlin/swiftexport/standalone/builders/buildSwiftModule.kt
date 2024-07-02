@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
-import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
 import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
@@ -43,6 +42,7 @@ internal class SwiftModuleBuildResults(
 internal fun buildSwiftModule(
     input: InputModule.Binary,
     dependencies: List<InputModule.Binary>,
+    moduleForPackages: SirModule?,
     config: SwiftExportConfig,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
 ): SwiftModuleBuildResults {
@@ -53,9 +53,8 @@ internal fun buildSwiftModule(
         MultipleModulesHandlingStrategy.IntoSingleModule -> SirSingleModuleProvider(swiftModuleName = input.name)
     }
     val moduleForPackageEnums = when (config.multipleModulesHandlingStrategy) {
-        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> buildModule {
-            name = "ExportedKotlinPackages"
-        }
+        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> moduleForPackages
+            ?: error("moduleForPackages on runSwiftExport were nil, while the config is OneToOneModuleMapping. Please provide moduleForPackages")
         MultipleModulesHandlingStrategy.IntoSingleModule -> with(moduleProvider) { mainModule.sirModule() }
     }
     val sirSession = StandaloneSirSession(
