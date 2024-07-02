@@ -1,5 +1,5 @@
 KaFunctionType:
-  abbreviatedType: null
+  abbreviation: null
   annotations: []
   arity: 1
   classId: kotlin/Function1
@@ -11,7 +11,7 @@ KaFunctionType:
   nullability: NON_NULLABLE
   parameterTypes: [
     KaUsualClassType:
-      abbreviatedType: null
+      abbreviation: null
       annotations: []
       classId: kotlin/String
       nullability: NON_NULLABLE
@@ -30,7 +30,7 @@ KaFunctionType:
       symbol: KaNamedClassSymbol(kotlin/Function1)
       typeArguments: [
         KaUsualClassType:
-          abbreviatedType: null
+          abbreviation: null
           annotations: []
           classId: kotlin/String
           nullability: NON_NULLABLE
@@ -43,7 +43,7 @@ KaFunctionType:
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
         KaUsualClassType:
-          abbreviatedType: null
+          abbreviation: null
           annotations: []
           classId: kotlin/Int
           nullability: NON_NULLABLE
@@ -59,7 +59,7 @@ KaFunctionType:
   ]
   receiverType: null
   returnType: KaUsualClassType:
-    abbreviatedType: null
+    abbreviation: null
     annotations: []
     classId: kotlin/Int
     nullability: NON_NULLABLE
@@ -74,7 +74,7 @@ KaFunctionType:
   symbol: KaNamedClassSymbol(kotlin/Function1)
   typeArguments: [
     KaUsualClassType:
-      abbreviatedType: null
+      abbreviation: null
       annotations: []
       classId: kotlin/String
       nullability: NON_NULLABLE
@@ -87,7 +87,7 @@ KaFunctionType:
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
     KaUsualClassType:
-      abbreviatedType: null
+      abbreviation: null
       annotations: []
       classId: kotlin/Int
       nullability: NON_NULLABLE

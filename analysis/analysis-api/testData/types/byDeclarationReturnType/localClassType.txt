@@ -1,5 +1,5 @@
 KaUsualClassType:
-  abbreviatedType: null
+  abbreviation: null
   annotations: []
   classId: <local>/B
   nullability: NON_NULLABLE

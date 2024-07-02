@@ -1,5 +1,5 @@
 KaFunctionType:
-  abbreviatedType: null
+  abbreviation: null
   annotations: []
   arity: 1
   classId: kotlin/Function1
@@ -11,8 +11,8 @@ KaFunctionType:
   nullability: NON_NULLABLE
   parameterTypes: [
     KaUsualClassType:
-      abbreviatedType: KaUsualClassType:
-        abbreviatedType: null
+      abbreviation: KaUsualClassType:
+        abbreviation: null
         annotations: []
         classId: library1/StringAlias
         nullability: NON_NULLABLE
@@ -42,8 +42,8 @@ KaFunctionType:
       symbol: KaNamedClassSymbol(kotlin/Function1)
       typeArguments: [
         KaUsualClassType:
-          abbreviatedType: KaUsualClassType:
-            abbreviatedType: null
+          abbreviation: KaUsualClassType:
+            abbreviation: null
             annotations: []
             classId: library1/StringAlias
             nullability: NON_NULLABLE
@@ -67,8 +67,8 @@ KaFunctionType:
           symbol: KaNamedClassSymbol(kotlin/String)
           typeArguments: []
         KaUsualClassType:
-          abbreviatedType: KaUsualClassType:
-            abbreviatedType: null
+          abbreviation: KaUsualClassType:
+            abbreviation: null
             annotations: []
             classId: library1/IntAlias
             nullability: NON_NULLABLE
@@ -95,8 +95,8 @@ KaFunctionType:
   ]
   receiverType: null
   returnType: KaUsualClassType:
-    abbreviatedType: KaUsualClassType:
-      abbreviatedType: null
+    abbreviation: KaUsualClassType:
+      abbreviation: null
       annotations: []
       classId: library1/IntAlias
       nullability: NON_NULLABLE
@@ -122,8 +122,8 @@ KaFunctionType:
   symbol: KaNamedClassSymbol(kotlin/Function1)
   typeArguments: [
     KaUsualClassType:
-      abbreviatedType: KaUsualClassType:
-        abbreviatedType: null
+      abbreviation: KaUsualClassType:
+        abbreviation: null
         annotations: []
         classId: library1/StringAlias
         nullability: NON_NULLABLE
@@ -147,8 +147,8 @@ KaFunctionType:
       symbol: KaNamedClassSymbol(kotlin/String)
       typeArguments: []
     KaUsualClassType:
-      abbreviatedType: KaUsualClassType:
-        abbreviatedType: null
+      abbreviation: KaUsualClassType:
+        abbreviation: null
         annotations: []
         classId: library1/IntAlias
         nullability: NON_NULLABLE
