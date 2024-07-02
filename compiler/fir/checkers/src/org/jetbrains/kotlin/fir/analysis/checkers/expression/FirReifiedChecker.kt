@@ -57,7 +57,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
     private fun ConeKotlinType.cannotBeReified() = when (this) {
         is ConeCapturedType -> true
         is ConeDynamicType -> true
-        else -> isNothing || isNullableNothing
+        else -> isNothing
     }
 
     private fun checkArgumentAndReport(
