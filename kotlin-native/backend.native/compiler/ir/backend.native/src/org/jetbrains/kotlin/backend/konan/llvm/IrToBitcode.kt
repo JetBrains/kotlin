@@ -926,7 +926,7 @@ internal class CodeGeneratorVisitor(
             is IrBreak               -> return evaluateBreak                  (value)
             is IrContinue            -> return evaluateContinue               (value)
             is IrGetObjectValue      -> return evaluateGetObjectValue         (value)
-            is IrFunctionReference   -> return evaluateFunctionReference      (value)
+            is IrRawFunctionReference   -> return evaluateRawFunctionReference      (value)
             is IrSuspendableExpression ->
                                         return evaluateSuspendableExpression  (value, resultSlot)
             is IrSuspensionPoint     -> return evaluateSuspensionPoint        (value)
@@ -2286,18 +2286,17 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateFunctionReference(expression: IrFunctionReference): LLVMValueRef {
-        // TODO: consider creating separate IR element for pointer to function.
-        assert (expression.type.getClass()?.symbol?.hasEqualFqName(InteropFqNames.cPointer.toSafe()) == true) {
-            "assert: should be ${InteropFqNames.cPointer}, ${expression.type.render()} found"
+    private fun evaluateRawFunctionReference(expression: IrRawFunctionReference): LLVMValueRef {
+        require(expression.type.getClass()?.symbol?.hasEqualFqName(InteropFqNames.cPointer.toSafe()) == true) {
+            "Raw reference should be ${InteropFqNames.cPointer}, ${expression.type.render()} found"
         }
-
-        assert (expression.getArgumentsWithIr().isEmpty())
-
         val function = expression.symbol.owner
-        require(function is IrSimpleFunction) { "References to constructors should've been lowered: ${expression.render()}" }
-        assert (function.dispatchReceiverParameter == null)
-
+        require(function is IrSimpleFunction) {
+            "Raw reference can't be for constructor: ${expression.render()}"
+        }
+        require(function.dispatchReceiverParameter == null) {
+            "Raw reference can't be for member function: ${expression.render()}"
+        }
         return codegen.functionEntryPointAddress(function)
     }
 

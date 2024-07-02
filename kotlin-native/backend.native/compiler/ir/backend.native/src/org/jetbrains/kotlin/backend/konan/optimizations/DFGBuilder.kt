@@ -135,7 +135,7 @@ private class ExpressionValuesExtractor(val context: Context,
             is IrVararg, /* Sometimes, we keep vararg till codegen phase (for constant arrays). */
             is IrClassReference, // Albeit these are lowered, they might occur after devirtualization.
             is IrMemberAccessExpression<*>, is IrGetValue, is IrGetObjectValue,
-            is IrGetField, is IrSetField, is IrConst, is IrConstantValue -> block(expression)
+            is IrGetField, is IrSetField, is IrConst, is IrConstantValue, is IrRawFunctionReference -> block(expression)
 
             else -> require(expression.type.isUnit() || expression.type.isNothing()) { "Unexpected expression: ${expression.render()}" }
         }
@@ -229,6 +229,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         override fun visitExpression(expression: IrExpression) {
             when (expression) {
                 is IrMemberAccessExpression<*>,
+                is IrRawFunctionReference,
                 is IrGetField,
                 is IrGetObjectValue,
                 is IrVararg,
@@ -253,7 +254,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
                     expressions += producerInvocation to currentLoop
 
-                    val jobFunctionReference = expression.getValueArgument(3) as? IrFunctionReference
+                    val jobFunctionReference = expression.getValueArgument(3) as? IrRawFunctionReference
                             ?: error("A function reference expected")
                     val jobInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                             jobFunctionReference.symbol.owner.returnType,
@@ -588,7 +589,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
                             is IrVararg, is IrClassReference -> DataFlowIR.Node.Const(symbolTable.mapType(value.type))
 
-                            is IrFunctionReference -> {
+                            is IrRawFunctionReference -> {
                                 val callee = value.symbol.owner
                                 require(callee is IrSimpleFunction) { "All constructors should've been lowered: ${value.render()}" }
                                 DataFlowIR.Node.FunctionReference(

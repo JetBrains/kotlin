@@ -25,12 +25,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -132,7 +130,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                 if (expression.symbol != symbols.executeImpl)
                     return expression
 
-                val job = expression.getValueArgument(3) as IrFunctionReference
+                val job = expression.getValueArgument(3) as IrRawFunctionReference
                 val jobFunction = (job.symbol as IrSimpleFunctionSymbol).owner
 
                 if (!::runtimeJobFunction.isInitialized) {
@@ -181,14 +179,12 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         overriddenFunction = overriddenJobDescriptor,
                         targetSymbol = jobFunction.symbol)
                 bridges += bridge
-                expression.putValueArgument(3, IrFunctionReferenceImpl.fromSymbolOwner(
+                expression.putValueArgument(3, IrRawFunctionReferenceImpl(
                         startOffset   = job.startOffset,
                         endOffset     = job.endOffset,
                         type          = job.type,
-                        symbol        = bridge.symbol,
-                        typeArgumentsCount = 0,
-                        reflectionTarget = null)
-                )
+                        symbol        = bridge.symbol
+                ))
                 return expression
             }
         })

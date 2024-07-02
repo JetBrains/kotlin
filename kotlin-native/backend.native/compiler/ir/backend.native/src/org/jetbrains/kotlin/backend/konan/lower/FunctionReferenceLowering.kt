@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -140,7 +140,12 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                         cur.getValueArgument(it.indexInOldValueParameters) == argument
                     }
                     if (parameter?.annotations?.findAnnotation(VOLATILE_LAMBDA_FQ_NAME) != null) {
-                        return expression
+                        return IrRawFunctionReferenceImpl(
+                                expression.startOffset,
+                                expression.endOffset,
+                                expression.type,
+                                expression.symbol
+                        )
                     }
                     break
                 }

@@ -110,7 +110,7 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference) {
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference) {
                 expression.acceptChildrenVoid(this)
 
                 val function = expression.symbol.owner

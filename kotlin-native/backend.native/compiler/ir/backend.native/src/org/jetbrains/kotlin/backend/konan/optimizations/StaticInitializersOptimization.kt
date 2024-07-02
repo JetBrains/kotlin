@@ -318,7 +318,7 @@ internal object StaticInitializersOptimization {
                 override fun visitSetField(expression: IrSetField, data: BitSet) =
                         expression.value.accept(this, expression.receiver?.accept(this, data) ?: data)
 
-                override fun visitFunctionReference(expression: IrFunctionReference, data: BitSet) = data
+                override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: BitSet) = data
                 override fun visitVararg(expression: IrVararg, data: BitSet) = data
 
                 override fun visitConstantValue(expression: IrConstantValue, data: BitSet) = data
