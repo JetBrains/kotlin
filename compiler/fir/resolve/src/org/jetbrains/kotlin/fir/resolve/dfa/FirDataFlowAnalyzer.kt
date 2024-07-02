@@ -1196,6 +1196,11 @@ abstract class FirDataFlowAnalyzer(
             val rightVariable = getVariableIfStable(flow, fir.rightOperand) ?: return@mergeIncomingFlow
             val operatorVariable = variableStorage.createSynthetic(fir)
             logicSystem.translateVariableFromConditionInStatements(flow, rightVariable, operatorVariable)
+        } else if (inferMoreImplications && fir.rightOperand.booleanLiteralValue == !saturatingValue) {
+            // Value of the expression = value of the left hand side.
+            if (leftVariable == null) return@mergeIncomingFlow
+            val operatorVariable = variableStorage.createSynthetic(fir)
+            logicSystem.translateVariableFromConditionInStatements(flow, leftVariable, operatorVariable)
         } else {
             val rightVariable = if (fir.rightOperand.resolvedType.isBoolean) getVariableIfStable(flowFromRight, fir.rightOperand) else null
             val statementsFromRight = flow.getTypeStatementsNotInheritedFrom(flowFromRight)
