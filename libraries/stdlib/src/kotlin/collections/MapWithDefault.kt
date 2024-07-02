@@ -31,6 +31,9 @@ internal fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
  * and a value is obtained with [Map.getValue] function, for example when properties are delegated to the map.
  *
  * When this map already has an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
+ *
+ * @sample samples.collections.Maps.Usage.getValueWithDefault
+ * @sample samples.collections.Maps.Usage.getValueWithReplacedDefault
  */
 public fun <K, V> Map<K, V>.withDefault(defaultValue: (key: K) -> V): Map<K, V> =
     when (this) {
@@ -45,6 +48,10 @@ public fun <K, V> Map<K, V>.withDefault(defaultValue: (key: K) -> V): Map<K, V> 
  * and a value is obtained with [Map.getValue] function, for example when properties are delegated to the map.
  *
  * When this map already has an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
+ *
+ * @sample samples.collections.Maps.Usage.getValueWithDefault
+ * @sample samples.collections.Maps.Usage.getValueWithReplacedDefault
+ * @sample samples.collections.Maps.Usage.changesToMutableMapWithDefaultPropagateToUnderlyingMap
  */
 @kotlin.jvm.JvmName("withDefaultMutable")
 public fun <K, V> MutableMap<K, V>.withDefault(defaultValue: (key: K) -> V): MutableMap<K, V> =

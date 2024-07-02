@@ -206,6 +206,44 @@ class Maps {
             assertPrints(totalValue(stats), "Total: [1787]")
         }
 
+        @Sample
+        fun getValueWithoutDefault() {
+            val map = mapOf(1 to "One", 2 to "Two")
+            assertFailsWith<NoSuchElementException> { map.getValue(3) }
+            assertPrints(map.getValue(1), "One")
+        }
+
+        @Sample
+        fun getValueWithDefault() {
+            val mapWithDefault = mapOf(1 to "One", 2 to "Two").withDefault { key ->
+                when {
+                    key == 0 -> "Zero"
+                    key > 0 -> "Positive"
+                    else -> "Negative"
+                }
+            }
+            val actual = (-1..3).associateWith { mapWithDefault.getValue(it) }
+            assertPrints(actual, "{-1=Negative, 0=Zero, 1=One, 2=Two, 3=Positive}")
+        }
+
+        @Sample
+        fun getValueWithReplacedDefault() {
+            val mapWithDefault = mapOf(1 to "One", 2 to "Two").withDefault { _ -> "Other" }
+            assertPrints(mapWithDefault.getValue(0), "Other")
+            val mapWithReplacedDefault = mapWithDefault.withDefault { _ -> "Unknown" }
+            assertPrints(mapWithReplacedDefault.getValue(0), "Unknown")
+        }
+
+        @Sample
+        fun changesToMutableMapWithDefaultPropagateToUnderlyingMap() {
+            val mutableMap = mutableMapOf(1 to "One", 2 to "Two")
+            val mutableMapWithDefault = mutableMap.withDefault { _ -> "Other" }
+            assertPrints(mutableMapWithDefault.getValue(0), "Other")
+            mutableMapWithDefault[0] = "Zero"
+            assertPrints(mutableMapWithDefault.getValue(0), "Zero")
+            assertPrints(mutableMap.getValue(0), "Zero")
+        }
+
     }
 
     class Filtering {
