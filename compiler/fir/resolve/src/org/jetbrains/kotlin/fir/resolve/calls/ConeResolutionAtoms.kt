@@ -37,10 +37,10 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
 
         fun createRawAtom(expression: FirExpression): ConeResolutionAtom {
             return when (expression) {
-                is FirAnonymousFunctionExpression -> ConeRawLambdaAtom(expression)
+                is FirAnonymousFunctionExpression -> ConeResolutionAtomWithPostponedChild(expression)
                 is FirCallableReferenceAccess -> when {
                     expression.isResolved -> ConeSimpleLeafResolutionAtom(expression)
-                    else -> ConeRawCallableReferenceAtom(expression)
+                    else -> ConeResolutionAtomWithPostponedChild(expression)
                 }
                 is FirSafeCallExpression -> ConeResolutionAtomWithSingleChild(
                     expression,
@@ -84,21 +84,11 @@ class ConeAtomWithCandidate(
         get() = fir as FirExpression
 }
 
-class ConeRawLambdaAtom(override val expression: FirAnonymousFunctionExpression) : ConeResolutionAtom() {
-    override val fir: FirAnonymousFunction = expression.anonymousFunction
-
-    var subAtom: ConePostponedResolvedAtom? = null
-        set(value) {
-            require(field == null) { "subAtom already initialized" }
-            field = value
-        }
-}
-
-class ConeRawCallableReferenceAtom(override val fir: FirCallableReferenceAccess) : ConeResolutionAtom() {
-    override val expression: FirCallableReferenceAccess
+class ConeResolutionAtomWithPostponedChild(override val fir: FirExpression) : ConeResolutionAtom() {
+    override val expression: FirExpression
         get() = fir
 
-    var subAtom: ConeResolvedCallableReferenceAtom? = null
+    var subAtom: ConePostponedResolvedAtom? = null
         set(value) {
             require(field == null) { "subAtom already initialized" }
             field = value

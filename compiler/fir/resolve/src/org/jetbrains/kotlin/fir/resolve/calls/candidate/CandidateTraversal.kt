@@ -45,14 +45,12 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
             postponedAtomsProcessor(atom)
             processCandidatesAndPostponedAtoms(atom.subAtom)
         }
-        is ConeRawLambdaAtom -> processCandidatesAndPostponedAtoms(atom.subAtom)
 
         // callable references
         is ConeResolvedCallableReferenceAtom -> {
             postponedAtomsProcessor(atom)
             processCandidatesAndPostponedAtoms(atom.subAtom)
         }
-        is ConeRawCallableReferenceAtom -> processCandidatesAndPostponedAtoms(atom.subAtom)
 
         // candidates
         is ConeAtomWithCandidate -> {
@@ -67,5 +65,6 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
         }
 
         is ConeResolutionAtomWithSingleChild -> processCandidatesAndPostponedAtoms(atom.subAtom)
+        is ConeResolutionAtomWithPostponedChild -> processCandidatesAndPostponedAtoms(atom.subAtom)
     }
 }
