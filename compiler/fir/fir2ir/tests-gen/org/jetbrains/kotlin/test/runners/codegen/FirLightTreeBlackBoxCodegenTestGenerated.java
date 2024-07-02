@@ -53240,6 +53240,30 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("insideInlineLambda_class.kt")
+        public void testInsideInlineLambda_class() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideInlineLambda_class.kt");
+        }
+
+        @Test
+        @TestMetadata("insideInlineLambda_indy.kt")
+        public void testInsideInlineLambda_indy() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideInlineLambda_indy.kt");
+        }
+
+        @Test
+        @TestMetadata("insideNonInlineLambda_class.kt")
+        public void testInsideNonInlineLambda_class() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideNonInlineLambda_class.kt");
+        }
+
+        @Test
+        @TestMetadata("insideNonInlineLambda_indy.kt")
+        public void testInsideNonInlineLambda_indy() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideNonInlineLambda_indy.kt");
+        }
+
+        @Test
         @TestMetadata("simpleClassParameter.kt")
         public void testSimpleClassParameter() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/simpleClassParameter.kt");

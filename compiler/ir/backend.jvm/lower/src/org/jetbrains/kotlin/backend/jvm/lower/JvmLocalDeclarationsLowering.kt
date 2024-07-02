@@ -33,6 +33,7 @@ internal class JvmLocalDeclarationsLowering(context: JvmBackendContext) : LocalD
     JvmVisibilityPolicy,
     compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
     forceFieldsForInlineCaptures = true,
+    remapTypesInExtractedLocalFunctions = false,
 ) {
     override fun postLocalDeclarationLoweringCallback(
         localFunctions: Map<IrFunction, LocalFunctionContext>,
