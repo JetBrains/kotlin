@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK_MISMATCH_MESSAGE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_NAME
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.notExists
@@ -48,6 +51,22 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     override val setProperty: (String) -> String = { ".set($it)" }
 
     override val mismatchReportMessage: String = PACKAGE_LOCK_MISMATCH_MESSAGE
+
+    @DisplayName("package-lock is OS independent")
+    @GradleTest
+    @OsCondition(enabledOnCI = [OS.WINDOWS])
+    @GradleTestVersions(minVersion = G_7_6)
+    fun testPackageLockOsIndependent(gradleVersion: GradleVersion) {
+        project("kotlin-js-package-lock-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build(":kotlinStorePackageLock") {
+                val packageLock = projectPath.resolve(KOTLIN_JS_STORE).resolve(PACKAGE_LOCK)
+                assertFileExists(packageLock)
+                assertFileDoesNotContain(packageLock, "\\")
+            }
+        }
+    }
 }
 
 class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
