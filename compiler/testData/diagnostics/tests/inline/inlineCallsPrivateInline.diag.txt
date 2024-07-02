@@ -1,13 +1,259 @@
-/inlineCallsPrivateInline.kt:4:9: error: public-API inline function cannot access non-public-API 'private final inline fun localDeclarations(): Boolean defined in AAA'
-        localDeclarations()
+/test.kt:23:47: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+        privateInlineParam: () -> Boolean = ::privateInlineFun,
+                                              ^^^^^^^^^^^^^^^^
+/test.kt:24:44: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+    internalInlineParam: () -> Boolean = ::internalInlineFun
+                                           ^^^^^^^^^^^^^^^^^
+/test.kt:26:9: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+        privateInlineFun()
+        ^^^^^^^^^^^^^^^^
+/test.kt:27:9: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+        internalInlineFun()
         ^^^^^^^^^^^^^^^^^
-/inlineCallsPrivateInline.kt:5:9: error: public-API inline function cannot access non-public-API 'private final val privatePropInline: Int defined in AAA'
+/test.kt:32:47: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+        privateInlineParam: () -> Boolean = ::privateInlineFun,
+                                              ^^^^^^^^^^^^^^^^
+/test.kt:33:44: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+    internalInlineParam: () -> Boolean = ::internalInlineFun
+                                           ^^^^^^^^^^^^^^^^^
+/test.kt:35:9: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+        privateInlineFun()
+        ^^^^^^^^^^^^^^^^
+/test.kt:36:9: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+        internalInlineFun()
+        ^^^^^^^^^^^^^^^^^
+/test.kt:41:13: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+            privateInlineFun()
+            ^^^^^^^^^^^^^^^^
+/test.kt:42:13: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:49:13: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+            privateInlineFun()
+            ^^^^^^^^^^^^^^^^
+/test.kt:50:13: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:57:51: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+            privateInlineParam: () -> Boolean = ::privateInlineFun,
+                                                  ^^^^^^^^^^^^^^^^
+/test.kt:58:48: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+        internalInlineParam: () -> Boolean = ::internalInlineFun
+                                               ^^^^^^^^^^^^^^^^^
+/test.kt:60:13: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+            privateInlineFun()
+            ^^^^^^^^^^^^^^^^
+/test.kt:61:13: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:66:51: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+            privateInlineParam: () -> Boolean = ::privateInlineFun,
+                                                  ^^^^^^^^^^^^^^^^
+/test.kt:67:48: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+        internalInlineParam: () -> Boolean = ::internalInlineFun
+                                               ^^^^^^^^^^^^^^^^^
+/test.kt:69:13: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolder'
+            privateInlineFun()
+            ^^^^^^^^^^^^^^^^
+/test.kt:70:13: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:77:44: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+    internalInlineParam: () -> Boolean = ::internalInlineFun
+                                           ^^^^^^^^^^^^^^^^^
+/test.kt:79:5: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolder'
+    internalInlineFun()
+    ^^^^^^^^^^^^^^^^^
+/test.kt:85:48: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+        internalInlineParam: () -> Boolean = ::internalInlineFun
+                                               ^^^^^^^^^^^^^^^^^
+/test.kt:87:9: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+        internalInlineFun()
+        ^^^^^^^^^^^^^^^^^
+/test.kt:92:48: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+        internalInlineParam: () -> Boolean = ::internalInlineFun
+                                               ^^^^^^^^^^^^^^^^^
+/test.kt:94:9: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+        internalInlineFun()
+        ^^^^^^^^^^^^^^^^^
+/test.kt:100:52: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+            internalInlineParam: () -> Boolean = ::internalInlineFun
+                                                   ^^^^^^^^^^^^^^^^^
+/test.kt:102:13: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:107:52: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+            internalInlineParam: () -> Boolean = ::internalInlineFun
+                                                   ^^^^^^^^^^^^^^^^^
+/test.kt:109:13: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:116:44: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+    internalInlineParam: () -> Boolean = ::internalInlineFun
+                                           ^^^^^^^^^^^^^^^^^
+/test.kt:118:5: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in KSubHolder'
+    internalInlineFun()
+    ^^^^^^^^^^^^^^^^^
+/test.kt:124:48: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+        internalInlineParam: () -> Boolean = ::internalInlineFun
+                                               ^^^^^^^^^^^^^^^^^
+/test.kt:124:48: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+        internalInlineParam: () -> Boolean = ::internalInlineFun
+                                               ^^^^^^^^^^^^^^^^^
+/test.kt:126:9: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+        internalInlineFun()
+        ^^^^^^^^^^^^^^^^^
+/test.kt:126:9: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+        internalInlineFun()
+        ^^^^^^^^^^^^^^^^^
+/test.kt:127:9: error: cannot access 'publishedInternalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+        publishedInternalInlineFun()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:127:9: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun publishedInternalInlineFun(): Boolean defined in KJSubHolder'
+        publishedInternalInlineFun()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:131:48: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+        internalInlineParam: () -> Boolean = ::internalInlineFun
+                                               ^^^^^^^^^^^^^^^^^
+/test.kt:131:48: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+        internalInlineParam: () -> Boolean = ::internalInlineFun
+                                               ^^^^^^^^^^^^^^^^^
+/test.kt:133:9: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+        internalInlineFun()
+        ^^^^^^^^^^^^^^^^^
+/test.kt:133:9: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+        internalInlineFun()
+        ^^^^^^^^^^^^^^^^^
+/test.kt:134:9: error: cannot access 'publishedInternalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+        publishedInternalInlineFun()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:134:9: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun publishedInternalInlineFun(): Boolean defined in KJSubHolder'
+        publishedInternalInlineFun()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:139:52: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+            internalInlineParam: () -> Boolean = ::internalInlineFun
+                                                   ^^^^^^^^^^^^^^^^^
+/test.kt:139:52: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+            internalInlineParam: () -> Boolean = ::internalInlineFun
+                                                   ^^^^^^^^^^^^^^^^^
+/test.kt:141:13: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:141:13: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:142:13: error: cannot access 'publishedInternalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+            publishedInternalInlineFun()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:142:13: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun publishedInternalInlineFun(): Boolean defined in KJSubHolder'
+            publishedInternalInlineFun()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:146:52: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+            internalInlineParam: () -> Boolean = ::internalInlineFun
+                                                   ^^^^^^^^^^^^^^^^^
+/test.kt:146:52: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+            internalInlineParam: () -> Boolean = ::internalInlineFun
+                                                   ^^^^^^^^^^^^^^^^^
+/test.kt:148:13: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:148:13: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+            internalInlineFun()
+            ^^^^^^^^^^^^^^^^^
+/test.kt:149:13: error: cannot access 'publishedInternalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+            publishedInternalInlineFun()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:149:13: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun publishedInternalInlineFun(): Boolean defined in KJSubHolder'
+            publishedInternalInlineFun()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:155:44: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+    internalInlineParam: () -> Boolean = ::internalInlineFun
+                                           ^^^^^^^^^^^^^^^^^
+/test.kt:155:44: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+    internalInlineParam: () -> Boolean = ::internalInlineFun
+                                           ^^^^^^^^^^^^^^^^^
+/test.kt:157:5: error: cannot access 'internalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+    internalInlineFun()
+    ^^^^^^^^^^^^^^^^^
+/test.kt:157:5: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun internalInlineFun(): Boolean defined in KJSubHolder'
+    internalInlineFun()
+    ^^^^^^^^^^^^^^^^^
+/test.kt:158:5: error: cannot access 'publishedInternalInlineFun': it is invisible (private in a supertype) in 'KJSubHolder'
+    publishedInternalInlineFun()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:158:5: error: public-API inline function cannot access non-public-API 'invisible_fake final inline fun publishedInternalInlineFun(): Boolean defined in KJSubHolder'
+    publishedInternalInlineFun()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:176:47: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolderObject'
+        privateInlineParam: () -> Boolean = ::privateInlineFun,
+                                              ^^^^^^^^^^^^^^^^
+/test.kt:177:44: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolderObject'
+    internalInlineParam: () -> Boolean = ::internalInlineFun
+                                           ^^^^^^^^^^^^^^^^^
+/test.kt:179:9: error: public-API inline function cannot access non-public-API 'private final inline fun privateInlineFun(): Boolean defined in FunHolderObject'
+        privateInlineFun()
+        ^^^^^^^^^^^^^^^^
+/test.kt:180:9: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolderObject'
+        internalInlineFun()
+        ^^^^^^^^^^^^^^^^^
+/test.kt:186:44: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolderObject'
+    internalInlineParam: () -> Boolean = ::internalInlineFun
+                                           ^^^^^^^^^^^^^^^^^
+/test.kt:188:5: error: public-API inline function cannot access non-public-API 'internal final inline fun internalInlineFun(): Boolean defined in FunHolderObject'
+    internalInlineFun()
+    ^^^^^^^^^^^^^^^^^
+/test.kt:214:5: error: public-API inline function cannot access non-public-API 'public constructor InternalHolder() defined in InternalHolder'
+    InternalHolder().publicInlineDeclarationPrivate()
+    ^^^^^^^^^^^^^^
+/test.kt:214:22: error: public-API inline function cannot access non-public-API 'public final inline fun publicInlineDeclarationPrivate(): Unit defined in InternalHolder'
+    InternalHolder().publicInlineDeclarationPrivate()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:215:5: error: public-API inline function cannot access non-public-API 'public constructor InternalHolder() defined in InternalHolder'
+    InternalHolder().publicInlineDeclarationInternal()
+    ^^^^^^^^^^^^^^
+/test.kt:215:22: error: public-API inline function cannot access non-public-API 'public final inline fun publicInlineDeclarationInternal(): Unit defined in InternalHolder'
+    InternalHolder().publicInlineDeclarationInternal()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:216:5: error: public-API inline function cannot access non-public-API 'public constructor InternalHolder() defined in InternalHolder'
+    InternalHolder().publicInlineDeclarationProtected()
+    ^^^^^^^^^^^^^^
+/test.kt:216:22: error: public-API inline function cannot access non-public-API 'public final inline fun publicInlineDeclarationProtected(): Unit defined in InternalHolder'
+    InternalHolder().publicInlineDeclarationProtected()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:241:5: error: public-API inline function cannot access non-public-API 'public constructor PrivateHolder() defined in PrivateHolder'
+    PrivateHolder().publicInlineDeclarationPrivate()
+    ^^^^^^^^^^^^^
+/test.kt:241:21: error: public-API inline function cannot access non-public-API 'public final inline fun publicInlineDeclarationPrivate(): Unit defined in PrivateHolder'
+    PrivateHolder().publicInlineDeclarationPrivate()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:242:5: error: public-API inline function cannot access non-public-API 'public constructor PrivateHolder() defined in PrivateHolder'
+    PrivateHolder().publicInlineDeclarationInternal()
+    ^^^^^^^^^^^^^
+/test.kt:242:21: error: public-API inline function cannot access non-public-API 'public final inline fun publicInlineDeclarationInternal(): Unit defined in PrivateHolder'
+    PrivateHolder().publicInlineDeclarationInternal()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:243:5: error: public-API inline function cannot access non-public-API 'public constructor PrivateHolder() defined in PrivateHolder'
+    PrivateHolder().publicInlineDeclarationProtected()
+    ^^^^^^^^^^^^^
+/test.kt:243:21: error: public-API inline function cannot access non-public-API 'public final inline fun publicInlineDeclarationProtected(): Unit defined in PrivateHolder'
+    PrivateHolder().publicInlineDeclarationProtected()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/test.kt:262:9: error: public-API inline function cannot access non-public-API 'private final val privatePropInline: Int defined in PropHolder'
         privatePropInline
         ^^^^^^^^^^^^^^^^^
-/inlineCallsPrivateInline.kt:6:9: error: public-API inline function cannot access non-public-API 'private final var privateVarPropInline: String defined in AAA'
+/test.kt:263:9: error: public-API inline function cannot access non-public-API 'internal final val internalPropInline: Int defined in PropHolder'
+        internalPropInline
+        ^^^^^^^^^^^^^^^^^^
+/test.kt:264:9: error: public-API inline function cannot access non-public-API 'private final var privateVarPropInline: String defined in PropHolder'
         privateVarPropInline = ""
         ^^^^^^^^^^^^^^^^^^^^
-/inlineCallsPrivateInline.kt:6:9: error: public-API inline function cannot access non-public-API 'private final inline fun `<set-privateVarPropInline>`(value: String): Unit defined in AAA'
+/test.kt:264:9: error: public-API inline function cannot access non-public-API 'private final inline fun `<set-privateVarPropInline>`(value: String): Unit defined in PropHolder'
         privateVarPropInline = ""
         ^^^^^^^^^^^^^^^^^^^^
+/test.kt:265:9: error: public-API inline function cannot access non-public-API 'internal final var internalVarPropInline: String defined in PropHolder'
+        internalVarPropInline = ""
+        ^^^^^^^^^^^^^^^^^^^^^
+/test.kt:265:9: error: public-API inline function cannot access non-public-API 'internal final inline fun `<set-internalVarPropInline>`(value: String): Unit defined in PropHolder'
+        internalVarPropInline = ""
+        ^^^^^^^^^^^^^^^^^^^^^
 

@@ -1,9 +1,169 @@
-/inlineCallsPrivateInline.fir.kt:(94,111): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+/test.kt:(58,64): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
 
-/inlineCallsPrivateInline.fir.kt:(122,139): error: Public-API inline function cannot access non-public-API inline property as it could transitively access non-public-API declarations.
+/test.kt:(139,145): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
 
-/inlineCallsPrivateInline.fir.kt:(148,168): error: Public-API inline function cannot access non-public-API inline property accessor as it could transitively access non-public-API declarations.
+/test.kt:(239,245): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
 
-/inlineCallsPrivateInline.fir.kt:(148,168): error: Public-API inline function cannot access non-public-API inline property as it could transitively access non-public-API declarations.
+/test.kt:(423,439): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
 
-/inlineCallsPrivateInline.fir.kt:(193,199): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+/test.kt:(484,501): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(518,534): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(545,562): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(696,712): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(757,774): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(791,807): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(818,835): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(906,922): error: Public-API inline property accessor cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(937,954): error: Public-API inline property accessor cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1081,1097): error: Public-API inline property accessor cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1112,1129): error: Public-API inline property accessor cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1303,1319): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1368,1385): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1410,1426): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1441,1458): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1608,1624): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1673,1690): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1715,1731): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1746,1763): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1925,1942): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(1951,1968): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(2148,2165): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(2182,2199): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(2337,2354): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(2371,2388): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(2577,2594): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(2619,2636): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(2790,2807): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(2832,2849): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3012,3029): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3038,3055): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3238,3255): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3272,3289): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3427,3444): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3461,3478): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3667,3684): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3709,3726): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3880,3897): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(3922,3939): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(4103,4120): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(4129,4146): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(4222,4228): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(4303,4309): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(4403,4409): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(4568,4584): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(4629,4646): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(4663,4679): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(4690,4707): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(4861,4878): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(4887,4904): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(4992,4998): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(5081,5087): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(5171,5177): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(5251,5257): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(5342,5348): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(5435,5441): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(5578,5592): error: Public-API inline function cannot access non-public-API constructor.
+
+/test.kt:(5595,5625): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(5632,5646): error: Public-API inline function cannot access non-public-API constructor.
+
+/test.kt:(5649,5680): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(5687,5701): error: Public-API inline function cannot access non-public-API constructor.
+
+/test.kt:(5704,5736): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(5789,5795): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(5878,5884): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(5968,5974): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(6048,6054): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(6139,6145): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(6232,6238): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(6375,6388): error: Public-API inline function cannot access non-public-API constructor.
+
+/test.kt:(6391,6421): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(6428,6441): error: Public-API inline function cannot access non-public-API constructor.
+
+/test.kt:(6444,6475): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(6482,6495): error: Public-API inline function cannot access non-public-API constructor.
+
+/test.kt:(6498,6530): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
+
+/test.kt:(6881,6887): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+
+/test.kt:(6921,6938): error: Public-API inline function cannot access non-public-API inline property as it could transitively access non-public-API declarations.
+
+/test.kt:(6947,6965): error: Public-API inline function cannot access non-public-API inline property as it could transitively access non-public-API declarations.
+
+/test.kt:(6974,6994): error: Public-API inline function cannot access non-public-API inline property accessor as it could transitively access non-public-API declarations.
+
+/test.kt:(6974,6994): error: Public-API inline function cannot access non-public-API inline property as it could transitively access non-public-API declarations.
+
+/test.kt:(7008,7029): error: Public-API inline function cannot access non-public-API inline property accessor as it could transitively access non-public-API declarations.
+
+/test.kt:(7008,7029): error: Public-API inline function cannot access non-public-API inline property as it could transitively access non-public-API declarations.
