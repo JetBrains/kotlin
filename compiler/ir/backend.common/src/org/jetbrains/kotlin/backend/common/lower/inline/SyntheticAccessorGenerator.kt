@@ -113,7 +113,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
         // For the call to super.g in function i, the accessor to A.g must be produced in C. Therefore, we
         // cannot use the function symbol (A.g in the example) by itself as the key since there should be
         // one accessor per dispatch receiver (i.e., parent of the accessor).
-        val functionMap = function.syntheticAccessors ?: mutableMapOf<AccessorKey, IrFunction>().also { function.syntheticAccessors = it }
+        val functionMap = function.syntheticAccessors ?: hashMapOf<AccessorKey, IrFunction>().also { function.syntheticAccessors = it }
         return functionMap.getOrPut(AccessorKey(parent, superQualifierSymbol)) {
             when (function) {
                 is IrConstructor ->
@@ -217,7 +217,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
         val field = expression.symbol.owner
         val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopes) as IrClass
         val getterMap =
-            field.getterSyntheticAccessors ?: mutableMapOf<AccessorKey, IrSimpleFunction>().also { field.setterSyntheticAccessors = it }
+            field.getterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.getterSyntheticAccessors = it }
         return getterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
             makeGetterAccessor(field, parent, expression.superQualifierSymbol).also {
                 if (addAccessorToParent) {
@@ -278,7 +278,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
         val field = expression.symbol.owner
         val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopes) as IrClass
         val setterMap =
-            field.setterSyntheticAccessors ?: mutableMapOf<AccessorKey, IrSimpleFunction>().also { field.setterSyntheticAccessors = it }
+            field.setterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.setterSyntheticAccessors = it }
         return setterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
             makeSetterAccessor(field, parent, expression.superQualifierSymbol).also {
                 if (addAccessorToParent) {
