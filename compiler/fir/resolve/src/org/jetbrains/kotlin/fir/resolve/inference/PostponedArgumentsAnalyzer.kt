@@ -80,7 +80,7 @@ class PostponedArgumentsAnalyzer(
             callResolver.resolveCallableReference(candidate, atom, hasSyntheticOuterCall = false)
         }
 
-        val callableReferenceAccess = atom.fir
+        val callableReferenceAccess = atom.expression
         atom.analyzed = true
 
         resolutionContext.bodyResolveContext.dropCallableReferenceContext(callableReferenceAccess)
@@ -184,12 +184,12 @@ class PostponedArgumentsAnalyzer(
         val checkerSink: CheckerSink = CheckerSinkImpl(candidate)
         val builder = c.getBuilder()
 
-        val lastExpression = lambda.fir.lastStatement() as? FirExpression
+        val lastExpression = lambda.anonymousFunction.lastStatement() as? FirExpression
         var hasExpressionInReturnArguments = false
-        val returnTypeRef = lambda.fir.returnTypeRef.let {
+        val returnTypeRef = lambda.anonymousFunction.returnTypeRef.let {
             it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(substituteAlreadyFixedVariables(lambda.returnType))
         }
-        val isUnitLambda = returnTypeRef.type.isUnitOrFlexibleUnit || lambda.fir.shouldReturnUnit(returnArguments)
+        val isUnitLambda = returnTypeRef.type.isUnitOrFlexibleUnit || lambda.anonymousFunction.shouldReturnUnit(returnArguments)
 
         for (atom in returnAtoms) {
             val expression = atom.expression
@@ -217,7 +217,7 @@ class PostponedArgumentsAnalyzer(
                     // See KT-63602 for details.
                     builder.addSubtypeConstraintIfCompatible(
                         expression.resolvedType, returnTypeRef.type,
-                        ConeLambdaArgumentConstraintPosition(lambda.fir)
+                        ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction)
                     )
                 }
                 continue
@@ -257,7 +257,7 @@ class PostponedArgumentsAnalyzer(
         // If we've got some errors already, no new constraints or diagnostics are required
         if (with(c) { lambdaReturnType.isError() } || builder.hasContradiction) return
 
-        val position = ConeLambdaArgumentConstraintPosition(lambda.fir)
+        val position = ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction)
         val unitType = components.session.builtinTypes.unitType.type
         if (!builder.addSubtypeConstraintIfCompatible(
                 unitType,
@@ -273,7 +273,7 @@ class PostponedArgumentsAnalyzer(
                     // TODO: Consider replacement with ArgumentTypeMismatch once KT-67961 is fixed
                     // Currently, ArgumentTypeMismatch only allows expressions and we don't have it here
                     UnitReturnTypeLambdaContradictsExpectedType(
-                        lambda.fir,
+                        lambda.anonymousFunction,
                         wholeLambdaExpectedType,
                         lambda.sourceForFunctionExpression,
                     )
