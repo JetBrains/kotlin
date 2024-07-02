@@ -91,6 +91,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-impl",
+    ":libraries:tools:gradle:fus-statistics-gradle-plugin"
 )
 
 private fun Task.processDependent(dependent: String, action: () -> Unit) {
