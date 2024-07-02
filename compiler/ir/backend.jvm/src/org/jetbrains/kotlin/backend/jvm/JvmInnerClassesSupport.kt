@@ -15,15 +15,15 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
-import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrClass.innerClassOuterThisField: IrField? by irAttribute(followAttributeOwner = false)
+private var IrConstructor.innerClassConstructorWithOuterThisParameter: IrConstructor? by irAttribute(followAttributeOwner = false)
+private var IrClass.innerClassOriginalPrimaryConstructor: IrConstructor? by irAttribute(followAttributeOwner = false)
 
 class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
-    private val outerThisDeclarations by irAttribute<IrClass, IrField>(false).asMap()
-    private val innerClassConstructors by irAttribute<IrConstructor, IrConstructor>(false).asMap()
-    private val originalInnerClassPrimaryConstructorByClass by irAttribute<IrClass, IrConstructor>(false).asMap()
-
     override fun getOuterThisField(innerClass: IrClass): IrField =
-        outerThisDeclarations.getOrPut(innerClass) {
+        innerClass::innerClassOuterThisField.getOrSetIfNull {
             assert(innerClass.isInner) { "Class is not inner: ${innerClass.dump()}" }
             irFactory.buildField {
                 name = Name.identifier("this$0")
@@ -40,19 +40,18 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
         val innerClass = innerClassConstructor.parent as IrClass
         assert(innerClass.isInner) { "Class is not inner: ${(innerClassConstructor.parent as IrClass).dump()}" }
 
-        return innerClassConstructors.getOrPut(innerClassConstructor) {
+        return innerClassConstructor::innerClassConstructorWithOuterThisParameter.getOrSetIfNull {
             createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
         }.also {
             if (innerClassConstructor.isPrimary) {
-                originalInnerClassPrimaryConstructorByClass[innerClass] = innerClassConstructor
+                innerClass.innerClassOriginalPrimaryConstructor = innerClassConstructor
             }
         }
     }
 
     override fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor? {
         assert(innerClass.isInner) { "Class is not inner: $innerClass" }
-
-        return originalInnerClassPrimaryConstructorByClass[innerClass]
+        return innerClass.innerClassOriginalPrimaryConstructor
     }
 
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor =
