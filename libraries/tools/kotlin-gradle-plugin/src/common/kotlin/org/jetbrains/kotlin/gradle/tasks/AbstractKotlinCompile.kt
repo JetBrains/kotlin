@@ -104,12 +104,16 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     // This allows us to treat friendPaths as Input rather than InputFiles
     @get:Input
-    internal val friendPathsSet: Set<String>
+    internal val friendPathsSet: Provider<Set<String>>
         get() {
             val buildDirFile = projectLayout.buildDirectory.asFile.get()
-            return friendPaths
-                .filter { it.exists() }
-                .map { it.normalize().relativeTo(buildDirFile).invariantSeparatorsPath }.toSet()
+            return friendPaths.elements.map { providedSet ->
+                providedSet
+                    .map { it.asFile }
+                    .filter { it.exists() }
+                    .map { it.normalize().relativeTo(buildDirFile).invariantSeparatorsPath }
+                    .toSet()
+            }
         }
 
     @get:Internal
