@@ -2271,7 +2271,7 @@ public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence)
 }
 
 /**
- * Splits the original char sequence into pair of char sequences,
+ * Splits the original char sequence into a pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,
  * while *second* char sequence contains characters for which [predicate] yielded `false`.
  * 
@@ -2291,7 +2291,7 @@ public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<Cha
 }
 
 /**
- * Splits the original string into pair of strings,
+ * Splits the original string into a pair of strings,
  * where *first* string contains characters for which [predicate] yielded `true`,
  * while *second* string contains characters for which [predicate] yielded `false`.
  * 
