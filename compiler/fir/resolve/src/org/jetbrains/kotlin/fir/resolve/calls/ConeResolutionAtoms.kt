@@ -43,7 +43,7 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                     expression.isResolved -> ConeSimpleLeafResolutionAtom(expression)
                     else -> ConeRawCallableReferenceAtom(expression)
                 }
-                is FirSafeCallExpression -> ConeSafeCallAtom(
+                is FirSafeCallExpression -> ConeResolutionAtomWithSingleChild(
                     expression,
                     createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression())
                 )
@@ -53,12 +53,17 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
                 }
                 is FirNamedArgumentExpression -> ConeNamedArgumentAtom(expression, createRawAtom(expression.expression))
                 is FirSpreadArgumentExpression -> ConeSpreadExpressionAtom(expression, createRawAtom(expression.expression))
-                is FirErrorExpression -> ConeErrorExpressionAtom(expression, createRawAtom(expression.expression))
-                is FirBlock -> ConeBlockAtom(expression, createRawAtom(expression.lastExpression))
+                is FirErrorExpression -> ConeResolutionAtomWithSingleChild(expression, createRawAtom(expression.expression))
+                is FirBlock -> ConeResolutionAtomWithSingleChild(expression, createRawAtom(expression.lastExpression))
                 else -> ConeSimpleLeafResolutionAtom(expression)
             }
         }
     }
+}
+
+class ConeResolutionAtomWithSingleChild(override val fir: FirExpression, val subAtom: ConeResolutionAtom?) : ConeResolutionAtom() {
+    override val expression: FirExpression
+        get() = fir
 }
 
 class ConeSimpleLeafResolutionAtom(override val fir: FirExpression) : ConeResolutionAtom() {
@@ -68,21 +73,6 @@ class ConeSimpleLeafResolutionAtom(override val fir: FirExpression) : ConeResolu
 //    }
 
     override val expression: FirExpression
-        get() = fir
-}
-
-class ConeSafeCallAtom(override val fir: FirSafeCallExpression, val selector: ConeResolutionAtom?) : ConeResolutionAtom() {
-    override val expression: FirSafeCallExpression
-        get() = fir
-}
-
-class ConeErrorExpressionAtom(override val fir: FirErrorExpression, val subAtom: ConeResolutionAtom?) : ConeResolutionAtom() {
-    override val expression: FirErrorExpression
-        get() = fir
-}
-
-class ConeBlockAtom(override val fir: FirBlock, val lastExpressionAtom: ConeResolutionAtom?) : ConeResolutionAtom() {
-    override val expression: FirBlock
         get() = fir
 }
 

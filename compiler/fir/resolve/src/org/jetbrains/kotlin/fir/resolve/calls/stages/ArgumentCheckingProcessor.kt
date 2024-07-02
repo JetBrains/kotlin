@@ -100,56 +100,54 @@ internal object ArgumentCheckingProcessor {
 
     // -------------------------------------------- Real implementation --------------------------------------------
 
-    private fun ArgumentContext.resolveArgumentExpression(argument: ConeResolutionAtom) {
-        when (argument) {
-            // x?.bar() is desugared to `x SAFE-CALL-OPERATOR { $not-null-receiver$.bar() }`
-            //
-            // If we have a safe-call as argument like in a call "foo(x SAFE-CALL-OPERATOR { $not-null-receiver$.bar() })"
-            // we obtain argument type (and argument's constraint system) from "$not-null-receiver$.bar()" (argument.regularQualifiedAccess)
-            // and then add constraint: typeOf(`$not-null-receiver$.bar()`).makeNullable() <: EXPECTED_TYPE
-            // NB: argument.regularQualifiedAccess is either a call or a qualified access
-            is ConeSafeCallAtom -> when (val selector = argument.selector) {
-                // Assignment
-                null -> checkApplicabilityForArgumentType(
-                    argument,
-                    StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
-                    SimpleConstraintSystemConstraintPosition,
-                )
-                else -> resolvePlainExpressionArgument(
-                    selector,
-                    useNullableArgumentType = true
-                )
+    private fun ArgumentContext.resolveArgumentExpression(atom: ConeResolutionAtom) {
+        when (atom) {
+            is ConeRawCallableReferenceAtom -> preprocessCallableReference(atom)
+
+            is ConeRawLambdaAtom -> preprocessLambdaArgument(atom)
+            is ConeWrappedExpressionAtom -> resolveArgumentExpression(atom.subAtom)
+
+            is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(atom)
+
+            is ConePostponedResolvedAtom -> error("Unexpected type of atom: ${atom::class.java}")
+            is ConeResolutionAtomWithSingleChild -> {
+                when (atom.expression) {
+                    // x?.bar() is desugared to `x SAFE-CALL-OPERATOR { $not-null-receiver$.bar() }`
+                    //
+                    // If we have a safe-call as argument like in a call "foo(x SAFE-CALL-OPERATOR { $not-null-receiver$.bar() })"
+                    // we obtain argument type (and argument's constraint system) from "$not-null-receiver$.bar()" (argument.regularQualifiedAccess)
+                    // and then add constraint: typeOf(`$not-null-receiver$.bar()`).makeNullable() <: EXPECTED_TYPE
+                    // NB: argument.regularQualifiedAccess is either a call or a qualified access
+                    is FirSafeCallExpression -> when (val selectorAtom = atom.subAtom) {
+                        // Assignment
+                        null -> checkApplicabilityForArgumentType(
+                            atom,
+                            StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
+                            SimpleConstraintSystemConstraintPosition,
+                        )
+                        else -> resolvePlainExpressionArgument(
+                            selectorAtom,
+                            useNullableArgumentType = true
+                        )
+                    }
+                    is FirBlock -> when (val lastExpression = atom.subAtom) {
+                        null -> {
+                            val newContext = this.copy(isReceiver = false, isDispatch = false)
+                            newContext.checkApplicabilityForArgumentType(
+                                atom,
+                                atom.expression.resolvedType,
+                                SimpleConstraintSystemConstraintPosition,
+                            )
+                        }
+                        else -> resolveArgumentExpression(lastExpression)
+                    }
+                    else -> when (val subAtom = atom.subAtom) {
+                        null -> resolvePlainExpressionArgument(atom)
+                        else -> resolveArgumentExpression(subAtom)
+                    }
+                }
             }
-            is ConeRawCallableReferenceAtom -> preprocessCallableReference(argument)
-
-            is ConeRawLambdaAtom -> preprocessLambdaArgument(argument)
-            is ConeWrappedExpressionAtom -> resolveArgumentExpression(argument.subAtom)
-
-            is ConeBlockAtom -> resolveBlockArgument(argument)
-
-            is ConeErrorExpressionAtom -> when (val wrappedExpression = argument.subAtom) {
-                null -> resolvePlainExpressionArgument(argument)
-                else -> resolveArgumentExpression(wrappedExpression)
-            }
-
-            is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(argument)
-
-            is ConePostponedResolvedAtom -> error("Unexpected type of atom: ${argument::class.java}")
         }
-    }
-
-    private fun ArgumentContext.resolveBlockArgument(atom: ConeBlockAtom) {
-        val lastExpression = atom.lastExpressionAtom
-        if (lastExpression == null) {
-            val newContext = this.copy(isReceiver = false, isDispatch = false)
-            newContext.checkApplicabilityForArgumentType(
-                atom,
-                atom.expression.resolvedType,
-                SimpleConstraintSystemConstraintPosition,
-            )
-            return
-        }
-        resolveArgumentExpression(lastExpression)
     }
 
     private fun ArgumentContext.resolvePlainExpressionArgument(
