@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 fun extractLambdaInfoFromFunctionType(
     expectedType: ConeKotlinType?,
-    argument: FirAnonymousFunctionExpression?,
+    argument: FirAnonymousFunctionExpression,
     lambda: FirAnonymousFunction,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
     components: BodyResolveComponents,
@@ -113,7 +113,6 @@ fun extractLambdaInfoFromFunctionType(
         }
 
     return ConeResolvedLambdaAtom(
-        lambda,
         argument,
         expectedType,
         actualFunctionKind ?: expectedFunctionKind,

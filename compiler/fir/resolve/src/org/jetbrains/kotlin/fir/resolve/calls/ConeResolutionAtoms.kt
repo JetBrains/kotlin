@@ -18,17 +18,33 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCan
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 //  -------------------------- Atoms --------------------------
 
+/**
+ * [ConeResolutionAtom] is an abstract representation calls component (like argument or receiver) which is needed
+ *   for convenient representation of all different kinds of arguments in the original order. Regular expressions cannot be
+ *   used for this purpose, as we have postponed arguments in the resolution logic (callable references and lambdas), which
+ *   require some additional information for resolution, which is provided on different steps of the resolution pipeline. So atoms
+ *   allow tracking all those transformations and keep the original structure of the call at the same time.
+ *
+ * There are multiple different kinds of atoms:
+ * - [ConeAtomWithCandidate] used for arguments, which are not completed yet and contain [Candidate] inside
+ * - [ConeResolutionAtomWithSingleChild] used for expressions, which wrap some other expression. Atom of underlying expression
+ *     is stored inside [ConeResolutionAtomWithSingleChild.subAtom]
+ * - [ConeResolutionAtomWithPostponedChild] is created for postponed arguments at the first stage of argument processing
+ *     and contain mutable [subAtom] property for more specific [ConePostponedResolvedAtom] which will be initialized later
+ * - [ConePostponedResolvedAtom] and its inheritors are special atoms for proper lambda and callable reference resolution
+ * - [ConeSimpleLeafResolutionAtom] is an atom for regular already completed expressions
+ */
 sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
+    abstract override val expression: FirExpression
+
     companion object {
         @JvmName("createRawAtomNullable")
         fun createRawAtom(expression: FirExpression?): ConeResolutionAtom? {
@@ -59,35 +75,20 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
     }
 }
 
-class ConeResolutionAtomWithSingleChild(override val fir: FirExpression, val subAtom: ConeResolutionAtom?) : ConeResolutionAtom() {
-    override val expression: FirExpression
-        get() = fir
-}
+class ConeResolutionAtomWithSingleChild(override val expression: FirExpression, val subAtom: ConeResolutionAtom?) : ConeResolutionAtom()
 
-class ConeSimpleLeafResolutionAtom(override val fir: FirExpression) : ConeResolutionAtom() {
+class ConeSimpleLeafResolutionAtom(override val expression: FirExpression) : ConeResolutionAtom() {
 // TODO: investigate possibility to enable this check. KT-69557
 //    init {
 //        check(fir.isResolved) { "ConeResolvedAtom should be created only for resolved expressions" }
 //    }
-
-    override val expression: FirExpression
-        get() = fir
 }
 
 //  -------------------------- Not-resolved atoms --------------------------
 
-class ConeAtomWithCandidate(
-    override val fir: FirResolvable,
-    val candidate: Candidate
-) : ConeResolutionAtom() {
-    override val expression: FirExpression
-        get() = fir as FirExpression
-}
+class ConeAtomWithCandidate(override val expression: FirExpression, val candidate: Candidate) : ConeResolutionAtom()
 
-class ConeResolutionAtomWithPostponedChild(override val fir: FirExpression) : ConeResolutionAtom() {
-    override val expression: FirExpression
-        get() = fir
-
+class ConeResolutionAtomWithPostponedChild(override val expression: FirExpression) : ConeResolutionAtom() {
     var subAtom: ConePostponedResolvedAtom? = null
         set(value) {
             require(field == null) { "subAtom already initialized" }
@@ -105,8 +106,7 @@ sealed class ConePostponedResolvedAtom : ConeResolutionAtom(), PostponedResolved
 //  ------------- Lambdas -------------
 
 class ConeResolvedLambdaAtom(
-    override val fir: FirAnonymousFunction,
-    private val _expression: FirAnonymousFunctionExpression?,
+    override val expression: FirAnonymousFunctionExpression,
     expectedType: ConeKotlinType?,
     val expectedFunctionTypeKind: FunctionTypeKind?,
     val receiver: ConeKotlinType?,
@@ -119,10 +119,7 @@ class ConeResolvedLambdaAtom(
     // TODO: Handle somehow that kind of lack of information once KT-67961 is fixed
     val sourceForFunctionExpression: KtSourceElement?,
 ) : ConePostponedResolvedAtom() {
-    override val expression: FirAnonymousFunctionExpression
-        get() = _expression ?: errorWithAttachment("No expression for lambda") {
-            withFirEntry("lambda", fir)
-        }
+    val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType? = typeVariableForLambdaReturnType
         private set
@@ -159,7 +156,7 @@ class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     private val initialExpectedTypeType: ConeKotlinType,
     val candidateOfOuterCall: Candidate,
 ) : ConePostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
-    override val fir: FirAnonymousFunction = expression.anonymousFunction
+    val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var subAtom: ConeResolvedLambdaAtom? = null
         set(value) {
@@ -193,14 +190,11 @@ class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
 //  ------------- References -------------
 
 class ConeResolvedCallableReferenceAtom(
-    override val fir: FirCallableReferenceAccess,
+    override val expression: FirCallableReferenceAccess,
     private val initialExpectedType: ConeKotlinType?,
     val lhs: DoubleColonLHS?,
     private val session: FirSession
 ) : ConePostponedResolvedAtom(), PostponedCallableReferenceMarker {
-    override val expression: FirCallableReferenceAccess
-        get() = fir
-
     var subAtom: ConeAtomWithCandidate? = null
         private set
 
@@ -217,7 +211,7 @@ class ConeResolvedCallableReferenceAtom(
         this.resultingReference = resultingReference
         val candidate = (resultingReference as? FirNamedReferenceWithCandidate)?.candidate
         if (candidate != null) {
-            subAtom = ConeAtomWithCandidate(fir, candidate)
+            subAtom = ConeAtomWithCandidate(expression, candidate)
         }
     }
 

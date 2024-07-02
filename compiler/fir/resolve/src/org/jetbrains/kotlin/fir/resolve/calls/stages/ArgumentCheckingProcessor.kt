@@ -363,7 +363,7 @@ internal object ArgumentCheckingProcessor {
                 contextReceivers = resolvedArgument.contextReceivers,
             )
 
-            val position = ConeArgumentConstraintPosition(resolvedArgument.fir)
+            val position = ConeArgumentConstraintPosition(resolvedArgument.anonymousFunction)
             if (duringCompletion) {
                 csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
             } else {
@@ -414,7 +414,6 @@ internal object ArgumentCheckingProcessor {
         }
 
         return ConeResolvedLambdaAtom(
-            lambda,
             argument,
             expectedType,
             expectedFunctionTypeKind = lambda.typeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.functionTypeKind(session),

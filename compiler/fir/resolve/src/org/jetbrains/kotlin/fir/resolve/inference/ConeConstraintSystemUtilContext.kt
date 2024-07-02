@@ -81,7 +81,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         require(argument is ConePostponedResolvedAtom) {
             "${argument::class}"
         }
-        return ConeArgumentConstraintPosition(argument.fir)
+        return ConeArgumentConstraintPosition(argument.expression)
     }
 
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {
@@ -94,15 +94,15 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         require(declaration is ConePostponedResolvedAtom)
         return when (declaration) {
             is ConeLambdaWithTypeVariableAsExpectedTypeAtom -> {
-                val atom = declaration.fir
-                return if (atom.isLambda) { // lambda - must return null in case of absent parameters
-                    if (atom.valueParameters.isNotEmpty())
-                        atom.collectDeclaredValueParameterTypes()
+                val anonymousFunction = declaration.anonymousFunction
+                return if (anonymousFunction.isLambda) { // lambda - must return null in case of absent parameters
+                    if (anonymousFunction.valueParameters.isNotEmpty())
+                        anonymousFunction.collectDeclaredValueParameterTypes()
                     else null
                 } else { // function expression - all types are explicit, shouldn't return null
                     buildList {
-                        atom.receiverParameter?.typeRef?.coneType?.let { add(it) }
-                        addAll(atom.collectDeclaredValueParameterTypes())
+                        anonymousFunction.receiverParameter?.typeRef?.coneType?.let { add(it) }
+                        addAll(anonymousFunction.collectDeclaredValueParameterTypes())
                     }
                 }
             }
@@ -115,19 +115,19 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
 
     override fun PostponedAtomWithRevisableExpectedType.isFunctionExpression(): Boolean {
         require(this is ConePostponedResolvedAtom)
-        return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom && !this.fir.isLambda
+        return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom && !this.anonymousFunction.isLambda
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean {
         require(this is ConePostponedResolvedAtom)
         return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom &&
-                !this.fir.isLambda &&
-                this.fir.receiverParameter?.typeRef?.coneType != null
+                !this.anonymousFunction.isLambda &&
+                this.anonymousFunction.receiverParameter?.typeRef?.coneType != null
     }
 
     override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {
         require(this is ConePostponedResolvedAtom)
-        return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom && this.fir.isLambda
+        return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom && this.anonymousFunction.isLambda
     }
 
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {

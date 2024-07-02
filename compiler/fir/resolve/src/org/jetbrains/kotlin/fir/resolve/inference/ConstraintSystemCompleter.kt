@@ -320,7 +320,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         topLevelAtoms: List<ConeResolutionAtom>,
     ) {
         val typeVariable = variableWithConstraints.typeVariable
-        val resolvedAtom = findStatementOfFirstAtomWithVariable(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()?.fir
+        val resolvedAtom = findStatementOfFirstAtomWithVariable(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()?.expression
 
         if (resolvedAtom != null) {
             addError(
@@ -411,7 +411,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
     companion object {
         internal fun getOrderedNotAnalyzedPostponedArguments(candidate: Candidate): List<ConePostponedResolvedAtom> {
-            val callSite = candidate.callInfo.callSite as FirResolvable
+            val callSite = candidate.callInfo.callSite as FirExpression
             return getOrderedNotAnalyzedPostponedArguments(listOf(ConeAtomWithCandidate(callSite, candidate)))
         }
 
@@ -468,7 +468,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                     postponedAtomsProcessor = { postponedAtom ->
                         if (postponedAtom is ConeResolvedLambdaAtom) {
                             if (postponedAtom.typeVariableForLambdaReturnType == typeVariable) {
-                                suggestElement(postponedAtom.fir)
+                                suggestElement(postponedAtom.anonymousFunction)
                             }
                         }
                     }

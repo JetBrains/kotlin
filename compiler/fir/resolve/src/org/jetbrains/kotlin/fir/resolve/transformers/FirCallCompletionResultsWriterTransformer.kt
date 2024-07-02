@@ -206,7 +206,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun runPCLARelatedTasksForCandidate(candidate: Candidate) {
         for (postponedCall in candidate.postponedPCLACalls) {
-            postponedCall.fir.transformSingle(this, null)
+            postponedCall.expression.transformSingle(this, null)
         }
 
         for (callback in candidate.onPCLACompletionResultsWritingCallbacks) {
@@ -774,7 +774,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType.ArgumentsMap? {
         val lambdasReturnType = postponedAtoms.filterIsInstance<ConeResolvedLambdaAtom>().associate {
-            Pair(it.fir, finallySubstituteOrSelf(substitutor.substituteOrSelf(it.returnType)))
+            Pair(it.anonymousFunction, finallySubstituteOrSelf(substitutor.substituteOrSelf(it.returnType)))
         }
 
         val isIntegerOperator = symbol.isWrappedIntegerOperator()
