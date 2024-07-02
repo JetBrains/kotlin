@@ -2436,6 +2436,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = PropertyWithNoTypeNoInitializer::class
     }
 
+    interface AbstractPropertyWithoutType : KaFirDiagnostic<KtProperty> {
+        override val diagnosticClass get() = AbstractPropertyWithoutType::class
+    }
+
+    interface LateinitPropertyWithoutType : KaFirDiagnostic<KtProperty> {
+        override val diagnosticClass get() = LateinitPropertyWithoutType::class
+    }
+
     interface MustBeInitialized : KaFirDiagnostic<KtProperty> {
         override val diagnosticClass get() = MustBeInitialized::class
     }

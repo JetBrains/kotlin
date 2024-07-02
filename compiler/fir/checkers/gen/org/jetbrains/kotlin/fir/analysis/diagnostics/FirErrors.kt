@@ -629,6 +629,8 @@ object FirErrors {
     val ABSTRACT_PROPERTY_WITH_INITIALIZER: KtDiagnosticFactory0 = KtDiagnosticFactory0("ABSTRACT_PROPERTY_WITH_INITIALIZER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val PROPERTY_INITIALIZER_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("PROPERTY_INITIALIZER_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val PROPERTY_WITH_NO_TYPE_NO_INITIALIZER: KtDiagnosticFactory0 = KtDiagnosticFactory0("PROPERTY_WITH_NO_TYPE_NO_INITIALIZER", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtProperty::class)
+    val ABSTRACT_PROPERTY_WITHOUT_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ABSTRACT_PROPERTY_WITHOUT_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtProperty::class)
+    val LATEINIT_PROPERTY_WITHOUT_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("LATEINIT_PROPERTY_WITHOUT_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtProperty::class)
     val MUST_BE_INITIALIZED: KtDiagnosticFactory0 = KtDiagnosticFactory0("MUST_BE_INITIALIZED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtProperty::class)
     val MUST_BE_INITIALIZED_WARNING: KtDiagnosticFactory0 = KtDiagnosticFactory0("MUST_BE_INITIALIZED_WARNING", WARNING, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtProperty::class)
     val MUST_BE_INITIALIZED_OR_BE_FINAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("MUST_BE_INITIALIZED_OR_BE_FINAL", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtProperty::class)

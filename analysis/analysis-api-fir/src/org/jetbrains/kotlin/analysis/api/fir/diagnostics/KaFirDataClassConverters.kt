@@ -3454,6 +3454,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ABSTRACT_PROPERTY_WITHOUT_TYPE) { firDiagnostic ->
+        AbstractPropertyWithoutTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_PROPERTY_WITHOUT_TYPE) { firDiagnostic ->
+        LateinitPropertyWithoutTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.MUST_BE_INITIALIZED) { firDiagnostic ->
         MustBeInitializedImpl(
             firDiagnostic as KtPsiDiagnostic,

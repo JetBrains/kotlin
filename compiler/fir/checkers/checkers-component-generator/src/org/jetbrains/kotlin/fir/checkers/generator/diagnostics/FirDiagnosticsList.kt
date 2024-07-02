@@ -1238,6 +1238,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ABSTRACT_PROPERTY_WITH_INITIALIZER by error<KtExpression>()
         val PROPERTY_INITIALIZER_IN_INTERFACE by error<KtExpression>()
         val PROPERTY_WITH_NO_TYPE_NO_INITIALIZER by error<KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val ABSTRACT_PROPERTY_WITHOUT_TYPE by error<KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val LATEINIT_PROPERTY_WITHOUT_TYPE by error<KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
 
         val MUST_BE_INITIALIZED by error<KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
         val MUST_BE_INITIALIZED_WARNING by warning<KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)

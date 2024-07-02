@@ -2923,6 +2923,16 @@ internal class PropertyWithNoTypeNoInitializerImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.PropertyWithNoTypeNoInitializer
 
+internal class AbstractPropertyWithoutTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.AbstractPropertyWithoutType
+
+internal class LateinitPropertyWithoutTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.LateinitPropertyWithoutType
+
 internal class MustBeInitializedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

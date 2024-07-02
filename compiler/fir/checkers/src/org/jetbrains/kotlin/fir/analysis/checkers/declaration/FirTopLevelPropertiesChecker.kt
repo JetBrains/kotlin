@@ -99,7 +99,7 @@ internal fun checkPropertyInitializer(
             returnTypeRef.noExplicitType()
         ) {
             property.source?.let {
-                reporter.reportOn(it, FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER, context)
+                reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITHOUT_TYPE, context)
             }
         }
         return
@@ -194,7 +194,11 @@ internal fun checkPropertyInitializer(
             }
 
             if (!initializationError && noExplicitType) {
-                reporter.reportOn(propertySource, FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER, context)
+                reporter.reportOn(
+                    propertySource,
+                    if (property.isLateInit) FirErrors.LATEINIT_PROPERTY_WITHOUT_TYPE else FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER,
+                    context
+                )
             }
 
             if (property.isLateInit) {

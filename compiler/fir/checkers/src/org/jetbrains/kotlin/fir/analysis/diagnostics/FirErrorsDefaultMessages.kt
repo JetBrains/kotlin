@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_N
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_WITHOUT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_WITH_GETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_WITH_SETTER
@@ -385,6 +386,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_NULLABLE_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_WITHOUT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_ANNOTATION_CLASS_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_EXTENSION_PROPERTY
@@ -2045,6 +2047,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             PROPERTY_WITH_NO_TYPE_NO_INITIALIZER,
             "This property must have an explicit type, be initialized, or be delegated."
+        )
+        map.put(
+            ABSTRACT_PROPERTY_WITHOUT_TYPE,
+            "Abstract property must have an explicit type."
+        )
+        map.put(
+            LATEINIT_PROPERTY_WITHOUT_TYPE,
+            "'lateinit' property must have an explicit type."
         )
 
         map.put(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER, "This variable must either have an explicit type or be initialized.")
