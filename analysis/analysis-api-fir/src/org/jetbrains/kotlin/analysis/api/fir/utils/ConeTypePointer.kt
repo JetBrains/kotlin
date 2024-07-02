@@ -84,13 +84,7 @@ private class ConeClassLikeTypePointer(coneType: ConeClassLikeType, builder: KaS
     private val abbreviatedTypePointer = coneType.abbreviatedType?.createPointer(builder)
 
     override fun restore(session: KaFirSession): ConeClassLikeTypeImpl? {
-        val typeArguments = buildList(typeArgumentPointers.size) {
-            for (typeArgumentPointer in typeArgumentPointers) {
-                val typeArgument = typeArgumentPointer.restore(session) ?: return null
-                add(typeArgument)
-            }
-        }
-
+        val typeArguments = typeArgumentPointers.map { it.restore(session) ?: return null }
         val abbreviatedType = abbreviatedTypePointer?.let { it.restore(session) ?: return null }
 
         val attributes = buildList {
