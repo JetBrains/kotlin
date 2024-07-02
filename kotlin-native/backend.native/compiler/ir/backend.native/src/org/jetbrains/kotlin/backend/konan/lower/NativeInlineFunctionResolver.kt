@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
+import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
@@ -103,7 +104,7 @@ internal class NativeInlineFunctionResolver(
 
         if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
             NativeIrInliner(generationState, inlineOnlyPrivateFunctions = true).lower(body, function)
-//            SyntheticAccessorLowering(context).lower(body, function)
+            SyntheticAccessorLowering(context).lower(body, function)
         }
     }
 
