@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrClass.cachedStubsForCollectionClass: List<StubsForCollectionClass>? by irAttribute(followAttributeOwner = false)
 
 class CollectionStubComputer(val context: JvmBackendContext) {
     private class LazyStubsForCollectionClass(
@@ -80,10 +82,8 @@ class CollectionStubComputer(val context: JvmBackendContext) {
         }
     }
 
-    private val stubsCache by irAttribute<IrClass, List<StubsForCollectionClass>>(false).asMap()
-
     fun stubsForCollectionClasses(irClass: IrClass): List<StubsForCollectionClass> =
-        stubsCache.getOrPut(irClass) {
+        irClass::cachedStubsForCollectionClass.getOrSetIfNull {
             computeStubsForCollectionClasses(irClass)
         }
 
