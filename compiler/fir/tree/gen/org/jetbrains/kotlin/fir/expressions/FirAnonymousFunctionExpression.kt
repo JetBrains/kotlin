@@ -37,6 +37,8 @@ abstract class FirAnonymousFunctionExpression : FirExpression() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun replaceAnonymousFunction(newAnonymousFunction: FirAnonymousFunction)
+
     @RawFirApi
     abstract fun replaceIsTrailingLambda(newIsTrailingLambda: Boolean)
 

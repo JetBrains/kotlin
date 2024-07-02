@@ -119,7 +119,7 @@ class ConeResolvedLambdaAtom(
     // TODO: Handle somehow that kind of lack of information once KT-67961 is fixed
     val sourceForFunctionExpression: KtSourceElement?,
 ) : ConePostponedResolvedAtom() {
-    override val expression: FirExpression
+    override val expression: FirAnonymousFunctionExpression
         get() = _expression ?: errorWithAttachment("No expression for lambda") {
             withFirEntry("lambda", fir)
         }

@@ -1068,15 +1068,34 @@ open class FirDeclarationsResolveTransformer(
     override fun transformAnonymousFunctionExpression(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         data: ResolutionMode
-    ): FirStatement {
+    ): FirStatement = whileAnalysing(session, anonymousFunctionExpression) {
         dataFlowAnalyzer.enterAnonymousFunctionExpression(anonymousFunctionExpression)
-        return anonymousFunctionExpression.transformAnonymousFunction(transformer, data)
+        val transformedAnonymousFunction = doTransformAnonymousFunction(anonymousFunctionExpression, data)
+        anonymousFunctionExpression.replaceAnonymousFunction(transformedAnonymousFunction)
+        anonymousFunctionExpression
     }
 
     override fun transformAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         data: ResolutionMode
     ): FirAnonymousFunction = whileAnalysing(session, anonymousFunction) {
+        error("Transformation of anonymous function should be performed via `transformAnonymousFunctionExpression`")
+    }
+
+    /**
+     * This function might be called from two places:
+     * 1. `transformAnonymousFunctionExpression` for independent/withExpectedType/dependant modes
+     * 2. `LambdaAnalyzerImpl.analyzeAndGetLambdaReturnArguments` for postponed lambdas, which are
+     *     being analyzed during completion
+     *
+     * This method cannot be merged with `transformAnonymousFunctionExpression`, because the latter performs some
+     *   CFA preparations for lambdas, which should be called only once, during first visiting of the lambda
+     */
+    internal fun doTransformAnonymousFunction(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        data: ResolutionMode
+    ): FirAnonymousFunction {
+        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         // Either ContextDependent, ContextIndependent or WithExpectedType could be here
         anonymousFunction.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         if (data !is ResolutionMode.LambdaResolution) {
@@ -1099,20 +1118,19 @@ open class FirDeclarationsResolveTransformer(
                     data.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
                 transformAnonymousFunctionBody(anonymousFunction, expectedReturnTypeRef, data)
             }
-            is ResolutionMode.WithExpectedType ->
-                transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
+            is ResolutionMode.WithExpectedType -> {
+                transformAnonymousFunctionWithExpectedType(anonymousFunctionExpression, data.expectedTypeRef, data)
+            }
+
 
             is ResolutionMode.ContextIndependent,
             is ResolutionMode.AssignmentLValue,
             is ResolutionMode.ReceiverResolution,
             is ResolutionMode.Delegate,
-            ->
-                transformAnonymousFunctionWithExpectedType(anonymousFunction, FirImplicitTypeRefImplWithoutSource, data)
-            is ResolutionMode.WithStatus ->
-                throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
+            -> transformAnonymousFunctionWithExpectedType(anonymousFunctionExpression, FirImplicitTypeRefImplWithoutSource, data)
+            is ResolutionMode.WithStatus -> error("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
         }
     }
-
 
     private fun transformAnonymousFunctionBody(
         anonymousFunction: FirAnonymousFunction,
@@ -1132,13 +1150,14 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private fun transformAnonymousFunctionWithExpectedType(
-        anonymousFunction: FirAnonymousFunction,
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
         expectedTypeRef: FirTypeRef,
         data: ResolutionMode
     ): FirAnonymousFunction {
+        val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
             extractLambdaInfoFromFunctionType(
-                it.type, argument = null, anonymousFunction, returnTypeVariable = null, components, candidate = null,
+                it.type, anonymousFunctionExpression, anonymousFunction, returnTypeVariable = null, components, candidate = null,
                 allowCoercionToExtensionReceiver = true,
                 sourceForFunctionExpression = null,
             )
