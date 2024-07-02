@@ -160,7 +160,7 @@ where advanced options include:
                              Only has effect if '-Xverify-ir' is not 'none'.
                              This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibility'.
 
-  -Xwhen-guards              Enable language support for when guards.
+  -Xwhen-guards              Enable experimental language support for when guards.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK
