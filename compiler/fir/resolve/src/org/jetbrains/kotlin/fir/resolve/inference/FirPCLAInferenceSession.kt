@@ -56,10 +56,8 @@ class FirPCLAInferenceSession(
         call: T,
         resolutionMode: ResolutionMode,
         completionMode: ConstraintSystemCompletionMode,
-    ) where T : FirResolvable, T : FirStatement {
-        if (call is FirExpression) {
-            call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
-        }
+    ) where T : FirResolvable, T : FirExpression {
+        call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
 
         val candidate = call.candidate()
         if (candidate?.usedOuterCs != true) return

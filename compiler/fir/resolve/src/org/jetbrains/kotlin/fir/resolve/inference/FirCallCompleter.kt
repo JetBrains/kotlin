@@ -67,7 +67,7 @@ class FirCallCompleter(
         resolutionMode: ResolutionMode,
         // Only expected to be true for resolving different versions of augmented assignments
         skipEvenPartialCompletion: Boolean = false,
-    ): T where T : FirResolvable, T : FirStatement {
+    ): T where T : FirResolvable, T : FirExpression {
         val typeRef = components.typeFromCallee(call)
 
         val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return call
@@ -75,10 +75,8 @@ class FirCallCompleter(
         val candidate = reference.candidate
         val initialType = typeRef.initialTypeOfCandidate(candidate)
 
-        if (call is FirExpression) {
-            call.resultType = initialType
-            session.lookupTracker?.recordTypeResolveAsLookup(initialType, call.source, components.context.file.source)
-        }
+        call.resultType = initialType
+        session.lookupTracker?.recordTypeResolveAsLookup(initialType, call.source, components.context.file.source)
 
         addConstraintFromExpectedType(
             candidate,
@@ -253,7 +251,7 @@ class FirCallCompleter(
         call: T,
         initialType: ConeKotlinType,
         analyzer: PostponedArgumentsAnalyzer? = null,
-    ) where T : FirStatement, T : FirResolvable {
+    ) where T : FirExpression, T : FirResolvable {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         completer.complete(
