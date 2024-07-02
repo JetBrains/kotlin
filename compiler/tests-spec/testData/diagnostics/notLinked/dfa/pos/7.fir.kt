@@ -72,7 +72,7 @@ fun case_3() {
 
 // TESTCASE NUMBER: 4
 fun case_4(x: Char?) {
-    if (x != null && true || x != null) {
+    if (x != null && true || <!SENSELESS_COMPARISON!>x != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Char? & kotlin.Char")!>x<!>.propT
@@ -109,16 +109,16 @@ fun case_6(x: Class?) {
     val y = true
 
     if (((false || x != null || false) && !y) || x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.funNullableAny()
     }
 }
 
@@ -320,16 +320,16 @@ val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>if (nullableIntPropert
  */
 fun case_18(a: DeepObject.A.B.C.D.E.F.G.J?, b: Nothing?) {
     if (a != null || <!SENSELESS_COMPARISON!>b !== a<!> || false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J?")!>a<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.funNullableAny()
     }
 }
 

@@ -1174,48 +1174,61 @@ abstract class FirDataFlowAnalyzer(
         val leftVariable = flowFromLeft?.takeIf { fir.leftOperand.resolvedType.isBoolean }?.getVariableIfUsed(fir.leftOperand)
         val rightVariable = flowFromRight.takeIf { fir.rightOperand.resolvedType.isBoolean }?.getVariableIfUsed(fir.rightOperand)
 
-        if (!isDead && rightOperandNode.isDead) {
+        when {
             // If RHS cannot terminate, then LHS *has* to be saturating, otherwise the entire expression won't terminate.
-            if (leftVariable != null) {
-                flow.commitOperationStatement(leftVariable eq saturatingValue)
+            !isDead && rightOperandNode.isDead -> {
+                if (leftVariable != null) {
+                    flow.commitOperationStatement(leftVariable eq saturatingValue)
+                }
             }
-        } else if (inferMoreImplications && leftOperandNode == null) {
+
             // Value of the expression = value of the right hand side.
-            if (rightVariable != null) {
-                logicSystem.translateVariableFromConditionInStatements(flow, rightVariable, SyntheticVariable(fir))
+            inferMoreImplications && leftOperandNode == null -> {
+                if (rightVariable != null) {
+                    logicSystem.translateVariableFromConditionInStatements(flow, rightVariable, SyntheticVariable(fir))
+                }
             }
-        } else {
-            val statementsFromRight = flow.getTypeStatementsNotInheritedFrom(flowFromRight)
 
-            // The right argument is only evaluated if the left argument is not saturating, so the statements
-            // returned by this function always include those implied by `leftVariable eq !saturatingValue`.
-            fun getStatementsWhenRightArgumentIs(value: Boolean) =
-                if (rightVariable != null) logicSystem.andForTypeStatements(
-                    statementsFromRight,
-                    logicSystem.approveOperationStatement(flowFromRight, rightVariable eq value),
-                ) else statementsFromRight
-
-            // If the result is not saturating, then both sides executed and are not saturating.
-            val whenNotSaturating = getStatementsWhenRightArgumentIs(!saturatingValue)
-            // If the result is saturating, then either the left side is saturating and the right side did not execute,
-            // or both sides executed, the left side is not saturating, and the right side is saturating.
-            val whenSaturating = if (leftVariable != null && (rightVariable != null || inferMoreImplications)) {
-                logicSystem.orForTypeStatements(
-                    logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq saturatingValue),
-                    if (inferMoreImplications) {
-                        getStatementsWhenRightArgumentIs(saturatingValue)
-                    } else {
-                        logicSystem.approveOperationStatement(flowFromRight, rightVariable!! eq saturatingValue)
-                    }
-                )
-            } else emptyMap()
-            if (inferMoreImplications) {
-                // The entire boolean expression has to be true or false, so the `or` of the two is always correct.
-                flow.addAllStatements(logicSystem.orForTypeStatements(whenSaturating, whenNotSaturating))
+            // Value of the expression = value of the left hand side.
+            inferMoreImplications && fir.rightOperand.booleanLiteralValue == !saturatingValue -> {
+                if (leftVariable != null) {
+                    logicSystem.translateVariableFromConditionInStatements(flow, leftVariable, SyntheticVariable(fir))
+                }
             }
-            val operatorVariable = SyntheticVariable(fir)
-            flow.addAllConditionally(operatorVariable eq saturatingValue, whenSaturating)
-            flow.addAllConditionally(operatorVariable eq !saturatingValue, whenNotSaturating)
+
+            else -> {
+                val statementsFromRight = flow.getTypeStatementsNotInheritedFrom(flowFromRight)
+
+                // The right argument is only evaluated if the left argument is not saturating, so the statements
+                // returned by this function always include those implied by `leftVariable eq !saturatingValue`.
+                fun getStatementsWhenRightArgumentIs(value: Boolean) =
+                    if (rightVariable != null) logicSystem.andForTypeStatements(
+                        statementsFromRight,
+                        logicSystem.approveOperationStatement(flowFromRight, rightVariable eq value),
+                    ) else statementsFromRight
+
+                // If the result is not saturating, then both sides executed and are not saturating.
+                val whenNotSaturating = getStatementsWhenRightArgumentIs(!saturatingValue)
+                // If the result is saturating, then either the left side is saturating and the right side did not execute,
+                // or both sides executed, the left side is not saturating, and the right side is saturating.
+                val whenSaturating = if (leftVariable != null && (rightVariable != null || inferMoreImplications)) {
+                    logicSystem.orForTypeStatements(
+                        logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq saturatingValue),
+                        if (inferMoreImplications) {
+                            getStatementsWhenRightArgumentIs(saturatingValue)
+                        } else {
+                            logicSystem.approveOperationStatement(flowFromRight, rightVariable!! eq saturatingValue)
+                        }
+                    )
+                } else emptyMap()
+                if (inferMoreImplications) {
+                    // The entire boolean expression has to be true or false, so the `or` of the two is always correct.
+                    flow.addAllStatements(logicSystem.orForTypeStatements(whenSaturating, whenNotSaturating))
+                }
+                val operatorVariable = SyntheticVariable(fir)
+                flow.addAllConditionally(operatorVariable eq saturatingValue, whenSaturating)
+                flow.addAllConditionally(operatorVariable eq !saturatingValue, whenNotSaturating)
+            }
         }
     }
 

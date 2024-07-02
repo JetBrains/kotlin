@@ -1054,8 +1054,6 @@ class ControlFlowGraphBuilder {
         return exitNode
     }
 
-    private val FirExpression.booleanLiteralValue: Boolean? get() = (this as? FirLiteralExpression)?.value as? Boolean?
-
     // ----------------------------------- Try-catch-finally -----------------------------------
 
     fun enterTryExpression(tryExpression: FirTryExpression): Pair<TryExpressionEnterNode, TryMainBlockEnterNode> {
@@ -1637,4 +1635,4 @@ fun FirAnonymousFunction.lastStatement(): FirStatement? {
     return last.unwrapBlocks()
 }
 
-
+val FirExpression.booleanLiteralValue: Boolean? get() = (this as? FirLiteralExpression)?.value as? Boolean?

@@ -37721,9 +37721,21 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("smartCastWithAndTrue.kt")
+      public void testSmartCastWithAndTrue() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastWithAndTrue.kt");
+      }
+
+      @Test
       @TestMetadata("smartCastWithOrFalse.kt")
       public void testSmartCastWithOrFalse() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastWithOrFalse.kt");
+      }
+
+      @Test
+      @TestMetadata("smartCastWithOrFalse_InferMoreImplicationsFromBooleanExpressions.kt")
+      public void testSmartCastWithOrFalse_InferMoreImplicationsFromBooleanExpressions() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastWithOrFalse_InferMoreImplicationsFromBooleanExpressions.kt");
       }
 
       @Test

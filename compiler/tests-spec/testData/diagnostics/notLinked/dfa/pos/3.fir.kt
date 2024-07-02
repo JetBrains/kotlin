@@ -123,14 +123,14 @@ fun case_11(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>, y: TypealiasNu
 
 // TESTCASE NUMBER: 12
 fun case_12(x: TypealiasNullableString, y: TypealiasNullableString) = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>if (x != null && true && true && true) "1"
-    else if (y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
+    else if (y != null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
     else "-1"<!>
 
 // TESTCASE NUMBER: 13
 fun case_13(x: otherpackage.EmptyClass13_14?) =
-    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.EmptyClass13_14?")!>if (x != null && true) {
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>if (x != null && true) {
         throw Exception()
-    } else <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.EmptyClass13_14?")!>x<!><!>
+    } else <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.EmptyClass13_14? & kotlin.Nothing?")!>x<!><!>
 
 // TESTCASE NUMBER: 14
 class Case14 {

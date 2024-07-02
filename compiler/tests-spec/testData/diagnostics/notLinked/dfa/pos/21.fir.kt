@@ -106,17 +106,17 @@ fun case_9(x: Any?) {
  */
 fun case_10(x: Any?) {
     if (<!DEPRECATED_IDENTITY_EQUALS!>!!(x !is Interface3) === true<!> && true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest3<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface3")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface3")!>x<!>.itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface3")!>x<!>.itest3()
     }
 }
 
 // TESTCASE NUMBER: 11
 fun case_11(x: Any?) {
     if (x is SealedMixedChildObject1? != false || false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>prop_1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>prop_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & SealedMixedChildObject1?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & SealedMixedChildObject1?")!>x<!>?.prop_1
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & SealedMixedChildObject1?")!>x<!>?.prop_2
     }
 }

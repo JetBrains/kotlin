@@ -45,7 +45,7 @@ fun annotatedFalseAndTrue(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 

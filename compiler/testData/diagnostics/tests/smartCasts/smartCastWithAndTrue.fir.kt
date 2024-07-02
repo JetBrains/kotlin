@@ -1,8 +1,8 @@
 fun main(x: Any?) {
-    if (x is String || false) {
+    if (x is String && true) {
         x.length
     }
-    else if (false || x is String) {
+    else if (true && x is String) {
         x.length
     }
     else {
