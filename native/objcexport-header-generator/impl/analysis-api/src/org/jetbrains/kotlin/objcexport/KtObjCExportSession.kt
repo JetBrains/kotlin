@@ -113,12 +113,12 @@ private fun <T> KtObjCExportSession.cached(typeOfT: Class<T>, key: Any, computat
  * Within that lambda, the translation API will take into account the overrides.
  * The [name], [returnType] and [valueParametersAssociated] properties, however, will still return the original values
  */
-fun <T> KtObjCExportSession.withOverriddenSignature(
+fun <T> ObjCExportContext.withOverriddenSignature(
     symbol: KaFunctionSymbol,
     name: String,
     returnType: KaType?,
     valueParametersAssociated: List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>?,
-    block: KtObjCExportSession.(KaSymbol) -> T,
+    block: ObjCExportContext.(KaSymbol) -> T,
 ): T = runWithOverride(symbol, KtObjCExportSymbolOverride(name, returnType, valueParametersAssociated), block)
 
 /**
@@ -126,20 +126,26 @@ fun <T> KtObjCExportSession.withOverriddenSignature(
  * Within that lambda, the translation API will take into account the overridden name.
  * The [name] property, however, will still return the original name
  */
-fun <T> KtObjCExportSession.withOverriddenName(
+fun <T> ObjCExportContext.withOverriddenName(
     symbol: KaNamedSymbol,
     name: String,
-    block: KtObjCExportSession.(KaSymbol) -> T,
+    block: ObjCExportContext.(KaSymbol) -> T,
 ): T =
     runWithOverride(symbol, KtObjCExportSymbolOverride(name, null, null), block)
 
-private fun <T, S : KaSymbol> KtObjCExportSession.runWithOverride(
+private fun <T, S : KaSymbol> ObjCExportContext.runWithOverride(
     symbol: S,
     override: KtObjCExportSymbolOverride,
-    block: KtObjCExportSession.(KaSymbol) -> T,
+    block: ObjCExportContext.(KaSymbol) -> T,
 ): T {
-    val session = (private as KtObjCExportSessionImpl).let { it.copy(overrides = it.overrides + (symbol to override)) }
-    return block(session, symbol)
+    val session = (exportSession.private as KtObjCExportSessionImpl).let {
+        it.copy(overrides = it.overrides + (symbol to override))
+    }
+    return ObjCExportContext(
+        kaSession = kaSession,
+        exportSession = session
+    ).block(symbol)
+    //return session.block(symbol)
 }
 
 internal fun KtObjCExportSession.exportSessionReturnType(symbol: KaCallableSymbol): KaType =

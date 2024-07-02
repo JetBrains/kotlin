@@ -41,7 +41,7 @@ class KtObjCExportNamerTest(
     @Test
     fun `test - class name override`() {
         getSymbol<KaNamedClassSymbol>("class Foo", "Foo", KaScope::classifiers) { symbol ->
-            exportSession.withOverriddenName(symbol, "Bar") {
+            withOverriddenName(symbol, "Bar") {
                 assertEquals(
                     ObjCExportClassOrProtocolName("Bar", "Bar"),
                     getObjCClassOrProtocolName(symbol)
@@ -53,7 +53,7 @@ class KtObjCExportNamerTest(
     @Test
     fun `test - function name override`() {
         getSymbol<KaNamedFunctionSymbol>("fun foo() {}", "foo", KaScope::callables) { symbol ->
-            exportSession.withOverriddenName(symbol, "bar") {
+            withOverriddenName(symbol, "bar") {
                 assertEquals(
                     ObjCExportFunctionName("bar", "bar"),
                     getObjCFunctionName(symbol)
@@ -65,7 +65,7 @@ class KtObjCExportNamerTest(
     @Test
     fun `test - property name override`() {
         getSymbol<KaPropertySymbol>("var foo: Int", "foo", KaScope::callables) { symbol ->
-            exportSession.withOverriddenName(symbol, "bar") {
+            withOverriddenName(symbol, "bar") {
                 assertEquals(
                     ObjCExportPropertyName("bar", "bar"),
                     getObjCPropertyName(symbol)
@@ -96,7 +96,7 @@ class KtObjCExportNamerTest(
                 bridgeParameter(type2) to KtObjCParameterData(Name.identifier("doubleParam"), false, type2, false)
             )
 
-            exportSession.withOverriddenSignature(symbol, "bar", returnType, valueParams) {
+            withOverriddenSignature(symbol, "bar", returnType, valueParams) {
 
                 val objCMethod = translateToObjCMethod(symbol)!!
 
