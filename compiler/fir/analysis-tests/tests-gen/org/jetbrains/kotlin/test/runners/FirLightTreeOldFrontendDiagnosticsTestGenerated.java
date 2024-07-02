@@ -538,6 +538,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("falseNegativeSuperCallWithDefaults.kt")
+    public void testFalseNegativeSuperCallWithDefaults() {
+      runTest("compiler/testData/diagnostics/tests/falseNegativeSuperCallWithDefaults.kt");
+    }
+
+    @Test
     @TestMetadata("fileDependencyRecursion.kt")
     public void testFileDependencyRecursion() {
       runTest("compiler/testData/diagnostics/tests/fileDependencyRecursion.kt");
