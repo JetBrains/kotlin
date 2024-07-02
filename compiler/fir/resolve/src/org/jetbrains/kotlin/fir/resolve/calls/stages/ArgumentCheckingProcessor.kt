@@ -86,7 +86,7 @@ internal object ArgumentCheckingProcessor {
     fun createResolvedLambdaAtomDuringCompletion(
         candidate: Candidate,
         csBuilder: ConstraintSystemBuilder,
-        atom: ConeRawLambdaAtom,
+        atom: ConeResolutionAtomWithPostponedChild,
         expectedType: ConeKotlinType?,
         context: ResolutionContext,
         returnTypeVariable: ConeTypeVariableForLambdaReturnType?
@@ -102,9 +102,10 @@ internal object ArgumentCheckingProcessor {
 
     private fun ArgumentContext.resolveArgumentExpression(atom: ConeResolutionAtom) {
         when (atom) {
-            is ConeRawCallableReferenceAtom -> preprocessCallableReference(atom)
-
-            is ConeRawLambdaAtom -> preprocessLambdaArgument(atom)
+            is ConeResolutionAtomWithPostponedChild -> when (atom.expression) {
+                is FirAnonymousFunctionExpression -> preprocessLambdaArgument(atom)
+                is FirCallableReferenceAccess -> preprocessCallableReference(atom)
+            }
 
             is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(atom)
 
@@ -294,21 +295,21 @@ internal object ArgumentCheckingProcessor {
         }
     }
 
-    private fun ArgumentContext.preprocessCallableReference(atom: ConeRawCallableReferenceAtom) {
-        val expression = atom.expression
+    private fun ArgumentContext.preprocessCallableReference(atom: ConeResolutionAtomWithPostponedChild) {
+        val expression = atom.callableReferenceExpression
         val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(expression)
         val postponedAtom = ConeResolvedCallableReferenceAtom(expression, expectedType, lhs, context.session)
         atom.subAtom = postponedAtom
         candidate.addPostponedAtom(postponedAtom)
     }
 
-    private fun ArgumentContext.preprocessLambdaArgument(atom: ConeRawLambdaAtom): ConePostponedResolvedAtom {
+    private fun ArgumentContext.preprocessLambdaArgument(atom: ConeResolutionAtomWithPostponedChild): ConePostponedResolvedAtom {
         createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(atom)?.let { return it }
         return createResolvedLambdaAtom(atom, duringCompletion = false, returnTypeVariable = null)
     }
 
     private fun ArgumentContext.createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(
-        atom: ConeRawLambdaAtom
+        atom: ConeResolutionAtomWithPostponedChild
     ): ConeLambdaWithTypeVariableAsExpectedTypeAtom? {
         if (expectedType == null || !csBuilder.isTypeVariable(expectedType)) return null
         val expectedTypeVariableWithConstraints = csBuilder.currentStorage()
@@ -320,7 +321,7 @@ internal object ArgumentCheckingProcessor {
         }?.type as ConeKotlinType?
 
         return runIf(explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
-            ConeLambdaWithTypeVariableAsExpectedTypeAtom(atom.expression, expectedType, candidate).also {
+            ConeLambdaWithTypeVariableAsExpectedTypeAtom(atom.lambdaExpression, expectedType, candidate).also {
                 candidate.addPostponedAtom(it)
                 atom.subAtom = it
             }
@@ -328,12 +329,12 @@ internal object ArgumentCheckingProcessor {
     }
 
     private fun ArgumentContext.createResolvedLambdaAtom(
-        atom: ConeRawLambdaAtom,
+        atom: ConeResolutionAtomWithPostponedChild,
         duringCompletion: Boolean,
         returnTypeVariable: ConeTypeVariableForLambdaReturnType?
     ): ConeResolvedLambdaAtom {
-        val expression = atom.expression
-        val anonymousFunction = atom.fir
+        val expression = atom.lambdaExpression
+        val anonymousFunction = expression.anonymousFunction
 
         val resolvedArgument = extractLambdaInfoFromFunctionType(
             expectedType,
@@ -452,4 +453,10 @@ internal object ArgumentCheckingProcessor {
             rawReturnType = typeArguments.last(),
         )
     }
+
+    private val ConeResolutionAtomWithPostponedChild.lambdaExpression: FirAnonymousFunctionExpression
+        get() = expression as? FirAnonymousFunctionExpression ?: error("Expected anonymous function expression")
+
+    private val ConeResolutionAtomWithPostponedChild.callableReferenceExpression: FirCallableReferenceAccess
+        get() = expression as? FirCallableReferenceAccess ?: error("Expected callable reference")
 }
