@@ -1,5 +1,8 @@
 // IGNORE_BACKEND_K1: JS_IR
+// REASON: There is no library for descriptor <m1>
 
+// SKIP_KLIB_TEST
+// REASON: KT-69587 Multi-module is not deserialized in JS irText
 // MODULE: m1
 // FILE: genericClassInDifferentModule_m1.kt
 
