@@ -48,7 +48,7 @@ public class SirParentProviderImpl(
                         SirImport(
                             moduleName = enumAsPackage.containingModule().name,
                             // so the user will have access to the Fully Qualified Name for declaration without importing additional modules
-                            isExported = true,
+                            mode = SirImport.Mode.Exported,
                         )
                     )
                     sirModule.addChild {

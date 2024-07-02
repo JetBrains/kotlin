@@ -1,5 +1,5 @@
 @_exported import ExportedKotlinPackages
-import KotlinBridges_main
+@_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
 public typealias DefaultInteger = main.RegularInteger

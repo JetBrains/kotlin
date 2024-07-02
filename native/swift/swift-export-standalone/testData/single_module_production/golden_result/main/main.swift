@@ -1,4 +1,4 @@
-import KotlinBridges_main
+@_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
 public typealias Clazz = main.org.kotlin.foo.Clazz

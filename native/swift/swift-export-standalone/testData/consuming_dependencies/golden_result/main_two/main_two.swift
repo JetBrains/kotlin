@@ -1,6 +1,6 @@
 @_exported import ExportedKotlinPackages
 import KotlinRuntime
-import KotlinBridges_main_two
+@_implementationOnly import KotlinBridges_main_two
 
 public extension ExportedKotlinPackages.org.main.second {
     public static var deps_instance_2: KotlinRuntime.KotlinBase {

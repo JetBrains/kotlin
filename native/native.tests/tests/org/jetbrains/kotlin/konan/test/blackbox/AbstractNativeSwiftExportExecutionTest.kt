@@ -69,11 +69,11 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
                 "-I", it.rootDir.absolutePath,
                 "-L", it.rootDir.absolutePath,
                 "-l${it.moduleName}",
-            ) + (it.modulemap?.let { listOf("-Xcc", "-fmodule-map-file=${it.absolutePath}") } ?: emptyList())
+            )
         } + listOf(
             "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
             "-L", kotlinBinaryLibrary.libraryFile.parentFile.absolutePath,
-            "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")}"
+            "-l${kotlinBinaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")}",
         )
 
         val provider = createTestProvider(buildDir(testName), testSources)

@@ -1,6 +1,6 @@
 @_exported import ExportedKotlinPackages
 import KotlinRuntime
-import KotlinBridges_main
+@_implementationOnly import KotlinBridges_main
 
 public var BOOLEAN_CONST: Swift.Bool {
     get {

@@ -193,6 +193,7 @@ abstract class AbstractNativeSwiftExportTest {
                 swiftModuleDir = swiftModuleDir,
                 swiftModuleName = name,
                 sources = listOf(swiftApi.toFile()),
+                kotlinBridgeModuleMap = null,
                 binaryLibrary = compiledKotlinLibrary,
                 deps = deps,
             )
@@ -230,7 +231,7 @@ abstract class AbstractNativeSwiftExportTest {
         swiftModuleDir: File,
         swiftModuleName: String,
         sources: List<File>,
-        kotlinBridgeModuleMap: File? = null,
+        kotlinBridgeModuleMap: File?,
         binaryLibrary: TestCompilationArtifact.BinaryLibrary,
         deps: Collection<TestCompilationArtifact.Swift.Module>,
     ): TestCompilationArtifact.Swift.Module {
@@ -241,7 +242,6 @@ abstract class AbstractNativeSwiftExportTest {
             expectedArtifact = TestCompilationArtifact.Swift.Module(
                 rootDir = swiftModuleDir,
                 moduleName = swiftModuleName,
-                modulemap = kotlinBridgeModuleMap
             ),
             swiftExtraOpts = listOf(
                 *(modulemapFileToSwiftCompilerOptionsIfNeeded(kotlinBridgeModuleMap)).toTypedArray(),

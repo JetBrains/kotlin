@@ -1,5 +1,5 @@
 import KotlinRuntime
-import KotlinBridges_main
+@_implementationOnly import KotlinBridges_main
 
 public class MyObject : KotlinRuntime.KotlinBase {
     public static var shared: main.MyObject {
@@ -24,4 +24,3 @@ public func isMainObject(
 ) -> Swift.Bool {
     return __root___isMainObject__TypesOfArguments__uintptr_t__(obj.__externalRCRef())
 }
-

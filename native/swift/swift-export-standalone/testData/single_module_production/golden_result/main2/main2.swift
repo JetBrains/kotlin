@@ -1,5 +1,5 @@
 @_exported import ExportedKotlinPackages
-import KotlinBridges_main2
+@_implementationOnly import KotlinBridges_main2
 
 public extension ExportedKotlinPackages.demo.shared {
     public static func foo2() -> Swift.Int32 {
