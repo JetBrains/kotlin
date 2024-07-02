@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaDefinitelyNotNullType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
@@ -49,9 +50,9 @@ public interface KaFunctionalTypeRenderer {
                     },
                     {
                         type.receiverType?.let {
-                            if (it is KaFunctionType) printer.append("(")
+                            if (it is KaFunctionType || it is KaDefinitelyNotNullType) printer.append("(")
                             typeRenderer.renderType(analysisSession, it, printer)
-                            if (it is KaFunctionType) printer.append(")")
+                            if (it is KaFunctionType || it is KaDefinitelyNotNullType) printer.append(")")
                             printer.append('.')
                         }
                         printCollection(type.parameterTypes, prefix = "(", postfix = ")") {
