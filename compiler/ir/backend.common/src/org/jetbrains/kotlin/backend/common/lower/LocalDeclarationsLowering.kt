@@ -259,11 +259,6 @@ open class LocalDeclarationsLowering(
         return typeRemapper.remapType(type)
     }
 
-    private fun LocalContext.remapTypes(body: IrBody) {
-        if (capturedTypeParameterToTypeParameter.isEmpty()) return
-        body.remapTypes(typeRemapper)
-    }
-
     private inner class LocalDeclarationsTransformer(
         val irElement: IrElement, val container: IrDeclaration, val closestParent: IrDeclarationParent? = null,
         val classesToLower: Set<IrClass>? = null, val functionsToSkip: Set<IrSimpleFunction>? = null
@@ -311,12 +306,9 @@ open class LocalDeclarationsLowering(
                     val original = localContext.declaration
 
                     this.body = original.body
-                    this.body?.let { localContext.remapTypes(it) }
 
-                    original.valueParameters.filter { v -> v.defaultValue != null }.forEach { argument ->
-                        val body = argument.defaultValue!!
-                        localContext.remapTypes(body)
-                        oldParameterToNew[argument]!!.defaultValue = body
+                    for (argument in original.valueParameters) {
+                        oldParameterToNew[argument]!!.defaultValue = argument.defaultValue ?: continue
                     }
                     acceptChildren(SetDeclarationsParentVisitor, this)
                 }
