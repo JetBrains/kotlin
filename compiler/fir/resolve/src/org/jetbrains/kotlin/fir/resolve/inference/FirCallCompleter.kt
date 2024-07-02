@@ -457,7 +457,7 @@ class FirCallCompleter(
             transformer.context.dropContextForAnonymousFunction(lambdaArgument)
 
             val returnArguments = components.dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument)
-                .map { ConeCallAtom.createRawAtom(it.expression) }
+                .map { ConeResolutionAtom.createRawAtom(it.expression) }
 
             return ReturnArgumentsAnalysisResult(returnArguments, additionalConstraints)
         }

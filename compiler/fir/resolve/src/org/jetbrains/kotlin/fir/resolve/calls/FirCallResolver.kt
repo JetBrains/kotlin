@@ -598,7 +598,7 @@ class FirCallResolver(
                 // We don't want to force full completion before the whole call is completed so that type variables are preserved.
                 // But we need to pass expectType to figure out the correct *arrayOf* function (because Array<T> and primitive arrays can't be matched).
                 val mapping = transformer.resolutionContext.bodyResolveComponents.mapArguments(
-                    annotation.arguments.map { ConeCallAtom.createRawAtom(it) },
+                    annotation.arguments.map { ConeResolutionAtom.createRawAtom(it) },
                     constructorSymbol.fir,
                     originScope = null,
                     callSiteIsOperatorCall = false,

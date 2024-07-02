@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 abstract class AbstractCandidate {
     abstract val symbol: FirBasedSymbol<*>
-    abstract val dispatchReceiver: AbstractConeCallAtom?
-    abstract val chosenExtensionReceiver: AbstractConeCallAtom?
+    abstract val dispatchReceiver: AbstractConeResolutionAtom?
+    abstract val chosenExtensionReceiver: AbstractConeResolutionAtom?
     abstract val explicitReceiverKind: ExplicitReceiverKind
     abstract val callInfo: AbstractCallInfo
     abstract val diagnostics: List<ResolutionDiagnostic>
@@ -22,7 +22,7 @@ abstract class AbstractCandidate {
     abstract val applicability: CandidateApplicability
 }
 
-abstract class AbstractCallCandidate<P : AbstractConeCallAtom> : AbstractCandidate() {
+abstract class AbstractCallCandidate<P : AbstractConeResolutionAtom> : AbstractCandidate() {
     abstract val argumentMapping: LinkedHashMap<P, FirValueParameter>
     abstract val argumentMappingInitialized: Boolean
 }

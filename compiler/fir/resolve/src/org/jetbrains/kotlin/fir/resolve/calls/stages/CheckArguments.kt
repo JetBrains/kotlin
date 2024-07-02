@@ -63,7 +63,7 @@ internal object CheckArguments : ResolutionStage() {
 
     private fun Candidate.resolveArgument(
         callInfo: CallInfo,
-        atom: ConeCallAtom,
+        atom: ConeResolutionAtom,
         parameter: FirValueParameter?,
         isReceiver: Boolean,
         sink: CheckerSink,

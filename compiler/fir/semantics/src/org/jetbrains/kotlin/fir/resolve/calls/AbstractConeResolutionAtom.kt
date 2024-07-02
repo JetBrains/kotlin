@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.*
 
-abstract class AbstractConeCallAtom {
+abstract class AbstractConeResolutionAtom {
     abstract val fir: FirElement
     abstract val expression: FirExpression
 }
