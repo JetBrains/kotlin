@@ -51,11 +51,11 @@ buildCache {
     val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
     if (!remoteBuildCacheUrl.isNullOrEmpty()) {
         remote<HttpBuildCache> {
+            val buildCacheCredentialsAvailable = buildProperties.buildCacheUser != null && buildProperties.buildCachePassword != null
+            
             url = uri(remoteBuildCacheUrl)
-            isPush = buildProperties.pushToBuildCache
-            if (buildProperties.buildCacheUser != null &&
-                buildProperties.buildCachePassword != null
-            ) {
+            isPush = buildProperties.pushToBuildCache && buildCacheCredentialsAvailable
+            if (buildCacheCredentialsAvailable) {
                 credentials.username = buildProperties.buildCacheUser
                 credentials.password = buildProperties.buildCachePassword
             }
