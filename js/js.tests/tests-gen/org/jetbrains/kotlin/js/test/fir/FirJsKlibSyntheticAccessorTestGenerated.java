@@ -372,6 +372,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       }
 
       @Test
+      @TestMetadata("leakingPrivateMethodThroughEffectivelyInternalInline.kt")
+      public void testLeakingPrivateMethodThroughEffectivelyInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughEffectivelyInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateMethodThroughPrivateInlineChain.kt")
       public void testLeakingPrivateMethodThroughPrivateInlineChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughPrivateInlineChain.kt");
@@ -598,6 +604,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       }
 
       @Test
+      @TestMetadata("leakingPrivateMethodThroughEffectivelyInternalInline.kt")
+      public void testLeakingPrivateMethodThroughEffectivelyInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughEffectivelyInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateMethodThroughPrivateInlineChain.kt")
       public void testLeakingPrivateMethodThroughPrivateInlineChain() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughPrivateInlineChain.kt");
@@ -695,6 +707,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       @Test
       public void testAllFilesPresentInSingleFile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodThroughEffectivelyInternalInline.kt")
+      public void testLeakingPrivateMethodThroughEffectivelyInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateMethodThroughEffectivelyInternalInline.kt");
       }
 
       @Test
