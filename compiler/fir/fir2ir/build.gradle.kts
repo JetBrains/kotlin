@@ -84,16 +84,28 @@ projectTest(
     configure()
 }
 
-projectTest("aggregateTests", jUnitMode = JUnitMode.JUnit5) {
-    configure {
-        excludeTags("FirPsiCodegenTest")
+if (kotlinBuildProperties.isTeamcityBuild) {
+    projectTest("aggregateTests", jUnitMode = JUnitMode.JUnit5) {
+        configure {
+            excludeTags("FirPsiCodegenTest")
+        }
     }
-}
 
-projectTest("nightlyTests", jUnitMode = JUnitMode.JUnit5) {
-    configure {
-        includeTags("FirPsiCodegenTest")
+    projectTest("nightlyTests", jUnitMode = JUnitMode.JUnit5) {
+        configure {
+            includeTags("FirPsiCodegenTest")
+        }
     }
+} else {
+    /*
+     * There is no much sense in those configurations in the local development
+     * They actually reduce the UX of running tests, as IDEA suggests choosing one of three
+     *   test tasks when you run any test
+     * So to fix this inconvenience in local environment, those
+     *   tasks just do nothing (and not inherit TestTask), so the IDEA won't see them
+    */
+    tasks.create("aggregateTests")
+    tasks.create("nightlyTests")
 }
 
 testsJar()
