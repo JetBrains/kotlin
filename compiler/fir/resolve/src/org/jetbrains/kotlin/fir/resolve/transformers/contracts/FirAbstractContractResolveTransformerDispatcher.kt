@@ -63,14 +63,6 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
 
     private var contractMode = true
 
-    override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
-        return annotation
-    }
-
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
-        return annotationCall
-    }
-
     protected open inner class FirDeclarationsContractResolveTransformer :
         FirDeclarationsResolveTransformer(this@FirAbstractContractResolveTransformerDispatcher) {
         override fun transformSimpleFunction(
