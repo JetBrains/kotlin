@@ -59,7 +59,7 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
         value = "-Xklib-double-inlining",
         description = "Turn on experimental double-inlining mode.\nWarning: This feature is unstable."
     )
-    var experimentalDoubleInlining = false
+    var experimentalDoubleInlining = true
         set(value) {
             checkFrozen()
             field = value
