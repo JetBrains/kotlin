@@ -85,8 +85,18 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
     companion object {
         /**
          * See: [KotlinAbiVersion bump history](compiler/util-klib/KotlinAbiVersionBumpHistory.md)
+         *
+         * Since the release of 2.1.0, the following encoding for [minor] part of ABI version is used.
+         * Kotlin version -> ABI version:
+         * 2.1.0 -> 201
+         * 2.2.0 -> 202
+         * ...
+         * 2.9.0 -> 209
+         * 2.10.0 -> 210
+         * ...
+         * 3.0.0 -> 300
          */
-        val CURRENT = KotlinAbiVersion(1, 8, 0)
+        val CURRENT = KotlinAbiVersion(1, 2_01, 0)
 
         /**
          * Versions before 1.4.1 were the active development phase.
