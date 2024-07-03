@@ -1,5 +1,3 @@
-// LANGUAGE: -BooleanElvisBoundSmartCasts
-
 interface Order {
     val expired: Boolean?
 

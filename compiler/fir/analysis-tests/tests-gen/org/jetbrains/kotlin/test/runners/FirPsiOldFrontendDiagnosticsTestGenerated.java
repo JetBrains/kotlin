@@ -35424,12 +35424,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
-        @TestMetadata("basicOn.kt")
-        public void testBasicOn() {
-          runTest("compiler/testData/diagnostics/tests/smartCasts/elvis/basicOn.kt");
-        }
-
-        @Test
         @TestMetadata("elvisResultSavedInVal.kt")
         public void testElvisResultSavedInVal() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/elvis/elvisResultSavedInVal.kt");
