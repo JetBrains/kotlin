@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
@@ -153,8 +152,12 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         val retentionPolicy = getRetentionPolicy(annotationClass)
         if (retentionPolicy == RetentionPolicy.SOURCE && !context.state.classBuilderMode.generateSourceRetentionAnnotations) return null
 
-        // FlexibleNullability is an internal annotation, used only inside the compiler
-        if (annotationClass.fqNameWhenAvailable in internalAnnotations) return null
+        // Annotations in the internal IR package do not have real class files.
+        // `EnhancedNullability` is in a real package `kotlin.jvm.internal`, but the annotation itself is fake.
+        val fqName = annotationClass.fqNameWhenAvailable
+        if (fqName?.parent() == StandardClassIds.BASE_INTERNAL_IR_PACKAGE ||
+            fqName == JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
+        ) return null
 
         // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
         // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
@@ -306,13 +309,6 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
             KotlinRetention.SOURCE to RetentionPolicy.SOURCE,
             KotlinRetention.BINARY to RetentionPolicy.CLASS,
             KotlinRetention.RUNTIME to RetentionPolicy.RUNTIME
-        )
-
-        internal val internalAnnotations = setOf(
-            JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
-            JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME,
-            JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION,
-            JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME
         )
 
         private fun getRetentionPolicy(irClass: IrClass): RetentionPolicy {
