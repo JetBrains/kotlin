@@ -42,5 +42,12 @@
     />
 
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.finder.JavaElementFinder"/>
+
+    <registryKey
+        defaultValue="false"
+        description="Throw an exception in the case of inconsistency in decompiled light classes"
+        key="kotlin.decompiled.light.classes.check.inconsistency"
+        restartRequired="false"
+    />
   </extensions>
 </idea-plugin>

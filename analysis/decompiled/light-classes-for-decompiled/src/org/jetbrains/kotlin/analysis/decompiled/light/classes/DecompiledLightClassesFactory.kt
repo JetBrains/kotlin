@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
 import com.intellij.psi.PsiClass
@@ -22,9 +23,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.checkWithAttachment
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 object DecompiledLightClassesFactory {
+    private val checkInconsistency: Boolean
+        get() = Registry.`is`(
+            /* key = */ "kotlin.decompiled.light.classes.check.inconsistency",
+            /* defaultValue = */ false,
+        )
+
     fun getLightClassForDecompiledClassOrObject(
         decompiledClassOrObject: KtClassOrObject,
         project: Project
@@ -53,23 +60,27 @@ object DecompiledLightClassesFactory {
         while (iterator.hasNext()) {
             val name = iterator.next()
             val innerClass = current.findInnerClassByName(name.asString(), false)
-            checkWithAttachment(
-                innerClass != null,
-                { "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\nFile: " + decompiledClassOrObject.containingKtFile.virtualFile.name },
-                {
-                    it.withPsiAttachment("decompiledClassOrObject.txt", decompiledClassOrObject)
-                    it.withAttachment("fileClass.txt", decompiledClassOrObject.containingFile::class)
-                    it.withPsiAttachment("file.txt", decompiledClassOrObject.containingFile)
-                    it.withPsiAttachment("root.txt", rootLightClassForDecompiledFile)
-                    it.withAttachment("currentName.txt", current.name)
-                    it.withPsiAttachment("current.txt", current)
-                    it.withAttachment("innerClasses.txt", current.innerClasses.map { psiClass -> psiClass.name })
-                    it.withAttachment("innerName.txt", name.asString())
-                },
-            )
+            current = when {
+                innerClass != null -> innerClass as KtLightClassForDecompiledDeclaration
+                checkInconsistency -> {
+                    throw KotlinExceptionWithAttachments("Could not find corresponding inner/nested class")
+                        .withAttachment("relativeFqName.txt", relativeFqName)
+                        .withAttachment("decompiledClassOrObjectFqName.txt", decompiledClassOrObject.fqName)
+                        .withAttachment("decompiledFileName.txt", decompiledClassOrObject.containingKtFile.virtualFile.name)
+                        .withPsiAttachment("decompiledClassOrObject.txt", decompiledClassOrObject)
+                        .withAttachment("fileClass.txt", decompiledClassOrObject.containingFile::class)
+                        .withPsiAttachment("file.txt", decompiledClassOrObject.containingFile)
+                        .withPsiAttachment("root.txt", rootLightClassForDecompiledFile)
+                        .withAttachment("currentName.txt", current.name)
+                        .withPsiAttachment("current.txt", current)
+                        .withAttachment("innerClasses.txt", current.innerClasses.map { psiClass -> psiClass.name })
+                        .withAttachment("innerName.txt", name.asString())
+                }
 
-            current = innerClass as KtLightClassForDecompiledDeclaration
+                else -> return null
+            }
         }
+
         return current
     }
 
