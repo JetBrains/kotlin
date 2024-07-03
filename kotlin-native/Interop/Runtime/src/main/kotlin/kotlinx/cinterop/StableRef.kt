@@ -12,7 +12,7 @@ package kotlinx.cinterop
  *
  * Any [StableRef] should be manually [disposed][dispose]
  */
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS", "OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 @kotlin.jvm.JvmInline
 @ExperimentalForeignApi
 public value class StableRef<out T : Any> @PublishedApi internal constructor(
