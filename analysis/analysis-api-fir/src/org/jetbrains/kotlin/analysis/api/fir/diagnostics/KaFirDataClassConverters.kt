@@ -5463,6 +5463,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS.errorFactory) { firDiagnostic ->
+        SynchronizedOnValueClassErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS.warningFactory) { firDiagnostic ->
+        SynchronizedOnValueClassWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.SYNCHRONIZED_ON_SUSPEND.errorFactory) { firDiagnostic ->
         SynchronizedOnSuspendErrorImpl(
             firDiagnostic as KtPsiDiagnostic,
