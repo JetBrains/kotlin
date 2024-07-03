@@ -15,7 +15,7 @@ import java.io.OutputStream
 internal class FastJarVirtualFile(
     private val handler: FastJarHandler,
     private val name: CharSequence,
-    private val length: Int,
+    private val length: Long,
     private val parent: FastJarVirtualFile?,
     private val entryDescription: ZipEntryDescription?,
 ) : VirtualFile() {
@@ -91,7 +91,7 @@ internal class FastJarVirtualFile(
 
     override fun getTimeStamp(): Long = 0
 
-    override fun getLength(): Long = length.toLong()
+    override fun getLength(): Long = length
 
     override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {}
 
