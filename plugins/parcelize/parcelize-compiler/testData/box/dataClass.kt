@@ -12,7 +12,7 @@ data class Color(val r: Int, val g: Int, val b: Int)
 data class Box<T>(internal val x: T)
 
 @Parcelize
-data class Test(val name: Box<String>, val color: Color) : Parcelable
+data class Test(val name: @DataClass Box<String>, val color: @DataClass Color) : Parcelable
 
 fun box() = parcelTest { parcel ->
     val test = Test(Box("John"), Color(0, 255, 0))

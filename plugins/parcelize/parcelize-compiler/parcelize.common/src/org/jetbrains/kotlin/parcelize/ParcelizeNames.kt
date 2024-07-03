@@ -12,12 +12,11 @@ import org.jetbrains.kotlin.name.Name
 object ParcelizeNames {
     // -------------------- Packages --------------------
 
+    private val RUNTIME_PACKAGE = FqName("kotlinx.parcelize")
+
     val DEPRECATED_RUNTIME_PACKAGE = FqName("kotlinx.android.parcel")
 
-    private val PACKAGES_FQ_NAMES = listOf(
-        FqName("kotlinx.parcelize"),
-        DEPRECATED_RUNTIME_PACKAGE
-    )
+    private val PACKAGES_FQ_NAMES = listOf(RUNTIME_PACKAGE, DEPRECATED_RUNTIME_PACKAGE)
 
     // -------------------- Class ids --------------------
 
@@ -33,6 +32,7 @@ object ParcelizeNames {
     val PARCELER_CLASS_IDS = createClassIds("Parceler")
     val PARCELIZE_CLASS_CLASS_IDS = createClassIds("Parcelize")
     val RAW_VALUE_ANNOTATION_CLASS_IDS = createClassIds("RawValue")
+    val DATA_CLASS_ANNOTATION_CLASS_ID = ClassId(RUNTIME_PACKAGE, Name.identifier("DataClass"))
 
     // -------------------- FQNs --------------------
 
@@ -44,6 +44,7 @@ object ParcelizeNames {
     val IGNORED_ON_PARCEL_FQ_NAMES = IGNORED_ON_PARCEL_CLASS_IDS.fqNames()
     val PARCELIZE_CLASS_FQ_NAMES: List<FqName> = PARCELIZE_CLASS_CLASS_IDS.fqNames()
     val RAW_VALUE_ANNOTATION_FQ_NAMES = RAW_VALUE_ANNOTATION_CLASS_IDS.fqNames()
+    val DATA_CLASS_ANNOTATION_FQ_NAME = DATA_CLASS_ANNOTATION_CLASS_ID.asSingleFqName()
 
     val PARCELER_FQN = PARCELER_ID.asSingleFqName()
     val OLD_PARCELER_FQN = OLD_PARCELER_ID.asSingleFqName()

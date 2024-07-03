@@ -105,7 +105,8 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
     private fun checkParcelableType(
         type: ConeKotlinType,
         customParcelerTypes: Set<ConeKotlinType>,
-        context: CheckerContext
+        context: CheckerContext,
+        inDataClass: Boolean = false
     ): Set<ConeKotlinType> {
         val session = context.session
         if (type.hasParcelerAnnotation(session) || type in customParcelerTypes) {
@@ -138,7 +139,7 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
             }
         }
 
-        if (symbol.isData) {
+        if (symbol.isData && (inDataClass || type.customAnnotations.any { it.fqName(session) == ParcelizeNames.DATA_CLASS_ANNOTATION_FQ_NAME })) {
             val properties = symbol.declarationSymbols.filterIsInstance<FirPropertySymbol>().filter { it.fromPrimaryConstructor }
             // Serialization uses the property getters, deserialization uses the constructor.
             if (properties.all { it.isVisible(context) } && symbol.primaryConstructorSymbol(session)?.isVisible(context) == true) {
@@ -151,7 +152,8 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
                 }.toMap()
                 val substitutor = substitutorByMap(typeMapping, context.session)
                 return properties.fold(emptySet()) { acc, property ->
-                    acc union checkParcelableType(substitutor.substituteOrSelf(property.resolvedReturnType), customParcelerTypes, context)
+                    val elementType = substitutor.substituteOrSelf(property.resolvedReturnType)
+                    acc union checkParcelableType(elementType, customParcelerTypes, context, inDataClass = true)
                 }
             }
         }

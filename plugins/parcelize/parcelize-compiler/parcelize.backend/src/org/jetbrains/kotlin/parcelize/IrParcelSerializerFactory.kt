@@ -56,9 +56,13 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
         scope: IrParcelerScope?,
         parcelizeType: IrType,
         strict: Boolean = false,
-        toplevel: Boolean = false
+        toplevel: Boolean = false,
+        inDataClass: Boolean = false,
     ): IrParcelSerializer {
         fun strict() = strict && !irType.hasAnyAnnotation(RAW_VALUE_ANNOTATION_FQ_NAMES)
+
+        fun getChild(elementType: IrType, allowDataClasses: Boolean = false) =
+            get(elementType, scope, parcelizeType, strict(), inDataClass = inDataClass || allowDataClasses)
 
         scope.getCustomSerializer(irType)?.let { parceler ->
             return IrCustomParcelSerializer(parceler)
@@ -180,7 +184,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                     if (classifier.defaultType.isPrimitiveArray()) classifier.defaultType else irBuiltIns.arrayClass.typeWith(elementType)
                 return wrapNullableSerializerIfNeeded(
                     irType,
-                    IrArrayParcelSerializer(arrayType, elementType, get(elementType, scope, parcelizeType, strict()))
+                    IrArrayParcelSerializer(arrayType, elementType, getChild(elementType))
                 )
             }
 
@@ -188,39 +192,23 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
             "android.util.SparseBooleanArray" ->
                 return wrapNullableSerializerIfNeeded(
                     irType,
-                    IrSparseArrayParcelSerializer(
-                        classifier,
-                        irBuiltIns.booleanType,
-                        get(irBuiltIns.booleanType, scope, parcelizeType, strict())
-                    )
+                    IrSparseArrayParcelSerializer(classifier, irBuiltIns.booleanType, getChild(irBuiltIns.booleanType))
                 )
             "android.util.SparseIntArray" ->
                 return wrapNullableSerializerIfNeeded(
                     irType,
-                    IrSparseArrayParcelSerializer(
-                        classifier,
-                        irBuiltIns.intType,
-                        get(irBuiltIns.intType, scope, parcelizeType, strict())
-                    )
+                    IrSparseArrayParcelSerializer(classifier, irBuiltIns.intType, getChild(irBuiltIns.intType))
                 )
             "android.util.SparseLongArray" ->
                 return wrapNullableSerializerIfNeeded(
                     irType,
-                    IrSparseArrayParcelSerializer(
-                        classifier,
-                        irBuiltIns.longType,
-                        get(irBuiltIns.longType, scope, parcelizeType, strict())
-                    )
+                    IrSparseArrayParcelSerializer(classifier, irBuiltIns.longType, getChild(irBuiltIns.longType))
                 )
             "android.util.SparseArray" -> {
                 val elementType = (irType as IrSimpleType).arguments.single().upperBound(irBuiltIns)
                 return wrapNullableSerializerIfNeeded(
                     irType,
-                    IrSparseArrayParcelSerializer(
-                        classifier,
-                        elementType,
-                        get(elementType, scope, parcelizeType, strict())
-                    )
+                    IrSparseArrayParcelSerializer(classifier, elementType, getChild(elementType))
                 )
             }
 
@@ -250,7 +238,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                     }
                 }
 
-                val listSerializer = IrListParcelSerializer(classifier, elementType, get(elementType, scope, parcelizeType, strict()))
+                val listSerializer = IrListParcelSerializer(classifier, elementType, getChild(elementType))
                 val actualSerializer =
                     when (classifierFqName) {
                         in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES -> IrExtensionFunctionOnReadCallingSerializer(
@@ -274,13 +262,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                 val keyType = (irType as IrSimpleType).arguments[0].upperBound(irBuiltIns)
                 val valueType = irType.arguments[1].upperBound(irBuiltIns)
                 val mapSerializer =
-                    IrMapParcelSerializer(
-                        classifier,
-                        keyType,
-                        valueType,
-                        get(keyType, scope, parcelizeType, strict()),
-                        get(valueType, scope, parcelizeType, strict())
-                    )
+                    IrMapParcelSerializer(classifier, keyType, valueType, getChild(keyType), getChild(valueType))
 
                 val actualSerializer =
                     if (classifierFqName in BuiltinParcelableTypes.IMMUTABLE_MAP_FQNAMES) {
@@ -336,14 +318,14 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                     || irType.isFunctionTypeOrSubtype() || irType.isSuspendFunctionTypeOrSubtype() ->
                 return serializableSerializer
 
-            classifier.isData -> {
+            classifier.isData && (inDataClass || irType.hasAnnotation(ParcelizeNames.DATA_CLASS_ANNOTATION_CLASS_ID)) -> {
                 val typeMapping = classifier.typeParameterMapping(irType)
                 val members = classifier.properties.mapNotNullTo(mutableListOf()) { property ->
                     val field = property.backingField ?: return@mapNotNullTo null
                     if (!field.isFromPrimaryConstructor) return@mapNotNullTo null
-                    property.symbol to get(field.type.substitute(typeMapping), scope, parcelizeType, strict())
+                    property.symbol to getChild(field.type.substitute(typeMapping), allowDataClasses = true)
                 }
-                return IrDataClassParcelSerializer(irType, members)
+                return wrapNullableSerializerIfNeeded(irType, IrDataClassParcelSerializer(irType, members))
             }
 
             strict() ->

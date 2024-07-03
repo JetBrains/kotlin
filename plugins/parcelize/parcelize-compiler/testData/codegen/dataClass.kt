@@ -11,4 +11,4 @@ data class A(val x: String, val y: Int)
 class A2(val x: String, val y: Int) : Parcelable
 
 @Parcelize
-class Aw(val a: A) : Parcelable
+class Aw(val a: @DataClass A) : Parcelable

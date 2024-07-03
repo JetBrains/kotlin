@@ -266,7 +266,8 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
         type: KotlinType,
         customParcelerTypes: Set<KotlinType>,
         containerClass: ClassDescriptor,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        inDataClass: Boolean = false,
     ): Set<KotlinType> {
         if (type.hasAnyAnnotation(ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES)
             || type.hasAnyAnnotation(ParcelizeNames.WRITE_WITH_FQ_NAMES)
@@ -297,7 +298,7 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
             return emptySet()
         }
 
-        if (descriptor.isData) {
+        if (descriptor.isData && (inDataClass || type.annotations.hasAnnotation(ParcelizeNames.DATA_CLASS_ANNOTATION_FQ_NAME))) {
             val scope = descriptor.getMemberScope(type.arguments)
             val primaryConstructor = descriptor.constructors.find { it.isPrimary } ?: return setOf(type)
             val properties = primaryConstructor.valueParameters.map {
@@ -308,7 +309,9 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
                 properties.all { DescriptorVisibilityUtils.isVisible(null, it, containerClass, languageVersionSettings) }
             ) {
                 return properties.fold(emptySet()) { acc, property ->
-                    acc union checkParcelableType(property.type, customParcelerTypes, containerClass, languageVersionSettings)
+                    acc union checkParcelableType(
+                        property.type, customParcelerTypes, containerClass, languageVersionSettings, inDataClass = true
+                    )
                 }
             }
         }
