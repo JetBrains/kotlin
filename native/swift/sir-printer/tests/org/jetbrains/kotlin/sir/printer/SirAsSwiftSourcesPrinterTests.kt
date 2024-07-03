@@ -170,6 +170,10 @@ class SirAsSwiftSourcesPrinterTests {
                                 argumentName = "arg7",
                                 type = SirNominalType(SirSwiftModule.float)
                             ),
+                            SirParameter(
+                                argumentName = "arg8",
+                                type = SirNominalType(SirSwiftModule.utf16CodeUnit)
+                            ),
                         )
                     )
                     returnType = SirNominalType(SirSwiftModule.bool)
@@ -503,6 +507,10 @@ class SirAsSwiftSourcesPrinterTests {
                                         argumentName = "arg7",
                                         type = SirNominalType(SirSwiftModule.float)
                                     ),
+                                    SirParameter(
+                                        argumentName = "arg8",
+                                        type = SirNominalType(SirSwiftModule.utf16CodeUnit)
+                                    ),
                                 )
                             )
                             returnType = SirNominalType(SirSwiftModule.bool)
@@ -595,6 +603,10 @@ class SirAsSwiftSourcesPrinterTests {
                                     SirParameter(
                                         argumentName = "arg7",
                                         type = SirNominalType(SirSwiftModule.float)
+                                    ),
+                                    SirParameter(
+                                        argumentName = "arg8",
+                                        type = SirNominalType(SirSwiftModule.utf16CodeUnit)
                                     ),
                                 )
                             )

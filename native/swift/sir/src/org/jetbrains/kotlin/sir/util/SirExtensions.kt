@@ -57,9 +57,12 @@ val SirType.swiftName
     }
 
 private val SirDeclaration.swiftParentNamePrefix: String?
-    get() = (parent as? SirNamedDeclaration)?.swiftFqName
-        ?: ((parent as? SirNamed)?.name)
-        ?: ((parent as? SirExtension)?.extendedType?.swiftName)
+    get() = this.parent.swiftFqNameOrNull
+
+val SirDeclarationParent.swiftFqNameOrNull: String?
+    get() = (this as? SirNamedDeclaration)?.swiftFqName
+        ?: ((this as? SirNamed)?.name)
+        ?: ((this as? SirExtension)?.extendedType?.swiftName)
 
 val SirNamedDeclaration.swiftFqName: String
     get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name
