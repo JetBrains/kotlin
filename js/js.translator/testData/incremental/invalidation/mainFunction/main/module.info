@@ -14,8 +14,11 @@ STEP 2:
     modified ir: f.kt
 STEP 3:
     modifications:
-        U : f.3.kt -> f.kt
         U : m.3.kt -> m.kt
+    modifications <js>:
+        U : f.3.kt -> f.kt
+    modifications <wasm>:
+        U : f.3.wasm.kt -> f.kt
     modified ir: f.kt, m.kt
 STEP 4:
     modifications:
