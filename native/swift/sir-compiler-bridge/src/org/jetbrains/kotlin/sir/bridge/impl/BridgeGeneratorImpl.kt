@@ -209,6 +209,8 @@ private fun bridgeType(type: SirType): Bridge {
 
         SirSwiftModule.string -> Bridge.AsObjCBridged(type, KotlinType.String, CType.NSString)
 
+        SirSwiftModule.utf16CodeUnit -> Bridge.AsIs(type, KotlinType.Char, CType.UInt16)
+
         is SirTypealias -> bridgeType(subtype.type)
 
         // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
@@ -264,6 +266,7 @@ private enum class KotlinType(val repr: String) {
     Unit("Unit"),
 
     Boolean("Boolean"),
+    Char("Char"),
 
     Byte("Byte"),
     Short("Short"),

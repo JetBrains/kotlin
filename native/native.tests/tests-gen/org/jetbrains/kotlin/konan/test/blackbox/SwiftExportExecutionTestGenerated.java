@@ -30,6 +30,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractNativeSwiftExport
   }
 
   @Test
+  @TestMetadata("char")
+  public void testChar() {
+    runTest("native/native.tests/testData/SwiftExport/char/");
+  }
+
+  @Test
   @TestMetadata("never_type")
   public void testNever_type() {
     runTest("native/native.tests/testData/SwiftExport/never_type/");

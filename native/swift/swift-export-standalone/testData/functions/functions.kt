@@ -23,6 +23,8 @@ fun all_args(
 
     arg10: Float,
     arg11: Double,
+
+    arg12: Char,
 ): Unit = Unit
 
 // FILE: bar.kt

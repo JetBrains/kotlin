@@ -2,6 +2,7 @@
 // MODULE: Properties
 // FILE: constants.kt
 const val BOOLEAN_CONST: Boolean = true
+const val CHAR_CONST: Char = 'A'
 const val BYTE_CONST: Byte = 1
 const val SHORT_CONST: Short = 2
 const val INT_CONST: Int = 3

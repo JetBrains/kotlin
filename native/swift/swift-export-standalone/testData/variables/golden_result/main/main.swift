@@ -12,9 +12,9 @@ public var BYTE_CONST: Swift.Int8 {
         return __root___BYTE_CONST_get()
     }
 }
-public var CHAR_CONST: Swift.Never {
+public var CHAR_CONST: Swift.Unicode.UTF16.CodeUnit {
     get {
-        fatalError()
+        return __root___CHAR_CONST_get()
     }
 }
 public var DOUBLE_CONST: Swift.Double {

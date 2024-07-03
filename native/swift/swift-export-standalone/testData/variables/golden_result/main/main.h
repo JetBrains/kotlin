@@ -5,6 +5,8 @@ _Bool __root___BOOLEAN_CONST_get();
 
 int8_t __root___BYTE_CONST_get();
 
+uint16_t __root___CHAR_CONST_get();
+
 double __root___DOUBLE_CONST_get();
 
 float __root___FLOAT_CONST_get();

@@ -13,6 +13,12 @@ public fun __root___BYTE_CONST_get(): Byte {
     return _result
 }
 
+@ExportedBridge("__root___CHAR_CONST_get")
+public fun __root___CHAR_CONST_get(): Char {
+    val _result = CHAR_CONST
+    return _result
+}
+
 @ExportedBridge("__root___DOUBLE_CONST_get")
 public fun __root___DOUBLE_CONST_get(): Double {
     val _result = DOUBLE_CONST

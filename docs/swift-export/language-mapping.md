@@ -151,19 +151,20 @@ public class Foo : KotlinRuntime.KotlinBase {
 
 ### Primitive types
 
-| Kotlin  | Swift  |
-|---------|--------|
-| Boolean | Bool   |
-| Byte    | Int8   |
-| Short   | Int16  |
-| Int     | Int32  |
-| Long    | Int64  |
-| UByte   | UInt8  |
-| UShort  | UInt16 |
-| UInt    | UInt32 |
-| ULong   | UInt64 |
-| Float   | Float  |
-| Double  | Double |
+| Kotlin  | Swift                  |
+|---------|------------------------|
+| Boolean | Bool                   |
+| Char    | Unicode.UTF16.CodeUnit |
+| Byte    | Int8                   |
+| Short   | Int16                  |
+| Int     | Int32                  |
+| Long    | Int64                  |
+| UByte   | UInt8                  |
+| UShort  | UInt16                 |
+| UInt    | UInt32                 |
+| ULong   | UInt64                 |
+| Float   | Float                  |
+| Double  | Double                 |
 
 ### kotlin.Any
 

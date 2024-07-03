@@ -24,8 +24,8 @@ public fun namespace1_local_functions_foo(): Unit {
     namespace1.local_functions.foo()
 }
 
-@ExportedBridge("namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_uint8_t_uint16_t_uint32_t_uint64_t_float_double__")
-public fun namespace1_main_all_args(arg1: Boolean, arg2: Byte, arg3: Short, arg4: Int, arg5: Long, arg6: UByte, arg7: UShort, arg8: UInt, arg9: ULong, arg10: Float, arg11: Double): Unit {
+@ExportedBridge("namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_uint8_t_uint16_t_uint32_t_uint64_t_float_double_uint16_t__")
+public fun namespace1_main_all_args(arg1: Boolean, arg2: Byte, arg3: Short, arg4: Int, arg5: Long, arg6: UByte, arg7: UShort, arg8: UInt, arg9: ULong, arg10: Float, arg11: Double, arg12: Char): Unit {
     val __arg1 = arg1
     val __arg2 = arg2
     val __arg3 = arg3
@@ -37,7 +37,8 @@ public fun namespace1_main_all_args(arg1: Boolean, arg2: Byte, arg3: Short, arg4
     val __arg9 = arg9
     val __arg10 = arg10
     val __arg11 = arg11
-    namespace1.main.all_args(__arg1, __arg2, __arg3, __arg4, __arg5, __arg6, __arg7, __arg8, __arg9, __arg10, __arg11)
+    val __arg12 = arg12
+    namespace1.main.all_args(__arg1, __arg2, __arg3, __arg4, __arg5, __arg6, __arg7, __arg8, __arg9, __arg10, __arg11, __arg12)
 }
 
 @ExportedBridge("namespace1_main_foobar__TypesOfArguments__int32_t__")
