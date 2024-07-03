@@ -3,8 +3,6 @@
   <xi:include href="/META-INF/analysis-api/low-level-api-fir.xml"/>
   <xi:include href="/META-INF/analysis-api/symbol-light-classes.xml"/>
 
-  <xi:include href="/META-INF/extensions/compiler.xml"/>
-
   <extensions defaultExtensionNs="com.intellij">
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.session.KaSessionProvider"

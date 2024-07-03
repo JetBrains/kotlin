@@ -1,8 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="/META-INF/analysis-api/analysis-api-impl-base.xml"/>
 
-  <xi:include href="/META-INF/extensions/compiler.xml"/>
-
   <extensionPoints>
     <extensionPoint
         qualifiedName="org.jetbrains.kotlin.declarationAttributeAltererExtension"
