@@ -692,4 +692,4 @@ In combination with '-meta-info', this generates both IR and pre-IR versions of 
 }
 
 fun K2JSCompilerArguments.isIrBackendEnabled(): Boolean =
-    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm || irBuildCache || useK2
+    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm || irBuildCache

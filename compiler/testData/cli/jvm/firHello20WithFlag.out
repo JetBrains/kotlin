@@ -1,2 +1,2 @@
-warning: compiler flag -Xuse-k2 is deprecated; please use "-language-version 2.0" instead
-OK
+error: compiler flag -Xuse-k2 is no more supported. Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier
+COMPILATION_ERROR

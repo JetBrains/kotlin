@@ -260,7 +260,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
     val useOldBackend = arguments.useOldBackend
-    val useIR = arguments.useK2 || languageVersionSettings.languageVersion.usesK2 || !useOldBackend
+    val useIR = languageVersionSettings.languageVersion.usesK2 || !useOldBackend
 
     messageCollector.report(LOGGING, "Using ${if (useIR) "JVM IR" else "old JVM"} backend")
 

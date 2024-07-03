@@ -79,7 +79,7 @@ fun CompilerConfiguration.setupCommonArguments(
     switchToFallbackModeIfNecessary(arguments, messageCollector)
     setupLanguageVersionSettings(arguments)
 
-    val usesK2 = arguments.useK2 || languageVersionSettings.languageVersion.usesK2
+    val usesK2 = languageVersionSettings.languageVersion.usesK2
     put(CommonConfigurationKeys.USE_FIR, usesK2)
     put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
@@ -91,8 +91,7 @@ private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, 
     }
 
     if (arguments !is K2JVMCompilerArguments) return
-    val isK2 =
-        arguments.useK2 || (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
+    val isK2 = (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
     val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
     when {
         isK2 && isKaptUsed && !arguments.useKapt4 -> {
@@ -101,7 +100,6 @@ private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, 
             if (arguments.apiVersion?.startsWith("2") == true) {
                 arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
             }
-            arguments.useK2 = false
             arguments.skipMetadataVersionCheck = true
             arguments.skipPrereleaseCheck = true
             arguments.allowUnstableDependencies = true

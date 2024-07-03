@@ -53,7 +53,7 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
      *
      * Default value: false
      */
-    @Deprecated(message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead", level = DeprecationLevel.WARNING)
+    @Deprecated(message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead", level = DeprecationLevel.ERROR)
     @get:org.gradle.api.tasks.Input
     val useK2: org.gradle.api.provider.Property<kotlin.Boolean>
 }

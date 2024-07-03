@@ -33,10 +33,9 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         // Only Java
         val libraryAnnotation = compileLibrary("libraryAnnotation")
         // Specifically, use K1
-        // Remove "-Xuse-k2=false" argument once it becomes forbidden
         val libraryUsingAnnotation = compileLibrary(
             "libraryUsingAnnotation",
-            additionalOptions = listOf("-language-version", "1.8", "-Xuse-k2=false"),
+            additionalOptions = listOf("-language-version", "1.8"),
             extraClassPath = listOf(libraryAnnotation)
         )
 
@@ -45,10 +44,6 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
             output = tmpdir,
             classpath = listOf(libraryAnnotation, libraryUsingAnnotation),
         )
-    }
-
-    fun testFirAgainstFirUsingFlag() {
-        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")), additionalOptions = listOf("-Xuse-k2"))
     }
 
     fun testStrictMetadataVersionSemanticsOldVersion() {

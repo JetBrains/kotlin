@@ -1254,35 +1254,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    @DisplayName("Kapt runs in fallback mode with useK2 = true")
-    @GradleTest
-    open fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {
-        project("simple".withPrefix, gradleVersion) {
-            buildGradle.appendText(
-                """
-                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-                |    compilerOptions {
-                |        freeCompilerArgs.addAll([
-                |            "-Xuse-fir-ic",
-                |            "-Xuse-fir-lt"
-                |        ])
-                |    }
-                |    kotlinOptions {
-                |      useK2 = true
-                |    }
-                |}
-                |
-                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
-                """.trimMargin()
-            )
-            build("build") {
-                assertKaptSuccessful()
-                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
-                assertOutputContains("Falling back to 1.9.")
-            }
-        }
-    }
-
     @DisplayName("Kapt runs in fallback mode with languageVersion = 2.0")
     @GradleTest
     open fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {

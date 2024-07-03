@@ -869,35 +869,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @WorkingDir("KotlinProject")
-    fun testModuleRebuildOnBackendChange() {
-        initProject(JVM_MOCK_RUNTIME)
-        myProject.modules.forEach {
-            val facet = KotlinFacetSettings()
-            facet.useProjectSettings = false
-            facet.compilerArguments = K2JVMCompilerArguments()
-            (facet.compilerArguments as K2JVMCompilerArguments).useK2 = false
-
-            it.container.setChild(
-                JpsKotlinFacetModuleExtension.KIND,
-                JpsKotlinFacetModuleExtension(facet)
-            )
-        }
-        buildAllModules().assertSuccessful()
-        myProject.modules.forEach {
-            val facet = KotlinFacetSettings()
-            facet.useProjectSettings = false
-            facet.compilerArguments = K2JVMCompilerArguments()
-            (facet.compilerArguments as K2JVMCompilerArguments).useK2 = true
-            it.container.setChild(
-                JpsKotlinFacetModuleExtension.KIND,
-                JpsKotlinFacetModuleExtension(facet)
-            )
-        }
-
-        checkWhen(emptyArray(), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
-    }
-
-    @WorkingDir("KotlinProject")
     fun testModuleRebuildOnJvmDefaultChange() {
         initProject(JVM_MOCK_RUNTIME)
         myProject.modules.forEach {

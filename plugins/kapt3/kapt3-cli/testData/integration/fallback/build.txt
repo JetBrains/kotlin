@@ -66,4 +66,7 @@ output/sourcesAlt/generated/Test.java
 test.TestKt
 
 # after
-Generated class: generated.Test
+Return code: 1
+
+warning: kapt currently doesn't support language version 2.0+. Falling back to 1.9.
+error: compiler flag -Xuse-k2 is no more supported. Compiler versions 2.0+ use K2 by default, unless the language version is set to 1.9 or earlier

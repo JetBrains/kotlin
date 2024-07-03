@@ -673,11 +673,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/firHello20WithFlag.args");
     }
 
-    @TestMetadata("firHello20WithOldLV.args")
-    public void testFirHello20WithOldLV() {
-      runTest("compiler/testData/cli/jvm/firHello20WithOldLV.args");
-    }
-
     @TestMetadata("firLightTreeOff.args")
     public void testFirLightTreeOff() {
       runTest("compiler/testData/cli/jvm/firLightTreeOff.args");
