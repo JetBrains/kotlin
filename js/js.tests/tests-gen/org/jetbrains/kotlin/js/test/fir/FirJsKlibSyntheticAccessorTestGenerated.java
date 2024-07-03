@@ -916,6 +916,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       }
 
       @Test
+      @TestMetadata("leakingPrivateTopLevelSuspendFun.kt")
+      public void testLeakingPrivateTopLevelSuspendFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelSuspendFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelVarThroughInlineFun.kt")
       public void testLeakingPrivateTopLevelVarThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelVarThroughInlineFun.kt");
@@ -1070,6 +1076,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       }
 
       @Test
+      @TestMetadata("leakingPrivateTopLevelSuspendFun.kt")
+      public void testLeakingPrivateTopLevelSuspendFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelSuspendFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelVarThroughInlineFun.kt")
       public void testLeakingPrivateTopLevelVarThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelVarThroughInlineFun.kt");
@@ -1179,6 +1191,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       @TestMetadata("usePrivateTopLevelSetterFromInternalInlineVar.kt")
       public void testUsePrivateTopLevelSetterFromInternalInlineVar() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelSetterFromInternalInlineVar.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelSuspendFun.kt")
+      public void testUsePrivateTopLevelSuspendFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelSuspendFun.kt");
       }
 
       @Test
