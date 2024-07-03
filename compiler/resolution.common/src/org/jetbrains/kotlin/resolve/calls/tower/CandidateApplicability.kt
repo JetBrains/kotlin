@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-enum class CandidateApplicability {
+enum class CandidateApplicability { // interesting!
     /**
      * Special applicability for migration warning up to 1.5.
      * Used when resolved to function with SAM conversion and array without spread as vararg.
      */
     K1_RESOLVED_TO_SAM_WITH_VARARG,
+
+    /**
+     * todo
+     */
+    HIDDEN_EXPECT,
 
     /**
      * Candidate is removed from resolve due to SinceKotlin with later version or Deprecation with hidden level.

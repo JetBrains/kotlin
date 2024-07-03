@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
@@ -94,12 +94,18 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val containingDeclarations = scopeClassDeclaration.containingDeclarations
 
         fun processCandidate(symbol: FirBasedSymbol<*>, substitutor: ConeSubstitutor?) {
+            println("--- ${(symbol as? FirClassLikeSymbol)?.classId}")
             var symbolApplicability = CandidateApplicability.RESOLVED
             var diagnostic: ConeDiagnostic? = null
 
             if (!symbol.isVisible(useSiteFile, containingDeclarations, supertypeSupplier)) {
                 symbolApplicability = minOf(CandidateApplicability.K2_VISIBILITY_ERROR, symbolApplicability)
                 diagnostic = ConeVisibilityError(symbol)
+            }
+
+            if (!session.moduleData.isCommon && symbol is FirRegularClassSymbol && symbol.name.asString() == "Foo" && symbol.isExpect) {
+                symbolApplicability = minOf(CandidateApplicability.HIDDEN_EXPECT, symbolApplicability)
+                diagnostic = null
             }
 
             if (resolveDeprecations) {

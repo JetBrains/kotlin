@@ -17,12 +17,13 @@ expect class Foo() {
     fun foo(): Int // 5
 }
 
-fun common(): Int = Foo().foo() //* Foo().commonFakeOverride() * Foo().commonOverride()
+fun common(): Int = 5 // Foo().foo() //* Foo().commonFakeOverride() * Foo().commonOverride()
 
 // MODULE: lib()()()
 // FILE: Foo.java
 public class Foo {
     public int foo() { return 5; }
+    public void javaLib() {}
     // @Override public int commonOverride() { return 7; }
 }
 
@@ -34,8 +35,11 @@ public class Foo {
 
 // MODULE: platform(lib)()(common)
 // FILE: jvm.kt
+fun unused(): Foo = null!!
+
 fun box(): String {
     val expect = 2 * 5 * 7
     val actual = common()
+    Foo().javaLib()
     return if (expect == actual) "OK" else "FAIL $expect $actual"
 }

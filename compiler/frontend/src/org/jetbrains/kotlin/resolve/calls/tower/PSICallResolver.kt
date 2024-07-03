@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
@@ -365,7 +364,8 @@ class PSICallResolver(
         val applicability = getResultApplicability(diagnostics)
         return applicability == CandidateApplicability.INAPPLICABLE ||
                 applicability == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
-                applicability == CandidateApplicability.HIDDEN
+                applicability == CandidateApplicability.HIDDEN ||
+                applicability == CandidateApplicability.HIDDEN_EXPECT
     }
 
     // true if we found something

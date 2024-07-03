@@ -31,7 +31,7 @@ abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
         val directives = module.testModule.directives
-        val expectedAnnotations = directives[Directives.EXPECTED]
+        val expectedAnnotations: List<AnnotationData> = directives[Directives.EXPECTED]
         val unexpectedAnnotations = directives[Directives.UNEXPECTED]
         val qualifiersToCheck = expectedAnnotations + unexpectedAnnotations
         testServices.assertions.assertTrue(qualifiersToCheck.isNotEmpty()) { error("Nothing to check") }

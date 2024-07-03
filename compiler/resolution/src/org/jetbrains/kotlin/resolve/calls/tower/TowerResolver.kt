@@ -481,7 +481,9 @@ class TowerResolver {
         override fun getFinalCandidates(): Collection<C> {
             val moreSuitableGroup = candidateGroups.maxByOrNull { it.groupApplicability } ?: return emptyList()
             val groupApplicability = moreSuitableGroup.groupApplicability
-            if (groupApplicability == CandidateApplicability.HIDDEN) return emptyList()
+            if (groupApplicability == CandidateApplicability.HIDDEN || groupApplicability == CandidateApplicability.HIDDEN_EXPECT) {
+                return emptyList()
+            }
 
             return moreSuitableGroup.filter { it.resultingApplicability == groupApplicability }
         }

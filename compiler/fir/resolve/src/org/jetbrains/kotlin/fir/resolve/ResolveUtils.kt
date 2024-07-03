@@ -710,7 +710,7 @@ fun createConeDiagnosticForCandidateWithError(
 ): ConeDiagnostic {
     val symbol = candidate.symbol
     return when (applicability) {
-        CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate)
+        CandidateApplicability.HIDDEN_EXPECT, CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate)
         CandidateApplicability.K2_VISIBILITY_ERROR -> {
             val session = candidate.callInfo.session
 

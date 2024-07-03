@@ -463,7 +463,7 @@ class Fir2IrDeclarationStorage(
         val symbol = IrConstructorSymbolImpl() // unbound instance
         if (potentiallyExternal) {
             val irParent = findIrParent(constructor, fakeOverrideOwnerLookupTag = null)
-            if (irParent.isExternalParent()) {
+            if (irParent.isExternalParent()) { // suka zdes
                 callablesGenerator.createIrConstructor(
                     constructor,
                     irParent as IrClass,
