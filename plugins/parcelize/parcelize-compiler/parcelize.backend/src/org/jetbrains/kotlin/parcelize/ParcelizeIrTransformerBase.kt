@@ -29,15 +29,15 @@ import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase
 abstract class ParcelizeIrTransformerBase(
     protected val context: IrPluginContext,
     protected val androidSymbols: AndroidSymbols,
-    protected val parcelizeAnnotations: List<FqName>
+    protected val parcelizeAnnotations: List<FqName>,
 ) : ParcelizeExtensionBase, IrElementVisitorVoid {
     private val irFactory: IrFactory = IrFactoryImpl
 
     protected val deferredOperations = mutableListOf<() -> Unit>()
     protected fun defer(block: () -> Unit) = deferredOperations.add(block)
 
-    protected fun IrSimpleFunction.generateDescribeContentsBody(parcelableProperties: List<ParcelableProperty?>) {
-        val flags = if (parcelableProperties.any { it != null && it.field.type.containsFileDescriptors }) 1 else 0
+    protected fun IrSimpleFunction.generateDescribeContentsBody(parcelableProperties: List<ParcelableProperty>) {
+        val flags = if (parcelableProperties.any { it.field.type.containsFileDescriptors }) 1 else 0
         body = context.createIrBuilder(symbol).run {
             irExprBody(irInt(flags))
         }
@@ -46,10 +46,10 @@ abstract class ParcelizeIrTransformerBase(
     protected fun IrSimpleFunction.generateWriteToParcelBody(
         irClass: IrClass,
         parcelerObject: IrClass?,
-        parcelableProperties: List<ParcelableProperty?>,
+        parcelableProperties: List<ParcelableProperty>,
         receiverParameter: IrValueParameter,
         parcelParameter: IrValueParameter,
-        flagsParameter: IrValueParameter
+        flagsParameter: IrValueParameter,
     ) {
         body = androidSymbols.createBuilder(symbol).run {
             irBlockBody {
@@ -59,14 +59,12 @@ abstract class ParcelizeIrTransformerBase(
 
                     parcelableProperties.isNotEmpty() ->
                         for (property in parcelableProperties) {
-                            if (property != null) {
-                                +writeParcelWith(
-                                    property.parceler,
-                                    parcelParameter,
-                                    flagsParameter,
-                                    irGetField(irGet(receiverParameter), property.field)
-                                )
-                            }
+                            +writeParcelWith(
+                                property.parceler,
+                                parcelParameter,
+                                flagsParameter,
+                                irGetField(irGet(receiverParameter), property.field)
+                            )
                         }
 
                     else ->
@@ -81,7 +79,7 @@ abstract class ParcelizeIrTransformerBase(
         }
     }
 
-    protected fun generateCreator(declaration: IrClass, parcelerObject: IrClass?, parcelableProperties: List<ParcelableProperty?>) {
+    protected fun generateCreator(declaration: IrClass, parcelerObject: IrClass?, parcelableProperties: List<ParcelableProperty>) {
         // Since the `CREATOR` object cannot refer to the type parameters of the parcelable class we use a star projected type
         val declarationType = declaration.symbol.starProjectedType
         val creatorType = androidSymbols.androidOsParcelableCreator.typeWith(declarationType)
@@ -139,10 +137,8 @@ abstract class ParcelizeIrTransformerBase(
 
                                     parcelableProperties.isNotEmpty() ->
                                         irCall(declaration.primaryConstructor!!).apply {
-                                            for ((index, property) in parcelableProperties.withIndex()) {
-                                                if (property != null) {
-                                                    putValueArgument(index, readParcelWith(property.parceler, parcelParameter))
-                                                }
+                                            for (property in parcelableProperties) {
+                                                putValueArgument(property.index, readParcelWith(property.parceler, parcelParameter))
                                             }
                                         }
 
@@ -171,19 +167,19 @@ abstract class ParcelizeIrTransformerBase(
             serializerFactory.get(defaultType, parcelizeType = defaultType, strict = true, toplevel = true, scope = getParcelerScope())
         }
 
-    protected class ParcelableProperty(val field: IrField, parcelerThunk: () -> IrParcelSerializer) {
+    protected class ParcelableProperty(val field: IrField, val index: Int, parcelerThunk: () -> IrParcelSerializer) {
         val parceler by lazy(parcelerThunk)
     }
 
     private val serializerFactory = IrParcelSerializerFactory(androidSymbols, parcelizeAnnotations)
 
-    protected val IrClass.parcelableProperties: List<ParcelableProperty?>
+    protected val IrClass.parcelableProperties: List<ParcelableProperty>
         get() {
             if (kind != ClassKind.CLASS) return emptyList()
 
             val constructor = primaryConstructor ?: return emptyList()
             val topLevelScope = getParcelerScope()
-            return constructor.valueParameters.map { parameter ->
+            return constructor.valueParameters.mapIndexedNotNull { index, parameter ->
                 val property = properties.firstOrNull { it.name == parameter.name }
                 if (property == null || property.hasAnyAnnotation(IGNORED_ON_PARCEL_FQ_NAMES)) {
                     null
@@ -193,7 +189,7 @@ abstract class ParcelizeIrTransformerBase(
                     if (backingField == null) {
                         null
                     } else {
-                        ParcelableProperty(backingField) {
+                        ParcelableProperty(backingField, index) {
                             serializerFactory.get(parameter.type, parcelizeType = defaultType, scope = localScope)
                         }
                     }
