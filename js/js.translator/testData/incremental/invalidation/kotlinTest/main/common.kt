@@ -32,7 +32,6 @@ interface SuiteContext {
     fun test(name: String, ignored: Boolean = false, body: TestBodyContext.() -> Unit = {})
 }
 
-
 interface TestBodyContext {
     fun call(name: String)
 
