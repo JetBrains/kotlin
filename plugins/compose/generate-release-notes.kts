@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
 fun getCommits(fromRevision: String, toRevision: String, path: String?): List<Commit> {
-    val cmd = "git rev-list --format=medium --ancestry-path $fromRevision..$toRevision ${path ?: "."}"
+    val cmd = "git rev-list --format=medium $fromRevision..$toRevision ${path ?: "."}"
     val process = ProcessBuilder(*(cmd.split(" ")).toTypedArray())
         .redirectOutput(ProcessBuilder.Redirect.PIPE)
         .redirectError(ProcessBuilder.Redirect.INHERIT)
@@ -45,7 +45,7 @@ val matchRelnote =
         setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL),
     )
 val matchChangeId = Regex("Change-Id:\\s+(I[0-9a-f]+)", RegexOption.IGNORE_CASE)
-val matchIssue = Regex("(?:Bug|Fixes):\\s+(\\d+)", RegexOption.IGNORE_CASE)
+val matchIssue = Regex("(?:Bug|Fixes):\\s+\\[?(\\d+)\\]?", RegexOption.IGNORE_CASE)
 
 data class Commit(
     val commit: String,
