@@ -42,7 +42,7 @@ fun main(a: A) {
     B(a.bar2())
 
     a.foo(<!JAVA_TYPE_MISMATCH!>a.bar3().get()<!>)
-    a.foo2(a.bar3().get())
+    a.foo2(<!JAVA_TYPE_MISMATCH!>a.bar3().get()<!>)
     a.foo3(a.bar3().get())
-    B(a.bar3().get())
+    B(<!JAVA_TYPE_MISMATCH!>a.bar3().get()<!>)
 }
