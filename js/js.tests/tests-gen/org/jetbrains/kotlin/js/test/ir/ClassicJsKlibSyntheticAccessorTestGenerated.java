@@ -396,6 +396,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       }
 
       @Test
+      @TestMetadata("leakingPrivateOperatorMethod.kt")
+      public void testLeakingPrivateOperatorMethod() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateOperatorMethod.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateSetterThroughInlineFun.kt")
       public void testLeakingPrivateSetterThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateSetterThroughInlineFun.kt");
@@ -628,6 +634,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       }
 
       @Test
+      @TestMetadata("leakingPrivateOperatorMethod.kt")
+      public void testLeakingPrivateOperatorMethod() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateOperatorMethod.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateSetterThroughInlineFun.kt")
       public void testLeakingPrivateSetterThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateSetterThroughInlineFun.kt");
@@ -767,6 +779,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       @TestMetadata("usePrivateNestedClassThroughInternalInlineFun.kt")
       public void testUsePrivateNestedClassThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateNestedClassThroughInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateOperatorMethod.kt")
+      public void testUsePrivateOperatorMethod() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateOperatorMethod.kt");
       }
 
       @Test
