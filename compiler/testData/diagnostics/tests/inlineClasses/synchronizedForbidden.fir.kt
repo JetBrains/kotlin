@@ -6,37 +6,37 @@
 
 @JvmInline
 value class A(val a: Int) {
-    @get:Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@get:Synchronized<!>
     val f0
         get() = Unit
 
-    @Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
     fun f1() = Unit
 
-    @Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
     fun String.f2() = Unit
 
-    @get:Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@get:Synchronized<!>
     val String.f3
         get() = Unit
 
-    @get:Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@get:Synchronized<!>
     val A.f4
         get() = Unit
 
-    @Synchronized
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
     fun A.f5() = Unit
 
     val f6
-        @Synchronized
+        <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
         get() = Unit
 
     val A.f7
-        @Synchronized
+        <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
         get() = Unit
 
     val String.f8
-        @Synchronized
+        <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
         get() = Unit
 }
 
