@@ -22,7 +22,11 @@ class WritersContractTest {
     val multiFileFacadeMd = Class.forName("kotlin.metadata.test.testdata.MultiFileClassFacade").getMetadata()
     val multiFilePartMd = Class.forName("kotlin.metadata.test.testdata.MultiFileClassFacade__MultiFileClassFacade1Kt").getMetadata()
 
-    val unknown = Metadata(99, metadataVersion = intArrayOf(2, 0, 0), extraString = "blabla")
+    val unknown = Metadata(
+        99,
+        metadataVersion = with(JvmMetadataVersion.LATEST_STABLE_SUPPORTED) { intArrayOf(major, minor, patch) },
+        extraString = "blabla"
+    )
 
     val everyType = listOf(classMd, fileFacadeMd, lambdaMd, multiFileFacadeMd, multiFilePartMd, unknown)
 
@@ -58,7 +62,6 @@ class WritersContractTest {
     }
 
     @Test
-    @Ignore("Enable when KT-69280 is fixed")
     fun nextVersionWrite() = everyType.forEach { before ->
         val md = KotlinClassMetadata.readStrict(before)
         val ver = md.version

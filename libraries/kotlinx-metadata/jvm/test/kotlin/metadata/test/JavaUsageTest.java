@@ -29,7 +29,6 @@ public class JavaUsageTest {
     }
 
     @Test
-    @Ignore("Enable when KT-69280 is fixed")
     public void testWritingBackWithDefaults() {
         Metadata m = MetadataSmokeTest.class.getAnnotation(Metadata.class);
         KotlinClassMetadata clazz1 = ((KotlinClassMetadata) Objects.requireNonNull(KotlinClassMetadata.readStrict(m)));
