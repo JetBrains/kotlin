@@ -305,15 +305,19 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
                 scope.getContributedVariables(it.name, NoLookupLocation.FOR_ALREADY_TRACKED).first()
             }
             // Serialization uses the property getters, deserialization uses the constructor.
-            if (DescriptorVisibilityUtils.isVisible(null, primaryConstructor, containerClass, languageVersionSettings) &&
-                properties.all { DescriptorVisibilityUtils.isVisible(null, it, containerClass, languageVersionSettings) }
-            ) {
-                return properties.fold(emptySet()) { acc, property ->
-                    acc union checkParcelableType(
-                        property.type, customParcelerTypes, containerClass, languageVersionSettings, inDataClass = true
-                    )
-                }
+            if (!DescriptorVisibilityUtils.isVisible(null, primaryConstructor, containerClass, languageVersionSettings) ||
+                properties.any { !DescriptorVisibilityUtils.isVisible(null, it, containerClass, languageVersionSettings) }
+            ) return setOf(type)
+
+            return properties.fold(emptySet()) { acc, property ->
+                acc union checkParcelableType(
+                    property.type, customParcelerTypes, containerClass, languageVersionSettings, inDataClass = true
+                )
             }
+        }
+
+        if (BuiltinParcelableTypes.EXTERNAL_SERIALIZABLE_FQNAMES.any { type.matchesFqNameWithSupertypes(it) }) {
+            return emptySet()
         }
 
         return setOf(type)

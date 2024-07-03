@@ -14,6 +14,7 @@ data class UnsupportedField(val x: Any)
 data class Generic<T>(val x: T)
 data class GenericOut<out T>(val x: T)
 data class GenericBounded<T : Parcelable>(val x: T)
+data class BadButSerializable(val x: Any) : java.io.Serializable
 
 @Parcelize
 class C(
@@ -26,4 +27,5 @@ class C(
     val f: @DataClass GenericOut<String>,
     val g: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass Generic<Any><!>,
     val h: @DataClass GenericBounded<*>,
+    val i: <!PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED!>@DataClass BadButSerializable<!>,
 ) : Parcelable

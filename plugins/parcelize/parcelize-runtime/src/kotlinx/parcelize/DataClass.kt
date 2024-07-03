@@ -6,15 +6,19 @@
 package kotlinx.parcelize
 
 /**
- * When a type is annotated with this, any data classes contained inside it will be
- * serialized even if they are not [android.os.Parcelable].
+ * When a type is annotated with this annotation, any data classes contained inside it
+ * (as well as the type itself, if it is one) will be serialized even if they are not
+ * [android.os.Parcelable].
  *
  * For a data class type to be serializable, its constructor and all properties must
- * be accessible from the class with this annotation. Data class serialization logic
- * has the lowest priority and will only be used if all other methods, except class loader
- * and [java.io.Serializable] based serialization, are not applicable. The serialization
- * format is equivalent to what would be generated if the data class itself was annotated
- * with [Parcelize].
+ * be accessible from the class that contains this annotation, and all properties must be
+ * of supported types. The serialization format is equivalent to what would be generated
+ * if the data class itself was annotated with [Parcelize].
+ *
+ * For technical reasons, this annotation overrides support for [java.io.Serializable]:
+ * if a data class implements it, it must still obey the above requirements and will use
+ * the data class specific serialization format, not [android.os.Parcel.writeSerializable].
+ * Non-data classes are not affected by this annotation.
  *
  * For example:
  *

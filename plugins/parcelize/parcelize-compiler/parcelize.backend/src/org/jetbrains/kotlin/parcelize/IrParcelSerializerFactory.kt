@@ -313,9 +313,8 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
             classifier.isEnumClass ->
                 return wrapNullableSerializerIfNeeded(irType, IrEnumParcelSerializer(classifier))
 
-            classifier.isSubclassOfFqName("java.io.Serializable")
-                    // Functions and Continuations are always serializable.
-                    || irType.isFunctionTypeOrSubtype() || irType.isSuspendFunctionTypeOrSubtype() ->
+            // Functions and Continuations are always serializable.
+            irType.isFunctionTypeOrSubtype() || irType.isSuspendFunctionTypeOrSubtype() ->
                 return serializableSerializer
 
             classifier.isData && (inDataClass || irType.hasAnnotation(ParcelizeNames.DATA_CLASS_ANNOTATION_CLASS_ID)) -> {
@@ -327,6 +326,9 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                 }
                 return wrapNullableSerializerIfNeeded(irType, IrDataClassParcelSerializer(irType, members))
             }
+
+            classifier.isSubclassOfFqName("java.io.Serializable") ->
+                return serializableSerializer
 
             strict() ->
                 throw IllegalArgumentException("Illegal type, could not find a specific serializer for ${irType.render()}")

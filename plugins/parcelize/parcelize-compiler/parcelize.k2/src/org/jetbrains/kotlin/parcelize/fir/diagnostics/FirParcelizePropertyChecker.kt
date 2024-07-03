@@ -133,33 +133,39 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
             }
         }
 
-        with(session.typeContext) {
-            if (type.anySuperTypeConstructor { it is ConeKotlinType && it.isParcelableSupertype(session) }) {
-                return emptySet()
-            }
+        if (type.anySuperTypeConstructor(session) { it.isParcelableSupertype(session) }) {
+            return emptySet()
         }
 
         if (symbol.isData && (inDataClass || type.customAnnotations.any { it.fqName(session) == ParcelizeNames.DATA_CLASS_ANNOTATION_FQ_NAME })) {
             val properties = symbol.declarationSymbols.filterIsInstance<FirPropertySymbol>().filter { it.fromPrimaryConstructor }
             // Serialization uses the property getters, deserialization uses the constructor.
-            if (properties.all { it.isVisible(context) } && symbol.primaryConstructorSymbol(session)?.isVisible(context) == true) {
-                val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { (parameter, arg) ->
-                    when (arg) {
-                        is ConeKotlinType -> parameter to arg
-                        is ConeKotlinTypeProjectionOut -> parameter to arg.type
-                        else -> null
-                    }
-                }.toMap()
-                val substitutor = substitutorByMap(typeMapping, context.session)
-                return properties.fold(emptySet()) { acc, property ->
-                    val elementType = substitutor.substituteOrSelf(property.resolvedReturnType)
-                    acc union checkParcelableType(elementType, customParcelerTypes, context, inDataClass = true)
-                }
+            if (properties.any { !it.isVisible(context) } || symbol.primaryConstructorSymbol(session)?.isVisible(context) != true) {
+                return setOf(type)
             }
+            val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { (parameter, arg) ->
+                when (arg) {
+                    is ConeKotlinType -> parameter to arg
+                    is ConeKotlinTypeProjectionOut -> parameter to arg.type
+                    else -> null
+                }
+            }.toMap()
+            val substitutor = substitutorByMap(typeMapping, context.session)
+            return properties.fold(emptySet()) { acc, property ->
+                val elementType = substitutor.substituteOrSelf(property.resolvedReturnType)
+                acc union checkParcelableType(elementType, customParcelerTypes, context, inDataClass = true)
+            }
+        }
+
+        if (type.anySuperTypeConstructor(session) { it.isSupportedSerializable() }) {
+            return emptySet()
         }
 
         return setOf(type)
     }
+
+    private fun ConeKotlinType.anySuperTypeConstructor(session: FirSession, predicate: (ConeKotlinType) -> Boolean): Boolean =
+        with(session.typeContext) { anySuperTypeConstructor { it is ConeKotlinType && predicate(it) } }
 
     @OptIn(SymbolInternals::class)
     private fun FirCallableSymbol<*>.isVisible(context: CheckerContext): Boolean {
@@ -193,6 +199,9 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
 
     private fun ConeKotlinType.isParcelableSupertype(session: FirSession): Boolean =
         classId?.asFqNameString() in BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES || isSomeFunctionType(session)
+
+    private fun ConeKotlinType.isSupportedSerializable(): Boolean =
+        classId?.asFqNameString() in BuiltinParcelableTypes.EXTERNAL_SERIALIZABLE_FQNAMES
 
     private fun ConeKotlinType.hasParcelerAnnotation(session: FirSession): Boolean {
         for (annotation in customAnnotations) {
