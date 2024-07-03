@@ -183,12 +183,14 @@ class JvmAbiClassBuilderInterceptor(
                 return method
             }
 
-            if (isDataClass && removeDataClassCopyIfConstructorIsPrivate &&
-                (name == "copy" || name == "copy${JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX}")
-            ) {
-                if (primaryConstructorIsNotInAbi) {
-                    return method
+            if (isDataClass && primaryConstructorIsNotInAbi) {
+                val removeCopy = when (name) {
+                    "copy" -> removeDataClassCopyIfConstructorIsPrivate
+                    "copy${JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX}" ->
+                        removeDataClassCopyIfConstructorIsPrivate || access and Opcodes.ACC_PUBLIC == 0
+                    else -> false
                 }
+                if (removeCopy) return method
             }
 
             // Copy inline functions verbatim
