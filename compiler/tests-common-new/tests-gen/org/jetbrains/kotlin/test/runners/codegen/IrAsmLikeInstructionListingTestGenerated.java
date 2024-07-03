@@ -129,6 +129,12 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
     }
 
     @Test
+    @TestMetadata("dontEmitInternal.kt")
+    public void testDontEmitInternal() {
+      runTest("compiler/testData/codegen/asmLike/typeAnnotations/dontEmitInternal.kt");
+    }
+
+    @Test
     @TestMetadata("enumClassConstructor.kt")
     public void testEnumClassConstructor() {
       runTest("compiler/testData/codegen/asmLike/typeAnnotations/enumClassConstructor.kt");
