@@ -24,14 +24,8 @@ class C {
 private var nonNullTopLevel: S = S(-1)
 private var nullableTopLevel: S? = S(-1)
 
-private fun <T> KCallable<T>.callBy(vararg args: Any?): T {
-    val params = parameters
-    return params.fold(HashMap<KParameter, Any?>()) { acc, cur ->
-        acc.apply {
-            acc[cur] = args[cur.index]
-        }
-    }.let { callBy(it) }
-}
+private fun <T> KCallable<T>.callBy(vararg args: Any?): T =
+    callBy(parameters.associateWith { args[it.index] })
 
 fun box(): String {
     val c = C()

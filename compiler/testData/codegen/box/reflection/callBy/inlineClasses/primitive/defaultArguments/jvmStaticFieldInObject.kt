@@ -24,14 +24,8 @@ object C {
     fun nullableBoundRef() = this::p2.apply { isAccessible = true }
 }
 
-private fun <T> KCallable<T>.callBy(vararg args: Any?): T {
-    val params = parameters
-    return params.fold(HashMap<KParameter, Any?>()) { acc, cur ->
-        acc.apply {
-            acc[cur] = args[cur.index]
-        }
-    }.let { callBy(it) }
-}
+private fun <T> KCallable<T>.callBy(vararg args: Any?): T =
+    callBy(parameters.associateWith { args[it.index] })
 
 fun box(): String {
     val one = Z(1)

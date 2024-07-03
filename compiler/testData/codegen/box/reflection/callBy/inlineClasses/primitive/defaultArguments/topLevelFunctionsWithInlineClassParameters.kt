@@ -75,14 +75,8 @@ fun topLevelDefault33_2(
     arg30, arg31
 ).sum().let { S(it.toInt()) } + x!!
 
-private fun <T> KCallable<T>.callBy(vararg args: Any?): T {
-    val params = parameters
-    return params.fold(HashMap<KParameter, Any?>()) { acc, cur ->
-        acc.apply {
-            acc[cur] = args[cur.index]
-        }
-    }.let { callBy(it) }
-}
+private fun <T> KCallable<T>.callBy(vararg args: Any?): T =
+    callBy(parameters.associateWith { args[it.index] })
 
 fun box(): String {
     val zero = S(0)
