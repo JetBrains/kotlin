@@ -86,7 +86,7 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
         /**
          * See: [KotlinAbiVersion bump history](compiler/util-klib/KotlinAbiVersionBumpHistory.md)
          */
-        val CURRENT = KotlinAbiVersion(1, 8, 0)
+        val CURRENT = KotlinAbiVersion(1, 9, 0)
 
         /**
          * Versions before 1.4.1 were the active development phase.
