@@ -15,6 +15,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
@@ -494,7 +495,7 @@ abstract class AbstractInvalidationTest(
 
     protected fun KotlinCoreEnvironment.createPsiFile(file: File): KtFile {
         val psiManager = PsiManager.getInstance(project)
-        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
+        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as KotlinLocalFileSystem
 
         val vFile = fileSystem.findFileByIoFile(file) ?: error("File not found: $file")
 

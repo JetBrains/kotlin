@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
+import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -47,7 +48,7 @@ private fun classesFqNames(kotlinFiles: Collection<File>, disposable: Disposable
     val environment = KotlinCoreEnvironment.createForProduction(disposable, config, configFiles)
     val psiManager = PsiManager.getInstance(environment.project)
     val fileManager = VirtualFileManager.getInstance()
-    val localFS = fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
+    val localFS = fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL) as KotlinLocalFileSystem
 
     val result = HashSet<String>()
 
