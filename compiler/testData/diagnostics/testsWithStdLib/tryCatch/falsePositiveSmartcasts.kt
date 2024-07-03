@@ -12,14 +12,14 @@ fun test1() {
     try {
         x = null
     } catch (e: Exception) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast shouldn't be allowed (OOME could happen after `x = null`)
+        <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast is unsafe (OOME could happen after `x = null`)
         throw e
     }
     finally {
-        // smartcast shouldn't be allowed, `x = null` could've happened
+        // smartcast is unsafe, `x = null` could've happened
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
     }
-    // smartcast shouldn't be allowed, `x = null` could've happened
+    // smartcast is unsafe, `x = null` could've happened
     <!DEBUG_INFO_SMARTCAST!>x<!>.length
 }
 
@@ -32,6 +32,7 @@ fun test2() {
     try {
         x = null
     } catch (e: Exception) {
+        // smartcast is unsafe, `x = null` could've happened
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
     }
     finally {
@@ -48,7 +49,7 @@ fun test3() {
         } catch (e: Exception) {
             t2 = null
         }
-        <!DEBUG_INFO_SMARTCAST!>t2<!>.not() // wrong smartcast, NPE
+        <!DEBUG_INFO_SMARTCAST!>t2<!>.not() // smartcast is unsafe, t2 is always null
     }
 }
 
@@ -58,7 +59,7 @@ fun test4() {
         try {
             t2 = null
         } finally { }
-        <!DEBUG_INFO_SMARTCAST!>t2<!>.not() // wrong smartcast, NPE
+        <!DEBUG_INFO_SMARTCAST!>t2<!>.not() // smartcast is unsafe, t2 is always null
     }
 }
 
@@ -78,11 +79,11 @@ fun test5() {
         return
     }
     finally {
-        <!DEBUG_INFO_SMARTCAST!>s1<!>.length
-        <!DEBUG_INFO_SMARTCAST!>s2<!>.length
+        <!DEBUG_INFO_SMARTCAST!>s1<!>.length // smartcast is safe, s1 is always ""
+        <!DEBUG_INFO_SMARTCAST!>s2<!>.length // smartcast is unsafe, s2 can be null
     }
-    <!DEBUG_INFO_SMARTCAST!>s1<!>.length
-    <!DEBUG_INFO_SMARTCAST!>s2<!>.length
+    <!DEBUG_INFO_SMARTCAST!>s1<!>.length // smartcast is safe, s1 is always ""
+    <!DEBUG_INFO_SMARTCAST!>s2<!>.length // smartcast is safe, as we can't reach this point with s2 = null
 }
 
 fun test6(s1: String?, s2: String?) {
@@ -96,10 +97,10 @@ fun test6(s1: String?, s2: String?) {
         return
     }
     finally {
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length
+        <!DEBUG_INFO_SMARTCAST!>s<!>.length // smartcast is unsafe, s is always null
         requireNotNull(s2)
     }
-    <!DEBUG_INFO_SMARTCAST!>s<!>.length
+    <!DEBUG_INFO_SMARTCAST!>s<!>.length // smartcast is unsafe, s is always null
     s1<!UNSAFE_CALL!>.<!>length
     <!DEBUG_INFO_SMARTCAST!>s2<!>.length
 }
