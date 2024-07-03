@@ -1393,6 +1393,19 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return result
     }
 
+    override fun transformMultiDelegatedConstructorCall(
+        multiDelegatedConstructorCall: FirMultiDelegatedConstructorCall,
+        data: ResolutionMode,
+    ): FirStatement {
+        multiDelegatedConstructorCall.transformChildren(transformer, data)
+        multiDelegatedConstructorCall.replaceConeTypeOrNull(
+            multiDelegatedConstructorCall.delegatedConstructorCalls.firstNotNullOfOrNull {
+                it.constructedTypeRef.coneType
+            } ?: ConeErrorType(ConeSimpleDiagnostic("Unresolved type for ambiguous delegated constructor call"))
+        )
+        return multiDelegatedConstructorCall
+    }
+
     private val FirDelegatedConstructorCall.isCallToDelegatedConstructorWithoutArguments
         get() = source?.kind == KtFakeSourceElementKind.DelegatingConstructorCall
 
