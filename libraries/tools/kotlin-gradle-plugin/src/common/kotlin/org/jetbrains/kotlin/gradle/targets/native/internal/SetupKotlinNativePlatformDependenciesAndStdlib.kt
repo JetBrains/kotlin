@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -70,6 +71,9 @@ private suspend fun KotlinMultiplatformExtension.excludeStdlibFromNativeSourceSe
             sourceSet.internal
                 .resolvableMetadataConfiguration
                 .exclude(mapOf("group" to KOTLIN_MODULE_GROUP, "module" to KOTLIN_STDLIB_MODULE_NAME))
+            project.locateOrRegisterMetadataDependencyTransformationTask(sourceSet).configure { task ->
+                task.excludeModules(group = KOTLIN_MODULE_GROUP, module = KOTLIN_STDLIB_MODULE_NAME)
+            }
         }
     }
 }

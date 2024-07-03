@@ -1,1 +1,1 @@
-private val mutexPool by lazy { 42 }
+fun commonMain() { println("Hello From CommonMain") }

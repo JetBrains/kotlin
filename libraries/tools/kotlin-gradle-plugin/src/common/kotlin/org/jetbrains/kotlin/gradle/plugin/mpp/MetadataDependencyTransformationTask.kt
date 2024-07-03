@@ -100,6 +100,12 @@ open class MetadataDependencyTransformationTask
         }
     }
 
+    private val excludeModules = mutableListOf<ExcludeModuleSelector>()
+
+    internal fun excludeModules(group: String, module: String) {
+        excludeModules.add(ExcludeModuleSelector(group, module))
+    }
+
     //endregion Task Configuration State & Inputs
 
     private fun Iterable<MetadataDependencyResolution>.toTransformedLibrariesRecords(): List<TransformedMetadataLibraryRecord> =
@@ -164,17 +170,22 @@ open class MetadataDependencyTransformationTask
     }
 
     internal fun allTransformedLibraries(): Provider<List<File>> {
-        val ownRecords = transformedLibrariesIndexFile.map { it.records() }
+        val excludes = this.excludeModules // extract excludes to separate variable for capturing into lambda
+        val ownRecords = transformedLibrariesIndexFile.map { it.records(excludes) }
 
         return parentLibrariesIndexFiles.zip(ownRecords) { parent, own ->
-            val allRecords = own + parent.flatMap { it.records() }
+            val allRecords = own + parent.flatMap { it.records(excludes) }
             allRecords.distinctBy { it.moduleId to it.sourceSetName }.map { File(it.file) }
         }
     }
 
     companion object {
         @JvmStatic
-        private fun RegularFile.records() = KotlinMetadataLibrariesIndexFile(asFile).read()
+        private fun RegularFile.records(excludes: List<ExcludeModuleSelector> = emptyList()): List<TransformedMetadataLibraryRecord> {
+            val records = KotlinMetadataLibrariesIndexFile(asFile).read()
+            if (excludes.isEmpty()) return records
+            return records.filter { record -> excludes.none { it.matches(record.moduleId) } }
+        }
     }
 }
 
@@ -192,3 +203,10 @@ private val ComponentIdentifier.serializableUniqueKey
         is ModuleComponentIdentifier -> "module $group:$module:$version"
         else -> error("Unexpected Component Identifier: '$this' of type ${this.javaClass}")
     }
+
+private class ExcludeModuleSelector(
+    val group: String,
+    val module: String
+) {
+    fun matches(moduleId: SerializableComponentIdentifierKey) = moduleId.startsWith("module $group:$module:")
+}

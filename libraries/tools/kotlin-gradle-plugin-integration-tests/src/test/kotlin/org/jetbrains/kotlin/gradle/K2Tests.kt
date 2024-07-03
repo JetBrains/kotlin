@@ -198,15 +198,18 @@ class CustomK2Tests : KGPBaseTest() {
         project(
             "k2-no-overload-resolution-ambiguity-between-expect-and-non-expect-in-native", gradleVersion,
         ) {
-            build("compileCommonMainKotlinMetadata") {
-                assertTasksExecuted(":compileCommonMainKotlinMetadata")
-                extractNativeTasksCommandLineArgumentsFromOutput(":compileCommonMainKotlinMetadata") {
-                    val stdlibCounts = args.count { it != "-nostdlib" && it.contains("stdlib") }
-                    assertEquals(
-                        1,
-                        stdlibCounts,
-                        "Expected a single stdlib in the command line arguments, but got $stdlibCounts"
-                    )
+            build("compileLinuxMainKotlinMetadata") {
+                val tasks = listOf(":compileNativeMainKotlinMetadata", ":compileLinuxMainKotlinMetadata")
+                for (task in tasks) {
+                    assertTasksExecuted(task)
+                    extractNativeTasksCommandLineArgumentsFromOutput(task) {
+                        val stdlibCounts = args.count { it != "-nostdlib" && it.contains("stdlib") }
+                        assertEquals(
+                            1,
+                            stdlibCounts,
+                            "Expected a single stdlib in the command line arguments for $task, but got $stdlibCounts"
+                        )
+                    }
                 }
             }
         }
