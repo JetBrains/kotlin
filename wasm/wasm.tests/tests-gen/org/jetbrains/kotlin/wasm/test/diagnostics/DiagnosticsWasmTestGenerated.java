@@ -100,6 +100,12 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
     }
 
     @Test
+    @TestMetadata("externalPropertyAccessor.kt")
+    public void testExternalPropertyAccessor() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/externalPropertyAccessor.kt");
+    }
+
+    @Test
     @TestMetadata("inheritance.kt")
     public void testInheritance() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/inheritance.kt");
