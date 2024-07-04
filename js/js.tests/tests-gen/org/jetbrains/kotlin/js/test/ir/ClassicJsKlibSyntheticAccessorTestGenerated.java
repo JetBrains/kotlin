@@ -282,6 +282,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       }
 
       @Test
+      @TestMetadata("leakingPrivateClassConstructor.kt")
+      public void testLeakingPrivateClassConstructor() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateClassConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateCompanionThroughInternalInlineFun.kt")
       public void testLeakingPrivateCompanionThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateCompanionThroughInternalInlineFun.kt");
@@ -375,6 +381,18 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       @TestMetadata("leakingPrivateMethodThroughEffectivelyInternalInline.kt")
       public void testLeakingPrivateMethodThroughEffectivelyInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughEffectivelyInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodThroughInheritedClass.kt")
+      public void testLeakingPrivateMethodThroughInheritedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughInheritedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodThroughInheritedCompanion.kt")
+      public void testLeakingPrivateMethodThroughInheritedCompanion() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughInheritedCompanion.kt");
       }
 
       @Test
@@ -520,6 +538,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       }
 
       @Test
+      @TestMetadata("leakingPrivateClassConstructor.kt")
+      public void testLeakingPrivateClassConstructor() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateClassConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateCompanionThroughInternalInlineFun.kt")
       public void testLeakingPrivateCompanionThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateCompanionThroughInternalInlineFun.kt");
@@ -613,6 +637,18 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       @TestMetadata("leakingPrivateMethodThroughEffectivelyInternalInline.kt")
       public void testLeakingPrivateMethodThroughEffectivelyInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughEffectivelyInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodThroughInheritedClass.kt")
+      public void testLeakingPrivateMethodThroughInheritedClass() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughInheritedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodThroughInheritedCompanion.kt")
+      public void testLeakingPrivateMethodThroughInheritedCompanion() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughInheritedCompanion.kt");
       }
 
       @Test
@@ -737,6 +773,12 @@ public class ClassicJsKlibSyntheticAccessorTestGenerated extends AbstractClassic
       @TestMetadata("useCompanionPrivateMethodFromInternalInline.kt")
       public void testUseCompanionPrivateMethodFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/useCompanionPrivateMethodFromInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateClassConstructor.kt")
+      public void testUsePrivateClassConstructor() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateClassConstructor.kt");
       }
 
       @Test
