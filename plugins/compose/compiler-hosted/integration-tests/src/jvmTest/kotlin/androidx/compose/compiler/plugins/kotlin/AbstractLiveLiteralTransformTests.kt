@@ -56,15 +56,16 @@ abstract class AbstractLiveLiteralTransformTests(
                                 pluginContext.moduleDescriptor,
                                 emptySet()
                             )
+                            val featureFlags = FeatureFlags()
                             val transformer = object : LiveLiteralTransformer(
                                 liveLiteralsEnabled || liveLiteralsV2Enabled,
                                 liveLiteralsV2Enabled,
                                 keyVisitor,
                                 pluginContext,
                                 symbolRemapper,
-                                ModuleMetricsImpl("temp") { stabilityInferencer.stabilityOf(it) },
+                                ModuleMetricsImpl("temp", featureFlags) { stabilityInferencer.stabilityOf(it) },
                                 stabilityInferencer,
-                                FeatureFlags()
+                                featureFlags
                             ) {
                                 override fun makeKeySet(): MutableSet<String> {
                                     return super.makeKeySet().also { builtKeys = it }

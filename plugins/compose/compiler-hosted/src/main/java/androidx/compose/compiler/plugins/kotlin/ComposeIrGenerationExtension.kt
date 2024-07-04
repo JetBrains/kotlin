@@ -56,7 +56,7 @@ class ComposeIrGenerationExtension(
     private val irVerificationMode: IrVerificationMode = IrVerificationMode.NONE,
     private val useK2: Boolean = false,
     private val stableTypeMatchers: Set<FqNameMatcher> = emptySet(),
-    private val moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null,
+    private val moduleMetricsFactory: ((StabilityInferencer, FeatureFlags) -> ModuleMetrics)? = null,
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
     private val skipIfRuntimeNotFound: Boolean = false,
@@ -99,9 +99,9 @@ class ComposeIrGenerationExtension(
         }
 
         if (moduleMetricsFactory != null) {
-            metrics = moduleMetricsFactory.invoke(stabilityInferencer)
+            metrics = moduleMetricsFactory.invoke(stabilityInferencer, featureFlags)
         } else if (metricsDestination != null || reportsDestination != null) {
-            metrics = ModuleMetricsImpl(moduleFragment.name.asString()) {
+            metrics = ModuleMetricsImpl(moduleFragment.name.asString(), featureFlags) {
                 stabilityInferencer.stabilityOf(it)
             }
         }
