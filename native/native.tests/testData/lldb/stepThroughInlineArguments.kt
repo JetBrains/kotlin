@@ -1,5 +1,7 @@
 // KIND: STANDALONE_LLDB
 // FIR_IDENTICAL
+// INPUT_DATA_FILE: stepThroughInlineArguments.in
+// OUTPUT_DATA_FILE: stepThroughInlineArguments.out
 // FILE: main.kt
 fun bar(x: Int): Int {
     val res = foo(

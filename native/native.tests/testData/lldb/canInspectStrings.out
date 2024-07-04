@@ -1,0 +1,23 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) command script import <path to lldb script>
+Stop hook #1 added.
+(lldb) b main.kt:11
+Breakpoint 1: where = lldb_canInspectStrings.kexe`kfun:#main(kotlin.Array<kotlin.String>){} + 372 at main.kt:11:5, address = <memory address>
+(lldb) r
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame <frame id>: <memory address> lldb_canInspectStrings.kexe`kfun:#main(args=[]){} at main.kt:11:5
+   8   	        append("dynamic ")
+   9   	        append("string")
+   10  	    }
+-> 11  	    return
+    	    ^
+   12  	}
+Target 0: (lldb_canInspectStrings.kexe) stopped.
+Process <process id> launched: <path to executable>
+(lldb) fr var
+(ObjHeader *) args = []
+(ObjHeader *) a = string literal
+(ObjHeader *) b = dynamic string
+(lldb) q

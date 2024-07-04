@@ -1,6 +1,0 @@
-> b 4
-Breakpoint 1: where = [..]`kfun:#foo(kotlin.Int){} [..] at kt47198.kt:4:[..]
-> r
-> fr v
-(int) a = 33
-> q

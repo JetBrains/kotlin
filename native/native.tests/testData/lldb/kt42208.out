@@ -1,0 +1,31 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) command script import <path to lldb script>
+Stop hook #1 added.
+(lldb) b ThrowException
+Breakpoint 1: where = lldb_kt42208.kexe`ThrowException, address = <memory address>
+(lldb) r
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame <frame id>: <memory address> lldb_kt42208.kexe`ThrowException
+lldb_kt42208.kexe`ThrowException:
+->  <memory address> <+0>: stp    x29, x30, [sp, #-<memory address>]!
+    <memory address> <+4>: mov    x29, sp
+    <memory address> <+8>: bl     <memory address>               ; ExceptionObjHolder::Throw(ObjHeader*)
+
+lldb_kt42208.kexe`ExceptionObjHolder::Throw:
+    <memory address> <+0>: sub    sp, sp, #<memory address>
+Target 0: (lldb_kt42208.kexe) stopped.
+Process <process id> launched: <path to executable>
+(lldb) bt
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+  * frame <frame id>: <memory address> lldb_kt42208.kexe`ThrowException
+    frame <frame id>: <memory address> lldb_kt42208.kexe`kfun:main$lambda$0#internal at kt42208-2.kt:12:18
+    frame <frame id>: <memory address> lldb_kt42208.kexe`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.invoke#internal(_this=[]) at kt42208-2.kt:11:20
+    frame <frame id>: <memory address> lldb_kt42208.kexe`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.$<bridge-DNN>invoke(_this=[]){}kotlin.Nothing#internal at kt42208-2.kt:11:20
+    frame <frame id>: <memory address> lldb_kt42208.kexe`kfun:kotlin.Function0#invoke(){}1:0-trampoline at [K][Suspend]Functions:1:1
+    frame <frame id>: <memory address> lldb_kt42208.kexe`kfun:#main(){} at kt42208-1.kt:7:5
+    frame <frame id>: <memory address> lldb_kt42208.kexe`Konan_start(args=[]) at kt42208-1.kt:6:1
+    frame <frame id>: <memory address> lldb_kt42208.kexe`Init_and_run_start + 100
+    frame <frame id>: <memory address> dyld`start + 2476
+(lldb) q

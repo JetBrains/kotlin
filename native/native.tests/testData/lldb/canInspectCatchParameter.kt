@@ -1,5 +1,7 @@
 // KIND: STANDALONE_LLDB
 // FIR_IDENTICAL
+// INPUT_DATA_FILE: canInspectCatchParameter.in
+// OUTPUT_DATA_FILE: canInspectCatchParameter.out
 fun main() {
     try {
         throw Exception("message 1")

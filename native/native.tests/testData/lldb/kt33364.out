@@ -1,0 +1,9 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) command script import <path to lldb script>
+Stop hook #1 added.
+(lldb) b 10
+Breakpoint 1: where = lldb_kt33364.kexe`kfun:#main(){} + 36 at kt33364.kt:11:10, address = <memory address>
+(lldb) b 17
+Breakpoint 2: where = lldb_kt33364.kexe`kfun:#main(){} + 140 at kt33364.kt:18:5, address = <memory address>
+(lldb) q

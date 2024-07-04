@@ -73,6 +73,15 @@ internal object TCTestOutputFilter : TestOutputFilter {
     }
 }
 
+internal object LLDBTestOutputFilter : TestOutputFilter {
+    override fun filter(testOutput: String): TestOutputFilter.FilteredOutput =
+        TestOutputFilter.FilteredOutput(
+            filteredOutput = LLDBSessionSpec.replaceUnstableIds(testOutput),
+            testReport = null
+        )
+
+}
+
 private class TCTestMessageParserCallback : ServiceMessageParserCallback {
     private var afterMessage = false
     private var state: State = State.Begin
