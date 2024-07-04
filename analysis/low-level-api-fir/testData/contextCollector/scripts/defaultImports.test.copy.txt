@@ -1,0 +1,58 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:asSequence
+                Qualified name: kotlin.streams.asSequence
+                Is all under: false
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+            Import name:Stream
+                Qualified name: java.util.stream.Stream
+                Is all under: false
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirScriptSymbol SCRIPT: <script-defaultImports.test.kts>
+                <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+                lval args: R|kotlin/Array<out kotlin/String>|
+
+                public final val $$result: R|kotlin/sequences/Sequence<kotlin/String!>|
+                    public get(): R|kotlin/sequences/Sequence<kotlin/String!>|
+                Type: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+    Element 11
+        Scope: FirLocalScope
+    Element 12
+        Implicit receiver:
+            FirAnonymousFunctionSymbol apply@fun R|kotlin/sequences/Sequence<kotlin/String!>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>
+                Type: kotlin.sequences.Sequence<kotlin.String!>
+    Element 13
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] defaultImports.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-defaultImports.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/sequences/Sequence<kotlin/String!>| = Q|java/util/stream/Stream|.R|java/util/stream/Stream.of|<R|kotlin/String!|>(String(foo)).R|kotlin/streams/asSequence|<R|kotlin/String!|>().R|kotlin/apply|<R|kotlin/sequences/Sequence<kotlin/String!>|>(<L> = [ResolvedTo(BODY_RESOLVE)] apply@fun R|kotlin/sequences/Sequence<kotlin/String!>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|kotlin/sequences/contains|<R|kotlin/String!|>(String(bar))
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/sequences/Sequence<kotlin/String!>|
