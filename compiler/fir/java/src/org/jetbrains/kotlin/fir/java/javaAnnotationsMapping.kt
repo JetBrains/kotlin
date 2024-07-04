@@ -284,9 +284,7 @@ private fun fillAnnotationArgumentMapping(
 ) {
     if (annotationArguments.isEmpty()) return
 
-    val annotationClassSymbol = lookupTag.toSymbol(session).also {
-        lookupTag.bindSymbolToLookupTag(session, it)
-    }
+    val annotationClassSymbol = lookupTag.toSymbol(session)
     val annotationConstructor = (annotationClassSymbol?.fir as FirRegularClass?)
         ?.declarations
         ?.firstIsInstanceOrNull<FirConstructor>()

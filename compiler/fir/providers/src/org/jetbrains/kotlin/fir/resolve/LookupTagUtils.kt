@@ -35,7 +35,7 @@ fun FirClassLikeSymbol<*>.getClassAndItsOuterClassesWhenLocal(session: FirSessio
         if (it.isInner) it.getContainingClassLookupTag()?.toRegularClassSymbol(session) else null
     }.toSet()
 
-@OptIn(LookupTagInternals::class)
+@LookupTagInternals
 fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol: FirClassLikeSymbol<*>?) {
     boundSymbol = WeakPair(session, symbol)
 }

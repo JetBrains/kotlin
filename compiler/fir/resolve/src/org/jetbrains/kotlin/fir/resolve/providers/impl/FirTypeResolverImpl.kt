@@ -303,6 +303,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         ).also {
             val lookupTag = it.lookupTag
             if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
+                @OptIn(LookupTagInternals::class)
                 lookupTag.bindSymbolToLookupTag(session, symbol)
             }
         }
