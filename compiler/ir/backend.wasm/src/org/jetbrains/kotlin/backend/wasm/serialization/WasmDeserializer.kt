@@ -76,7 +76,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                         type,
                         deserializeImportDescriptor()
                     )
-                    else -> tagError()
+                    else -> tagError(tag)
                 }
             }
         }
@@ -103,7 +103,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 0 -> deserializeFunctionType()
                 1 -> deserializeStructDeclaration()
                 2 -> deserializeArrayDeclaration()
-                else -> tagError()
+                else -> tagError(tag)
             }
         }
 
@@ -161,7 +161,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             when (tag) {
                 0 -> WasmRefType(deserializeHeapType())
                 1 -> WasmRefNullType(deserializeHeapType())
-                else -> WASM_TYPE_OBJECTS.getOrElse(tag - 2) { tagError() }
+                else -> WASM_TYPE_OBJECTS.getOrElse(tag - 2) { tagError(tag) }
             }
         }
 
@@ -176,7 +176,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 5 -> WasmHeapType.Simple.None
                 6 -> WasmHeapType.Simple.Struct
                 7 -> WasmHeapType.Type(deserializeSymbol(::deserializeTypeDeclaration))
-                else -> tagError()
+                else -> tagError(tag)
             }
         }
 
@@ -213,7 +213,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             when (tag) {
                 0 -> WasmInstrWithLocation(op, immediates, deserializeSourceLocation())
                 1 -> WasmInstrWithoutLocation(op, immediates)
-                else -> tagError()
+                else -> tagError(tag)
             }
         }
     }
@@ -249,17 +249,17 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 25 -> WasmImmediate.ValTypeVector(deserializeList(::deserializeType))
                 // This is the special case of BlockType.Value, which accepts a nullable WasmType. If is null, MSB is set to 1.
                 129 -> WasmImmediate.BlockType.Value(null)
-                else -> tagError()
+                else -> tagError(tag)
             }
         }
 
     private fun deserializeImmediateCatch(): WasmImmediate.Catch {
-        val type = when (b.readByte().toInt()) {
+        val type = when (val tag = b.readByte().toInt()) {
             0 -> WasmImmediate.Catch.CatchType.CATCH
             1 -> WasmImmediate.Catch.CatchType.CATCH_REF
             2 -> WasmImmediate.Catch.CatchType.CATCH_ALL
             3 -> WasmImmediate.Catch.CatchType.CATCH_ALL_REF
-            else -> tagError()
+            else -> tagError(tag)
         }
         val immediates = deserializeList(::deserializeImmediate)
         return WasmImmediate.Catch(type, immediates)
@@ -279,7 +279,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             when (tag) {
                 0 -> WasmTable.Value.Expression(deserializeList(::deserializeInstr))
                 1 -> WasmTable.Value.Function(deserializeSymbol(::deserializeFunction))
-                else -> tagError()
+                else -> tagError(tag)
             }
         }
 
@@ -301,7 +301,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 }
                 1 -> WasmElement.Mode.Declarative
                 2 -> WasmElement.Mode.Passive
-                else -> tagError()
+                else -> tagError(tag)
             }
         }
 
@@ -315,7 +315,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 2 -> WasmExport.Memory(name, deserializeMemory())
                 3 -> WasmExport.Global(name, deserializeGlobal())
                 4 -> WasmExport.Tag(name, deserializeTag())
-                else -> tagError()
+                else -> tagError(tag)
             }
         }
     }
@@ -387,7 +387,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                         when (tag) {
                             1 -> SourceLocation.Location(module, file, line, column)
                             2 -> SourceLocation.IgnoredLocation(module, file, line, column)
-                            else -> tagError()
+                            else -> tagError(tag)
                         }
                     }
                 }
@@ -398,7 +398,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         when (it) {
             0 -> null
             1 -> deserializeFunc()
-            else -> tagError()
+            else -> tagError(it)
         }
     }
 
@@ -414,7 +414,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 6 -> deserializeScopeLocalDeclaration()
                 7 -> deserializeSpecialFakeOverrideSignature()
                 8 -> deserializeString().let { IdSignature.FileSignature(it, FqName.ROOT, it) }
-                else -> tagError()
+                else -> tagError(tag)
             }
         }
 
@@ -485,7 +485,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 3 -> deserializeConstantDataIntField()
                 4 -> deserializeConstantDataIntegerArray()
                 5 -> deserializeConstantDataStruct()
-                else -> tagError()
+                else -> tagError(tag)
             }
         }
 
@@ -721,7 +721,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private fun UByte.toBoolean(): Boolean = this == 1.toUByte()
 
-    private fun tagError(): Nothing = error("Invalid tag")
+    private fun tagError(tag: Int): Nothing = error("Invalid tag: $tag")
 
     /**
      * Convenience wrapper class around a bitset byte
