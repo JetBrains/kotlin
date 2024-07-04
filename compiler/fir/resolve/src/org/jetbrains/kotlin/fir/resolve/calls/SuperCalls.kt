@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.Name
@@ -118,7 +119,7 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
             typesWithNonConcreteMembers.filter {
                 // We aren't interested in objects or enum classes here
                 // (objects can't be inherited, enum classes cannot have specific equals/hashCode)
-                it is ConeClassLikeType && (it.lookupTag.toSymbol(session) as? FirRegularClassSymbol)?.classKind?.isClass == true
+                it is ConeClassLikeType && it.lookupTag.toRegularClassSymbol(session)?.classKind?.isClass == true
             }
     }
 }

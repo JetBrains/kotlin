@@ -979,7 +979,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     // is not bare type
                     it !is ConeClassLikeType ||
                             it.typeArguments.isNotEmpty() ||
-                            (it.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner)?.typeParameters?.isEmpty() == true
+                            it.lookupTag.toSymbol(session)?.fir?.typeParameters?.isEmpty() == true
                 }?.let {
                     if (operation == SAFE_AS)
                         it.withNullability(ConeNullability.NULLABLE, session.typeContext)

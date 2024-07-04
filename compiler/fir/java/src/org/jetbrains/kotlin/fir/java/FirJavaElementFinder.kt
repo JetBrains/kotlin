@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
+import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -332,7 +332,7 @@ private fun PsiClassStubImpl<*>.addSupertypesReferencesLists(
 
     for (superTypeRef in superTypeRefs) {
         val superConeType = superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
-        val supertypeFirClass = superConeType.toFirClass(session) ?: continue
+        val supertypeFirClass = superConeType.toRegularClassSymbol(session) ?: continue
 
         val canonicalString = superConeType.mapToCanonicalString(session)
 
@@ -386,11 +386,6 @@ private fun createJavaFileStub(packageFqName: FqName, psiManager: PsiManager): P
 
     javaFileStub.psi = fakeFile
     return javaFileStub
-}
-
-private fun ConeClassLikeType.toFirClass(session: FirSession): FirRegularClass? {
-    val expandedType = this.fullyExpandedType(session)
-    return (expandedType.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir as? FirRegularClass
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -449,7 +449,7 @@ open class FirSupertypeResolverVisitor(
             supertypeRefs.mapTo(mutableListOf()) {
                 val superTypeRef = it.transform<FirTypeRef, ScopeClassDeclaration>(transformer, scopeDeclaration)
                 val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
-                val typealiasSymbol = superTypeRef.coneTypeSafe<ConeClassLikeType>()?.toSymbol(session) as? FirTypeAliasSymbol
+                val typealiasSymbol = superTypeRef.coneTypeSafe<ConeClassLikeType>()?.toTypeAliasSymbol(session)
                 if (resolveRecursively && typealiasSymbol != null) {
                     // Jump to typealiases in supertypes of class-like types.
                     // We need to make sure that by the time we want to fully expand typealiases in supertypes

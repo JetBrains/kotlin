@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.computeTypeAttributes
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -201,7 +200,7 @@ private fun ConeKotlinType.isSubtypeOfFunctionType(session: FirSession, expected
 
 fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: ScopeSession): FirNamedFunctionSymbol? {
     require(this.isSomeFunctionType(session))
-    val functionN = (lookupTag.toSymbol(session)?.fir as? FirClass) ?: return null
+    val functionN = lookupTag.toClassSymbol(session)?.fir ?: return null
     var baseInvokeSymbol: FirNamedFunctionSymbol? = null
     functionN.unsubstitutedScope(
         session,

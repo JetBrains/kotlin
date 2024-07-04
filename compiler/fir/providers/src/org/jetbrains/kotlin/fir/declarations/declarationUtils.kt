@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
@@ -21,9 +18,9 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.PrivateForInline
 
 fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
     val result = mutableListOf<FirConstructorSymbol>()
@@ -73,7 +70,7 @@ fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSessi
 fun FirConstructorSymbol.getConstructedClass(session: FirSession): FirRegularClassSymbol? {
     return resolvedReturnTypeRef.coneType
         .fullyExpandedType(session)
-        .toSymbol(session) as? FirRegularClassSymbol?
+        .toRegularClassSymbol(session)
 }
 
 fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {

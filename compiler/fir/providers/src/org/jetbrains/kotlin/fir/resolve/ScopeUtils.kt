@@ -61,11 +61,11 @@ fun ConeClassLikeType.delegatingConstructorScope(
     derivedClassLookupTag: ConeClassLikeLookupTag,
     outerType: ConeClassLikeType?
 ): FirTypeScope? {
-    val fir = fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
+    val fir = fullyExpandedType(useSiteSession).lookupTag.toClassSymbol(useSiteSession)?.fir ?: return null
 
     val substitutor = when {
         outerType != null -> {
-            val outerFir = outerType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
+            val outerFir = outerType.lookupTag.toClassSymbol(useSiteSession)?.fir ?: return null
             substitutorByMap(
                 createSubstitutionForScope(outerFir.typeParameters, outerType, useSiteSession),
                 useSiteSession,
@@ -138,7 +138,7 @@ private fun ConeClassLikeType.classScope(
     memberOwnerLookupTag: ConeClassLikeLookupTag
 ): FirTypeScope? {
     val fullyExpandedType = fullyExpandedType(useSiteSession)
-    val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
+    val fir = fullyExpandedType.lookupTag.toClassSymbol(useSiteSession)?.fir ?: return null
     val substitutor = when {
         attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
         else -> substitutorByMap(

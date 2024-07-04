@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.expressions.canBeEvaluatedAtCompileTime
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -131,8 +130,8 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
         }
     }
 
-    private fun isAllowedClassKind(cone: ConeLookupTagBasedType, session: FirSession): Boolean {
-        val typeRefClassKind = (cone.lookupTag.toSymbol(session) as? FirRegularClassSymbol)
+    private fun isAllowedClassKind(cone: ConeKotlinType, session: FirSession): Boolean {
+        val typeRefClassKind = cone.toRegularClassSymbol(session)
             ?.classKind
             ?: return false
 

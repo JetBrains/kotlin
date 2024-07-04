@@ -44,7 +44,7 @@ fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTa
 
 internal fun FirAnnotation.getAnnotationClassForOptInMarker(session: FirSession): FirRegularClassSymbol? {
     val lookupTag = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return null
-    val annotationClassSymbol = lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: return null
+    val annotationClassSymbol = lookupTag.toRegularClassSymbol(session) ?: return null
     if (annotationClassSymbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) {
         return null
     }

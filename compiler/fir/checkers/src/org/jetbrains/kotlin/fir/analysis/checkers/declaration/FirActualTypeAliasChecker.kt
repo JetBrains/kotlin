@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
@@ -23,8 +22,8 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isActual) return
 
-        val expandedType = declaration.expandedTypeRef.coneType.abbreviatedTypeOrSelf
-        val expandedTypeSymbol = expandedType.toSymbol(context.session) as? FirClassLikeSymbol<*> ?: return
+        val expandedType = declaration.expandedTypeRef.coneType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
+        val expandedTypeSymbol = expandedType.toSymbol(context.session) ?: return
 
         if (expandedTypeSymbol is FirTypeAliasSymbol) {
             reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS, context)

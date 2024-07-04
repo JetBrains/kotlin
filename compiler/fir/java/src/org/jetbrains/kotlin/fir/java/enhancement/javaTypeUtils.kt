@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
@@ -178,7 +179,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
         val currentArgGlobalIndex = globalArgIndex.also { globalArgIndex += subtreeSizes[it] }
         if (arg.type == null && qualifiers(currentArgGlobalIndex).nullability == NullabilityQualifier.FORCE_FLEXIBILITY) {
             // Given `C<T extends @Nullable V>`, unannotated `C<?>` is `C<out (V..V?)>`.
-            val typeParameters = (this.lookupTag.toSymbol(session)?.fir as? FirClassLikeDeclaration)?.typeParameters
+            val typeParameters = this.lookupTag.toClassLikeSymbol(session)?.fir?.typeParameters
             if (typeParameters != null) {
                 val bound = typeParameters[currentArgLocalIndex].symbol.fir.bounds.first().coneType
                 return@mapIndexed ConeKotlinTypeProjectionOut(

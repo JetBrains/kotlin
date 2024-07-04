@@ -805,7 +805,7 @@ class FirCallResolver(
 
                         var fir = singleExpectedCandidate?.symbol?.fir
                         if (fir is FirTypeAlias) {
-                            fir = (fir.expandedTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol)?.fir
+                            fir = fir.expandedTypeRef.coneType.fullyExpandedType(session).toRegularClassSymbol(session)?.fir
                         }
 
                         when (fir) {

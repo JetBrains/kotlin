@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -223,7 +223,7 @@ class Fir2IrClassifierStorage(
     }
 
     private fun getIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
-        val firClassSymbol = lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return null
+        val firClassSymbol = lookupTag.toClassSymbol(session) ?: return null
         return getIrClass(firClassSymbol.fir)
     }
 

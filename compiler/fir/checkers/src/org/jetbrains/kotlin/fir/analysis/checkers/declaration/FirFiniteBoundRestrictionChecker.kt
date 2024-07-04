@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ProjectionKind
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.utils.DFS
 
 /**
@@ -47,7 +48,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
             }
         }
 
-        val problemSymbols = problemNodes.mapNotNullTo(mutableSetOf()) { it.toSymbol(context.session) as? FirTypeParameterSymbol }
+        val problemSymbols = problemNodes.mapNotNullTo(mutableSetOf()) { it.toTypeParameterSymbol(context.session) }
         if (problemSymbols.any { it.source != null }) return
 
         val containers = problemSymbols.map { it.containingDeclarationSymbol }

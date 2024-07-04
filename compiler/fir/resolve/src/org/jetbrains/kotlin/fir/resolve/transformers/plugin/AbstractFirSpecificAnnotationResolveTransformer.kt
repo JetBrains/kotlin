@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -341,7 +339,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun resolveAnnotationsOnAnnotationIfNeeded(annotationTypeRef: FirResolvedTypeRef) {
-        val symbol = annotationTypeRef.coneType.toSymbol(session) as? FirRegularClassSymbol ?: return
+        val symbol = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toRegularClassSymbol(session) ?: return
         computationSession.resolveAnnotationsOnAnnotationIfNeeded(symbol, scopeSession)
     }
 

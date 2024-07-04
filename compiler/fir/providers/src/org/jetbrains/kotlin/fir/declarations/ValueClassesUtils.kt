@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -32,10 +30,7 @@ internal fun ConeKotlinType.substitutedUnderlyingTypeForInlineClass(session: Fir
 }
 
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: FirSession): ConeKotlinType? {
-    val symbol = (this.fullyExpandedType(session) as? ConeLookupTagBasedType)
-        ?.lookupTag
-        ?.toSymbol(session) as? FirRegularClassSymbol
-        ?: return null
+    val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
     symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
     return symbol.fir.inlineClassRepresentation?.underlyingType
 }
@@ -67,7 +62,7 @@ private fun isRecursiveSingleFieldValueClass(
 }
 
 private fun ConeSimpleKotlinType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeSimpleKotlinType>>? {
-    val symbol = this.toSymbol(session) as? FirRegularClassSymbol ?: return null
+    val symbol = this.toRegularClassSymbol(session) ?: return null
     if (!symbol.fir.isInline) return null
     symbol.fir.valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
 

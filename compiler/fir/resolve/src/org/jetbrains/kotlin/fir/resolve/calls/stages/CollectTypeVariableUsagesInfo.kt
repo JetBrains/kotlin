@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.calls.stages
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -64,7 +63,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
     ): Boolean {
         if (baseType !is ConeClassLikeType) return false
         val dependentTypeParameter = getTypeParameterByVariable(variableTypeConstructor) ?: return false
-        val declaration = baseType.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner ?: return false
+        val declaration = baseType.lookupTag.toSymbol(session)?.fir ?: return false
         val declaredTypeParameters = declaration.typeParameters
 
         if (declaredTypeParameters.size < baseType.typeArguments.size) return false

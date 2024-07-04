@@ -230,7 +230,7 @@ class FirSamResolver(
         val type =
             typeAliasSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
 
-        val expansionRegularClass = type.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return null
+        val expansionRegularClass = type.lookupTag.toRegularClassSymbol(session)?.fir ?: return null
         val samConstructorForClass = getSamConstructor(expansionRegularClass) ?: return null
 
         // The constructor is something like `fun <T, ...> C(...): C<T, ...>`, meaning the type parameters

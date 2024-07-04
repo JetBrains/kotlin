@@ -18,16 +18,13 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.FirTypeResolutionResult
-import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueInFunctionType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -217,7 +214,7 @@ class FirSpecificTypeResolverTransformer(
             ?: fakeElement(KtFakeSourceElementKind.ErroneousTypealiasExpansion)
 
     private val ConeKotlinType.isTypealiasWithErrorInExpansion: Boolean
-        get() = (toSymbol(session) as? FirTypeAliasSymbol)?.resolvedExpandedTypeRef is FirErrorTypeRef
+        get() = toTypeAliasSymbol(session)?.resolvedExpandedTypeRef is FirErrorTypeRef
 
     /**
      * Returns the smallest non-resolvable prefix of the given [qualifiers].

@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.SCRIPT_RECEIVER_NAME_PREFIX
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
+import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
@@ -1641,10 +1644,11 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun ConeClassLikeType?.toIrClassSymbol(): IrClassSymbol? =
-        (this?.lookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.let {
+    private fun ConeClassLikeType?.toIrClassSymbol(): IrClassSymbol? {
+        return this?.lookupTag?.toClassSymbol(session)?.let {
             classifierStorage.getIrClassSymbol(it)
         }
+    }
 
     private fun convertToArrayLiteral(
         arrayLiteral: FirArrayLiteral,

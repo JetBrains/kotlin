@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -574,7 +574,7 @@ class Fir2IrDeclarationStorage(
 
         val setterSymbol = runIf(property.isVar) {
             val setterIsVisible = property.setter?.let { setter ->
-                (fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.fir?.let { containingClass ->
+                fakeOverrideOwnerLookupTag?.toClassSymbol(session)?.fir?.let { containingClass ->
                     setter.isVisibleInClass(containingClass)
                 }
             } ?: true

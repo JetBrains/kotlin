@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
@@ -46,13 +47,13 @@ class FirMissingDependencyStorage(private val session: FirSession) : FirSessionC
             for (superTypeRef in symbol.resolvedSuperTypeRefs) {
                 val superType = superTypeRef.type
                 if (!superType.isAny && result.add(TypeWithOrigin(superType, origin))) {
-                    (superType.toSymbol(session) as? FirClassSymbol<*>)?.let { collect(it, origin) }
+                    superType.toClassSymbol(session)?.let { collect(it, origin) }
                 }
                 for (typeArgument in superType.typeArguments) {
                     if (typeArgument !is ConeKotlinTypeProjection) continue
                     val type = typeArgument.type
                     if (!type.isAny && result.add(TypeWithOrigin(type, SupertypeOrigin.TYPE_ARGUMENT))) {
-                        (type.toSymbol(session) as? FirClassSymbol<*>)?.let { collect(it, SupertypeOrigin.TYPE_ARGUMENT) }
+                        type.toClassSymbol(session)?.let { collect(it, SupertypeOrigin.TYPE_ARGUMENT) }
                     }
                 }
             }

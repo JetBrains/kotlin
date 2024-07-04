@@ -29,12 +29,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.BlockExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FinallyBlockEnterNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FinallyBlockExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastPreviousNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.*
@@ -281,7 +276,7 @@ fun FirClass.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? {
     for (superTypeRef in superTypeRefs) {
         val lookupTag = (superTypeRef.coneType as? ConeClassLikeType)?.lookupTag ?: continue
 
-        val symbol = lookupTag.toSymbol(context.session) as? FirClassSymbol<*> ?: continue
+        val symbol = lookupTag.toClassSymbol(context.session) ?: continue
 
         if (symbol.classKind != ClassKind.INTERFACE) {
             return superTypeRef
@@ -759,7 +754,7 @@ fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlin
 
 fun FirCallableDeclaration.getDirectOverriddenSymbols(context: CheckerContext): List<FirCallableSymbol<FirCallableDeclaration>> {
     if (!this.isOverride) return emptyList()
-    val classSymbol = this.containingClassLookupTag()?.toSymbol(context.session) as? FirClassSymbol<*> ?: return emptyList()
+    val classSymbol = this.containingClassLookupTag()?.toClassSymbol(context.session) ?: return emptyList()
     val scope = classSymbol.unsubstitutedScope(context)
     //this call is needed because AbstractFirUseSiteMemberScope collect overrides in it only,
     //and not in processDirectOverriddenFunctionsWithBaseScope

@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.symbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -35,7 +34,7 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessEx
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall && expression !is FirCallableReferenceAccess) return
         val copyFunction = expression.calleeReference.symbol as? FirCallableSymbol ?: return
-        val dataClass = copyFunction.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
+        val dataClass = copyFunction.containingClassLookupTag()?.toRegularClassSymbol(context.session) ?: return
         if (copyFunction.isDataClassCopy(dataClass, context.session)) {
             val dataClassConstructor = dataClass.primaryConstructorSymbol(context.session) ?: return
 

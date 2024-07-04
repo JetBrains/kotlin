@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -586,7 +585,7 @@ abstract class FirDataFlowAnalyzer(
             substituteTypes = false
         )
         val superClassSymbols = superTypes.mapNotNull {
-            it.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol
+            it.fullyExpandedType(session).toRegularClassSymbol(session)
         }
 
         return superClassSymbols.any { it.hasEqualsOverride(session, checkModality = false) }

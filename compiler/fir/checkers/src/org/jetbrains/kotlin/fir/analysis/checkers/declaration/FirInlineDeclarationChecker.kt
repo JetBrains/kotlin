@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.* import org.jetbrains.kotlin.fir.analysis.checkers.*
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.isDataClassCopy
 import org.jetbrains.kotlin.fir.analysis.checkers.getDirectOverriddenSymbols
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -170,7 +173,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         private fun FirStatement.localDispatchReceiver(context: CheckerContext): ConeKotlinType? =
             (this as? FirQualifiedAccessExpression)?.dispatchReceiver?.resolvedType?.takeIf {
-                (it.toSymbol(context.session) as? FirClassLikeSymbol<*>)?.effectiveVisibility == EffectiveVisibility.Local
+                it.toClassLikeSymbol(context.session)?.effectiveVisibility == EffectiveVisibility.Local
             }
 
         internal data class AccessedDeclarationVisibilityData(
@@ -608,6 +611,6 @@ fun createInlineFunctionBodyContext(function: FirFunction, session: FirSession):
 }
 
 fun FirBasedSymbol<*>.unwrapDataClassCopyWithPrimaryConstructorOrNull(session: FirSession): FirCallableSymbol<*>? =
-    (this as? FirCallableSymbol<*>)?.containingClassLookupTag()?.toSymbol(session)?.let { it as? FirClassSymbol<*> }
+    (this as? FirCallableSymbol<*>)?.containingClassLookupTag()?.toClassSymbol(session)
         ?.takeIf { containingClass -> isDataClassCopy(containingClass, session) }
         ?.primaryConstructorSymbol(session)

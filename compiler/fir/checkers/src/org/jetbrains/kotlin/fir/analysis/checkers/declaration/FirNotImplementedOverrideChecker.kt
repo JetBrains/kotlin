@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.impl.filterOutOverriddenFunctions
@@ -189,13 +189,13 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                     it.modality == Modality.ABSTRACT
                 }
             if (implIntersections.any {
-                    (it.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol)?.classKind == ClassKind.CLASS
+                    it.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS
                 }
             ) {
                 reporter.reportOn(source, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
             } else {
                 if (canHaveAbstractDeclarations && abstractIntersections.any {
-                        (it.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol)?.classKind == ClassKind.CLASS
+                        it.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.classKind == ClassKind.CLASS
                     }
                 ) {
                     return

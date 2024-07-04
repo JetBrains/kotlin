@@ -170,7 +170,7 @@ object JavaScopeProvider : FirScopeProvider() {
     private tailrec fun FirRegularClass.findJavaSuperClass(useSiteSession: FirSession): FirRegularClass? {
         val superClass = superConeTypes.firstNotNullOfOrNull {
             if (it.isAny) return@firstNotNullOfOrNull null
-            (it.lookupTag.toSymbol(useSiteSession)?.fir as? FirRegularClass)?.takeIf { superClass ->
+            it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir?.takeIf { superClass ->
                 superClass.classKind == ClassKind.CLASS
             }
         } ?: return null
@@ -185,7 +185,7 @@ object JavaScopeProvider : FirScopeProvider() {
         DFS.dfs(listOf(this),
                 { regularClass ->
                     regularClass.superConeTypes.mapNotNull {
-                        it.lookupTag.toSymbol(useSiteSession)?.fir as? FirRegularClass
+                        it.lookupTag.toRegularClassSymbol(useSiteSession)?.fir
                     }
                 },
                 object : DFS.AbstractNodeHandler<FirRegularClass, Unit>() {

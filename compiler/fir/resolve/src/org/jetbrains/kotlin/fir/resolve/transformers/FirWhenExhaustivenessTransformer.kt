@@ -10,19 +10,14 @@ import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.enumWhenTracker
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.reportEnumUsageInWhen
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -300,7 +295,7 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
 
 private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
     override fun isApplicable(subjectType: ConeKotlinType, session: FirSession): Boolean {
-        val symbol = subjectType.toSymbol(session) as? FirRegularClassSymbol ?: return false
+        val symbol = subjectType.toRegularClassSymbol(session) ?: return false
         return symbol.fir.classKind == ClassKind.ENUM_CLASS
     }
 
@@ -333,7 +328,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
 
 private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecker() {
     override fun isApplicable(subjectType: ConeKotlinType, session: FirSession): Boolean {
-        return (subjectType.toSymbol(session)?.fir as? FirRegularClass)?.modality == Modality.SEALED
+        return subjectType.toRegularClassSymbol(session)?.fir?.modality == Modality.SEALED
     }
 
     override fun computeMissingCases(

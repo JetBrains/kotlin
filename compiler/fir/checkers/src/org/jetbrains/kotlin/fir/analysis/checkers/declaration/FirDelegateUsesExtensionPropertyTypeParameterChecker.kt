@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
@@ -41,11 +42,11 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         val expandedDelegateClassLikeType =
             delegate.resolvedType.lowerBoundIfFlexible().fullyExpandedType(context.session)
                 .unwrapDefinitelyNotNull() as? ConeClassLikeType ?: return null
-        val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toSymbol(context.session) as? FirClassSymbol<*> ?: return null
+        val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toClassSymbol(context.session) ?: return null
         val delegateClassScope by lazy(LazyThreadSafetyMode.NONE) { delegateClassSymbol.unsubstitutedScope(context) }
         for (it in typeArguments) {
             val theType = it.type ?: continue
-            val argumentAsTypeParameterSymbol = theType.toSymbol(context.session) as? FirTypeParameterSymbol
+            val argumentAsTypeParameterSymbol = theType.toTypeParameterSymbol(context.session)
 
             if (argumentAsTypeParameterSymbol in typeParameterSymbols) {
                 var propertyWithTypeParameterTypeFound = false

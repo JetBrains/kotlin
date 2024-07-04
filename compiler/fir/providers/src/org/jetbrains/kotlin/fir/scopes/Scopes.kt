@@ -7,16 +7,15 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 
 fun ConeClassLikeLookupTag.getNestedClassifierScope(session: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? {
-    val klass = toSymbol(session)?.fir as? FirRegularClass ?: return null
+    val klass = toRegularClassSymbol(session)?.fir ?: return null
     return klass.scopeProvider.getNestedClassifierScope(klass, session, scopeSession)
 }
 

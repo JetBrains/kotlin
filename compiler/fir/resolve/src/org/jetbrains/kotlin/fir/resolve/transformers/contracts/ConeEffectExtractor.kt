@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -218,7 +219,7 @@ class ConeEffectExtractor(
         val arg = typeOperatorCall.argument.asContractValueExpression()
         val type = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType(session)
         val isNegated = typeOperatorCall.operation == FirOperation.NOT_IS
-        val diagnostic = (type.toSymbol(session) as? FirTypeParameterSymbol)?.let { typeParameterSymbol ->
+        val diagnostic = type.toTypeParameterSymbol(session)?.let { typeParameterSymbol ->
             val typeParametersOfOwner = (owner as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
             if (typeParametersOfOwner.none { it is FirTypeParameter && it.symbol == typeParameterSymbol }) {
                 return@let ConeContractDescriptionError.NotSelfTypeParameter(typeParameterSymbol)

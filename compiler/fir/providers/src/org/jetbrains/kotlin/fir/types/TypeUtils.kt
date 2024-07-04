@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringEras
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitute
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -586,7 +586,7 @@ private fun ConeKotlinType.hasSubtypesAboveNothingAccordingToK1(session: FirSess
         return true
     }
     val expandedType = fullyExpandedType(session)
-    val classSymbol = expandedType.toSymbol(session) as? FirClassSymbol ?: return true
+    val classSymbol = expandedType.toClassSymbol(session) ?: return true
     // In K2 enum classes are final, though enum entries are their subclasses (which is a compiler implementation detail).
     if (classSymbol.isEnumClass || classSymbol.isExpect || classSymbol.modality != Modality.FINAL) {
         return true

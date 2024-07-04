@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.isTypeAliasedConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
@@ -50,7 +49,7 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
                 it.withSourceRecursive(expression)
             }
 
-            typeParameters = (constructedType.toSymbol(context.session) as? FirRegularClassSymbol)?.typeParameterSymbols ?: return
+            typeParameters = constructedType.toRegularClassSymbol(context.session)?.typeParameterSymbols ?: return
         } else {
             typeArguments = expression.typeArguments.toTypeArgumentsWithSourceInfo()
             typeParameters = calleeSymbol?.typeParameterSymbols ?: return

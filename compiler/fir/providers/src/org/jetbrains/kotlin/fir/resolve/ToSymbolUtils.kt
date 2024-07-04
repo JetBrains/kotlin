@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTagWithFixedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -29,12 +27,21 @@ import org.jetbrains.kotlin.name.ClassId
  *
  * @see ConeClassifierLookupTag
  */
-fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierSymbol<*>? =
-    when (this) {
+fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierSymbol<*>? {
+    return when (this) {
         is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
         is ConeClassifierLookupTagWithFixedSymbol -> this.symbol
         else -> error("missing branch for ${javaClass.name}")
     }
+}
+
+fun ConeClassifierLookupTag.toClassLikeSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
+    return toSymbol(useSiteSession) as? FirClassLikeSymbol<*>
+}
+
+fun ConeClassifierLookupTag.toRegularClassSymbol(useSiteSession: FirSession): FirRegularClassSymbol? {
+    return toSymbol(useSiteSession) as? FirRegularClassSymbol
+}
 
 /**
  * @see toSymbol
@@ -54,24 +61,44 @@ fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSym
 /**
  * @see toSymbol
  */
-fun ConeClassLikeLookupTag.toClassSymbol(session: FirSession): FirClassSymbol<*>? =
-    toSymbol(session) as? FirClassSymbol<*>
+fun ConeClassLikeLookupTag.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
+    return toSymbol(session) as? FirClassSymbol<*>
+}
 
 /**
  * @see toSymbol
  */
-fun ConeClassLikeLookupTag.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? =
-    toSymbol(session) as? FirRegularClassSymbol
+fun ConeClassLikeLookupTag.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
+    return toSymbol(session) as? FirRegularClassSymbol
+}
 
-// ----------------------------------------------- cone type -----------------------------------------------
+fun ConeClassLikeLookupTag.toTypeAliasSymbol(useSiteSession: FirSession): FirTypeAliasSymbol? {
+    return toSymbol(useSiteSession) as? FirTypeAliasSymbol
+}
+
+// ----------------------------------------------- cone type (without expansion) -----------------------------------------------
+
+fun ConeClassLikeType.toSymbol(session: FirSession): FirClassLikeSymbol<*>? {
+    return lookupTag.toSymbol(session)
+}
 
 fun ConeKotlinType.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
     return (this as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
 }
 
-fun ConeClassLikeType.toSymbol(session: FirSession): FirClassLikeSymbol<*>? {
-    return lookupTag.toSymbol(session)
+fun ConeKotlinType.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? {
+    return toSymbol(session) as? FirClassLikeSymbol
 }
+
+fun ConeKotlinType.toTypeAliasSymbol(session: FirSession): FirTypeAliasSymbol? {
+    return toSymbol(session) as? FirTypeAliasSymbol
+}
+
+fun ConeKotlinType.toTypeParameterSymbol(session: FirSession): FirTypeParameterSymbol? {
+    return toSymbol(session) as? FirTypeParameterSymbol
+}
+
+// ----------------------------------------------- cone type (with expansion) -----------------------------------------------
 
 fun ConeKotlinType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
     return (this as? ConeClassLikeType)?.toClassSymbol(session)

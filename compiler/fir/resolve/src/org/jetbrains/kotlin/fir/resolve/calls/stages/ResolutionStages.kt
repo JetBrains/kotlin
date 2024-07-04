@@ -9,14 +9,17 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.isInfix
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
-import org.jetbrains.kotlin.fir.resolve.inference.*
+import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
+import org.jetbrains.kotlin.fir.resolve.inference.isAnyOfDelegateOperators
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -475,7 +478,7 @@ object CheckDslScopeViolation : ResolutionStage() {
     private fun MutableSet<ClassId>.collectDslMarkerAnnotations(context: ResolutionContext, annotations: Collection<FirAnnotation>) {
         for (annotation in annotations) {
             val annotationClass =
-                annotation.annotationTypeRef.coneType.fullyExpandedType(context.session).toSymbol(context.session) as? FirClassSymbol
+                annotation.annotationTypeRef.coneType.fullyExpandedType(context.session).toClassSymbol(context.session)
                     ?: continue
             if (annotationClass.hasAnnotation(dslMarkerClassId, context.session)) {
                 add(annotationClass.classId)

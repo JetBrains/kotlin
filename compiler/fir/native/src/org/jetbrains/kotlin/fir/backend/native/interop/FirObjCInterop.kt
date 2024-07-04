@@ -128,7 +128,7 @@ internal fun FirFunctionSymbol<*>.getInitMethodIfObjCConstructor(session: FirSes
             this
 
 fun FirProperty.isExternalObjCClassProperty(session: FirSession): Boolean =
-        (containingClassLookupTag()?.toSymbol(session) as? FirClassSymbol)?.isExternalObjCClass(session) == true
+        containingClassLookupTag()?.toClassSymbol(session)?.isExternalObjCClass(session) == true
 
 internal fun FirClassSymbol<*>.isExternalObjCClass(session: FirSession): Boolean =
         isObjCClass(session) &&
