@@ -310,11 +310,10 @@ fun FirVariable.toComponentCall(
     }
 }
 
-val FirClassBuilder.ownerRegularOrAnonymousObjectSymbol
+val FirClassBuilder.ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<FirClass>
     get() = when (this) {
         is FirAnonymousObjectBuilder -> symbol
         is FirRegularClassBuilder -> symbol
-        else -> null
     }
 
 fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
