@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.classLikeLookupTag
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -61,7 +61,7 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
 
     private fun FirBasedSymbol<*>.visibilityFromAnnotation(): Visibility? {
         val annotation = annotations.firstOrNull {
-            it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == AllPublicClassId
+            it.annotationTypeRef.coneType.classLikeLookupTag?.classId == AllPublicClassId
         } as? FirAnnotationCall ?: return null
         val argument = annotation.arguments.firstOrNull() as? FirPropertyAccessExpression ?: return null
         val reference = argument.calleeReference as? FirNamedReference ?: return null

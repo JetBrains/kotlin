@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
+import org.jetbrains.kotlin.fir.scopes.impl.chooseIntersectionVisibilityOrNull
+import org.jetbrains.kotlin.fir.scopes.impl.isAbstractAccordingToRawStatus
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -131,7 +133,7 @@ class JavaOverrideChecker internal constructor(
         // Both candidate and base are not primitive
         if (!candidateHasPrimitiveReturnType) return true
 
-        return (candidateType as? ConeClassLikeType)?.lookupTag == (baseType as? ConeClassLikeType)?.lookupTag
+        return candidateType.classLikeLookupTag == baseType.classLikeLookupTag
     }
 
     private fun ConeKotlinType.isPrimitiveInJava(isReturnType: Boolean): Boolean = with(context) {

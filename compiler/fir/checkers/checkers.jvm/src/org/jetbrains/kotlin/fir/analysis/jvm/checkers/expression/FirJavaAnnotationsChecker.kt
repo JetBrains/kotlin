@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
+import org.jetbrains.kotlin.fir.types.classLikeLookupTag
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -38,7 +38,7 @@ object FirJavaAnnotationsChecker : FirAnnotationChecker(MppCheckerKind.Common) {
     override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.containingDeclarations.lastOrNull()?.source?.kind != KtRealSourceElementKind) return
         val annotationType = expression.annotationTypeRef.coneType.abbreviatedTypeOrSelf
-        val classSymbol = (annotationType as? ConeClassLikeType)?.lookupTag?.toClassSymbol(context.session) ?: return
+        val classSymbol = annotationType.classLikeLookupTag?.toClassSymbol(context.session) ?: return
         if (classSymbol.origin !is FirDeclarationOrigin.Java) return
 
         val lookupTag = classSymbol.toLookupTag()

@@ -293,11 +293,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         require(this is ConeTypeParameterLookupTag)
         val bounds = this.typeParameterSymbol.resolvedBounds.map { it.coneType }
         return bounds.firstOrNull {
-            val classSymbol = (it as? ConeClassLikeType)
-                ?.fullyExpandedType(session)
-                ?.lookupTag
-                ?.toRegularClassSymbol(session)
-                ?: return@firstOrNull false
+            val classSymbol = it.toRegularClassSymbol(session) ?: return@firstOrNull false
             val kind = classSymbol.fir.classKind
             kind != ClassKind.INTERFACE && kind != ClassKind.ANNOTATION_CLASS
         } ?: bounds.first()

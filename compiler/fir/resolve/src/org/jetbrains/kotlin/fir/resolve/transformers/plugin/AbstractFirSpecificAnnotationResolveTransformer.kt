@@ -333,13 +333,13 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
         val requiredAnnotationsWithArguments = session.annotationPlatformSupport.requiredAnnotationsWithArguments
 
-        if (transformedAnnotationType.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId in requiredAnnotationsWithArguments) {
+        if (transformedAnnotationType.type.classLikeLookupTag?.classId in requiredAnnotationsWithArguments) {
             argumentsTransformer.transformAnnotation(annotationCall, ResolutionMode.ContextDependent)
         }
     }
 
     private fun resolveAnnotationsOnAnnotationIfNeeded(annotationTypeRef: FirResolvedTypeRef) {
-        val symbol = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toRegularClassSymbol(session) ?: return
+        val symbol = annotationTypeRef.type.classLikeLookupTag?.toRegularClassSymbol(session) ?: return
         computationSession.resolveAnnotationsOnAnnotationIfNeeded(symbol, scopeSession)
     }
 

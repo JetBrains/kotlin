@@ -335,7 +335,7 @@ internal class ClassMemberGenerator(
         // Unwrap substitution overrides from both derived class and a superclass
         val constructorSymbol = referencedSymbol
             .unwrapCallRepresentative(c, referencedSymbol.containingClassLookupTag())
-            .unwrapCallRepresentative(c, (referencedSymbol.resolvedReturnType as? ConeClassLikeType)?.lookupTag)
+            .unwrapCallRepresentative(c, referencedSymbol.resolvedReturnType.classLikeLookupTag)
 
         check(constructorSymbol is FirConstructorSymbol)
 

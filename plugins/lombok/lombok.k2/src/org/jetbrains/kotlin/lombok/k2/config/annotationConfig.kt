@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.classLikeLookupTag
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.ACCESS
@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.name.ClassId
  */
 
 fun List<FirAnnotation>.findAnnotation(classId: ClassId): FirAnnotation? {
-    return firstOrNull { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == classId }
+    return firstOrNull { it.annotationTypeRef.coneType.classLikeLookupTag?.classId == classId }
 }
 
 abstract class ConeAnnotationCompanion<T>(val name: ClassId) {

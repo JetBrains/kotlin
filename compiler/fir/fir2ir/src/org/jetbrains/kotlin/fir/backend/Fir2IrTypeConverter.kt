@@ -248,10 +248,10 @@ class Fir2IrTypeConverter(
 
     private fun ConeFlexibleType.hasFlexibleArrayElementVariance(): Boolean =
         lowerBound.let { lowerBound ->
-            lowerBound is ConeClassLikeType && lowerBound.lookupTag.classId == StandardClassIds.Array &&
+            lowerBound.classLikeLookupTag?.classId == StandardClassIds.Array &&
                     lowerBound.typeArguments.single().kind == ProjectionKind.INVARIANT
         } && upperBound.let { upperBound ->
-            upperBound is ConeClassLikeType && upperBound.lookupTag.classId == StandardClassIds.Array &&
+            upperBound.classLikeLookupTag?.classId == StandardClassIds.Array &&
                     upperBound.typeArguments.single().kind == ProjectionKind.OUT
         }
 
@@ -259,7 +259,7 @@ class Fir2IrTypeConverter(
         val commonSupertype = session.typeContext.commonSuperTypeOrNull(resolvedBounds.map { it.type })!!
         val resultType = (commonSupertype as? ConeClassLikeType)?.replaceArgumentsWithStarProjections()
             ?: commonSupertype
-        val approximatedType = (commonSupertype as? ConeSimpleKotlinType)?.let { it.approximateForIrOrSelf(c) } ?: resultType
+        val approximatedType = (commonSupertype as? ConeSimpleKotlinType)?.approximateForIrOrSelf(c) ?: resultType
         return approximatedType.toIrType(c)
     }
 

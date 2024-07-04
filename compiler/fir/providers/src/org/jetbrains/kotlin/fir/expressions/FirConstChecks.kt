@@ -498,8 +498,5 @@ private class FirConstCheckVisitor(
     }
 
     private fun FirCallableSymbol<*>?.getReferencedClassSymbol(): FirBasedSymbol<*>? =
-        this?.resolvedReturnTypeRef
-            ?.coneTypeSafe<ConeLookupTagBasedType>()
-            ?.lookupTag
-            ?.toSymbol(session)
+        this?.resolvedReturnTypeRef?.coneType?.toSymbol(session)
 }

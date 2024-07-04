@@ -975,7 +975,7 @@ class CallAndReferenceGenerator(
         qualifier: FirResolvedQualifier,
         callableReferenceAccess: FirCallableReferenceAccess?,
     ): IrExpression? {
-        val classSymbol = (qualifier.resolvedType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
+        val classSymbol = qualifier.resolvedType.toClassLikeSymbol(session)
 
         if (callableReferenceAccess?.isBound == false) {
             return null

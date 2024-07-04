@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.renderer.ConeIdRendererForDiagnostics
+import org.jetbrains.kotlin.fir.renderer.ConeIdShortRenderer
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForReadability
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
@@ -17,6 +22,12 @@ val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NO
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
 
 val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.lookupTag?.classId
+
+val ConeKotlinType.lookupTag: ConeClassifierLookupTag?
+    get() = (this as? ConeLookupTagBasedType)?.lookupTag
+
+val ConeKotlinType.classLikeLookupTag: ConeClassLikeLookupTag?
+    get() = (this as? ConeClassLikeType)?.lookupTag
 
 /**
  * Recursively visits each [ConeKotlinType] inside (including itself) and performs the given action.
