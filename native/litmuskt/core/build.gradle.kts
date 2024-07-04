@@ -5,8 +5,7 @@ plugins {
 kotlin {
     val nativeTargets = listOf(
         linuxX64(),
-        // 1) no machine currently available 2) CLI library does not support
-//        linuxArm64(),
+        linuxArm64(),
         macosX64(),
         macosArm64(),
     )
