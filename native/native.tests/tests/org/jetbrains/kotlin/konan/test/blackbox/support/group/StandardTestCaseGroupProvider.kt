@@ -221,11 +221,9 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             fixPackageNames(testModules.values, nominalPackageName, testDataFile)
         }
 
-        val lldbSpec = if (testKind == TestKind.STANDALONE_LLDB) parseLLDBSpec(testDataFile, registeredDirectives, settings) else null
+        val outputMatcher = parseOutputRegex(registeredDirectives)
 
-        val outputMatcher = lldbSpec?.let {
-            OutputMatcher(Output.STDOUT) { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
-        } ?: parseOutputRegex(registeredDirectives)
+        val inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
 
         val testCase = TestCase(
             id = TestCaseId.TestDataFile(testDataFile),
@@ -246,7 +244,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 TestKind.STANDALONE_NO_TR -> {
                     NoTestRunnerExtras(
                         entryPoint = parseEntryPoint(registeredDirectives, location),
-                        inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location),
+                        inputDataFile = inputDataFile,
                         arguments = parseProgramArguments(registeredDirectives)
                     )
                 }
@@ -256,7 +254,10 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 TestKind.STANDALONE_LLDB -> {
                     NoTestRunnerExtras(
                         entryPoint = parseEntryPoint(registeredDirectives, location),
-                        arguments = lldbSpec!!.generateCLIArguments(settings.get<LLDB>().prettyPrinters)
+                        arguments = listOf("-b",
+                                           "-o", "command script import ${settings.get<LLDB>().prettyPrinters.absolutePath}",
+                                           *(inputDataFile?.readLines()?.flatMap { listOf("-o", it) } ?: listOf()).toTypedArray()
+                        )
                     )
                 }
             }
@@ -314,7 +315,9 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         ): OutputDataFile? = parseOutputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
 
         private fun computeTestOutputFiltering(testKind: TestKind): TestFiltering = TestFiltering(
-            if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter else TestOutputFilter.NO_FILTERING
+            if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter
+            else if (testKind == TestKind.STANDALONE_LLDB) LLDBTestOutputFilter
+            else TestOutputFilter.NO_FILTERING
         )
     }
 }

@@ -1,0 +1,44 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) command script import <path to lldb script>
+Stop hook #1 added.
+(lldb) b main.kt:9
+Breakpoint 1: where = lldb_canInspectCatchParameter.kexe`kfun:#main(){} + 276 at main.kt:9:17, address = <memory address>
+(lldb) r
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+    frame <frame id>: <memory address> lldb_canInspectCatchParameter.kexe`kfun:#main(){} at main.kt:9:17
+   6   	    try {
+   7   	        throw Exception("message 1")
+   8   	    } catch (e1: Throwable) {
+-> 9   	        println(e1.message)
+    	                ^
+   10  	    }
+   11
+   12  	    try {
+Target 0: (lldb_canInspectCatchParameter.kexe) stopped.
+Process <process id> launched: <path to executable>
+(lldb) fr var
+(ObjHeader *) e1 = [message: ..., cause: ..., stackTrace: ..., stackTraceStrings$delegate: ..., suppressedExceptionsList: ...]
+(ObjHeader *) e2 = NULL
+(lldb) b main.kt:13
+Breakpoint 2: where = lldb_canInspectCatchParameter.kexe`kfun:#main(){} + 308 at main.kt:13:9, address = <memory address>
+(lldb) c
+message 1
+Process <process id> resuming
+Process <process id> stopped
+* thread <thread id>, queue = 'com.apple.main-thread', stop reason = breakpoint 2.1
+    frame <frame id>: <memory address> lldb_canInspectCatchParameter.kexe`kfun:#main(){} at main.kt:13:9
+   10  	    }
+   11
+   12  	    try {
+-> 13  	        throwError()
+    	        ^
+   14  	    } catch (e2: Throwable) {
+   15  	        println(e2.message)
+   16  	    }
+Target 0: (lldb_canInspectCatchParameter.kexe) stopped.
+(lldb) fr var
+(ObjHeader *) e1 = [message: ..., cause: ..., stackTrace: ..., stackTraceStrings$delegate: ..., suppressedExceptionsList: ...]
+(ObjHeader *) e2 = NULL
+(lldb) q

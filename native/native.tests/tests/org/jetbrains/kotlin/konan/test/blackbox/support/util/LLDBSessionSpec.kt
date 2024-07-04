@@ -135,5 +135,22 @@ internal class LLDBSessionSpec private constructor(private val expectedSteps: Li
                 .filterNot(String::isBlank)
                 .map { block -> Step.parse(block, SPEC_COMMAND_PREFIX) }
         )
+
+        fun replaceUnstableIds(lldbOutput: String): String {
+            val executablePathRegexp = Regex("""('\S+\.kexe' \(\S+\))|("\S+\.kexe")""")
+            val lldbScriptPath = Regex("""(\S+/konan_lldb.py)""")
+            val processIdRegex = Regex("""Process \d+""")
+            val threadIdRegex = Regex("""thread #\d+""")
+            val frameIdRegex = Regex("""frame #\d+""")
+            val memoryAddressRegex = Regex("""0x[0-9a-fA-F]+""")
+
+            return lldbOutput
+                .replace(executablePathRegexp, "<path to executable>")
+                .replace(lldbScriptPath, "<path to lldb script>")
+                .replace(processIdRegex, "Process <process id>")
+                .replace(threadIdRegex, "thread <thread id>")
+                .replace(frameIdRegex, "frame <frame id>")
+                .replace(memoryAddressRegex, "<memory address>")
+        }
     }
 }

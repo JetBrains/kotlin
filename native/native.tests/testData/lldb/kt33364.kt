@@ -1,6 +1,8 @@
 // KIND: STANDALONE_LLDB
 // FREE_COMPILER_ARGS: -Xg-generate-debug-trampoline=enable
 // FIR_IDENTICAL
+// INPUT_DATA_FILE: kt33364.in
+// OUTPUT_DATA_FILE: kt33364.out
 // FILE: kt33364.kt
 fun main() {
     val param = 3

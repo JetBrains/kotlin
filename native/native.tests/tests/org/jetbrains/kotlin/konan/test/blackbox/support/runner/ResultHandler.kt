@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.util.convertLineSeparators
+import org.opentest4j.AssertionFailedError
+import org.opentest4j.FileInfo
+import java.nio.charset.StandardCharsets
 
 internal class ResultHandler(
     runResult: RunResult,
@@ -21,9 +26,14 @@ internal class ResultHandler(
             check.apply(testRun, runResult)
         }.filterIsInstance<TestRunCheck.Result.Failed>()
         if (!testRun.expectedFailure) {
-            verifyExpectation(failedResults.isEmpty()) {
-                failedResults.joinToString("\n")
+            val exceptions = failedResults.map {
+                AssertionFailedError(
+                    it.reason,
+                    it.expectedFile?.let { FileInfo(it.absolutePath, it.readText().convertLineSeparators().toByteArray(StandardCharsets.UTF_8)) },
+                    it.actual,
+                )
             }
+            JUnit5Assertions.failAll(exceptions)
         } else {
             val runResultInfo = buildString {
                 appendLine("TestCase Kind: ${testRun.testCase.kind}")
