@@ -1,5 +1,4 @@
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
 
 import kotlin.reflect.KCallable
@@ -92,7 +91,9 @@ fun box(): String {
 
     assertEquals(S("abc"), C::member.callBy(instance, S("a"), "b", S("c")))
     assertEquals(zero, C::memberDefault1_1.callBy(instance, zero))
-    assertEquals(default, C::memberDefault1_1.callByEmpty(instance))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(default, C::memberDefault1_1.callByEmpty(instance))
+    }
     assertEquals(zero, C::memberDefault1_2.callBy(instance, zero))
     assertEquals(default, C::memberDefault1_2.callByEmpty(instance))
     assertEquals(
@@ -105,7 +106,9 @@ fun box(): String {
             0L, zero
         )
     )
-    assertEquals(instance.memberDefault32_1(), C::memberDefault32_1.callByEmpty(instance))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(instance.memberDefault32_1(), C::memberDefault32_1.callByEmpty(instance))
+    }
     assertEquals(
         S("00"),
         C::memberDefault32_2.callBy(
@@ -127,7 +130,9 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertEquals(instance.memberDefault33_1(), C::memberDefault33_1.callByEmpty(instance))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(instance.memberDefault33_1(), C::memberDefault33_1.callByEmpty(instance))
+    }
     assertEquals(
         S("00"),
         C::memberDefault33_2.callBy(

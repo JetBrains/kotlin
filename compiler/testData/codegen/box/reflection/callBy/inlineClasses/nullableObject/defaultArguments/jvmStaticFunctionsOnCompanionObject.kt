@@ -1,6 +1,5 @@
-// TARGET_BACKEND: JVM
+// TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
-// IGNORE_BACKEND: JVM_IR
 // WITH_REFLECT
 
 import kotlin.reflect.KCallable
@@ -103,7 +102,9 @@ fun box(): String {
     val cMembers = I.Companion::class.members.associateBy { it.name }
     assertEquals(S("124"), cMembers.getValue("bar").callBy(I, one, "2", four))
     assertEquals(four, cMembers.getValue("staticDefault1_1").callBy(I, four))
-    assertEquals(default, cMembers.getValue("staticDefault1_1").callByEmpty(I))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(default, cMembers.getValue("staticDefault1_1").callByEmpty(I))
+    }
     assertEquals(four, cMembers.getValue("staticDefault1_2").callBy(I, four))
     assertEquals(default, cMembers.getValue("staticDefault1_2").callByEmpty(I))
     assertEquals(
@@ -116,7 +117,9 @@ fun box(): String {
             0L, zero
         )
     )
-    assertEquals(I.staticDefault32_1(), cMembers.getValue("staticDefault32_1").callByEmpty(I))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(I.staticDefault32_1(), cMembers.getValue("staticDefault32_1").callByEmpty(I))
+    }
     assertEquals(
         S("00"),
         cMembers.getValue("staticDefault32_2").callBy(
@@ -138,7 +141,9 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertEquals(I.staticDefault33_1(), cMembers.getValue("staticDefault33_1").callByEmpty(I))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(I.staticDefault33_1(), cMembers.getValue("staticDefault33_1").callByEmpty(I))
+    }
     assertEquals(
         S("00"),
         cMembers.getValue("staticDefault33_2").callBy(

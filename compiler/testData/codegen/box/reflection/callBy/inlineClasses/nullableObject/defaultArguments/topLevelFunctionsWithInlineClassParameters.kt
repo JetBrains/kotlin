@@ -1,10 +1,10 @@
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
 
 import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @JvmInline
 value class S(val value: String?) {
@@ -84,7 +84,9 @@ fun box(): String {
 
     assertEquals(S("abc"), ::topLevel.callBy(S("a"), "b", S("c")))
     assertEquals(zero, ::topLevelDefault1_1.callBy(zero))
-    assertEquals(default, ::topLevelDefault1_1.callBy(emptyMap()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(default, ::topLevelDefault1_1.callBy(emptyMap()))
+    }
     assertEquals(zero, ::topLevelDefault1_2.callBy(zero))
     assertEquals(default, ::topLevelDefault1_2.callBy(emptyMap()))
     assertEquals(
@@ -96,7 +98,9 @@ fun box(): String {
             0L, zero
         )
     )
-    assertEquals(topLevelDefault32_1(), ::topLevelDefault32_1.callBy(emptyMap()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(topLevelDefault32_1(), ::topLevelDefault32_1.callBy(emptyMap()))
+    }
     assertEquals(
         S("00"),
         ::topLevelDefault32_2.callBy(
@@ -116,7 +120,9 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertEquals(topLevelDefault33_1(), ::topLevelDefault33_1.callBy(emptyMap()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(topLevelDefault33_1(), ::topLevelDefault33_1.callBy(emptyMap()))
+    }
     assertEquals(
         S("00"),
         ::topLevelDefault33_2.callBy(

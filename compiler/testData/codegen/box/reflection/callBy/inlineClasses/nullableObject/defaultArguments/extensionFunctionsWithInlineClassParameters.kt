@@ -1,5 +1,4 @@
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
 
 import kotlin.reflect.KCallable
@@ -217,15 +216,21 @@ fun box(): String {
     assertEquals(one, S::extension1_0.callBy(one))
     assertEquals(one, S::extension2_0.callBy(one))
     assertEquals(one, C::extensionDefault1_1.callBy(c, one))
-    assertEquals(default, C::extensionDefault1_1.callByEmpty(c))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(default, C::extensionDefault1_1.callByEmpty(c))
+    }
     assertEquals(one, C::extensionDefault1_2.callBy(c, one))
     assertEquals(default, C::extensionDefault1_2.callByEmpty(c))
     assertEquals(S("12"), S::extensionDefault1_1_1.callBy(one, two))
-    assertEquals(S("1-default"), S::extensionDefault1_1_1.callByEmpty(one))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(S("1-default"), S::extensionDefault1_1_1.callByEmpty(one))
+    }
     assertEquals(S("12"), S::extensionDefault1_1_2.callBy(one, two))
     assertEquals(S("1-default"), S::extensionDefault1_1_2.callByEmpty(one))
     assertEquals(S("12"), S::extensionDefault2_1_1.callBy(one, two))
-    assertEquals(S("1-default"), S::extensionDefault2_1_1.callByEmpty(one))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(S("1-default"), S::extensionDefault2_1_1.callByEmpty(one))
+    }
     assertEquals(S("12"), S::extensionDefault2_1_2.callBy(one, two))
     assertEquals(S("1-default"), S::extensionDefault2_1_2.callByEmpty(one))
     assertEquals(
@@ -316,7 +321,9 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertEquals(c.extensionDefault33_1(), C::extensionDefault33_1.callByEmpty(c))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(c.extensionDefault33_1(), C::extensionDefault33_1.callByEmpty(c))
+    }
     assertEquals(
         S("00"),
         C::extensionDefault33_2.callBy(
@@ -338,7 +345,9 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertEquals(zero.extensionDefault1_33_1(), S::extensionDefault1_33_1.callByEmpty(zero))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(zero.extensionDefault1_33_1(), S::extensionDefault1_33_1.callByEmpty(zero))
+    }
     assertEquals(
         S("000"),
         S::extensionDefault1_33_2.callBy(
@@ -360,7 +369,9 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertEquals(zero.extensionDefault2_33_1(), S::extensionDefault2_33_1.callByEmpty(zero))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(zero.extensionDefault2_33_1(), S::extensionDefault2_33_1.callByEmpty(zero))
+    }
     assertEquals(
         S("000"),
         S::extensionDefault2_33_2.callBy(
@@ -376,15 +387,21 @@ fun box(): String {
     assertEquals(one, one::extension1_0.callBy())
     assertEquals(one, one::extension2_0.callBy())
     assertEquals(one, c::extensionDefault1_1.callBy(one))
-    assertEquals(default, c::extensionDefault1_1.callBy(emptyMap()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(default, c::extensionDefault1_1.callBy(emptyMap()))
+    }
     assertEquals(one, c::extensionDefault1_2.callBy(one))
     assertEquals(default, c::extensionDefault1_2.callBy(emptyMap()))
     assertEquals(S("12"), one::extensionDefault1_1_1.callBy(two))
-    assertEquals(S("1-default"), one::extensionDefault1_1_1.callBy(emptyMap()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(S("1-default"), one::extensionDefault1_1_1.callBy(emptyMap()))
+    }
     assertEquals(S("12"), one::extensionDefault1_1_2.callBy(two))
     assertEquals(S("1-default"), one::extensionDefault1_1_2.callBy(emptyMap()))
     assertEquals(S("12"), one::extensionDefault2_1_1.callBy(two))
-    assertEquals(S("1-default"), one::extensionDefault2_1_1.callBy(emptyMap()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(S("1-default"), one::extensionDefault2_1_1.callBy(emptyMap()))
+    }
     assertEquals(S("12"), one::extensionDefault2_1_2.callBy(two))
     assertEquals(S("1-default"), one::extensionDefault2_1_2.callBy(emptyMap()))
     assertEquals(
@@ -468,7 +485,9 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertEquals(c.extensionDefault33_1(), c::extensionDefault33_1.callBy(emptyMap()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(c.extensionDefault33_1(), c::extensionDefault33_1.callBy(emptyMap()))
+    }
     assertEquals(
         S("00"),
         c::extensionDefault33_2.callBy(
@@ -488,7 +507,9 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertEquals(zero.extensionDefault1_33_1(), zero::extensionDefault1_33_1.callBy(emptyMap()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(zero.extensionDefault1_33_1(), zero::extensionDefault1_33_1.callBy(emptyMap()))
+    }
     assertEquals(
         S("000"),
         zero::extensionDefault1_33_2.callBy(
@@ -508,7 +529,9 @@ fun box(): String {
             0L, 0L, zero
         )
     )
-    assertEquals(zero.extensionDefault2_33_1(), zero::extensionDefault2_33_1.callBy(emptyMap()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(zero.extensionDefault2_33_1(), zero::extensionDefault2_33_1.callBy(emptyMap()))
+    }
     assertEquals(
         S("000"),
         zero::extensionDefault2_33_2.callBy(

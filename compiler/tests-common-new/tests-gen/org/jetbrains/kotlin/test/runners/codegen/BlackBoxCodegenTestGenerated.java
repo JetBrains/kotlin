@@ -46662,12 +46662,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
-            @TestMetadata("extensionFunctionsWithInlineClassParameters.kt")
-            public void testExtensionFunctionsWithInlineClassParameters() {
-              runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/extensionFunctionsWithInlineClassParameters.kt");
-            }
-
-            @Test
             @TestMetadata("fieldAccessors.kt")
             public void testFieldAccessors() {
               runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/fieldAccessors.kt");
@@ -46677,30 +46671,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("jvmStaticFieldInObject.kt")
             public void testJvmStaticFieldInObject() {
               runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/jvmStaticFieldInObject.kt");
-            }
-
-            @Test
-            @TestMetadata("jvmStaticFunctionsOnCompanionObject.kt")
-            public void testJvmStaticFunctionsOnCompanionObject() {
-              runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/jvmStaticFunctionsOnCompanionObject.kt");
-            }
-
-            @Test
-            @TestMetadata("jvmStaticFunctionsOnObject.kt")
-            public void testJvmStaticFunctionsOnObject() {
-              runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/jvmStaticFunctionsOnObject.kt");
-            }
-
-            @Test
-            @TestMetadata("memberFunctionsWithInlineClassParameters.kt")
-            public void testMemberFunctionsWithInlineClassParameters() {
-              runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/memberFunctionsWithInlineClassParameters.kt");
-            }
-
-            @Test
-            @TestMetadata("topLevelFunctionsWithInlineClassParameters.kt")
-            public void testTopLevelFunctionsWithInlineClassParameters() {
-              runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/topLevelFunctionsWithInlineClassParameters.kt");
             }
           }
         }
