@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest.MyClasspathProvider
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.fir.dataframe.services.TemporaryDirectoryManagerImplFixed
 import org.jetbrains.kotlin.fir.dataframe.services.classpath.classpathFromClassloader
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_DEXING
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.initIdeaConfiguration
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentBasedStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
@@ -48,6 +48,7 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
         builder.useConfigurators(::DataFramePluginAnnotationsProvider)
         builder.useConfigurators(::ExperimentalExtensionRegistrarConfigurator)
         builder.useCustomRuntimeClasspathProviders(::MyClasspathProvider)
+        builder.useAdditionalSourceProviders(::TestUtilsSourceProvider)
     }
 
     override fun runTest(filePath: String) {
@@ -64,6 +65,16 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
 
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
         return EnvironmentBasedStandardLibrariesPathProvider
+    }
+
+    class TestUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+        companion object {
+            const val COMMON_SOURCE_PATH = "testData/testUtils.kt"
+        }
+
+        override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+            return listOf(File(COMMON_SOURCE_PATH).toTestFile())
+        }
     }
 }
 
