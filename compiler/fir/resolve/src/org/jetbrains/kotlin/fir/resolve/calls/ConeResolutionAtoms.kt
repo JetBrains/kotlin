@@ -16,13 +16,17 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
+import org.jetbrains.kotlin.fir.resolve.calls.stages.FirFakeArgumentForCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 //  -------------------------- Atoms --------------------------
 
@@ -48,28 +52,59 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
     companion object {
         @JvmName("createRawAtomNullable")
         fun createRawAtom(expression: FirExpression?): ConeResolutionAtom? {
-            return expression?.let { createRawAtom(it) }
+            return createRawAtom(expression, allowUnresolvedExpression = false)
         }
 
         fun createRawAtom(expression: FirExpression): ConeResolutionAtom {
+            return createRawAtom(expression, allowUnresolvedExpression = false)!!
+        }
+
+        /**
+         * Creation of atoms based on potentially unresolved arguments is unsafe, as most of the atoms consumers
+         *   expect that `ConeResolutionAtom.expression.resolvedType` is initialized. This way of atom creation
+         *   is allowed to use only for creating arguments mapping with a condition that those atoms won't be used
+         *   in the further resolution pipeline (like in `CheckArguments` stage or in call completion)
+         *
+         * The only known case for such potentially unresolved atoms is annotation resolution, which pipeline
+         *   is following:
+         * - create argument/parameter mapping
+         * - analyze arguments with an expected type from corresponding parameters
+         * - run proper resolution sequence for annotation constructor call (with creation of new atoms)
+         */
+        @UnsafeExpressionUtility
+        fun createRawAtomForPotentiallyUnresolvedExpression(expression: FirExpression): ConeResolutionAtom {
+            return createRawAtom(expression, allowUnresolvedExpression = true)!!
+        }
+
+        private fun createRawAtom(expression: FirExpression?, allowUnresolvedExpression: Boolean): ConeResolutionAtom? {
             return when (expression) {
+                null -> null
                 is FirAnonymousFunctionExpression -> ConeResolutionAtomWithPostponedChild(expression)
                 is FirCallableReferenceAccess -> when {
-                    expression.isResolved -> ConeSimpleLeafResolutionAtom(expression)
+                    expression.isResolved -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                     else -> ConeResolutionAtomWithPostponedChild(expression)
                 }
                 is FirSafeCallExpression -> ConeResolutionAtomWithSingleChild(
                     expression,
-                    createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression())
+                    createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression(), allowUnresolvedExpression)
                 )
                 is FirResolvable -> when (val candidate = expression.candidate()) {
-                    null -> ConeSimpleLeafResolutionAtom(expression)
+                    null -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
                     else -> ConeAtomWithCandidate(expression, candidate)
                 }
-                is FirWrappedArgumentExpression -> ConeResolutionAtomWithSingleChild(expression, createRawAtom(expression.expression))
-                is FirErrorExpression -> ConeResolutionAtomWithSingleChild(expression, createRawAtom(expression.expression))
-                is FirBlock -> ConeResolutionAtomWithSingleChild(expression, createRawAtom(expression.lastExpression))
-                else -> ConeSimpleLeafResolutionAtom(expression)
+                is FirWrappedArgumentExpression -> ConeResolutionAtomWithSingleChild(
+                    expression,
+                    createRawAtom(expression.expression, allowUnresolvedExpression)
+                )
+                is FirErrorExpression -> ConeResolutionAtomWithSingleChild(
+                    expression,
+                    createRawAtom(expression.expression, allowUnresolvedExpression)
+                )
+                is FirBlock -> ConeResolutionAtomWithSingleChild(
+                    expression,
+                    createRawAtom(expression.lastExpression, allowUnresolvedExpression)
+                )
+                else -> ConeSimpleLeafResolutionAtom(expression, allowUnresolvedExpression)
             }
         }
     }
@@ -77,11 +112,20 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
 
 class ConeResolutionAtomWithSingleChild(override val expression: FirExpression, val subAtom: ConeResolutionAtom?) : ConeResolutionAtom()
 
-class ConeSimpleLeafResolutionAtom(override val expression: FirExpression) : ConeResolutionAtom() {
-// TODO: investigate possibility to enable this check. KT-69557
-//    init {
-//        check(fir.isResolved) { "ConeResolvedAtom should be created only for resolved expressions" }
-//    }
+class ConeSimpleLeafResolutionAtom(override val expression: FirExpression, allowUnresolvedExpression: Boolean) : ConeResolutionAtom() {
+    init {
+        if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+            checkWithAttachment(
+                allowUnresolvedExpression ||
+                        expression.unwrapArgument() is FirFakeArgumentForCallableReference ||
+                        expression is FirArrayLiteral || // TODO: this check should be eliminated, KT-65085
+                        expression.isResolved,
+                { "ConeResolvedAtom should be created only for resolved expressions" }
+            ) {
+                withFirEntry("expression", expression)
+            }
+        }
+    }
 }
 
 //  -------------------------- Not-resolved atoms --------------------------

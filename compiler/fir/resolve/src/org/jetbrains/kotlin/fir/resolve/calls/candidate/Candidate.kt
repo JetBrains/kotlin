@@ -279,7 +279,7 @@ class Candidate(
         }
 
         val newExpression = this.expression.tryToSetSourceForImplicitReceiver() ?: return this
-        return ConeSimpleLeafResolutionAtom(newExpression)
+        return ConeSimpleLeafResolutionAtom(newExpression, allowUnresolvedExpression = false)
     }
 
     // ---------------------------------------- Backing field ----------------------------------------
