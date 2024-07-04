@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.*
+import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.random.Random
@@ -99,6 +100,29 @@ class FastJarFSTest : TestCase() {
         }
         // Asserting that core jar FS still behaves the same way as the "emulation" implemented in FastJarFS
         Assert.assertTrue(errFromCoreJarFs.contains("WARN: zip file is empty"))
+    }
+
+    fun testPlainDecoding() {
+        val fs = fs ?: return
+        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val jarFile = File(tmpDir, "tmp.jar")
+
+        val data = "someFlatData"
+        ZipOutputStream(FileOutputStream(jarFile)).use { out ->
+            val buf = data.toByteArray()
+            out.setMethod(ZipOutputStream.STORED)
+            val entry = ZipEntry("flat.txt").apply {
+                size = buf.size.toLong()
+                compressedSize = buf.size.toLong()
+                val crc32compute = CRC32()
+                crc32compute.update(buf)
+                crc = crc32compute.value
+            }
+            out.putNextEntry(entry)
+            out.write(buf)
+            out.closeEntry()
+        }
+        assertEquals(data, String(fs.findFileByPath(jarFile.absolutePath + "!/flat.txt")!!.contentsToByteArray()))
     }
 
     fun testInterleaveSmallAndBigJarEntriesInOrder() {

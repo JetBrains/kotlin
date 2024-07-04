@@ -40,12 +40,13 @@ internal fun LargeDynamicMappedBuffer.contentsToByteArray(
             "Reading files bigger than Int.MAX_VALUE - $startPos is not supported yet"
         }
 
-        val compressed = getBytes(startPos, zipEntryDescription.compressedSize.toInt())
-
         when (zipEntryDescription.compressionKind) {
             ZipEntryDescription.CompressionKind.DEFLATE -> {
                 val inflater = Inflater(true)
-                inflater.setInput(compressed, 0, zipEntryDescription.compressedSize.toInt())
+                // Note that starting from JDK 16 it is possible to call MappedByteBuffer.slice to get a "sub-buffer" and also
+                // use it directly with inflater.setInput, which would avoid copying of the data
+                // TODO: consider implementing (maybe JDK-specific) optimization that avoids unnecessary copying (see KT-69758)
+                inflater.setInput(getBytes(startPos, zipEntryDescription.compressedSize.toInt()))
 
                 val result = ByteArray(zipEntryDescription.uncompressedSize.toInt())
 
@@ -55,7 +56,7 @@ internal fun LargeDynamicMappedBuffer.contentsToByteArray(
                 result
             }
 
-            ZipEntryDescription.CompressionKind.PLAIN -> compressed.copyOf(zipEntryDescription.compressedSize.toInt())
+            ZipEntryDescription.CompressionKind.PLAIN -> getBytes(startPos, zipEntryDescription.compressedSize.toInt())
         }
     }
 
