@@ -157,8 +157,8 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             return destructuringDeclaration.entries.indexOf(this)
         }
 
-        fun convertAnonymousInitializer(element: KtAnonymousInitializer, containingDeclaration: FirDeclaration?): FirAnonymousInitializer {
-            return buildAnonymousInitializer(element, containingDeclaration?.symbol)
+        fun convertAnonymousInitializer(element: KtAnonymousInitializer, containingDeclaration: FirDeclaration): FirAnonymousInitializer {
+            return buildAnonymousInitializer(element, containingDeclaration.symbol)
         }
 
         private fun extractContructorConversionParams(
@@ -294,7 +294,12 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     val firFile = visitor.convertElement(declarationToBuild, originalDeclaration) as FirFile
                     firFile.codeFragment
                 }
-                is KtAnonymousInitializer -> visitor.convertAnonymousInitializer(declarationToBuild, containingDeclaration)
+                is KtAnonymousInitializer -> {
+                    requireWithAttachment(containingDeclaration != null, { "Containing declaration is null" }) {
+                        withPsiEntry("elementToBuild.txt", declarationToBuild)
+                    }
+                    visitor.convertAnonymousInitializer(declarationToBuild, containingDeclaration)
+                }
                 else -> visitor.convertElement(declarationToBuild, originalDeclaration)
             } as FirDeclaration
         }

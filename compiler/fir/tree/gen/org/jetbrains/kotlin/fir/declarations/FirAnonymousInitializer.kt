@@ -31,7 +31,7 @@ abstract class FirAnonymousInitializer : FirDeclaration(), FirControlFlowGraphOw
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val body: FirBlock?
     abstract override val symbol: FirAnonymousInitializerSymbol
-    abstract val containingDeclarationSymbol: FirBasedSymbol<*>?
+    abstract val containingDeclarationSymbol: FirBasedSymbol<*>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnonymousInitializer(this, data)

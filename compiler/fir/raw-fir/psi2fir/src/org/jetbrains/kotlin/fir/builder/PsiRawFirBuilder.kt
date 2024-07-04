@@ -2223,10 +2223,6 @@ open class PsiRawFirBuilder(
             }
         }
 
-        override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: FirElement?): FirElement {
-            return buildAnonymousInitializer(initializer, containingDeclarationSymbol = null)
-        }
-
         /**
          * Builds [FirAnonymousInitializer] from [KtAnonymousInitializer]
          *
@@ -2237,7 +2233,7 @@ open class PsiRawFirBuilder(
          */
         protected fun buildAnonymousInitializer(
             initializer: KtAnonymousInitializer,
-            containingDeclarationSymbol: FirBasedSymbol<*>?,
+            containingDeclarationSymbol: FirBasedSymbol<*>,
             allowLazyBody: Boolean = true,
             isLocal: Boolean = false,
         ): FirAnonymousInitializer = buildAnonymousInitializer {

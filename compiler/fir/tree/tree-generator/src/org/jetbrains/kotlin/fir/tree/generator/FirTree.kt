@@ -709,9 +709,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("body", block, nullable = true, withReplace = true)
         +declaredSymbol(anonymousInitializerSymbolType)
-        // the containing declaration is nullable, because it is not immediately clear how to obtain it in all places in the fir builder
-        // TODO: review and consider making not-nullable (KT-64195)
-        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true) {
+        +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)) {
             withBindThis = false
         }
     }
