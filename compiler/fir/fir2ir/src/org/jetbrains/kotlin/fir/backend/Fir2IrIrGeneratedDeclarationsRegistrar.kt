@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.toRegularClass
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.providedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
@@ -220,7 +220,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     }
 
     private fun IrDeclarationParent.toFirClass(): FirRegularClass? {
-        return (this as? IrClass)?.classIdOrFail?.toLookupTag()?.toRegularClass(session)
+        return (this as? IrClass)?.classIdOrFail?.toLookupTag()?.toRegularClassSymbol(session)?.fir
     }
 
     private fun IrAnnotationContainer.convertAnnotations(): List<FirAnnotation> {
@@ -256,7 +256,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                     val typeParameter = when (val parent = owner.parent) {
                         originalFunction -> convertedFunction.typeParameters[owner.index]
                         is IrClass -> {
-                            val firClass = parent.classIdOrFail.toLookupTag().toRegularClass(session)
+                            val firClass = parent.classIdOrFail.toLookupTag().toRegularClassSymbol(session)?.fir
                                 ?: error("Fir class for ${parent.render()} not found")
                             firClass.typeParameters[owner.index]
                         }

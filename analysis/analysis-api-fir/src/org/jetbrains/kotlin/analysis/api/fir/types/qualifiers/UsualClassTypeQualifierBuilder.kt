@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.containingClassForLocal
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.resolve.toRegularClass
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
@@ -81,7 +81,7 @@ internal object UsualClassTypeQualifierBuilder {
         val designation = mutableListOf<FirClassLikeDeclaration>(this)
         @OptIn(LookupTagInternals::class)
         while (containingClassLookUp != null && containingClassLookUp.classId.isLocal) {
-            val currentClass = containingClassLookUp.toRegularClass(moduleData.session) ?: break
+            val currentClass = containingClassLookUp.toRegularClassSymbol(moduleData.session)?.fir ?: break
             designation.add(currentClass)
             containingClassLookUp = currentClass.containingClassForLocal()
         }

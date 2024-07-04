@@ -241,10 +241,10 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         return createFirFakeOverrideIfNeeded(
             dispatchReceiverLookupTag, originalSymbol
         ) { firFunction ->
-            val containingClass = dispatchReceiverLookupTag.toRegularClass(session)!!
+            val containingClass = dispatchReceiverLookupTag.toRegularClassSymbol(session)!!
             FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
                 session,
-                FirNamedFunctionSymbol(CallableId(containingClass.symbol.classId, originalSymbol.callableId.callableName)),
+                FirNamedFunctionSymbol(CallableId(containingClass.classId, originalSymbol.callableId.callableName)),
                 firFunction,
                 derivedClassLookupTag = dispatchReceiverLookupTag,
                 newDispatchReceiverType = containingClass.defaultType(),
@@ -267,10 +267,10 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         return createFirFakeOverrideIfNeeded(
             dispatchReceiverLookupTag, originalSymbol
         ) { firProperty ->
-            val containingClass = dispatchReceiverLookupTag.toRegularClass(session)!!
+            val containingClass = dispatchReceiverLookupTag.toRegularClassSymbol(session)!!
             FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                 session,
-                FirPropertySymbol(CallableId(containingClass.symbol.classId, originalSymbol.callableId.callableName)),
+                FirPropertySymbol(CallableId(containingClass.classId, originalSymbol.callableId.callableName)),
                 firProperty,
                 derivedClassLookupTag = dispatchReceiverLookupTag,
                 newDispatchReceiverType = containingClass.defaultType(),
@@ -293,7 +293,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         return createFirFakeOverrideIfNeeded(
             dispatchReceiverLookupTag, originalSymbol
         ) { firField ->
-            val containingClass = dispatchReceiverLookupTag.toRegularClass(session)!!
+            val containingClass = dispatchReceiverLookupTag.toRegularClassSymbol(session)!!
             FirFakeOverrideGenerator.createSubstitutionOverrideField(
                 session,
                 firField,

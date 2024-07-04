@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.toRegularClass
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -190,7 +190,7 @@ class Fir2IrDeclarationStorage(
                 return FakeOverrideIdentifier(
                     originalSymbol,
                     dispatchReceiverLookupTag,
-                    dispatchReceiverLookupTag.toRegularClass(c.session)?.isExpect == true
+                    dispatchReceiverLookupTag.toRegularClassSymbol(c.session)?.isExpect == true
                 )
             }
         }
@@ -1052,7 +1052,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun FirCallableDeclaration.computeExternalOrigin(): IrDeclarationOrigin {
-        val containingClass = containingClassLookupTag()?.toRegularClass(session)
+        val containingClass = containingClassLookupTag()?.toRegularClassSymbol(session)
         return when (containingClass?.isJavaOrEnhancement) {
             true -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB

@@ -107,7 +107,7 @@ class FirSamResolver(
     }
 
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
-        val firRegularClass = type.lookupTag.toRegularClass(session) ?: return null
+        val firRegularClass = type.lookupTag.toRegularClassSymbol(session)?.fir ?: return null
 
         val (_, unsubstitutedFunctionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 

@@ -63,9 +63,6 @@ fun ConeClassLikeLookupTag.toClassSymbol(session: FirSession): FirClassSymbol<*>
 fun ConeClassLikeLookupTag.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? =
     toSymbol(session) as? FirRegularClassSymbol
 
-@SymbolInternals
-fun ConeClassLikeLookupTag.toRegularClass(session: FirSession): FirRegularClass? = toRegularClassSymbol(session)?.fir
-
 // ----------------------------------------------- cone type -----------------------------------------------
 
 fun ConeKotlinType.toSymbol(session: FirSession): FirClassifierSymbol<*>? {

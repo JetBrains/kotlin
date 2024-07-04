@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
-import org.jetbrains.kotlin.fir.resolve.toRegularClass
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -133,7 +133,7 @@ class CandidateFactory private constructor(
         if (symbol is FirPropertySymbol &&
             !context.session.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)
         ) {
-            val containingClass = symbol.containingClassLookupTag()?.toRegularClass(context.session)
+            val containingClass = symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.fir
             if (containingClass != null && symbol.fir.isEnumEntries(containingClass)) {
                 result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
