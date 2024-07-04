@@ -18,8 +18,8 @@ external class A : <!EXTERNAL_DELEGATION!>I<!> by O {
 external val topLevelProp by <!EXTERNAL_DELEGATION!>Delegate()<!>
 
 val x by lazy { "1" }
-    external get
+    <!WRONG_EXTERNAL_DECLARATION!>external get<!>
 
 var y by Delegate()
-    external get
-    external set
+    <!WRONG_EXTERNAL_DECLARATION!>external get<!>
+    <!WRONG_EXTERNAL_DECLARATION!>external set<!>

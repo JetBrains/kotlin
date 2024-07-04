@@ -73,10 +73,7 @@ abstract class FirWebCommonExternalChecker(private val allowCompanionInInterface
             }
         }
 
-        if (declaration is FirPropertyAccessor && declaration.isDirectlyExternal(context.session)) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "property accessor", context)
-        } else if (
-            declaration !is FirConstructor &&
+        if (declaration !is FirConstructor &&
             declaration !is FirField &&
             declaration.isPrivateMemberOfExternalClass(context.session)
         ) {
