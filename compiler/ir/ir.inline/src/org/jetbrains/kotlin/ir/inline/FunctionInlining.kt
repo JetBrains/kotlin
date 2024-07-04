@@ -416,7 +416,7 @@ open class FunctionInlining(
                     // `attributeOwnerId` is used to get the original reference instead of a reference on `stub_for_inlining`
                     inlineFunction(immediateCall, inlinedFunction, irFunctionReference.attributeOwnerId)
                 } else {
-                    super.visitExpression(immediateCall).transform(this@FunctionInlining, null)
+                    super.visitExpression(immediateCall)
                 }.doImplicitCastIfNeededTo(irCall.type)
             }
 
