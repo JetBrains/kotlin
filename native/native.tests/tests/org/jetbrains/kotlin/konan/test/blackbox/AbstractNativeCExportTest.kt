@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -46,6 +47,12 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testDir: String) {
         checkTestPrerequisites()
+
+        // https://youtrack.jetbrains.com/issue/KT-69303
+        if (testDir == "native/native.tests/testData/CExport/InterfaceV1/concurrentTerminate/" && HostManager.hostIsMac) {
+            Assumptions.abort<Nothing>("concurrentTerminate flaks on Mac, see KT-69303")
+        }
+
         val testPathFull = getAbsoluteFile(testDir)
         val ktSources = testPathFull.list()!!
             .filter { it.endsWith(".kt") }
