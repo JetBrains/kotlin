@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <string>
 
 #include "Common.h"
 
@@ -164,6 +165,8 @@ struct TypeInfo {
         }
         return true;
     }
+
+    std::string fqName() const;
 #endif
 };
 

@@ -296,10 +296,10 @@ extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
 
 extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    threadData->suspensionData().requestThreadsSuspension("Heap Dump");
+    threadData->suspensionData().requestThreadsSuspension("Memory dump");
     CallsCheckerIgnoreGuard guard;
     // We're in the runnable state, but everything else (including the GC thread) will be suspended.
-    // It's fine to wait for that suspension and execute long running operations (I/O) here.
+    // It's fine to wait for that suspension and execute long-running operations (I/O) here.
     mm::WaitForThreadsSuspension();
     bool success = mm::DumpMemory(fd);
     mm::ResumeThreads();

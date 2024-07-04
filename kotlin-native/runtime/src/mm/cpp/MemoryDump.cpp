@@ -20,6 +20,8 @@
 #include "ThreadData.hpp"
 #include "std_support/Span.hpp"
 
+constexpr auto kTagMemDump = kotlin::logging::Tag::kMemoryDump;
+
 namespace kotlin::mm {
 
 class MemoryDumper {
@@ -28,16 +30,18 @@ public:
 
     // Dumps the memory and returns the success flag.
     void Dump() {
+        RuntimeLogInfo({kTagMemDump}, "Starting to dump memory into %p", file_);
+        
         DumpStr("Kotlin/Native dump 1.0.8");
         DumpBool(konan::isLittleEndian());
         DumpU8(sizeof(void*));
 
-        // Dump global roots.
+        RuntimeLogInfo({kTagMemDump}, "Dumping global roots");
         for (auto value : mm::GlobalRootSet()) {
             DumpTransitively(value);
         }
 
-        // Dump threads and thread roots.
+        RuntimeLogInfo({kTagMemDump}, "Dumping threads and thread roots");
         for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
             DumpThread(thread);
             for (auto value : mm::ThreadRootSet(thread)) {
@@ -45,13 +49,16 @@ public:
             }
         }
 
-        // Dump objects from the heap.
+        RuntimeLogInfo({kTagMemDump}, "Dumping objects from the heap");
         GlobalData::Instance().allocator().TraverseAllocatedObjects([&](auto obj) { DumpTransitively(obj); });
 
-        // Dump extra objects from the heap.
+        RuntimeLogInfo({kTagMemDump}, "Dumping extra objects from the heap");
         GlobalData::Instance().allocator().TraverseAllocatedExtraObjects([&](auto extraObj) { DumpTransitively(extraObj); });
 
+        RuntimeLogInfo({kTagMemDump}, "Dumping enqueued objects");
         DumpEnqueuedObjects();
+        
+        RuntimeLogInfo({kTagMemDump}, "Dumping finished");
     }
 
 private:
@@ -93,17 +100,20 @@ private:
     }
 
     void DumpThread(ThreadData& thread) {
+        RuntimeLogDebug({kTagMemDump}, "Dumping thread %d", thread.threadId());
         DumpU8(TAG_THREAD);
         DumpId(&thread);
     }
 
     void DumpGlobalRoot(GlobalRootSet::Value& value) {
+        RuntimeLogDebug({kTagMemDump}, "Dumping global root: source=%d, object=%p", static_cast<int>(value.source), value.object);
         DumpU8(TAG_GLOBAL_ROOT);
         DumpU8(UInt8(value.source));
         DumpId(value.object);
     }
 
     void DumpThreadRoot(ThreadData& thread, ThreadRootSet::Value& value) {
+        RuntimeLogDebug({kTagMemDump}, "Dumping thread root: source=%d, object=%p", static_cast<int>(value.source), value.object);
         DumpU8(TAG_THREAD_ROOT);
         DumpId(&thread);
         DumpU8(UInt8(value.source));
@@ -111,6 +121,7 @@ private:
     }
 
     void DumpObject(const TypeInfo* type, ObjHeader* obj) {
+        RuntimeLogDebug({kTagMemDump}, "Dumping object %p of type %s", obj, type->fqName().c_str());
         DumpU8(TAG_OBJECT);
         DumpId(obj);
         DumpId(type);
@@ -125,6 +136,7 @@ private:
     }
 
     void DumpArray(const TypeInfo* type, ArrayHeader* arr) {
+        RuntimeLogDebug({kTagMemDump}, "Dumping array %p", arr);
         DumpU8(TAG_ARRAY);
         DumpId(arr);
         DumpId(type);
@@ -151,6 +163,7 @@ private:
     }
 
     void DumpType(const TypeInfo* type) {
+        RuntimeLogDebug({kTagMemDump}, "Dumping type %s", type->fqName().c_str());
         DumpU8(TAG_TYPE);
         DumpId(type);
 
@@ -240,6 +253,7 @@ private:
     }
 
     void DumpTransitively(ExtraObjectData* extraObj) {
+        RuntimeLogDebug({kTagMemDump}, "Dumping extra object %p", extraObj);
         DumpU8(TAG_EXTRA_OBJECT);
         DumpId(extraObj);
 
@@ -359,7 +373,7 @@ bool DumpMemory(int fd) noexcept {
         DumpMemoryOrThrow(fd);
     } catch (const std::system_error& e) {
         success = false;
-        RuntimeLogError({kTagGC}, "Memory dump error: %s", e.what());
+        RuntimeLogError({kTagMemDump}, "Memory dump error: %s", e.what());
     }
 
     return success;

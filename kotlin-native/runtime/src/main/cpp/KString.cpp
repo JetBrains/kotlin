@@ -135,11 +135,7 @@ OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes) {
 
 char* CreateCStringFromString(KConstRef kref) {
   if (kref == nullptr) return nullptr;
-  KString kstring = kref->array();
-  const KChar* utf16 = CharArrayAddressOfElementAt(kstring, 0);
-  std::string utf8;
-  utf8.reserve(kstring->count_);
-  utf8::unchecked::utf16to8(utf16, utf16 + kstring->count_, back_inserter(utf8));
+    std::string utf8 = to_string(kref->array());
   char* result = reinterpret_cast<char*>(std::calloc(1, utf8.size() + 1));
   ::memcpy(result, utf8.c_str(), utf8.size());
   return result;
@@ -479,3 +475,12 @@ KInt Kotlin_String_utf16length(KString message) {
 
 
 } // extern "C"
+
+std::string kotlin::to_string(KString kstring) {
+    RuntimeAssert(kstring->type_info() == theStringTypeInfo, "A Kotlin String expected");
+    const KChar* utf16 = CharArrayAddressOfElementAt(kstring, 0);
+    std::string utf8;
+    utf8.reserve(kstring->count_);
+    utf8::unchecked::utf16to8(utf16, utf16 + kstring->count_, back_inserter(utf8));
+    return utf8;
+}

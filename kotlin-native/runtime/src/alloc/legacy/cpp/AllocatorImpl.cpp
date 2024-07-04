@@ -41,16 +41,14 @@ void alloc::Allocator::ThreadData::clearForTests() noexcept {
 }
 
 void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept {
-    auto iter = impl_->objectFactory().LockForIter();
-    for (auto it = iter.begin(); it != iter.end();) {
-        fn(it->GetObjHeader());
+    for (auto node : impl_->objectFactory().LockForIter()) {
+        fn(node.GetObjHeader());
     }
 }
 
 void alloc::Allocator::TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept {
-    auto iter = impl_->extraObjectDataFactory().LockForIter();
-    for (auto it = iter.begin(); it != iter.end();) {
-        fn(&*it);
+    for (auto& extraObjectData : impl_->extraObjectDataFactory().LockForIter()) {
+        fn(&extraObjectData);
     }
 }
 
