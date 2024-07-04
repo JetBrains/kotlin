@@ -128,7 +128,7 @@ open class FunctionInlining(
             ?: containerScope?.irElement as? IrDeclarationParent
             ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
-        val inliner = Inliner(
+        val inliner = CallInlining(
             expression, actualCallee, currentScope ?: containerScope!!, parent,
             context,
             inlineFunctionResolver,
@@ -155,7 +155,7 @@ open class FunctionInlining(
         return this
     }
 
-    private class Inliner(
+    private class CallInlining(
         val callSite: IrFunctionAccessExpression,
         val callee: IrFunction,
         val currentScope: ScopeWithIr,
