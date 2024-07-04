@@ -139,7 +139,7 @@ abstract class KotlinTargetResourcesPublicationImpl @Inject constructor(
     }
 
     fun setupResourceResolvingForTarget(target: KotlinTarget, compilation: KotlinCompilation<*>): Provider<File> {
-        val prefix = if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) "" else compilation.name
+        val prefix = if (compilation.isMain()) "" else compilation.name.toLowerCase()
         val aggregateResourcesTaskName = lowerCamelCaseName(prefix, target.name, "AggregateResources")
 
         project.locateTask<AggregateResourcesTask>(aggregateResourcesTaskName)?.let {
