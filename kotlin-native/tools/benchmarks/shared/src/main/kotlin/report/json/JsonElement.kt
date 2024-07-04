@@ -143,7 +143,7 @@ sealed class JsonPrimitive : JsonElement() {
  * Class representing JSON literals: numbers, booleans and string.
  * Strings are always quoted.
  */
-data class JsonLiteral internal constructor(
+data class JsonLiteral(
         private val body: Any,
         private val isString: Boolean
 ) : JsonPrimitive() {
