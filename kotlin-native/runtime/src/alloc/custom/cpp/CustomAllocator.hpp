@@ -9,6 +9,7 @@
 #include <atomic>
 #include <cstring>
 
+#include "AllocationSize.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
 #include "Heap.hpp"
@@ -44,7 +45,7 @@ public:
     }
 
 private:
-    uint8_t* Allocate(uint64_t cellCount) noexcept;
+    uint8_t* Allocate(AllocationSize size) noexcept;
     uint8_t* AllocateInSingleObjectPage(uint64_t cellCount) noexcept;
     uint8_t* AllocateInNextFitPage(uint32_t cellCount) noexcept;
     uint8_t* AllocateInFixedBlockPage(uint32_t cellCount) noexcept;

@@ -16,6 +16,7 @@
 #include "Cell.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
+#include "AllocationSize.hpp"
 
 namespace kotlin::alloc {
 
@@ -24,7 +25,7 @@ public:
     static inline constexpr const size_t SIZE = 256 * KiB;
 
     static inline constexpr int cellCount() {
-        return (SIZE - sizeof(NextFitPage)) / sizeof(Cell);
+        return AllocationSize::bytesExactly(SIZE - sizeof(NextFitPage)).inCells();
     }
 
     static inline constexpr int maxBlockSize() {

@@ -10,6 +10,7 @@
 
 #include "CustomLogging.hpp"
 #include "KAssert.h"
+#include "AllocationSize.hpp"
 
 namespace kotlin::alloc {
 
@@ -36,7 +37,7 @@ uint8_t* Cell::TryAllocate(uint32_t cellsNeeded) noexcept {
 void Cell::Deallocate() noexcept {
     CustomAllocDebug("Cell@%p{ allocated = %d, size = %u }::Deallocate()", this, isAllocated_, size_);
     RuntimeAssert(isAllocated_, "Cell is not currently allocated");
-    memset(data_, 0, (size_ - 1) * sizeof(Cell));
+    memset(data_, 0, AllocationSize::cells(size_ - 1).inBytes());
     isAllocated_ = false;
 }
 

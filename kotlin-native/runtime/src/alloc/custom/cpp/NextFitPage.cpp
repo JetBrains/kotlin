@@ -51,7 +51,7 @@ bool NextFitPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueu
     for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
         if (block->isAllocated_) {
             if (SweepObject(block->data_, finalizerQueue, sweepHandle)) {
-                aliveBytes += block->size_ * sizeof(Cell);
+                aliveBytes += AllocationSize::cells(block->size_).inBytes();
             } else {
                 block->Deallocate();
             }
