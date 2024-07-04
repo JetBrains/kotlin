@@ -83,7 +83,6 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : CommonBa
 open class FunctionInlining(
     val context: CommonBackendContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
-    private val innerClassesSupport: InnerClassesSupport? = null,
     private val insertAdditionalImplicitCasts: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
@@ -132,7 +131,6 @@ open class FunctionInlining(
             expression, actualCallee, currentScope ?: containerScope!!, parent,
             context,
             inlineFunctionResolver,
-            innerClassesSupport,
             insertAdditionalImplicitCasts
         )
         return inliner.inline().markAsRegenerated()
@@ -162,7 +160,6 @@ open class FunctionInlining(
         val parent: IrDeclarationParent?,
         val context: CommonBackendContext,
         private val inlineFunctionResolver: InlineFunctionResolver,
-        private val innerClassesSupport: InnerClassesSupport? = null,
         private val insertAdditionalImplicitCasts: Boolean = false,
     ) {
         private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
@@ -492,8 +489,6 @@ open class FunctionInlining(
         private fun ParameterToArgument.andAllOuterClasses(): List<ParameterToArgument> {
             val allParametersReplacements = mutableListOf(this)
 
-            if (innerClassesSupport == null) return allParametersReplacements
-
             var currentThisSymbol = parameter.symbol
             var parameterClassDeclaration = parameter.type.classifierOrNull?.owner as? IrClass ?: return allParametersReplacements
 
@@ -506,7 +501,7 @@ open class FunctionInlining(
                     argumentExpression = IrGetFieldImpl(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
-                        innerClassesSupport.getOuterThisField(parameterClassDeclaration).symbol,
+                        context.innerClassesSupport.getOuterThisField(parameterClassDeclaration).symbol,
                         outerClassThis.type,
                         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, currentThisSymbol)
                     )

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 class JvmIrInliner(context: JvmBackendContext) : FunctionInlining(
     context,
     inlineFunctionResolver = JvmInlineFunctionResolver(context),
-    innerClassesSupport = context.innerClassesSupport,
     regenerateInlinedAnonymousObjects = true,
 ) {
     private val enabled = context.config.enableIrInliner

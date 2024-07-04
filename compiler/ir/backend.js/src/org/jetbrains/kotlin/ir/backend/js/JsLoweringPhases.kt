@@ -205,13 +205,7 @@ private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
 )
 
 private val functionInliningPhase = makeIrModulePhase(
-    {
-        FunctionInlining(
-            it,
-            JsInlineFunctionResolver(it),
-            it.innerClassesSupport,
-        )
-    },
+    { FunctionInlining(it, JsInlineFunctionResolver(it)) },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
     prerequisite = setOf(saveInlineFunctionsBeforeInlining)
