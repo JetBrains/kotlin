@@ -136,6 +136,12 @@ public class CExportDynamicInterfaceV1TestGenerated extends AbstractNativeCExpor
   }
 
   @Test
+  @TestMetadata("programName")
+  public void testProgramName() {
+    runTest("native/native.tests/testData/CExport/InterfaceV1/programName/");
+  }
+
+  @Test
   @TestMetadata("simple")
   public void testSimple() {
     runTest("native/native.tests/testData/CExport/InterfaceV1/simple/");
