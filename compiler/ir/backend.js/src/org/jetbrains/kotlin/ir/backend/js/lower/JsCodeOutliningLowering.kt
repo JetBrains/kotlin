@@ -150,6 +150,20 @@ private class JsCodeOutlineTransformer(
         val outlinedFunction = createOutlinedFunction(kotlinLocalsUsedInJs)
 
         // Building JS Ast function
+        val newFun = createJsFunction(jsStatements, kotlinLocalsUsedInJs)
+
+        backendContext.addOutlinedJsCode(outlinedFunction.symbol, newFun)
+
+        return with(backendContext.createIrBuilder(container.symbol)) {
+            irCall(outlinedFunction).apply {
+                kotlinLocalsUsedInJs.values.forEachIndexed { index, local ->
+                    putValueArgument(index, irGet(local))
+                }
+            }
+        }
+    }
+
+    private fun createJsFunction(jsStatements: List<JsStatement>, kotlinLocalsUsedInJs: Map<JsName, IrValueDeclaration>): JsFunction {
         val lastStatement = jsStatements.findLast { it !is JsSingleLineComment && it !is JsMultiLineComment }
         val newStatements = jsStatements.toMutableList()
         when (lastStatement) {
@@ -166,16 +180,7 @@ private class JsCodeOutlineTransformer(
         kotlinLocalsUsedInJs.keys.forEach { jsName ->
             newFun.parameters.add(JsParameter(jsName))
         }
-
-        backendContext.addOutlinedJsCode(outlinedFunction.symbol, newFun)
-
-        return with(backendContext.createIrBuilder(container.symbol)) {
-            irCall(outlinedFunction).apply {
-                kotlinLocalsUsedInJs.values.forEachIndexed { index, local ->
-                    putValueArgument(index, irGet(local))
-                }
-            }
-        }
+        return newFun
     }
 
     private fun createOutlinedFunction(kotlinLocalsUsedInJs: Map<JsName, IrValueDeclaration>): IrSimpleFunction {
