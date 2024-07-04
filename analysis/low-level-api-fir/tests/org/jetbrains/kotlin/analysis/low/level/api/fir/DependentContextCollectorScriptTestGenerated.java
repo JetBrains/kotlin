@@ -54,6 +54,12 @@ public class DependentContextCollectorScriptTestGenerated extends AbstractDepend
     }
 
     @Test
+    @TestMetadata("defaultImports.test.kts")
+    public void testDefaultImports_test() {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/defaultImports.test.kts");
+    }
+
+    @Test
     @TestMetadata("insideClassBody.kts")
     public void testInsideClassBody() {
       runTest("analysis/low-level-api-fir/testData/contextCollector/scripts/insideClassBody.kts");

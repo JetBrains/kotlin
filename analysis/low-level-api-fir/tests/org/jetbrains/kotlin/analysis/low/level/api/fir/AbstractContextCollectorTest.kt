@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
@@ -267,9 +268,11 @@ abstract class AbstractDependentContextCollectorSourceTest : AbstractContextColl
 }
 
 abstract class AbstractContextCollectorScriptTest : AbstractContextCollectorTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator =
+        AnalysisApiFirCustomScriptDefinitionTestConfigurator(analyseInDependentSession = false)
 }
 
 abstract class AbstractDependentContextCollectorScriptTest : AbstractContextCollectorTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = true)
+    override val configurator: AnalysisApiTestConfigurator =
+        AnalysisApiFirCustomScriptDefinitionTestConfigurator(analyseInDependentSession = true)
 }
