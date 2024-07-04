@@ -188,8 +188,8 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 it.parameters.startParameters.set(getStartParameters(project))
                 it.parameters.reportingSettings.set(reportingSettings)
                 reportingSettings.httpReportSettings?.let { httpSettings ->
-                    if (httpSettings.useExecutorForHttpReport) {
-                        log.warn("`useExecutorForHttpReport` property for test purpose only")
+                    if (!httpSettings.useExecutorForHttpReport) {
+                        log.warn("`kotlin.internal.build.report.http.use.executor` property is for test purposes only")
                     }
 
                     it.parameters.httpParameters.set(

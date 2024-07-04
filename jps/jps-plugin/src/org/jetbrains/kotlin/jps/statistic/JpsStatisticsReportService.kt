@@ -58,7 +58,8 @@ sealed class JpsStatisticsReportService {
             val httpReportPassword = System.getProperty("kotlin.build.report.http.password")
             val includeGitBranch = System.getProperty("kotlin.build.report.http.git_branch", "false").toBoolean()
             val verboseEnvironment = System.getProperty("kotlin.build.report.http.environment.verbose", "false").toBoolean()
-            return HttpReportSettings(httpReportUrl, httpReportUser, httpReportPassword, verboseEnvironment, includeGitBranch)
+            val useExecutorForHttpReports = System.getProperty("kotlin.internal.build.report.http.use.executor", "false").toBoolean()
+            return HttpReportSettings(httpReportUrl, httpReportUser, httpReportPassword, verboseEnvironment, includeGitBranch, useExecutorForHttpReports)
         }
     }
 
