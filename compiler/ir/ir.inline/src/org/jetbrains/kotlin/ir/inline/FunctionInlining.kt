@@ -88,7 +88,6 @@ open class FunctionInlining(
     private val regenerateInlinedAnonymousObjects: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
-    private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // TODO container: IrSymbolDeclaration
@@ -157,6 +156,7 @@ open class FunctionInlining(
         val parent: IrDeclarationParent?,
         val context: CommonBackendContext
     ) {
+        private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
         val copyIrElement = run {
             val typeParameters =
@@ -750,14 +750,14 @@ open class FunctionInlining(
 
             return variable
         }
-    }
 
-    private fun irGetValueWithoutLocation(
-        symbol: IrValueSymbol,
-        origin: IrStatementOrigin? = null,
-    ): IrGetValue {
-        return IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, origin).also {
-            elementsWithLocationToPatch += it
+        private fun irGetValueWithoutLocation(
+            symbol: IrValueSymbol,
+            origin: IrStatementOrigin? = null,
+        ): IrGetValue {
+            return IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, origin).also {
+                elementsWithLocationToPatch += it
+            }
         }
     }
 }
