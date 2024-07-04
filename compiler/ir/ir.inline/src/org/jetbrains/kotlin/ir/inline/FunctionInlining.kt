@@ -116,6 +116,12 @@ open class FunctionInlining(
 
         withinScope(actualCallee) {
             actualCallee.body?.transformChildrenVoid()
+            actualCallee.valueParameters.forEachIndexed { index, param ->
+                if (expression.getValueArgument(index) == null) {
+                    // Default values can recursively reference [callee] - transform only needed.
+                    param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, null)
+                }
+            }
         }
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
@@ -167,7 +173,7 @@ open class FunctionInlining(
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
-        fun inline() = inlineFunction(callSite, callee, callee.originalFunction, true)
+        fun inline() = inlineFunction(callSite, callee, callee.originalFunction)
 
         private fun <E : IrElement> E.copy(): E {
             @Suppress("UNCHECKED_CAST")
@@ -178,19 +184,9 @@ open class FunctionInlining(
             callSite: IrFunctionAccessExpression,
             callee: IrFunction,
             originalInlinedElement: IrElement,
-            performRecursiveInline: Boolean
         ): IrReturnableBlock {
             val copiedCallee = callee.copy().apply {
                 parent = callee.parent
-                if (performRecursiveInline) {
-                    body?.transformChildrenVoid()
-                    valueParameters.forEachIndexed { index, param ->
-                        if (callSite.getValueArgument(index) == null) {
-                            // Default values can recursively reference [callee] - transform only needed.
-                            param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, null)
-                        }
-                    }
-                }
             }
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
@@ -294,9 +290,7 @@ open class FunctionInlining(
 
             fun inlineFunctionExpression(irCall: IrCall, irFunctionExpression: IrFunctionExpression): IrExpression {
                 // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
-                val newExpression = inlineFunction(
-                    irCall, irFunctionExpression.function, irFunctionExpression, false
-                )
+                val newExpression = inlineFunction(irCall, irFunctionExpression.function, irFunctionExpression)
                 // Substitute lambda arguments with target function arguments.
                 return newExpression.transform(this, null)
             }
@@ -420,7 +414,7 @@ open class FunctionInlining(
 
                 return if (inlineFunctionResolver.needsInlining(inlinedFunction)) {
                     // `attributeOwnerId` is used to get the original reference instead of a reference on `stub_for_inlining`
-                    inlineFunction(immediateCall, inlinedFunction, irFunctionReference.attributeOwnerId, performRecursiveInline = true)
+                    inlineFunction(immediateCall, inlinedFunction, irFunctionReference.attributeOwnerId)
                 } else {
                     super.visitExpression(immediateCall).transform(this@FunctionInlining, null)
                 }.doImplicitCastIfNeededTo(irCall.type)
