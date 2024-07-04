@@ -51,7 +51,7 @@ fun test(l : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
 //  Collections.sort<Integer>(ArrayList<Integer>())
   xxx.<!UNRESOLVED_REFERENCE!>Class<!>()
 
-  java.lang.String()
+  java.lang.<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>String<!>()
 }
 
 

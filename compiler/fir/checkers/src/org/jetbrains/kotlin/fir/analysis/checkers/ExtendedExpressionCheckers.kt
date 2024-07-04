@@ -28,6 +28,7 @@ object ExtendedExpressionCheckers : ExpressionCheckers() {
     override val functionCallCheckers: Set<FirFunctionCallChecker>
         get() = setOf(
             EmptyRangeChecker,
+            PlatformClassMappedToKotlinConstructorCallChecker,
         )
 
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
