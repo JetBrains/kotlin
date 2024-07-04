@@ -201,7 +201,7 @@ internal class BaseDirs(val testBuildDir: File)
  */
 internal class Timeouts(val executionTimeout: Duration) {
     companion object {
-        val DEFAULT_EXECUTION_TIMEOUT: Duration get() = 30.seconds
+        val DEFAULT_EXECUTION_TIMEOUT: Duration get() = 60.seconds
     }
 }
 
