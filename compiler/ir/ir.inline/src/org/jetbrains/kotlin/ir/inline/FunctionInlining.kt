@@ -128,7 +128,13 @@ open class FunctionInlining(
             ?: containerScope?.irElement as? IrDeclarationParent
             ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
-        val inliner = Inliner(expression, actualCallee, currentScope ?: containerScope!!, parent, context)
+        val inliner = Inliner(
+            expression, actualCallee, currentScope ?: containerScope!!, parent,
+            context,
+            inlineFunctionResolver,
+            innerClassesSupport,
+            insertAdditionalImplicitCasts
+        )
         return inliner.inline().markAsRegenerated()
     }
 
@@ -149,12 +155,15 @@ open class FunctionInlining(
         return this
     }
 
-    private inner class Inliner(
+    private class Inliner(
         val callSite: IrFunctionAccessExpression,
         val callee: IrFunction,
         val currentScope: ScopeWithIr,
         val parent: IrDeclarationParent?,
-        val context: CommonBackendContext
+        val context: CommonBackendContext,
+        private val inlineFunctionResolver: InlineFunctionResolver,
+        private val innerClassesSupport: InnerClassesSupport? = null,
+        private val insertAdditionalImplicitCasts: Boolean = false,
     ) {
         private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
