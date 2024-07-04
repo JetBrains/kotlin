@@ -19,6 +19,7 @@
 
 #include "Common.h"
 #include "CompilerConstants.hpp"
+#include "std_support/TypeTraits.hpp"
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
@@ -45,19 +46,21 @@ inline RUNTIME_NORETURN void TODOImpl(const char* location, const char* message)
 
 // Use RuntimeAssert() in internal state checks, which could be ignored in production.
 #define RuntimeAssert(condition, format, ...) \
-    do { \
-        switch (::kotlin::compiler::runtimeAssertsMode()) { \
-            case ::kotlin::compiler::RuntimeAssertsMode::kIgnore: break; \
-            case ::kotlin::compiler::RuntimeAssertsMode::kLog: \
-                if (!(condition)) { \
-                    ::kotlin::internal::RuntimeAssertFailedLog(true, CURRENT_SOURCE_LOCATION, format, ##__VA_ARGS__); \
-                } \
-                break; \
-            case ::kotlin::compiler::RuntimeAssertsMode::kPanic: \
-                if (!(condition)) { \
-                    ::kotlin::internal::RuntimeAssertFailedPanic(true, CURRENT_SOURCE_LOCATION, format, ##__VA_ARGS__); \
-                } \
-                break; \
+    do {                                      \
+        if (!::kotlin::std_support::is_constant_evaluated() || !(condition)) { \
+            switch (::kotlin::compiler::runtimeAssertsMode()) { \
+                case ::kotlin::compiler::RuntimeAssertsMode::kIgnore: break; \
+                case ::kotlin::compiler::RuntimeAssertsMode::kLog: \
+                    if (!(condition)) { \
+                        ::kotlin::internal::RuntimeAssertFailedLog(true, CURRENT_SOURCE_LOCATION, format, ##__VA_ARGS__); \
+                    } \
+                    break; \
+                case ::kotlin::compiler::RuntimeAssertsMode::kPanic: \
+                    if (!(condition)) { \
+                        ::kotlin::internal::RuntimeAssertFailedPanic(true, CURRENT_SOURCE_LOCATION, format, ##__VA_ARGS__); \
+                    } \
+                    break; \
+            } \
         } \
     } while (false)
 

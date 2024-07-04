@@ -33,9 +33,7 @@ public:
     }
     static constexpr AllocationSize bytesExactly(uint64_t bytes) {
         AllocationSize atLeast = bytesAtLeast(bytes);
-        if (atLeast.inBytes() != bytes) {
-            RuntimeFail("The allocations size %" PRIu64 " must be a multiple of Cell size", bytes);
-        }
+        RuntimeAssert(atLeast.inBytes() == bytes, "The allocations size %" PRIu64 " must be a multiple of Cell size", bytes);
         return atLeast;
     }
 
@@ -61,12 +59,12 @@ public:
     constexpr AllocationSize operator+(const AllocationSize& other) const noexcept { return AllocationSize{*this} += other; }
 
 
-    AllocationSize& operator-=(const AllocationSize& other) noexcept {
+    constexpr AllocationSize& operator-=(const AllocationSize& other) noexcept {
         RuntimeAssert(cells_ >= other.cells_, "Subtraction would cause a negative value");
         cells_ -= other.cells_;
         return *this;
     }
-    AllocationSize operator-(const AllocationSize& other) const noexcept { return AllocationSize{*this} -= other; }
+    constexpr AllocationSize operator-(const AllocationSize& other) const noexcept { return AllocationSize{*this} -= other; }
 
     constexpr AllocationSize& operator*=(uint32_t multiplier) noexcept {
         cells_ *= multiplier;
@@ -92,5 +90,7 @@ static_assert(AllocationSize::bytesExactly(37 * sizeof(Cell)).inBytes() == 37 * 
 
 static_assert(AllocationSize::cells(3) + AllocationSize::cells(7) == AllocationSize::cells(10));
 static_assert(AllocationSize::cells(3) * 7 == AllocationSize::cells(21));
+
+static_assert((AllocationSize::cells(37) - AllocationSize::cells(37)).inBytes() == 0);
 
 }
