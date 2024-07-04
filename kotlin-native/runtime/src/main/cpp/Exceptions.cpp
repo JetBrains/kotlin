@@ -81,6 +81,10 @@ void RUNTIME_NORETURN terminateWithUnhandledException(KRef exception) {
 #if KONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG
         ReportBacktraceToIosCrashLog(exception);
 #endif
+
+        // Best effort to make sure the reported exception gets actually printed:
+        konan::consoleFlush();
+
         std::abort();
     });
 }
