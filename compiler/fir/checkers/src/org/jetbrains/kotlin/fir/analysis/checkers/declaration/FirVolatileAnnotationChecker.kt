@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassIds
 
-object FirVolatileAnnotationChecker : FirPropertyChecker(CheckerSessionKind.Platform) {
+object FirVolatileAnnotationChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind != KtRealSourceElementKind) return
 

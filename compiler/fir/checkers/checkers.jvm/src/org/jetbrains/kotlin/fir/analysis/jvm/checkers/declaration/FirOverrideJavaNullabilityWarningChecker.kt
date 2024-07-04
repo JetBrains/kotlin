@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: CheckerSessionKind) : FirAbstractOverrideChecker(mppKind) {
-    object Regular : FirOverrideJavaNullabilityWarningChecker(CheckerSessionKind.Platform) {
+    object Regular : FirOverrideJavaNullabilityWarningChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

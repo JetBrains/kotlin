@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
 sealed class FirJsInheritanceFunctionChecker(mppKind: CheckerSessionKind) : FirFunctionChecker(mppKind) {
-    object Regular : FirJsInheritanceFunctionChecker(CheckerSessionKind.Platform) {
+    object Regular : FirJsInheritanceFunctionChecker() {
         override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
             if ((context.containingDeclarations.last() as? FirClass)?.isExpect == true) return
             super.check(declaration, context, reporter)

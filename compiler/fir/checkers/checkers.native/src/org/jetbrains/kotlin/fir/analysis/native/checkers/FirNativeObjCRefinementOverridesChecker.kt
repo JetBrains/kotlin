@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 sealed class FirNativeObjCRefinementOverridesChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirNativeObjCRefinementOverridesChecker(CheckerSessionKind.Platform) {
+    object Regular : FirNativeObjCRefinementOverridesChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

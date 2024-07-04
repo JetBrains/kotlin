@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 
-abstract class AbstractFirPropertyInitializationChecker(final override val mppKind: CheckerSessionKind) : FirCheckerWithMppKind {
+abstract class AbstractFirPropertyInitializationChecker(
+    final override val mppKind: CheckerSessionKind = CheckerSessionKind.Platform,
+) : FirCheckerWithMppKind {
     abstract fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext)
 }

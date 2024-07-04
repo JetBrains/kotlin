@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) : FirClassChecker(CheckerSessionKind.Platform) {
+class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         checkParcelableClass(declaration, context, reporter)
         checkParcelerClass(declaration, context, reporter)

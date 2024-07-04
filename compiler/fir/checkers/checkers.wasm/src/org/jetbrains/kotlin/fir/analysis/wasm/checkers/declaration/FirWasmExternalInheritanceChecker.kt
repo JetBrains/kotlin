@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.StandardClassIds
 
 sealed class FirWasmExternalInheritanceChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirWasmExternalInheritanceChecker(CheckerSessionKind.Platform) {
+    object Regular : FirWasmExternalInheritanceChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

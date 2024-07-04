@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 
-object FirFieldAccessShadowedByInvisibleKotlinProperty : FirPropertyAccessExpressionChecker(CheckerSessionKind.Platform) {
+object FirFieldAccessShadowedByInvisibleKotlinProperty : FirPropertyAccessExpressionChecker() {
     override fun check(expression: FirPropertyAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         checkFieldAccess(expression, context, reporter)
     }
 }
 
-object FirFieldReferenceShadowedByInvisibleKotlinProperty : FirCallableReferenceAccessChecker(CheckerSessionKind.Platform) {
+object FirFieldReferenceShadowedByInvisibleKotlinProperty : FirCallableReferenceAccessChecker() {
     override fun check(expression: FirCallableReferenceAccess, context: CheckerContext, reporter: DiagnosticReporter) {
         checkFieldAccess(expression, context, reporter)
     }

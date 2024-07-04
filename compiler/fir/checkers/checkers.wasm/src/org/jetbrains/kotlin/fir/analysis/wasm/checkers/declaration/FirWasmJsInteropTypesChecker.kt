@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 
-object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(CheckerSessionKind.Platform) {
+object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
 

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 
-internal object FirPackageConflictsWithClassifierChecker : FirFileChecker(CheckerSessionKind.Platform) {
+internal object FirPackageConflictsWithClassifierChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         val packageDirective = declaration.packageDirective
         val filePackageFqName = packageDirective.packageFqName

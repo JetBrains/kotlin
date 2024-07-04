@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllCallables
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 sealed class FirNotImplementedOverrideSimpleEnumEntryChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirNotImplementedOverrideSimpleEnumEntryChecker(CheckerSessionKind.Platform) {
+    object Regular : FirNotImplementedOverrideSimpleEnumEntryChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

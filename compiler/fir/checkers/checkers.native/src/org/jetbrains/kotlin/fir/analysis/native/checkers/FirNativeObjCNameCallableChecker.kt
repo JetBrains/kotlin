@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
 sealed class FirNativeObjCNameCallableChecker(mppKind: CheckerSessionKind) : FirCallableDeclarationChecker(mppKind) {
-    object Regular : FirNativeObjCNameCallableChecker(CheckerSessionKind.Platform) {
+    object Regular : FirNativeObjCNameCallableChecker() {
         override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
             val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
             if (containingClass.isExpect) return

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 sealed class FirJsInheritanceClassChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirJsInheritanceClassChecker(CheckerSessionKind.Platform) {
+    object Regular : FirJsInheritanceClassChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

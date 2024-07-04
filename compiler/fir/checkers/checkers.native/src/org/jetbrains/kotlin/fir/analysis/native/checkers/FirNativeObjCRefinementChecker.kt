@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(CheckerSessionKind.Platform) {
+object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker() {
 
     val hidesFromObjCClassId: ClassId = ClassId.topLevel(FqName("kotlin.native.HidesFromObjC"))
     val refinesInSwiftClassId: ClassId = ClassId.topLevel(FqName("kotlin.native.RefinesInSwift"))

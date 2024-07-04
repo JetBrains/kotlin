@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 sealed class FirNativeThrowsChecker(mppKind: CheckerSessionKind) : FirBasicDeclarationChecker(mppKind) {
-    object Regular : FirNativeThrowsChecker(CheckerSessionKind.Platform) {
+    object Regular : FirNativeThrowsChecker() {
         override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
             if ((declaration as? FirMemberDeclaration)?.isExpect == true) return
             super.check(declaration, context, reporter)

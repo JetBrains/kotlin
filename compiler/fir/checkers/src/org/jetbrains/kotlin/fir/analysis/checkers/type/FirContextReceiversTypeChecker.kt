@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.contextReceiversTypes
 import org.jetbrains.kotlin.fir.types.hasContextReceivers
 
-object FirContextReceiversTypeChecker : FirResolvedTypeRefChecker(CheckerSessionKind.Platform) {
+object FirContextReceiversTypeChecker : FirResolvedTypeRefChecker() {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef.source?.kind is KtFakeSourceElementKind) return
         if (!typeRef.coneType.hasContextReceivers) return

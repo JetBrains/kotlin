@@ -105,7 +105,7 @@ abstract class FirAbstractOverrideChecker(mppKind: CheckerSessionKind) : FirClas
 }
 
 sealed class FirOverrideChecker(mppKind: CheckerSessionKind) : FirAbstractOverrideChecker(mppKind) {
-    object Regular : FirOverrideChecker(CheckerSessionKind.Platform) {
+    object Regular : FirOverrideChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 sealed class FirImplementationMismatchChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirImplementationMismatchChecker(CheckerSessionKind.Platform) {
+    object Regular : FirImplementationMismatchChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

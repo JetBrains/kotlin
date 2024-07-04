@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.toConeTypeProjection
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.type
 
-object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionChecker(CheckerSessionKind.Platform) {
+object FirNativeForwardDeclarationReifiedChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeReference = expression.calleeReference
         val typeArguments = expression.typeArguments

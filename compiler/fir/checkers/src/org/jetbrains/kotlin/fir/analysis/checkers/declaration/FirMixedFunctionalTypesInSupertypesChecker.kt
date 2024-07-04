@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 
 sealed class FirMixedFunctionalTypesInSupertypesChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirMixedFunctionalTypesInSupertypesChecker(CheckerSessionKind.Platform) {
+    object Regular : FirMixedFunctionalTypesInSupertypesChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

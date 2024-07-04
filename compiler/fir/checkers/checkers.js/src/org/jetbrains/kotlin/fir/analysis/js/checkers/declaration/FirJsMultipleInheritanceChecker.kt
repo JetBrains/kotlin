@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 sealed class FirJsMultipleInheritanceChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirJsMultipleInheritanceChecker(CheckerSessionKind.Platform) {
+    object Regular : FirJsMultipleInheritanceChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

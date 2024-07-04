@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExternalInheri
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 sealed class FirJsExternalInheritorOnlyChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirJsExternalInheritorOnlyChecker(CheckerSessionKind.Platform) {
+    object Regular : FirJsExternalInheritorOnlyChecker() {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

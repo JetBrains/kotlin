@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FunctionN
 
-object FirBadInheritedJavaSignaturesChecker : FirClassChecker(CheckerSessionKind.Platform) {
+object FirBadInheritedJavaSignaturesChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         fun containsFunctionN(type: ConeKotlinType) = type.classId == FunctionN
 

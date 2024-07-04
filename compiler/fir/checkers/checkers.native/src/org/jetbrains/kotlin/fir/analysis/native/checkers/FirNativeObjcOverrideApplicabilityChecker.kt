@@ -59,7 +59,7 @@ object NativeConflictDeclarationsDiagnosticDispatcher : PlatformConflictDeclarat
     }
 }
 
-object FirNativeObjcOverrideApplicabilityChecker : FirFunctionChecker(CheckerSessionKind.Platform) {
+object FirNativeObjcOverrideApplicabilityChecker : FirFunctionChecker() {
     override fun check(
         declaration: FirFunction,
         context: CheckerContext,

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
 
-class FirParcelizeConstructorChecker(private val parcelizeAnnotations: List<ClassId>) : FirConstructorChecker(CheckerSessionKind.Platform) {
+class FirParcelizeConstructorChecker(private val parcelizeAnnotations: List<ClassId>) : FirConstructorChecker() {
     override fun check(declaration: FirConstructor, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isPrimary) return
         val source = declaration.source ?: return

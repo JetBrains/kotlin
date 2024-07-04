@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 
 sealed class FirTypeParameterBoundsChecker(mppKind: CheckerSessionKind) : FirTypeParameterChecker(mppKind) {
-    object Regular : FirTypeParameterBoundsChecker(CheckerSessionKind.Platform) {
+    object Regular : FirTypeParameterBoundsChecker() {
         override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
             val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
             if ((containingDeclaration as? FirMemberDeclaration)?.isExpect == true) return

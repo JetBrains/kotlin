@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
 
 sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: CheckerSessionKind) : FirRegularClassChecker(mppKind) {
-    object Regular : FirMultipleDefaultsInheritedFromSupertypesChecker(CheckerSessionKind.Platform) {
+    object Regular : FirMultipleDefaultsInheritedFromSupertypesChecker() {
         override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)

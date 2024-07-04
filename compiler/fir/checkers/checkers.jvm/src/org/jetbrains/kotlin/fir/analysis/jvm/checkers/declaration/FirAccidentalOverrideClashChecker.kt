@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
 
-object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(CheckerSessionKind.Platform) {
+object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker() {
     override fun check(
         declaration: FirSimpleFunction,
         context: CheckerContext,

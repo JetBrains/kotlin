@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.*
 
-object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(CheckerSessionKind.Platform) {
+object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         val contextReceivers = declaration.getContextReceiver()

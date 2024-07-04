@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
-object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallChecker(CheckerSessionKind.Platform) {
+object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallChecker() {
     override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val targetTypeRef = expression.conversionTypeRef
         val declarationToCheck = targetTypeRef.toRegularClassSymbol(context.session) ?: return

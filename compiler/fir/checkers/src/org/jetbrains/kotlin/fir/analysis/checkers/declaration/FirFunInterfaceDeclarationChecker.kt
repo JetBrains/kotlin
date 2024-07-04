@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 
 sealed class FirFunInterfaceDeclarationChecker(mppKind: CheckerSessionKind) : FirRegularClassChecker(mppKind) {
-    object Regular : FirFunInterfaceDeclarationChecker(CheckerSessionKind.Platform) {
+    object Regular : FirFunInterfaceDeclarationChecker() {
         override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)
