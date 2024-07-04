@@ -113,8 +113,14 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
                 analysisFlags
             )
             updateConfiguration()
+            val classpath = defaultClassPathRoots
             addJvmClasspathRoots(additionalPaths)
-            addJvmClasspathRoots(defaultClassPathRoots)
+            addJvmClasspathRoots(classpath)
+
+            require(classpath.any { it.name.matches(Regex("kotlin-stdlib-\\S+\\.jar")) }) {
+                "kotlin-stdlib.jar is not found in classpath: $classpath"
+            }
+
             if (!getBoolean(JVMConfigurationKeys.NO_JDK) &&
                 get(JVMConfigurationKeys.JDK_HOME) == null) {
                 // We need to set `JDK_HOME` explicitly to use JDK 17
