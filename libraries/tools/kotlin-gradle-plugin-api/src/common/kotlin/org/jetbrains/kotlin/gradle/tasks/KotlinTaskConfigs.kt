@@ -92,7 +92,7 @@ interface BaseKotlinCompile : KotlinCompileTool {
     /**
      * Paths to the output directories of the friend modules whose internal declarations should be visible.
      */
-    @get:Internal
+    @get:Classpath
     val friendPaths: ConfigurableFileCollection
 
     /**

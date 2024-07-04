@@ -24,17 +24,17 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
 
     override fun resolveFriendPaths(compilation: InternalKotlinCompilation<*>): Iterable<FileCollection> {
         return mutableListOf<FileCollection>().apply {
-            compilation.allAssociatedCompilations.forEach {
-                add(it.output.classesDirs)
+            val friendsFromAssociatedCompilations = compilation.project.files()
+            compilation.allAssociatedCompilations.forAll {
+                friendsFromAssociatedCompilations.from(it.output.classesDirs)
                 // Adding classes that could be produced to non-default destination for JVM target
                 // Check KotlinSourceSetProcessor for details
                 @Suppress("UNCHECKED_CAST")
-                add(
-                    compilation.project.files(
-                        (it.compileTaskProvider as TaskProvider<KotlinCompileTool>).flatMap { task -> task.destinationDirectory }
-                    )
-                )
+                val compileTaskOutput = (it.compileTaskProvider as TaskProvider<KotlinCompileTool>)
+                    .flatMap { task -> task.destinationDirectory }
+                friendsFromAssociatedCompilations.from(compileTaskOutput)
             }
+            add(friendsFromAssociatedCompilations)
             add(friendArtifactResolver.resolveFriendArtifacts(compilation))
         }
     }
