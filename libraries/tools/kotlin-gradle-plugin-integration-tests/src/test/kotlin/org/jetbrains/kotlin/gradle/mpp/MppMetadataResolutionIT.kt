@@ -17,13 +17,6 @@ import kotlin.test.assertTrue
 @MppGradlePluginTests
 class MppMetadataResolutionIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
-        nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
-            // Use kotlin-native bundle version provided by default in KGP, because it will be pushed in one of the known IT repos for sure
-            version = null
-        )
-    )
-
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
     fun testResolveMppLibDependencyToMetadata(gradleVersion: GradleVersion) {
