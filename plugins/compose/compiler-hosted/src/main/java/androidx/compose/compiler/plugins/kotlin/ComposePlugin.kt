@@ -613,7 +613,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
         fun createComposeIrExtension(
             configuration: CompilerConfiguration,
             descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
-            moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null
+            moduleMetricsFactory: ((StabilityInferencer, FeatureFlags) -> ModuleMetrics)? = null
         ): ComposeIrGenerationExtension {
             val liveLiteralsEnabled = configuration.getBoolean(
                 ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
