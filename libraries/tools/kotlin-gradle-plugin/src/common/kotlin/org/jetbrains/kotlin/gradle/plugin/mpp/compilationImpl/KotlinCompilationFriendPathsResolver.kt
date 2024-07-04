@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
@@ -61,6 +62,8 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
 
     object DefaultFriendArtifactResolver : FriendArtifactResolver {
         override fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection {
+            if (!compilation.project.kotlinPropertiesProvider.archivesTaskOutputAsFriendModule) return compilation.project.files()
+
             return with(compilation.project) {
                 val friendArtifactsTaskProvider = resolveFriendArtifactsTask(compilation) ?: return files()
                 filesProvider { friendArtifactsTaskProvider.flatMap { it.archiveFile } }
