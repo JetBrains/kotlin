@@ -1207,6 +1207,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       }
 
       @Test
+      @TestMetadata("potentiallyClashingPrivateClassAccessors.kt")
+      public void testPotentiallyClashingPrivateClassAccessors() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingPrivateClassAccessors.kt");
+      }
+
+      @Test
       @TestMetadata("potentiallyClashingVarAccessors.kt")
       public void testPotentiallyClashingVarAccessors() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/potentiallyClashingVarAccessors.kt");
