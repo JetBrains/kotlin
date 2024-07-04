@@ -689,7 +689,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                     StabilityConfigParser.fromFile(path).stableTypeMatchers
                 } catch (e: Exception) {
                     configuration.messageCollector.report(
-                        CompilerMessageSeverity.ERROR,
+                        CompilerMessageSeverity.WARNING,
                         e.message ?: "Error parsing stability configuration at $path"
                     )
                     emptySet()
