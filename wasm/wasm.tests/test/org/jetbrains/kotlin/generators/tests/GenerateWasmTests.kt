@@ -72,6 +72,7 @@ fun main(args: Array<String>) {
                     "jsCodeWithConstStringFromOtherModule",
                     "moveExternalDeclarationsBetweenFiles",
                     "inlineFunctionCircleUsage",
+                    "jsExportReexport"
                 )
                 model(
                     "incremental/invalidation/",
