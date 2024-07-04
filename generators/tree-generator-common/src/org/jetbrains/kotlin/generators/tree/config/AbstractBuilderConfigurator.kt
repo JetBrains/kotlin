@@ -310,6 +310,12 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, ElementField
          */
         val parents: MutableList<IntermediateBuilder<ElementField, Element>>
             get() = builder.parents
+
+        var isSealed: Boolean
+            get() = builder.isSealed
+            set(value) {
+                builder.isSealed = value
+            }
     }
 
     protected inner class IntermediateBuilderDelegateProvider(

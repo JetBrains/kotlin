@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
@@ -62,7 +61,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
 
             println("@", builderDslAnnotation.render())
             when (builder) {
-                is IntermediateBuilder -> print("interface ")
+                is IntermediateBuilder -> print("${if (builder.isSealed) "sealed " else ""}interface ")
                 is LeafBuilder<*, *, *> -> {
                     if (builder.isOpen) {
                         print("open ")

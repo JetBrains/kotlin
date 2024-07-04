@@ -71,6 +71,7 @@ class IntermediateBuilder<Field, Element>(
               Element : AbstractElement<Element, *, *> {
     val fields: MutableList<Field> = mutableListOf()
     var materializedElement: Element? = null
+    var isSealed: Boolean = false
 
     override val allFields: List<Field> by lazy {
         buildMap<String, Field> {
