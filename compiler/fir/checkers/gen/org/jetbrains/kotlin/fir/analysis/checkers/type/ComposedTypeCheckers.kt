@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 
 /*
  * This file was generated automatically
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
  */
 
 class ComposedTypeCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : TypeCheckers() {
-    constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
+    constructor(mppKind: CheckerSessionKind) : this({ it.mppKind == mppKind })
 
     override val typeRefCheckers: Set<FirTypeRefChecker>
         get() = _typeRefCheckers

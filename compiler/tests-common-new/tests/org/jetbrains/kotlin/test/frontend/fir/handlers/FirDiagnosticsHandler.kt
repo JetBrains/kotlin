@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -635,7 +635,7 @@ typealias DiagnosticsMap = Multimap<FirFile, DiagnosticWithKmpCompilationMode, L
 data class DiagnosticWithKmpCompilationMode(val diagnostic: KtDiagnostic, val kmpCompilationMode: KmpCompilationMode)
 
 /**
- * There are two types of checkers (represented by [MppCheckerKind]):
+ * There are two types of checkers (represented by [CheckerSessionKind]):
  * 1. Common checker. When a common checker analyzes a code, the checker doesn't see what are the actualizations for the `expect` declarations.
  * 2. Platform checker. When a platform checker analyzes a code, the checker sees what are the actualizations for the `expect` declarations
  *    instead of the `expect` declarations themselves.
@@ -677,7 +677,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                 platformPart.firAnalyzerFacade.scopeSession,
                 allFiles,
                 DiagnosticReporterFactory.createPendingReporter(),
-                mppCheckerKind = MppCheckerKind.Platform
+                checkerSessionKind = CheckerSessionKind.Platform
             ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) } }
 
             for (part in info.partsForDependsOnModules) {
@@ -685,7 +685,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                     part.firAnalyzerFacade.scopeSession,
                     part.firFiles.values,
                     DiagnosticReporterFactory.createPendingReporter(),
-                    mppCheckerKind = MppCheckerKind.Common
+                    checkerSessionKind = CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers
                 ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) } }
             }
 
@@ -695,7 +695,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         part.firAnalyzerFacade.scopeSession,
                         part.firFiles.values,
                         DiagnosticReporterFactory.createPendingReporter(),
-                        mppCheckerKind = MppCheckerKind.Platform
+                        checkerSessionKind = CheckerSessionKind.Platform
                     ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.METADATA) } }
                 }
             }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.isDataClassCopy
 import org.jetbrains.kotlin.fir.analysis.checkers.getDirectOverriddenSymbols
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
+object FirInlineDeclarationChecker : FirFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isInline) {
             checkParametersInNotInline(declaration, context, reporter)

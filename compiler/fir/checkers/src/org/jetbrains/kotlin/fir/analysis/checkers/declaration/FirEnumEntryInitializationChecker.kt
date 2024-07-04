@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.VariableInitializationCheckProcesso
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwarePropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.emptyNormalPathInfo
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
-object FirEnumEntryInitializationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirEnumEntryInitializationChecker : FirRegularClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isEnumClass) return
         if (!context.languageVersionSettings.supportsFeature(ProperUninitializedEnumEntryAccessAnalysis)) return

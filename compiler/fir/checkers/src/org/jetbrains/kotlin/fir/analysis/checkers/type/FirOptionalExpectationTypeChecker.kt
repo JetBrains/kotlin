@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isOptionalAnnotationClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 
-object FirOptionalExpectationTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+object FirOptionalExpectationTypeChecker : FirResolvedTypeRefChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = typeRef.source
         if (source?.kind is KtFakeSourceElementKind) return

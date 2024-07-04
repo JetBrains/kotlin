@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-object RedundantExplicitTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
+object RedundantExplicitTypeChecker : FirPropertyChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isLocal) return
         if (declaration.returnTypeRef.source == null) return

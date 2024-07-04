@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.declarations.*
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_CLASS_IDS
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) : FirClassChecker(MppCheckerKind.Platform) {
+class FirParcelizeClassChecker(private val parcelizeAnnotations: List<ClassId>) : FirClassChecker(CheckerSessionKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         checkParcelableClass(declaration, context, reporter)
         checkParcelerClass(declaration, context, reporter)

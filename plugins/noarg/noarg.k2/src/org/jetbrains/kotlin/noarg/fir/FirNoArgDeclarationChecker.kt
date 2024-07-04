@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.noarg.fir
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 
-object FirNoArgDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirNoArgDeclarationChecker : FirRegularClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = declaration.source ?: return
         if (declaration.classKind != ClassKind.CLASS) return

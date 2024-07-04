@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
@@ -34,15 +34,15 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
-sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
-    object Regular : FirJsNameClashClassMembersChecker(MppCheckerKind.Platform) {
+sealed class FirJsNameClashClassMembersChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
+    object Regular : FirJsNameClashClassMembersChecker(CheckerSessionKind.Platform) {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)
         }
     }
 
-    object ForExpectClass : FirJsNameClashClassMembersChecker(MppCheckerKind.Common) {
+    object ForExpectClass : FirJsNameClashClassMembersChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (!declaration.isExpect) return
             super.check(declaration, context, reporter)

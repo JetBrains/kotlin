@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
 
-object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
+object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(CheckerSessionKind.Platform) {
     override fun check(
         declaration: FirSimpleFunction,
         context: CheckerContext,

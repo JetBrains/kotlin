@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -18,15 +18,15 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
-sealed class FirJsInheritanceFunctionChecker(mppKind: MppCheckerKind) : FirFunctionChecker(mppKind) {
-    object Regular : FirJsInheritanceFunctionChecker(MppCheckerKind.Platform) {
+sealed class FirJsInheritanceFunctionChecker(mppKind: CheckerSessionKind) : FirFunctionChecker(mppKind) {
+    object Regular : FirJsInheritanceFunctionChecker(CheckerSessionKind.Platform) {
         override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
             if ((context.containingDeclarations.last() as? FirClass)?.isExpect == true) return
             super.check(declaration, context, reporter)
         }
     }
 
-    object ForExpectClass : FirJsInheritanceFunctionChecker(MppCheckerKind.Common) {
+    object ForExpectClass : FirJsInheritanceFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
         override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
             if ((context.containingDeclarations.last() as? FirClass)?.isExpect != true) return
             super.check(declaration, context, reporter)

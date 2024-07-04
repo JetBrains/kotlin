@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.types.*
 
-object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
+object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirEqualityOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val arguments = expression.argumentList.arguments
         require(arguments.size == 2) { "Equality operator call with non-2 arguments" }

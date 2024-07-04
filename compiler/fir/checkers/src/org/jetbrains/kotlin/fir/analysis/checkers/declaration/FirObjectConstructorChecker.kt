@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirObjectConstructorChecker : FirRegularClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSelfCallsInNestedObjects))
             return

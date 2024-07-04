@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkMissingDependencySuperTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.collectUpperBounds
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 /**
  * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
  */
-object FirMissingDependencySupertypeInDeclarationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirMissingDependencySupertypeInDeclarationsChecker : FirBasicDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirClass) {
             checkMissingDependencySuperTypes(declaration.symbol, declaration.source, reporter, context)

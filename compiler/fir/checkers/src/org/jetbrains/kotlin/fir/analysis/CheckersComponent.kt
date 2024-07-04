@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.config.ComposedLanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
@@ -28,20 +28,20 @@ class CheckersComponent : FirSessionComponent {
     val commonDeclarationCheckers: DeclarationCheckers get() = _commonDeclarationCheckers
     val platformDeclarationCheckers: DeclarationCheckers get() = _platformDeclarationCheckers
 
-    private val _commonDeclarationCheckers = ComposedDeclarationCheckers(MppCheckerKind.Common)
-    private val _platformDeclarationCheckers = ComposedDeclarationCheckers(MppCheckerKind.Platform)
+    private val _commonDeclarationCheckers = ComposedDeclarationCheckers(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
+    private val _platformDeclarationCheckers = ComposedDeclarationCheckers(CheckerSessionKind.Platform)
 
     val commonExpressionCheckers: ExpressionCheckers get() = _commonExpressionCheckers
     val platformExpressionCheckers: ExpressionCheckers get() = _platformExpressionCheckers
 
-    private val _commonExpressionCheckers = ComposedExpressionCheckers(MppCheckerKind.Common)
-    private val _platformExpressionCheckers = ComposedExpressionCheckers(MppCheckerKind.Platform)
+    private val _commonExpressionCheckers = ComposedExpressionCheckers(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
+    private val _platformExpressionCheckers = ComposedExpressionCheckers(CheckerSessionKind.Platform)
 
     val commonTypeCheckers: TypeCheckers get() = _commonTypeCheckers
     val platformTypeCheckers: TypeCheckers get() = _platformTypeCheckers
 
-    private val _commonTypeCheckers = ComposedTypeCheckers(MppCheckerKind.Common)
-    private val _platformTypeCheckers = ComposedTypeCheckers(MppCheckerKind.Platform)
+    private val _commonTypeCheckers = ComposedTypeCheckers(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
+    private val _platformTypeCheckers = ComposedTypeCheckers(CheckerSessionKind.Platform)
 
     val languageVersionSettingsCheckers: LanguageVersionSettingsCheckers get() = _languageVersionSettingsCheckers
     private val _languageVersionSettingsCheckers = ComposedLanguageVersionSettingsCheckers()

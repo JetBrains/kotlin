@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker.DeclarationKind.InlinedLambda
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker.DeclarationKind.NotInalienableDeclaration
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 
-object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker(MppCheckerKind.Common) {
+object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirLoopJump, context: CheckerContext, reporter: DiagnosticReporter) {
         val targetElement = expression.target.labeledElement.block
         val path = context.containingElements.dropWhile { it != targetElement }

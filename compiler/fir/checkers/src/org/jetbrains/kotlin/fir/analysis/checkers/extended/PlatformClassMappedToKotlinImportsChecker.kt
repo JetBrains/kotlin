@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFileChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.name.ClassId
 
-object PlatformClassMappedToKotlinImportsChecker : FirFileChecker(MppCheckerKind.Common) {
+object PlatformClassMappedToKotlinImportsChecker : FirFileChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.imports.forEach { import ->
             val importedFqName = import.importedFqName ?: return

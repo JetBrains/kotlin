@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platform) {
+object FirNotImplementedOverrideChecker : FirClassChecker(CheckerSessionKind.Platform) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.isExpect && !context.languageVersionSettings.getFlag(AnalysisFlags.metadataCompilation)) return
         val source = declaration.source ?: return

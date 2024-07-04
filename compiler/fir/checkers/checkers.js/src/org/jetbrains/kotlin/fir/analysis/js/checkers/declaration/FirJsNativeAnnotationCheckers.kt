@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 internal abstract class FirJsAbstractNativeAnnotationChecker(private val requiredAnnotation: ClassId) : FirSimpleFunctionChecker(
-    MppCheckerKind.Common) {
+    CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     protected fun FirFunction.hasRequiredAnnotation(context: CheckerContext) = hasAnnotation(requiredAnnotation, context.session)
 
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {

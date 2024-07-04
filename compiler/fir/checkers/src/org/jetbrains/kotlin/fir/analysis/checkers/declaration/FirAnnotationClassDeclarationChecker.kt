@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.diagnostics.hasValOrVar
 import org.jetbrains.kotlin.diagnostics.hasVar
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getTargetAnnotation
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.primitiveArrayTypeByElementType
 import org.jetbrains.kotlin.name.StandardClassIds.unsignedArrayTypeByElementType
 
-object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ANNOTATION_CLASS) return
         if (declaration.isLocal) reporter.reportOn(declaration.source, FirErrors.LOCAL_ANNOTATION_CLASS_ERROR, context)

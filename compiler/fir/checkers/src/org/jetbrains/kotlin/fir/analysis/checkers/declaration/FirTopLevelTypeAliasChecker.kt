@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForUnderscore
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-object FirTopLevelTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
+object FirTopLevelTypeAliasChecker : FirTypeAliasChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirTypeAlias, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.isTopLevel) {
             reporter.reportOn(declaration.source, FirErrors.TOPLEVEL_TYPEALIASES_ONLY, context)

@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findContextReceiverListSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.*
 
-object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
+object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(CheckerSessionKind.Platform) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         val contextReceivers = declaration.getContextReceiver()

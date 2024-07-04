@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-object FirJvmPolymorphicSignatureCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object FirJvmPolymorphicSignatureCallChecker : FirFunctionCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     private val polymorphicSignatureClassId = ClassId.fromString("java/lang/invoke/MethodHandle.PolymorphicSignature")
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {

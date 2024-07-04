@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 
-object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall) return
         val functionName = expression.calleeReference.name.asString()

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-object FirNativeThreadLocalChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
+object FirNativeThreadLocalChecker : FirBasicDeclarationChecker(CheckerSessionKind.Platform) {
     private val threadLocalClassId = ClassId.topLevel(FqName("kotlin.native.concurrent.ThreadLocal"))
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {

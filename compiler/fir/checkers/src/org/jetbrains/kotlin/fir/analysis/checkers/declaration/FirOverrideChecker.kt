@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 
-abstract class FirAbstractOverrideChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
+abstract class FirAbstractOverrideChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
     private fun ConeKotlinType.substituteAllTypeParameters(
         overrideDeclaration: FirCallableSymbol<*>,
         baseDeclaration: FirCallableSymbol<*>,
@@ -104,15 +104,15 @@ abstract class FirAbstractOverrideChecker(mppKind: MppCheckerKind) : FirClassChe
     }
 }
 
-sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideChecker(mppKind) {
-    object Regular : FirOverrideChecker(MppCheckerKind.Platform) {
+sealed class FirOverrideChecker(mppKind: CheckerSessionKind) : FirAbstractOverrideChecker(mppKind) {
+    object Regular : FirOverrideChecker(CheckerSessionKind.Platform) {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)
         }
     }
 
-    object ForExpectClass : FirOverrideChecker(MppCheckerKind.Common) {
+    object ForExpectClass : FirOverrideChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (!declaration.isExpect) return
             super.check(declaration, context, reporter)

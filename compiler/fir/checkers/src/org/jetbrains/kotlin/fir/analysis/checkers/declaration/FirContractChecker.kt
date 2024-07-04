@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
+object FirContractChecker : FirFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     private val EMPTY_CONTRACT_MESSAGE = "Empty contract block is not allowed"
 
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {

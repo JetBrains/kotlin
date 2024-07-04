@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 
 abstract class FirAbstractReifiedExternalChecker(
     private val webCheckerUtils: FirAbstractWebCheckerUtils
-) : FirFunctionCallChecker(MppCheckerKind.Common) {
+) : FirFunctionCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         expression.forAllReifiedTypeParameters { type, typeArgument ->
             val typeSymbol = type.toSymbol(context.session)

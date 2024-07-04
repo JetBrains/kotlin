@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -74,7 +74,7 @@ fun resolveAndCheckFir(
     diagnosticsReporter: BaseDiagnosticsCollector
 ): ModuleCompilerAnalyzedOutput {
     val (scopeSession, fir) = session.runResolution(firFiles)
-    session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
+    session.runCheckers(scopeSession, fir, diagnosticsReporter, CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
     return ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
 }
 

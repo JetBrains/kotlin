@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 /**
- * - [MppCheckerKind.Common] means that this checker should run from the same
+ * - [CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers] means that this checker should run from the same
  *   session to which corresponding declaration belongs
- * - [MppCheckerKind.Platform] means that in case of MPP compilation this
+ * - [CheckerSessionKind.Platform] means that in case of MPP compilation this
  *   checker should run with session of leaf platform module for sources
  *   of all modules
  *
  *  For more information see the doc: compiler/fir/checkers/module.md
  */
-enum class MppCheckerKind {
-    Common, Platform
+enum class CheckerSessionKind {
+    DeclarationSiteForExpectsPlatformForOthers, Platform
 }
 
 interface FirCheckerWithMppKind {
-    val mppKind: MppCheckerKind
+    val mppKind: CheckerSessionKind
 }

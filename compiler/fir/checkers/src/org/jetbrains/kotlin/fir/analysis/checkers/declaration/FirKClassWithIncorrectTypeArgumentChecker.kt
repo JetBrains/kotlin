@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 // See FE1.0 [KClassWithIncorrectTypeArgumentChecker]
-object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
+object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
 
     override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         // Only report on top level callable declarations

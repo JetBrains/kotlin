@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
-object FirWasmJsCodeCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object FirWasmJsCodeCallChecker : FirFunctionCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
 

@@ -28,7 +28,7 @@ import org.jetbrains.kotlinx.serialization.compiler.fir.services.*
  * For K1 alternative of this checker, see [org.jetbrains.kotlin.idea.compilerPlugin.kotlinxSerialization.JsonFormatRedundantDiagnostic]
  * in the IntelliJ IDEA repository.
  */
-internal object FirSerializationPluginCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+internal object FirSerializationPluginCallChecker : FirFunctionCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     private val jsonFqName: FqName = FqName("kotlinx.serialization.json.Json")
     private val jsonDefaultFqName: FqName = FqName("kotlinx.serialization.json.Json.Default")
     private val parameterNameFrom: Name = Name.identifier("from")

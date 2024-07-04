@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.isEnumEntry
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.primaryConstructorSuperTypePlatformSupport
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 /** Checker on super type declarations in the primary constructor of a class declaration. */
-object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Common) {
+object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.isInterface) {
             with(SourceNavigator.forElement(declaration)) {

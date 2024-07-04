@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.getTargetAnnotation
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.getRetentionAnnotation
 import org.jetbrains.kotlin.resolve.checkers.OptInDescription
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
-object FirOptInAnnotationClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirOptInAnnotationClassChecker : FirRegularClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
         val session = context.session

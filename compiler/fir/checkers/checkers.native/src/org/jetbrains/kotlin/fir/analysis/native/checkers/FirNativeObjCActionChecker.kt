@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 
-object FirNativeObjCActionChecker : FirClassChecker(MppCheckerKind.Platform) {
+object FirNativeObjCActionChecker : FirClassChecker(CheckerSessionKind.Platform) {
     @OptIn(UnexpandedTypeCheck::class)
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session

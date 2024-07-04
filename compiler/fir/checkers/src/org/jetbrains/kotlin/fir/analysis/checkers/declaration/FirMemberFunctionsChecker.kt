@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 // See old FE's [DeclarationsChecker]
-object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+object FirMemberFunctionsChecker : FirSimpleFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val containingDeclaration = context.containingDeclarations.lastIsInstanceOrNull<FirClass>() ?: return
         checkFunction(containingDeclaration, declaration, context, reporter)

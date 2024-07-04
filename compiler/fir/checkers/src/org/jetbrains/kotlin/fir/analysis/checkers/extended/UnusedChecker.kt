@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.util.*
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 
-object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
+object UnusedChecker : AbstractFirPropertyInitializationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
         @Suppress("UNCHECKED_CAST")
         val properties = data.properties as Set<FirPropertySymbol>

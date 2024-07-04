@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 
-object FirPropertyAccessTypeArgumentsChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
+object FirPropertyAccessTypeArgumentsChecker : FirPropertyAccessExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirPropertyAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // Property accesses may not have explicit type arguments (see KT-54978). Additionally, the callee reference's errors should take
         // precedence, if any exist. For example, the callee reference might be a function `Collections.emptyList<Int>`, but the programmer

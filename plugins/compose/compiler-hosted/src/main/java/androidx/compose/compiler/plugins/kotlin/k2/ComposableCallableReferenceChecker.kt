@@ -18,7 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.k2
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
  * function types. Since there are no reflective composable function types we cannot support
  * composable function references yet.
  */
-object ComposableCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
+object ComposableCallableReferenceChecker : FirCallableReferenceAccessChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(
         expression: FirCallableReferenceAccess,
         context: CheckerContext,

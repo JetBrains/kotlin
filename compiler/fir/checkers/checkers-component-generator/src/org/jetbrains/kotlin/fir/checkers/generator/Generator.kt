@@ -15,7 +15,7 @@ private typealias Fqn = String
 
 private const val CHECKERS_COMPONENT_INTERNAL_ANNOTATION = "@CheckersComponentInternal"
 private const val CHECKERS_COMPONENT_INTERNAL_FQN = "org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal"
-private const val MPP_CHECKER_KIND_FQN = "org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind"
+private const val MPP_CHECKER_KIND_FQN = "org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind"
 private const val MPP_CHECKER_WITH_KIND_FQN = "org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind"
 
 class Generator(
@@ -96,7 +96,7 @@ class Generator(
             printGeneratedMessage()
             println("class $composedComponentName(val predicate: (FirCheckerWithMppKind) -> Boolean) : $checkersComponentName() {")
             withIndent {
-                println("constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })")
+                println("constructor(mppKind: CheckerSessionKind) : this({ it.mppKind == mppKind })")
                 println()
 
                 // public overrides

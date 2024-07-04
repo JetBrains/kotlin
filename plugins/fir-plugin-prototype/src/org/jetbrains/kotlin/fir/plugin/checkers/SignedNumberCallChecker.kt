@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.fir.plugin.checkers
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.InternalDiagnosticFactoryMethod
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.fir.plugin.types.numberSign
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-object SignedNumberCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object SignedNumberCallChecker : FirFunctionCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val argumentMapping = expression.resolvedArgumentMapping ?: return
         for ((argument, parameter) in argumentMapping.entries) {

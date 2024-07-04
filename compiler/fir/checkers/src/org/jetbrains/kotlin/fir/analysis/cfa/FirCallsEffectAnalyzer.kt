@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.util.*
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 
-object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
+object FirCallsEffectAnalyzer : FirControlFlowChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
         // TODO, KT-59816: this is quadratic due to `graph.traverse`, surely there is a better way?
         for (subGraph in graph.subGraphs) {

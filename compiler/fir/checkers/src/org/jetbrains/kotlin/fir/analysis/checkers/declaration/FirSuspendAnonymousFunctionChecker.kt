@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 
-object FirSuspendAnonymousFunctionChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
+object FirSuspendAnonymousFunctionChecker : FirAnonymousFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isLambda && declaration.isSuspend) {
             reporter.reportOn(declaration.source, FirErrors.ANONYMOUS_SUSPEND_FUNCTION, context)

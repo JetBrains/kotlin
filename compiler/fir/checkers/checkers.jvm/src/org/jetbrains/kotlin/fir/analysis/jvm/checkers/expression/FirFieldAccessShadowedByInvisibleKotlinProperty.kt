@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature.ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 
-object FirFieldAccessShadowedByInvisibleKotlinProperty : FirPropertyAccessExpressionChecker(MppCheckerKind.Platform) {
+object FirFieldAccessShadowedByInvisibleKotlinProperty : FirPropertyAccessExpressionChecker(CheckerSessionKind.Platform) {
     override fun check(expression: FirPropertyAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         checkFieldAccess(expression, context, reporter)
     }
 }
 
-object FirFieldReferenceShadowedByInvisibleKotlinProperty : FirCallableReferenceAccessChecker(MppCheckerKind.Platform) {
+object FirFieldReferenceShadowedByInvisibleKotlinProperty : FirCallableReferenceAccessChecker(CheckerSessionKind.Platform) {
     override fun check(expression: FirCallableReferenceAccess, context: CheckerContext, reporter: DiagnosticReporter) {
         checkFieldAccess(expression, context, reporter)
     }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.analysis.collectors.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -16,14 +16,14 @@ object DiagnosticComponentsFactory {
     fun createAllDiagnosticComponents(
         session: FirSession,
         reporter: DiagnosticReporter,
-        mppKind: MppCheckerKind,
+        mppKind: CheckerSessionKind,
     ): DiagnosticCollectorComponents {
         val regularComponents = buildList {
             add(DeclarationCheckersDiagnosticComponent(session, reporter, mppKind))
             add(ExpressionCheckersDiagnosticComponent(session, reporter, mppKind))
             add(TypeCheckersDiagnosticComponent(session, reporter, mppKind))
             add(ControlFlowAnalysisDiagnosticComponent(session, reporter, mppKind))
-            if (mppKind == MppCheckerKind.Common) {
+            if (mppKind == CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
                 add(ErrorNodeDiagnosticCollectorComponent(session, reporter))
                 add(LanguageVersionSettingsDiagnosticComponent(session, reporter))
             }
@@ -34,7 +34,7 @@ object DiagnosticComponentsFactory {
     fun create(
         session: FirSession,
         scopeSession: ScopeSession,
-        mppKind: MppCheckerKind
+        mppKind: CheckerSessionKind
     ): SimpleDiagnosticsCollector {
         return SimpleDiagnosticsCollector(session, scopeSession) { reporter ->
             createAllDiagnosticComponents(session, reporter, mppKind)

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMemberBodyGenerator
 import org.jetbrains.kotlin.fir.backend.utils.generatedBuiltinsDeclarationsFileName
@@ -66,7 +66,7 @@ fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnos
     val scopeSession = platformModule.scopeSession
 
     val allFiles = this.flatMap { it.fir }
-    session.runCheckers(scopeSession, allFiles, reporter, MppCheckerKind.Platform)
+    session.runCheckers(scopeSession, allFiles, reporter, CheckerSessionKind.Platform)
 }
 
 fun FirResult.convertToIrAndActualize(

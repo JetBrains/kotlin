@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-object FirJvmSynchronizedByValueClassOrPrimitiveChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object FirJvmSynchronizedByValueClassOrPrimitiveChecker : FirFunctionCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     private val synchronizedCallableId = CallableId(FqName("kotlin"), Name.identifier("synchronized"))
     private val lockParameterName = Name.identifier("lock")
 

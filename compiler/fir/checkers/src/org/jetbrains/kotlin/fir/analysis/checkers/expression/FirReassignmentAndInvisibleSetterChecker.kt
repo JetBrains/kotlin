@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.evaluatedInPlace
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 
-object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
+object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
         checkInvisibleSetter(expression, context, reporter)
         checkValReassignmentViaBackingField(expression, context, reporter)

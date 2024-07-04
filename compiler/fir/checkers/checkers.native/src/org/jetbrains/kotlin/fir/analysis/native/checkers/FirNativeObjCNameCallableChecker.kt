@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCallableDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
-sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCallableDeclarationChecker(mppKind) {
-    object Regular : FirNativeObjCNameCallableChecker(MppCheckerKind.Platform) {
+sealed class FirNativeObjCNameCallableChecker(mppKind: CheckerSessionKind) : FirCallableDeclarationChecker(mppKind) {
+    object Regular : FirNativeObjCNameCallableChecker(CheckerSessionKind.Platform) {
         override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
             val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
             if (containingClass.isExpect) return
@@ -25,7 +25,7 @@ sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCall
         }
     }
 
-    object ForExpectClass : FirNativeObjCNameCallableChecker(MppCheckerKind.Common) {
+    object ForExpectClass : FirNativeObjCNameCallableChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
         override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
             val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
             if (!containingClass.isExpect) return

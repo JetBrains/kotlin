@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.parcelize.fir.diagnostics
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_CLASS_IDS
 
 // TODO: extract common checker for expect interfaces
 class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: List<ClassId>) :
-    FirAnnotationCallChecker(MppCheckerKind.Platform) {
+    FirAnnotationCallChecker(CheckerSessionKind.Platform) {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotationType = expression.annotationTypeRef.coneType.fullyExpandedType(context.session) as? ConeClassLikeType ?: return
         val resolvedAnnotationSymbol = annotationType.lookupTag.toRegularClassSymbol(context.session) ?: return

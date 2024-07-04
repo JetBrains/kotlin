@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.expression
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
-object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         checkReifiedTypeParameters(expression, context, reporter)
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.StandardClassIds
 
-sealed class FirWasmExternalInheritanceChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
-    object Regular : FirWasmExternalInheritanceChecker(MppCheckerKind.Platform) {
+sealed class FirWasmExternalInheritanceChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
+    object Regular : FirWasmExternalInheritanceChecker(CheckerSessionKind.Platform) {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)
         }
     }
 
-    object ForExpectClass : FirWasmExternalInheritanceChecker(MppCheckerKind.Common) {
+    object ForExpectClass : FirWasmExternalInheritanceChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (!declaration.isExpect) return
             super.check(declaration, context, reporter)

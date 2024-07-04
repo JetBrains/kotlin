@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -419,8 +419,8 @@ private fun doCompileWithK2(
 
     val (scopeSession, fir) = session.runResolution(orderedRawFir)
     // checkers
-    session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
-    session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Platform)
+    session.runCheckers(scopeSession, fir, diagnosticsReporter, CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
+    session.runCheckers(scopeSession, fir, diagnosticsReporter, CheckerSessionKind.Platform)
 
     val analysisResults = FirResult(listOf(ModuleCompilerAnalyzedOutput(session, scopeSession, fir)))
 

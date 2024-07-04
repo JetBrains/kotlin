@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.js.validateQualifier
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
 
-object FirJsQualifierChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
+object FirJsQualifierChecker : FirAnnotationCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.toAnnotationClassId(context.session) != JsQualifier) {
             return

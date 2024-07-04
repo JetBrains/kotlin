@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyAccessorChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.lexer.KtTokens
 
-object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(MppCheckerKind.Common) {
+object FirWebCommonExternalPropertyAccessorChecker : FirPropertyAccessorChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirPropertyAccessor, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirDefaultPropertyAccessor && declaration.isDirectlyExternal()) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "property accessor", context)

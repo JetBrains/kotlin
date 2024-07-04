@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
-import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
@@ -29,12 +28,12 @@ class ControlFlowAnalysisDiagnosticComponent(
     reporter: DiagnosticReporter,
     declarationCheckers: DeclarationCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
-    constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: MppCheckerKind) : this(
+    constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: CheckerSessionKind) : this(
         session,
         reporter,
         when (mppKind) {
-            MppCheckerKind.Common -> session.checkersComponent.commonDeclarationCheckers
-            MppCheckerKind.Platform -> session.checkersComponent.platformDeclarationCheckers
+            CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers -> session.checkersComponent.commonDeclarationCheckers
+            CheckerSessionKind.Platform -> session.checkersComponent.platformDeclarationCheckers
         }
     )
 

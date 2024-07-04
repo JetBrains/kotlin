@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ForbidLambdaParameterWithMiss
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidUsingExpressionTypesWithInaccessibleContent
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy.MissingTypeOrigin.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
 /**
  * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker
  */
-object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common), FirMissingDependencyClassProxy {
+object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers), FirMissingDependencyClassProxy {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeReference = expression.calleeReference
         val missingTypes = mutableSetOf<ConeKotlinType>()

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirNotNullAssertionChecker : FirCheckNotNullCallChecker(MppCheckerKind.Common) {
+object FirNotNullAssertionChecker : FirCheckNotNullCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirCheckNotNullCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val argument = expression.argumentList.arguments.singleOrNull() ?: return
         val argumentWithoutSmartcast = argument.unwrapSmartcastExpression()

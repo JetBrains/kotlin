@@ -32,15 +32,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
-    object Regular : FirValueClassDeclarationChecker(MppCheckerKind.Platform) {
+sealed class FirValueClassDeclarationChecker(mppKind: CheckerSessionKind) : FirRegularClassChecker(mppKind) {
+    object Regular : FirValueClassDeclarationChecker(CheckerSessionKind.Platform) {
         override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)
         }
     }
 
-    object ForExpectClass : FirValueClassDeclarationChecker(MppCheckerKind.Common) {
+    object ForExpectClass : FirValueClassDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
         override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (!declaration.isExpect) return
             super.check(declaration, context, reporter)

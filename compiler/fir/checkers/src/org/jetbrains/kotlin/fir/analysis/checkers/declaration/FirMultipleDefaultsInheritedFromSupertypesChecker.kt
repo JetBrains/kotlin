@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -25,15 +25,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
 
-sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
-    object Regular : FirMultipleDefaultsInheritedFromSupertypesChecker(MppCheckerKind.Platform) {
+sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: CheckerSessionKind) : FirRegularClassChecker(mppKind) {
+    object Regular : FirMultipleDefaultsInheritedFromSupertypesChecker(CheckerSessionKind.Platform) {
         override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)
         }
     }
 
-    object ForExpectClass : FirMultipleDefaultsInheritedFromSupertypesChecker(MppCheckerKind.Common) {
+    object ForExpectClass : FirMultipleDefaultsInheritedFromSupertypesChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
         override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (!declaration.isExpect) return
             super.check(declaration, context, reporter)

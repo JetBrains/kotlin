@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 
-object FirWasmExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirWasmExternalFileChecker : FirBasicDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.isTopLevel || declaration.symbol.isEffectivelyExternal(context.session)) {
             return

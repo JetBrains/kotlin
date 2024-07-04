@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.ASSOCIATED_OBJECT_INVALID_BINDING
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 
-object FirWasmJsAssociatedObjectChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirWasmJsAssociatedObjectChecker : FirBasicDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirClass) return
         if (!declaration.symbol.isEffectivelyExternal(context.session)) return

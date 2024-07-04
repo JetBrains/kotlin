@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.type
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirFunctionTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmNamesChecker
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 
-object FirFunctionalTypeParameterNameChecker : FirFunctionTypeRefChecker(MppCheckerKind.Common) {
+object FirFunctionalTypeParameterNameChecker : FirFunctionTypeRefChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(typeRef: FirFunctionTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         for (parameter in typeRef.parameters) {
             check(parameter, context, reporter)

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.DFS
 /**
  * @see org.jetbrains.kotlin.resolve.FiniteBoundRestrictionChecker
  */
-object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.typeParameters.isEmpty()) return
 

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
@@ -22,12 +22,12 @@ class ExpressionCheckersDiagnosticComponent(
     reporter: DiagnosticReporter,
     private val checkers: ExpressionCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
-    constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: MppCheckerKind) : this(
+    constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: CheckerSessionKind) : this(
         session,
         reporter,
         when (mppKind) {
-            MppCheckerKind.Common -> session.checkersComponent.commonExpressionCheckers
-            MppCheckerKind.Platform -> session.checkersComponent.platformExpressionCheckers
+            CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers -> session.checkersComponent.commonExpressionCheckers
+            CheckerSessionKind.Platform -> session.checkersComponent.platformExpressionCheckers
         }
     )
 

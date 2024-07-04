@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -30,15 +30,15 @@ import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
-sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
-    object Regular : FirNativeObjCRefinementOverridesChecker(MppCheckerKind.Platform) {
+sealed class FirNativeObjCRefinementOverridesChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
+    object Regular : FirNativeObjCRefinementOverridesChecker(CheckerSessionKind.Platform) {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration.isExpect) return
             super.check(declaration, context, reporter)
         }
     }
 
-    object ForExpectClass : FirNativeObjCRefinementOverridesChecker(MppCheckerKind.Common) {
+    object ForExpectClass : FirNativeObjCRefinementOverridesChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
         override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
             if (!declaration.isExpect) return
             super.check(declaration, context, reporter)

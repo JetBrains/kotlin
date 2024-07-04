@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
@@ -98,7 +98,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
         val scopeSession = ScopeSession()
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
             if (RUN_CHECKERS) {
-                it + FirCheckersResolveProcessor(session, scopeSession, MppCheckerKind.Common)
+                it + FirCheckersResolveProcessor(session, scopeSession, CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
             } else {
                 it
             }
@@ -270,9 +270,9 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 class FirCheckersResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession,
-    mppCheckerKind: MppCheckerKind
+    checkerSessionKind: CheckerSessionKind
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
-    val diagnosticCollector: AbstractDiagnosticCollector = DiagnosticComponentsFactory.create(session, scopeSession, mppCheckerKind)
+    val diagnosticCollector: AbstractDiagnosticCollector = DiagnosticComponentsFactory.create(session, scopeSession, checkerSessionKind)
 
     override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)
 }

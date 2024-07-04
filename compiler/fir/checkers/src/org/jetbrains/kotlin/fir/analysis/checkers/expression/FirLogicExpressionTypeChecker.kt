@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkCondition
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 
-object FirLogicExpressionTypeChecker : FirLogicExpressionChecker(MppCheckerKind.Common) {
+object FirLogicExpressionTypeChecker : FirLogicExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirBinaryLogicExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         checkCondition(expression.leftOperand, context, reporter)
         checkCondition(expression.rightOperand, context, reporter)

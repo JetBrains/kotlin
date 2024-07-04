@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 
 /*
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
  */
 
 class ComposedDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : DeclarationCheckers() {
-    constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
+    constructor(mppKind: CheckerSessionKind) : this({ it.mppKind == mppKind })
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = _basicDeclarationCheckers

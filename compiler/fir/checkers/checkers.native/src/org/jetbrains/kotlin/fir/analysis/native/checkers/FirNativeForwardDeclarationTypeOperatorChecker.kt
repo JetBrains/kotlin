@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirTypeOperatorCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
-object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallChecker(MppCheckerKind.Platform) {
+object FirNativeForwardDeclarationTypeOperatorChecker : FirTypeOperatorCallChecker(CheckerSessionKind.Platform) {
     override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val targetTypeRef = expression.conversionTypeRef
         val declarationToCheck = targetTypeRef.toRegularClassSymbol(context.session) ?: return

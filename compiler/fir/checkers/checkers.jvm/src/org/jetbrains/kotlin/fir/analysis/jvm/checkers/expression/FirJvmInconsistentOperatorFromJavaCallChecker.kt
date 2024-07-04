@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * but there's a member in ConcurrentHashMap with acceptable signature that delegates to `containsValue` instead,
  * leading to an unexpected result. See KT-18053
  */
-object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     private val CONCURRENT_HASH_MAP_CALLABLE_ID = CallableId(
         ClassId.fromString("java/util/concurrent/ConcurrentHashMap"),
         OperatorNameConventions.CONTAINS

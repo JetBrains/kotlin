@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.fir.analysis.checkers.isRecursiveValueClassType
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
-object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common) {
+object FirInapplicableLateinitChecker : FirPropertyChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isLateInit || declaration.returnTypeRef is FirErrorTypeRef) {
             return

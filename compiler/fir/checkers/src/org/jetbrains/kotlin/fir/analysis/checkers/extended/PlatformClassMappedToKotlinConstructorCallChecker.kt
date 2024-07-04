@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.classId
 
-object PlatformClassMappedToKotlinConstructorCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object PlatformClassMappedToKotlinConstructorCallChecker : FirFunctionCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = expression.toResolvedCallableSymbol() as? FirConstructorSymbol ?: return
         val kotlinClassId = context.session.platformClassMapper.getCorrespondingKotlinClass(symbol.resolvedReturnTypeRef.type.classId)

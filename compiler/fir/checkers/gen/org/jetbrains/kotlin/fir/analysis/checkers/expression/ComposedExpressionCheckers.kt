@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 
 /*
  * This file was generated automatically
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
  */
 
 class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : ExpressionCheckers() {
-    constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
+    constructor(mppKind: CheckerSessionKind) : this({ it.mppKind == mppKind })
 
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = _basicExpressionCheckers

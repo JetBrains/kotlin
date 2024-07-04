@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.pipeline
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.analysis.collectors.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
@@ -29,9 +29,9 @@ fun FirSession.runCheckers(
     scopeSession: ScopeSession,
     firFiles: Collection<FirFile>,
     reporter: BaseDiagnosticsCollector,
-    mppCheckerKind: MppCheckerKind
+    checkerSessionKind: CheckerSessionKind
 ): Map<FirFile, List<KtDiagnostic>> {
-    val collector = DiagnosticComponentsFactory.create(this, scopeSession, mppCheckerKind)
+    val collector = DiagnosticComponentsFactory.create(this, scopeSession, checkerSessionKind)
     collector.collectDiagnosticsInSettings(reporter)
     for (file in firFiles) {
         withFileAnalysisExceptionWrapping(file) {

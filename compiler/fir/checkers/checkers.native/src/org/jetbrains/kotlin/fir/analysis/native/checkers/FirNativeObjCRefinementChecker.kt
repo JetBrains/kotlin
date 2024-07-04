@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCallableDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(MppCheckerKind.Platform) {
+object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(CheckerSessionKind.Platform) {
 
     val hidesFromObjCClassId: ClassId = ClassId.topLevel(FqName("kotlin.native.HidesFromObjC"))
     val refinesInSwiftClassId: ClassId = ClassId.topLevel(FqName("kotlin.native.RefinesInSwift"))

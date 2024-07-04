@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 
-object FirForLoopStatementAssignmentChecker : FirLoopExpressionChecker(MppCheckerKind.Common) {
+object FirForLoopStatementAssignmentChecker : FirLoopExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirLoop, context: CheckerContext, reporter: DiagnosticReporter) {
         // Checks the pattern for desugared for loop.
         val parent = if (context.containingElements.size >= 2) context.containingElements[context.containingElements.size - 2] else return

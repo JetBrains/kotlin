@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.InternalDiagnosticFactoryMethod
 import org.jetbrains.kotlin.diagnostics.requireNotNull
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatc
 /**
  * This checker runs only in IDE mode. In CLI IR checker runs instead of it.
  */
-internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirMemberDeclaration) return
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return

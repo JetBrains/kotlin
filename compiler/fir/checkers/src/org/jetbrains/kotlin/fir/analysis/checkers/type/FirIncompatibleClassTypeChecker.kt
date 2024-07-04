@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirIncompatibleClassExpressionChecker
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
-object FirIncompatibleClassTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+object FirIncompatibleClassTypeChecker : FirResolvedTypeRefChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         FirIncompatibleClassExpressionChecker.checkType(typeRef.coneTypeOrNull, typeRef, context, reporter)
     }

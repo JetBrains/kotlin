@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkModifiersCompatibility
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 
 
-object FirIncompatibleProjectionsOnTypeArgumentChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+object FirIncompatibleProjectionsOnTypeArgumentChecker : FirQualifiedAccessExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         for (it in expression.typeArguments) {
             checkModifiersCompatibility(it, context, reporter)

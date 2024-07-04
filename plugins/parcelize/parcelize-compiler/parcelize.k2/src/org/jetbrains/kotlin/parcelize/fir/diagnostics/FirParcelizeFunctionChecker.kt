@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.parcelize.fir.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-class FirParcelizeFunctionChecker(private val parcelizeAnnotations: List<ClassId>) : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
+class FirParcelizeFunctionChecker(private val parcelizeAnnotations: List<ClassId>) : FirSimpleFunctionChecker(CheckerSessionKind.Platform) {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(context.session)
         if (!containingClassSymbol.isParcelize(context.session, parcelizeAnnotations)) return

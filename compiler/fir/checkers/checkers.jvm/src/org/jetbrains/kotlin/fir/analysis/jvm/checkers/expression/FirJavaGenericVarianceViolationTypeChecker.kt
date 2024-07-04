@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.StandardTypes
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -46,7 +46,7 @@ import kotlin.math.min
  * `UnsupportedOperationException`, which is expected and the price we pay in order to make immutable collection easier to use. This checker
  * doesn't do anything to prevent this from happening.
  */
-object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return

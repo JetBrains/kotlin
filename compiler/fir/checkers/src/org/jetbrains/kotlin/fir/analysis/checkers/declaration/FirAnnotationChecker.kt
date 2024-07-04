@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirAnnotationChecker : FirBasicDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     private val deprecatedClassId = FqName("kotlin.Deprecated")
     private val deprecatedSinceKotlinClassId = FqName("kotlin.DeprecatedSinceKotlin")
 

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 
-abstract class FirExpressionChecker<in E : FirStatement>(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
+abstract class FirExpressionChecker<in E : FirStatement>(final override val mppKind: CheckerSessionKind) : FirCheckerWithMppKind {
     abstract fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter)
 }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.isEnumClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
 
-class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId>) : FirPropertyChecker(MppCheckerKind.Platform) {
+class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId>) : FirPropertyChecker(CheckerSessionKind.Platform) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
         val containingClassSymbol = declaration.dispatchReceiverType?.toRegularClassSymbol(session) ?: return

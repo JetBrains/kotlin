@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.isExperimentalMarker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
-object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
+object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
         checkNotAcceptedExperimentalities(expression, context, reporter)
         checkMarkerUsedAsQualifier(expression, context, reporter)

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 
 // No need to visit anonymous object since an anonymous object is always inner. This aligns with
 // compiler/frontend/src/org/jetbrains/kotlin/resolve/ModifiersChecker.java:198
-object FirNestedClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirNestedClassChecker : FirRegularClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // Local enums / objects / companion objects are handled with different diagnostic codes.
         if ((declaration.classKind.isSingleton || declaration.classKind == ClassKind.ENUM_CLASS) && declaration.isLocal) return

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extractClassFromArgument
@@ -36,15 +36,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarationChecker(mppKind) {
-    object Regular : FirNativeThrowsChecker(MppCheckerKind.Platform) {
+sealed class FirNativeThrowsChecker(mppKind: CheckerSessionKind) : FirBasicDeclarationChecker(mppKind) {
+    object Regular : FirNativeThrowsChecker(CheckerSessionKind.Platform) {
         override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
             if ((declaration as? FirMemberDeclaration)?.isExpect == true) return
             super.check(declaration, context, reporter)
         }
     }
 
-    object ForExpectClass : FirNativeThrowsChecker(MppCheckerKind.Common) {
+    object ForExpectClass : FirNativeThrowsChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
         override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
             if ((declaration as? FirMemberDeclaration)?.isExpect != true) return
             super.check(declaration, context, reporter)

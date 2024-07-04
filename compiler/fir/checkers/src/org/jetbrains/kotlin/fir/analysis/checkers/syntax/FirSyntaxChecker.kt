@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 
@@ -53,7 +53,7 @@ interface FirSyntaxChecker<in D : FirElement, P : PsiElement> {
 }
 
 abstract class FirDeclarationSyntaxChecker<in D : FirDeclaration, P : PsiElement> :
-    FirDeclarationChecker<D>(MppCheckerKind.Common),
+    FirDeclarationChecker<D>(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers),
     FirSyntaxChecker<D, P> {
     final override fun check(declaration: D, context: CheckerContext, reporter: DiagnosticReporter) {
         checkSyntax(declaration, context, reporter)
@@ -61,7 +61,7 @@ abstract class FirDeclarationSyntaxChecker<in D : FirDeclaration, P : PsiElement
 }
 
 abstract class FirExpressionSyntaxChecker<in E : FirStatement, P : PsiElement> :
-    FirExpressionChecker<E>(MppCheckerKind.Common),
+    FirExpressionChecker<E>(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers),
     FirSyntaxChecker<E, P> {
     final override fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {
         checkSyntax(expression, context, reporter)
