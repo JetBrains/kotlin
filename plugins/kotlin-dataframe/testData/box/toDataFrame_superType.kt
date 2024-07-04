@@ -16,6 +16,7 @@ class MyImpl(override val i: Int, override val a: Int) : MyInterface
 fun test(list: List<MyInterface>) {
     val df = list.toDataFrame()
     df.schema().print()
+    df.compareSchemas(strict = true)
     df.i
     df.a
 }
