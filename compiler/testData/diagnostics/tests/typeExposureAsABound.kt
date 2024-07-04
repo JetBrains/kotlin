@@ -1,4 +1,5 @@
 // ISSUE: KT-27112
+// LANGUAGE: -ReportExposedTypeForMoreCasesOfTypeParameterBounds
 
 // FILE: Foo.kt
 private open class Foo {

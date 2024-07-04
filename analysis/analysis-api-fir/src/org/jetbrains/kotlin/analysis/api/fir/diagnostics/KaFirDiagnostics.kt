@@ -1195,6 +1195,13 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val restrictingVisibility: EffectiveVisibility
     }
 
+    interface ExposedTypeParameterBoundDeprecationWarning : KaFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass get() = ExposedTypeParameterBoundDeprecationWarning::class
+        val elementVisibility: EffectiveVisibility
+        val restrictingDeclaration: KaSymbol
+        val restrictingVisibility: EffectiveVisibility
+    }
+
     interface InapplicableInfixModifier : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InapplicableInfixModifier::class
     }

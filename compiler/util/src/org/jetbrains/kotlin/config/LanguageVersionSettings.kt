@@ -410,6 +410,7 @@ enum class LanguageFeature(
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, kind = OTHER), // KT-56386
     WhenGuards(sinceVersion = null, kind = OTHER), // KT-13626
     MultiDollarInterpolation(sinceVersion = null, kind = OTHER), // KT-2425
+    ReportExposedTypeForMoreCasesOfTypeParameterBounds(sinceVersion = null, kind = BUG_FIX), // KT-27112
     ;
 
     init {
