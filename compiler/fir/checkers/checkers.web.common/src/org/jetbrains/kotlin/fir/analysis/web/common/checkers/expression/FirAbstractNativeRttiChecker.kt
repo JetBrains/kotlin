@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.web.common.checkers.FirAbstractWebCheck
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 abstract class FirAbstractNativeRttiChecker(
     private val webCheckerUtils: FirAbstractWebCheckerUtils

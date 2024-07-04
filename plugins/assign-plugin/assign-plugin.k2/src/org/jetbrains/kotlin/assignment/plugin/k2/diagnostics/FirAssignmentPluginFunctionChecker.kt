@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 
 object FirAssignmentPluginFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {

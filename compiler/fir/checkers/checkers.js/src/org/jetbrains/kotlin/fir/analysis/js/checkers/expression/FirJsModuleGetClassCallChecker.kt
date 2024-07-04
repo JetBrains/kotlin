@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirGetClassCallChec
 import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 
 
 object FirJsModuleGetClassCallChecker : FirGetClassCallChecker(MppCheckerKind.Common) {

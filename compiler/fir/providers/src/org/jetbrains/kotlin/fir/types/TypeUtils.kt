@@ -287,14 +287,6 @@ fun FirTypeRef.isExtensionFunctionType(session: FirSession): Boolean {
     return coneTypeSafe<ConeKotlinType>()?.isExtensionFunctionType(session) == true
 }
 
-fun ConeKotlinType.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
-    return (this as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
-}
-
-fun ConeClassLikeType.toSymbol(session: FirSession): FirClassLikeSymbol<*>? {
-    return lookupTag.toSymbol(session)
-}
-
 fun FirTypeRef.hasEnhancedNullability(): Boolean =
     coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
 
@@ -626,26 +618,6 @@ private fun ConeKotlinType.hasSubtypesAboveNothingAccordingToK1(session: FirSess
     }
 
     return false
-}
-
-/**
- * Returns the FirRegularClassSymbol associated with this
- * or null of something goes wrong.
- */
-fun ConeClassLikeType.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
-    return fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol
-}
-
-fun ConeKotlinType.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
-    return (this as? ConeClassLikeType)?.toRegularClassSymbol(session)
-}
-
-fun ConeKotlinType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
-    return (this as? ConeClassLikeType)?.toClassSymbol(session)
-}
-
-fun ConeClassLikeType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
-    return fullyExpandedType(session).toSymbol(session) as? FirClassSymbol<*>
 }
 
 /**

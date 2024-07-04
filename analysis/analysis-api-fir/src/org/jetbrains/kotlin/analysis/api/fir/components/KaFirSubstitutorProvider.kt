@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.substitutorForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 internal class KaFirSubstitutorProvider(
     override val analysisSessionProvider: () -> KaFirSession

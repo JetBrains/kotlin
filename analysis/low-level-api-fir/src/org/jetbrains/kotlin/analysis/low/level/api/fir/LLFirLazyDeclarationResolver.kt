@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.fir.types.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 
 @ThreadSafeMutableState
 internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {

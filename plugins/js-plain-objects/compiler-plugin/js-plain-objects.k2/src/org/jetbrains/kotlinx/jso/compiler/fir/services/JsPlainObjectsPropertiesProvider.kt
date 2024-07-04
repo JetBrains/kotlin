@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlinx.jspo.compiler.fir.JsPlainObjectsPredicates
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsAnnotations
