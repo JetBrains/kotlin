@@ -1,5 +1,5 @@
 val x by lazy { "1" }
-    external get
+    <!WRONG_EXTERNAL_DECLARATION!>external get<!>
 
 class Delegate {
     operator fun getValue(thisRef: Any?, property: Any): String = ""
@@ -7,5 +7,5 @@ class Delegate {
 }
 
 var y by Delegate()
-    external get
-    external set
+    <!WRONG_EXTERNAL_DECLARATION!>external get<!>
+    <!WRONG_EXTERNAL_DECLARATION!>external set<!>
