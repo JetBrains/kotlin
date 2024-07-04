@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 
-internal val KotlinMultiplatformExtension.resourcesPublicationExtension: KotlinTargetResourcesPublicationImpl?
+val KotlinMultiplatformExtension.resourcesPublicationExtension: KotlinTargetResourcesPublicationImpl?
     get() {
         if (!project.kotlinPropertiesProvider.mppResourcesPublication) return null
         return project.extraProperties.getOrPut(KotlinTargetResourcesPublication.EXTENSION_NAME) {

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import javax.inject.Inject
 
 @DisableCachingByDefault
-internal abstract class ResolveResourcesFromDependenciesTask : DefaultTask() {
+abstract class ResolveResourcesFromDependenciesTask : DefaultTask() {
 
     @get:Inject
     abstract val fileSystem: FileSystemOperations

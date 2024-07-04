@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.KotlinAndroidTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.AggregateResourcesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
@@ -27,10 +28,12 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import javax.inject.Inject
 
-internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor(
+abstract class KotlinTargetResourcesPublicationImpl @Inject constructor(
     private val project: Project,
 ) : KotlinTargetResourcesPublication {
 
@@ -131,39 +134,53 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
         validateTargetResourcesAreResolvable(target)
         validateGradleVersionIsCompatibleWithResolutionStrategy(target.name)
 
-        val aggregateResourcesTaskName = target.disambiguateName("AggregateResources")
+        val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        return setupResourceResolvingForTarget(target, mainCompilation)
+    }
+
+    fun setupResourceResolvingForTarget(target: KotlinTarget, compilation: KotlinCompilation<*>): Provider<File> {
+        val prefix = if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) "" else compilation.name
+        val aggregateResourcesTaskName = lowerCamelCaseName(prefix, target.name, "AggregateResources")
+
         project.locateTask<AggregateResourcesTask>(aggregateResourcesTaskName)?.let {
             return it.flatMap { it.outputDirectory.asFile }
         }
 
         val resolveResourcesFromDependenciesTask = project.registerTask<ResolveResourcesFromDependenciesTask>(
-            target.disambiguateName("ResolveResourcesFromDependencies")
+            lowerCamelCaseName(prefix, target.name, "ResolveResourcesFromDependencies")
         )
         val aggregateResourcesTask = project.registerTask<AggregateResourcesTask>(aggregateResourcesTaskName) { aggregate ->
             aggregate.resourcesFromDependenciesDirectory.set(resolveResourcesFromDependenciesTask.flatMap { it.outputDirectory })
             aggregate.outputDirectory.set(
-                project.layout.buildDirectory.dir("$MULTIPLATFORM_RESOURCES_DIRECTORY/aggregated-resources/${target.targetName}")
+                project.layout.buildDirectory.dir(
+                    "$MULTIPLATFORM_RESOURCES_DIRECTORY/${
+                        dashSeparatedName(prefix, "aggregated-resources")
+                    }/${target.targetName}"
+                )
             )
         }
 
         project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
-            val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
             resolveResourcesFromDependencies(
-                compilation = mainCompilation,
+                prefix = prefix,
+                compilation = compilation,
                 resolveResourcesFromDependenciesTask = resolveResourcesFromDependenciesTask,
                 targetName = target.targetName,
             )
-            resolveResourcesFromSelf(
-                compilation = mainCompilation,
-                target = target,
-                aggregateResourcesTask = aggregateResourcesTask,
-            )
+            if (compilation.isMain()) {
+                resolveResourcesFromSelf(
+                    compilation = compilation,
+                    target = target,
+                    aggregateResourcesTask = aggregateResourcesTask,
+                )
+            }
         }
 
         return aggregateResourcesTask.flatMap { it.outputDirectory.asFile }
     }
 
     private fun resolveResourcesFromDependencies(
+        prefix: String,
         compilation: KotlinCompilation<*>,
         resolveResourcesFromDependenciesTask: TaskProvider<ResolveResourcesFromDependenciesTask>,
         targetName: String,
@@ -181,7 +198,14 @@ internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor
                 project.kotlinPropertiesProvider.mppResourcesResolutionStrategy.resourceArchives(compilation)
             )
             it.outputDirectory.set(
-                project.layout.buildDirectory.dir("$MULTIPLATFORM_RESOURCES_DIRECTORY/resources-from-dependencies/${targetName}")
+                project.layout.buildDirectory.dir(
+                    "$MULTIPLATFORM_RESOURCES_DIRECTORY/${
+                        dashSeparatedName(
+                            prefix,
+                            "resources-from-dependencies"
+                        )
+                    }/${targetName}"
+                )
             )
         }
     }
