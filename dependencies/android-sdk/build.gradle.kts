@@ -24,15 +24,36 @@ repositories {
     }
 }
 
-val buildToolsVersion = "r29.0.3"
 val platformToolsVersion = "r28.0.1"
 val sdkToolsVersion = "4333796" /*26.1.1*/
 val emulatorVersion = "5264690"
 
+val buildTools_30_0_3_artifactId = mapOf(
+    "windows" to "91936d4ee3ccc839f0addd53c9ebf087b1e39251.build-tools",
+    "macosx" to "f6d24b187cc6bd534c6c37604205171784ac5621.build-tools"
+).withDefault { "build-tools" }
+
 dependencies {
-    implicitDependencies("google:build-tools:$buildToolsVersion:linux@zip")
-    implicitDependencies("google:build-tools:$buildToolsVersion:windows@zip")
-    implicitDependencies("google:build-tools:$buildToolsVersion:macosx@zip")
+    implicitDependencies("google:platform:23_r03@zip")
+    implicitDependencies("google:platform:26_r02@zip")
+    implicitDependencies("google:platform:33_r02@zip")
+    implicitDependencies("google:platform:34-ext7_r02@zip")
+
+    implicitDependencies("google:build-tools:r29.0.3:linux@zip")
+    implicitDependencies("google:build-tools:r29.0.3:windows@zip")
+    implicitDependencies("google:build-tools:r29.0.3:macosx@zip")
+
+    implicitDependencies("google:${buildTools_30_0_3_artifactId.getValue("linux")}:r30.0.3:linux@zip")
+    implicitDependencies("google:${buildTools_30_0_3_artifactId.getValue("windows")}:r30.0.3:windows@zip")
+    implicitDependencies("google:${buildTools_30_0_3_artifactId.getValue("macosx")}:r30.0.3:macosx@zip")
+
+    implicitDependencies("google:build-tools:r33.0.1:linux@zip")
+    implicitDependencies("google:build-tools:r33.0.1:windows@zip")
+    implicitDependencies("google:build-tools:r33.0.1:macosx@zip")
+
+    implicitDependencies("google:build-tools:r34:linux@zip")
+    implicitDependencies("google:build-tools:r34:windows@zip")
+    implicitDependencies("google:build-tools:r34:macosx@zip")
 
     implicitDependencies("google:platform-tools:$platformToolsVersion:linux@zip")
     implicitDependencies("google:platform-tools:$platformToolsVersion:windows@zip")
@@ -146,11 +167,25 @@ fun unzipSdkTask(
     return unzipTask
 }
 
+unzipSdkTask("android", "22_r02", "platforms/android-22", "", androidPlatform, 1, prepareTask = preparePlatform)
+unzipSdkTask("platform", "23_r03", "platforms/android-23", "", androidPlatform, 1, prepareTask = preparePlatform)
+unzipSdkTask("platform", "24_r02", "platforms/android-24", "", androidPlatform, 1, prepareTask = preparePlatform)
 unzipSdkTask("platform", "26_r02", "platforms/android-26", "", androidPlatform, 1, prepareTask = preparePlatform)
+unzipSdkTask("platform", "27_r03", "platforms/android-27", "", androidPlatform, 1, prepareTask = preparePlatform)
+unzipSdkTask("platform", "28_r06", "platforms/android-28", "", androidPlatform, 1, prepareTask = preparePlatform)
+unzipSdkTask("platform", "30_r03", "platforms/android-30", "", androidPlatform, 1, prepareTask = preparePlatform)
+unzipSdkTask("platform", "31_r01", "platforms/android-31", "", androidPlatform, 1, prepareTask = preparePlatform)
+unzipSdkTask("platform", "33_r02", "platforms/android-33", "", androidPlatform, 1, prepareTask = preparePlatform)
+unzipSdkTask("platform", "34-ext7_r02", "platforms/android-34", "", androidPlatform, 1, prepareTask = preparePlatform)
+
+unzipSdkTask("build-tools", "r29.0.3", "build-tools/29.0.3", toolsOs, buildTools, 1)
+unzipSdkTask(buildTools_30_0_3_artifactId.getValue(toolsOs), "r30.0.3", "build-tools/30.0.3", toolsOs, buildTools, 1)
+unzipSdkTask("build-tools", "r33.0.1", "build-tools/33.0.1", toolsOs, buildTools, 1)
+unzipSdkTask("build-tools", "r34", "build-tools/34.0.0", toolsOs, buildTools, 1)
+
 unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)
 unzipSdkTask("sdk-tools-$toolsOsDarwin", sdkToolsVersion, "", "")
-unzipSdkTask("build-tools", buildToolsVersion, "build-tools/29.0.3", toolsOs, buildTools, 1)
 unzipSdkTask("emulator-$toolsOsDarwin", emulatorVersion, "", "", prepareTask = prepareEmulator)
 unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default","r05", prepareTask = prepareEmulator)
 unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
