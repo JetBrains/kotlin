@@ -407,19 +407,21 @@ class JsIrBackendContext(
     }
 
     fun getJsCodeForFunction(symbol: IrFunctionSymbol): JsFunction? {
-        val jsFunction = outlinedJsCodeFunctions[symbol]
+        val originalSymbol = symbol.owner.originalFunction.symbol
+        val jsFunction = outlinedJsCodeFunctions[originalSymbol]
         if (jsFunction != null) return jsFunction
-        val jsFunAnnotation = symbol.owner.getAnnotation(JsAnnotations.jsFunFqn) ?: return null
+
+        val jsFunAnnotation = originalSymbol.owner.getAnnotation(JsAnnotations.jsFunFqn) ?: return null
         val jsCode = jsFunAnnotation.getValueArgument(0)
             ?: compilationException("@JsFun annotation must contain an argument", jsFunAnnotation)
-        val statements = translateJsCodeIntoStatementList(jsCode, this, symbol.owner)
+        val statements = translateJsCodeIntoStatementList(jsCode, this, originalSymbol.owner)
             ?: compilationException("Could not parse JS code", jsFunAnnotation)
         val parsedJsFunction = statements.singleOrNull()
             ?.safeAs<JsExpressionStatement>()
             ?.expression
             ?.safeAs<JsFunction>()
             ?: compilationException("Provided JS code is not a js function", jsFunAnnotation)
-        outlinedJsCodeFunctions[symbol] = parsedJsFunction
+        outlinedJsCodeFunctions[originalSymbol] = parsedJsFunction
         return parsedJsFunction
     }
 

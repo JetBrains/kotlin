@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.ir.util.originalFunction
 import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
@@ -90,7 +91,10 @@ class JsGenerationContext(
 
     fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode
 
-    fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean = staticContext.backendContext.getJsCodeForFunction(symbol) != null
+    fun checkIfHasAssociatedJsCode(symbol: IrFunctionSymbol): Boolean {
+        val originalSymbol = symbol.owner.originalFunction.symbol
+        return staticContext.backendContext.getJsCodeForFunction(originalSymbol) != null
+    }
 
     fun getStartLocationForIrElement(irElement: IrElement, originalName: String? = null) =
         getLocationForIrElement(irElement, originalName, startLocationCache) { startOffset }

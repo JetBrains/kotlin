@@ -5913,6 +5913,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Test
+    @TestMetadata("jsCodeInLambda.kt")
+    public void testJsCodeInLambda() {
+      runTest("js/js.translator/testData/box/inline/jsCodeInLambda.kt");
+    }
+
+    @Test
     @TestMetadata("jsCodeVarDeclared.kt")
     public void testJsCodeVarDeclared() {
       runTest("js/js.translator/testData/box/inline/jsCodeVarDeclared.kt");
