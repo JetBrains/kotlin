@@ -13,6 +13,8 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 /**
  * Extracts dump for targets supported by the host compiler from a merged API dump stored in a project.
@@ -58,7 +60,8 @@ public abstract class KotlinKlibExtractAbiTask : DefaultTask() {
                     "Please ensure that ':apiDump' was executed in order to get API dump to compare the build against")
         }
         if (inputFile.length() == 0L) {
-            error("Project ABI file ${inputFile.relativeTo(rootDir)} is empty.")
+            Files.copy(inputFile.toPath(), outputAbiFile.asFile.get().toPath(), StandardCopyOption.REPLACE_EXISTING)
+            return
         }
         val dump = KlibDump.from(inputFile)
         val unsupportedTargets = targetsToRemove.get().map(KlibTarget::targetName).toSet()

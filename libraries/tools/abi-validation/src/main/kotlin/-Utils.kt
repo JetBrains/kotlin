@@ -53,10 +53,10 @@ public class KlibDumpMetadata(
      * happen for an empty project, a project having only test targets,
      * or a project that has no sources for a particular target),
      * [KlibDumpMetadata] will not force an error.
-     * Instead, a dependent task will be skipped.
+     * It's up to [KlibDumpMetadata] users to check if a [dumpFile] exists and
+     * perform a required action accordingly.
      */
     @get:InputFiles
-    @get:SkipWhenEmpty
     @get:PathSensitive(PathSensitivity.RELATIVE)
     public val dumpFile: RegularFileProperty
 ) : Serializable

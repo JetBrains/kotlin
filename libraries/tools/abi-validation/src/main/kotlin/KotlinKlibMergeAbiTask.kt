@@ -20,8 +20,7 @@ public abstract class KotlinKlibMergeAbiTask : DefaultTask() {
     /**
      * Dumps to merge.
      *
-     * If a file referred by [KlibDumpMetadata.dumpFile] does not exist, it will be ignored and corresponding
-     * target will not be mentioned in the resulting merged dump.
+     * If there is no dump for a particular target, its [KlibDumpMetadata.dumpFile] won't exist.
      */
     @get:Nested
     public abstract val dumps: SetProperty<KlibDumpMetadata>

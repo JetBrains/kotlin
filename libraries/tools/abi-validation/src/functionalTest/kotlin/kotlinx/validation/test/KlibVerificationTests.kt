@@ -700,14 +700,16 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             runApiDump()
         }
 
-        runner.withDebug(true).build().apply {
-            assertTaskSkipped(":klibApiDump")
+        runner.build().apply {
+            assertTaskSuccess(":klibApiDump")
         }
-        assertFalse(runner.projectDir.resolve("api").exists())
+        val apiDumpFile = rootProjectAbiDump("testproject")
+        assertTrue(apiDumpFile.exists())
+        assertTrue(apiDumpFile.readText().isEmpty())
     }
 
     @Test
-    fun `apiDump should remove dump file if the project does not contain sources anymore`() {
+    fun `apiDump should dump empty file if the project does not contain sources anymore`() {
         val runner = test {
             baseProjectSetting()
             addToSrcSet("/examples/classes/AnotherBuildConfig.kt", sourceSet = "commonTest")
@@ -720,7 +722,9 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
         runner.build().apply {
             assertTaskSuccess(":klibApiDump")
         }
-        assertFalse(runner.projectDir.resolve("api").resolve("testproject.klib.api").exists())
+        val dumpFile = rootProjectAbiDump("testproject")
+        assertTrue(dumpFile.exists())
+        assertTrue(dumpFile.readText().isEmpty())
     }
 
     @Test
@@ -735,7 +739,7 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
     }
 
     @Test
-    fun `apiCheck should fail for empty project`() {
+    fun `apiCheck should fail for empty project without a dump file`() {
         val runner = test {
             baseProjectSetting()
             addToSrcSet("/examples/classes/AnotherBuildConfig.kt", sourceSet = "commonTest")
@@ -746,6 +750,21 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
             Assertions.assertThat(output).contains(
                 "File with project's API declarations 'api${File.separator}testproject.klib.api' does not exist."
             )
+        }
+    }
+
+    @Test
+    fun `apiCheck should not fail for empty project with an empty dump file`() {
+        val runner = test {
+            baseProjectSetting()
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt", sourceSet = "commonTest")
+            abiFile("testproject") {
+                // empty dump file
+            }
+            runApiCheck()
+        }
+        runner.build().apply {
+            assertTaskSuccess(":klibApiCheck")
         }
     }
 
