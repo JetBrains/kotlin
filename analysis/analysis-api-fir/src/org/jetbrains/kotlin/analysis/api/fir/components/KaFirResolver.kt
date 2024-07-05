@@ -594,7 +594,7 @@ internal class KaFirResolver(
                     partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
                     if (fir.isThis) KaDelegatedConstructorCall.Kind.THIS_CALL else KaDelegatedConstructorCall.Kind.SUPER_CALL,
                     fir.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionSignature<*>),
-                    fir.toTypeArgumentsMapping(partiallyAppliedSymbol)
+                    fir.toTypeArgumentsMapping(partiallyAppliedSymbol.symbol)
                 )
             }
             is FirVariableAssignment -> {
@@ -603,7 +603,7 @@ internal class KaFirResolver(
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                 KaBaseSimpleVariableAccessCall(
                     partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
-                    fir.unwrapLValue()?.toTypeArgumentsMapping(partiallyAppliedSymbol) ?: emptyMap(),
+                    fir.unwrapLValue()?.toTypeArgumentsMapping(partiallyAppliedSymbol.symbol) ?: emptyMap(),
                     KaBaseSimpleVariableWriteAccess(rhs),
                 )
             }
@@ -615,7 +615,7 @@ internal class KaFirResolver(
                         @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                         KaBaseSimpleVariableAccessCall(
                             partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
-                            fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
+                            fir.toTypeArgumentsMapping(partiallyAppliedSymbol.symbol),
                             KaBaseSimpleVariableReadAccess,
                         )
                     }
@@ -625,7 +625,7 @@ internal class KaFirResolver(
                         KaBaseSimpleFunctionCall(
                             partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
                             emptyMap(),
-                            fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
+                            fir.toTypeArgumentsMapping(partiallyAppliedSymbol.symbol),
                             isImplicitInvoke,
                         )
                     }
@@ -651,7 +651,7 @@ internal class KaFirResolver(
                     argumentMappingWithoutExtensionReceiver
                         ?.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionSignature<*>)
                         ?: emptyMap(),
-                    fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
+                    fir.toTypeArgumentsMapping(partiallyAppliedSymbol.symbol),
                     isImplicitInvoke
                 )
             }
@@ -686,7 +686,7 @@ internal class KaFirResolver(
                     KaBaseSimpleFunctionCall(
                         getPartiallyAppliedSymbol,
                         getAccessArgumentMapping,
-                        fir.toTypeArgumentsMapping(getPartiallyAppliedSymbol),
+                        fir.toTypeArgumentsMapping(getPartiallyAppliedSymbol.symbol),
                         false
                     )
                 } else {
@@ -709,7 +709,7 @@ internal class KaFirResolver(
                 return if (resolveFragmentOfCall) {
                     KaBaseSimpleVariableAccessCall(
                         variablePartiallyAppliedSymbol,
-                        fir.unwrapLValue()?.toTypeArgumentsMapping(variablePartiallyAppliedSymbol) ?: emptyMap(),
+                        fir.unwrapLValue()?.toTypeArgumentsMapping(variablePartiallyAppliedSymbol.symbol) ?: emptyMap(),
                         KaBaseSimpleVariableReadAccess,
                     )
                 } else {
@@ -741,7 +741,7 @@ internal class KaFirResolver(
                     KaBaseSimpleFunctionCall(
                         getPartiallyAppliedSymbol,
                         getAccessArgumentMapping,
-                        fir.toTypeArgumentsMapping(getPartiallyAppliedSymbol),
+                        fir.toTypeArgumentsMapping(getPartiallyAppliedSymbol.symbol),
                         false
                     )
                 } else {
@@ -764,7 +764,7 @@ internal class KaFirResolver(
                 return if (resolveFragmentOfCall) {
                     KaBaseSimpleVariableAccessCall(
                         variablePartiallyAppliedSymbol,
-                        fir.unwrapLValue()?.toTypeArgumentsMapping(variablePartiallyAppliedSymbol) ?: emptyMap(),
+                        fir.unwrapLValue()?.toTypeArgumentsMapping(variablePartiallyAppliedSymbol.symbol) ?: emptyMap(),
                         KaBaseSimpleVariableReadAccess,
                     )
                 } else {
@@ -959,22 +959,16 @@ internal class KaFirResolver(
     private fun FirVariableSymbol<*>.toKaSignature(): KaVariableSignature<KaVariableSymbol> =
         firSymbolBuilder.variableBuilder.buildVariableLikeSignature(this)
 
-    private fun FirQualifiedAccessExpression.toTypeArgumentsMapping(
-        partiallyAppliedSymbol: KaPartiallyAppliedSymbol<*, *>,
-    ): Map<KaTypeParameterSymbol, KaType> {
-        return toTypeArgumentsMapping(typeArguments, partiallyAppliedSymbol)
+    private fun FirQualifiedAccessExpression.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
+        return toTypeArgumentsMapping(typeArguments, symbol)
     }
 
-    private fun FirResolvedQualifier.toTypeArgumentsMapping(
-        partiallyAppliedSymbol: KaPartiallyAppliedSymbol<*, *>,
-    ): Map<KaTypeParameterSymbol, KaType> {
-        return toTypeArgumentsMapping(typeArguments, partiallyAppliedSymbol)
+    private fun FirResolvedQualifier.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
+        return toTypeArgumentsMapping(typeArguments, symbol)
     }
 
-    private fun FirDelegatedConstructorCall.toTypeArgumentsMapping(
-        partiallyAppliedSymbol: KaPartiallyAppliedSymbol<*, *>,
-    ): Map<KaTypeParameterSymbol, KaType> {
-        val typeParameters = partiallyAppliedSymbol.symbol.typeParameters.ifEmpty { return emptyMap() }
+    private fun FirDelegatedConstructorCall.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
+        val typeParameters = symbol.typeParameters.ifEmpty { return emptyMap() }
         val typeArguments = constructedTypeRef.coneType.typeArguments
         // In all cases, the size of arguments and parameters is the same,
         // so this check exists just to be sure
@@ -989,7 +983,7 @@ internal class KaFirResolver(
     }
 
     /**
-     * Maps [typeArguments] to the type parameters of [partiallyAppliedSymbol].
+     * Maps [typeArguments] to the type parameters of [symbol].
      *
      * If too many type arguments are provided, a mapping is still created. Extra type arguments are simply ignored. If this wasn't the
      * case, the resulting [KaCall] would contain no type arguments at all, which can cause problems later. If too few type arguments are
@@ -998,9 +992,9 @@ internal class KaFirResolver(
      */
     private fun toTypeArgumentsMapping(
         typeArguments: List<FirTypeProjection>,
-        partiallyAppliedSymbol: KaPartiallyAppliedSymbol<*, *>,
+        symbol: KaDeclarationSymbol,
     ): Map<KaTypeParameterSymbol, KaType> {
-        val typeParameters = partiallyAppliedSymbol.symbol.typeParameters
+        val typeParameters = symbol.typeParameters
         if (typeParameters.isEmpty()) return emptyMap()
         if (typeArguments.size < typeParameters.size) return emptyMap()
 
@@ -1016,11 +1010,9 @@ internal class KaFirResolver(
         return result
     }
 
-    private fun FirArrayLiteral.toTypeArgumentsMapping(
-        partiallyAppliedSymbol: KaPartiallyAppliedSymbol<*, *>,
-    ): Map<KaTypeParameterSymbol, KaType> {
+    private fun FirArrayLiteral.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
         val elementType = resolvedType.arrayElementType()?.asKtType() ?: return emptyMap()
-        val typeParameter = partiallyAppliedSymbol.symbol.typeParameters.singleOrNull() ?: return emptyMap()
+        val typeParameter = symbol.typeParameters.singleOrNull() ?: return emptyMap()
         return mapOf(typeParameter to elementType)
     }
 
@@ -1090,7 +1082,7 @@ internal class KaFirResolver(
         analysisSession.apply {
             return constructors.map { constructor ->
                 val partiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(constructor.asSignature(), null, null)
-                KaBaseSimpleFunctionCall(partiallyAppliedSymbol, emptyMap(), toTypeArgumentsMapping(partiallyAppliedSymbol), false)
+                KaBaseSimpleFunctionCall(partiallyAppliedSymbol, emptyMap(), toTypeArgumentsMapping(constructor), false)
             }
         }
     }
@@ -1262,7 +1254,7 @@ internal class KaFirResolver(
                             KaBaseSimpleFunctionCall(
                                 partiallyAppliedSymbol,
                                 createArgumentMapping(defaultArrayOfSymbol, substitutor),
-                                this@toKtCallInfo.toTypeArgumentsMapping(partiallyAppliedSymbol),
+                                this@toKtCallInfo.toTypeArgumentsMapping(defaultArrayOfSymbol),
                                 false,
                             )
                         ),
@@ -1286,7 +1278,7 @@ internal class KaFirResolver(
             KaBaseSimpleFunctionCall(
                 partiallyAppliedSymbol,
                 createArgumentMapping(arrayOfSymbol, substitutor),
-                this@toKtCallInfo.toTypeArgumentsMapping(partiallyAppliedSymbol),
+                this@toKtCallInfo.toTypeArgumentsMapping(arrayOfSymbol),
                 false
             )
         )
