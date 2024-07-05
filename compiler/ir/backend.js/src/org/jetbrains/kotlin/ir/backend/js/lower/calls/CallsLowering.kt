@@ -30,7 +30,6 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
         BuiltInConstructorCalls(context),
         JsonIntrinsics(context),
         NativeGetterSetterTransformer(context),
-        ReplaceCallsWithInvalidTypeArgumentForReifiedParameters(context),
     )
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -174,7 +174,6 @@ internal class ICHasher {
             JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
             JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
             JSConfigurationKeys.MODULE_KIND,
-            JSConfigurationKeys.ERROR_TOLERANCE_POLICY
         )
         hashCalculator.updateConfigKeys(config, enumKeys) { value: Enum<*> ->
             hashCalculator.update(value.ordinal)
