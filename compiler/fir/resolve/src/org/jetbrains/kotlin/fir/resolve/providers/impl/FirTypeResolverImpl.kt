@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @ThreadSafeMutableState
 class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
+    private val aliasedTypeExpansionGloballyDisabled: Boolean =
+        !session.languageVersionSettings.getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution)
+
     private fun resolveSymbol(
         symbol: FirBasedSymbol<*>,
         qualifier: List<FirQualifierPart>,
@@ -459,6 +463,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 // Those are guaranteed to have source sessions, though.
                 val isFromLibraryDependency = resolvedTypeSymbol?.moduleData?.session?.kind == FirSession.Kind.Library
                 val resolvedExpandedType = when {
+                    aliasedTypeExpansionGloballyDisabled -> resolvedType
                     (expandTypeAliases || isFromLibraryDependency) && resolvedTypeSymbol is FirTypeAliasSymbol -> {
                         resolvedType.fullyExpandedType(resolvedTypeSymbol.moduleData.session)
                             .withAbbreviation(AbbreviatedTypeAttribute(resolvedType))

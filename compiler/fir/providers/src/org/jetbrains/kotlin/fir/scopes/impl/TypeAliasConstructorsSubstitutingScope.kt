@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -40,6 +42,11 @@ class TypeAliasConstructorsSubstitutingScope(
     private val outerType: ConeClassLikeType?,
     private val abbreviation: ConeClassLikeType?,
 ) : FirScope() {
+    private val aliasedTypeExpansionGloballyEnabled: Boolean = typeAliasSymbol
+        .moduleData
+        .session
+        .languageVersionSettings
+        .getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution)
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
@@ -53,7 +60,7 @@ class TypeAliasConstructorsSubstitutingScope(
                     this.typeParameters.clear()
                     typeParameters.mapTo(this.typeParameters) { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
 
-                    if (abbreviation != null) {
+                    if (abbreviation != null && aliasedTypeExpansionGloballyEnabled) {
                         returnTypeRef = returnTypeRef.withReplacedConeType(
                             returnTypeRef.coneType.withAbbreviation(AbbreviatedTypeAttribute(abbreviation))
                         )
