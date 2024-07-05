@@ -23,7 +23,14 @@ class RecompileModuleJsIrBackendFacade(
     testServices: TestServices
 ) : CommonRecompileModuleJsBackendFacade<ClassicFrontendOutputArtifact, IrBackendInput>(testServices, TargetBackend.JS_IR) {
     override fun TestConfigurationBuilder.configure(module: TestModule) {
-        startingArtifactFactory = { testServices.dependencyProvider.getArtifact(module, BackendKinds.IrBackend) }
+        startingArtifactFactory = {
+            testServices.dependencyProvider.getArtifact(module, BackendKinds.IrBackend).also {
+                require(it is IrBackendInput.JsIrAfterFrontendBackendInput) {
+                    "Recompilation can start only from IC cache entry, which has type JsIrAfterFrontendBackendInput.\n" +
+                    "Actual type: ${it::javaClass.name}.\nProbable cause: accidental override of artifact with the output of Klib deserialization facade"
+                }
+            }
+        }
 
         facadeStep { JsKlibBackendFacade(it, firstTimeCompilation = false) }
         facadeStep { JsIrBackendFacade(it, firstTimeCompilation = false) }

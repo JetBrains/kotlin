@@ -47,13 +47,13 @@ class DependencyProviderImpl(
         return getArtifactSafe(module, kind) ?: error("Artifact with kind $kind is not registered for module ${module.name}")
     }
 
+    // Registers output artifact, overriding previous one of the same kind.
+    // It's important for different IrBackend artifacts: the first one before serialization, the second one after serialization.
     fun <OutputArtifact : ResultingArtifact<OutputArtifact>> registerArtifact(
         module: TestModule,
         artifact: ResultingArtifact<OutputArtifact>,
     ) {
-        val kind = artifact.kind
-        val previousValue = artifactsByModule.getMap(module).put(kind, artifact)
-        if (previousValue != null) error("Artifact with kind $kind already registered for module ${module.name}")
+        artifactsByModule.getMap(module)[artifact.kind] = artifact
     }
 
     override fun unregisterAllArtifacts(module: TestModule) {

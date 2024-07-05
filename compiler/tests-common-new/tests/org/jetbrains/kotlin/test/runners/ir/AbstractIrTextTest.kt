@@ -42,7 +42,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
     abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
 
     data class KlibFacades(
-        val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+        val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
         val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
     )
 
@@ -108,7 +108,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
     }
 
     private fun TestConfigurationBuilder.klibSteps(klibFacades: KlibFacades) = klibFacades.run {
-        facadeStep(backendFacade)
+        facadeStep(serializerFacade)
         klibArtifactsHandlersStep()
         facadeStep(deserializerFacade)
         deserializedIrHandlersStep { useIrTextHandlers(this@klibSteps, isDeserializedInput = true) }

@@ -166,10 +166,12 @@ class IrTextDumpHandler(
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
         if (actualDump.isNotEmpty()) {
-            if (isDeserializedInput)
+            if (isDeserializedInput) {
+                // KT-54028: commit 3713d95bb1fc0cc434eeed42a0f0adac52af091b has "temporarily" disabled sealed subclasses deserialization
                 assertions.assertEqualsToFile(expectedFile, actualDump) { text -> filterOutSealedSubclasses(text) }
-            else
+            } else {
                 assertions.assertEqualsToFile(expectedFile, actualDump)
+            }
         } else {
             assertions.assertFileDoesntExist(expectedFile, DUMP_IR)
         }
@@ -187,8 +189,9 @@ class IrTextDumpHandler(
                 if (ongoingSealedSubclassesClauseIndent == null) {
                     if (line.trim() == SEALED_SUBCLASSES_CLAUSE) {
                         ongoingSealedSubclassesClauseIndent = line.substringBefore(SEALED_SUBCLASSES_CLAUSE)
-                    } else
+                    } else {
                         appendLine(line)
+                    }
                 } else {
                     if (!line.startsWith("$ongoingSealedSubclassesClauseIndent  CLASS") ) {
                         ongoingSealedSubclassesClauseIndent = null

@@ -34,7 +34,7 @@ abstract class AbstractFirJsIrTextTestBase(private val parser: FirParser) : Abst
 
     override val klibFacades: KlibFacades
         get() = KlibFacades(
-            backendFacade = ::FirJsKlibBackendFacade,
+            serializerFacade = ::FirJsKlibBackendFacade,
             deserializerFacade = ::JsIrDeserializerFacade,
         )
 

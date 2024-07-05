@@ -141,10 +141,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             when (val result = step.hackyProcessModule(module, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)) {
                 is TestStep.StepResult.Artifact<*> -> {
                     require(step is TestStep.FacadeStep<*, *>)
-                    if (step.inputArtifactKind != step.outputArtifactKind) {
-                        if (step.facade !is DeserializerFacade<*, *>) // DeserializerFacade produces second artifact with kind IrBackend
-                            dependencyProvider.registerArtifact(module, result.outputArtifact)
-                    }
+                    dependencyProvider.registerArtifact(module, result.outputArtifact)
                     inputArtifact = result.outputArtifact
                 }
                 is TestStep.StepResult.ErrorFromFacade -> {

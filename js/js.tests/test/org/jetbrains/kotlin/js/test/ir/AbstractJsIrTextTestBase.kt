@@ -47,7 +47,7 @@ open class AbstractClassicJsIrTextTest : AbstractJsIrTextTestBase<ClassicFronten
 
     override val klibFacades: KlibFacades?
         get() = KlibFacades(
-            backendFacade = ::JsKlibBackendFacade,
+            serializerFacade = ::JsKlibBackendFacade,
             deserializerFacade = ::JsIrDeserializerFacade,
         )
 }
