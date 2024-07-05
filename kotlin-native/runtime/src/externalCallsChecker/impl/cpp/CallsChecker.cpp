@@ -166,6 +166,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "+[NSObject class]",
         "+[NSObject conformsToProtocol:]",
         "+[NSObject isKindOfClass:]",
+        "+[NSObject isSubclassOfClass:]",
         "+[NSObject new]",
         "+[NSString stringWithFormat:]",
         "+[NSString stringWithUTF8String:]",
