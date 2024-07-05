@@ -119,6 +119,8 @@ class TestGroup(
             filenameStartsLowerCase: Boolean? = null, // assert that file is properly named
             skipIgnored: Boolean = false, // pretty meaningless flag, affects only few test names in one test runner
             deep: Int? = null, // specifies how deep recursive search will follow directory with testdata
+            skipSpecificFile: (File) -> Boolean = { false },
+            skipTestAllFilesCheck: Boolean = false,
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
@@ -139,7 +141,7 @@ class TestGroup(
                         rootFile, recursive, excludeParentDirs,
                         compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
                         realTargetBackend, excludeDirs, excludeDirsRecursively, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
-                        extractTagsFromDirectory(rootFile), methodModels
+                        extractTagsFromDirectory(rootFile), methodModels, skipSpecificFile, skipTestAllFilesCheck
                     )
                 }
             )

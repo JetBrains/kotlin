@@ -264,7 +264,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            fun model(allowKts: Boolean): TestClass.() -> Unit = {
+            fun model(allowKts: Boolean, onlyTypealiases: Boolean = false): TestClass.() -> Unit = {
                 val pattern = when (allowKts) {
                     true -> TestGeneratorUtil.KT_OR_KTS
                     false -> TestGeneratorUtil.KT
@@ -272,9 +272,16 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model(
                     "diagnostics/tests", pattern = pattern,
                     excludeDirsRecursively = listOf("multiplatform"),
-                    excludedPattern = excludedCustomTestdataPattern
+                    excludedPattern = excludedCustomTestdataPattern,
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
                 )
-                model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
+                model(
+                    "diagnostics/testsWithStdLib",
+                    excludedPattern = excludedCustomTestdataPattern,
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
+                )
             }
 
             testClass<AbstractFirPsiDiagnosticTest>(
@@ -290,7 +297,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(
                 suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerated",
-                init = model(allowKts = false)
+                init = model(allowKts = false, onlyTypealiases = true)
             )
 
             testClass<AbstractFirPsiForeignAnnotationsSourceJavaTest>(
@@ -437,18 +444,28 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            fun model(allowKts: Boolean): TestClass.() -> Unit = {
+            fun model(allowKts: Boolean, onlyTypealiases: Boolean = false): TestClass.() -> Unit = {
                 val pattern = when (allowKts) {
                     true -> TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
                     false -> TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
                 }
-                model("resolve", pattern = pattern)
-                model("resolveWithStdlib", pattern = pattern)
+                model(
+                    "resolve",
+                    pattern = pattern,
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
+                )
+                model(
+                    "resolveWithStdlib",
+                    pattern = pattern,
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
+                )
             }
 
             testClass<AbstractFirPsiDiagnosticTest>(init = model(allowKts = true))
             testClass<AbstractFirLightTreeDiagnosticsTest>(init = model(allowKts = false))
-            testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(init = model(allowKts = false))
+            testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(init = model(allowKts = false, onlyTypealiases = true))
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
