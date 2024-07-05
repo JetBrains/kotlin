@@ -80,9 +80,35 @@ class ComposeCompilerGradleSubplugin
                     SubpluginOption("traceMarkersEnabled", it.toString())
                 })
 
-                addAll(composeExtension.featureFlags.map { flags ->
-                    flags.map { SubpluginOption("featureFlag", it.toString()) }
-                }.orElse(emptyList()))
+                @Suppress("DEPRECATION")
+                addAll(
+                    composeExtension.featureFlags
+                        .zip(composeExtension.enableIntrinsicRemember) { featureFlags, intrinsicRemember ->
+                            if (!intrinsicRemember && !featureFlags.contains(ComposeFeatureFlag.IntrinsicRemember.disabled())) {
+                                featureFlags + ComposeFeatureFlag.IntrinsicRemember.disabled()
+                            } else {
+                                featureFlags
+                            }
+                        }
+                        .zip(composeExtension.enableStrongSkippingMode) { featureFlags, strongSkippingMode ->
+                            if (!strongSkippingMode && !featureFlags.contains(ComposeFeatureFlag.StrongSkipping.disabled())) {
+                                featureFlags + ComposeFeatureFlag.StrongSkipping.disabled()
+                            } else {
+                                featureFlags
+                            }
+                        }
+                        .zip(composeExtension.enableNonSkippingGroupOptimization) { featureFlags, nonSkippingGroupOptimization ->
+                            if (nonSkippingGroupOptimization && !featureFlags.contains(ComposeFeatureFlag.OptimizeNonSkippingGroups)) {
+                                featureFlags + ComposeFeatureFlag.OptimizeNonSkippingGroups
+                            } else {
+                                featureFlags
+                            }
+                        }
+                        .map { flags ->
+                            flags.map { SubpluginOption("featureFlag", it.toString()) }
+                        }
+                        .orElse(emptyList())
+                )
             }
 
         return project.objects
