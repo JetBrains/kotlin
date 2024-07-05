@@ -1,6 +1,7 @@
-java.lang.IllegalArgumentException: class org.jetbrains.kotlin.psi.KtClass is not a subtype of class org.jetbrains.kotlin.psi.KtTypeReference for factory SUPERTYPE_NOT_INITIALIZED
-    at org.jetbrains.kotlin.diagnostics.KtDiagnosticKt.checkPsiTypeConsistency(KtDiagnostic.kt:82)
-    at org.jetbrains.kotlin.diagnostics.KtDiagnosticKt.access$checkPsiTypeConsistency(KtDiagnostic.kt:1)
-    at org.jetbrains.kotlin.diagnostics.KtPsiSimpleDiagnostic.<init>(KtDiagnostic.kt:95)
-    at org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0.on(KtDiagnosticFactory.kt:46)
-    at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn(KtDiagnosticReportHelpers.kt:18)
+While analysing /entityTypeSuperClass.kt:17:1: java.lang.IllegalArgumentException: class org.jetbrains.kotlin.psi.KtClass is not a subtype of class org.jetbrains.kotlin.psi.KtTypeReference for factory MANY_CLASSES_IN_SUPERTYPE_LIST
+org.jetbrains.kotlin.util.FileAnalysisException: While analysing /entityTypeSuperClass.kt:17:1: java.lang.IllegalArgumentException: class org.jetbrains.kotlin.psi.KtClass is not a subtype of class org.jetbrains.kotlin.psi.KtTypeReference for factory MANY_CLASSES_IN_SUPERTYPE_LIST
+    at org.jetbrains.kotlin.util.AnalysisExceptionsKt.wrapIntoFileAnalysisExceptionIfNeeded(AnalysisExceptions.kt:57)
+    at org.jetbrains.kotlin.fir.FirCliExceptionHandler.handleExceptionOnFileAnalysis(Utils.kt:249)
+    at org.jetbrains.kotlin.fir.pipeline.AnalyseKt.runCheckers(analyse.kt:68)
+    at org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService.computeDiagnostics(FirDiagnosticsHandler.kt:681)
+    at org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService.getFrontendDiagnosticsForModule(FirDiagnosticsHandler.kt:659)
