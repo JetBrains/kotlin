@@ -899,7 +899,7 @@ KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@An
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = AbstractClass<T>
+          returnType = AbstractClass<@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>>
           symbol = <constructor>(): AbstractClass<T>
           valueParameters = []
           callableId = null
@@ -917,7 +917,7 @@ KtConstructorCalleeExpression(480,616): '@Anno("super type call $prop") Abstract
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = AbstractClass<T>
+          returnType = AbstractClass<@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>>
           symbol = <constructor>(): AbstractClass<T>
           valueParameters = []
           callableId = null
@@ -1289,7 +1289,7 @@ KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@An
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = AbstractClass<T>
+          returnType = AbstractClass<@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>>
           symbol = <constructor>(): AbstractClass<T>
           valueParameters = []
           callableId = null
@@ -1307,7 +1307,7 @@ KtConstructorCalleeExpression(653,789): '@Anno("super type call $prop") Abstract
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = AbstractClass<T>
+          returnType = AbstractClass<@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>>
           symbol = <constructor>(): AbstractClass<T>
           valueParameters = []
           callableId = null

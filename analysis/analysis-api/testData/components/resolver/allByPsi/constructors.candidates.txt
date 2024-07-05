@@ -866,7 +866,7 @@ KtConstructorDelegationCall(446,454): 'super(1)'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = r.ClassWithType<T>
+          returnType = r.ClassWithType<kotlin.Int>
           symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
           valueParameters = [
             KaVariableSignature:
@@ -899,7 +899,7 @@ KtConstructorDelegationReferenceExpression(446,451): 'super'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = r.ClassWithType<T>
+          returnType = r.ClassWithType<kotlin.Int>
           symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
           valueParameters = [
             KaVariableSignature:

@@ -5,7 +5,7 @@ KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
         "str" -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = T
+          returnType = kotlin.String
           symbol = x: T
           callableId = null)
       }
@@ -15,13 +15,13 @@ KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = Foo<T>
+          returnType = Foo<kotlin.String>
           symbol = <constructor>(x: T): Foo<T>
           valueParameters = [
             KaVariableSignature:
               name = x
               receiverType = null
-              returnType = T
+              returnType = kotlin.String
               symbol = x: T
               callableId = null
           ]

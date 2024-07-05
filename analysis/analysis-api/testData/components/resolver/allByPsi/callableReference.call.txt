@@ -172,7 +172,7 @@ KtSuperTypeCallEntry(258,282): 'ClassWithType<MyClass>()'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = pack.ClassWithType<T>
+          returnType = pack.ClassWithType<pack.MyClass>
           symbol = <constructor>(): pack.ClassWithType<T>
           valueParameters = []
           callableId = null
@@ -190,7 +190,7 @@ KtConstructorCalleeExpression(258,280): 'ClassWithType<MyClass>'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = pack.ClassWithType<T>
+          returnType = pack.ClassWithType<pack.MyClass>
           symbol = <constructor>(): pack.ClassWithType<T>
           valueParameters = []
           callableId = null

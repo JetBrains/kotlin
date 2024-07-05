@@ -131,7 +131,7 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = one.two.Base<B>
+          returnType = one.two.Base<C>
           symbol = <constructor>(): one.two.Base<B>
           valueParameters = []
           callableId = null
@@ -150,7 +150,7 @@ KtConstructorCalleeExpression(186,193): 'Base<C>'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = one.two.Base<B>
+          returnType = one.two.Base<C>
           symbol = <constructor>(): one.two.Base<B>
           valueParameters = []
           callableId = null
