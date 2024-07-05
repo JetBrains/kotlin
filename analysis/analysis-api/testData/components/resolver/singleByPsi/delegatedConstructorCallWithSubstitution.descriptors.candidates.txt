@@ -1,0 +1,30 @@
+KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      argumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.String
+          symbol = x: T
+          callableId = null)
+      }
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Foo<kotlin.String>
+          symbol = <constructor>(x: T): Foo<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = kotlin.String
+              symbol = x: T
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

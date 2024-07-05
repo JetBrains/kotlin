@@ -329,6 +329,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Test
+  @TestMetadata("constructorCallWithSubstitution.kt")
+  public void testConstructorCallWithSubstitution() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorCallWithSubstitution.kt");
+  }
+
+  @Test
   @TestMetadata("CtrlClickResolve.kt")
   public void testCtrlClickResolve() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/CtrlClickResolve.kt");
@@ -374,6 +380,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   @TestMetadata("delegatedConstructorApplicable.kt")
   public void testDelegatedConstructorApplicable() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorApplicable.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatedConstructorCallWithSubstitution.kt")
+  public void testDelegatedConstructorCallWithSubstitution() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorCallWithSubstitution.kt");
   }
 
   @Test

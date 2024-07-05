@@ -329,6 +329,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("constructorCallWithSubstitution.kt")
+  public void testConstructorCallWithSubstitution() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorCallWithSubstitution.kt");
+  }
+
+  @Test
   @TestMetadata("CtrlClickResolve.kt")
   public void testCtrlClickResolve() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/CtrlClickResolve.kt");
@@ -374,6 +380,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   @TestMetadata("delegatedConstructorApplicable.kt")
   public void testDelegatedConstructorApplicable() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorApplicable.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatedConstructorCallWithSubstitution.kt")
+  public void testDelegatedConstructorCallWithSubstitution() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorCallWithSubstitution.kt");
   }
 
   @Test
@@ -4880,6 +4892,30 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("constructorCallWithSubstitution.kt")
+    public void testConstructorCallWithSubstitution() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/constructorCallWithSubstitution.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorCallWithSubstitutionMissedType.kt")
+    public void testConstructorCallWithSubstitutionMissedType() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/constructorCallWithSubstitutionMissedType.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorCallWithSubstitutionMissedTypeWithBound.kt")
+    public void testConstructorCallWithSubstitutionMissedTypeWithBound() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/constructorCallWithSubstitutionMissedTypeWithBound.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorCallWithSubstitutionWrongBound.kt")
+    public void testConstructorCallWithSubstitutionWrongBound() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/constructorCallWithSubstitutionWrongBound.kt");
+    }
+
+    @Test
     @TestMetadata("CoroutineSuspensionPoint.kt")
     public void testCoroutineSuspensionPoint() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/CoroutineSuspensionPoint.kt");
@@ -4895,6 +4931,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     @TestMetadata("defaultValueThatCallsPreviousParameter.kt")
     public void testDefaultValueThatCallsPreviousParameter() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/defaultValueThatCallsPreviousParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCallWithSubstitution.kt")
+    public void testDelegatedConstructorCallWithSubstitution() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/delegatedConstructorCallWithSubstitution.kt");
     }
 
     @Test

@@ -1,0 +1,6 @@
+KtNameReferenceExpression(45,48): 'Foo'
+  KtSimpleNameReference:
+    (in Foo) constructor(x: T)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
