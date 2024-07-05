@@ -28856,6 +28856,42 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("valueClassInstanceOfNumberAndComparable.kt")
+    public void testValueClassInstanceOfNumberAndComparable() {
+      runTest("compiler/testData/codegen/box/inlineClasses/valueClassInstanceOfNumberAndComparable.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassInstanceOfNumberAndComparableInFunction.kt")
+    public void testValueClassInstanceOfNumberAndComparableInFunction() {
+      runTest("compiler/testData/codegen/box/inlineClasses/valueClassInstanceOfNumberAndComparableInFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassInstanceOfNumberAndComparableInFunction_before.kt")
+    public void testValueClassInstanceOfNumberAndComparableInFunction_before() {
+      runTest("compiler/testData/codegen/box/inlineClasses/valueClassInstanceOfNumberAndComparableInFunction_before.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassInstanceOfNumberAndComparableInInlineFunction.kt")
+    public void testValueClassInstanceOfNumberAndComparableInInlineFunction() {
+      runTest("compiler/testData/codegen/box/inlineClasses/valueClassInstanceOfNumberAndComparableInInlineFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassInstanceOfNumberAndComparableInInlineFunction_before.kt")
+    public void testValueClassInstanceOfNumberAndComparableInInlineFunction_before() {
+      runTest("compiler/testData/codegen/box/inlineClasses/valueClassInstanceOfNumberAndComparableInInlineFunction_before.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassInstanceOfNumberAndComparable_before.kt")
+    public void testValueClassInstanceOfNumberAndComparable_before() {
+      runTest("compiler/testData/codegen/box/inlineClasses/valueClassInstanceOfNumberAndComparable_before.kt");
+    }
+
+    @Test
     @TestMetadata("whenWithSubject.kt")
     public void testWhenWithSubject() {
       runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubject.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

@@ -135,17 +135,19 @@ internal class RedundantBoxingInterpreter(
         private val PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER =
             ImmutableSet.of(Type.BYTE, Type.SHORT, Type.INT, Type.FLOAT, Type.LONG, Type.DOUBLE)
 
-        private fun isSafeCast(value: BoxedBasicValue, targetInternalName: String) =
-            when (targetInternalName) {
-                Type.getInternalName(Any::class.java) ->
-                    true
-                Type.getInternalName(Number::class.java) ->
-                    value.descriptor.unboxedTypes.singleOrNull()?.sort?.let { PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(it) } == true
-                "java/lang/Comparable" ->
-                    true
-                else ->
-                    value.type.internalName == targetInternalName
+        private fun isSafeCast(value: BoxedBasicValue, targetInternalName: String) = when (targetInternalName) {
+            Type.getInternalName(Any::class.java) -> true
+            Type.getInternalName(Number::class.java) -> {
+                if (value.descriptor.isValueClassValue) {
+                    false
+                } else {
+                    val unboxedType = value.descriptor.unboxedTypes.singleOrNull()
+                    unboxedType != null && PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(unboxedType.sort)
+                }
             }
+            "java/lang/Comparable" -> !value.descriptor.isValueClassValue
+            else -> value.type.internalName == targetInternalName
+        }
 
         private fun addAssociatedInsn(value: BoxedBasicValue, insn: AbstractInsnNode) {
             value.descriptor.run {

@@ -23627,6 +23627,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("valueClassInstanceOfNumberAndComparable.kt")
+      public void testValueClassInstanceOfNumberAndComparable() {
+        runTest("compiler/testData/codegen/box/inlineClasses/valueClassInstanceOfNumberAndComparable.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassInstanceOfNumberAndComparableInFunction.kt")
+      public void testValueClassInstanceOfNumberAndComparableInFunction() {
+        runTest("compiler/testData/codegen/box/inlineClasses/valueClassInstanceOfNumberAndComparableInFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassInstanceOfNumberAndComparableInInlineFunction.kt")
+      public void testValueClassInstanceOfNumberAndComparableInInlineFunction() {
+        runTest("compiler/testData/codegen/box/inlineClasses/valueClassInstanceOfNumberAndComparableInInlineFunction.kt");
+      }
+
+      @Test
       @TestMetadata("whenWithSubject.kt")
       public void testWhenWithSubject() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()

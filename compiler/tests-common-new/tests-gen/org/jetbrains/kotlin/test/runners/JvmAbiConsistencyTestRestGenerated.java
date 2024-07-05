@@ -7590,6 +7590,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("checkcastAndInstanceOf_before.kt")
+      public void testCheckcastAndInstanceOf_before() {
+        runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/checkcastAndInstanceOf_before.kt");
+      }
+
+      @Test
       @TestMetadata("fold.kt")
       public void testFold() {
         runTest("compiler/testData/codegen/bytecodeText/boxingOptimization/fold.kt");
