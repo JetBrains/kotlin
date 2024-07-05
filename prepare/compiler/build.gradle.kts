@@ -174,9 +174,10 @@ dependencies {
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
     }
-
-    distCompilerPluginProjects.forEach {
-        compilerPlugins(project(it)) { isTransitive = false }
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        distCompilerPluginProjects.forEach {
+            compilerPlugins(project(it)) { isTransitive = false }
+        }
     }
     distCompilerPluginProjectsCompat.forEach {
         compilerPluginsCompat(
