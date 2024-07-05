@@ -206,15 +206,6 @@ sealed class ClangArgs(
     private val targetArCmd
             = listOf("${absoluteLlvmHome}/bin/llvm-ar")
 
-    fun clangC_WithXcode16Hacks(
-        temporaryRoot: java.io.File,
-        vararg userArgs: String
-    ) = clangC(*prepareXcode16HacksIfNeeded(target, temporaryRoot).toTypedArray(), *userArgs)
-    fun clangCXX_WithXcode16Hacks(
-        temporaryRoot: java.io.File,
-        vararg userArgs: String
-    ) = clangCXX(*prepareXcode16HacksIfNeeded(target, temporaryRoot).toTypedArray(), *userArgs)
-
     fun clangC(vararg userArgs: String) = targetClangCmd + userArgs.asList()
     fun clangCXX(vararg userArgs: String) = targetClangXXCmd + userArgs.asList()
 
@@ -252,6 +243,7 @@ fun prepareXcode16HacksIfNeeded(
     target: KonanTarget,
     temporaryRoot: java.io.File,
 ): List<String> {
+    return emptyList()
     if (!HostManager.hostIsMac) return emptyList()
     if (!target.family.isAppleFamily) return emptyList()
     if (dumpXcodeVersion() < 16) return emptyList()

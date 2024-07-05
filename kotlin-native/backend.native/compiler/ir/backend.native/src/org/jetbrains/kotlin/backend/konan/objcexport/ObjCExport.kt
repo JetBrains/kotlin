@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.prepareXcode16HacksIfNeeded
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -222,15 +221,8 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
 
     val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
 
-    val xcode16Hacks = org.jetbrains.kotlin.konan.file.createTempDir("xcode16Hacks_ObjcExport").deleteOnExit()
-    val xcode16Args = prepareXcode16HacksIfNeeded(
-            target,
-            java.io.File(xcode16Hacks.path)
-    ).toTypedArray()
-
     val clangCommand = generationState.config.clang.clangC(
             source.absolutePath,
-            *xcode16Args,
             "-O2",
             "-emit-llvm",
             "-c", "-o", bitcode.absolutePath

@@ -33,7 +33,7 @@ native {
     )
     suffixes {
         (".cpp" to ".$obj") {
-            tool(*hostPlatform.clangForJni.clangCXX_WithXcode16Hacks(layout.buildDirectory.dir("1").get().asFile,"").toTypedArray())
+            tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
             flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
 

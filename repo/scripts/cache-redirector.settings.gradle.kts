@@ -224,9 +224,10 @@ fun RepositoryHandler.redirect() = configureEach {
 // Native compiler download url override section
 
 fun Project.overrideNativeCompilerDownloadUrl() {
-    logger.info("Redirecting Kotlin/Native compiler download url")
-    extensions.extraProperties["kotlin.native.distribution.baseDownloadUrl"] =
-        "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native/builds"
+//    return
+//    logger.info("Redirecting Kotlin/Native compiler download url")
+//    extensions.extraProperties["kotlin.native.distribution.baseDownloadUrl"] =
+//        "https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native/builds"
 }
 
 // Check repositories are overriden section

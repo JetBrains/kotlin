@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.prepareXcode16HacksIfNeeded
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.utils.KotlinNativePaths
@@ -398,10 +397,7 @@ private fun processCLib(
     manifestAddend?.parentFile?.mkdirs()
     manifestAddend?.let { def.manifestAddendProperties.storeProperties(it) }
 
-    val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray() + prepareXcode16HacksIfNeeded(
-            tool.target,
-            Files.createTempDirectory("processCLib1").toFile().also { it.deleteOnExit() }
-    )
+    val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray()
     val nativeOutputPath: String = when (flavor) {
         KotlinPlatform.JVM -> {
             val outOFile = tempFiles.create(libName,".o")
@@ -477,8 +473,7 @@ private fun compileSources(
     val mangledFileName = "${index}_${File(source).nameWithoutExtension}"
     val outputFileName = "$nativeLibsDir/${mangledFileName}.bc"
     val compilerArgs = cinteropArguments.sourceCompileOptions.toTypedArray()
-    val compilerCmd = toolConfig.clang.clangCXX_WithXcode16Hacks(
-        File(tempFiles.create("xcode16Hacks_compileSources").path),
+    val compilerCmd = toolConfig.clang.clangCXX(
         *compilerArgs, source, "-emit-llvm", "-c", "-o", outputFileName
     )
     runCmd(compilerCmd.toTypedArray(), verbose = cinteropArguments.verbose)
@@ -534,7 +529,6 @@ internal fun buildNativeLibrary(
     val compilerOpts: List<String> = mutableListOf<String>().apply {
         addAll(def.config.compilerOpts)
         addAll(tool.getDefaultCompilerOptsForLanguage(language))
-        addAll(prepareXcode16HacksIfNeeded(tool.target, Files.createTempDirectory("buildNativeLibrary").toFile().also { it.deleteOnExit() }))
         addAll(additionalCompilerOpts)
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see below)
