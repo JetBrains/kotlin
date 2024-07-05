@@ -10,5 +10,5 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsInlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.CommonInlineCallableReferenceToLambdaPhase
 
 internal class JsInlineCallableReferenceToLambdaPhase(context: JsIrBackendContext) : CommonInlineCallableReferenceToLambdaPhase(
-    context, JsInlineFunctionResolver(context)
+    context, JsInlineFunctionResolver(context, inlineOnlyPrivateFunctions = false)
 )

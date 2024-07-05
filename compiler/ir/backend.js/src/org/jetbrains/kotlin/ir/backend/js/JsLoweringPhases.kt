@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
+import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -14,6 +16,8 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -21,7 +25,10 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
+import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
+import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
@@ -34,8 +41,48 @@ private val validateIrBeforeLowering = makeIrModulePhase<JsIrBackendContext>(
     description = "Validate IR before lowering"
 )
 
-private val validateIrAfterInliningPhase = makeIrModulePhase(
-    ::IrValidationAfterInliningAllFunctionsPhase,
+private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+            context,
+            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+                // Call sites of only non-private functions are allowed at this stage.
+                val inlineFunction = inlineFunctionUseSite.symbol.owner
+                when {
+                    // TODO: remove this condition after the fix of KT-69470:
+                    inlineFunctionUseSite is IrFunctionReference &&
+                            inlineFunction.visibility == DescriptorVisibilities.LOCAL -> true // temporarily permitted
+
+                    inlineFunction.isConsideredAsPrivateForInlining() -> false // forbidden
+
+                    else -> true // permitted
+                }
+            }
+        )
+    },
+    name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
+    description = "Validate IR after only private functions have been inlined",
+)
+
+private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        IrValidationAfterInliningAllFunctionsPhase(
+            context,
+            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+                // No inline function call sites should remain at this stage.
+                val inlineFunction = inlineFunctionUseSite.symbol.owner
+                when {
+                    // TODO: remove this condition after the fix of KT-69457:
+                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
+
+                    // TODO: remove this condition after the fix of KT-67169:
+                    isTypeOfIntrinsic(inlineFunction.symbol) -> true // temporarily permitted
+
+                    else -> false // forbidden
+                }
+            }
+        )
+    },
     name = "IrValidationAfterInliningAllFunctionsPhase",
     description = "Validate IR after all functions have been inlined",
 )
@@ -194,6 +241,24 @@ private val replaceSuspendIntrinsicLowering = makeIrModulePhase(
     description = "Replace suspend intrinsic for generator based coroutines"
 )
 
+private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        FunctionInlining(
+            context,
+            JsInlineFunctionResolver(context, inlineOnlyPrivateFunctions = true),
+        )
+    },
+    name = "InlineOnlyPrivateFunctions",
+    description = "The first phase of inlining (inline only private functions)",
+)
+
+internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
+    lowering = ::SyntheticAccessorLowering,
+    name = "SyntheticAccessorGeneration",
+    description = "Generate synthetic accessors from private declarations referenced from inline functions",
+    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
+)
+
 private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
     ::SaveInlineFunctionsBeforeInlining,
     name = "SaveInlineFunctionsBeforeInlining",
@@ -201,14 +266,19 @@ private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
     prerequisite = setOf(
         sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
-        legacySyntheticAccessorLoweringPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering
+        wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
 )
 
-private val functionInliningPhase = makeIrModulePhase(
-    { FunctionInlining(it, JsInlineFunctionResolver(it)) },
-    name = "FunctionInliningPhase",
-    description = "Perform function inlining",
+private val inlineAllFunctionsPhase = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        FunctionInlining(
+            context,
+            JsInlineFunctionResolver(context, inlineOnlyPrivateFunctions = false),
+        )
+    },
+    name = "InlineAllFunctions",
+    description = "The second phase of inlining (inline all functions)",
     prerequisite = setOf(saveInlineFunctionsBeforeInlining)
 )
 
@@ -216,14 +286,14 @@ private val copyInlineFunctionBodyLoweringPhase = makeIrModulePhase(
     ::CopyInlineFunctionBodyLowering,
     name = "CopyInlineFunctionBody",
     description = "Copy inline function body",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeIrModulePhase(
     { RemoveInlineDeclarationsWithReifiedTypeParametersLowering() },
     name = "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
     description = "Remove Inline functions with reified parameters from context",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val captureStackTraceInThrowablesPhase = makeIrModulePhase(
@@ -327,14 +397,14 @@ private val callableReferenceLowering = makeIrModulePhase(
     ::CallableReferenceLowering,
     name = "CallableReferenceLowering",
     description = "Build a lambda/callable reference class",
-    prerequisite = setOf(functionInliningPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering)
+    prerequisite = setOf(inlineAllFunctionsPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering)
 )
 
 private val returnableBlockLoweringPhase = makeIrModulePhase(
     ::JsReturnableBlockLowering,
     name = "JsReturnableBlockLowering",
     description = "Introduce temporary variable for result and change returnable block's type to Unit",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val rangeContainsLoweringPhase = makeIrModulePhase(
@@ -649,7 +719,7 @@ private val jsClassUsageInReflectionPhase = makeIrModulePhase(
     ::JsClassUsageInReflectionLowering,
     name = "JsClassUsageInReflectionLowering",
     description = "[Optimization] Eliminate ClassReference and GetClassExpression usages in a simple case of usage raw js constructor",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val classReferenceLoweringPhase = makeIrModulePhase(
@@ -767,8 +837,9 @@ val inlineCallableReferenceToLambdaPhase = makeIrModulePhase<JsIrBackendContext>
 )
 
 fun getJsLowerings(
-    @Suppress("UNUSED_PARAMETER") configuration: CompilerConfiguration
-): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOf(
+    configuration: CompilerConfiguration
+): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
+    // BEGIN: Common Native/JS prefix.
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
     lateinitNullableFieldsPhase,
@@ -780,11 +851,18 @@ fun getJsLowerings(
     localClassesExtractionFromInlineFunctionsPhase,
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
-    legacySyntheticAccessorLoweringPhase,
+    legacySyntheticAccessorLoweringPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+    inlineOnlyPrivateFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+    syntheticAccessorGenerationPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+    // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
+    // just because it goes so in Native.
+    validateIrAfterInliningOnlyPrivateFunctions.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
     saveInlineFunctionsBeforeInlining,
-    functionInliningPhase,
-    validateIrAfterInliningPhase,
+    inlineAllFunctionsPhase,
+    validateIrAfterInliningAllFunctions,
+    // END: Common Native/JS prefix.
+
     constEvaluationPhase,
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
