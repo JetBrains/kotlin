@@ -179,11 +179,6 @@ internal class KaSymbolByFirBuilder(
             }
         }
 
-        fun buildTypeParameterSymbolByLookupTag(lookupTag: ConeTypeParameterLookupTag): KaTypeParameterSymbol? {
-            val firTypeParameterSymbol = lookupTag.toSymbol(analysisSession.firSession) as? FirTypeParameterSymbol ?: return null
-            return buildTypeParameterSymbol(firTypeParameterSymbol)
-        }
-
         fun buildClassLikeSymbolByClassId(classId: ClassId): KaClassLikeSymbol? {
             val firClassLikeSymbol = firProvider.getClassLikeSymbolByClassId(classId) ?: return null
             return buildClassLikeSymbol(firClassLikeSymbol)
