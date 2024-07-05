@@ -703,13 +703,7 @@ val loweringList = listOf(
     forLoopsLoweringPhase,
     propertyLazyInitLoweringPhase,
     removeInitializersForLazyProperties,
-
-    // When performing incremental compilation, changing the structure of a struct doesn't update the field index references in other fragments.
-    // This is because we're using the IC system of javascript, and in JS, they reference fields by name, in which structural  changes
-    //  don't need updating references of fields. In Wasm, we use indices, which must change upon structural changes if needed.
-    // Before enabling this optimization, make sure to update the IC system so that when compiling to Wasm, files referencing fields get
-    //  considered to be "updated imports" as well.
-    // propertyAccessorInlinerLoweringPhase,
+    propertyAccessorInlinerLoweringPhase,
 
     stringConcatenationLowering,
 
