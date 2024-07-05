@@ -11,3 +11,9 @@ interface SessionHolder {
     val session: FirSession
     val scopeSession: ScopeSession
 }
+
+data class SessionHolderImpl(override val session: FirSession, override val scopeSession: ScopeSession) : SessionHolder {
+    companion object {
+        fun createWithEmptyScopeSession(session: FirSession): SessionHolderImpl = SessionHolderImpl(session, ScopeSession())
+    }
+}
