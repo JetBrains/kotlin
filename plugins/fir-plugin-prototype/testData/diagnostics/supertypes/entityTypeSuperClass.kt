@@ -14,5 +14,5 @@ class WithExplicitInterface : Inter
 
 open class SomeClass
 
-@GeneratedEntityType
-class WithExplicitClass : SomeClass()
+<!MANY_CLASSES_IN_SUPERTYPE_LIST!>@GeneratedEntityType
+class WithExplicitClass : SomeClass()<!>

@@ -1,7 +1,0 @@
-While analysing /entityTypeSuperClass.kt:17:1: java.lang.IllegalArgumentException: class org.jetbrains.kotlin.psi.KtClass is not a subtype of class org.jetbrains.kotlin.psi.KtTypeReference for factory MANY_CLASSES_IN_SUPERTYPE_LIST
-org.jetbrains.kotlin.util.FileAnalysisException: While analysing /entityTypeSuperClass.kt:17:1: java.lang.IllegalArgumentException: class org.jetbrains.kotlin.psi.KtClass is not a subtype of class org.jetbrains.kotlin.psi.KtTypeReference for factory MANY_CLASSES_IN_SUPERTYPE_LIST
-    at org.jetbrains.kotlin.util.AnalysisExceptionsKt.wrapIntoFileAnalysisExceptionIfNeeded(AnalysisExceptions.kt:57)
-    at org.jetbrains.kotlin.fir.FirCliExceptionHandler.handleExceptionOnFileAnalysis(Utils.kt:249)
-    at org.jetbrains.kotlin.fir.pipeline.AnalyseKt.runCheckers(analyse.kt:68)
-    at org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService.computeDiagnostics(FirDiagnosticsHandler.kt:681)
-    at org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService.getFrontendDiagnosticsForModule(FirDiagnosticsHandler.kt:659)
