@@ -43687,18 +43687,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
-      @TestMetadata("allowResultInReturnType_1_3.kt")
-      public void testAllowResultInReturnType_1_3() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowResultInReturnType_1_3.kt");
-      }
-
-      @Test
-      @TestMetadata("allowResultInReturnType_1_4.kt")
-      public void testAllowResultInReturnType_1_4() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/allowResultInReturnType_1_4.kt");
-      }
-
-      @Test
       @TestMetadata("basicBuildListBuildMap.kt")
       public void testBasicBuildListBuildMap() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/basicBuildListBuildMap.kt");
@@ -43714,6 +43702,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestMetadata("coroutineContext.kt")
       public void testCoroutineContext() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/coroutineContext.kt");
+      }
+
+      @Test
+      @TestMetadata("disallowResultInReturnType.kt")
+      public void testDisallowResultInReturnType() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/disallowResultInReturnType.kt");
       }
 
       @Test
@@ -43966,12 +43960,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestMetadata("usageOfResultTypeInReturnType.kt")
       public void testUsageOfResultTypeInReturnType() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/usageOfResultTypeInReturnType.kt");
-      }
-
-      @Test
-      @TestMetadata("usageOfResultTypeInReturnType_1_4.kt")
-      public void testUsageOfResultTypeInReturnType_1_4() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/usageOfResultTypeInReturnType_1_4.kt");
       }
 
       @Test

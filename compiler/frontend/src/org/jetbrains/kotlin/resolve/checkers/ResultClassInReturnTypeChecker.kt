@@ -19,11 +19,6 @@ class ResultClassInReturnTypeChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val languageVersionSettings = context.languageVersionSettings
 
-        if ((languageVersionSettings.getFeatureSupport(LanguageFeature.InlineClasses) == LanguageFeature.State.ENABLED ||
-                    languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineValueClasses)) &&
-            languageVersionSettings.supportsFeature(LanguageFeature.AllowResultInReturnType)
-        ) return
-
         if (languageVersionSettings.supportsFeature(LanguageFeature.AllowNullOperatorsForResultAndResultReturnTypeByDefault)) return
 
         if (declaration !is KtCallableDeclaration || descriptor !is CallableMemberDescriptor) return
