@@ -6,9 +6,10 @@ import kotlin.math.sqrt
 import kotlin.system.getTimeMillis
 import kotlin.test.assertTrue
 
-// Runs for ~60 seconds. Prints a short message to stdout every second.
+// Runs for ~240 seconds. Prints a short message to stdout every second.
+// 24o seconds is expected to exceed the default test timeout and multipliers used in special modes.
 fun main() {
-    for (i in 0..60) {
+    for (i in 1..240) {
         println("Iteration $i")
         sleep(1000)
     }
