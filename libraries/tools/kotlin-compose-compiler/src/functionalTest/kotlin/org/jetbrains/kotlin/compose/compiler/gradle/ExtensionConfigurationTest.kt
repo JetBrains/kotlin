@@ -173,6 +173,73 @@ class ExtensionConfigurationTest {
         }
     }
 
+    @Test
+    fun combineDeprecatedPropertiesWithFeatureFlags() {
+        @Suppress("DEPRECATION")
+        val project = buildProjectWithJvm {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.enableNonSkippingGroupOptimization.set(true)
+            composeExtension.enableIntrinsicRemember.set(false)
+            composeExtension.featureFlags.addAll(ComposeFeatureFlag.StrongSkipping)
+        }
+
+        project.evaluate()
+
+        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
+        val composeOptions = jvmTask.composeOptions()
+
+        listOf(
+            "OptimizeNonSkippingGroups",
+            "StrongSkipping",
+            "-IntrinsicRemember"
+        ).forEach { flag ->
+            composeOptions.assertFeature(flag)
+        }
+    }
+
+    @Test
+    fun contradictInConfiguredFlags() {
+        @Suppress("DEPRECATION")
+        val project = buildProjectWithJvm {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.enableStrongSkippingMode.set(false)
+            composeExtension.featureFlags.addAll(ComposeFeatureFlag.StrongSkipping)
+        }
+
+        project.evaluate()
+
+        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
+        val composeOptions = jvmTask.composeOptions()
+
+        listOf(
+            "StrongSkipping",
+        ).forEach { flag ->
+            composeOptions.assertFeature(flag)
+        }
+    }
+
+    @Test
+    fun combineDeprecatedPropertiesWithFeatureFlags_StrongSkipping() {
+        @Suppress("DEPRECATION")
+        val project = buildProjectWithJvm {
+            val composeExtension = extensions.getByType<ComposeCompilerGradlePluginExtension>()
+            composeExtension.enableStrongSkippingMode.set(false)
+            composeExtension.featureFlags.addAll(ComposeFeatureFlag.IntrinsicRemember.disabled())
+        }
+
+        project.evaluate()
+
+        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
+        val composeOptions = jvmTask.composeOptions()
+
+        listOf(
+            "-StrongSkipping",
+            "-IntrinsicRemember"
+        ).forEach { flag ->
+            composeOptions.assertFeature(flag)
+        }
+    }
+
     private fun testComposeFeatureFlags(flags: List<String>, configure: (ComposeCompilerGradlePluginExtension) -> Unit) {
         testComposeOptions({ extension, _ -> configure(extension) }) { options, _ ->
             for (flag in flags) options.assertFeature(flag)
