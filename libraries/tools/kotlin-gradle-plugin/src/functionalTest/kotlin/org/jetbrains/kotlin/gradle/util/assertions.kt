@@ -23,6 +23,12 @@ fun Task.assertDependsOn(other: Task) {
     }
 }
 
+fun Task.assertNotDependsOn(other: Task) {
+    if (isDependsOn(other)) {
+        fail("Expected ${this.path} not to depend on ${other.path}")
+    }
+}
+
 fun Task.assertNoCircularTaskDependencies() {
     data class TaskAndDependants(
         val task: Task,
