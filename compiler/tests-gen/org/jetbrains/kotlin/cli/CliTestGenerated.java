@@ -833,6 +833,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/jdkRelease.args");
     }
 
+    @TestMetadata("jdkRelease20WithCorruptedClass.args")
+    public void testJdkRelease20WithCorruptedClass() {
+      runTest("compiler/testData/cli/jvm/jdkRelease20WithCorruptedClass.args");
+    }
+
     @TestMetadata("jdkRelease6WithJvmTarget8Jdk11.args")
     public void testJdkRelease6WithJvmTarget8Jdk11() {
       runTest("compiler/testData/cli/jvm/jdkRelease6WithJvmTarget8Jdk11.args");

@@ -231,8 +231,14 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             return null;
         }
 
-        if (arg.equals("$JDK_1_8")) return KtTestUtil.getJdk8Home().getAbsolutePath();
-        if (arg.equals("$JDK_11_0")) return KtTestUtil.getJdk11Home().getAbsolutePath();
+        switch (arg) {
+            case "$JDK_1_8":
+                return KtTestUtil.getJdk8Home().getAbsolutePath();
+            case "$JDK_11_0":
+                return KtTestUtil.getJdk11Home().getAbsolutePath();
+            case "$JDK_21":
+                return KtTestUtil.getJdk21Home().getAbsolutePath();
+        }
 
         String argWithColonsReplaced = arg
                 .replace("\\:", "$COLON$")
