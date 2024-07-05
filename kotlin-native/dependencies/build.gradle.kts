@@ -12,7 +12,7 @@ plugins {
 }
 
 nativeDependenciesDownloader {
-    repositoryURL.set("https://cache-redirector.jetbrains.com/download.jetbrains.com/kotlin/native")
+    repositoryURL.set("https://packages.jetbrains.team/files/p/mpp/xcode16-llvm/resources/llvm")
     dependenciesDirectory.set(DependencyDirectories.getDependenciesRoot(kotlinBuildProperties.konanDataDir))
 
     allTargets {}
