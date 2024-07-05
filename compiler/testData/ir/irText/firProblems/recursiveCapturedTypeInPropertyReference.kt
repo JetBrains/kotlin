@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // FULL_JDK
-// SKIP_KLIB_TEST
+// SKIP_DESERIALIZED_IR_TEXT_DUMP
 // REASON: KT-69567 extra @[NoInfer] annotation on type parameter of `fun filterIsInstance<Recursive<*>>()`
 
 interface Something

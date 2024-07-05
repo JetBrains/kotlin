@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_CLASS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KLIB_TEST
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_DESERIALIZED_IR_TEXT_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -94,8 +94,9 @@ class IrTextDumpHandler(
     override fun processModule(module: TestModule, info: IrBackendInput) {
         byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
 
-        // IR dump after deserialization should not be verified in tests with SKIP_KLIB_TEST directive
-        if (DUMP_IR !in module.directives || (isDeserializedInput && SKIP_KLIB_TEST in module.directives)) return
+        if (DUMP_IR !in module.directives) return
+        // IR dump after deserialization should not be verified in tests with SKIP_DESERIALIZED_IR_TEXT_DUMP directive
+        if (isDeserializedInput && SKIP_DESERIALIZED_IR_TEXT_DUMP in module.directives) return
 
         val irBuiltins = info.irModuleFragment.irBuiltins
 
@@ -155,7 +156,7 @@ class IrTextDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
-        if (isDeserializedInput && moduleStructure.modules.any { SKIP_KLIB_TEST in it.directives })
+        if (isDeserializedInput && moduleStructure.modules.any { SKIP_DESERIALIZED_IR_TEXT_DUMP in it.directives })
             return // don't check, don't remove testData
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(moduleStructure.modules.first().getDumpExtension())

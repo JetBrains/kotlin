@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KLIB_TEST
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_DESERIALIZED_IR_TEXT_DUMP
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
@@ -43,7 +43,7 @@ class FirJsKlibBackendFacade(
     constructor(testServices: TestServices) : this(testServices, firstTimeCompilation = true)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == inputKind && SKIP_KLIB_TEST !in module.directives
+        return module.backendKind == inputKind && SKIP_DESERIALIZED_IR_TEXT_DUMP !in module.directives
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
