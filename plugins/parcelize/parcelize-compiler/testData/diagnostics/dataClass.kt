@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
+@file:OptIn(kotlinx.parcelize.Experimental::class)
 
 package test
 

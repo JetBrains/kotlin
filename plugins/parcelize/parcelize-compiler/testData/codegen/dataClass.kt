@@ -1,5 +1,6 @@
 // CURIOUS_ABOUT: writeToParcel, createFromParcel
 // WITH_STDLIB
+@file:OptIn(kotlinx.parcelize.Experimental::class)
 
 import kotlinx.parcelize.*
 import android.os.Parcel

@@ -1,5 +1,5 @@
 // WITH_STDLIB
-
+@file:OptIn(kotlinx.parcelize.Experimental::class)
 @file:JvmName("TestKt")
 package test
 

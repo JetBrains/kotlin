@@ -15,7 +15,7 @@ package kotlinx.parcelize
  * of supported types. The serialization format is equivalent to what would be generated
  * if the data class itself was annotated with [Parcelize].
  *
- * For technical reasons, this annotation overrides support for [java.io.Serializable]:
+ * To allow space for future improvement, this annotation overrides support for [java.io.Serializable]:
  * if a data class implements it, it must still obey the above requirements and will use
  * the data class specific serialization format, not [android.os.Parcel.writeSerializable].
  * Non-data classes are not affected by this annotation.
@@ -31,7 +31,10 @@ package kotlinx.parcelize
  *
  * The produced parcels will be exactly the same as if `C` was declared as
  * `@Parcelize data class C(val a: Int, val b: String) : Parcelable`.
+ *
+ * As a practical example, [kotlin.Pair] is a data class.
  */
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.SOURCE)
+@Experimental
 annotation class DataClass

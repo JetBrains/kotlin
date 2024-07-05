@@ -88,7 +88,7 @@ public final class A2 : java/lang/Object, android/os/Parcelable {
           GETFIELD (A2, y, I)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
         LABEL (L1)
-        LINENUMBER (11)
+        LINENUMBER (12)
           RETURN
         LABEL (L2)
     }
@@ -160,7 +160,7 @@ public final class Aw : java/lang/Object, android/os/Parcelable {
           INVOKEVIRTUAL (A, getY, ()I)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
         LABEL (L1)
-        LINENUMBER (14)
+        LINENUMBER (15)
           RETURN
         LABEL (L2)
     }
