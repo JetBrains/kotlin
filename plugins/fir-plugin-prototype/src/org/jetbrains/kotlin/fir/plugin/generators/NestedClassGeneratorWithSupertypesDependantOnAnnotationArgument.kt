@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
@@ -89,7 +90,7 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService,
-    ): List<FirResolvedTypeRef> = emptyList()
+    ): List<ConeKotlinType> = emptyList()
 
     @ExperimentalSupertypesGenerationApi
     override fun computeAdditionalSupertypesForGeneratedNestedClass(

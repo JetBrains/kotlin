@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.ClassId
@@ -36,7 +36,7 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService
-    ): List<FirResolvedTypeRef> {
+    ): List<ConeKotlinType> {
         if (classLikeDeclaration !is FirRegularClass) return emptyList()
         when (classLikeDeclaration.classKind) {
             ClassKind.CLASS,
@@ -48,11 +48,7 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
             ClassKind.ANNOTATION_CLASS -> return emptyList()
         }
         if (resolvedSupertypes.any { it.coneType.classId == myInterfaceClassId }) return emptyList()
-        return listOf(
-            buildResolvedTypeRef {
-                coneType = myInterfaceClassId.constructClassLikeType(emptyArray(), isNullable = false)
-            }
-        )
+        return listOf(myInterfaceClassId.constructClassLikeType(emptyArray(), isNullable = false))
     }
 
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {

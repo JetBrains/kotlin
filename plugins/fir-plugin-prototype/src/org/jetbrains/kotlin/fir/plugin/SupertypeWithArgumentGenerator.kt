@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.extensions.buildUserTypeFromQualifierParts
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.ClassId
@@ -35,7 +35,7 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService
-    ): List<FirResolvedTypeRef> {
+    ): List<ConeKotlinType> {
         if (resolvedSupertypes.any { it.coneType.classId == supertypeClassId }) return emptyList()
 
         val annotation = classLikeDeclaration.getAnnotationByClassId(annotationClassId, session) ?: return emptyList()
@@ -52,11 +52,7 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
 
         val resolvedArgument = typeResolver.resolveUserType(typeToResolve).coneType
 
-        return listOf(
-            buildResolvedTypeRef {
-                coneType = supertypeClassId.constructClassLikeType(arrayOf(resolvedArgument), isNullable = false)
-            }
-        )
+        return listOf(supertypeClassId.constructClassLikeType(arrayOf(resolvedArgument), isNullable = false))
     }
 
     private val FirPropertyAccessExpression.qualifierName: Name?

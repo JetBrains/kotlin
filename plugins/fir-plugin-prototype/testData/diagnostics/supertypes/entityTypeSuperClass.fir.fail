@@ -1,5 +1,6 @@
-java.lang.IllegalArgumentException: source must not be null
-	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.requireNotNull(KtDiagnosticReportHelpers.kt:68)
-	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn(KtDiagnosticReportHelpers.kt:18)
-	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn$default(KtDiagnosticReportHelpers.kt:12)
-	at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPrimaryConstructorSuperTypeChecker.checkSuperTypeNotInitialized(FirPrimaryConstructorSuperTypeChecker.kt:88)
+java.lang.IllegalArgumentException: class org.jetbrains.kotlin.psi.KtClass is not a subtype of class org.jetbrains.kotlin.psi.KtTypeReference for factory SUPERTYPE_NOT_INITIALIZED
+    at org.jetbrains.kotlin.diagnostics.KtDiagnosticKt.checkPsiTypeConsistency(KtDiagnostic.kt:82)
+    at org.jetbrains.kotlin.diagnostics.KtDiagnosticKt.access$checkPsiTypeConsistency(KtDiagnostic.kt:1)
+    at org.jetbrains.kotlin.diagnostics.KtPsiSimpleDiagnostic.<init>(KtDiagnostic.kt:95)
+    at org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0.on(KtDiagnosticFactory.kt:46)
+    at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn(KtDiagnosticReportHelpers.kt:18)

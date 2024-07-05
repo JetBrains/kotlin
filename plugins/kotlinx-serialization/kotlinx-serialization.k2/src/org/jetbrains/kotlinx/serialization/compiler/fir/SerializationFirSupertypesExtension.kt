@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isJs
@@ -65,7 +63,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService
-    ): List<FirResolvedTypeRef> {
+    ): List<ConeKotlinType> {
         val kSerializerClassId = ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME)
         val generatedSerializerClassId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
 
@@ -75,11 +73,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
                 val getClassArgument = classLikeDeclaration.getSerializerFor(session) ?: return emptyList()
                 val serializerConeType = resolveConeTypeFromArgument(getClassArgument, typeResolver)
 
-                listOf(
-                    buildResolvedTypeRef {
-                        coneType = kSerializerClassId.constructClassLikeType(arrayOf(serializerConeType), isNullable = false)
-                    }
-                )
+                listOf(kSerializerClassId.constructClassLikeType(arrayOf(serializerConeType), isNullable = false))
             }
             isSerializableObjectAndNeedsFactory(classLikeDeclaration) || isCompanionAndNeedsFactory(classLikeDeclaration) -> {
                 val serializerFactoryClassId = ClassId(
@@ -87,7 +81,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
                     SerialEntityNames.SERIALIZER_FACTORY_INTERFACE_NAME
                 )
                 if (resolvedSupertypes.any { it.coneType.classId == serializerFactoryClassId }) return emptyList()
-                listOf(serializerFactoryClassId.constructClassLikeType(emptyArray(), false).toFirResolvedTypeRef())
+                listOf(serializerFactoryClassId.constructClassLikeType(emptyArray(), false))
             }
             else -> emptyList()
         }
