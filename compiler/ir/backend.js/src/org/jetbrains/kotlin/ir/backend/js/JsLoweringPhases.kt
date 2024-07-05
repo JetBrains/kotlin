@@ -765,7 +765,7 @@ val inlineCallableReferenceToLambdaPhase = makeIrModulePhase<JsIrBackendContext>
     description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
 )
 
-val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
+fun getJsLowerings(): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOf(
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
     lateinitNullableFieldsPhase,
@@ -876,10 +876,10 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     validateIrAfterLowering,
 )
 
-val jsPhases = SameTypeNamedCompilerPhase(
+fun getJsPhases(): NamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = loweringList.toCompilerPhase(),
+    lower = getJsLowerings().toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )

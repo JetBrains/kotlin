@@ -846,7 +846,7 @@ fun rebuildCacheForDirtyFiles(
         mainArguments,
         configuration,
         JsGenerationGranularity.PER_MODULE,
-        PhaseConfig(jsPhases),
+        PhaseConfig(getJsPhases()),
         exportedDeclarations,
     )
 

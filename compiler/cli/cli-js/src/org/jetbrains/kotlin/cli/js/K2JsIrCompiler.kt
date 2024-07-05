@@ -377,7 +377,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             return OK
         }
 
-        val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
+        val phaseConfig = createPhaseConfig(getJsPhases(), arguments, messageCollector)
 
         val module = if (includes != null) {
             if (sourcesFiles.isNotEmpty()) {
@@ -725,7 +725,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         mainCallArguments,
                         cfg,
                         arguments.granularity,
-                        PhaseConfig(jsPhases),
+                        PhaseConfig(getJsPhases()),
                     )
                 }
             )
