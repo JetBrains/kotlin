@@ -769,5 +769,13 @@ enum class NonReifiedTypeParameterRemappingMode {
 /**
  * Checks if the given function should be treated by 1st phase of inlining (inlining of private functions).
  */
-fun IrFunction.isConsideredAsPrivateForInlining(): Boolean =
-    DescriptorVisibilities.isPrivate(visibility) || visibility == DescriptorVisibilities.LOCAL
+fun IrFunction.isConsideredAsPrivateForInlining(): Boolean {
+    if (visibility == DescriptorVisibilities.LOCAL) {
+        // In practice, there should not be inline functions with the local visibility after the fix of KT-69470.
+        // But we would like to preserve this check here. Because this way we can be sure that if such a function
+        // ever appears, it won't be left unnoticed.
+        return true
+    }
+
+    return DescriptorVisibilities.isPrivate(visibility)
+}

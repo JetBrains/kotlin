@@ -26,7 +26,10 @@ abstract class CommonInlineCallableReferenceToLambdaPhase(
             for (parameter in declaration.valueParameters) {
                 if (parameter.isInlineParameter()) {
                     val defaultExpression = parameter.defaultValue?.expression ?: continue
-                    parameter.defaultValue?.expression = defaultExpression.transformToLambda(declaration)
+                    parameter.defaultValue?.expression = defaultExpression.transformToLambda(
+                        inlineFunctionVisibility = declaration.visibility,
+                        scope = declaration
+                    )
                 }
             }
         }
@@ -40,6 +43,9 @@ abstract class CommonInlineCallableReferenceToLambdaPhase(
         val owner = expression.symbol.owner
         if (!owner.isInlineArrayConstructor(context.irBuiltIns)) return expression
 
-        return expression.transformToLambda(data)
+        return expression.transformToLambda(
+            inlineFunctionVisibility = owner.visibility,
+            scope = data
+        )
     }
 }

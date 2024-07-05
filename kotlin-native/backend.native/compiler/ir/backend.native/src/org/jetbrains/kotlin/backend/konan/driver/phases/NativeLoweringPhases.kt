@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -77,15 +76,7 @@ internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedComp
                     checkInlineFunctionCallSites = { inlineFunctionUseSite ->
                         // Call sites of only non-private functions are allowed at this stage.
                         val inlineFunction = inlineFunctionUseSite.symbol.owner
-                        when {
-                            // TODO: remove this condition after the fix of KT-69470:
-                            inlineFunctionUseSite is IrFunctionReference &&
-                                    inlineFunction.visibility == DescriptorVisibilities.LOCAL -> true // temporarily permitted
-
-                            inlineFunction.isConsideredAsPrivateForInlining() -> false // forbidden
-
-                            else -> true // permitted
-                        }
+                        !inlineFunction.isConsideredAsPrivateForInlining()
                     }
             ).lower(module)
         }
