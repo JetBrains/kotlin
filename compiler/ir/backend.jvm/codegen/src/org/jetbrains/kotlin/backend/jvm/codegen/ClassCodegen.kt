@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -197,8 +198,8 @@ class ClassCodegen private constructor(
 
     private fun shouldSkipCodeGenerationAccordingToGenerationFilter(): Boolean {
         val filter = state.generateDeclaredClassFilter
-        val ktFile = irClass.descriptorOrigin.element as? KtFile
-        val ktClass = irClass.psiElement as? KtClassOrObject
+        val ktFile = PsiSourceManager.findPsiElement(irClass, irClass, KtFile::class)
+        val ktClass = PsiSourceManager.findPsiElement(irClass, irClass, KtClassOrObject::class)
         return (ktFile != null && !filter.shouldGeneratePackagePart(ktFile))
                 || (ktClass != null && !filter.shouldGenerateClass(ktClass))
     }
