@@ -709,6 +709,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_APPLE_COCOAPODS_EXECUTABLE = property("kotlin.apple.cocoapods.bin")
         val KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS = property("kotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies")
         val KOTLIN_SWIFT_EXPORT_ENABLED = property("kotlin.swift-export.enabled")
+        val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
+        val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used
@@ -728,7 +730,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_KLIBS_KT64115_WORKAROUND_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.enableWorkaroundForKT64115")
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")
-        val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.archivesTaskOutputAsFriendModule")
     }
 
     companion object {
