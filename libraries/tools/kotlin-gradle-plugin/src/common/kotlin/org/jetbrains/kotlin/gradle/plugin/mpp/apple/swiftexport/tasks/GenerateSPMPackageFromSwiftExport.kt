@@ -133,7 +133,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         }
 
         kotlinRuntimeModulePath.resolve("linkingStub.c").writeText("\n")
-        appendToOtherIncludes(kotlinRuntime.getFile().name, kotlinRuntimeIncludePath)
+        appendToOtherIncludes(kotlinRuntimeModule, kotlinRuntimeIncludePath)
     }
 
     private fun createPackageManifest(modules: List<GradleSwiftExportModule>) {

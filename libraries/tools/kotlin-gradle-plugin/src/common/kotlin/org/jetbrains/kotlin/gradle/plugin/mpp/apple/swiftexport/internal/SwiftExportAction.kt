@@ -45,6 +45,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
                 logger = Companion,
                 distribution = parameters.konanDistribution.get(),
                 outputPath = parameters.outputPath.getFile().toPath(),
+                multipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.IntoSingleModule
             )
         ).apply {
             val modules = getOrThrow().toPlainList()
