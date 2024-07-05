@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
+import org.jetbrains.kotlin.ir.inline.STUB_FOR_INLINING
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
@@ -80,7 +80,7 @@ internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedComp
                         when {
                             // TODO: remove this condition after the fix of KT-69470:
                             inlineFunctionUseSite is IrFunctionReference &&
-                                    inlineFunction.visibility == DescriptorVisibilities.LOCAL -> true // temporarily permitted
+                                    inlineFunction.name == STUB_FOR_INLINING -> true // temporarily permitted
 
                             inlineFunction.isConsideredAsPrivateForInlining() -> false // forbidden
 
@@ -105,7 +105,9 @@ internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhas
                             inlineFunction.isExternal -> true // temporarily permitted
 
                             // TODO: remove this condition after the fix of KT-69457:
-                            inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
+                            inlineFunctionUseSite is IrFunctionReference &&
+                                    inlineFunction.name != STUB_FOR_INLINING &&
+                                    !inlineFunction.isReifiable() -> true // temporarily permitted
 
                             else -> false // forbidden
                         }
