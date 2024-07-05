@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctionsWithBaseScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -187,7 +186,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
 
         if (this is FirResolvedQualifier) {
             symbol?.let { symbol ->
-                if (symbol is FirTypeAliasSymbol && symbol.resolvedExpandedTypeRef.coneTypeSafe<ConeKotlinType>()?.hasError() == true) {
+                if (symbol is FirTypeAliasSymbol && symbol.resolvedExpandedTypeRef.coneType.hasError()) {
                     return true
                 }
                 // TODO: accept also FirClassSymbol<*>, like `FirClassLikeSymbol<*>.getSuperTypes()` does. Write test for this use-case.

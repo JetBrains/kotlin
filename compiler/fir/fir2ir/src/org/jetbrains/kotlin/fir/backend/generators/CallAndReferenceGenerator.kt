@@ -162,7 +162,7 @@ class CallAndReferenceGenerator(
                 )
             }
 
-            fun convertReferenceToField(fieldSymbol: FirFieldSymbol): IrExpression? {
+            fun convertReferenceToField(fieldSymbol: FirFieldSymbol): IrExpression {
                 val field = fieldSymbol.fir
                 val irPropertySymbol = fieldSymbol.toSymbolForCall() as IrPropertySymbol
                 val irFieldSymbol = declarationStorage.findBackingFieldOfProperty(irPropertySymbol)!!
@@ -281,8 +281,8 @@ class CallAndReferenceGenerator(
             return null
         }
         val superTypeRef = dispatchReceiverReference.superTypeRef
-        val coneSuperType = superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: return null
-        val firClassSymbol = coneSuperType.fullyExpandedType(session).lookupTag.toClassSymbol(session)
+        val coneSuperType = superTypeRef.coneType
+        val firClassSymbol = coneSuperType.fullyExpandedType(session).toClassSymbol(session)
         if (firClassSymbol != null) {
             return classifierStorage.getIrClassSymbol(firClassSymbol)
         }
@@ -882,14 +882,13 @@ class CallAndReferenceGenerator(
     }
 
     fun convertToIrConstructorCall(annotation: FirAnnotation): IrExpression {
-        val coneType = annotation.annotationTypeRef.coneTypeSafe<ConeLookupTagBasedType>()
-            ?.fullyExpandedType(session)
-        val type = coneType?.toIrType()
-        val symbol = type?.classifierOrNull
+        val coneType = annotation.annotationTypeRef.coneType.fullyExpandedType(session)
+        val type = coneType.toIrType()
+        val symbol = type.classifierOrNull
         val firConstructorSymbol = (annotation.toResolvedCallableSymbol(session) as? FirConstructorSymbol)
             ?: run {
                 // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
-                val fir = coneType?.toClassSymbol(session)?.fir
+                val fir = coneType.toClassSymbol(session)?.fir
                 var constructorSymbol: FirConstructorSymbol? = null
                 fir?.unsubstitutedScope(c)?.processDeclaredConstructors {
                     if (it.fir.isPrimary && constructorSymbol == null) {
@@ -902,7 +901,7 @@ class CallAndReferenceGenerator(
             // This `if` can't be replaced with `when` yet, because smart casts won't work :(
             if (symbol !is IrClassSymbol) {
                 return@convertWithOffsets IrErrorCallExpressionImpl(
-                    startOffset, endOffset, type ?: createErrorType(), "Unresolved reference: ${annotation.render()}"
+                    startOffset, endOffset, type, "Unresolved reference: ${annotation.render()}"
                 )
             } else if (firConstructorSymbol == null) {
                 return@convertWithOffsets IrErrorCallExpressionImpl(

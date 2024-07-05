@@ -365,7 +365,7 @@ class FirJvmSignatureSerializer(stringTable: FirElementAwareStringTable) : JvmSi
     }
 
     private fun mapTypeDefault(typeRef: FirTypeRef): String? {
-        val classId = typeRef.coneTypeSafe<ConeClassLikeType>()?.classId
+        val classId = typeRef.coneType.classId
         return if (classId == null) null else ClassMapperLite.mapClass(classId.asString())
     }
 }

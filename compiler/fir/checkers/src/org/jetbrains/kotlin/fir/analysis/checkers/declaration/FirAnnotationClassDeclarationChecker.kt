@@ -73,11 +73,10 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                     }
 
                     val typeRef = parameter.returnTypeRef
-                    val coneType = typeRef.coneTypeSafe<ConeLookupTagBasedType>()
-                        ?.fullyExpandedType(context.session) as? ConeLookupTagBasedType
-                    val classId = coneType?.classId
+                    val coneType = typeRef.coneType.fullyExpandedType(context.session)
+                    val classId = coneType.classId
 
-                    if (coneType != null) when {
+                    when {
                         coneType is ConeErrorType -> {
                             // DO NOTHING: error types already have diagnostics which are reported elsewhere.
                         }

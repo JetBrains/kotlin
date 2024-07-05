@@ -53,7 +53,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         val isInterface = declaration.classKind == ClassKind.INTERFACE
         for (supertypeRef in supertypes) {
             if (supertypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
-            val supertype = supertypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
+            val supertype = supertypeRef.coneType
             val classSymbol = supertype.toRegularClassSymbol(context.session) ?: continue
             val superIsInterface = classSymbol.classKind == ClassKind.INTERFACE
             if (superIsInterface != isInterface) {

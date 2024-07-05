@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.projection
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.canBeUsedForConstVal
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -1053,7 +1055,7 @@ class FirElementSerializer private constructor(
         classId: ClassId,
         argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping,
     ): FirAnnotation? {
-        return runIf(existingAnnotations?.any { it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId == classId } != true) {
+        return runIf(existingAnnotations?.any { it.annotationTypeRef.coneType.classId == classId } != true) {
             buildAnnotation {
                 annotationTypeRef = buildResolvedTypeRef {
                     this.type = classId.constructClassLikeType(

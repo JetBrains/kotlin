@@ -82,7 +82,7 @@ fun FirClassSymbol<*>.declaredMemberScope(context: CheckerContext): FirContainin
     )
 
 fun FirTypeRef.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? {
-    return coneTypeSafe<ConeClassLikeType>()?.toSymbol(session)
+    return coneType.toClassLikeSymbol(session)
 }
 
 /**

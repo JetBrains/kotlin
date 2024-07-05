@@ -36,7 +36,7 @@ fun checkUpperBoundViolated(
     reporter: DiagnosticReporter,
     isIgnoreTypeParameters: Boolean = false
 ) {
-    val type = typeRef?.coneTypeSafe<ConeClassLikeType>() ?: return
+    val type = typeRef?.coneType as? ConeClassLikeType ?: return
     checkUpperBoundViolated(typeRef, type, context, reporter, isIgnoreTypeParameters)
 }
 
@@ -99,9 +99,7 @@ internal class FE10LikeConeSubstitutor(
             return StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = true).withProjection(projection)
         }
 
-        val result =
-            projection.type!!.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
-                ?: return null
+        val result = projection.type!!.updateNullabilityIfNeeded(type).withCombinedAttributesFrom(type)
 
         return result.withProjection(projection)
     }

@@ -11,18 +11,18 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.firForVisibilityChecker
 import org.jetbrains.kotlin.fir.getOwnerLookupTag
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
+import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visibilityChecker
 
 object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
@@ -68,7 +68,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         }
 
         if (symbol is FirTypeAliasSymbol) {
-            symbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()?.toSymbol(context.session)?.let {
+            symbol.resolvedExpandedTypeRef.coneType.toClassLikeSymbol(context.session)?.let {
                 checkClassLikeSymbol(it, expression, isStandalone, context, reporter)
             }
         }

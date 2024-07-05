@@ -11,13 +11,9 @@ import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
-import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.DefaultExpressionInfo
 import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.VariableReassignment
-import org.jetbrains.kotlin.analysis.api.components.KaDataFlowProvider
-import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCast
-import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCastKind
-import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiverSmartCast
@@ -38,45 +34,21 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.AnonymousObjectExpressionExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.DelegateExpressionExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ElvisExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ElvisLhsExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ExitNodeMarker
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ExitSafeCallNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ExitValueParameterNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.LocalClassExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.PostponedLambdaExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.SmartCastExpressionExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.StubNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.WhenBranchResultExitNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.WhenSubjectExpressionExitNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtOperationExpression
-import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
-import org.jetbrains.kotlin.psi.KtParenthesizedExpression
-import org.jetbrains.kotlin.psi.KtQualifiedExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import java.util.Optional
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.sign
 
@@ -86,7 +58,7 @@ internal class KaFirDataFlowProvider(
     override val KtExpression.smartCastInfo: KaSmartCastInfo?
         get() = withValidityAssertion {
             val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(this) ?: return null
-            val type = firSmartCastExpression.smartcastType.coneTypeSafe<ConeKotlinType>()?.asKtType() ?: return null
+            val type = firSmartCastExpression.smartcastType.coneType.asKtType()
             return KaBaseSmartCastInfo(type, firSmartCastExpression.isStable)
         }
 

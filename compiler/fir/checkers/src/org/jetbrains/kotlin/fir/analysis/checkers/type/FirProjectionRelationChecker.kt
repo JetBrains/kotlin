@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.types.Variance
 object FirProjectionRelationChecker : FirTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef.source?.kind?.shouldSkipErrorTypeReporting != false) return
-        val type = typeRef.coneTypeSafe<ConeClassLikeType>()?.abbreviatedTypeOrSelf
-        val fullyExpandedType = type?.fullyExpandedType(context.session) ?: return
+        val type = typeRef.coneType.abbreviatedTypeOrSelf
+        val fullyExpandedType = type.fullyExpandedType(context.session)
 
         val potentiallyProblematicArguments = collectPotentiallyProblematicArguments(typeRef, context.session)
 

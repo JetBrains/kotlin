@@ -25,13 +25,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -228,7 +225,7 @@ fun deserializeClassToSymbol(
         valueClassRepresentation =
             classProto.loadValueClassRepresentation(context.nameResolver, context.typeTable, context.typeDeserializer::simpleType) { name ->
                 val member = declarations.singleOrNull { it is FirProperty && it.receiverParameter == null && it.name == name }
-                (member as FirProperty?)?.returnTypeRef?.coneTypeSafe()
+                (member as FirProperty?)?.returnTypeRef?.coneType as ConeSimpleKotlinType
             } ?: computeValueClassRepresentation(this, session)
 
         replaceAnnotations(
