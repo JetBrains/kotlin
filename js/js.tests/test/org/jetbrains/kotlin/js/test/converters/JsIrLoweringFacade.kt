@@ -113,7 +113,7 @@ class JsIrLoweringFacade(
         }
 
         val debugMode = DebugMode.fromSystemProperty("kotlin.js.debugMode")
-        val jsPhases = getJsPhases()
+        val jsPhases = getJsPhases(configuration)
         val phaseConfig = if (debugMode >= DebugMode.SUPER_DEBUG) {
             val dumpOutputDir = File(
                 JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices),

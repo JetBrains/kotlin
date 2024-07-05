@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunc
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -765,7 +766,9 @@ val inlineCallableReferenceToLambdaPhase = makeIrModulePhase<JsIrBackendContext>
     description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
 )
 
-fun getJsLowerings(): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOf(
+fun getJsLowerings(
+    @Suppress("UNUSED_PARAMETER") configuration: CompilerConfiguration
+): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOf(
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
     lateinitNullableFieldsPhase,
@@ -876,10 +879,12 @@ fun getJsLowerings(): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModule
     validateIrAfterLowering,
 )
 
-fun getJsPhases(): NamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
+fun getJsPhases(
+    configuration: CompilerConfiguration
+): NamedCompilerPhase<JsIrBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = getJsLowerings().toCompilerPhase(),
+    lower = getJsLowerings(configuration).toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )

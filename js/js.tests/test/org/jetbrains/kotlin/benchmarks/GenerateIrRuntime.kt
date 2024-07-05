@@ -106,7 +106,7 @@ class GenerateIrRuntime {
         KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
     private val configuration = buildConfiguration(environment)
     private val project = environment.project
-    private val jsPhases = getJsPhases()
+    private val jsPhases = getJsPhases(configuration)
     private val phaseConfig = PhaseConfig(jsPhases)
 
     private val languageVersionSettings = configuration.languageVersionSettings

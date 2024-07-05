@@ -141,7 +141,7 @@ fun compileIr(
         lowerPreservingTags(allModules, context, phaseConfig, it)
     } ?: run {
         val phaserState = PhaserState<IrModuleFragment>()
-        getJsLowerings().forEachIndexed { _, lowering ->
+        getJsLowerings(configuration).forEachIndexed { _, lowering ->
             allModules.forEach { module ->
                 lowering.invoke(phaseConfig, phaserState, context, module)
             }

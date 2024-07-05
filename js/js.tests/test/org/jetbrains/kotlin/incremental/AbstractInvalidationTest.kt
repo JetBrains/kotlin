@@ -334,8 +334,8 @@ abstract class AbstractInvalidationTest(
             }
         }
 
-        private fun getPhaseConfig(stepId: Int): PhaseConfig {
-            val jsPhases = getJsPhases()
+        private fun getPhaseConfig(configuration: CompilerConfiguration, stepId: Int): PhaseConfig {
+            val jsPhases = getJsPhases(configuration)
 
             if (DebugMode.fromSystemProperty("kotlin.js.debugMode") < DebugMode.SUPER_DEBUG) {
                 return PhaseConfig(jsPhases)
@@ -415,7 +415,7 @@ abstract class AbstractInvalidationTest(
                             mainArguments,
                             cfg,
                             granularity,
-                            getPhaseConfig(projStep.id),
+                            getPhaseConfig(configuration, projStep.id),
                             setOf(FqName(BOX_FUNCTION_NAME)),
                         )
                     }
