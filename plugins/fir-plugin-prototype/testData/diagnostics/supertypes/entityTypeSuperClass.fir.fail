@@ -1,0 +1,5 @@
+java.lang.IllegalArgumentException: source must not be null
+	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.requireNotNull(KtDiagnosticReportHelpers.kt:68)
+	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn(KtDiagnosticReportHelpers.kt:18)
+	at org.jetbrains.kotlin.diagnostics.KtDiagnosticReportHelpersKt.reportOn$default(KtDiagnosticReportHelpers.kt:12)
+	at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPrimaryConstructorSuperTypeChecker.checkSuperTypeNotInitialized(FirPrimaryConstructorSuperTypeChecker.kt:88)

@@ -1,0 +1,35 @@
+FILE: entityTypeSuperClass.kt
+    package foo
+
+    public open class EntityType<Self> : R|kotlin/Any| {
+        public constructor<Self>(): R|foo/EntityType<Self>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/GeneratedEntityType|() public final class WithImplicitAny : R|kotlin/Any|, R|foo/EntityType<foo/WithImplicitAny>| {
+        public constructor(): R|foo/WithImplicitAny| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface Inter : R|kotlin/Any| {
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/GeneratedEntityType|() public final class WithExplicitInterface : R|foo/Inter|, R|foo/EntityType<foo/WithExplicitInterface>| {
+        public constructor(): R|foo/WithExplicitInterface| {
+            super<R|foo/EntityType<foo/WithExplicitInterface>|>()
+        }
+
+    }
+    public open class SomeClass : R|kotlin/Any| {
+        public constructor(): R|foo/SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/GeneratedEntityType|() public final class WithExplicitClass : R|foo/SomeClass|, R|foo/EntityType<foo/WithExplicitClass>| {
+        public constructor(): R|foo/WithExplicitClass| {
+            super<R|foo/SomeClass|>()
+        }
+
+    }

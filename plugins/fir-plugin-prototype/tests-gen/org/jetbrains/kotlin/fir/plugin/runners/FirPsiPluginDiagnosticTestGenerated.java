@@ -222,6 +222,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     }
 
     @Test
+    @TestMetadata("entityTypeSuperClass.kt")
+    public void testEntityTypeSuperClass() {
+      runTest("plugins/fir-plugin-prototype/testData/diagnostics/supertypes/entityTypeSuperClass.kt");
+    }
+
+    @Test
     @TestMetadata("metaAnnotationOrder.kt")
     public void testMetaAnnotationOrder() {
       runTest("plugins/fir-plugin-prototype/testData/diagnostics/supertypes/metaAnnotationOrder.kt");

@@ -72,5 +72,9 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
     useCustomRuntimeClasspathProviders(
         ::PluginRuntimeAnnotationsProvider
     )
+
+    useAfterAnalysisCheckers(
+        ::FirFailingTestSuppressor,
+    )
 }
 
