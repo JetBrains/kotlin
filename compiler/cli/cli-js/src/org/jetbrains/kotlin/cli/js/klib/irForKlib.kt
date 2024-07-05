@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.psi.KtFile
@@ -59,12 +58,11 @@ fun generateIrForKlibSerialization(
     val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
     performanceManager?.notifyIRTranslationStarted()
 
-    val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageCollector = configuration.messageCollector
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
     val psi2Ir = Psi2IrTranslator(
         configuration.languageVersionSettings,
-        Psi2IrConfiguration(errorPolicy.allowErrors, configuration.partialLinkageConfig.isEnabled),
+        Psi2IrConfiguration(ignoreErrors = false, configuration.partialLinkageConfig.isEnabled),
         messageCollector::checkNoUnboundSymbols
     )
     val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
@@ -86,12 +84,12 @@ fun generateIrForKlibSerialization(
         psi2IrContext.symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
-            allowErrorTypes = errorPolicy.allowErrors,
+            allowErrorTypes = false,
             builtIns = psi2IrContext.irBuiltIns,
             messageCollector = messageCollector
         ),
         feContext,
-        ICData(icData.map { it.irData!! }, errorPolicy.allowErrors),
+        ICData(icData.map { it.irData!! }, containsErrorCode = false),
         stubGenerator = stubGenerator
     )
 

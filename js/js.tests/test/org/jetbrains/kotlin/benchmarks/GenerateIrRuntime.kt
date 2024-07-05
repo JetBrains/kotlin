@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.incremental.IncrementalJsCompilerRunner
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.withJsIC
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -453,7 +452,7 @@ class GenerateIrRuntime {
             )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        TopDownAnalyzerFacadeForJS.checkForErrors(files, analysisResult.bindingContext, ErrorTolerancePolicy.NONE)
+        TopDownAnalyzerFacadeForJS.checkForErrors(files, analysisResult.bindingContext)
 
         return analysisResult
     }

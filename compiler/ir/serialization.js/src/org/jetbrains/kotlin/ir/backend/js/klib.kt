@@ -42,11 +42,12 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
@@ -174,7 +175,6 @@ fun loadIr(
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
     val allDependencies = depsDescriptors.allDependencies
-    val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.messageCollector
     val partialLinkageEnabled = configuration.partialLinkageConfig.isEnabled
 
@@ -184,7 +184,7 @@ fun loadIr(
     when (mainModule) {
         is MainModule.SourceFiles -> {
             assert(filesToLoad == null)
-            val psi2IrContext = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable, partialLinkageEnabled)
+            val psi2IrContext = preparePsi2Ir(depsDescriptors, symbolTable, partialLinkageEnabled)
             val friendModules =
                 mapOf(psi2IrContext.moduleDescriptor.name.asString() to depsDescriptors.friendDependencies.map { it.uniqueName })
 
@@ -238,7 +238,6 @@ fun getIrModuleInfoForKlib(
     val mainModuleLib = sortedDependencies.last()
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-    val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val irLinker = JsIrLinker(
         currentModule = null,
@@ -247,7 +246,7 @@ fun getIrModuleInfoForKlib(
         symbolTable = symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
-            allowErrorTypes = errorPolicy.allowErrors,
+            allowErrorTypes = false,
             builtIns = irBuiltIns,
             messageCollector = messageCollector
         ),
@@ -302,7 +301,6 @@ fun getIrModuleInfoForSourceFiles(
     val feContext = psi2IrContext.run {
         JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
-    val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,
@@ -311,7 +309,7 @@ fun getIrModuleInfoForSourceFiles(
         symbolTable = symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
-            allowErrorTypes = errorPolicy.allowErrors,
+            allowErrorTypes = false,
             builtIns = irBuiltIns,
             messageCollector = messageCollector
         ),
@@ -361,14 +359,13 @@ fun getIrModuleInfoForSourceFiles(
 
 private fun preparePsi2Ir(
     depsDescriptors: ModulesStructure,
-    errorIgnorancePolicy: ErrorTolerancePolicy,
     symbolTable: SymbolTable,
     partialLinkageEnabled: Boolean
 ): GeneratorContext {
     val analysisResult = depsDescriptors.jsFrontEndResult
     val psi2Ir = Psi2IrTranslator(
         depsDescriptors.compilerConfiguration.languageVersionSettings,
-        Psi2IrConfiguration(errorIgnorancePolicy.allowErrors, partialLinkageEnabled),
+        Psi2IrConfiguration(ignoreErrors = false, partialLinkageEnabled),
         depsDescriptors.compilerConfiguration::checkNoUnboundSymbols
     )
     return psi2Ir.createGeneratorContext(
@@ -491,7 +488,6 @@ class ModulesStructure(
     lateinit var jsFrontEndResult: JsFrontEndResult
 
     fun runAnalysis(
-        errorPolicy: ErrorTolerancePolicy,
         analyzer: AbstractAnalyzerWithCompilerReport,
         analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb
     ) {
@@ -522,7 +518,7 @@ class ModulesStructure(
                     project,
                     analysisResult.bindingContext,
                     analysisResult.moduleDescriptor,
-                    errorPolicy.allowErrors,
+                    allowErrorTypes = false,
                 )
             }
             if (shouldGoToNextIcRound) {
@@ -530,14 +526,11 @@ class ModulesStructure(
             }
         }
 
-        var hasErrors = false
         if (analyzer.hasErrors() || analysisResult !is JsAnalysisResult) {
-            if (!errorPolicy.allowErrors)
-                throw CompilationErrorException()
-            else hasErrors = true
+            throw CompilationErrorException()
         }
 
-        hasErrors = analyzerFacade.checkForErrors(files, analysisResult.bindingContext, errorPolicy) || hasErrors
+        val hasErrors = analyzerFacade.checkForErrors(files, analysisResult.bindingContext)
 
         jsFrontEndResult = JsFrontEndResult(analysisResult, hasErrors)
     }
