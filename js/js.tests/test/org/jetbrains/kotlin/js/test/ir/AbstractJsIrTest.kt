@@ -220,6 +220,7 @@ open class AbstractClassicJsKlibSyntheticAccessorTest : AbstractJsIrTest(
         commonConfigurationForJsBlackBoxCodegenTest()
         defaultDirectives {
             +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
+            +CodegenTestDirectives.ENABLE_EXPERIMENTAL_DOUBLE_INLINING
         }
     }
 }

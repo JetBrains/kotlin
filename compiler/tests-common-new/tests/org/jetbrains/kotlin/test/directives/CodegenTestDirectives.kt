@@ -276,6 +276,13 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         cause visibility violations until we start generating synthetic accessors (KT-64865).
         """.trimIndent()
     )
+
+    val ENABLE_EXPERIMENTAL_DOUBLE_INLINING by directive(
+        """
+            Enable double-inlining for KLIB-based backend.
+            Equivalent to passing the '-Xklib-double-inlining' CLI flag.
+        """.trimIndent()
+    )
 }
 
 fun extractIgnoredDirectiveForTargetBackend(
