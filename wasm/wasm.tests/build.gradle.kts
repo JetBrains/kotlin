@@ -101,6 +101,7 @@ val wasmEdge by configurations.creating {
 dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":js:js.tests"))
     testApi(intellijCore())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
