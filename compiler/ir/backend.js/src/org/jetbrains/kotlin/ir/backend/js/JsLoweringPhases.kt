@@ -175,10 +175,10 @@ private val localClassesExtractionFromInlineFunctionsPhase = makeIrModulePhase(
     prerequisite = setOf(localClassesInInlineFunctionsPhase)
 )
 
-private val syntheticAccessorLoweringPhase = makeIrModulePhase(
-    ::SyntheticAccessorLowering,
-    name = "syntheticAccessorLoweringPhase",
-    description = "Wrap top level inline function to access through them from inline functions"
+private val legacySyntheticAccessorLoweringPhase = makeIrModulePhase(
+    ::LegacySyntheticAccessorLowering,
+    name = "LegacySyntheticAccessorLowering",
+    description = "Wrap top level inline function to access through them from inline functions (legacy lowering)"
 )
 
 private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeIrModulePhase(
@@ -200,7 +200,7 @@ private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
     prerequisite = setOf(
         sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
-        syntheticAccessorLoweringPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering
+        legacySyntheticAccessorLoweringPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
 )
 
@@ -777,7 +777,7 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     localClassesExtractionFromInlineFunctionsPhase,
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
-    syntheticAccessorLoweringPhase,
+    legacySyntheticAccessorLoweringPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
     saveInlineFunctionsBeforeInlining,
     functionInliningPhase,

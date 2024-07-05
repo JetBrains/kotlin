@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
@@ -24,8 +25,10 @@ import org.jetbrains.kotlin.ir.util.withinScope
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-// TODO: Replace this with org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
-class SyntheticAccessorLowering(private val context: CommonBackendContext) : BodyLoweringPass {
+/**
+ * TODO: Drop in favor of [SyntheticAccessorLowering].
+ */
+class LegacySyntheticAccessorLowering(private val context: CommonBackendContext) : BodyLoweringPass {
 
     private class CandidatesCollector(val candidates: MutableCollection<IrSimpleFunction>) : IrElementVisitorVoid {
 
