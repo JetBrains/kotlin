@@ -124,8 +124,6 @@ internal class MultipleJvmTargetsTest : BaseKotlinGradleTest() {
             assertTaskSuccess(":jvmApiDump")
             assertTaskSuccess(":anotherJvmApiDump")
 
-            System.err.println(output)
-
             val anotherExpectedApi = readFileList("/examples/classes/Subsub1Class.dump")
             assertThat(anotherApiDump.readText()).isEqualToIgnoringNewLines(anotherExpectedApi)
 
