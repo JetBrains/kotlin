@@ -149,6 +149,7 @@ open class IrFactory(
             origin = IrDeclarationOrigin.DEFINED,
         ).declarationCreated().apply {
             this.descriptor = descriptor ?: this.toIrBasedDescriptor()
+            error("Error declarations are not allowed")
         }
 
     fun createField(

@@ -266,6 +266,8 @@ fun serializeFirKlib(
     )
     val icData = moduleStructure.compilerConfiguration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles)
 
+    val containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors
+    require(!containsErrorCode)
     serializeModuleIntoKlib(
         moduleStructure.compilerConfiguration[CommonConfigurationKeys.MODULE_NAME]!!,
         moduleStructure.compilerConfiguration,
@@ -277,7 +279,7 @@ fun serializeFirKlib(
         cleanFiles = icData ?: emptyList(),
         nopack = nopack,
         perFile = false,
-        containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
+        containsErrorCode = containsErrorCode,
         abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
         jsOutputName = jsOutputName,
         builtInsPlatform = if (useWasmPlatform) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,

@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
+import org.jetbrains.kotlin.ir.expressions.IrConstantObject
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable.*
@@ -35,6 +38,9 @@ internal class ClassifierExplorer(
     private val stubGenerator: MissingDeclarationStubGenerator,
     private val allowErrorTypes: Boolean
 ) {
+    init {
+        require(!allowErrorTypes)
+    }
     private val exploredSymbols = ExploredClassifiers()
 
     private val permittedAnnotationArrayParameterSymbols: Set<IrClassSymbol> by lazy {

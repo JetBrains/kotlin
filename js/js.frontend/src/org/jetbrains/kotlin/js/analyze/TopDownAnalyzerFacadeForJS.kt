@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
@@ -166,31 +165,14 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
         }
     }
 
-    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext, errorPolicy: ErrorTolerancePolicy): Boolean {
-        var hasErrors = false
-        try {
-            AnalyzingUtils.throwExceptionOnErrors(bindingContext)
-        } catch (ex: Exception) {
-            if (!errorPolicy.allowSemanticErrors) {
-                throw ex
-            } else {
-                hasErrors = true
-            }
+    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext): Boolean {
+        AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+
+        for (file in allFiles) {
+            AnalyzingUtils.checkForSyntacticErrors(file)
         }
 
-        try {
-            for (file in allFiles) {
-                AnalyzingUtils.checkForSyntacticErrors(file)
-            }
-        } catch (ex: Exception) {
-            if (!errorPolicy.allowSyntaxErrors) {
-                throw ex
-            } else {
-                hasErrors = true
-            }
-        }
-
-        return hasErrors
+        return false
     }
 }
 

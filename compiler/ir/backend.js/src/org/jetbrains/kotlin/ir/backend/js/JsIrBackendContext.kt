@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
@@ -104,7 +103,6 @@ class JsIrBackendContext(
                 call.symbol == intrinsics.jsUnboxIntrinsic
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
-    val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
     override val es6mode = configuration[JSConfigurationKeys.USE_ES6_CLASSES] ?: false
     val platformArgumentsProviderJsExpression = configuration[JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS]
 
@@ -311,10 +309,6 @@ class JsIrBackendContext(
     }
 
     // classes forced to be loaded
-
-    val errorCodeSymbol: IrSimpleFunctionSymbol? =
-        if (errorPolicy.allowErrors) symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("errorCode")) else null
-
     val throwableClass = getIrClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
 
     val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associateWith {
