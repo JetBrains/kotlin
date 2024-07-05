@@ -288,6 +288,11 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 init = model(allowKts = false)
             )
 
+            testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(
+                suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerated",
+                init = model(allowKts = false)
+            )
+
             testClass<AbstractFirPsiForeignAnnotationsSourceJavaTest>(
                 suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated"
             ) {
@@ -443,6 +448,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractFirPsiDiagnosticTest>(init = model(allowKts = true))
             testClass<AbstractFirLightTreeDiagnosticsTest>(init = model(allowKts = false))
+            testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(init = model(allowKts = false))
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {

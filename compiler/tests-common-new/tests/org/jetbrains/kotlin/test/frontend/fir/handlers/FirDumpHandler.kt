@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.renderer.FirSymbolRendererWithStaticFlag
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -36,6 +37,10 @@ class FirDumpHandler(
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
+        // disabled typealias mode is used only for sanity checks for tests
+        // there is no need to duplicate dumps for them (and they may differ from regular ones, as
+        // types in resolved type ref won't be expanded)
+        if (DISABLE_TYPEALIAS_EXPANSION in module.directives) return
         for (part in info.partsForDependsOnModules) {
             val currentModule = part.module
             byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
@@ -63,6 +68,8 @@ class FirDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (DISABLE_TYPEALIAS_EXPANSION in testServices.moduleStructure.allDirectives) return
+
         // TODO: change according to multiple testdata files
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val extension = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
