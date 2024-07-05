@@ -25,7 +25,7 @@ class FirNumberSignAttributeExtension(session: FirSession) : FirTypeAttributeExt
     }
 
     override fun extractAttributeFromAnnotation(annotation: FirAnnotation): ConeAttribute<*>? {
-        val sign = when (annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId) {
+        val sign = when (annotation.annotationTypeRef.coneTypeOrNull?.classId) {
             PositiveClassId -> ConeNumberSignAttribute.Sign.Positive
             NegativeClassId -> ConeNumberSignAttribute.Sign.Negative
             else -> return null
