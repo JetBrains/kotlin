@@ -14,7 +14,9 @@ import java.io.File
  */
 fun produceCAdapterBitcode(clang: ClangArgs, cppFile: File, bitcodeFile: File, xcode16Hacks: File) {
     val xcode16Args = prepareXcode16HacksIfNeeded(
-        target = clang.target, temporaryRoot = xcode16Hacks
+        target = clang.target,
+        temporaryRoot = xcode16Hacks,
+        clang.absoluteTargetSysRoot
     )
     val clangCommand = clang.clangCXX(
             *xcode16Args.toTypedArray(),

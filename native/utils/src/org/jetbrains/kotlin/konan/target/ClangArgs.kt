@@ -30,7 +30,7 @@ sealed class ClangArgs(
 ) {
 
     private val absoluteTargetToolchain = configurables.absoluteTargetToolchain
-    private val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
+    val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
     private val absoluteLlvmHome = configurables.absoluteLlvmHome
     val target = configurables.target
     private val targetTriple = configurables.targetTriple
@@ -267,11 +267,11 @@ sealed class ClangArgs(
     fun clangC_WithXcode16Hacks(
         temporaryRoot: java.io.File,
         vararg userArgs: String
-    ) = clangC(*prepareXcode16HacksIfNeeded(target, temporaryRoot).toTypedArray(), *userArgs)
+    ) = clangC(*prepareXcode16HacksIfNeeded(target, temporaryRoot, absoluteTargetSysRoot).toTypedArray(), *userArgs)
     fun clangCXX_WithXcode16Hacks(
         temporaryRoot: java.io.File,
         vararg userArgs: String
-    ) = clangCXX(*prepareXcode16HacksIfNeeded(target, temporaryRoot).toTypedArray(), *userArgs)
+    ) = clangCXX(*prepareXcode16HacksIfNeeded(target, temporaryRoot, absoluteTargetSysRoot).toTypedArray(), *userArgs)
 
     fun clangC(vararg userArgs: String) = targetClangCmd + userArgs.asList()
     fun clangCXX(vararg userArgs: String) = targetClangXXCmd + userArgs.asList()
@@ -309,10 +309,11 @@ sealed class ClangArgs(
 fun prepareXcode16HacksIfNeeded(
     target: KonanTarget,
     temporaryRoot: java.io.File,
+    sdkRoot: String,
 ): List<String> {
     if (!HostManager.hostIsMac) return emptyList()
     if (!target.family.isAppleFamily) return emptyList()
-    if (dumpXcodeVersion() < 16) return emptyList()
+//    if (dumpXcodeVersion() < 16) return emptyList()
 
     temporaryRoot.mkdirs()
 
@@ -320,7 +321,7 @@ fun prepareXcode16HacksIfNeeded(
     val headersRoot = temporaryRoot.resolve("include")
     vfsOverlay.writeText(
         xcode16VfsOverlay(
-            sdkRoot = dumpSdkPath(target).path,
+            sdkRoot = sdkRoot,
             headersRoot = headersRoot.path + "/include",
         )
     )

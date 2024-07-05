@@ -225,7 +225,8 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
     val xcode16Hacks = org.jetbrains.kotlin.konan.file.createTempDir("xcode16Hacks_ObjcExport").deleteOnExit()
     val xcode16Args = prepareXcode16HacksIfNeeded(
             target,
-            java.io.File(xcode16Hacks.path)
+            java.io.File(xcode16Hacks.path),
+            generationState.config.clang.absoluteTargetSysRoot
     ).toTypedArray()
 
     val clangCommand = generationState.config.clang.clangC(

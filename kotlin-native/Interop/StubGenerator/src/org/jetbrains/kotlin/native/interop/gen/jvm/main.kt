@@ -400,7 +400,8 @@ private fun processCLib(
 
     val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray() + prepareXcode16HacksIfNeeded(
             tool.target,
-            Files.createTempDirectory("processCLib1").toFile().also { it.deleteOnExit() }
+            Files.createTempDirectory("processCLib1").toFile().also { it.deleteOnExit() },
+            tool.sysRoot
     )
     val nativeOutputPath: String = when (flavor) {
         KotlinPlatform.JVM -> {
@@ -534,7 +535,7 @@ internal fun buildNativeLibrary(
     val compilerOpts: List<String> = mutableListOf<String>().apply {
         addAll(def.config.compilerOpts)
         addAll(tool.getDefaultCompilerOptsForLanguage(language))
-        addAll(prepareXcode16HacksIfNeeded(tool.target, Files.createTempDirectory("buildNativeLibrary").toFile().also { it.deleteOnExit() }))
+        addAll(prepareXcode16HacksIfNeeded(tool.target, Files.createTempDirectory("buildNativeLibrary").toFile().also { it.deleteOnExit() }, tool.sysRoot))
         addAll(additionalCompilerOpts)
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see below)

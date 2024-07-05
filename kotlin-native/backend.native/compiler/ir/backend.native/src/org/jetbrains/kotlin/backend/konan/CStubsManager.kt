@@ -43,7 +43,8 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
             val xcode16Hacks = createTempDir("xcode16Hacks_CStubsManager").deleteOnExit()
             val xcode16Args = prepareXcode16HacksIfNeeded(
                     clang.target,
-                    java.io.File(xcode16Hacks.path)
+                    java.io.File(xcode16Hacks.path),
+                    clang.absoluteTargetSysRoot,
             ).toTypedArray()
 
             val clangCommand = clang.clangC(
