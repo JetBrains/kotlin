@@ -121,7 +121,7 @@ class ComposeIT : KGPBaseTest() {
                         assertOutputContains(
                             "Starting in Kotlin 2.0, the Compose Compiler Gradle plugin is required\n" +
                                     "  when compose is enabled. See the following link for more information:\n" +
-                                    "  https://d.android.com/r/studio-ui/compose-compiler\n"
+                                    "  https://d.android.com/r/studio-ui/compose-compiler"
                         )
                     }
                 }
