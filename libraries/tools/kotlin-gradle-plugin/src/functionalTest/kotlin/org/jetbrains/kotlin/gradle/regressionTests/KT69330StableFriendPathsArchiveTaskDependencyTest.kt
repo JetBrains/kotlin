@@ -50,6 +50,10 @@ class KT69330StableFriendPathsArchiveTaskDependencyTest {
 
     private fun hasTestJarDependencyInTest(project: ProjectInternal): Boolean {
         val testCompilationImpl = project.kotlinJvmExtension.target.compilations.getByName("test").decoratedInstance.compilation
-        return testCompilationImpl.friendPaths.any { it.asPath.endsWith("build/libs/test.jar") }
+        return testCompilationImpl.friendPaths.any {
+            it.files.any { file ->
+                file.invariantSeparatorsPath.endsWith("build/libs/test.jar")
+            }
+        }
     }
 }
