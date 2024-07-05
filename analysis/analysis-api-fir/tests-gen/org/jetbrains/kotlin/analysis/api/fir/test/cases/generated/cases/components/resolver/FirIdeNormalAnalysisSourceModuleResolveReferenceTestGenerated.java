@@ -5060,6 +5060,18 @@ public class FirIdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exten
     }
 
     @Test
+    @TestMetadata("functionReceiverSubstitution.kt")
+    public void testFunctionReceiverSubstitution() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/functionReceiverSubstitution.kt");
+    }
+
+    @Test
+    @TestMetadata("functionReceiverSubstitutionWithConflict.kt")
+    public void testFunctionReceiverSubstitutionWithConflict() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/functionReceiverSubstitutionWithConflict.kt");
+    }
+
+    @Test
     @TestMetadata("functionTypeVariableCall_extensionReceiver.kt")
     public void testFunctionTypeVariableCall_extensionReceiver() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/functionTypeVariableCall_extensionReceiver.kt");
@@ -5243,6 +5255,18 @@ public class FirIdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exten
     @TestMetadata("PropertyPlaceInClassObjectInObject.kt")
     public void testPropertyPlaceInClassObjectInObject() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/PropertyPlaceInClassObjectInObject.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyReceiverSubstitution.kt")
+    public void testPropertyReceiverSubstitution() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/propertyReceiverSubstitution.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyReceiverSubstitutionWithConflict.kt")
+    public void testPropertyReceiverSubstitutionWithConflict() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/propertyReceiverSubstitutionWithConflict.kt");
     }
 
     @Test

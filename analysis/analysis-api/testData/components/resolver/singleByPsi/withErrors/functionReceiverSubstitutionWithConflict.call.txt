@@ -1,0 +1,53 @@
+KtDotQualifiedExpression(106,113): 'f.foo()'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        argumentMapping = {}
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = f
+            isSafeNavigation = false
+            type = Foo<kotlin.String>
+          signature = KaFunctionSignature:
+            receiverType = Foo<A>
+            returnType = kotlin.Unit
+            symbol = /foo(<extension receiver>: Foo<A>, i: kotlin.Int): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = i
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = i: kotlin.Int
+                callableId = null
+            ]
+            callableId = /foo
+        typeArgumentsMapping = {},
+      KaSimpleFunctionCall:
+        argumentMapping = {}
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = f
+            isSafeNavigation = false
+            type = Foo<kotlin.String>
+          signature = KaFunctionSignature:
+            receiverType = Foo<B>
+            returnType = kotlin.Unit
+            symbol = /foo(<extension receiver>: Foo<B>, s: kotlin.String): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = s
+                receiverType = null
+                returnType = kotlin.String
+                symbol = s: kotlin.String
+                callableId = null
+            ]
+            callableId = /foo
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+    fun <A> Foo<A>.foo(i: Int): Unit
+    fun <B> Foo<B>.foo(s: String): Unit>

@@ -1,0 +1,54 @@
+KtDotQualifiedExpression(106,113): 'f.foo()'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = Foo<A>
+          returnType = kotlin.Unit
+          symbol = /foo(<extension receiver>: Foo<A>, i: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = Foo<B>
+          returnType = kotlin.Unit
+          symbol = /foo(<extension receiver>: Foo<B>, s: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
+    isInBestCandidates = true
