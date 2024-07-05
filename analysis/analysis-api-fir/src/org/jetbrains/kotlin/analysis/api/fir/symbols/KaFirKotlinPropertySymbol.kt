@@ -85,16 +85,16 @@ internal class KaFirKotlinPropertySymbol(
 
     override val getter: KaPropertyGetterSymbol?
         get() = withValidityAssertion {
-            firSymbol.getterSymbol?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KaPropertyGetterSymbol
+            firSymbol.getterSymbol?.let { builder.functionBuilder.buildPropertyAccessorSymbol(it) } as? KaPropertyGetterSymbol
         }
 
     override val setter: KaPropertySetterSymbol?
         get() = withValidityAssertion {
-            firSymbol.setterSymbol?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KaPropertySetterSymbol
+            firSymbol.setterSymbol?.let { builder.functionBuilder.buildPropertyAccessorSymbol(it) } as? KaPropertySetterSymbol
         }
     override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion {
-            firSymbol.backingFieldSymbol?.let { builder.callableBuilder.buildBackingFieldSymbol(it) }
+            firSymbol.backingFieldSymbol?.let { builder.variableBuilder.buildBackingFieldSymbol(it) }
         }
 
     // NB: `field` in accessors indicates the property should have a backing field. To see that, though, we need BODY_RESOLVE.

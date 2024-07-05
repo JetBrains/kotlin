@@ -181,7 +181,7 @@ internal class KaFirSymbolProvider(
 
     override val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.callableBuilder.buildPropertyAccessorSymbol(
+            firSymbolBuilder.functionBuilder.buildPropertyAccessorSymbol(
                 resolveToFirSymbolOfType<FirPropertyAccessorSymbol>(firResolveSession)
             )
         }

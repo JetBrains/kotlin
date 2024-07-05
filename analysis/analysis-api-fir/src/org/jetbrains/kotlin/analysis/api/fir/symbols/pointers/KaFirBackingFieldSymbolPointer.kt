@@ -25,7 +25,8 @@ internal class KaFirBackingFieldSymbolPointer(
         } ?: return null
 
         check(propertySymbol is KaFirKotlinPropertySymbol)
-        return analysisSession.firSymbolBuilder.variableBuilder.buildBackingFieldSymbolByProperty(propertySymbol.firSymbol)
+        val backingFieldSymbol = propertySymbol.firSymbol.backingFieldSymbol ?: return null
+        return analysisSession.firSymbolBuilder.variableBuilder.buildBackingFieldSymbol(backingFieldSymbol)
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

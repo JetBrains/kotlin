@@ -271,8 +271,41 @@ internal class KaSymbolByFirBuilder(
             }
         }
 
-        fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KaFunctionSymbol {
-            return callableBuilder.buildPropertyAccessorSymbol(firSymbol)
+        fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KaPropertyAccessorSymbol = when {
+            firSymbol.isGetter -> buildGetterSymbol(firSymbol)
+            else -> buildSetterSymbol(firSymbol)
+        }
+
+        fun buildGetterSymbol(firSymbol: FirPropertyAccessorSymbol): KaFirPropertyGetterSymbol {
+            checkRequirementForBuildingSymbol<KaFirPropertyGetterSymbol>(firSymbol, firSymbol.isGetter)
+
+            firSymbol.propertySymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { unwrapped ->
+                val getterSymbol = unwrapped.symbol.getterSymbol ?: errorWithFirSpecificEntries("No getter found", fir = unwrapped) {
+                    withFirEntry("original", firSymbol.fir)
+                }
+
+                return buildGetterSymbol(getterSymbol)
+            }
+
+            return symbolsCache.cache(firSymbol) {
+                KaFirPropertyGetterSymbol(firSymbol, analysisSession)
+            }
+        }
+
+        fun buildSetterSymbol(firSymbol: FirPropertyAccessorSymbol): KaFirPropertySetterSymbol {
+            checkRequirementForBuildingSymbol<KaFirPropertySetterSymbol>(firSymbol, firSymbol.isSetter)
+
+            firSymbol.propertySymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { unwrapped ->
+                val setterSymbol = unwrapped.symbol.setterSymbol ?: errorWithFirSpecificEntries("No setter found", fir = unwrapped) {
+                    withFirEntry("original", firSymbol.fir)
+                }
+
+                return buildSetterSymbol(setterSymbol)
+            }
+
+            return symbolsCache.cache(firSymbol) {
+                KaFirPropertySetterSymbol(firSymbol, analysisSession)
+            }
         }
     }
 
@@ -367,14 +400,8 @@ internal class KaSymbolByFirBuilder(
             return symbolsCache.cache(firSymbol) { KaFirJavaFieldSymbol(firSymbol, analysisSession) }
         }
 
-        fun buildBackingFieldSymbol(firSymbol: FirBackingFieldSymbol): KaFirBackingFieldSymbol {
-            return KaFirBackingFieldSymbol(firSymbol, analysisSession)
-        }
-
-        fun buildBackingFieldSymbolByProperty(firSymbol: FirPropertySymbol): KaFirBackingFieldSymbol {
-            val backingFieldSymbol = firSymbol.backingFieldSymbol
-                ?: error("FirProperty backingField is null")
-            return buildBackingFieldSymbol(backingFieldSymbol)
+        fun buildBackingFieldSymbol(firSymbol: FirBackingFieldSymbol): KaFirBackingFieldSymbol = symbolsCache.cache(firSymbol) {
+            KaFirBackingFieldSymbol(firSymbol, analysisSession)
         }
 
         private fun FirField.isJavaFieldOrSubstitutionOverrideOfJavaField(): Boolean = when (this) {
@@ -385,66 +412,18 @@ internal class KaSymbolByFirBuilder(
     }
 
     inner class CallableSymbolBuilder {
-        fun buildCallableSymbol(firSymbol: FirCallableSymbol<*>): KaCallableSymbol {
-            return when (firSymbol) {
-                is FirPropertyAccessorSymbol -> buildPropertyAccessorSymbol(firSymbol)
-                is FirFunctionSymbol<*> -> functionBuilder.buildFunctionSymbol(firSymbol)
-                is FirVariableSymbol<*> -> variableBuilder.buildVariableSymbol(firSymbol)
-                else -> throwUnexpectedElementError(firSymbol)
-            }
-        }
-
-        fun buildCallableSignature(firSymbol: FirCallableSymbol<*>): KaCallableSignature<KaCallableSymbol> = when (firSymbol) {
-            is FirPropertyAccessorSymbol -> with(analysisSession) { buildPropertyAccessorSymbol(firSymbol).asSignature() }
-            is FirFunctionSymbol<*> -> functionBuilder.buildFunctionSignature(firSymbol)
-            is FirVariableSymbol<*> -> variableBuilder.buildVariableLikeSignature(firSymbol)
+        fun buildCallableSymbol(firSymbol: FirCallableSymbol<*>): KaCallableSymbol = when (firSymbol) {
+            is FirPropertyAccessorSymbol -> functionBuilder.buildPropertyAccessorSymbol(firSymbol)
+            is FirFunctionSymbol<*> -> functionBuilder.buildFunctionSymbol(firSymbol)
+            is FirVariableSymbol<*> -> variableBuilder.buildVariableSymbol(firSymbol)
             else -> throwUnexpectedElementError(firSymbol)
         }
 
-
-        fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KaPropertyAccessorSymbol {
-            return when {
-                firSymbol.isGetter -> buildGetterSymbol(firSymbol)
-                else -> buildSetterSymbol(firSymbol)
-            }
-        }
-
-        fun buildGetterSymbol(firSymbol: FirPropertyAccessorSymbol): KaFirPropertyGetterSymbol {
-            checkRequirementForBuildingSymbol<KaFirPropertyGetterSymbol>(firSymbol, firSymbol.isGetter)
-
-            firSymbol.propertySymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { unwrapped ->
-                val getterSymbol = unwrapped.symbol.getterSymbol ?: errorWithFirSpecificEntries("No getter found", fir = unwrapped) {
-                    withFirEntry("original", firSymbol.fir)
-                }
-
-                return buildGetterSymbol(getterSymbol)
-            }
-
-            return symbolsCache.cache(firSymbol) {
-                KaFirPropertyGetterSymbol(firSymbol, analysisSession)
-            }
-        }
-
-        fun buildSetterSymbol(firSymbol: FirPropertyAccessorSymbol): KaFirPropertySetterSymbol {
-            checkRequirementForBuildingSymbol<KaFirPropertySetterSymbol>(firSymbol, firSymbol.isSetter)
-
-            firSymbol.propertySymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { unwrapped ->
-                val setterSymbol = unwrapped.symbol.setterSymbol ?: errorWithFirSpecificEntries("No setter found", fir = unwrapped) {
-                    withFirEntry("original", firSymbol.fir)
-                }
-
-                return buildSetterSymbol(setterSymbol)
-            }
-
-            return symbolsCache.cache(firSymbol) {
-                KaFirPropertySetterSymbol(firSymbol, analysisSession)
-            }
-        }
-
-        fun buildBackingFieldSymbol(firSymbol: FirBackingFieldSymbol): KaFirBackingFieldSymbol {
-            return symbolsCache.cache(firSymbol) {
-                KaFirBackingFieldSymbol(firSymbol, analysisSession)
-            }
+        fun buildCallableSignature(firSymbol: FirCallableSymbol<*>): KaCallableSignature<KaCallableSymbol> = when (firSymbol) {
+            is FirPropertyAccessorSymbol -> with(analysisSession) { functionBuilder.buildPropertyAccessorSymbol(firSymbol).asSignature() }
+            is FirFunctionSymbol<*> -> functionBuilder.buildFunctionSignature(firSymbol)
+            is FirVariableSymbol<*> -> variableBuilder.buildVariableLikeSignature(firSymbol)
+            else -> throwUnexpectedElementError(firSymbol)
         }
 
         fun buildExtensionReceiverSymbol(firSymbol: FirCallableSymbol<*>): KaReceiverParameterSymbol? {
