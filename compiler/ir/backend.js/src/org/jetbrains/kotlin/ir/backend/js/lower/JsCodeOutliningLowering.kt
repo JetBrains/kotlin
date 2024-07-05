@@ -147,23 +147,7 @@ private class JsCodeOutlineTransformer(
             return null
 
         // Building outlined IR function skeleton
-        val outlinedFunction = backendContext.irFactory.buildFun {
-            name = Name.identifier(container.safeAs<IrDeclarationWithName>()?.name?.asString()?.let { "$it\$outlinedJsCode\$" }
-                                       ?: "outlinedJsCode\$")
-            returnType = backendContext.dynamicType
-            isExternal = true
-            origin = JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN
-        }
-        // We don't need this function's body. Using empty block body stub, because some code might expect all functions to have bodies.
-        outlinedFunction.body = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-        outlinedFunction.parent = container.file
-        container.file.declarations.add(outlinedFunction)
-        kotlinLocalsUsedInJs.values.forEach { local ->
-            outlinedFunction.addValueParameter {
-                name = local.name
-                type = local.type
-            }
-        }
+        val outlinedFunction = createOutlinedFunction(kotlinLocalsUsedInJs)
 
         // Building JS Ast function
         val lastStatement = jsStatements.findLast { it !is JsSingleLineComment && it !is JsMultiLineComment }
@@ -192,6 +176,28 @@ private class JsCodeOutlineTransformer(
                 }
             }
         }
+    }
+
+    private fun createOutlinedFunction(kotlinLocalsUsedInJs: Map<JsName, IrValueDeclaration>): IrSimpleFunction {
+        val outlinedFunction = backendContext.irFactory.buildFun {
+            name = Name.identifier(container.safeAs<IrDeclarationWithName>()?.name?.asString()?.let { "$it\$outlinedJsCode\$" }
+                                       ?: "outlinedJsCode\$")
+            returnType = backendContext.dynamicType
+            isExternal = true
+            origin = JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN
+        }
+        // We don't need this function's body. Using empty block body stub, because some code might expect all functions to have bodies.
+        outlinedFunction.body = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+        outlinedFunction.parent = container.file
+        container.file.declarations.add(outlinedFunction)
+        kotlinLocalsUsedInJs.values.forEach { local ->
+            outlinedFunction.addValueParameter {
+                name = local.name
+                type = local.type
+            }
+        }
+
+        return outlinedFunction
     }
 }
 
