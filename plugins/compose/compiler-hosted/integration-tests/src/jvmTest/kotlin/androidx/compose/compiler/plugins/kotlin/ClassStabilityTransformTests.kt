@@ -23,6 +23,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -179,6 +180,19 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         "interface Foo",
         "Uncertain(Foo)"
     )
+
+    @Test
+    fun testInterfacesAreUncertainOnIncrementalCompilation() {
+        assertStability(
+            classDefSrc = """
+                interface Foo
+            """,
+            transform = {
+                it.origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+            },
+            stability = "Uncertain(Foo)"
+        )
+    }
 
     @Test
     fun testInterfaceWithStableValAreUncertain() = assertStability(
@@ -1614,6 +1628,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         classDefSrc: String,
         stability: String,
         externalTypes: Set<String> = emptySet(),
+        transform: (IrClass) -> Unit = {}
     ) {
         val source = """
             import androidx.compose.runtime.mutableStateOf
@@ -1633,7 +1648,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         val irModule = compileToIr(files, registerExtensions = {
             it.put(ComposeConfiguration.TEST_STABILITY_CONFIG_KEY, externalTypes)
         })
-        val irClass = irModule.files.last().declarations.first() as IrClass
+        val irClass = (irModule.files.last().declarations.first() as IrClass).apply(transform)
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
         val stabilityInferencer = StabilityInferencer(irModule.descriptor, externalTypeMatchers)
         val classStability = stabilityInferencer.stabilityOf(irClass.defaultType as IrType)
