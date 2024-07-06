@@ -216,10 +216,12 @@ project.artifacts.add("archives", shadowJarTask)
 
 private fun ShadowJar.configureEmbeddableCompilerRelocation() {
     relocate("org.jetbrains.kotlin", "nativebuildtools.org.jetbrains.kotlin") {
-        // FIXME: These are used as mainClass = "..."
         exclude("org.jetbrains.kotlin.native.interop.gen.jvm.MainKt")
         exclude("org.jetbrains.kotlin.cli.utilities.MainKt")
         exclude("org.jetbrains.kotlin.native.executors.cli.ExecutorsCLI")
+        exclude("org.jetbrains.kotlin.native.platform.")
+        exclude("org.jetbrains.kotlin.target")
+        exclude("org.jetbrains.kotlin.native.home")
 
         // FIXME: Not idea why this didn't work
 //        project.layout.projectDirectory.asFile.resolve("preserve_list").readLines().forEach {

@@ -283,11 +283,18 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     val defaultRoots: List<File>
         get() = listOfNotNull(distHead, distPlatformHead).filter { it.exists }
 
-    private fun getDefaultLibrariesFromDir(directory: File, prefix: String = "org.jetbrains.kotlin") =
+    private fun getDefaultLibrariesFromDir(directory: File, prefix: String = "__dontuse__") =
         if (directory.exists) {
             directory.listFiles
                 .asSequence()
-                .filter { it.name.startsWith(prefix) }
+                .filter {
+                    val actualPrefix = if (prefix == "__dontuse__") {
+                        val a = "org.jetbrains"
+                        val b = ".kotlin"
+                        a + b
+                    } else prefix
+                    it.name.startsWith(actualPrefix)
+                }
                 .filterNot { it.name.startsWith('.') }
                 .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_NATIVE_STDLIB_NAME }
                 .map { RequiredUnresolvedLibrary(it.absolutePath) }
