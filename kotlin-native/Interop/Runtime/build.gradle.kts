@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.jetbrains.kotlin.tools.lib
-import org.jetbrains.kotlin.tools.solib
-import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.konan.target.HostManager
+import nativebuildtools.org.jetbrains.kotlin.tools.NativePluginKt.lib
+import nativebuildtools.org.jetbrains.kotlin.tools.NativePluginKt.solib
+import nativebuildtools.org.jetbrains.kotlin.*
+import nativebuildtools.org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("org.jetbrains.kotlin.jvm")

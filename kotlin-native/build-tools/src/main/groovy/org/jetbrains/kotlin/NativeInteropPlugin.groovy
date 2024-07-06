@@ -195,7 +195,9 @@ class NamedNativeInteropConfig implements Named {
 
             project.dependencies {
                 add interopStubs.getApiConfigurationName(), project(path: ':kotlin-native:Interop:Runtime')
-                add interopStubs.getApiConfigurationName(), "org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}"
+                add interopStubs.getApiConfigurationName(), project(path: ':kotlin-stdlib')
+                // FIXME: Why when ShadowJar relocates "org.jetbrains.kotlin" is also relocates the org.jetbrains.kotlin:kotlin-stdlib dependency???
+                //add interopStubs.getApiConfigurationName(), "org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}"
             }
 
             this.configuration.extendsFrom project.configurations[interopStubs.getRuntimeClasspathConfigurationName()]

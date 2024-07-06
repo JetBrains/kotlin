@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.tools.lib
-import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.konan.target.Family.*
-import org.jetbrains.kotlin.konan.target.HostManager
+import nativebuildtools.org.jetbrains.kotlin.tools.NativePluginKt.lib
+import nativebuildtools.org.jetbrains.kotlin.*
+import nativebuildtools.org.jetbrains.kotlin.konan.target.Family.*
+import nativebuildtools.org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("kotlin.native.build-tools-conventions")
@@ -32,7 +32,7 @@ native {
         "-I${llvmDir}/include",
         "-Isrc/main/include"
     )
-    when (org.jetbrains.kotlin.konan.target.HostManager.host.family) {
+    when (nativebuildtools.org.jetbrains.kotlin.konan.target.HostManager.host.family) {
         LINUX -> {
             cxxflags.addAll(listOf("-DKONAN_LINUX=1"))
         }

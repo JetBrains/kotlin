@@ -3,8 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.konan.target.allTargetsWithSanitizers
-import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import nativebuildtools.org.jetbrains.kotlin.konan.target.allTargetsWithSanitizers
+import nativebuildtools.org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 plugins {
     id("native-dependencies-downloader")

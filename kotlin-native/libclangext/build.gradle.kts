@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.tools.lib
-import org.jetbrains.kotlin.*
+//import nativebuildtools.org.jetbrains.kotlin.tools.lib
+//import nativebuildtools.org.jetbrains.kotlin.tools.lib
+import nativebuildtools.org.jetbrains.kotlin.tools.NativePluginKt.lib
+import nativebuildtools.org.jetbrains.kotlin.*
 
 plugins {
     id("kotlin.native.build-tools-conventions")

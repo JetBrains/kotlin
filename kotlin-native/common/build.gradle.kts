@@ -1,5 +1,5 @@
-import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
-import org.jetbrains.kotlin.PlatformInfo
+import nativebuildtools.org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import nativebuildtools.org.jetbrains.kotlin.PlatformInfo
 
 /*
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license

@@ -3,14 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
-import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
-import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.kotlinNativeDist
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.*
-import org.jetbrains.kotlin.platformManager
-import org.jetbrains.kotlin.utils.capitalized
+import nativebuildtools.org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
+import nativebuildtools.org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
+import nativebuildtools.org.jetbrains.kotlin.PlatformInfo
+import nativebuildtools.org.jetbrains.kotlin.UtilsKt.getKotlinNativeDist as kotlinNativeDist
+import nativebuildtools.org.jetbrains.kotlin.konan.target.*
+import nativebuildtools.org.jetbrains.kotlin.konan.util.*
+import nativebuildtools.org.jetbrains.kotlin.UtilsKt.getPlatformManager as platformManager
+import nativebuildtools.org.jetbrains.kotlin.utils.capitalized
 
 plugins {
     id("base")
@@ -34,7 +34,7 @@ if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
-val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
+val cacheableTargetNames = platformManager(project).hostPlatform.cacheableTargets
 
 enabledTargets(platformManager).forEach { target ->
     val targetName = target.visibleName
@@ -50,7 +50,7 @@ enabledTargets(platformManager).forEach { target ->
             group = BasePlugin.BUILD_GROUP
             description = "Build the Kotlin/Native platform library '$libName' for '$target'"
 
-            this.compilerDistributionPath.set(kotlinNativeDist.absolutePath)
+            this.compilerDistributionPath.set(kotlinNativeDist(project).absolutePath)
             dependsOn(":kotlin-native:${targetName}CrossDist")
 
             this.konanTarget.set(target)
@@ -76,7 +76,7 @@ enabledTargets(platformManager).forEach { target ->
 
         val klibInstallTask = tasks.register(libName, Sync::class.java) {
             from(libTask)
-            into(kotlinNativeDist.resolve("klib/platform/$targetName/$artifactName"))
+            into(kotlinNativeDist(project).resolve("klib/platform/$targetName/$artifactName"))
         }
         installTasks.add(klibInstallTask)
 
@@ -86,7 +86,7 @@ enabledTargets(platformManager).forEach { target ->
                 this.target = targetName
                 originalKlib.fileProvider(libTask.map { it.outputs.files.singleFile })
                 klibUniqName = artifactName
-                cacheRoot = kotlinNativeDist.resolve("klib/cache").absolutePath
+                cacheRoot = kotlinNativeDist(project).resolve("klib/cache").absolutePath
 
                 dependsOn(":kotlin-native:${targetName}StdlibCache")
 

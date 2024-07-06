@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.NativeFullCrossDistKt
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.CopySamples
-import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
-import org.jetbrains.kotlin.cpp.CppUsage
-import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
-import org.jetbrains.kotlin.CompareDistributionSignatures
-import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
+import nativebuildtools.org.jetbrains.kotlin.NativeFullCrossDistKt
+import nativebuildtools.org.jetbrains.kotlin.konan.target.*
+import nativebuildtools.org.jetbrains.kotlin.CopySamples
+import nativebuildtools.org.jetbrains.kotlin.PlatformInfo
+import nativebuildtools.org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
+import nativebuildtools.org.jetbrains.kotlin.cpp.CppUsage
+import nativebuildtools.org.jetbrains.kotlin.cpp.GitClangFormatPlugin
+import nativebuildtools.org.jetbrains.kotlin.CompareDistributionSignatures
+import nativebuildtools.org.jetbrains.kotlin.xcode.XcodeOverridePlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.jetbrains.kotlin.UtilsKt
+import nativebuildtools.org.jetbrains.kotlin.UtilsKt
 import plugins.KotlinBuildPublishingPluginKt
 import java.security.MessageDigest
 
@@ -341,6 +341,7 @@ tasks.register("crossDistStdlibCache") {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
 }
 
+def platformLibsTasks = new ArrayList()
 targetList.each { target ->
     tasks.register("${target}CrossDistBitcodeCopy", Copy) {
         def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
@@ -363,12 +364,13 @@ targetList.each { target ->
         destinationDir project.file("$distDir/$stdlibDefaultComponent")
     }
 
-    tasks.register("${target}PlatformLibs") {
+    def platformLibsTask = tasks.register("${target}PlatformLibs") {
         dependsOn ":kotlin-native:platformLibs:${target}Install"
         if (target in cacheableTargetNames) {
             dependsOn(":kotlin-native:platformLibs:${target}Cache")
         }
     }
+    platformLibsTasks.add(platformLibsTask)
 
     if (target in cacheableTargetNames) {
         tasks.register("${target}StdlibCache", Copy) {
@@ -427,6 +429,8 @@ def sbomBundleRegularForPublish = tasks.register("sbomBundleRegularForPublish", 
 
 tasks.register("bundleRegular", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn(sbomBundleRegularForPublish)
+    // FIXME: Why was Gradle not complaining about this with bootstrap :native-build-tools?
+    dependsOn(platformLibsTasks)
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-$simpleOsName")
     archiveVersion.set(kotlinVersion)

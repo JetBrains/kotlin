@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.tools.lib
-import org.jetbrains.kotlin.konan.target.HostManager
+import nativebuildtools.org.jetbrains.kotlin.tools.NativePluginKt.lib
+import nativebuildtools.org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("native")

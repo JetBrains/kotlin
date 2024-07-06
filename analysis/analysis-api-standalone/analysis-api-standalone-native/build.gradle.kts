@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.kotlinNativeDist
+import nativebuildtools.org.jetbrains.kotlin.UtilsKt.getKotlinNativeDist as kotlinNativeDist
 
 plugins {
     kotlin("jvm")
@@ -32,7 +32,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 }
 
 val test by nativeTest("test", null) {
-    systemProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
+    systemProperty("kotlin.native.home", kotlinNativeDist(project).absolutePath)
 }
 
 testsJar()

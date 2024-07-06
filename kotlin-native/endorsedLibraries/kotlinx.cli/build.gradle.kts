@@ -1,4 +1,5 @@
-import org.jetbrains.kotlin.*
+import nativebuildtools.org.jetbrains.kotlin.*
+import nativebuildtools.org.jetbrains.kotlin.UtilsKt.projectOrFiles
 
 plugins {
     kotlin("multiplatform")

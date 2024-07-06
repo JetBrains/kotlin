@@ -2,19 +2,20 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
-import org.jetbrains.kotlin.cpp.CppUsage
-import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
-import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileTask
-import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.konan.properties.saveProperties
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
-import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
-import org.jetbrains.kotlin.konan.file.File as KFile
-import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
+import nativebuildtools.org.jetbrains.kotlin.*
+import nativebuildtools.org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
+import nativebuildtools.org.jetbrains.kotlin.cpp.CppUsage
+import nativebuildtools.org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
+import nativebuildtools.org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileTask
+import nativebuildtools.org.jetbrains.kotlin.konan.properties.loadProperties
+import nativebuildtools.org.jetbrains.kotlin.konan.properties.saveProperties
+import nativebuildtools.org.jetbrains.kotlin.konan.target.*
+import nativebuildtools.org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
+import nativebuildtools.org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
+import nativebuildtools.org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
+import nativebuildtools.org.jetbrains.kotlin.konan.file.File as KFile
+import nativebuildtools.org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
+import nativebuildtools.org.jetbrains.kotlin.UtilsKt.getKotlinNativeDist as kotlinNativeDist
 
 val kotlinVersion: String by rootProject.extra
 
@@ -560,7 +561,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
     description = "Build the Kotlin/Native standard library '$name'"
 
-    this.compilerDistributionPath.set(kotlinNativeDist.absolutePath)
+    this.compilerDistributionPath.set(kotlinNativeDist(project).absolutePath)
     dependsOn(":kotlin-native:distCompiler")
 
     this.konanTarget.set(HostManager.host)
@@ -646,7 +647,7 @@ cacheableTargetNames.forEach { targetName ->
 
         dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
         // stdlib cache links in runtime modules from the K/N distribution.
-        inputs.dir("$kotlinNativeDist/konan/targets/$targetName/native")
+        inputs.dir("${kotlinNativeDist(project)}/konan/targets/$targetName/native")
     }
 }
 

@@ -299,7 +299,8 @@ when {
     }
     else -> {
         val bootstrapVersion = defaultBootstrapVersion.get()
-        val bootstrapRepo = "https://packages.jetbrains.team/maven/p/mpp/xcode16"
+        val bootstrapRepo = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap"
+//        val bootstrapRepo = "https://packages.jetbrains.team/maven/p/mpp/xcode16"
 
         applyBootstrapConfiguration(
             bootstrapVersion,

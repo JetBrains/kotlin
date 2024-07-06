@@ -1,6 +1,6 @@
-import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
-import org.jetbrains.kotlin.tools.lib
+import nativebuildtools.org.jetbrains.kotlin.PlatformInfo
+import nativebuildtools.org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import nativebuildtools.org.jetbrains.kotlin.tools.NativePluginKt.lib
 
 plugins {
     kotlin("jvm")

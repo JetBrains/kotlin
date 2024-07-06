@@ -3,11 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.tools.lib
-import org.jetbrains.kotlin.tools.solib
-import org.jetbrains.kotlin.*
+import nativebuildtools.org.jetbrains.kotlin.tools.NativePluginKt.lib
+import nativebuildtools.org.jetbrains.kotlin.tools.NativePluginKt.solib
+import nativebuildtools.org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.konan.target.*
+import nativebuildtools.org.jetbrains.kotlin.konan.target.*
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
