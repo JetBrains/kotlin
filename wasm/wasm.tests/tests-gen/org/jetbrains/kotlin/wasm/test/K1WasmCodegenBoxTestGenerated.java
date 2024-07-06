@@ -24060,6 +24060,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
 
+      @Test
+      @TestMetadata("genericArrayInlineClassCast.kt")
+      public void testGenericArrayInlineClassCast() {
+        runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/genericArrayInlineClassCast.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface")
       @TestDataPath("$PROJECT_ROOT")

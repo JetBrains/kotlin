@@ -27208,9 +27208,20 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       @UsePartialLinkage(mode = Mode.DISABLED)
       @Tag("no-partial-linkage-may-be-skipped")
       public class UnboxGenericParameter {
+        public UnboxGenericParameter() {
+          register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/genericArrayInlineClassCast.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
         @Test
         public void testAllFilesPresentInUnboxGenericParameter() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("genericArrayInlineClassCast.kt")
+        public void testGenericArrayInlineClassCast() {
+          // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+          runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/genericArrayInlineClassCast.kt");
         }
 
         @Nested
