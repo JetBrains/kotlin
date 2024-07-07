@@ -310,8 +310,6 @@ class JsIrBackendContext(
 
     // classes forced to be loaded
 
-    val errorCodeSymbol: IrSimpleFunctionSymbol? = null
-
     val throwableClass = getIrClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
 
     val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associateWith {
