@@ -238,7 +238,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JSCompilerArguments::irModuleName,
             K2JSCompilerArguments::includes,
             K2JSCompilerArguments::friendModules,
-            K2JSCompilerArguments::errorTolerancePolicy,
             K2JSCompilerArguments::irDceRuntimeDiagnostic,
         )
         private val k2JSCompilerArgumentsArrayProperties = commonCompilerArgumentsArrayProperties
