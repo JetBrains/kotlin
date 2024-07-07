@@ -748,7 +748,6 @@ internal class CacheBuilder(
     class Settings(
         val runnerSettings: KotlinNativeCompilerRunner.Settings,
         val konanCacheKind: NativeCacheKind,
-        val libraries: FileCollection,
         val gradleUserHomeDir: File,
         val konanTarget: KonanTarget,
         val toolOptions: KotlinCommonCompilerToolOptions,
@@ -778,7 +777,6 @@ internal class CacheBuilder(
                 return Settings(
                     runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome, konanDataDir, project),
                     konanCacheKind = konanCacheKind,
-                    libraries = binary.compilation.compileDependencyFiles,
                     gradleUserHomeDir = project.gradle.gradleUserHomeDir,
                     konanTarget = konanTarget,
                     toolOptions = toolOptions,
@@ -810,9 +808,6 @@ internal class CacheBuilder(
         get() = settings.konanCacheKind
 
     // Inputs and outputs
-    private val libraries: FileCollection
-        get() = settings.libraries
-
     private val target: String
         get() = konanTarget.name
 
