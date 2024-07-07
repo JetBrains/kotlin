@@ -75,8 +75,6 @@ internal sealed class MetadataDependencyResolution(
                 MetadataProvider(), CompositeMetadataArtifact by compositeMetadataArtifact
 
             abstract class ProjectMetadataProvider : MetadataProvider() {
-                enum class MetadataConsumer { Ide, Cli }
-
                 abstract fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection?
             }
         }
