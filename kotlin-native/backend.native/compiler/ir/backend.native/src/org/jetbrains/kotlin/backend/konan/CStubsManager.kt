@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.prepareXcode16HeadersIfNeeded
 
 private const val dumpBridges = false
 
@@ -39,8 +40,15 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
 
             val cSourcePath = cSource.absolutePath
 
+            val xcode16Hacks = createTempDir("xcode16Hacks_CStubsManager").deleteOnExit()
+            val xcode16Args = prepareXcode16HeadersIfNeeded(
+                    clang.target,
+                    java.io.File(xcode16Hacks.path),
+                    clang.absoluteTargetSysRoot,
+            ).toTypedArray()
+
             val clangCommand = clang.clangC(
-                    *compilerOptions.toTypedArray(), "-O2",
+                    *compilerOptions.toTypedArray(), *xcode16Args, "-O2",
                     "-fexceptions", // Allow throwing exceptions through generated stubs.
                     cSourcePath, "-emit-llvm", "-c", "-o", bitcode.absolutePath
             )

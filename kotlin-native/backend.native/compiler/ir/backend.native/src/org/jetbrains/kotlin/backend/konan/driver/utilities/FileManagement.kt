@@ -33,4 +33,5 @@ internal class CExportFiles(
         val bitcodeAdapter: File,
         val header: File,
         val def: File?,
+        val xcode16Hacks: File,
 )

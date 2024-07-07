@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.prepareXcode16HeadersIfNeeded
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -188,7 +190,7 @@ internal class ObjCExport(
 
         val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
 
-        exportedInterface?.generateWorkaroundForSwiftSR10177(generationState)
+        exportedInterface?.generateWorkaroundForSwiftSR10177(generationState, target)
 
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
@@ -196,7 +198,7 @@ internal class ObjCExport(
 }
 
 // See https://bugs.swift.org/browse/SR-10177
-private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationState: NativeGenerationState) {
+private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationState: NativeGenerationState, target: KonanTarget) {
     // Code for all protocols from the header should get into the binary.
     // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
     // so the easiest way to achieve this (quickly) is to compile a stub by clang.
@@ -220,8 +222,16 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
 
     val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
 
+    val xcode16Hacks = org.jetbrains.kotlin.konan.file.createTempDir("xcode16Hacks_ObjcExport").deleteOnExit()
+    val xcode16Args = prepareXcode16HeadersIfNeeded(
+            target,
+            java.io.File(xcode16Hacks.path),
+            generationState.config.clang.absoluteTargetSysRoot
+    ).toTypedArray()
+
     val clangCommand = generationState.config.clang.clangC(
             source.absolutePath,
+            *xcode16Args,
             "-O2",
             "-emit-llvm",
             "-c", "-o", bitcode.absolutePath

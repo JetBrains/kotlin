@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.file.File
+import java.util.zip.ZipInputStream
 
 internal object Android {
     const val API = "21"
@@ -26,9 +27,9 @@ sealed class ClangArgs(
 ) {
 
     private val absoluteTargetToolchain = configurables.absoluteTargetToolchain
-    private val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
+    val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
     private val absoluteLlvmHome = configurables.absoluteLlvmHome
-    private val target = configurables.target
+    val target = configurables.target
     private val targetTriple = configurables.targetTriple
 
     // TODO: Should be dropped in favor of real MSVC target.
@@ -162,6 +163,10 @@ sealed class ClangArgs(
         if (targetConditionals != null) {
             add(targetConditionals.map { "-D${it.key}=${it.value}" })
         }
+
+        if (target.family.isAppleFamily && target.architecture == Architecture.X64) {
+            add(listOf("-D_Float16"))
+        }
     }.flatten()
 
     private val specificClangArgs: List<String> = when (target) {
@@ -209,6 +214,7 @@ sealed class ClangArgs(
                 "-stdlib=libc++",
                 // KT-57848
                 "-Dat_quick_exit=atexit", "-Dquick_exit=exit",
+                "-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS"
         )
         else -> emptyArray()
     }
@@ -249,6 +255,14 @@ sealed class ClangArgs(
     private val targetArCmd
             = listOf("${absoluteLlvmHome}/bin/llvm-ar")
 
+    fun clangC_WithXcode16Hacks(
+        temporaryRoot: java.io.File,
+        vararg userArgs: String
+    ) = clangC(*prepareXcode16HeadersIfNeeded(target, temporaryRoot, absoluteTargetSysRoot).toTypedArray(), *userArgs)
+    fun clangCXX_WithXcode16Hacks(
+        temporaryRoot: java.io.File,
+        vararg userArgs: String
+    ) = clangCXX(*prepareXcode16HeadersIfNeeded(target, temporaryRoot, absoluteTargetSysRoot).toTypedArray(), *userArgs)
 
     fun clangC(vararg userArgs: String) = targetClangCmd + userArgs.asList()
 
@@ -281,4 +295,84 @@ sealed class ClangArgs(
      * E.g., Kotlin/Native runtime and interop stubs.
      */
     class Native(configurables: Configurables) : ClangArgs(configurables, forJni = false)
+}
+
+
+fun prepareXcode16HeadersIfNeeded(
+    target: KonanTarget,
+    temporaryRoot: java.io.File,
+    sdkRoot: String,
+): List<String> {
+    if (!HostManager.hostIsMac) return emptyList()
+    if (!target.family.isAppleFamily) return emptyList()
+    // FIXME: Check if Xcode version is 16 without running cli tools
+//    if (dumpXcodeVersion() < 16) return emptyList()
+
+    temporaryRoot.mkdirs()
+
+    val vfsOverlay = temporaryRoot.resolve("overlay.yaml")
+    val headersRoot = temporaryRoot.resolve("include")
+    vfsOverlay.writeText(
+        xcode16VfsOverlay(
+            sdkRoot = sdkRoot,
+            headersRoot = headersRoot.path + "/include",
+        )
+    )
+
+    copyXcode16Headers(
+        headersRoot = headersRoot,
+    )
+
+    return listOf("-ivfsoverlay", vfsOverlay.path)
+}
+
+fun xcode16VfsOverlay(
+    sdkRoot: String,
+    headersRoot: String,
+): String = """
+        {
+          'case-sensitive': 'false',
+          'roots': [
+            {
+              "contents": [
+                { 'external-contents': "${headersRoot}/simd/packed.h", 'name': "simd/packed.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/types.h", 'name': "simd/types.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/quaternion.h", 'name': "simd/quaternion.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/matrix_types.h", 'name': "simd/matrix_types.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/matrix.h", 'name': "simd/matrix.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/conversion.h", 'name': "simd/conversion.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/vector_make.h", 'name': "simd/vector_make.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/common.h", 'name': "simd/common.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/logic.h", 'name': "simd/logic.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/simd.h", 'name': "simd/simd.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/vector_types.h", 'name': "simd/vector_types.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/math.h", 'name': "simd/math.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/extern.h", 'name': "simd/extern.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/vector.h", 'name': "simd/vector.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/geometry.h", 'name': "simd/geometry.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/simd/base.h", 'name': "simd/base.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/math.h", 'name': "math.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/tgmath.h", 'name': "tgmath.h", 'type': 'file' },
+                { 'external-contents': "${headersRoot}/empty", 'name': "libxml2/libxml/module.modulemap", 'type': 'file' }
+              ],
+              'name': "${sdkRoot}/usr/include",
+              'type': 'directory'
+            },
+          ],
+          'version': 0,
+        }
+    """.trimIndent()
+
+fun copyXcode16Headers(headersRoot: java.io.File) {
+    ZipInputStream(
+        ClangArgs::class.java.getResourceAsStream("/headerHacks.zip")!!
+    ).use { zip ->
+        for (entry in generateSequence { zip.nextEntry }) {
+            val file = headersRoot.resolve(entry.name)
+            if (!entry.isDirectory) {
+                file.parentFile.mkdirs()
+                file.writeBytes(zip.readBytes())
+            }
+        }
+    }
 }

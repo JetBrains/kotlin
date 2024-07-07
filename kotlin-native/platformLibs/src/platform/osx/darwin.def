@@ -30,6 +30,7 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     net/if_media.h sys/disk.h sys/kernel_types.h
 
 headerFilter = **
+excludeFilter = objc/objc.h
 
 excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     asl_decode_buffer asl_encode_buffer asl_remove_index \
