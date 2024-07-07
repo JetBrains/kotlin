@@ -46,8 +46,6 @@ abstract class KotlinNativeTarget @Inject constructor(
         attributes.setAttribute(konanTargetAttribute, konanTarget.name)
     }
 
-    private val hostSpecificMetadataJarTaskName get() = disambiguateName("MetadataJar")
-
     internal val hostSpecificMetadataElementsConfigurationName get() = disambiguateName("MetadataElements")
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
