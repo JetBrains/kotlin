@@ -14,7 +14,6 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -26,13 +25,11 @@ internal interface ToolchainSupport {
     companion object {
         internal fun createToolchain(
             project: Project,
-            kotlinExtension: KotlinTopLevelExtensionConfig
         ): ToolchainSupport {
             return project.objects.newInstance<DefaultToolchainSupport>(
                 project.extensions,
                 project.tasks,
                 project.plugins,
-                kotlinExtension
             )
         }
     }
@@ -42,7 +39,6 @@ internal abstract class DefaultToolchainSupport @Inject constructor(
     private val extensions: ExtensionContainer,
     private val tasks: TaskContainer,
     private val plugins: PluginContainer,
-    private val kotlinExtension: KotlinTopLevelExtensionConfig
 ) : ToolchainSupport {
     private val toolchainSpec: JavaToolchainSpec
         get() = extensions
