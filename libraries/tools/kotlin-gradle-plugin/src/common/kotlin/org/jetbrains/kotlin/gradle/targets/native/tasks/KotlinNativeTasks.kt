@@ -267,10 +267,6 @@ abstract class AbstractKotlinNativeCompile<
     @get:Nested
     var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
 
-    private val languageSettingsBuilder by project.provider {
-        compilation.languageSettings
-    }
-
     @get:Internal
     internal val manifestFile: Provider<RegularFile> get() = projectLayout.buildDirectory.file("tmp/$name/inputManifest")
 
