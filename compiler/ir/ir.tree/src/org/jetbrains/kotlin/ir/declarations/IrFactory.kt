@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -142,14 +141,7 @@ open class IrFactory(
         endOffset: Int,
         descriptor: DeclarationDescriptor? = null,
     ): IrErrorDeclaration =
-        IrErrorDeclarationImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            factory = this,
-            origin = IrDeclarationOrigin.DEFINED,
-        ).declarationCreated().apply {
-            this.descriptor = descriptor ?: this.toIrBasedDescriptor()
-        }
+        error("IrErrorDeclarationImpl() is deprecated for ${descriptor?.name} at offset $startOffset .. $endOffset")
 
     fun createField(
         startOffset: Int,
