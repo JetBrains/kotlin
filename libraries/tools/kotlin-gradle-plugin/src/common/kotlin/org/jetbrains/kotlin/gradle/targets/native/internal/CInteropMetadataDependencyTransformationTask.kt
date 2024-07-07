@@ -114,8 +114,6 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     objectFactory: ObjectFactory,
 ) : DefaultTask() {
 
-    private val currentBuild = project.currentBuild
-
     private val parameters = GranularMetadataTransformation.Params(project, sourceSet)
 
     sealed class Cleaning : Serializable {
