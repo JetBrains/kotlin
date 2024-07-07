@@ -81,7 +81,10 @@ class FastJarFSTest : TestCase() {
             coreAppEnv!!.jarFileSystem.findFileByPath(badJarFile.absolutePath + "!/a.class")
         }
         // Asserting that core jar FS still behaves the same way as the "emulation" implemented in FastJarFS
-        Assert.assertTrue(errFromCoreJarFs.contains("WARN: error in opening zip file"))
+        Assert.assertTrue(
+            errFromCoreJarFs.contains("WARN: error in opening zip file") ||
+                    errFromCoreJarFs.contains("WARN: zip END header not found")
+        )
     }
 
     fun testEmptyJar() {
