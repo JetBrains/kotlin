@@ -63,16 +63,6 @@ open class ModuleDependencyIdentifier(
     }
 }
 
-class ChangingModuleDependencyIdentifier(
-    val groupIdProvider: () -> String?,
-    val moduleIdProvider: () -> String,
-) : ModuleDependencyIdentifier(groupIdProvider(), moduleIdProvider()) {
-    override val groupId: String?
-        get() = groupIdProvider()
-    override val moduleId: String
-        get() = moduleIdProvider()
-}
-
 sealed class SourceSetMetadataLayout(
     @get:Input
     val name: String,
