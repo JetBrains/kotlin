@@ -246,7 +246,6 @@ fun getIrModuleInfoForKlib(
         symbolTable = symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
-            allowErrorTypes = false,
             builtIns = irBuiltIns,
             messageCollector = messageCollector
         ),
@@ -309,7 +308,6 @@ fun getIrModuleInfoForSourceFiles(
         symbolTable = symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
-            allowErrorTypes = false,
             builtIns = irBuiltIns,
             messageCollector = messageCollector
         ),
