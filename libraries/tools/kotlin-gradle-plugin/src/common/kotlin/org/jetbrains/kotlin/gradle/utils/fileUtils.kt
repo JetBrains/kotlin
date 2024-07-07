@@ -78,9 +78,6 @@ internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boo
     }
 }
 
-internal fun File.absolutePathWithoutExtension(): String =
-    normalize().absolutePath.substringBeforeLast(".")
-
 internal fun File.listFilesOrEmpty() = (if (exists()) listFiles() else null).orEmpty()
 
 fun contentEquals(file1: File, file2: File): Boolean {
