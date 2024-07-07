@@ -116,9 +116,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             }
         }
 
-    @get:Internal
-    val startParameters = BuildReportsService.getStartParameters(project)
-
     @get:Input
     @get:Optional
     abstract val explicitApiMode: Property<ExplicitApiMode>
@@ -165,8 +162,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
-
-    private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
     @get:Internal
     protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objectFactory
