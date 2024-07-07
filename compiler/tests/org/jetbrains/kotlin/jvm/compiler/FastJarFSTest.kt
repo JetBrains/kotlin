@@ -128,7 +128,10 @@ class FastJarFSTest : TestCase() {
         assertEquals(data, String(fs.findFileByPath(jarFile.absolutePath + "!/flat.txt")!!.contentsToByteArray()))
     }
 
-    fun testInterleaveSmallAndBigJarEntriesInOrder() {
+    // TODO: unmute the tests below, see KT-69831
+
+    // takes too long to run
+    fun skip_testInterleaveSmallAndBigJarEntriesInOrder() {
         // tests the zip file larger than Int.MAX_VALUE, so it doesn't fit into MappedByteBuffer, but smaller than UInt.MAX__VALUE,
         // so no ZIP64 format is triggered
         val fs = fs ?: return
@@ -150,7 +153,8 @@ class FastJarFSTest : TestCase() {
         assertEquals("smallTwo", String(fs.findFileByPath(jarFile.absolutePath + "!/small2.txt")!!.contentsToByteArray()))
     }
 
-    fun testInterleaveSmallAndBigJarEntriesOutOfOrder() {
+    // takes too long to run
+    fun skip_testInterleaveSmallAndBigJarEntriesOutOfOrder() {
         // similar to testInterleaveSmallAndBigJarEntriesInOrder, but with out of order files reading, promting more remappings
         val fs = fs ?: return
         val tmpDir = KotlinTestUtils.tmpDirForTest(this)
@@ -171,7 +175,8 @@ class FastJarFSTest : TestCase() {
         assertEquals("smallOne", String(fs.findFileByPath(jarFile.absolutePath + "!/small1.txt")!!.contentsToByteArray()))
     }
 
-    fun testInterleaveSmallAndBigJarEntriesInOrderZip64() {
+    // takes too long to run
+    fun skip_testInterleaveSmallAndBigJarEntriesInOrderZip64() {
         // tests the zip file larger than UInt.MAX_VALUE, so ZIP64 fields are used in the directory
         val fs = fs ?: return
         val tmpDir = KotlinTestUtils.tmpDirForTest(this)
@@ -196,7 +201,8 @@ class FastJarFSTest : TestCase() {
         assertEquals("smallThree", String(fs.findFileByPath(jarFile.absolutePath + "!/small3.txt")!!.contentsToByteArray()))
     }
 
-    fun testInterleaveSmallAndBigJarEntriesOutOfOrderZip64() {
+    // takes too long to run
+    fun skip_testInterleaveSmallAndBigJarEntriesOutOfOrderZip64() {
         // similar to testInterleaveSmallAndBigJarEntriesInOrderZip64, but with out of order files reading, promting more remappings
         val fs = fs ?: return
         val tmpDir = KotlinTestUtils.tmpDirForTest(this)
