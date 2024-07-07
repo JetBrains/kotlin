@@ -12,7 +12,6 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
 
     to.cacheDirectory = from.cacheDirectory
     to.enableJsScripting = from.enableJsScripting
-    to.errorTolerancePolicy = from.errorTolerancePolicy
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals
     to.fakeOverrideValidator = from.fakeOverrideValidator
     to.friendModules = from.friendModules
