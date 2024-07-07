@@ -118,9 +118,6 @@ private val File.canKlibBePassedToCompiler get() = (extension == "klib" || isDir
 
 internal fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter(File::canKlibBePassedToCompiler)
 
-/* Returned FileCollection is lazy */
-internal fun FileCollection.filterKlibsPassedToCompiler(): FileCollection = filter(File::canKlibBePassedToCompiler)
-
 // endregion
 @Suppress("DEPRECATION")
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
