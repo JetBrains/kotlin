@@ -165,7 +165,7 @@ sealed class ClangArgs(
         }
 
         if (target.family.isAppleFamily && target.architecture == Architecture.X64) {
-            add(listOf("-D_Float16"))
+            add(listOf("-D_Float16=short"))
         }
     }.flatten()
 
