@@ -1,0 +1,36 @@
+---
+#include "pthread.h"
+#include "stdlib.h"
+
+/**
+ * On different platforms `pthread_t` hides different types (unsigned long int on Linux, struct on Macos).
+ * These functions provide a way to use `pthread_t` in a unified way as a `void*`.
+ */
+void *k_pthread_t_alloc()
+{
+    return malloc(sizeof(pthread_t));
+}
+
+void k_pthread_t_free(void *ptr)
+{
+    free(ptr);
+}
+
+int k_pthread_create(void *pthread_ptr, void *(*function)(void *), void *args)
+{
+    return pthread_create(
+        (pthread_t *)pthread_ptr,
+        NULL,
+        function,
+        args
+    );
+}
+
+int k_pthread_join(void *pthread_ptr, void *result)
+{
+    pthread_t thread = *((pthread_t *)pthread_ptr);
+    return pthread_join(
+        thread,
+        result
+    );
+}

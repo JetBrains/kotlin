@@ -6,9 +6,10 @@ import org.jetbrains.litmuskt.autooutcomes.accept
 import org.jetbrains.litmuskt.autooutcomes.interesting
 import org.jetbrains.litmuskt.litmusTest
 
-@LitmusTestContainer
-object WordTearingNative {
-
+//@LitmusTestContainer
+//@OptIn(ObsoleteNativeApi::class)
+//object WordTearingNative {
+//
 //    val Bitset = litmusTest({
 //        object : LitmusZZOutcome() {
 //            val bs = BitSet()
@@ -31,4 +32,4 @@ object WordTearingNative {
 //            interesting(false, true)
 //        }
 //    }
-}
+//}

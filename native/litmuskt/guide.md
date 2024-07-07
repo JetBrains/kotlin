@@ -18,11 +18,12 @@ In theory, there should have been a git submodule here. In practice, it was deci
 
 In `./native/litmuskt`:
 
-1. `git clone https://github.com/JetBrains-Research/litmuskt new-version`
+1. `git clone https://github.com/JetBrains-Research/litmuskt new-version -b development`
 1. Fix the new version files:
     * Only keep `:core` and `:testsuite` subprojects
     * In `:testsuite` build file, add the `:litmuskt` prefix to `:core`, remove all KSP 
     * In `:core` build file, remove `jvmToolchain` references
+    * In both build files, remove `java-library` plugin
 1. Swap the old `:core` and `:testsuite` subprojects with the new ones
 1. Remove `testsuite/src/.../generated/LitmusTestRegistry.kt` and `.../LitmusTestExtensions.kt`
 1. Remove `WordTearingNative.kt` test (or find a way to make it compile, with `Bitset` being obsolete and `@ObsoleveNativeApi` being internal)

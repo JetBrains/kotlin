@@ -30,6 +30,9 @@ kotlin {
                             compilerOpts.add("-D_GNU_SOURCE")
                         }
                     }
+                    create("kpthread") {
+                        defFile(project.file("src/nativeInterop/kpthread.def"))
+                    }
                 }
             }
         }

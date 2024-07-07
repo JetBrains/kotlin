@@ -1,8 +1,5 @@
 package org.jetbrains.litmuskt
 
-import org.jetbrains.litmuskt.*
-import org.jetbrains.litmuskt.*
-
 /**
  * A simplistic runner based on JVM threads. Does not support affinity.
  */
