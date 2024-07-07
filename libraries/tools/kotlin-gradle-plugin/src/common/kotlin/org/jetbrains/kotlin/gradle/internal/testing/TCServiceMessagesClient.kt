@@ -209,11 +209,6 @@ internal open class TCServiceMessagesClient(
         }
     }
 
-    private inline fun <NodeType : Node> NodeType.open(contents: (NodeType) -> Unit) = open(System.currentTimeMillis()) {
-        contents(it)
-        System.currentTimeMillis()
-    }
-
     private inline fun <NodeType : Node> NodeType.open(tsStart: Long, contents: (NodeType) -> Long) {
         val child = open(tsStart, this@open)
         val tsEnd = contents(child)
