@@ -141,7 +141,6 @@ internal class JsIrLinkerLoader(
             symbolTable = symbolTable,
             partialLinkageSupport = createPartialLinkageSupportForLinker(
                 partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
-                allowErrorTypes = false,
                 builtIns = irBuiltIns,
                 messageCollector = messageCollector
             ),

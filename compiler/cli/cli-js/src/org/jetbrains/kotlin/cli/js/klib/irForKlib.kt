@@ -84,7 +84,6 @@ fun generateIrForKlibSerialization(
         psi2IrContext.symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
-            allowErrorTypes = false,
             builtIns = psi2IrContext.irBuiltIns,
             messageCollector = messageCollector
         ),

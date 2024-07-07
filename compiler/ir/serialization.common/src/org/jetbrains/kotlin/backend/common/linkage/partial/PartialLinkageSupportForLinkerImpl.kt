@@ -20,21 +20,19 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 
 fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
-    allowErrorTypes: Boolean,
     builtIns: IrBuiltIns,
     messageCollector: MessageCollector
 ): PartialLinkageSupportForLinker = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLinkerImpl(builtIns, allowErrorTypes, PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel))
+    PartialLinkageSupportForLinkerImpl(builtIns, PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel))
 else
     PartialLinkageSupportForLinker.DISABLED
 
 internal class PartialLinkageSupportForLinkerImpl(
     builtIns: IrBuiltIns,
-    allowErrorTypes: Boolean,
     private val logger: PartialLinkageLogger
 ) : PartialLinkageSupportForLinker {
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
-    private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator, allowErrorTypes)
+    private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator)
     private val patcher = PartiallyLinkedIrTreePatcher(builtIns, classifierExplorer, stubGenerator, logger)
 
     override val isEnabled get() = true
