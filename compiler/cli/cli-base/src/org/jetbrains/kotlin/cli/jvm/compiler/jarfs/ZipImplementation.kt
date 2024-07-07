@@ -80,12 +80,28 @@ internal fun LargeDynamicMappedBuffer.parseCentralDirectory(): List<ZipEntryDesc
 
             val fileNameLength = getUnsignedShort(28)
             val extraLength = getUnsignedShort(30)
+            val extraFieldOffset = 46 + fileNameLength
 
-            val compressedSize = getIntAsLong(20)
-            val uncompressedSize = getIntAsLong(24)
+            val compressedSize32 = getInt(20)
+            val uncompressedSize32 = getInt(24)
             val fileCommentLength = getUnsignedShort(32)
 
-            val offsetOfFileData = getIntAsLong(42)
+            val offsetOfFileData32 = getInt(42)
+
+            // NOTE: order of Zip64 fields is fixed, see "4.5.3 -Zip64 Extended Information Extra Field" in zip file format specs
+            var extraFieldNo = 0
+            val extraFieldsSize = getShort(extraFieldOffset + 2)
+
+            fun Int.toLongOrNextZip64ExtrField(): Long =
+                if (this != -1) toUInt().toLong()
+                else {
+                    require(extraFieldsSize >= (extraFieldNo + 1) * 8)
+                    getLong(extraFieldOffset + 4 + extraFieldNo * 8).also { extraFieldNo++ }
+                }
+
+            val compressedSize = compressedSize32.toLongOrNextZip64ExtrField()
+            val uncompressedSize = uncompressedSize32.toLongOrNextZip64ExtrField()
+            val offsetOfFileData = offsetOfFileData32.toLongOrNextZip64ExtrField()
 
             val bytesForName = getBytes(46, fileNameLength)
 
@@ -152,9 +168,4 @@ private fun LargeDynamicMappedBuffer.Mapping.parseZip64CentralDirectoryRecordsNu
 }
 
 private fun LargeDynamicMappedBuffer.Mapping.getUnsignedShort(offset: Int): Int = java.lang.Short.toUnsignedInt(getShort(offset))
-
-internal fun LargeDynamicMappedBuffer.Mapping.getIntAsLong(offset: Int): Long {
-    val i = getInt(offset)
-    return if (i == -1) -1L else i.toUInt().toLong()
-}
 

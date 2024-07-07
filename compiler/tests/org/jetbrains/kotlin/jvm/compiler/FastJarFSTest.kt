@@ -144,6 +144,56 @@ class FastJarFSTest : TestCase() {
         assertEquals("smallOne", String(fs.findFileByPath(jarFile.absolutePath + "!/small1.txt")!!.contentsToByteArray()))
     }
 
+    fun testInterleaveSmallAndBigJarEntriesInOrderZip64() {
+        // tests the zip file larger than UInt.MAX_VALUE, so ZIP64 fields are used in the directory
+        val fs = fs ?: return
+        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val jarFile = File(tmpDir, "tmp.jar")
+
+        val chunkSize = 1024 * 1024
+        val repetitions = (Int.MAX_VALUE.toLong() + 1) / chunkSize
+
+        ZipOutputStream(FileOutputStream(jarFile)).use { out ->
+            out.addEntry("small1.txt") { append("smallOne") }
+            out.addRandomEntry("big1.txt", chunkSize, repetitions)
+            out.addEntry("small2.txt") { append("smallTwo") }
+            out.addRandomEntry("big2.txt", chunkSize, repetitions + 2)
+            out.addEntry("small3.txt") { append("smallThree") }
+        }
+
+        assert(jarFile.length() > UInt.MAX_VALUE.toLong())
+        assertEquals("smallOne", String(fs.findFileByPath(jarFile.absolutePath + "!/small1.txt")!!.contentsToByteArray()))
+        assertEquals(repetitions * chunkSize, fs.findFileByPath(jarFile.absolutePath + "!/big1.txt")!!.length)
+        assertEquals("smallTwo", String(fs.findFileByPath(jarFile.absolutePath + "!/small2.txt")!!.contentsToByteArray()))
+        assertEquals((repetitions + 2) * chunkSize, fs.findFileByPath(jarFile.absolutePath + "!/big2.txt")!!.length)
+        assertEquals("smallThree", String(fs.findFileByPath(jarFile.absolutePath + "!/small3.txt")!!.contentsToByteArray()))
+    }
+
+    fun testInterleaveSmallAndBigJarEntriesOutOfOrderZip64() {
+        // similar to testInterleaveSmallAndBigJarEntriesInOrderZip64, but with out of order files reading, promting more remappings
+        val fs = fs ?: return
+        val tmpDir = KotlinTestUtils.tmpDirForTest(this)
+        val jarFile = File(tmpDir, "tmp.jar")
+
+        val chunkSize = 1024 * 1024
+        val repetitions = (Int.MAX_VALUE.toLong() + 1) / chunkSize
+
+        ZipOutputStream(FileOutputStream(jarFile)).use { out ->
+            out.addEntry("small1.txt") { append("smallOne") }
+            out.addRandomEntry("big1.txt", chunkSize, repetitions)
+            out.addEntry("small2.txt") { append("smallTwo") }
+            out.addRandomEntry("big2.txt", chunkSize, repetitions + 2)
+            out.addEntry("small3.txt") { append("smallThree") }
+        }
+
+        assert(jarFile.length() > UInt.MAX_VALUE.toLong())
+        assertEquals("smallThree", String(fs.findFileByPath(jarFile.absolutePath + "!/small3.txt")!!.contentsToByteArray()))
+        assertEquals((repetitions + 2) * chunkSize, fs.findFileByPath(jarFile.absolutePath + "!/big2.txt")!!.length)
+        assertEquals("smallTwo", String(fs.findFileByPath(jarFile.absolutePath + "!/small2.txt")!!.contentsToByteArray()))
+        assertEquals(repetitions * chunkSize, fs.findFileByPath(jarFile.absolutePath + "!/big1.txt")!!.length)
+        assertEquals("smallOne", String(fs.findFileByPath(jarFile.absolutePath + "!/small1.txt")!!.contentsToByteArray()))
+    }
+
     fun skip_testBigJarDirectory() {
         // it will be nice to have a test that checks logic of ZIP directory reading on the directories that doesn't fit to MappedByteBuffer
         // but this tests fails with OOM on such zip file generation.
