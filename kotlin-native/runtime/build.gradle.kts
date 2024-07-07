@@ -37,6 +37,7 @@ googletest {
 val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 
 if (HostManager.hostIsMac) {
+    // FIXME: Find a proper way to pass compiler arguments here
     afterEvaluate {
         tasks.withType(ClangFrontend::class.java).configureEach {
             arguments.add("-D_Float16=short")
