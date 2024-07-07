@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.StartParameterInternal
 import org.gradle.api.provider.Provider
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
@@ -26,7 +27,7 @@ fun Task.notCompatibleWithConfigurationCacheCompat(reason: String) {
         false
     }
 
-    if (!isGradleVersionAtLeast(7, 4)) {
+    if (GradleVersion.current() < GradleVersion.version("7.4")) {
         if (reportConfigurationCacheWarnings) {
             logger.warn("Task $name is not compatible with configuration cache: $reason")
         }

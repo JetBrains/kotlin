@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.file.*
 import org.gradle.api.provider.Provider
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.CustomPropertiesFileValueSource
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
@@ -121,7 +122,7 @@ internal fun Provider<Directory>.getFile(): File = get().asFile
  * NOTE: You can remove this method and all its usages since the minimal supported version of gradle become 8.0
  */
 internal fun File.existsCompat(): Boolean =
-    if (isGradleVersionAtLeast(8, 0)) {
+    if (GradleVersion.current() >= GradleVersion.version("8.0")) {
         true
     } else {
         exists()
