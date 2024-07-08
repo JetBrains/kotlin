@@ -27,7 +27,7 @@ internal fun ObjCExportContext.getFunctionMethodBridge(symbol: KaFunctionSymbol)
     val isInner = (with(analysisSession) { symbol.containingDeclaration } as? KaNamedClassSymbol)?.isInner ?: false
 
     symbol.receiverParameter?.apply {
-        valueParameters += bridgeParameter(this.type)
+        valueParameters += bridgeParameter(this.returnType)
     }
 
     symbol.valueParameters.forEach {

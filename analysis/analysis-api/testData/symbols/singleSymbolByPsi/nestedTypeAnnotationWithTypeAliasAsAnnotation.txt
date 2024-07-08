@@ -23,13 +23,25 @@ KaNamedFunctionSymbol:
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/foo2)
-    type: KaTypeParameterType:
+    receiverParameter: null
+    returnType: KaTypeParameterType:
       annotations: []
       type: T
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
+    getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasAsAnnotationKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

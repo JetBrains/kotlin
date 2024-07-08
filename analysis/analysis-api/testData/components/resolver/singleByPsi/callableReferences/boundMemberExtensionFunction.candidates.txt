@@ -7,13 +7,24 @@ KtCallableReferenceExpression(230,238): 'Bar::foo'
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            type: KaUsualClassType:
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: Foo
+            visibility: PUBLIC
           type = Foo
         extensionReceiver = null
         signature = KaFunctionSignature:

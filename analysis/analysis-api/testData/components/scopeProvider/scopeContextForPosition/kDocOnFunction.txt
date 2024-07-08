@@ -342,13 +342,24 @@ scopes:
         origin: SOURCE
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isVal: true
           location: LOCAL
+          modality: FINAL
+          name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(test/function)
-          type: KaUsualClassType:
+          receiverParameter: null
+          returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: test/Receiver
+          visibility: PUBLIC
         returnType: KaTypeParameterType:
           annotations: []
           type: TypeParam

@@ -5,13 +5,24 @@ KtNameReferenceExpression(50,51): 'i'
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-            type: KaUsualClassType:
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: A
+            visibility: PUBLIC
           type = A
         extensionReceiver = null
         signature = KaVariableSignature:

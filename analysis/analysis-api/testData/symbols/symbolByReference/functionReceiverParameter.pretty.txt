@@ -3,13 +3,24 @@ KaReceiverParameterSymbol:
     ReceiverAnnotation()
       psi: KtAnnotationEntry
   ]
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isVal: true
   location: LOCAL
+  modality: FINAL
+  name: <receiver>
   origin: SOURCE
   owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-  type: KaUsualClassType:
+  receiverParameter: null
+  returnType: KaUsualClassType:
     annotations: [
       ReceiverTypeAnnotation()
         psi: KtAnnotationEntry
     ]
     typeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Int
+  visibility: PUBLIC

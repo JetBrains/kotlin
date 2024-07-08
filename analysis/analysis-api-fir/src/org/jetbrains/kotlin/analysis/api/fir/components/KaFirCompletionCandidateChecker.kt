@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.ResolutionParameters
@@ -77,6 +78,10 @@ private class KaFirCompletionExtensionCandidateChecker(
     }
 
     override fun computeApplicability(candidate: KaCallableSymbol): KaExtensionApplicabilityResult {
+        if (candidate is KaReceiverParameterSymbol) {
+            return NonApplicable(analysisSession.token)
+        }
+
         require(candidate is KaFirSymbol<*>)
 
         analysisSession.withValidityAssertion {

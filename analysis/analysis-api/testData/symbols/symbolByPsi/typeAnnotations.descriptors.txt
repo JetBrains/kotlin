@@ -617,13 +617,25 @@ KaNamedFunctionSymbol:
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    callableId: null
+    compilerVisibility: Local
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-    type: KaTypeParameterType:
+    receiverParameter: null
+    returnType: KaTypeParameterType:
       annotations: []
       type: T
+    visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
+    getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -689,13 +701,25 @@ KaNamedFunctionSymbol:
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    callableId: null
+    compilerVisibility: Local
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/foo2)
-    type: KaTypeParameterType:
+    receiverParameter: null
+    returnType: KaTypeParameterType:
       annotations: []
       type: T
+    visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
+    getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

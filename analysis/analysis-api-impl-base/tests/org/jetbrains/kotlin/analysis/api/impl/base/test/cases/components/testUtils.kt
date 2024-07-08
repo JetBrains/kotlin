@@ -62,7 +62,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
             )
             append("(")
             (this@with as? KaNamedFunctionSymbol)?.receiverParameter?.let { receiver ->
-                append("<extension receiver>: ${receiver.type.render()}")
+                append("<extension receiver>: ${receiver.returnType.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
 
@@ -76,6 +76,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
             append(": ${returnType.render()}")
         }
         is KaValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
+        is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, this)
         is KaTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
         is KaVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"

@@ -277,13 +277,24 @@ scopes:
         origin: SOURCE
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
+          callableId: null
+          compilerVisibility: Private
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isVal: true
           location: LOCAL
+          modality: FINAL
+          name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/test)
-          type: KaUsualClassType:
+          receiverParameter: null
+          returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
             type: kotlin/Any
+          visibility: PRIVATE
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []

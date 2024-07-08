@@ -13,10 +13,20 @@ KaNamedFunctionSymbol:
           parameterSymbol:
             KaReceiverParameterSymbol:
               annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
               location: LOCAL
+              modality: FINAL
+              name: <receiver>
               origin: SOURCE
               owningCallableSymbol: KaNamedFunctionSymbol(/referenceReceiverInContract)
-              type: KaFunctionType:
+              receiverParameter: null
+              returnType: KaFunctionType:
                 annotations: []
                 typeArguments: [
                   KaUsualClassType:
@@ -25,7 +35,9 @@ KaNamedFunctionSymbol:
                     type: kotlin/Unit
                 ]
                 type: kotlin/Function0<kotlin/Unit>
+              visibility: PUBLIC
               getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
+              getContainingJvmClassName: ReferenceReceiverInContractKt
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
       occurrencesRange: EXACTLY_ONCE
@@ -49,10 +61,20 @@ KaNamedFunctionSymbol:
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/referenceReceiverInContract)
-    type: KaFunctionType:
+    receiverParameter: null
+    returnType: KaFunctionType:
       annotations: []
       typeArguments: [
         KaUsualClassType:
@@ -61,7 +83,9 @@ KaNamedFunctionSymbol:
           type: kotlin/Unit
       ]
       type: kotlin/Function0<kotlin/Unit>
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
+    getContainingJvmClassName: ReferenceReceiverInContractKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

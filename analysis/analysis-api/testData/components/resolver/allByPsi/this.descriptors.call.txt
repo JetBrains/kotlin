@@ -877,13 +877,24 @@ KtCallExpression(625,630): 'foo()'
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(<local>/<no name provided>)
-            type: KaUsualClassType:
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: one/MyClass
+            visibility: LOCAL
           type = one.MyClass
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -903,13 +914,24 @@ KtNameReferenceExpression(625,628): 'foo'
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(<local>/<no name provided>)
-            type: KaUsualClassType:
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: one/MyClass
+            visibility: LOCAL
           type = one.MyClass
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1386,13 +1408,24 @@ KtCallExpression(891,896): 'foo()'
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            type: KaUsualClassType:
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: one/MyClass.InnerOuter.InnerNested
+            visibility: LOCAL
           type = one.MyClass.InnerOuter.InnerNested
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -1412,13 +1445,24 @@ KtNameReferenceExpression(891,894): 'foo'
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            type: KaUsualClassType:
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: one/MyClass.InnerOuter.InnerNested
+            visibility: LOCAL
           type = one.MyClass.InnerOuter.InnerNested
         extensionReceiver = null
         signature = KaFunctionSignature:
@@ -2040,12 +2084,23 @@ KtCallExpression(1272,1282): 'body(this)'
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(one/myWith)
-            type: KaTypeParameterType:
+            receiverParameter: null
+            returnType: KaTypeParameterType:
               annotations: []
               type: T
+            visibility: LOCAL
           type = T
         signature = KaFunctionSignature:
           receiverType = T

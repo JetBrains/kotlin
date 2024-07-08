@@ -332,14 +332,26 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
       location: LOCAL
+      modality: OPEN
+      name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/I.doo)
-      type: KaUsualClassType:
+      receiverParameter: null
+      returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(I.class)
+      getContainingJvmClassName: I
       getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -376,14 +388,26 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: OPEN
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/I.doo)
-    type: KaUsualClassType:
+    receiverParameter: null
+    returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(I.class)
+    getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -592,14 +616,26 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
       location: LOCAL
+      modality: OPEN
+      name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/I.zoo)
-      type: KaUsualClassType:
+      receiverParameter: null
+      returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(I.class)
+      getContainingJvmClassName: I
       getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -636,14 +672,26 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: OPEN
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/I.zoo)
-    type: KaUsualClassType:
+    receiverParameter: null
+    returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(I.class)
+    getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   returnType: KaUsualClassType:
@@ -697,14 +745,26 @@ KaKotlinPropertySymbol:
       deprecationStatus: null
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
       location: LOCAL
+      modality: OPEN
+      name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/I.zoo)
-      type: KaUsualClassType:
+      receiverParameter: null
+      returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
+      visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(I.class)
+      getContainingJvmClassName: I
       getContainingModule: KaLibraryModule "Library main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -791,14 +851,26 @@ KaNamedFunctionSymbol:
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: OPEN
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/I.smth)
-    type: KaUsualClassType:
+    receiverParameter: null
+    returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Int
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(I.class)
+    getContainingJvmClassName: I
     getContainingModule: KaLibraryModule "Library main"
     deprecationStatus: null
   returnType: KaUsualClassType:

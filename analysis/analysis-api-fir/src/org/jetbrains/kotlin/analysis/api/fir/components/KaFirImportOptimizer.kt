@@ -306,7 +306,7 @@ internal class KaFirImportOptimizer(
                             } else if (fqName != qualifiedNameAsFqName) {
                                 // or some kind of top level declaration with potential receiver
                                 this += fqName
-                                val receiverClassType = symbol.receiverParameter?.type as? KaClassType
+                                val receiverClassType = symbol.receiverParameter?.returnType as? KaClassType
                                 val receiverFqName = receiverClassType?.classId?.asSingleFqName()
                                 // import has no receiver for receiver kdoc declaration:
                                 // for receiver case kdoc like `[Foo.bar]`

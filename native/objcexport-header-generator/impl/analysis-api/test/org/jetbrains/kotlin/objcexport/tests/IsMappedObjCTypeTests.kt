@@ -31,4 +31,4 @@ class IsMappedObjCTypeTests(
     }
 }
 
-private val KaNamedFunctionSymbol.receiverType: KaType get() = receiverParameter?.type ?: error("$name doesn't have receiver")
+private val KaNamedFunctionSymbol.receiverType: KaType get() = receiverParameter?.returnType ?: error("$name doesn't have receiver")

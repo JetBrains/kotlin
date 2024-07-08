@@ -62,6 +62,8 @@ internal class KaFirSymbolInformationProvider(
     }
 
     override fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? = withValidityAssertion {
+        if (this is KaReceiverParameterSymbol) return null
+
         require(this is KaFirSymbol<*>)
         return if (annotationUseSiteTarget != null) {
             firSymbol.getDeprecationForCallSite(analysisSession.firSession, annotationUseSiteTarget)

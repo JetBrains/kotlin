@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForReceiverParameter
@@ -16,12 +17,17 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
@@ -38,7 +44,7 @@ internal class KaFirReceiverParameterSymbol(
         }
     }
 
-    override val type: KaType by cached {
+    override val returnType: KaType by cached {
         firSymbol.receiverType(analysisSession.firSymbolBuilder)
             ?: errorWithAttachment("${firSymbol::class} doesn't have an extension receiver") {
                 withFirEntry("callable", firSymbol.fir)
@@ -48,6 +54,22 @@ internal class KaFirReceiverParameterSymbol(
     override val owningCallableSymbol: KaCallableSymbol by cached { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol) }
 
     override val origin: KaSymbolOrigin = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
+
+    override val modality: KaSymbolModality
+        get() = withValidityAssertion { firSymbol.kaSymbolModality }
+
+    @KaExperimentalApi
+    override val compilerVisibility: Visibility
+        get() = withValidityAssertion { firSymbol.visibility }
+
+    override val isActual: Boolean
+        get() = withValidityAssertion { false }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { false }
+
+    override val name: Name
+        get() = withValidityAssertion { SpecialNames.RECEIVER }
 
     override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = withValidityAssertion {
         KaFirReceiverParameterSymbolPointer(owningCallableSymbol.createPointer())

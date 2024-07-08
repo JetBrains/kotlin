@@ -54,10 +54,20 @@ scopes:
           origin: PLUGIN
           receiverParameter: KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: PLUGIN
             owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
-            type: KaUsualClassType:
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
               typeArguments: [
                 KaUsualClassType:
@@ -66,6 +76,7 @@ scopes:
                   type: <local>/Schema1
               ]
               type: DataFrame<<local>/Schema1>
+            visibility: LOCAL
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
@@ -92,10 +103,20 @@ scopes:
         origin: PLUGIN
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
+          callableId: null
+          compilerVisibility: Local
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isVal: true
           location: LOCAL
+          modality: FINAL
+          name: <receiver>
           origin: PLUGIN
           owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
-          type: KaUsualClassType:
+          receiverParameter: null
+          returnType: KaUsualClassType:
             annotations: []
             typeArguments: [
               KaUsualClassType:
@@ -104,6 +125,7 @@ scopes:
                 type: <local>/Schema1
             ]
             type: DataFrame<<local>/Schema1>
+          visibility: LOCAL
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
@@ -409,10 +431,20 @@ scopes:
         origin: SOURCE
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isVal: true
           location: LOCAL
+          modality: FINAL
+          name: <receiver>
           origin: SOURCE
           owningCallableSymbol: KaNamedFunctionSymbol(/add)
-          type: KaUsualClassType:
+          receiverParameter: null
+          returnType: KaUsualClassType:
             annotations: []
             typeArguments: [
               KaTypeParameterType:
@@ -420,6 +452,7 @@ scopes:
                 type: T
             ]
             type: DataFrame<T>
+          visibility: PUBLIC
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: [

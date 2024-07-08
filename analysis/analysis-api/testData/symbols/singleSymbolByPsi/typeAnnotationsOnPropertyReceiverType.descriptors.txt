@@ -45,10 +45,20 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
       location: LOCAL
+      modality: FINAL
+      name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/foo)
-      type: KaUsualClassType:
+      receiverParameter: null
+      returnType: KaUsualClassType:
         annotations: [
           Anno3()
             psi: KtAnnotationEntry
@@ -59,7 +69,9 @@ KaKotlinPropertySymbol:
         ]
         typeArguments: []
         type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyReceiverType.kt)
+      getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -92,10 +104,20 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    callableId: null
+    compilerVisibility: Local
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/foo)
-    type: KaUsualClassType:
+    receiverParameter: null
+    returnType: KaUsualClassType:
       annotations: [
         Anno3()
           psi: KtAnnotationEntry
@@ -106,7 +128,9 @@ KaKotlinPropertySymbol:
       ]
       typeArguments: []
       type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
+    visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyReceiverType.kt)
+    getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

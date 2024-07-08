@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
@@ -31,6 +32,8 @@ internal class KaFirSymbolDeclarationOverridesProvider(
     fun <T : KaSymbol> getAllOverriddenSymbols(
         callableSymbol: T,
     ): Sequence<KaCallableSymbol> {
+        if (callableSymbol is KaReceiverParameterSymbol) return emptySequence()
+
         require(callableSymbol is KaFirSymbol<*>)
         if (callableSymbol is KaFirBackingFieldSymbol) return emptySequence()
         if (callableSymbol is KaValueParameterSymbol) {
@@ -58,6 +61,8 @@ internal class KaFirSymbolDeclarationOverridesProvider(
     }
 
     fun <T : KaSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
+        if (callableSymbol is KaReceiverParameterSymbol) return emptySequence()
+
         require(callableSymbol is KaFirSymbol<*>)
         if (callableSymbol is KaFirBackingFieldSymbol) return emptySequence()
         if (callableSymbol is KaValueParameterSymbol) {
@@ -196,6 +201,8 @@ internal class KaFirSymbolDeclarationOverridesProvider(
     }
 
     fun getIntersectionOverriddenSymbols(symbol: KaCallableSymbol): List<KaCallableSymbol> {
+        if (symbol is KaReceiverParameterSymbol) return emptyList()
+
         require(symbol is KaFirSymbol<*>)
         if (symbol.origin != KaSymbolOrigin.INTERSECTION_OVERRIDE) return emptyList()
         return symbol.firSymbol

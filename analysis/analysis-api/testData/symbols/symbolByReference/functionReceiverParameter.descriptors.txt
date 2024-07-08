@@ -26,17 +26,29 @@ KaNamedFunctionSymbol:
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
+    callableId: null
+    compilerVisibility: Local
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-    type: KaUsualClassType:
+    receiverParameter: null
+    returnType: KaUsualClassType:
       annotations: [
         ReceiverTypeAnnotation()
           psi: KtAnnotationEntry
       ]
       typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Int
+    visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(functionReceiverParameter.kt)
+    getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

@@ -15,14 +15,26 @@ KaNamedFunctionSymbol:
           parameterSymbol:
             KaReceiverParameterSymbol:
               annotations: []
+              callableId: null
+              compilerVisibility: Public
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
               location: LOCAL
+              modality: FINAL
+              name: <receiver>
               origin: SOURCE
               owningCallableSymbol: KaNamedFunctionSymbol(/referenceReceiverInContract)
-              type: KaUsualClassType:
+              receiverParameter: null
+              returnType: KaUsualClassType:
                 annotations: []
                 typeArguments: []
                 type: kotlin/Boolean
+              visibility: PUBLIC
               getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
+              getContainingJvmClassName: ReferenceBooleanReceiverInContractKt
               getContainingModule: KaSourceModule "Sources of main"
               deprecationStatus: null
   ]
@@ -45,14 +57,26 @@ KaNamedFunctionSymbol:
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaNamedFunctionSymbol(/referenceReceiverInContract)
-    type: KaUsualClassType:
+    receiverParameter: null
+    returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Boolean
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
+    getContainingJvmClassName: ReferenceBooleanReceiverInContractKt
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

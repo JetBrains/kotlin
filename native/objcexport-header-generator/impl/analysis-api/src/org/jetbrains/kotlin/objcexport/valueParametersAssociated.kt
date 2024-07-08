@@ -138,7 +138,7 @@ internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol?): KaType? {
         @Suppress("DEPRECATION")
         symbol.dispatchReceiverType
     } else if (symbol.isExtension) {
-        val receiverParameterType = symbol.receiverParameter?.type
+        val receiverParameterType = symbol.receiverParameter?.returnType
         if (isMappedObjCType(receiverParameterType)) receiverParameterType
         else if ((symbol.containingDeclaration as? KaNamedClassSymbol)?.isInner == true) receiverParameterType
         else if (receiverParameterType != null && isObjCNothing(receiverParameterType)) return receiverParameterType

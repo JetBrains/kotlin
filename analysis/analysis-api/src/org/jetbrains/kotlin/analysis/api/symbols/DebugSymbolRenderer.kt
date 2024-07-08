@@ -194,10 +194,7 @@ public class DebugSymbolRenderer(
             }
         }
 
-        if (renderSymbolsFully || symbol is KaBackingFieldSymbol ||
-            symbol is KaPropertyGetterSymbol || symbol is KaPropertySetterSymbol ||
-            symbol is KaValueParameterSymbol || symbol is KaReceiverParameterSymbol
-        ) {
+        if (renderSymbolsFully || symbol is KaBackingFieldSymbol || symbol is KaPropertyAccessorSymbol || symbol is KaParameterSymbol) {
             renderSymbol(symbol, printer)
             return
         }

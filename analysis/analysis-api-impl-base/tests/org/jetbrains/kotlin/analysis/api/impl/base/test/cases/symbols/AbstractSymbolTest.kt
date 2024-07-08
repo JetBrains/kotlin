@@ -114,14 +114,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                     PointerWithRenderedSymbol(
                         safePointer(symbol),
                         when (symbol) {
+                            is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, symbol)
                             is KaDeclarationSymbol -> symbol.render(prettyRenderer)
                             is KaFileSymbol -> prettyPrint {
                                 printCollection(symbol.fileScope.declarations.asIterable(), separator = "\n\n") {
                                     append(it.render(prettyRenderer))
                                 }
                             }
-
-                            is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, symbol)
                             else -> error(symbol::class.toString())
                         },
                     )

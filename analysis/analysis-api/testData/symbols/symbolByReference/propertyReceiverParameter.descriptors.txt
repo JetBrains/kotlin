@@ -48,17 +48,29 @@ KaKotlinPropertySymbol:
         ReceiverAnnotation()
           psi: KtAnnotationEntry
       ]
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
       location: LOCAL
+      modality: FINAL
+      name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/prop)
-      type: KaUsualClassType:
+      receiverParameter: null
+      returnType: KaUsualClassType:
         annotations: [
           ReceiverTypeAnnotation()
             psi: KtAnnotationEntry
         ]
         typeArguments: []
         type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
+      getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
@@ -94,17 +106,29 @@ KaKotlinPropertySymbol:
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
+    callableId: null
+    compilerVisibility: Local
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
     location: LOCAL
+    modality: FINAL
+    name: <receiver>
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/prop)
-    type: KaUsualClassType:
+    receiverParameter: null
+    returnType: KaUsualClassType:
       annotations: [
         ReceiverTypeAnnotation()
           psi: KtAnnotationEntry
       ]
       typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+    visibility: LOCAL
     getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
+    getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -255,14 +256,7 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol(),
 @Deprecated("Use 'KaLocalVariableSymbol' instead", ReplaceWith("KaLocalVariableSymbol"))
 public typealias KtLocalVariableSymbol = KaLocalVariableSymbol
 
-// TODO design common ancestor of parameter and receiver KTIJ-23745
-public sealed interface KaParameterSymbol : KaAnnotatedSymbol
-
-@Deprecated("Use 'KaParameterSymbol' instead", ReplaceWith("KaParameterSymbol"))
-public typealias KtParameterSymbol = KaParameterSymbol
-
-public abstract class KaValueParameterSymbol : KaVariableSymbol(), KaParameterSymbol,
-    @Suppress("DEPRECATION") KaSymbolWithKind, KaAnnotatedSymbol {
+public sealed class KaParameterSymbol : KaVariableSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
 
     final override val callableId: CallableId? get() = withValidityAssertion { null }
@@ -272,7 +266,13 @@ public abstract class KaValueParameterSymbol : KaVariableSymbol(), KaParameterSy
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
     final override val isVal: Boolean get() = withValidityAssertion { true }
+}
 
+@Deprecated("Use 'KaParameterSymbol' instead", ReplaceWith("KaParameterSymbol"))
+public typealias KtParameterSymbol = KaParameterSymbol
+
+public abstract class KaValueParameterSymbol : KaParameterSymbol(),
+    @Suppress("DEPRECATION") KaSymbolWithKind, KaAnnotatedSymbol {
     /**
      * Returns true if the function parameter is marked with `noinline` modifier
      */
@@ -319,3 +319,24 @@ public abstract class KaValueParameterSymbol : KaVariableSymbol(), KaParameterSy
 
 @Deprecated("Use 'KaValueParameterSymbol' instead", ReplaceWith("KaValueParameterSymbol"))
 public typealias KtValueParameterSymbol = KaValueParameterSymbol
+
+/**
+ * Symbol for a receiver parameter of a function or property. For example, consider code `fun String.foo() {...}`, the declaration of
+ * `String` receiver parameter is such a symbol.
+ */
+public abstract class KaReceiverParameterSymbol : KaParameterSymbol() {
+    @Deprecated("Use 'returnType' instead", ReplaceWith("returnType"))
+    public val type: KaType
+        get() = withValidityAssertion { returnType }
+
+    /**
+     * Link to the corresponding function or property.
+     * In terms of the example above -- this is link to the function foo.
+     */
+    public abstract val owningCallableSymbol: KaCallableSymbol
+
+    abstract override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol>
+}
+
+@Deprecated("Use 'KaReceiverParameterSymbol' instead.", ReplaceWith("KaReceiverParameterSymbol"))
+public typealias KtReceiverParameterSymbol = KaReceiverParameterSymbol

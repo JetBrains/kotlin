@@ -1,0 +1,38 @@
+KtCallExpression(51,56): 'foo()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaSmartCastedReceiverValue:
+          original = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Local
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/test)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/Any
+              visibility: LOCAL
+            type = kotlin.Any
+          type = kotlin.String
+        signature = KaFunctionSignature:
+          receiverType = kotlin.String
+          returnType = kotlin.Unit
+          symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit
+          valueParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}

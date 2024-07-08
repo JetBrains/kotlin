@@ -14,10 +14,20 @@ KtNameReferenceExpression(248,251): 'add'
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            type: KaUsualClassType:
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
               typeArguments: [
                 KaUsualClassType:
@@ -26,6 +36,7 @@ KtNameReferenceExpression(248,251): 'add'
                   type: kotlin/String
               ]
               type: test/Target<kotlin/String>
+            visibility: PUBLIC
           type = test.Target<kotlin.String>
         extensionReceiver = null
         signature = KaFunctionSignature:

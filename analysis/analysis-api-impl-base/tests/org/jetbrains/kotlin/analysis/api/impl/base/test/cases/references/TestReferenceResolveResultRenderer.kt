@@ -66,6 +66,10 @@ object TestReferenceResolveResultRenderer {
                 append("(in $fqName) ")
             }
             when (symbol) {
+                is KaReceiverParameterSymbol -> {
+                    append("extension receiver with type ")
+                    append(symbol.returnType.render(renderer.typeRenderer, position = Variance.INVARIANT))
+                }
                 is KaDeclarationSymbol -> {
                     append(symbol.render(renderer))
                     if (renderPsiClassName) {
@@ -73,10 +77,6 @@ object TestReferenceResolveResultRenderer {
                     }
                 }
                 is KaPackageSymbol -> append("package ${symbol.fqName}")
-                is KaReceiverParameterSymbol -> {
-                    append("extension receiver with type ")
-                    append(symbol.type.render(renderer.typeRenderer, position = Variance.INVARIANT))
-                }
                 else -> error("Unexpected symbol ${symbol::class}")
             }
             additionalInfo(symbol)?.let { append(" [$it]") }

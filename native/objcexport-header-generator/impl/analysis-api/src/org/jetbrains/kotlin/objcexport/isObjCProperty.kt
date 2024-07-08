@@ -12,5 +12,5 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.isObjCProperty]
  */
 internal fun KaSession.isObjCProperty(symbol: KaPropertySymbol): Boolean {
-    return symbol.receiverParameter?.type == null || getClassIfCategory(symbol) != null
+    return symbol.receiverParameter?.returnType == null || getClassIfCategory(symbol) != null
 }

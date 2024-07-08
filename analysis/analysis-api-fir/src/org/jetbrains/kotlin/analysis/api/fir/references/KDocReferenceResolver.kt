@@ -348,7 +348,7 @@ internal object KDocReferenceResolver {
      * This check might change in the future, as Dokka team advances with KDoc rules.
      */
     private fun KaSession.canBeReferencedAsExtensionOn(symbol: KaCallableSymbol, actualReceiverType: KaType): Boolean {
-        val extensionReceiverType = symbol.receiverParameter?.type ?: return false
+        val extensionReceiverType = symbol.receiverParameter?.returnType ?: return false
         return isPossiblySuperTypeOf(extensionReceiverType, actualReceiverType)
     }
 

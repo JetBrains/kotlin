@@ -346,6 +346,8 @@ internal class KaFirSymbolRelationProvider(
 
     override fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
         withValidityAssertion {
+            if (this is KaReceiverParameterSymbol) return null
+
             require(this is KaFirSymbol<*>)
             require(parentClassSymbol is KaFirSymbol<*>)
 
@@ -361,6 +363,8 @@ internal class KaFirSymbolRelationProvider(
 
     override val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
         get() = withValidityAssertion {
+            if (this is KaReceiverParameterSymbol) return this
+
             require(this is KaFirSymbol<*>)
 
             val originalDeclaration = firSymbol.fir as FirCallableDeclaration
@@ -372,6 +376,8 @@ internal class KaFirSymbolRelationProvider(
     @Suppress("OVERRIDE_DEPRECATION")
     override val KaCallableSymbol.originalContainingClassForOverride: KaClassSymbol?
         get() = withValidityAssertion {
+            if (this is KaReceiverParameterSymbol) return null
+
             require(this is KaFirSymbol<*>)
 
             val targetDeclaration = firSymbol.fir as FirCallableDeclaration
@@ -383,6 +389,12 @@ internal class KaFirSymbolRelationProvider(
         }
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {
+        if (this is KaReceiverParameterSymbol) {
+            this.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
+                .filterIsInstance<FirCallableSymbol<*>>()
+                .mapNotNull { analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(it) }
+        }
+
         require(this is KaFirSymbol<*>)
         val firSymbol = firSymbol
         if (firSymbol !is FirCallableSymbol && firSymbol !is FirClassSymbol && firSymbol !is FirTypeAliasSymbol) {

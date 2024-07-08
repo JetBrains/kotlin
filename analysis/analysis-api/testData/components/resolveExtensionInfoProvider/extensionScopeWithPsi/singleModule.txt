@@ -151,13 +151,24 @@ callables: 5
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
       location: LOCAL
+      modality: FINAL
+      name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaNamedFunctionSymbol(generated/genTopLevelExtension1)
-      type: KaUsualClassType:
+      receiverParameter: null
+      returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/String
+      visibility: PUBLIC
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
@@ -441,13 +452,24 @@ callables: 5
       origin: SOURCE
       receiverParameter: KaReceiverParameterSymbol:
         annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isVal: true
         location: LOCAL
+        modality: FINAL
+        name: <receiver>
         origin: SOURCE
         owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
-        type: KaUsualClassType:
+        receiverParameter: null
+        returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
           type: generated/GenClass2
+        visibility: PUBLIC
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
@@ -474,13 +496,24 @@ callables: 5
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
       location: LOCAL
+      modality: FINAL
+      name: <receiver>
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
-      type: KaUsualClassType:
+      receiverParameter: null
+      returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: generated/GenClass2
+      visibility: PUBLIC
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []

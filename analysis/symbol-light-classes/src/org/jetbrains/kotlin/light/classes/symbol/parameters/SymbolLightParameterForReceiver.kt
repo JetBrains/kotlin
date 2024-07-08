@@ -79,7 +79,7 @@ internal class SymbolLightParameterForReceiver private constructor(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->
-                        receiver.type.let { if (it.isPrimitiveBacked) KaTypeNullability.UNKNOWN else it.nullability }
+                        receiver.returnType.let { if (it.isPrimitiveBacked) KaTypeNullability.UNKNOWN else it.nullability }
                     }
                 },
             ),
@@ -88,7 +88,7 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
-            val ktType = receiver.type
+            val ktType = receiver.returnType
             val psiType = ktType.asPsiType(
                 this,
                 allowErrorTypes = true,

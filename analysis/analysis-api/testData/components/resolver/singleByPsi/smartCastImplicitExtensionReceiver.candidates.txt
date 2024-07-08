@@ -8,13 +8,24 @@ KtCallExpression(51,56): 'foo()'
         extensionReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
             annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
             location: LOCAL
+            modality: FINAL
+            name: <receiver>
             origin: SOURCE
             owningCallableSymbol: KaNamedFunctionSymbol(/test)
-            type: KaUsualClassType:
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
               typeArguments: []
               type: kotlin/Any
+            visibility: PUBLIC
           type = kotlin.String
         signature = KaFunctionSignature:
           receiverType = kotlin.String

@@ -35,7 +35,7 @@ public interface KaCallableReceiverRenderer {
                     },
                     {
                         val receiverType = declarationRenderer.declarationTypeApproximator
-                            .approximateType(analysisSession, symbol.type, Variance.IN_VARIANCE)
+                            .approximateType(analysisSession, symbol.returnType, Variance.IN_VARIANCE)
 
                         declarationRenderer.typeRenderer.renderType(analysisSession, receiverType, printer)
                     },

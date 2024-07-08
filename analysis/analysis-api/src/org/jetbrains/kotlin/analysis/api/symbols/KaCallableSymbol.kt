@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
@@ -39,26 +37,4 @@ public sealed class KaCallableSymbol :
 public typealias KtCallableSymbol = KaCallableSymbol
 
 public val KaCallableSymbol.receiverType: KaType?
-    get() = receiverParameter?.type
-
-/**
- * Symbol for a receiver parameter of a function or property. For example, consider code `fun String.foo() {...}`, the declaration of
- * `String` receiver parameter is such a symbol.
- */
-public abstract class KaReceiverParameterSymbol : KaAnnotatedSymbol, KaParameterSymbol {
-    public abstract val type: KaType
-
-    /**
-     * Link to the corresponding function or property.
-     * In terms of the example above -- this is link to the function foo.
-     */
-    public abstract val owningCallableSymbol: KaCallableSymbol
-
-    abstract override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol>
-
-    final override val location: KaSymbolLocation
-        get() = withValidityAssertion { KaSymbolLocation.LOCAL }
-}
-
-@Deprecated("Use 'KaReceiverParameterSymbol' instead.", ReplaceWith("KaReceiverParameterSymbol"))
-public typealias KtReceiverParameterSymbol = KaReceiverParameterSymbol
+    get() = receiverParameter?.returnType

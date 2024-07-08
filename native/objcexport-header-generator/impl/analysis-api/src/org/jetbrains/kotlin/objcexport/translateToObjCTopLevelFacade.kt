@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
@@ -68,6 +69,6 @@ fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFi
 }
 
 internal fun ObjCExportContext.isExtensionOfMappedObjCType(symbol: KaCallableSymbol): Boolean {
-    val receiverType = symbol.receiverParameter?.type
+    val receiverType = symbol.receiverParameter?.returnType
     return symbol.isExtension && receiverType != null && analysisSession.isMappedObjCType(receiverType)
 }

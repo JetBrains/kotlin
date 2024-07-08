@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 
@@ -51,7 +52,7 @@ fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExport
         .sortedWith(StableCallableOrder)
         .ifEmpty { return emptyList() }
         .groupBy {
-            val type = it.receiverParameter?.type
+            val type = it.receiverParameter?.returnType
             if (analysisSession.isMappedObjCType(type)) return@groupBy null
             else {
                 /**
