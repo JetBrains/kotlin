@@ -23,6 +23,7 @@ method class_PrimitiveField$constructor$fun_take$T_Int$return$T_class_global$cla
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_PrimitiveField())
   ensures acc(T_class_global$class_PrimitiveField(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_PrimitiveField(ret), write)
 
 
 method global$fun_testReferenceFieldSetter$fun_take$T_class_global$class_ReferenceField$return$T_Unit(local$rf: Ref)
@@ -65,6 +66,7 @@ method class_PrimitiveProperty$constructor$fun_take$$return$T_class_global$class
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_PrimitiveProperty())
   ensures acc(T_class_global$class_PrimitiveProperty(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_PrimitiveProperty(ret), write)
 
 
 method global$fun_testReferencePropertySetter$fun_take$T_class_global$class_ReferenceProperty$return$T_Unit(local$rp: Ref)

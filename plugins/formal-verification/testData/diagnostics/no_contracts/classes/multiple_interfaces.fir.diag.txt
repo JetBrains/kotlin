@@ -3,6 +3,7 @@ method class_D$constructor$fun_take$$return$T_class_global$class_D()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_D())
   ensures acc(T_class_global$class_D(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_D(ret), write)
 
 
 method global$fun_testDiamond$fun_take$$return$T_Int() returns (ret$0: Ref)
@@ -26,12 +27,14 @@ method class_G$constructor$fun_take$$return$T_class_global$class_G()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_G())
   ensures acc(T_class_global$class_G(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_G(ret), write)
 
 
 method class_I$constructor$fun_take$$return$T_class_global$class_I()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_I())
   ensures acc(T_class_global$class_I(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_I(ret), write)
 
 
 method global$fun_testVarVal$fun_take$$return$T_Unit() returns (ret$0: Ref)

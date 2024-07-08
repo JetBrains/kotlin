@@ -8,6 +8,7 @@ method class_PrimitiveFields$constructor$fun_take$T_Int$T_Int$return$T_class_glo
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_PrimitiveFields())
   ensures acc(T_class_global$class_PrimitiveFields(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_PrimitiveFields(ret), write)
   ensures (unfolding acc(T_class_global$class_PrimitiveFields(ret), wildcard) in
       dom$RuntimeType$intFromRef(ret.public$backing_field_a) ==
       dom$RuntimeType$intFromRef(local$a) &&
@@ -33,6 +34,7 @@ method class_Recursive$constructor$fun_take$NT_class_global$class_Recursive$retu
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Recursive())
   ensures acc(T_class_global$class_Recursive(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Recursive(ret), write)
   ensures (unfolding acc(T_class_global$class_Recursive(ret), wildcard) in
       ret.public$backing_field_a == local$a)
 
@@ -56,6 +58,7 @@ method class_FieldInBody$constructor$fun_take$T_Int$return$T_class_global$class_
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_FieldInBody())
   ensures acc(T_class_global$class_FieldInBody(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_FieldInBody(ret), write)
   ensures (unfolding acc(T_class_global$class_FieldInBody(ret), wildcard) in
       dom$RuntimeType$intFromRef(ret.public$backing_field_c) ==
       dom$RuntimeType$intFromRef(local$c))

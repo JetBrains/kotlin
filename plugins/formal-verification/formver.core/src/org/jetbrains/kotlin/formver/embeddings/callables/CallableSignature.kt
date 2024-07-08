@@ -15,6 +15,8 @@ interface CallableSignature {
     val receiverType: TypeEmbedding?
     val paramTypes: List<TypeEmbedding>
     val returnType: TypeEmbedding
+    val returnsUnique: Boolean
+        get() = false
 
     /**
      * The flattened structure of the callable parameters: in case the callable has a receiver

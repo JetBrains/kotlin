@@ -66,12 +66,14 @@ method class_C$constructor$fun_take$$return$T_class_global$class_C()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_C())
   ensures acc(T_class_global$class_C(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_C(ret), write)
 
 
 method class_D$constructor$fun_take$$return$T_class_global$class_D()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_D())
   ensures acc(T_class_global$class_D(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_D(ret), write)
 
 
 method global$fun_extractPublic$fun_take$$return$T_Boolean()

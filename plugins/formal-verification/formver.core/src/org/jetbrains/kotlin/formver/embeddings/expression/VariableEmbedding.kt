@@ -21,6 +21,10 @@ import org.jetbrains.kotlin.formver.viper.ast.*
 sealed interface VariableEmbedding : PureExpEmbedding, PropertyAccessEmbedding {
     val name: MangledName
     override val type: TypeEmbedding
+    val isUnique: Boolean
+        get() = false
+    val isBorrowed: Boolean
+        get() = false
 
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
@@ -42,9 +46,10 @@ sealed interface VariableEmbedding : PureExpEmbedding, PropertyAccessEmbedding {
     fun pureInvariants(): List<ExpEmbedding> = type.pureInvariants().fillHoles(this)
     fun provenInvariants(): List<ExpEmbedding> = listOf(type.subTypeInvariant().fillHole(this))
     fun accessInvariants(): List<ExpEmbedding> = type.accessInvariants().fillHoles(this)
-    fun predicateAccessInvariant() = type.sharedPredicateAccessInvariant()?.fillHole(this)
+    fun sharedPredicateAccessInvariant() = type.sharedPredicateAccessInvariant()?.fillHole(this)
+    fun uniquePredicateAccessInvariant() = type.uniquePredicateAccessInvariant()?.fillHole(this)
 
-    fun allAccessInvariants() = accessInvariants() + listOfNotNull(predicateAccessInvariant())
+    fun allAccessInvariants() = accessInvariants() + listOfNotNull(sharedPredicateAccessInvariant())
 
     fun dynamicInvariants(): List<ExpEmbedding> = type.dynamicInvariants().fillHoles(this)
 
@@ -56,7 +61,12 @@ sealed interface VariableEmbedding : PureExpEmbedding, PropertyAccessEmbedding {
  * Embedding of a variable that is only used as a local placeholder, e.g. the return value or parameters
  * in a type signature.
  */
-class PlaceholderVariableEmbedding(override val name: MangledName, override val type: TypeEmbedding) : VariableEmbedding
+class PlaceholderVariableEmbedding(
+    override val name: MangledName,
+    override val type: TypeEmbedding,
+    override val isUnique: Boolean = false,
+    override val isBorrowed: Boolean = false,
+) : VariableEmbedding
 
 /**
  * Embedding of an anonymous variable.
@@ -68,7 +78,13 @@ class AnonymousVariableEmbedding(n: Int, override val type: TypeEmbedding) : Var
 /**
  * Embedding of a variable that comes from some FIR element.
  */
-class FirVariableEmbedding(override val name: MangledName, override val type: TypeEmbedding, val symbol: FirBasedSymbol<*>) :
+class FirVariableEmbedding(
+    override val name: MangledName,
+    override val type: TypeEmbedding,
+    val symbol: FirBasedSymbol<*>,
+    override val isUnique: Boolean = false,
+    override val isBorrowed: Boolean = false,
+) :
     VariableEmbedding {
     override val sourceRole: SourceRole
         get() = symbol.asSourceRole

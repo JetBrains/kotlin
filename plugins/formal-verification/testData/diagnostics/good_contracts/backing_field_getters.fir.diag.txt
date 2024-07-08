@@ -126,6 +126,7 @@ method class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Baz())
   ensures acc(T_class_global$class_Baz(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Baz(ret), write)
 
 
 method global$fun_nullableReceiverNotNullSafeGet$fun_take$$return$T_Boolean()
@@ -182,6 +183,7 @@ method class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Baz())
   ensures acc(T_class_global$class_Baz(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Baz(ret), write)
 
 
 method global$fun_nonNullableReceiverSafeGet$fun_take$$return$T_Boolean()
@@ -217,6 +219,7 @@ method class_ClassI$constructor$fun_take$T_Int$T_Int$return$T_class_global$class
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_ClassI())
   ensures acc(T_class_global$class_ClassI(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_ClassI(ret), write)
   ensures (unfolding acc(T_class_global$class_ClassI(ret), wildcard) in
       dom$RuntimeType$intFromRef(ret.public$backing_field_x) ==
       dom$RuntimeType$intFromRef(local$x) &&
@@ -228,6 +231,7 @@ method class_ClassII$constructor$fun_take$T_class_global$class_Z$return$T_class_
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_ClassII())
   ensures acc(T_class_global$class_ClassII(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_ClassII(ret), write)
   ensures (unfolding acc(T_class_global$class_ClassII(ret), wildcard) in
       ret.public$backing_field_z == local$z)
 
@@ -236,6 +240,7 @@ method class_Z$constructor$fun_take$$return$T_class_global$class_Z()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Z())
   ensures acc(T_class_global$class_Z(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Z(ret), write)
 
 
 method global$fun_checkPrimary$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,

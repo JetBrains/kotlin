@@ -241,7 +241,7 @@ data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: Exp
             // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
             // provenInvariants don't contain permissions.
             // TODO (inhale vs require) Decide if `predicateAccessInvariant` should be required rather than inhaled in the beginning of the body.
-            (arg.provenInvariants() + listOfNotNull(arg.predicateAccessInvariant())).forEach { invariant ->
+            (arg.provenInvariants() + listOfNotNull(arg.sharedPredicateAccessInvariant())).forEach { invariant ->
                 ctx.addStatement { Stmt.Inhale(invariant.toViperBuiltinType(ctx), ctx.source.asPosition) }
             }
         }

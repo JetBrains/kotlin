@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
@@ -48,7 +49,13 @@ val KtSourceElement?.asPosition: Position
 val FirBasedSymbol<*>.asSourceRole: SourceRole
     get() = SourceRole.FirSymbolHolder(this)
 
-fun FirBasedSymbol<*>.isUnique(session: FirSession) = hasAnnotation(
-    ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlin", "formver", "plugin")), Name.identifier("Unique")),
-    session
-)
+fun annotationId(name: String): ClassId =
+    ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlin", "formver", "plugin")), Name.identifier(name))
+
+fun FirBasedSymbol<*>.isUnique(session: FirSession) = hasAnnotation(annotationId("Unique"), session)
+
+fun FirBasedSymbol<*>.isBorrowed(session: FirSession) = hasAnnotation(annotationId("Borrowed"), session)
+
+fun FirAnnotationContainer.isUnique(session: FirSession) = hasAnnotation(annotationId("Unique"), session)
+
+fun FirAnnotationContainer.isBorrowed(session: FirSession) = hasAnnotation(annotationId("Borrowed"), session)

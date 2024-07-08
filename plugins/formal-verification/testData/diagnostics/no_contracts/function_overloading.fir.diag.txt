@@ -73,12 +73,14 @@ method class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
   ensures acc(T_class_global$class_Bar(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Bar(ret), write)
 
 
 method class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(T_class_global$class_Foo(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Foo(ret), write)
 
 
 method global$fun_fakePrint$fun_take$T_Boolean$return$T_Unit(local$truth: Ref)
@@ -126,6 +128,7 @@ method class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
   ensures acc(T_class_global$class_Bar(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Bar(ret), write)
 
 
 method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(this: Ref,
@@ -144,6 +147,7 @@ method class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(T_class_global$class_Foo(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Foo(ret), write)
 
 
 method global$fun_testClassFunctionOverloading$fun_take$$return$T_Unit()

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.formver.linearization.SharedLinearizationState
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Program
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 /**
@@ -210,14 +211,17 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     override fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
         val retType = embedType(symbol.resolvedReturnTypeRef.type)
         val receiverType = symbol.receiverType
+        val isReceiverUnique = symbol.receiverParameter?.isUnique(session) ?: false
+        val isReceiverBorrowed = symbol.receiverParameter?.isBorrowed(session) ?: false
         return object : FunctionSignature {
             // TODO: figure out whether we want a symbol here and how to get it.
             override val receiver =
-                receiverType?.let { PlaceholderVariableEmbedding(ThisReceiverName, embedType(it)) }
+                receiverType?.let { PlaceholderVariableEmbedding(ThisReceiverName, embedType(it), isReceiverUnique, isReceiverBorrowed) }
             override val params = symbol.valueParameterSymbols.map {
-                FirVariableEmbedding(it.embedName(), embedType(it.resolvedReturnType), it)
+                FirVariableEmbedding(it.embedName(), embedType(it.resolvedReturnType), it, it.isUnique(session), it.isBorrowed(session))
             }
             override val returnType = retType
+            override val returnsUnique = symbol.isUnique(session) || symbol is FirConstructorSymbol
         }
     }
 
@@ -235,20 +239,35 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
         return object : FullNamedFunctionSignature, NamedFunctionSignature by subSignature {
             // TODO (inhale vs require) Decide if `predicateAccessInvariant` should be required rather than inhaled in the beginning of the body.
-            override fun getPreconditions(returnVariable: VariableEmbedding) =
-                subSignature.formalArgs.flatMap { it.pureInvariants() } +
-                        subSignature.formalArgs.flatMap { it.accessInvariants() } +
-                        subSignature.stdLibPreconditions()
+            override fun getPreconditions(returnVariable: VariableEmbedding) = buildList {
+                subSignature.formalArgs.forEach {
+                    addAll(it.pureInvariants())
+                    addAll(it.accessInvariants())
+                    if (it.isUnique) {
+                        addIfNotNull(it.type.uniquePredicateAccessInvariant()?.fillHole(it))
+                    }
+                }
+                addAll(subSignature.stdLibPreconditions())
+            }
 
-            override fun getPostconditions(returnVariable: VariableEmbedding) =
-                subSignature.formalArgs.flatMap { it.accessInvariants() } +
-                        subSignature.params.flatMap { it.dynamicInvariants() } +
-                        returnVariable.pureInvariants() +
-                        returnVariable.provenInvariants() +
-                        returnVariable.allAccessInvariants() +
-                        contractVisitor.getPostconditions(ContractVisitorContext(returnVariable, symbol)) +
-                        subSignature.stdLibPostconditions(returnVariable) +
-                        listOfNotNull(primaryConstructorInvariants(returnVariable))
+            override fun getPostconditions(returnVariable: VariableEmbedding) = buildList {
+                subSignature.formalArgs.forEach {
+                    addAll(it.accessInvariants())
+                    if (it.isUnique && it.isBorrowed) {
+                        addIfNotNull(it.type.uniquePredicateAccessInvariant()?.fillHole(it))
+                    }
+                }
+                addAll(subSignature.params.flatMap { it.dynamicInvariants() })
+                addAll(returnVariable.pureInvariants())
+                addAll(returnVariable.provenInvariants())
+                addAll(returnVariable.allAccessInvariants())
+                if (subSignature.returnsUnique) {
+                    addIfNotNull(returnVariable.uniquePredicateAccessInvariant())
+                }
+                addAll(contractVisitor.getPostconditions(ContractVisitorContext(returnVariable, symbol)))
+                addAll(subSignature.stdLibPostconditions(returnVariable))
+                addIfNotNull(primaryConstructorInvariants(returnVariable))
+            }
 
             fun primaryConstructorInvariants(returnVariable: VariableEmbedding): ExpEmbedding? {
                 val invariants = params.mapNotNull { param ->
@@ -280,7 +299,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
      */
     private fun processBackingField(
         symbol: FirPropertySymbol,
-        classSymbol: FirRegularClassSymbol
+        classSymbol: FirRegularClassSymbol,
     ): Pair<SimpleKotlinName, FieldEmbedding>? {
         val embedding = embedClass(classSymbol)
         val unscopedName = symbol.callableId.embedUnscopedPropertyName()

@@ -38,6 +38,7 @@ method class_CustomList$constructor$fun_take$T_Int$T_Int$return$T_class_global$c
   ensures acc(ret.special$size, write)
   ensures dom$RuntimeType$intFromRef(ret.special$size) >= 0
   ensures acc(T_class_global$class_CustomList(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_CustomList(ret), write)
 
 
 method class_CustomList$fun_get$fun_take$T_class_global$class_CustomList$T_Int$return$T_Int(this: Ref,

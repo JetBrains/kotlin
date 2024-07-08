@@ -40,6 +40,7 @@ method class_Impl$constructor$fun_take$T_Int$return$T_class_global$class_Impl(lo
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl())
   ensures acc(T_class_global$class_Impl(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Impl(ret), write)
   ensures (unfolding acc(T_class_global$class_Impl(ret), wildcard) in
       dom$RuntimeType$intFromRef(ret.public$backing_field_number) ==
       dom$RuntimeType$intFromRef(local$number))

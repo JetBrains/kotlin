@@ -21,6 +21,7 @@ method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(loc
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Box())
   ensures acc(T_class_global$class_Box(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Box(ret), write)
 
 
 method global$fun_createBox$fun_take$$return$T_Int() returns (ret$0: Ref)
@@ -56,6 +57,7 @@ method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(loc
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Box())
   ensures acc(T_class_global$class_Box(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Box(ret), write)
 
 
 method global$fun_setGenericField$fun_take$$return$T_Unit()

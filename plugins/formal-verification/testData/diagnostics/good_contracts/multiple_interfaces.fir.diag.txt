@@ -75,30 +75,35 @@ method class_Impl12$constructor$fun_take$$return$T_class_global$class_Impl12()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl12())
   ensures acc(T_class_global$class_Impl12(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Impl12(ret), write)
 
 
 method class_Impl14$constructor$fun_take$$return$T_class_global$class_Impl14()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl14())
   ensures acc(T_class_global$class_Impl14(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Impl14(ret), write)
 
 
 method class_Impl23$constructor$fun_take$$return$T_class_global$class_Impl23()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl23())
   ensures acc(T_class_global$class_Impl23(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Impl23(ret), write)
 
 
 method class_Impl24$constructor$fun_take$$return$T_class_global$class_Impl24()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl24())
   ensures acc(T_class_global$class_Impl24(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Impl24(ret), write)
 
 
 method class_Impl3$constructor$fun_take$$return$T_class_global$class_Impl3()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl3())
   ensures acc(T_class_global$class_Impl3(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_Impl3(ret), write)
 
 
 method global$fun_create6$fun_take$$return$T_class_global$class_InheritingInterfaceWithoutImplementation6()
