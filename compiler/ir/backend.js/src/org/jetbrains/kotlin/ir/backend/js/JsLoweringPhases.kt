@@ -702,6 +702,12 @@ private val inlineClassUsageLoweringPhase = makeIrModulePhase(
     )
 )
 
+private val expressionBodyTransformer = makeIrModulePhase(
+    ::ExpressionBodyTransformer,
+    name = "ExpressionBodyTransformer",
+    description = "Replace IrExpressionBody with IrBlockBody"
+)
+
 private val autoboxingTransformerPhase = makeIrModulePhase<JsIrBackendContext>(
     { AutoboxingTransformer(it, replaceTypesInsideInlinedFunctionBlock = true) },
     name = "AutoboxingTransformer",
@@ -941,6 +947,7 @@ fun getJsLowerings(
     constLoweringPhase,
     inlineClassDeclarationLoweringPhase,
     inlineClassUsageLoweringPhase,
+    expressionBodyTransformer,
     autoboxingTransformerPhase,
     objectDeclarationLoweringPhase,
     blockDecomposerLoweringPhase,
