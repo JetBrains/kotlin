@@ -124,6 +124,9 @@ fun Project.configureKotlinCompilationOptions() {
             "-opt-in=kotlin.RequiresOptIn",
             "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
             "-Xdont-warn-on-error-suppression",
+            "-Xmulti-dollar-interpolation", // KT-2425
+            "-Xwhen-guards", // KT-13626
+            "-Xnon-local-break-continue", // KT-1436
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
