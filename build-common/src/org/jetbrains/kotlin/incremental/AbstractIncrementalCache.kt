@@ -128,7 +128,7 @@ abstract class AbstractIncrementalCache<ClassName>(
      *
      * The `srcFile` argument may be `null` (e.g., if we are processing .class files in jars where source files are not available).
      */
-    protected fun addToClassStorage(classProtoData: ClassProtoData, srcFile: File?) {
+    protected fun addToClassStorage(classProtoData: ClassProtoData, srcFile: File?, useCompilerMapsOnly: Boolean = false) {
         val (proto, nameResolver) = classProtoData
 
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
@@ -143,11 +143,17 @@ abstract class AbstractIncrementalCache<ClassName>(
         removedSupertypes.forEach { subtypesMap.removeValues(it, setOf(child)) }
 
         supertypesMap[child] = parents
+        if (useCompilerMapsOnly) return
+
         srcFile?.let { classFqNameToSourceMap[child] = it }
         classAttributesMap[child] = ICClassesAttributes(ProtoBuf.Modality.SEALED == Flags.MODALITY.get(proto.flags))
     }
 
-    protected fun removeAllFromClassStorage(removedClasses: Collection<FqName>, changesCollector: ChangesCollector) {
+    protected fun removeAllFromClassStorage(
+        removedClasses: Collection<FqName>,
+        changesCollector: ChangesCollector,
+        useCompilerMapsOnly: Boolean = false,
+    ) {
         if (removedClasses.isEmpty()) return
 
         val removedFqNames = removedClasses.toSet()
@@ -178,6 +184,8 @@ abstract class AbstractIncrementalCache<ClassName>(
                 cache.subtypesMap.removeValues(parent, removedFqNames)
             }
         }
+
+        if (useCompilerMapsOnly) return
 
         removedFqNames.forEach {
             classFqNameToSourceMap.remove(it)

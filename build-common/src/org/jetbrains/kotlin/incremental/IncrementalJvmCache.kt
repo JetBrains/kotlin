@@ -197,9 +197,7 @@ open class IncrementalJvmCache(
                 }
             }
             KotlinClassHeader.Kind.CLASS -> {
-                if (!icContext.useCompilerMapsOnly) {
-                    addToClassStorage(kotlinClassInfo.protoData as ClassProtoData, sourceFiles?.let { sourceFiles.single() })
-                }
+                addToClassStorage(kotlinClassInfo.protoData as ClassProtoData, sourceFiles?.let { sourceFiles.single() }, icContext.useCompilerMapsOnly)
 
                 protoMap.process(kotlinClassInfo, changesCollector)
 
@@ -257,10 +255,8 @@ open class IncrementalJvmCache(
             javaSourcesProtoMap.process(jvmClassName, serializedJavaClass, collector)
         }
         source?.let { sourceToClassesMap.add(source, jvmClassName) }
-        if (!icContext.useCompilerMapsOnly) {
-            addToClassStorage(serializedJavaClass.toProtoData(), source)
-//        collector.addJavaProto(ClassProtoData(proto, nameResolver))
-        }
+        addToClassStorage(serializedJavaClass.toProtoData(), source, icContext.useCompilerMapsOnly)
+
         dirtyOutputClassesMap.notDirty(jvmClassName)
     }
 
@@ -317,9 +313,8 @@ open class IncrementalJvmCache(
             }
         }
 
-        if (!icContext.useCompilerMapsOnly) {
-            removeAllFromClassStorage(dirtyClasses.map { it.fqNameForClassNameWithoutDollars }, changesCollector)
-        }
+        removeAllFromClassStorage(dirtyClasses.map { it.fqNameForClassNameWithoutDollars }, changesCollector, icContext.useCompilerMapsOnly)
+
         dirtyOutputClassesMap.clean()
     }
 
