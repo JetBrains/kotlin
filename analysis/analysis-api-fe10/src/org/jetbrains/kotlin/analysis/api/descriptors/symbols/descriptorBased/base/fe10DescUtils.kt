@@ -413,6 +413,10 @@ internal val DeclarationDescriptor.kaSymbolModality: KaSymbolModality
     }
 
 internal fun ConstantValue<*>.toKtConstantValue(): KaConstantValue {
+    return toKtConstantValueOrNull() ?: error("Unexpected constant value $value")
+}
+
+internal fun ConstantValue<*>.toKtConstantValueOrNull(): KaConstantValue? {
     return when (this) {
         is ErrorValue.ErrorValueWithMessage -> KaErrorConstantValueImpl(message, sourcePsi = null)
         is BooleanValue -> KaBooleanConstantValueImpl(value, sourcePsi = null)
@@ -429,7 +433,7 @@ internal fun ConstantValue<*>.toKtConstantValue(): KaConstantValue {
         is UIntValue -> KaUnsignedIntConstantValueImpl(value.toUInt(), sourcePsi = null)
         is ULongValue -> KaUnsignedLongConstantValueImpl(value.toULong(), sourcePsi = null)
         is UShortValue -> KaUnsignedShortConstantValueImpl(value.toUShort(), sourcePsi = null)
-        else -> error("Unexpected constant value $value")
+        else -> null
     }
 }
 

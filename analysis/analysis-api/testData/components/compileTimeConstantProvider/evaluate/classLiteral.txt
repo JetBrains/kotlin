@@ -1,0 +1,3 @@
+expression: String::class
+constant: NOT_EVALUATED
+constantValueKind: NOT_EVALUATED

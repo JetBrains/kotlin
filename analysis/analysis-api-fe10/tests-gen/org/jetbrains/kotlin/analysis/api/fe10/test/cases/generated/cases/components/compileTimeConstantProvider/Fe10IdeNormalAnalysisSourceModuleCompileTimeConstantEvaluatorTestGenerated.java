@@ -59,6 +59,18 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
   }
 
   @Test
+  @TestMetadata("classLiteral.kt")
+  public void testClassLiteral() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/classLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("enumValue.kt")
+  public void testEnumValue() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/enumValue.kt");
+  }
+
+  @Test
   @TestMetadata("integerLiteral_minusOne_entire.kt")
   public void testIntegerLiteral_minusOne_entire() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_minusOne_entire.kt");
@@ -128,6 +140,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
   @TestMetadata("namedReference_var.kt")
   public void testNamedReference_var() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_var.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedAnnotationValue.kt")
+  public void testNestedAnnotationValue() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/nestedAnnotationValue.kt");
   }
 
   @Test
