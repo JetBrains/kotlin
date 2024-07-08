@@ -62,6 +62,9 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
     @Parameter
     private boolean mapDiagnosticLocations = false;
+    
+    @Parameter
+    private String aptMode = "stubsAndApt";
 
     @Parameter
     private List<String> annotationProcessorArgs;
