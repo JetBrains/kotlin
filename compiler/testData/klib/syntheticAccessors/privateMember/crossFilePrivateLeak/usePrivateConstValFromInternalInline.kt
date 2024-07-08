@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: JS_IR
-
 // FILE: A.kt
 class A {
     companion object {

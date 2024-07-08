@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
 // MODULE: lib
 // FILE: A.kt
 class A {

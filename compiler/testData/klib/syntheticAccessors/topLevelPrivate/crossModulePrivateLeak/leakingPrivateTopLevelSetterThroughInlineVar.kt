@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
 // MODULE: lib
 // FILE: a.kt
 var privateSetterVarA = 0

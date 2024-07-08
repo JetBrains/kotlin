@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: ANY
+// IGNORE_BACKEND: NATIVE
 
 // MODULE: lib1
 // FILE: file1.kt

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
 // FILE: A.kt
 class A {
     private var privateVar = 12

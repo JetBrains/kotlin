@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
 // FILE: Outer.kt
 class Outer {
     private fun privateMethod() = "OK"

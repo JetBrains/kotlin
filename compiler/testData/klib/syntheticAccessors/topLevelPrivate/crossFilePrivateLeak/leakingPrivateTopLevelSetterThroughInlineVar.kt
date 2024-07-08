@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
 // FILE: a.kt
 var privateSetterVarA = 0
     private set

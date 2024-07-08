@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
 // MODULE: lib
 // FILE: Outer.kt
 class Outer private constructor(val s: String) {

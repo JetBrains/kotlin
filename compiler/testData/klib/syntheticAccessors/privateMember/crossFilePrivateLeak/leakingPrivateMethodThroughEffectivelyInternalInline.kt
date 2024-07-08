@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
 // FILE: A.kt
 internal class A {
     private fun privateMethod() = "OK"

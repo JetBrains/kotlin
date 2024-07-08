@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-
 // FILE: A.kt
 class A {
     var a: Int = 0
