@@ -243,7 +243,7 @@ internal object DevirtualizationAnalysis {
             }
         }
 
-        inner class TypeHierarchyImpl(override val allTypes: Array<DataFlowIR.Type>) : TypeHierarchy {
+        class TypeHierarchyImpl(override val allTypes: Array<DataFlowIR.Type>) : TypeHierarchy {
             private val typesSubTypes = Array(allTypes.size) { mutableListOf<DataFlowIR.Type>() }
             private val allInheritors = Array(allTypes.size) { BitSet() }
 
@@ -699,7 +699,7 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
-//            println("During DevirtualizationAnalysisPhase: $maxMemoryUsage")
+            println("During DevirtualizationAnalysisPhase: $maxMemoryUsage")
 
             return AnalysisResult(result.asSequence().associateBy({ it.key }, { it.value.first }).toMutableMap(), typeHierarchy)
         }

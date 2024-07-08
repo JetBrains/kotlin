@@ -192,13 +192,14 @@ internal class BackendInliner(
 
         val genomeSize = callSiteInfos.size
 
-        val loopsPenalty = 5
+        val loopsPenalty = 3
         val populationSize = 1_000
         val generations = 250//1_000
         val mutationsCount = max(1, genomeSize / 1_000)
         val random = Random(0x42424242)
 
         fun pow(x: Float, k: Int) = kotlin.math.exp(k * kotlin.math.ln(x))
+        fun pow(x: Double, k: Double) = kotlin.math.exp(k * kotlin.math.ln(x))
 
         fun computeScore(genome: BitSet): Float {
             val functionsScoreIngredients = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, FunctionScoreIngredients>()
@@ -249,7 +250,10 @@ internal class BackendInliner(
 
             val framesTraversalComplexity = rootSet.sumOf { functionsScoreIngredients[it]!!.framesTraversalComplexity.toDouble() }
             val irSwellingFactor = callGraph.directEdges.keys.sumByLong { functionsScoreIngredients[it]!!.irSize.toLong() } * 1.0 / totalIrSize
-            return (framesTraversalComplexity * kotlin.math.sqrt(irSwellingFactor)).toFloat()
+//            return (framesTraversalComplexity * kotlin.math.sqrt(irSwellingFactor)).toFloat()
+//            return (framesTraversalComplexity * pow(irSwellingFactor, 1.0 / 100)).toFloat()
+            return kotlin.math.exp(kotlin.math.ln(framesTraversalComplexity) + kotlin.math.ln(irSwellingFactor) / 1000).toFloat()
+//            return framesTraversalComplexity.toFloat()
         }
 
         @Suppress("NAME_SHADOWING")
@@ -308,6 +312,8 @@ internal class BackendInliner(
                 bestGenome = population[0].genome
             }
         }
+
+//        bestGenome = BitSet(genomeSize).apply { (0..<genomeSize).forEach { set(it) }; andNot(forbiddenToInline) }
 
         val result = mutableMapOf<IrFunction, Set<IrFunction>>()
         for ((functionSymbol, callGraphNode) in callGraph.directEdges) {
@@ -603,7 +609,7 @@ internal class BackendInliner(
     }
 
     fun run() {
-        val allFunctionsToInline = run4()
+//        val allFunctionsToInline = run2()
         val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
         val stack = rootSet.toMutableList()
         for (root in stack)
@@ -658,28 +664,33 @@ internal class BackendInliner(
                         val calleeIrFunction = calleeSymbol.irFunction ?: continue
                         val callee = moduleDFG.functions[calleeSymbol]!!
 
-//                        var isALoop = false
-//                        callee.body.forEachNonScopeNode { node ->
-//                            if (node is DataFlowIR.Node.Call && node.callee == calleeSymbol)
-//                                isALoop = true
+                        var isALoop = false
+                        callee.body.forEachNonScopeNode { node ->
+                            if (node is DataFlowIR.Node.Call && node.callee == calleeSymbol)
+                                isALoop = true
+                        }
+
+                        val calleeSize = callee.body.allScopes.sumOf { it.nodes.size }
+//                        //if (irFunction.name.asString() == "foo")
+//                        println("        $isALoop $calleeSize")
+                        val threshold = if (calleeIrFunction is IrSimpleFunction) 33 else 33
+                        val shouldInline = !isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
+                                && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION || options.inlineBoxUnbox)
+                                && !calleeIrFunction.hasAnnotation(noInline)
+                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
+                                && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
+                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.let {
+                            it.parentClassOrNull?.isSingleFieldValueClass == true && it.backingField != null
+                        } != true
+                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } != true
+                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true
+                        /*&& irFunction.fileOrNull?.path?.endsWith("tt.kt") == true*/
+//                        if (allFunctionsToInline[irFunction] == null) {
+//                            println("BUGBUGBUG: ${System.identityHashCode(irFunction)} ${irFunction.render()}")
+//                            allFunctionsToInline.keys.filter { it.name.asString() == irFunction.name.asString() }
+//                                    .forEach { println("    ${System.identityHashCode(it)} ${it.render()}") }
 //                        }
-//
-//                        val calleeSize = callee.body.allScopes.sumOf { it.nodes.size }
-////                        //if (irFunction.name.asString() == "foo")
-////                        println("        $isALoop $calleeSize")
-//                        val threshold = if (calleeIrFunction is IrSimpleFunction) 33 else 33
-//                        val shouldInline = !isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
-//                                && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION || options.inlineBoxUnbox)
-//                                && !calleeIrFunction.hasAnnotation(noInline)
-//                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
-//                                && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
-//                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.let {
-//                            it.parentClassOrNull?.isSingleFieldValueClass == true && it.backingField != null
-//                        } != true
-//                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } != true
-//                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true
-//                        /*&& irFunction.fileOrNull?.path?.endsWith("tt.kt") == true*/
-                        val shouldInline = calleeIrFunction in allFunctionsToInline[irFunction]!!// && !isALoop
+//                        val shouldInline = !isALoop && calleeIrFunction in allFunctionsToInline[irFunction]!!
                         if (shouldInline) {
                             if (functionsToInline.add(calleeIrFunction)) {
 //                                if (calleeIrFunction is IrConstructor && calleeIrFunction.constructedClass.name.asString() == "ConcurrentModificationException") {
@@ -861,7 +872,7 @@ internal class BackendInliner(
             }
         }
 
-//        println("During BackendInlinerPhase: $maxMemoryUsage")
+        println("During BackendInlinerPhase: $maxMemoryUsage")
 
     }
 
