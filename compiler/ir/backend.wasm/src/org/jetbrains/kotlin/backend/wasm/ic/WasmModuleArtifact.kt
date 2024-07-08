@@ -13,7 +13,6 @@ import java.io.File
 internal inline fun <T> File.ifExists(f: File.() -> T): T? = if (exists()) f() else null
 
 class WasmSrcFileArtifact(
-    val srcFilePath: String,
     private val fragments: WasmIrProgramFragments?,
     private val astArtifact: File? = null,
     private val skipLocalNames: Boolean = false,
@@ -24,18 +23,20 @@ class WasmSrcFileArtifact(
             return fragments
         }
         return astArtifact?.ifExists { readBytes() }
-            ?.let { WasmIrProgramFragments(WasmDeserializer(it.inputStream(), skipLocalNames, skipSourceLocations).deserialize()) }
+            ?.let {
+                WasmIrProgramFragments(
+                    WasmDeserializer(
+                        inputStream = it.inputStream(),
+                        skipLocalNames = skipLocalNames,
+                        skipSourceLocations = skipSourceLocations
+                    ).deserialize()
+                )
+            }
     }
 
     override fun isModified() = fragments != null
 }
 
 class WasmModuleArtifact(
-    moduleName: String,
     override val fileArtifacts: List<WasmSrcFileArtifact>,
-    val artifactsDir: File? = null,
-    val forceRebuildJs: Boolean = false,
-    externalModuleName: String? = null
-) : ModuleArtifact() {
-    val moduleSafeName = moduleName.safeModuleName
-}
+) : ModuleArtifact()

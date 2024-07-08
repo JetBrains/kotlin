@@ -42,6 +42,7 @@ where advanced options include:
   -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
   -Xplatform-arguments-in-main-function
                              JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
+  -Xwasm-preserve-ic-order   Preserve wasm file structure between IC runs.
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files.
   -Xtyped-arrays             This option does nothing and is left for compatibility with the legacy backend.
                              It is deprecated and will be removed in a future release.

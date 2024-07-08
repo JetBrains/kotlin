@@ -610,6 +610,7 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeCompiledFileFragment(compiledFileFragment: WasmCompiledFileFragment) =
         with(compiledFileFragment) {
+            serializeNullable(fragmentTag, ::serialize)
             serialize(functions, ::serialize, ::serialize)
             serialize(globalFields, ::serialize, ::serialize)
             serialize(globalVTables, ::serialize, ::serialize)

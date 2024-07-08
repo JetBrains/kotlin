@@ -52,6 +52,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     @Suppress("DEPRECATION")
     to.outputFile = from.outputFile
     to.platformArgumentsProviderJsExpression = from.platformArgumentsProviderJsExpression
+    to.preserveIcOrder = from.preserveIcOrder
     to.sourceMap = from.sourceMap
     to.sourceMapBaseDirs = from.sourceMapBaseDirs
     to.sourceMapEmbedSources = from.sourceMapEmbedSources

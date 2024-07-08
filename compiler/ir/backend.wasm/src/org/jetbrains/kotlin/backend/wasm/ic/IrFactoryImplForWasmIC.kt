@@ -21,15 +21,16 @@ open class WasmICContext(
     protected val allowIncompleteImplementations: Boolean,
     protected val skipLocalNames: Boolean = false,
     protected val skipSourceLocations: Boolean = false,
+    private val safeFragmentTags: Boolean
 ) : PlatformDependentICContext {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
 
     override fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface =
-        WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations)
+        WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations, safeFragmentTags)
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrProgramFragments?, astArtifact: File?): SrcFileArtifact =
-        WasmSrcFileArtifact(srcFilePath, fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames, skipSourceLocations)
+        WasmSrcFileArtifact(fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames, skipSourceLocations)
 
     override fun createModuleArtifact(
         moduleName: String,
@@ -38,14 +39,15 @@ open class WasmICContext(
         forceRebuildJs: Boolean,
         externalModuleName: String?,
     ): ModuleArtifact =
-        WasmModuleArtifact(moduleName, fileArtifacts.map { it as WasmSrcFileArtifact }, artifactsDir, forceRebuildJs, externalModuleName)
+        WasmModuleArtifact(fileArtifacts.map { it as WasmSrcFileArtifact })
 }
 
 class WasmICContextForTesting(
     allowIncompleteImplementations: Boolean,
     skipLocalNames: Boolean = false,
     skipSourceLocations: Boolean = false,
-) : WasmICContext(allowIncompleteImplementations, skipLocalNames, skipSourceLocations) {
+    safeFragmentTags: Boolean = false,
+) : WasmICContext(allowIncompleteImplementations, skipLocalNames, skipSourceLocations, safeFragmentTags) {
     override fun createCompiler(mainModule: IrModuleFragment, configuration: CompilerConfiguration): IrCompilerICInterface =
         WasmCompilerWithICForTesting(mainModule, configuration, allowIncompleteImplementations)
 }

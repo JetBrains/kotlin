@@ -16,19 +16,17 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.IrProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
-import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WasmCompilerWithIC(
-    mainModule: IrModuleFragment,
+    private val mainModule: IrModuleFragment,
     configuration: CompilerConfiguration,
     private val allowIncompleteImplementations: Boolean,
+    private val safeFragmentTags: Boolean,
 ) : IrCompilerICInterface {
     val context: WasmBackendContext
     private val idSignatureRetriever: IdSignatureRetriever
@@ -66,7 +64,8 @@ open class WasmCompilerWithIC(
                 context,
                 idSignatureRetriever,
                 wasmModuleMetadataCache,
-                allowIncompleteImplementations
+                allowIncompleteImplementations,
+                if (safeFragmentTags) "${irFile.module.name.asString()}${irFile.path}" else null
             )
         )
     }
@@ -87,7 +86,8 @@ class WasmCompilerWithICForTesting(
     mainModule: IrModuleFragment,
     configuration: CompilerConfiguration,
     allowIncompleteImplementations: Boolean,
-) : WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations) {
+    safeFragmentTags: Boolean = false,
+) : WasmCompilerWithIC(mainModule, configuration, allowIncompleteImplementations, safeFragmentTags) {
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrProgramFragments> {
         val testFile = dirtyFiles.firstOrNull { file ->
             file.declarations.any { declaration -> declaration is IrFunction && declaration.name.asString() == "box" }

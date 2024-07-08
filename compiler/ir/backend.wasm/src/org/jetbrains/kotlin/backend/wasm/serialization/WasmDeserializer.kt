@@ -596,6 +596,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         }
 
     private fun deserializeCompiledFileFragment() = WasmCompiledFileFragment(
+        fragmentTag = deserializeNullable(::deserializeString),
         functions = deserializeFunctions(),
         globalFields = deserializeGlobalFields(),
         globalVTables = deserializeGlobalVTables(),
