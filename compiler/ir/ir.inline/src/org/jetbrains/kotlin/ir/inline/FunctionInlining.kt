@@ -305,11 +305,10 @@ open class FunctionInlining(
                 val irFunction = irBlock.statements[0].let {
                     it.transformChildrenVoid(this)
                     copyIrElement.copy(it) as IrFunction
-                }.apply {
-                    origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
                 }
                 val irFunctionReference = irBlock.statements[1] as IrFunctionReference
                 val inlinedFunctionReference = inlineFunctionReference(irCall, irFunctionReference, irFunction)
+                irFunction.origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
                 return IrBlockImpl(
                     irCall.startOffset, irCall.endOffset,
                     inlinedFunctionReference.type, origin = null,
@@ -418,7 +417,7 @@ open class FunctionInlining(
                         putTypeArgument(index, irFunctionReference.getTypeArgument(index))
                 }
 
-                return if (inlineFunctionResolver.needsInlining(inlinedFunction)) {
+                return if (inlineFunctionResolver.needsInlining(inlinedFunction) || inlinedFunction.isStubForInline()) {
                     // `attributeOwnerId` is used to get the original reference instead of a reference on `stub_for_inlining`
                     inlineFunction(immediateCall, inlinedFunction, irFunctionReference.attributeOwnerId)
                 } else {

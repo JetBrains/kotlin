@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.name.Name
 
 private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
 
+fun IrFunction.isStubForInline() = name == STUB_FOR_INLINING && origin == LoweredDeclarationOrigins.INLINE_LAMBDA
+
 // This lowering transforms CR passed to inline function to lambda which would be inlined
 //
 //      inline fun foo(inlineParameter: (A) -> B): B {
@@ -102,7 +104,6 @@ abstract class InlineCallableReferenceToLambdaPhase(
             name = STUB_FOR_INLINING
             visibility = DescriptorVisibilities.LOCAL
             returnType = field.type
-            isInline = true
         }.apply {
             body = context.createIrBuilder(symbol).run {
                 val boundReceiver = dispatchReceiver ?: extensionReceiver
@@ -126,7 +127,6 @@ abstract class InlineCallableReferenceToLambdaPhase(
             visibility = DescriptorVisibilities.LOCAL
             returnType = ((type as IrSimpleType).arguments.last() as IrTypeProjection).type
             isSuspend = referencedFunction.isSuspend
-            isInline = true
         }.apply {
             body = context.createIrBuilder(symbol, startOffset, endOffset).run {
                 val boundReceiver = dispatchReceiver ?: extensionReceiver
