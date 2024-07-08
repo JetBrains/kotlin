@@ -5,7 +5,7 @@ plugins {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-gradle-plugin-api"
 
-    compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+    compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable:2.0.20-Beta1"
 }
 
 compileKotlin {

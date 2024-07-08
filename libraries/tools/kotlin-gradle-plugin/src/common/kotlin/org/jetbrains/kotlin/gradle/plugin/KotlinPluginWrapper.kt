@@ -105,7 +105,16 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             .maybeCreateResolvable(COMPILER_CLASSPATH_CONFIGURATION_NAME)
             .defaultDependencies {
                 it.add(
-                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${project.getKotlinPluginVersion()}")
+                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:2.0.20-Beta1")
+                )
+                it.add(
+                    project.dependencies.create("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
+                )
+                it.add(
+                    project.dependencies.create("$KOTLIN_MODULE_GROUP:kotlin-daemon-embeddable:2.0.20-Beta1")
+                )
+                it.add(
+                    project.dependencies.create("$KOTLIN_MODULE_GROUP:kotlin-script-runtime:2.0.20-Beta1")
                 )
             }
         project

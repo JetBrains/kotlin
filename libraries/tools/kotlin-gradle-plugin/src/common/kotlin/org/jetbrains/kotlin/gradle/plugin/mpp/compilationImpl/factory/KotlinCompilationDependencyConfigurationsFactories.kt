@@ -213,6 +213,13 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         }
         isVisible = false
         description = "Kotlin compiler plugins for $compilation"
+        resolutionStrategy {
+            it.eachDependency { details ->
+                if (details.target.group == "org.jetbrains.kotlin" && details.target.name != "kotlin-gradle-subplugin-example") {
+                    details.useVersion("2.0.20-Beta1")
+                }
+            }
+        }
     }
 
     val resourcesConfiguration = when (target.project.kotlinPropertiesProvider.mppResourcesResolutionStrategy) {
