@@ -74,7 +74,7 @@ internal class ExpectActualCollector(
 
 data class ClassActualizationInfo(
     // mapping from classId of actual class/typealias to itself/typealias expansion
-    val actualClasses: Map<ClassId, IrClassSymbol>,
+    val actualClasses: ActualClassMapping,
     // mapping from classId to actual typealias
     val actualTypeAliases: Map<ClassId, IrTypeAliasSymbol>,
     val actualTopLevels: Map<CallableId, List<IrSymbol>>,
@@ -82,6 +82,20 @@ data class ClassActualizationInfo(
 ) {
     fun getActualWithoutExpansion(classId: ClassId): IrSymbol? {
         return actualTypeAliases[classId] ?: actualClasses[classId]
+    }
+
+    class ActualClassMapping(private val actualClasses: Map<ClassId, IrClassSymbol>) {
+        /*
+         * expect class may be actualized to another expect class via actual typealias, so
+         *   we need to actualize them recursively until there will be a non-expect class
+         */
+        operator fun get(classId: ClassId?): IrClassSymbol? {
+            val actualized = actualClasses[classId] ?: return null
+            if (actualized.owner.isExpect) {
+                return get(actualized.owner.classIdOrFail)
+            }
+            return actualized
+        }
     }
 }
 
@@ -136,7 +150,7 @@ private class ActualDeclarationsCollector(private val expectTopLevelDeclarations
                 collector.collectExtraActualDeclarations(extraActualDeclarationExtractor)
             }
             return ClassActualizationInfo(
-                collector.actualClasses,
+                ClassActualizationInfo.ActualClassMapping(collector.actualClasses),
                 collector.actualTypeAliasesWithoutExpansion,
                 collector.actualTopLevels,
                 collector.actualSymbolsToFile
