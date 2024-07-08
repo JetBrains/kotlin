@@ -32,27 +32,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-sealed class FirValueClassDeclarationChecker(mppKind: CheckerSessionKind) : FirRegularClassChecker(mppKind) {
-    object Regular : FirValueClassDeclarationChecker() {
-        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
-    object ForExpectClass : FirValueClassDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
-    companion object {
-        private val boxAndUnboxNames = setOf("box", "unbox")
-        private val equalsAndHashCodeNames = setOf("equals", "hashCode")
-        private val javaLangFqName = FqName("java.lang")
-        private val cloneableFqName = FqName("Cloneable")
-    }
+object FirValueClassDeclarationChecker : FirRegularClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+    private val boxAndUnboxNames = setOf("box", "unbox")
+    private val equalsAndHashCodeNames = setOf("equals", "hashCode")
+    private val javaLangFqName = FqName("java.lang")
+    private val cloneableFqName = FqName("Cloneable")
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.symbol.isInlineOrValueClass()) {

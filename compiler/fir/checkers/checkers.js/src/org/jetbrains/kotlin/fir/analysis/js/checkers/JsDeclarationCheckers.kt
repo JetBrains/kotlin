@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebC
 object JsDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
-            FirJsInheritanceFunctionChecker.Regular,
-            FirJsInheritanceFunctionChecker.ForExpectClass,
+            FirJsInheritanceFunctionChecker,
         )
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
@@ -33,15 +32,11 @@ object JsDeclarationCheckers : DeclarationCheckers() {
 
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirJsMultipleInheritanceChecker.Regular,
-            FirJsMultipleInheritanceChecker.ForExpectClass,
+            FirJsMultipleInheritanceChecker,
             FirJsDynamicDeclarationChecker,
-            FirJsInheritanceClassChecker.Regular,
-            FirJsInheritanceClassChecker.ForExpectClass,
-            FirJsExternalInheritorOnlyChecker.Regular,
-            FirJsExternalInheritorOnlyChecker.ForExpectClass,
-            FirJsNameClashClassMembersChecker.Regular,
-            FirJsNameClashClassMembersChecker.ForExpectClass,
+            FirJsInheritanceClassChecker,
+            FirJsExternalInheritorOnlyChecker,
+            FirJsNameClashClassMembersChecker,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>

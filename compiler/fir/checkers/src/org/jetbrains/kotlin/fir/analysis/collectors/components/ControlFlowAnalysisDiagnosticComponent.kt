@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckersCornerCase
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
+@OptIn(CheckersCornerCase::class)
 class ControlFlowAnalysisDiagnosticComponent(
     session: FirSession,
     reporter: DiagnosticReporter,
@@ -32,7 +34,8 @@ class ControlFlowAnalysisDiagnosticComponent(
         session,
         reporter,
         when (mppKind) {
-            CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers -> session.checkersComponent.commonDeclarationCheckers
+            CheckerSessionKind.DeclarationSite -> session.checkersComponent.commonDeclarationCheckers
+            CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers -> session.checkersComponent.expectDeclarationCheckers
             CheckerSessionKind.Platform -> session.checkersComponent.platformDeclarationCheckers
         }
     )

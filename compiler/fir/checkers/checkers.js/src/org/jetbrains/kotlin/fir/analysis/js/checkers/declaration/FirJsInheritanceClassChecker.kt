@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckersCornerCase
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.isOverridingExternalWithOpt
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
@@ -28,21 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymb
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-sealed class FirJsInheritanceClassChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirJsInheritanceClassChecker() {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
-    object ForExpectClass : FirJsInheritanceClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
+object FirJsInheritanceClassChecker : FirClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
         val isEffectivelyExternal = declaration.symbol.isEffectivelyExternal(session)

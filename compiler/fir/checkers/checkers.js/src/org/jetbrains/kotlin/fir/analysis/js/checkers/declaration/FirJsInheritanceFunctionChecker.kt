@@ -13,26 +13,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isOverridingExternalWithOptionalParams
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
-sealed class FirJsInheritanceFunctionChecker(mppKind: CheckerSessionKind) : FirFunctionChecker(mppKind) {
-    object Regular : FirJsInheritanceFunctionChecker() {
-        override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-            if ((context.containingDeclarations.last() as? FirClass)?.isExpect == true) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
-    object ForExpectClass : FirJsInheritanceFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-            if ((context.containingDeclarations.last() as? FirClass)?.isExpect != true) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
+object FirJsInheritanceFunctionChecker : FirFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.isNotEffectivelyExternalFunctionButOverridesExternal(context)) {
             reporter.reportOn(declaration.source, FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS, context)

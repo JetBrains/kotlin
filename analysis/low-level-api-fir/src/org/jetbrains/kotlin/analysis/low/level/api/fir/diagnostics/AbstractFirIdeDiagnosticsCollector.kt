@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
 import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -48,7 +49,7 @@ private object CheckersFactory {
     fun createComponents(
         session: FirSession,
         reporter: DiagnosticReporter,
-        useExtendedCheckers: Boolean
+        useExtendedCheckers: Boolean,
     ): DiagnosticCollectorComponents {
         val module = session.llFirModuleData.ktModule
         val platform = module.targetPlatform
@@ -66,7 +67,13 @@ private object CheckersFactory {
             add(TypeCheckersDiagnosticComponent(session, reporter, typeCheckers))
             add(ControlFlowAnalysisDiagnosticComponent(session, reporter, declarationCheckers))
         }
-        return DiagnosticCollectorComponents(regularComponents, ReportCommitterDiagnosticComponent(session, reporter))
+        return DiagnosticCollectorComponents(
+            commonComponents = emptyList(),
+            expectComponents = emptyList(),
+            regularComponents,
+            ReportCommitterDiagnosticComponent(session, reporter),
+            SessionHolderImpl.createWithEmptyScopeSession(session),
+        )
     }
 
 

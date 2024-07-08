@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckersCornerCase
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -25,21 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.Name
 
-sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: CheckerSessionKind) : FirRegularClassChecker(mppKind) {
-    object Regular : FirMultipleDefaultsInheritedFromSupertypesChecker() {
-        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
-    object ForExpectClass : FirMultipleDefaultsInheritedFromSupertypesChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
+object FirMultipleDefaultsInheritedFromSupertypesChecker : FirRegularClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.unsubstitutedScope(context).processAllFunctions {
             val originalIfSubstitutionOverride = it.unwrapSubstitutionOverrides()

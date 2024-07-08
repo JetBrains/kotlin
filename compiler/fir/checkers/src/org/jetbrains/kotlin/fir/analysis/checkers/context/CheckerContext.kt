@@ -45,6 +45,7 @@ abstract class CheckerContext : DiagnosticContext {
     abstract val isContractBody: Boolean
     abstract val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?
     abstract val lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?
+    abstract val shouldUseDeclarationSiteSession: Boolean
 
     // Suppress
     abstract val suppressedDiagnostics: Set<String>

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
@@ -84,7 +85,25 @@ abstract class AbstractDiagnosticCollectorVisitor(
             }
         }
 
-        visitWithDeclarationAndReceiver(klass, (klass as? FirRegularClass)?.name, receiverParameter)
+        withProperSessionFor(klass) {
+            visitWithDeclarationAndReceiver(klass, (klass as? FirRegularClass)?.name, receiverParameter)
+        }
+    }
+
+    protected inline fun <T> withProperSessionFor(declaration: FirMemberDeclaration, block: () -> T): T = when {
+        declaration.isExpect -> withExpectContextFor(block)
+        else -> block()
+    }
+
+    @OptIn(PrivateForInline::class)
+    protected inline fun <T> withExpectContextFor(block: () -> T): T {
+        val oldShouldUse = context.shouldUseDeclarationSiteSession
+        return try {
+            context = context.setShouldUseDeclarationSiteSession(true)
+            block()
+        } finally {
+            context = context.setShouldUseDeclarationSiteSession(oldShouldUse)
+        }
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
@@ -115,14 +134,18 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
         withAnnotationContainer(simpleFunction) {
             withInlineFunctionBodyIfApplicable(simpleFunction, simpleFunction.isInline) {
-                visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverParameter)
+                withProperSessionFor(simpleFunction) {
+                    visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverParameter)
+                }
             }
         }
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {
         withAnnotationContainer(constructor) {
-            visitWithDeclaration(constructor)
+            withProperSessionFor(constructor) {
+                visitWithDeclaration(constructor)
+            }
         }
     }
 
@@ -150,7 +173,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitProperty(property: FirProperty, data: Nothing?) {
         withPotentialPropertyFromPrimaryConstructor(property) {
             withAnnotationContainer(property) {
-                visitWithDeclaration(property)
+                withProperSessionFor(property) {
+                    visitWithDeclaration(property)
+                }
             }
         }
     }

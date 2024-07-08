@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ReportCommitterDiagnosticComponent
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
 
 class DiagnosticCollectorComponents(
+    val commonComponents: List<AbstractDiagnosticCollectorComponent>,
+    val expectComponents: List<AbstractDiagnosticCollectorComponent>,
     val regularComponents: List<AbstractDiagnosticCollectorComponent>,
-    val reportCommitter: ReportCommitterDiagnosticComponent
+    val reportCommitter: ReportCommitterDiagnosticComponent,
+    val declarationSiteSessionHolder: SessionHolder?,
 )

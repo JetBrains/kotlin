@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory.CompilationMode.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -667,25 +670,22 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
     }
 
     private fun computeDiagnostics(info: FirOutputArtifact): ListMultimap<FirFile, DiagnosticWithKmpCompilationMode> {
-        val allFiles = info.partsForDependsOnModules.flatMap { it.firFiles.values }
         val platformPart = info.partsForDependsOnModules.last()
         val lazyDeclarationResolver = platformPart.session.lazyDeclarationResolver
         val result = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
 
         lazyDeclarationResolver.disableLazyResolveContractChecksInside {
-            result += platformPart.session.runCheckers(
-                platformPart.firAnalyzerFacade.scopeSession,
-                allFiles,
-                DiagnosticReporterFactory.createPendingReporter(),
-                checkerSessionKind = CheckerSessionKind.Platform
-            ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) } }
+            val allFilesWithSessionHolders = mutableListOf<Pair<FirFile, SessionHolder>>()
 
             for (part in info.partsForDependsOnModules) {
-                result += part.session.runCheckers(
-                    part.firAnalyzerFacade.scopeSession,
+                val partSessionHolder = SessionHolderImpl(part.session, part.firAnalyzerFacade.scopeSession)
+                part.firFiles.mapTo(allFilesWithSessionHolders) { it.value to partSessionHolder }
+
+                result += platformPart.session.runCheckers(
+                    platformPart.firAnalyzerFacade.scopeSession,
                     part.firFiles.values,
                     DiagnosticReporterFactory.createPendingReporter(),
-                    checkerSessionKind = CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers
+                    mode = Platform(declarationSiteSessionHolder = partSessionHolder),
                 ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) } }
             }
 
@@ -695,19 +695,20 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         part.firAnalyzerFacade.scopeSession,
                         part.firFiles.values,
                         DiagnosticReporterFactory.createPendingReporter(),
-                        checkerSessionKind = CheckerSessionKind.Platform
+                        mode = Metadata,
                     ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.METADATA) } }
                 }
             }
 
             val lostDiagnostics = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
-            for (file in allFiles) {
+            for ((file, declarationSiteSessionHolder) in allFilesWithSessionHolders) {
                 val diagnostics = result[file]
                 if (diagnostics.none { it.diagnostic.severity == Severity.ERROR } && !hasSyntaxDiagnostics(file)) {
                     platformPart.session.collectLostDiagnosticsOnFile(
                         platformPart.firAnalyzerFacade.scopeSession,
                         file,
-                        DiagnosticReporterFactory.createPendingReporter()
+                        DiagnosticReporterFactory.createPendingReporter(),
+                        declarationSiteSessionHolder,
                     ).forEach { lostDiagnostics.put(file, DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM)) }
                 }
             }

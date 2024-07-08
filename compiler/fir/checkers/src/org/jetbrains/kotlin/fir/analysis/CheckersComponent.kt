@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(CheckersCornerCase::class)
+
 package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.fir.FirSession
@@ -11,6 +13,7 @@ import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckersCornerCase
 import org.jetbrains.kotlin.fir.analysis.checkers.config.ComposedLanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
@@ -26,21 +29,27 @@ annotation class CheckersComponentInternal
 @NoMutableState
 class CheckersComponent : FirSessionComponent {
     val commonDeclarationCheckers: DeclarationCheckers get() = _commonDeclarationCheckers
+    val expectDeclarationCheckers: DeclarationCheckers get() = _expectDeclarationCheckers
     val platformDeclarationCheckers: DeclarationCheckers get() = _platformDeclarationCheckers
 
-    private val _commonDeclarationCheckers = ComposedDeclarationCheckers(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
+    private val _commonDeclarationCheckers = ComposedDeclarationCheckers(CheckerSessionKind.DeclarationSite)
+    private val _expectDeclarationCheckers = ComposedDeclarationCheckers(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
     private val _platformDeclarationCheckers = ComposedDeclarationCheckers(CheckerSessionKind.Platform)
 
     val commonExpressionCheckers: ExpressionCheckers get() = _commonExpressionCheckers
+    val expectExpressionCheckers: ExpressionCheckers get() = _expectExpressionCheckers
     val platformExpressionCheckers: ExpressionCheckers get() = _platformExpressionCheckers
 
-    private val _commonExpressionCheckers = ComposedExpressionCheckers(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
+    private val _commonExpressionCheckers = ComposedExpressionCheckers(CheckerSessionKind.DeclarationSite)
+    private val _expectExpressionCheckers = ComposedExpressionCheckers(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
     private val _platformExpressionCheckers = ComposedExpressionCheckers(CheckerSessionKind.Platform)
 
     val commonTypeCheckers: TypeCheckers get() = _commonTypeCheckers
+    val expectTypeCheckers: TypeCheckers get() = _expectTypeCheckers
     val platformTypeCheckers: TypeCheckers get() = _platformTypeCheckers
 
-    private val _commonTypeCheckers = ComposedTypeCheckers(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
+    private val _commonTypeCheckers = ComposedTypeCheckers(CheckerSessionKind.DeclarationSite)
+    private val _expectTypeCheckers = ComposedTypeCheckers(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
     private val _platformTypeCheckers = ComposedTypeCheckers(CheckerSessionKind.Platform)
 
     val languageVersionSettingsCheckers: LanguageVersionSettingsCheckers get() = _languageVersionSettingsCheckers
@@ -50,6 +59,7 @@ class CheckersComponent : FirSessionComponent {
     @OptIn(CheckersComponentInternal::class)
     fun register(checkers: DeclarationCheckers) {
         _commonDeclarationCheckers.register(checkers)
+        _expectDeclarationCheckers.register(checkers)
         _platformDeclarationCheckers.register(checkers)
     }
 
@@ -57,6 +67,7 @@ class CheckersComponent : FirSessionComponent {
     @OptIn(CheckersComponentInternal::class)
     fun register(checkers: ExpressionCheckers) {
         _commonExpressionCheckers.register(checkers)
+        _expectExpressionCheckers.register(checkers)
         _platformExpressionCheckers.register(checkers)
     }
 
@@ -64,6 +75,7 @@ class CheckersComponent : FirSessionComponent {
     @OptIn(CheckersComponentInternal::class)
     fun register(checkers: TypeCheckers) {
         _commonTypeCheckers.register(checkers)
+        _expectTypeCheckers.register(checkers)
         _platformTypeCheckers.register(checkers)
     }
 

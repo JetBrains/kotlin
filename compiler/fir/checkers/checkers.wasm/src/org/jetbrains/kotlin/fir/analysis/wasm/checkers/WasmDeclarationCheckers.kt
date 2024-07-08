@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebC
 object WasmBaseDeclarationCheckers : DeclarationCheckers() {
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirWasmExternalInheritanceChecker.Regular,
-            FirWasmExternalInheritanceChecker.ForExpectClass,
+            FirWasmExternalInheritanceChecker,
         )
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>

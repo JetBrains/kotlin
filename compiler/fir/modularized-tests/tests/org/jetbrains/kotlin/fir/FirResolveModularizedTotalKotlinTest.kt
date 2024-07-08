@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
@@ -98,7 +100,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
         val scopeSession = ScopeSession()
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
             if (RUN_CHECKERS) {
-                it + FirCheckersResolveProcessor(session, scopeSession, CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
+                it + FirCheckersResolveProcessor(session, scopeSession, SessionHolderImpl(session, scopeSession))
             } else {
                 it
             }
@@ -270,9 +272,11 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 class FirCheckersResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession,
-    checkerSessionKind: CheckerSessionKind
+    declarationSideSessionHolder: SessionHolder,
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
-    val diagnosticCollector: AbstractDiagnosticCollector = DiagnosticComponentsFactory.create(session, scopeSession, checkerSessionKind)
+    val diagnosticCollector: AbstractDiagnosticCollector = DiagnosticComponentsFactory.create(
+        session, scopeSession, declarationSideSessionHolder,
+    )
 
     override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)
 }

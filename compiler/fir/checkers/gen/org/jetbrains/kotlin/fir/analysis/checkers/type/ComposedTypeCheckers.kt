@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
-import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
 
 /*
  * This file was generated automatically

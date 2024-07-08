@@ -74,7 +74,7 @@ fun resolveAndCheckFir(
     diagnosticsReporter: BaseDiagnosticsCollector
 ): ModuleCompilerAnalyzedOutput {
     val (scopeSession, fir) = session.runResolution(firFiles)
-    session.runCheckers(scopeSession, fir, diagnosticsReporter, CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
+    session.runCheckers(scopeSession, fir, diagnosticsReporter)
     return ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
 }
 

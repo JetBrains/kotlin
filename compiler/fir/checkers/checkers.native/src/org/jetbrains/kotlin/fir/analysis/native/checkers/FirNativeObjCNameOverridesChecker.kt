@@ -12,26 +12,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameUtilities.checkCallableMember
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 
-sealed class FirNativeObjCNameOverridesChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirNativeObjCNameOverridesChecker() {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
-    object ForExpectClass : FirNativeObjCNameOverridesChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
+object FirNativeObjCNameOverridesChecker : FirClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // We just need to check intersection overrides, all other declarations are checked by FirNativeObjCNameChecker
         val firTypeScope = declaration.unsubstitutedScope(context)

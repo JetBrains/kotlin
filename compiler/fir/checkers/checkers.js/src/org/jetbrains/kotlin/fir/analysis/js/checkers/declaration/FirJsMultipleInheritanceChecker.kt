@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -24,21 +23,7 @@ import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-sealed class FirJsMultipleInheritanceChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirJsMultipleInheritanceChecker() {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
-    object ForExpectClass : FirJsMultipleInheritanceChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
+object FirJsMultipleInheritanceChecker : FirClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.checkFunctionIfSubtypeOf(
             functionToCheck = OperatorNameConventions.GET,

@@ -38,7 +38,7 @@ internal open class LLFirDiagnosticVisitor(
 
     override fun checkElement(element: FirElement) {
         beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
-        components.regularComponents.forEach { diagnosticVisitor ->
+        forEachComponentWithProperSession { diagnosticVisitor ->
             checkCanceled()
             suppressAndLogExceptions {
                 element.accept(diagnosticVisitor, context)

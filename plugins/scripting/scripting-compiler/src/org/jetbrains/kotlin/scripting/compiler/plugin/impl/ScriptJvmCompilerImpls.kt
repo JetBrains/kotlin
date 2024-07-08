@@ -419,8 +419,7 @@ private fun doCompileWithK2(
 
     val (scopeSession, fir) = session.runResolution(orderedRawFir)
     // checkers
-    session.runCheckers(scopeSession, fir, diagnosticsReporter, CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers)
-    session.runCheckers(scopeSession, fir, diagnosticsReporter, CheckerSessionKind.Platform)
+    session.runCheckers(scopeSession, fir, diagnosticsReporter)
 
     val analysisResults = FirResult(listOf(ModuleCompilerAnalyzedOutput(session, scopeSession, fir)))
 

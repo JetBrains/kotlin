@@ -98,18 +98,15 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirOverrideChecker.Regular,
-            FirOverrideChecker.ForExpectClass,
+            FirOverrideChecker,
             FirNotImplementedOverrideChecker,
-            FirNotImplementedOverrideSimpleEnumEntryChecker.Regular,
-            FirNotImplementedOverrideSimpleEnumEntryChecker.ForExpectClass,
+            FirNotImplementedOverrideSimpleEnumEntryChecker,
             FirThrowableSubclassChecker,
             FirOpenMemberChecker,
             FirClassVarianceChecker,
             FirSealedSupertypeChecker,
             FirMemberPropertiesChecker,
-            FirImplementationMismatchChecker.Regular,
-            FirImplementationMismatchChecker.ForExpectClass,
+            FirImplementationMismatchChecker,
             FirTypeParametersInObjectChecker,
             FirSupertypesChecker,
             FirPrimaryConstructorSuperTypeChecker,
@@ -118,8 +115,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirEnumCompanionInEnumConstructorCallChecker,
             FirBadInheritedJavaSignaturesChecker,
             FirSealedInterfaceAllowedChecker,
-            FirMixedFunctionalTypesInSupertypesChecker.Regular,
-            FirMixedFunctionalTypesInSupertypesChecker.ForExpectClass,
+            FirMixedFunctionalTypesInSupertypesChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
@@ -136,16 +132,13 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirMethodOfAnyImplementedInInterfaceChecker,
             FirDataClassPrimaryConstructorChecker,
             FirDataClassNonPublicConstructorChecker,
-            FirFunInterfaceDeclarationChecker.Regular,
-            FirFunInterfaceDeclarationChecker.ForExpectClass,
+            FirFunInterfaceDeclarationChecker,
             FirNestedClassChecker,
-            FirValueClassDeclarationChecker.Regular,
-            FirValueClassDeclarationChecker.ForExpectClass,
+            FirValueClassDeclarationChecker,
             FirOuterClassArgumentsRequiredChecker,
             FirPropertyInitializationChecker,
             FirDelegateFieldTypeMismatchChecker,
-            FirMultipleDefaultsInheritedFromSupertypesChecker.Regular,
-            FirMultipleDefaultsInheritedFromSupertypesChecker.ForExpectClass,
+            FirMultipleDefaultsInheritedFromSupertypesChecker,
             FirFiniteBoundRestrictionChecker,
             FirNonExpansiveInheritanceRestrictionChecker,
             FirObjectConstructorChecker,
@@ -185,8 +178,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val typeParameterCheckers: Set<FirTypeParameterChecker>
         get() = setOf(
-            FirTypeParameterBoundsChecker.Regular,
-            FirTypeParameterBoundsChecker.ForExpectClass,
+            FirTypeParameterBoundsChecker,
             FirTypeParameterVarianceChecker,
             FirReifiedTypeParameterChecker,
             FirTypeParameterSyntaxChecker,

@@ -14,26 +14,14 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 
-sealed class FirNativeObjCNameCallableChecker(mppKind: CheckerSessionKind) : FirCallableDeclarationChecker(mppKind) {
-    object Regular : FirNativeObjCNameCallableChecker() {
-        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-            val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
-            if (containingClass.isExpect) return
-            check(declaration, containingClass, context, reporter)
-        }
+object FirNativeObjCNameCallableChecker : FirCallableDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+    override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        val containingClass = context.containingDeclarations.last() as? FirClass ?: return
+        check(declaration, containingClass, context, reporter)
     }
 
-    object ForExpectClass : FirNativeObjCNameCallableChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-            val containingClass = context.containingDeclarations.lastOrNull() as? FirClass ?: return
-            if (!containingClass.isExpect) return
-            check(declaration, containingClass, context, reporter)
-        }
-    }
-
-    protected fun check(
+    private fun check(
         declaration: FirCallableDeclaration,
         containingClass: FirClass,
         context: CheckerContext,

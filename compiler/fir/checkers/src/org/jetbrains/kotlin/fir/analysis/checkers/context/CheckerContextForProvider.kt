@@ -83,4 +83,8 @@ abstract class CheckerContextForProvider(
     abstract fun addElement(element: FirElement): CheckerContextForProvider
 
     abstract fun dropElement()
+
+    abstract fun setSessionHolder(holder: SessionHolder): CheckerContextForProvider
+
+    abstract fun setShouldUseDeclarationSiteSession(value: Boolean): CheckerContextForProvider
 }

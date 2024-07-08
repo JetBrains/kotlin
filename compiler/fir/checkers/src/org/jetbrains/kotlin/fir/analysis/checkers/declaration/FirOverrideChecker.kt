@@ -104,21 +104,7 @@ abstract class FirAbstractOverrideChecker(mppKind: CheckerSessionKind) : FirClas
     }
 }
 
-sealed class FirOverrideChecker(mppKind: CheckerSessionKind) : FirAbstractOverrideChecker(mppKind) {
-    object Regular : FirOverrideChecker() {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
-    object ForExpectClass : FirOverrideChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
+object FirOverrideChecker : FirAbstractOverrideChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val typeCheckerState = context.session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,

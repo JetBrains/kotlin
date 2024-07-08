@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.references.isError
@@ -36,34 +35,18 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-sealed class FirNativeThrowsChecker(mppKind: CheckerSessionKind) : FirBasicDeclarationChecker(mppKind) {
-    object Regular : FirNativeThrowsChecker() {
-        override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-            if ((declaration as? FirMemberDeclaration)?.isExpect == true) return
-            super.check(declaration, context, reporter)
-        }
-    }
+object FirNativeThrowsChecker : FirBasicDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+    private val throwsClassId = ClassId.topLevel(KOTLIN_THROWS_ANNOTATION_FQ_NAME)
 
-    object ForExpectClass : FirNativeThrowsChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-            if ((declaration as? FirMemberDeclaration)?.isExpect != true) return
-            super.check(declaration, context, reporter)
-        }
-    }
+    private val cancellationExceptionFqName = FqName("kotlin.coroutines.cancellation.CancellationException")
 
-    companion object {
-        private val throwsClassId = ClassId.topLevel(KOTLIN_THROWS_ANNOTATION_FQ_NAME)
-
-        private val cancellationExceptionFqName = FqName("kotlin.coroutines.cancellation.CancellationException")
-
-        private val cancellationExceptionAndSupersClassIds = setOf(
-            ClassId.topLevel(StandardNames.FqNames.throwable),
-            ClassId.topLevel(FqName("kotlin.Exception")),
-            ClassId.topLevel(FqName("kotlin.RuntimeException")),
-            ClassId.topLevel(FqName("kotlin.IllegalStateException")),
-            ClassId.topLevel(cancellationExceptionFqName)
-        )
-    }
+    private val cancellationExceptionAndSupersClassIds = setOf(
+        ClassId.topLevel(StandardNames.FqNames.throwable),
+        ClassId.topLevel(FqName("kotlin.Exception")),
+        ClassId.topLevel(FqName("kotlin.RuntimeException")),
+        ClassId.topLevel(FqName("kotlin.IllegalStateException")),
+        ClassId.topLevel(cancellationExceptionFqName)
+    )
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val throwsAnnotation = declaration.getAnnotationByClassId(throwsClassId, context.session)

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarati
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
@@ -34,6 +33,7 @@ class PersistentCheckerContext private constructor(
     override val isContractBody: Boolean,
     override val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?,
     override val lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?,
+    override val shouldUseDeclarationSiteSession: Boolean,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -52,6 +52,7 @@ class PersistentCheckerContext private constructor(
         isContractBody = false,
         inlineFunctionBodyContext = null,
         lambdaBodyContext = null,
+        shouldUseDeclarationSiteSession = false,
         sessionHolder,
         returnTypeCalculator,
         persistentSetOf(),
@@ -92,6 +93,12 @@ class PersistentCheckerContext private constructor(
 
     override fun dropElement() {}
 
+    override fun setSessionHolder(holder: SessionHolder): CheckerContextForProvider =
+        copy(sessionHolder = holder)
+
+    override fun setShouldUseDeclarationSiteSession(value: Boolean): CheckerContextForProvider =
+        copy(shouldUseDeclarationSiteSession = value)
+
     override fun addSuppressedDiagnostics(
         diagnosticNames: Collection<String>,
         allInfosSuppressed: Boolean,
@@ -122,6 +129,8 @@ class PersistentCheckerContext private constructor(
         allErrorsSuppressed: Boolean = this.allErrorsSuppressed,
         suppressedDiagnostics: PersistentSet<String> = this.suppressedDiagnostics,
         containingFile: FirFile? = this.containingFile,
+        shouldUseDeclarationSiteSession: Boolean = this.shouldUseDeclarationSiteSession,
+        sessionHolder: SessionHolder = this.sessionHolder,
     ): PersistentCheckerContext {
         return PersistentCheckerContext(
             implicitReceiverStack,
@@ -133,6 +142,7 @@ class PersistentCheckerContext private constructor(
             isContractBody,
             inlineFunctionBodyContext,
             lambdaBodyContext,
+            shouldUseDeclarationSiteSession,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,

@@ -10,11 +10,9 @@ import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
@@ -34,6 +32,7 @@ class MutableCheckerContext private constructor(
     override var inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?,
     override var lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?,
     override var containingFile: FirFile?,
+    override var shouldUseDeclarationSiteSession: Boolean,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -41,6 +40,9 @@ class MutableCheckerContext private constructor(
     allWarningsSuppressed: Boolean,
     allErrorsSuppressed: Boolean
 ) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
+    override var sessionHolder: SessionHolder = sessionHolder
+        private set
+
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
         mutableListOf(),
@@ -52,6 +54,7 @@ class MutableCheckerContext private constructor(
         inlineFunctionBodyContext = null,
         lambdaBodyContext = null,
         containingFile = null,
+        shouldUseDeclarationSiteSession = false,
         sessionHolder,
         returnTypeCalculator,
         persistentSetOf(),
@@ -72,6 +75,7 @@ class MutableCheckerContext private constructor(
             inlineFunctionBodyContext,
             lambdaBodyContext,
             containingFile,
+            shouldUseDeclarationSiteSession,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -127,6 +131,16 @@ class MutableCheckerContext private constructor(
         containingElements.removeLast()
     }
 
+    override fun setSessionHolder(holder: SessionHolder): CheckerContextForProvider {
+        sessionHolder = holder
+        return this
+    }
+
+    override fun setShouldUseDeclarationSiteSession(value: Boolean): CheckerContextForProvider {
+        shouldUseDeclarationSiteSession = value
+        return this
+    }
+
     override fun addSuppressedDiagnostics(
         diagnosticNames: Collection<String>,
         allInfosSuppressed: Boolean,
@@ -145,6 +159,7 @@ class MutableCheckerContext private constructor(
             inlineFunctionBodyContext,
             lambdaBodyContext,
             containingFile,
+            shouldUseDeclarationSiteSession,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics.addAll(diagnosticNames),

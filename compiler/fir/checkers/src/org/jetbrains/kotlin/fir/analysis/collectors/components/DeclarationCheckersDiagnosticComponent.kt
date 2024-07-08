@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckersCornerCase
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.declarations.*
 
-@OptIn(CheckersComponentInternal::class)
+@OptIn(CheckersComponentInternal::class, CheckersCornerCase::class)
 class DeclarationCheckersDiagnosticComponent(
     session: FirSession,
     reporter: DiagnosticReporter,
@@ -26,7 +27,8 @@ class DeclarationCheckersDiagnosticComponent(
         session,
         reporter,
         when (mppKind) {
-            CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers -> session.checkersComponent.commonDeclarationCheckers
+            CheckerSessionKind.DeclarationSite -> session.checkersComponent.commonDeclarationCheckers
+            CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers -> session.checkersComponent.expectDeclarationCheckers
             CheckerSessionKind.Platform -> session.checkersComponent.platformDeclarationCheckers
         }
     )

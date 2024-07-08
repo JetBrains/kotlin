@@ -66,7 +66,7 @@ fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnos
     val scopeSession = platformModule.scopeSession
 
     val allFiles = this.flatMap { it.fir }
-    session.runCheckers(scopeSession, allFiles, reporter, CheckerSessionKind.Platform)
+    session.runCheckers(scopeSession, allFiles, reporter)
 }
 
 fun FirResult.convertToIrAndActualize(

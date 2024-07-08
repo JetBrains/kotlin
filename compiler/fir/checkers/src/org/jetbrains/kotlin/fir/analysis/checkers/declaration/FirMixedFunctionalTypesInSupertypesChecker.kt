@@ -13,25 +13,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 
-sealed class FirMixedFunctionalTypesInSupertypesChecker(mppKind: CheckerSessionKind) : FirClassChecker(mppKind) {
-    object Regular : FirMixedFunctionalTypesInSupertypesChecker() {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
-    object ForExpectClass : FirMixedFunctionalTypesInSupertypesChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-            if (!declaration.isExpect) return
-            super.check(declaration, context, reporter)
-        }
-    }
-
+object FirMixedFunctionalTypesInSupertypesChecker : FirClassChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val superKinds = lookupSuperTypes(declaration.symbol, lookupInterfaces = true, deep = true, context.session)
             .mapNotNullTo(mutableSetOf()) { it.functionTypeKind(context.session)?.nonReflectKind() }

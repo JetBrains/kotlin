@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckersCornerCase
 import org.jetbrains.kotlin.fir.types.*
 
-@OptIn(CheckersComponentInternal::class)
+@OptIn(CheckersComponentInternal::class, CheckersCornerCase::class)
 class TypeCheckersDiagnosticComponent(
     session: FirSession,
     reporter: DiagnosticReporter,
@@ -26,7 +27,8 @@ class TypeCheckersDiagnosticComponent(
         session,
         reporter,
         when (mppKind) {
-            CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers -> session.checkersComponent.commonTypeCheckers
+            CheckerSessionKind.DeclarationSite -> session.checkersComponent.commonTypeCheckers
+            CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers -> session.checkersComponent.expectTypeCheckers
             CheckerSessionKind.Platform -> session.checkersComponent.platformTypeCheckers
         }
     )

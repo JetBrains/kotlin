@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 object NativeDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
-            FirNativeThrowsChecker.Regular,
-            FirNativeThrowsChecker.ForExpectClass,
+            FirNativeThrowsChecker,
             FirNativeSharedImmutableChecker,
             FirNativeThreadLocalChecker,
             FirNativeIdentifierChecker,
@@ -26,16 +25,13 @@ object NativeDeclarationCheckers : DeclarationCheckers() {
     override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
         get() = setOf(
             FirNativeObjCRefinementChecker,
-            FirNativeObjCNameCallableChecker.Regular,
-            FirNativeObjCNameCallableChecker.ForExpectClass,
+            FirNativeObjCNameCallableChecker,
         )
 
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirNativeObjCRefinementOverridesChecker.Regular,
-            FirNativeObjCRefinementOverridesChecker.ForExpectClass,
-            FirNativeObjCNameOverridesChecker.Regular,
-            FirNativeObjCNameOverridesChecker.ForExpectClass,
+            FirNativeObjCRefinementOverridesChecker,
+            FirNativeObjCNameOverridesChecker,
             FirNativeObjCOutletChecker,
             FirNativeObjCActionChecker,
             FirNativeObjCOverrideInitChecker,

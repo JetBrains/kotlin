@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -21,30 +20,17 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 
-sealed class FirTypeParameterBoundsChecker(mppKind: CheckerSessionKind) : FirTypeParameterChecker(mppKind) {
-    object Regular : FirTypeParameterBoundsChecker() {
-        override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
-            val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
-            if ((containingDeclaration as? FirMemberDeclaration)?.isExpect == true) return
-            check(declaration, containingDeclaration, context, reporter)
-        }
-    }
-
-    object ForExpectClass : FirTypeParameterBoundsChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
-        override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
-            val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
-            if ((containingDeclaration as? FirMemberDeclaration)?.isExpect != true) return
-            check(declaration, containingDeclaration, context, reporter)
-        }
-    }
-
+object FirTypeParameterBoundsChecker : FirTypeParameterChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     private val classKinds = setOf(
         ClassKind.CLASS,
         ClassKind.ENUM_CLASS,
         ClassKind.OBJECT
     )
 
-    protected fun check(
+    override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter): Unit =
+        check(declaration, context.containingDeclarations.last(), context, reporter)
+
+    private fun check(
         declaration: FirTypeParameter,
         containingDeclaration: FirDeclaration,
         context: CheckerContext,
