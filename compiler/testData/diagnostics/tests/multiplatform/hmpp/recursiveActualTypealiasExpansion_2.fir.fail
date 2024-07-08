@@ -1,0 +1,11 @@
+java.lang.StackOverflowError
+	at org.jetbrains.kotlin.util.AbstractArrayMapOwner$AbstractArrayMapAccessor.extractValue(ArrayMapOwner.kt:26)
+	at org.jetbrains.kotlin.util.ArrayMapAccessor.getValue(ArrayMapOwner.kt:51)
+	at org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolverKt.getLazyDeclarationResolver(FirLazyDeclarationResolver.kt:72)
+	at org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolverKt.getLazyDeclarationResolver(FirLazyDeclarationResolver.kt:74)
+	at org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolverKt.invokeLazyResolveToPhase(FirLazyDeclarationResolver.kt:179)
+	at org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolverKt.lazyResolveToPhase(FirLazyDeclarationResolver.kt:100)
+	at org.jetbrains.kotlin.fir.resolve.TypeExpansionUtilsKt.expandedConeTypeWithEnsuredPhase(TypeExpansionUtils.kt:54)
+	at org.jetbrains.kotlin.fir.resolve.TypeExpansionUtilsKt$fullyExpandedType$2.invoke(TypeExpansionUtils.kt:63)
+	at org.jetbrains.kotlin.fir.resolve.TypeExpansionUtilsKt$fullyExpandedType$2.invoke(TypeExpansionUtils.kt:63)
+	at org.jetbrains.kotlin.fir.resolve.TypeExpansionUtilsKt.directExpansionType(TypeExpansionUtils.kt:108)
