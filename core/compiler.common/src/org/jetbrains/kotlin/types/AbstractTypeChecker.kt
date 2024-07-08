@@ -223,10 +223,18 @@ object AbstractTypeChecker {
         typeConstructor: TypeConstructorMarker,
         superConstructor: TypeConstructorMarker
     ): Boolean {
+        return isSubtypeOfClass(state.typeSystemContext, typeConstructor, superConstructor)
+    }
+
+    fun isSubtypeOfClass(
+        typeSystemContext: TypeSystemContext,
+        typeConstructor: TypeConstructorMarker,
+        superConstructor: TypeConstructorMarker,
+    ): Boolean {
         if (typeConstructor == superConstructor) return true
-        with(state.typeSystemContext) {
+        with(typeSystemContext) {
             for (superType in typeConstructor.supertypes()) {
-                if (isSubtypeOfClass(state, superType.typeConstructor(), superConstructor)) {
+                if (isSubtypeOfClass(typeSystemContext, superType.typeConstructor(), superConstructor)) {
                     return true
                 }
             }

@@ -319,7 +319,7 @@ class CallAndReferenceGenerator(
                     return type.intersectedTypes.first {
                         val componentConstructor = with(typeContext) { it.lowerBoundIfFlexible().typeConstructor() }
                         AbstractTypeChecker.isSubtypeOfClass(
-                            typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
+                            typeContext,
                             componentConstructor,
                             containingClassLookupTag
                         )

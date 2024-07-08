@@ -345,9 +345,8 @@ class FirSyntheticPropertiesScope private constructor(
 
         val typeContext = session.typeContext
         fun checkType(type: ConeClassLikeType): Boolean {
-            val state = typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
             if (type.toRegularClassSymbol(session)?.isJavaOrEnhancement == true) {
-                if (AbstractTypeChecker.isSubtypeOfClass(state, type.lookupTag, lookupTagToStop)) {
+                if (AbstractTypeChecker.isSubtypeOfClass(typeContext, type.lookupTag, lookupTagToStop)) {
                     return true
                 }
             }
