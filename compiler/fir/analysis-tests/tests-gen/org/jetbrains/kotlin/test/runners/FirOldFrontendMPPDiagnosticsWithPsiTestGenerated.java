@@ -1963,6 +1963,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("recursiveActualTypealiasExpansion_1.kt")
+    public void testRecursiveActualTypealiasExpansion_1() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/recursiveActualTypealiasExpansion_1.kt");
+    }
+
+    @Test
+    @TestMetadata("recursiveActualTypealiasExpansion_2.kt")
+    public void testRecursiveActualTypealiasExpansion_2() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/recursiveActualTypealiasExpansion_2.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/simple.kt");
