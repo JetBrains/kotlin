@@ -42,7 +42,7 @@ class TypeCheckersDiagnosticComponent(
     }
 
     override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: CheckerContext) {
-        checkers.allTypeRefCheckers.check(functionTypeRef, data)
+        checkers.allFunctionTypeRefCheckers.check(functionTypeRef, data)
     }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef, data: CheckerContext) {
@@ -50,11 +50,11 @@ class TypeCheckersDiagnosticComponent(
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: CheckerContext) {
-        checkers.allTypeRefCheckers.check(resolvedTypeRef, data)
+        checkers.allResolvedTypeRefCheckers.check(resolvedTypeRef, data)
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
-        checkers.allTypeRefCheckers.check(errorTypeRef, data)
+        checkers.allResolvedTypeRefCheckers.check(errorTypeRef, data)
     }
 
     override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: CheckerContext) {
@@ -62,7 +62,7 @@ class TypeCheckersDiagnosticComponent(
     }
 
     override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: CheckerContext) {
-        checkers.allTypeRefCheckers.check(intersectionTypeRef, data)
+        checkers.allIntersectionTypeRefCheckers.check(intersectionTypeRef, data)
     }
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: CheckerContext) {

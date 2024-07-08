@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.ErrorListDi
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.generateDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
+import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import java.io.File
 
@@ -101,6 +104,9 @@ fun main(args: Array<String>) {
         val typePackage = "$basePackage.checkers.type"
         generateCheckersComponents(checkersPath, typePackage, "FirTypeChecker") {
             alias<FirTypeRef>("TypeRefChecker")
+            alias<FirResolvedTypeRef>("ResolvedTypeRefChecker")
+            alias<FirFunctionTypeRef>("FunctionTypeRefChecker")
+            alias<FirIntersectionTypeRef>("IntersectionTypeRefChecker")
         }
 
         val expressionPackage = "$basePackage.checkers.expression"

@@ -19,11 +19,23 @@ class ComposedTypeCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : 
 
     override val typeRefCheckers: Set<FirTypeRefChecker>
         get() = _typeRefCheckers
+    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker>
+        get() = _resolvedTypeRefCheckers
+    override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker>
+        get() = _functionTypeRefCheckers
+    override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker>
+        get() = _intersectionTypeRefCheckers
 
     private val _typeRefCheckers: MutableSet<FirTypeRefChecker> = mutableSetOf()
+    private val _resolvedTypeRefCheckers: MutableSet<FirResolvedTypeRefChecker> = mutableSetOf()
+    private val _functionTypeRefCheckers: MutableSet<FirFunctionTypeRefChecker> = mutableSetOf()
+    private val _intersectionTypeRefCheckers: MutableSet<FirIntersectionTypeRefChecker> = mutableSetOf()
 
     @CheckersComponentInternal
     fun register(checkers: TypeCheckers) {
         checkers.typeRefCheckers.filterTo(_typeRefCheckers, predicate)
+        checkers.resolvedTypeRefCheckers.filterTo(_resolvedTypeRefCheckers, predicate)
+        checkers.functionTypeRefCheckers.filterTo(_functionTypeRefCheckers, predicate)
+        checkers.intersectionTypeRefCheckers.filterTo(_intersectionTypeRefCheckers, predicate)
     }
 }
