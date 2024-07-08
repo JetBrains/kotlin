@@ -21,6 +21,7 @@ import com.intellij.psi.PsiJavaModule;
 import kotlin.collections.MapsKt;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -90,6 +91,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Parameter(property = "kotlin.compiler.javaParameters")
     protected boolean javaParameters;
+
+    @Parameter(defaultValue = "${plugin}", required = true, readonly = true)
+    private PluginDescriptor plugin;
 
     @NotNull
     private File getCachesDir() {
@@ -217,8 +221,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             try {
                 URL toolsJar = getJdkToolsJarURL();
                 if (toolsJar != null) {
-                    project.getClassRealm().addURL(toolsJar);
+                    plugin.getClassRealm().addURL(toolsJar);
                 }
+
             } catch (IOException ignored) {}
         }
 
