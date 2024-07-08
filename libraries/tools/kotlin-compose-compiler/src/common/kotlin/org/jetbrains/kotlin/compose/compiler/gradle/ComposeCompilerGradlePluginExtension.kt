@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.compose.compiler.gradle
 
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -118,7 +120,16 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * For more information, see this link:
      *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
      */
+    @Deprecated("Use the stabilityConfigurationFiles option instead")
     abstract val stabilityConfigurationFile: RegularFileProperty
+
+    /**
+     * List of paths to the stability configuration file.
+     *
+     * For more information, see this link:
+     *  - [AndroidX stability configuration file](https://developer.android.com/develop/ui/compose/performance/stability/fix#configuration-file)
+     */
+    abstract val stabilityConfigurationFiles: ListProperty<RegularFile>
 
     /**
      * Include composition trace markers in the generated code.

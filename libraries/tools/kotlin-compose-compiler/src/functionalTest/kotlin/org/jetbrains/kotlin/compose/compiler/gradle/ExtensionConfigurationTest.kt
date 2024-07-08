@@ -65,6 +65,7 @@ class ExtensionConfigurationTest {
         }
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun testStabilityConfigurationFile() {
         testComposeOptions(
@@ -77,6 +78,29 @@ class ExtensionConfigurationTest {
             assertTrue(
                 options.contains(
                     "stabilityConfigurationPath" to project.layout.projectDirectory.file("compose.conf").asFile.path
+                )
+            )
+        }
+    }
+
+    @Test
+    fun testStabilityConfigurationFiles() {
+        testComposeOptions(
+            { extension, project ->
+                extension.stabilityConfigurationFiles.value(
+                    listOf(
+                        project.layout.projectDirectory.file("compose.conf"),
+                        project.layout.projectDirectory.file("compose2.conf")
+                    )
+                )
+            }
+        ) { options, project ->
+            assertTrue(
+                options.contains(
+                    "stabilityConfigurationPath" to project.layout.projectDirectory.file("compose.conf").asFile.path
+                ) &&
+                options.contains(
+                    "stabilityConfigurationPath" to project.layout.projectDirectory.file("compose2.conf").asFile.path
                 )
             )
         }

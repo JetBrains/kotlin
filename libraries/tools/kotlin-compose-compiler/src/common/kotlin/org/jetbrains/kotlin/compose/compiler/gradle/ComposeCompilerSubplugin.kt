@@ -73,9 +73,15 @@ class ComposeCompilerGradleSubplugin
                     FilesSubpluginOption("reportsDestination", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
 
+                @Suppress("DEPRECATION")
                 add(composeExtension.stabilityConfigurationFile.map<SubpluginOption> {
                     FilesSubpluginOption("stabilityConfigurationPath", listOf(it.asFile))
                 }.orElse(EMPTY_OPTION))
+
+                addAll(composeExtension.stabilityConfigurationFiles.map { paths ->
+                    paths.map { FilesSubpluginOption("stabilityConfigurationPath", listOf(it.asFile)) }
+                }.orElse(emptyList()))
+
                 add(composeExtension.includeTraceMarkers.map {
                     SubpluginOption("traceMarkersEnabled", it.toString())
                 })
