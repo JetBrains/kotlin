@@ -5,14 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.type.*
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirDynamicUnsupportedChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirFunctionTypeRefChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.type.FirFunctionalTypeParameterNameChecker
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.type.FirJvmModuleAccessibilityTypeChecker
 
 object JvmTypeCheckers : TypeCheckers() {
-    override val typeRefCheckers: Set<FirTypeRefChecker> = setOf(
-        FirDynamicUnsupportedChecker,
+    override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker> = setOf(
         FirFunctionalTypeParameterNameChecker,
+    )
+
+    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
+        FirDynamicUnsupportedChecker,
         FirJvmModuleAccessibilityTypeChecker,
     )
 }

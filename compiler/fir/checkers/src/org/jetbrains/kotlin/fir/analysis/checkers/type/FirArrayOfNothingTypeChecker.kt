@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANDS
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
-object FirArrayOfNothingTypeChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirArrayOfNothingTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         /** Ignore typealias, see [TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS] */
         if (context.containingDeclarations.lastOrNull() is FirTypeAlias) return
         val coneType = typeRef.coneTypeOrNull ?: return

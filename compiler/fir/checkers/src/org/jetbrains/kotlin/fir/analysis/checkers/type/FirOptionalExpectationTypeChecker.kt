@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isOptionalAnnotationClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 
-object FirOptionalExpectationTypeChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirOptionalExpectationTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = typeRef.source
         if (source?.kind is KtFakeSourceElementKind) return
         val classSymbol = typeRef.coneType.toRegularClassSymbol(context.session) ?: return

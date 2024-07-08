@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirIncompatibleClassExpressionChecker
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
-object FirIncompatibleClassTypeChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirIncompatibleClassTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         FirIncompatibleClassExpressionChecker.checkType(typeRef.coneTypeOrNull, typeRef, context, reporter)
     }
 }

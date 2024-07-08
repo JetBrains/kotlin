@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.PlatformClassMappedToKotlinTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantNullableChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.type.*
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 
 object ExtendedTypeCheckers : TypeCheckers() {
-    override val typeRefCheckers: Set<FirTypeRefChecker> = setOf(
+    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
         RedundantNullableChecker,
-        PlatformClassMappedToKotlinTypeRefChecker
+        PlatformClassMappedToKotlinTypeRefChecker,
     )
 }

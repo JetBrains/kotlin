@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.customAnnotations
+import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.fir.types.type
 
-object FirDuplicateParameterNameInFunctionTypeChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirResolvedTypeRef || !typeRef.type.isSomeFunctionType(context.session)) return
+object FirDuplicateParameterNameInFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!typeRef.type.isSomeFunctionType(context.session)) return
 
         val nameToArgumentProjection = typeRef.type.typeArguments.dropLast(1).groupBy {
             val type = it.type ?: return@groupBy null

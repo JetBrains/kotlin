@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
 
-object FirProjectionRelationChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef.source?.kind?.shouldSkipErrorTypeReporting != false) return
         val type = typeRef.coneType.abbreviatedTypeOrSelf
         val fullyExpandedType = type.fullyExpandedType(context.session)

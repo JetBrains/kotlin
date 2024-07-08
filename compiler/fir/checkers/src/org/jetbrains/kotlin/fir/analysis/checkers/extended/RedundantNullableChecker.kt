@@ -12,16 +12,18 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeRefChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_NULLABLE
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 
-object RedundantNullableChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+object RedundantNullableChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (
-            typeRef !is FirResolvedTypeRef ||
             !typeRef.coneType.abbreviatedTypeOrSelf.isMarkedNullable ||
             typeRef.source?.kind == KtFakeSourceElementKind.ImplicitTypeArgument
         ) return

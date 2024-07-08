@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -16,14 +15,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirTypeAnnotationChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef !is FirResolvedTypeRef) return
-
+object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         for (annotation in typeRef.annotations) {
             if (annotation.source == null) continue
             val useSiteTarget = annotation.useSiteTarget

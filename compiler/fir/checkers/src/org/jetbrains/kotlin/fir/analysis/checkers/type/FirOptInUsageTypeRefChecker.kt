@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
-object FirOptInUsageTypeRefChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = typeRef.source
-        val delegatedTypeRef = (typeRef as? FirResolvedTypeRef)?.delegatedTypeRef
+        val delegatedTypeRef = typeRef.delegatedTypeRef
         if (source?.kind !is KtRealSourceElementKind) return
         // ConeClassLikeType filters out all delegatedTypeRefs from here
         val expandedTypealiasType = typeRef.coneType as? ConeClassLikeType ?: return
