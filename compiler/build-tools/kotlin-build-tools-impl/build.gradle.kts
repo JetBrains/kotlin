@@ -15,7 +15,7 @@ dependencies {
     compileOnly(project(":kotlin-compiler-runner-unshaded"))
     compileOnly(intellijCore())
     compileOnly(project(":kotlin-scripting-compiler"))
-    runtimeOnly(project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"))
+    runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-runner"))
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     runtimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))

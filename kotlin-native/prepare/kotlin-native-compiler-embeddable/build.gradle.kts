@@ -59,9 +59,6 @@ dependencies {
 
     testImplementation(libs.junit4)
     testImplementation(kotlinTest("junit"))
-    runtimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
-    runtimeOnly(project(":kotlin-daemon-embeddable"))
-    runtimeOnly(project(":kotlin-script-runtime"))
 }
 
 val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {
