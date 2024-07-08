@@ -182,22 +182,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
     }
 
     private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(subType: ConeKotlinType, superType: ConeSimpleKotlinType): Boolean {
-        return isTypeConstructorEqualOrSubClassOf(subType.typeConstructor(), superType.typeConstructor())
+        return AbstractTypeChecker.isSubtypeOfClass(this, subType.typeConstructor(), superType.typeConstructor())
     }
 
-    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(
-        subTypeConstructor: TypeConstructorMarker,
-        superTypeConstructor: TypeConstructorMarker
-    ): Boolean {
-        if (subTypeConstructor == superTypeConstructor) return true
-        for (immediateSuperType in subTypeConstructor.supertypes()) {
-            val immediateSuperTypeConstructor = immediateSuperType.typeConstructor()
-            if (superTypeConstructor == immediateSuperTypeConstructor) return true
-            if (this@isTypeConstructorEqualOrSubClassOf.isTypeConstructorEqualOrSubClassOf(
-                    immediateSuperTypeConstructor, superTypeConstructor
-                )
-            ) return true
-        }
-        return false
-    }
 }
