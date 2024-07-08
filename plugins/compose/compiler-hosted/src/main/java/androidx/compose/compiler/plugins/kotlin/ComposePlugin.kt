@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
+import java.io.FileNotFoundException
 
 object ComposeConfiguration {
     val LIVE_LITERALS_ENABLED_KEY =
@@ -687,6 +688,12 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 val path = stabilityConfigPaths[i]
                 val matchers = try {
                     StabilityConfigParser.fromFile(path).stableTypeMatchers
+                } catch (e: FileNotFoundException) {
+                    configuration.messageCollector.report(
+                        CompilerMessageSeverity.WARNING,
+                        "Stability configuration file not found at $path"
+                    )
+                    emptySet()
                 } catch (e: Exception) {
                     configuration.messageCollector.report(
                         CompilerMessageSeverity.ERROR,

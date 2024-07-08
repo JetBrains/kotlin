@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import java.io.FileNotFoundException
 
 class StabilityConfigurationParserTests {
     private fun testConfigParsing(config: String, expectedClasses: Set<String>) {
@@ -125,6 +126,13 @@ class StabilityConfigurationParserTests {
             com.foo!.bar //comment
         """.trimIndent()
     )
+
+    @Test
+    fun testNonExistantFileThrows() {
+        assertThrows(FileNotFoundException::class.java) {
+            StabilityConfigParser.fromFile("doesnotexist")
+        }
+    }
 }
 
 private const val PATH_TO_CONFIG_FILES = "$TEST_RESOURCES_ROOT/testStabilityConfigFiles"
