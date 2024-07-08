@@ -27973,6 +27973,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestDataPath("$PROJECT_ROOT")
       public class Hmpp {
         @Test
+        @TestMetadata("actualizationToExpectClass.kt")
+        public void testActualizationToExpectClass() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/actualizationToExpectClass.kt");
+        }
+
+        @Test
         @TestMetadata("actualizeSubtypeBeforeSupertype.kt")
         public void testActualizeSubtypeBeforeSupertype() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/actualizeSubtypeBeforeSupertype.kt");
