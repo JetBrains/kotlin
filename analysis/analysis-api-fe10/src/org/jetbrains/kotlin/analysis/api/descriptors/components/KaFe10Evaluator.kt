@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KaEvaluator
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValueOrNull
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
@@ -29,7 +29,7 @@ internal class KaFe10Evaluator(
         // TODO: how to _not_ evaluate expressions with a compilation error, e.g., uninitialized property access
         if (constant?.usesNonConstValAsConstant == true) return null
 
-        return constant?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.toKtConstantValue()
+        return constant?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.toKtConstantValueOrNull()
     }
 
     override fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue? = withValidityAssertion {
