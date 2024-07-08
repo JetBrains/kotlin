@@ -69,13 +69,22 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
         val moduleDescriptors = setOf(createModuleDescriptor(environment, kotlinFiles, configuration.dependencies))
 
+        // Parse objc-entry-points file if present
+        val entryPoints = File(root, "objc-entry-points")
+            .takeIf { it.isFile }
+            ?.toPath()
+            ?.let { org.jetbrains.kotlin.konan.file.File(it) }
+            ?.readObjCEntryPoints()
+            ?: ObjCEntryPoints.ALL
+
         val mapper = ObjCExportMapper(
             deprecationResolver = DeprecationResolver(
                 storageManager = LockBasedStorageManager.NO_LOCKS,
                 languageVersionSettings = createLanguageVersionSettings(),
                 deprecationSettings = JavaDeprecationSettings
             ),
-            unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT
+            unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT,
+            entryPoints = entryPoints,
         )
 
         val exportedModuleDescriptors = moduleDescriptors + moduleDescriptors

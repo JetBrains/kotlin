@@ -383,6 +383,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
+    fun `test - objCEntryPoints`() {
+        doTest(headersTestDataDir.resolve("objCEntryPoints"))
+    }
+
+    @Test
     fun `test - objCMappedPropertyExtension`() {
         doTest(headersTestDataDir.resolve("objCMappedPropertyExtension"))
     }

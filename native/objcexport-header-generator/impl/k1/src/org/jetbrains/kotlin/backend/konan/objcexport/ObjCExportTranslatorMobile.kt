@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 class ObjCExportTranslatorMobile internal constructor(private val delegate: ObjCExportTranslatorImpl) : ObjCExportTranslator by delegate {
     companion object {
         fun create(namer: ObjCExportNamer, configuration: ObjCExportLazy.Configuration): ObjCExportTranslatorMobile {
-            val mapper = ObjCExportMapper(local = true, unitSuspendFunctionExport = configuration.unitSuspendFunctionExport)
+            val mapper = ObjCExportMapper(
+                local = true,
+                unitSuspendFunctionExport = configuration.unitSuspendFunctionExport,
+                entryPoints = configuration.entryPoints,
+            )
             return ObjCExportTranslatorMobile(
                 ObjCExportTranslatorImpl(
                     null,
