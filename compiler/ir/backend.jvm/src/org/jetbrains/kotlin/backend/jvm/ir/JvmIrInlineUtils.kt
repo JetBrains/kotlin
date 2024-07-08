@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -80,9 +81,6 @@ fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
 
 fun IrFunction.isPrivateInlineSuspend(): Boolean =
     isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
-
-fun IrFunction.isReifiable(): Boolean =
-    typeParameters.any { it.isReified }
 
 private fun IrAttributeContainer.getDeclarationBeforeInline(): IrDeclaration? {
     val original = this.originalBeforeInline ?: return null

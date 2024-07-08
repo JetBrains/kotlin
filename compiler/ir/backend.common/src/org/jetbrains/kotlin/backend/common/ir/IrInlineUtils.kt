@@ -227,3 +227,5 @@ fun IrExpression.isInlineLambdaBlock(): Boolean {
     return reference?.origin == LoweredStatementOrigins.INLINE_LAMBDA
 }
 
+fun IrFunction.isReifiable(): Boolean =
+    typeParameters.any { it.isReified }
