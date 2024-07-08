@@ -64,10 +64,16 @@ fun ObjCExportContext.translateToObjCConstructors(symbol: KaClassSymbol): List<O
     // Hide "unimplemented" super constructors:
     with(analysisSession) { this@translateToObjCConstructors.analysisSession.getSuperClassSymbolNotAny(symbol)?.memberScope }?.constructors.orEmpty()
         .filter { analysisSession.isVisibleInObjC(it) }
-        .forEach { superClassConstructor ->
-            val translatedSuperClassConstructor = buildObjCMethod(superClassConstructor, unavailable = true)
-            if (result.none { it.name == translatedSuperClassConstructor.name }) {
-                result.add(translatedSuperClassConstructor)
+        .forEach { superConstructor ->
+            val translatedSuperConstructor = buildObjCMethod(superConstructor, unavailable = true)
+            if (result.none { it.name == translatedSuperConstructor.name }) {
+                result.add(translatedSuperConstructor)
+            }
+            if (result.none { it.name == "new" } && translatedSuperConstructor.name == "init") {
+                /**
+                 * There should be only one "new" constructor, so if it's already defined in [symbol] we skip the one from super type
+                 */
+                result.add(analysisSession.buildNewInitSuperConstructor(superConstructor))
             }
         }
 
@@ -90,3 +96,19 @@ private fun KaSession.buildNewInitConstructor(constructor: KaFunctionSymbol): Ob
         )
     )
 }
+
+/**
+ * Additional primary super constructor which goes always after primary constructor ([ObjCMethod.name] == "init")
+ */
+private fun KaSession.buildNewInitSuperConstructor(constructor: KaFunctionSymbol): ObjCMethod {
+    return ObjCMethod(
+        comment = null,
+        origin = getObjCExportStubOrigin(constructor),
+        isInstanceMethod = false,
+        returnType = ObjCInstanceType,
+        selectors = listOf("new"),
+        parameters = emptyList(),
+        attributes = listOf("unavailable")
+    )
+}
+

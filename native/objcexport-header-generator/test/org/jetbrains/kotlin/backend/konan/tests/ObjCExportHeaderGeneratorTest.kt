@@ -253,12 +253,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("classWithGenerics"))
     }
 
-    /**
-     * - init method missing
-     * - 'new constructor' missing
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - objectWithGenericSuperclass`() {
         doTest(headersTestDataDir.resolve("objectWithGenericSuperclass"))
     }
