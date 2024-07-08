@@ -9,6 +9,7 @@ tasks.register("analysisAllTests") {
         ":analysis:decompiled:decompiler-js:test",
         ":analysis:decompiled:decompiler-native:test",
         ":analysis:analysis-api:test",
+        ":analysis:analysis-api:apiCheck",
         ":analysis:analysis-api-fir:test",
         ":analysis:analysis-api-fe10:test",
         ":analysis:analysis-api-standalone:test",

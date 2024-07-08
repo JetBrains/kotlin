@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 kotlin {
@@ -32,6 +33,16 @@ kotlin {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+apiValidation {
+    nonPublicMarkers += listOf(
+        "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+        "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+        "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface" // Platform interface is not stable yet
+    )
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
