@@ -202,9 +202,6 @@ kotlin {
                                 "-Xexpect-actual-classes",
                             )
                         )
-                        if (kotlinBuildProperties.useFir) {
-                            freeCompilerArgs.add("-Xuse-k2")
-                        }
                         // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
                         val currentFreeArgs = freeCompilerArgs.get()
                         freeCompilerArgs
