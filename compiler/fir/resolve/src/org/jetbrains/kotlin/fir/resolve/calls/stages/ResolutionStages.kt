@@ -56,7 +56,7 @@ abstract class ResolutionStage {
 internal object CheckExplicitReceiverConsistency : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val receiverKind = candidate.explicitReceiverKind
-        val explicitReceiver = callInfo.explicitReceiver
+        val explicitReceiver = callInfo.explicitReceiver?.unwrapSmartcastExpression()
         when (receiverKind) {
             NO_EXPLICIT_RECEIVER -> {
                 if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {

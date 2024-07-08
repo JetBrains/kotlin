@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordNameLookup
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -198,7 +199,7 @@ internal fun extractNestedClassAccessDiagnostic(
     explicitReceiver: FirExpression?,
     symbol: FirClassLikeSymbol<*>
 ): ConeDiagnostic? {
-    if ((explicitReceiver as? FirResolvedQualifier)?.typeArguments?.isNotEmpty() == true)
+    if ((explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.typeArguments?.isNotEmpty() == true)
         return ConeNestedClassAccessedViaInstanceReference(source!!, symbol)
     return null
 }
@@ -210,7 +211,7 @@ internal fun extractNonFatalDiagnostics(
     extraNotFatalDiagnostics: List<ConeDiagnostic>?,
     session: FirSession,
 ): List<ConeDiagnostic> {
-    val prevDiagnostics = (explicitReceiver as? FirResolvedQualifier)?.nonFatalDiagnostics ?: emptyList()
+    val prevDiagnostics = (explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.nonFatalDiagnostics ?: emptyList()
     var result: MutableList<ConeDiagnostic>? = null
 
     val deprecation = symbol.getDeprecationForCallSite(session)

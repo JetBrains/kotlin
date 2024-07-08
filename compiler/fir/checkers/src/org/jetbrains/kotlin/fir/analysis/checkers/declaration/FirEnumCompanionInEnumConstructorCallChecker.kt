@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
 import org.jetbrains.kotlin.fir.expressions.toReference
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
@@ -80,7 +81,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                 else -> continue
             }
             val matchingReceiver = qualifiedAccess.allReceiverExpressions
-                .firstOrNull { it.getClassSymbol(context.session) == companionSymbol }
+                .firstOrNull { it.unwrapSmartcastExpression().getClassSymbol(context.session) == companionSymbol }
             if (matchingReceiver != null) {
                 reporter.reportOn(
                     matchingReceiver.source ?: qualifiedAccess.source,

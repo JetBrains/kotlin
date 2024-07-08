@@ -29,7 +29,7 @@ object RedundantExplicitTypeChecker : FirPropertyChecker(MppCheckerKind.Common) 
         if (!declaration.isLocal) return
         if (declaration.returnTypeRef.source == null) return
 
-        val initializer = declaration.initializer ?: return
+        val initializer = declaration.initializer?.unwrapSmartcastExpression() ?: return
         val typeReference = declaration.returnTypeRef.takeUnless { it is FirErrorTypeRef } ?: return
 
         if (typeReference.source?.kind is KtFakeSourceElementKind) return

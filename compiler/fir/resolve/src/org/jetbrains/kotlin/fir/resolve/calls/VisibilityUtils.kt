@@ -41,7 +41,7 @@ fun FirVisibilityChecker.isVisible(
                 declaration.isStatic &&
                 isExplicitReceiverExpression(dispatchReceiver)
     ) {
-        when (val classLikeSymbol = (dispatchReceiver as? FirResolvedQualifier)?.symbol) {
+        when (val classLikeSymbol = (dispatchReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.symbol) {
             is FirRegularClassSymbol -> classLikeSymbol.fir
             is FirTypeAliasSymbol -> classLikeSymbol.fullyExpandedClass(callInfo.session)?.fir
             is FirAnonymousObjectSymbol,
