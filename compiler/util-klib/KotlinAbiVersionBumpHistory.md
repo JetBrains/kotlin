@@ -1,5 +1,9 @@
 # `KotlinAbiVersion` (KLIB ABI version) change history
 
+##### Bump 1.8.0 -> 1.201.0
+- Commit: `6616728ad2debf29024df4a4716949b5b0c76e58 2024-07-03 Bump KLIB ABI version: 1.8.0 -> 1.201.0`
+- The bump is caused by migration to new version of LLVM, which is not forward-compatible with old LLVM [KT-49279](https://youtrack.jetbrains.com/issue/KT-49279)
+
 ##### Bump 1.7.0 -> 1.8.0
 - Commit: `770d6a4708055798da2f89bedcab4152e6c3f6ae Bump KotlinAbiVersion for Enum.Entries`
 - The bump is caused by incompatible change in `KotlinIr.proto`.
