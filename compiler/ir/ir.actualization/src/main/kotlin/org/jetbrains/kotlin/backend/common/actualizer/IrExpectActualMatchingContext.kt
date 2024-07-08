@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal abstract class IrExpectActualMatchingContext(
     val typeContext: IrTypeSystemContext,
-    val expectToActualClassMap: Map<ClassId, IrClassSymbol>
+    val expectToActualClassMap: ClassActualizationInfo.ActualClassMapping
 ) : ExpectActualMatchingContext<IrSymbol>, TypeSystemContext by typeContext {
     // This incompatibility is often suppressed in the source code (e.g. in kotlin-stdlib).
     // The backend must be able to do expect-actual matching to emit bytecode
