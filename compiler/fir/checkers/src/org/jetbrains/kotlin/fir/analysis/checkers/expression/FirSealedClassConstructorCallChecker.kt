@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.classLikeLookupTag
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 
 object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -24,7 +24,7 @@ object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecke
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol(discardErrorReference = true) ?: return
 
         val typeSymbol = constructorSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(context.session)
-            .classLikeLookupTag?.toRegularClassSymbol(context.session)
+            .classLikeLookupTagIfAny?.toRegularClassSymbol(context.session)
             ?: return
 
         if (typeSymbol.modality == Modality.SEALED) {

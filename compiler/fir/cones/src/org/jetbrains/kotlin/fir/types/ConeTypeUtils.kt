@@ -23,10 +23,10 @@ val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullabil
 
 val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.lookupTag?.classId
 
-val ConeKotlinType.lookupTag: ConeClassifierLookupTag?
+val ConeKotlinType.lookupTagIfAny: ConeClassifierLookupTag?
     get() = (this as? ConeLookupTagBasedType)?.lookupTag
 
-val ConeKotlinType.classLikeLookupTag: ConeClassLikeLookupTag?
+val ConeKotlinType.classLikeLookupTagIfAny: ConeClassLikeLookupTag?
     get() = (this as? ConeClassLikeType)?.lookupTag
 
 /**

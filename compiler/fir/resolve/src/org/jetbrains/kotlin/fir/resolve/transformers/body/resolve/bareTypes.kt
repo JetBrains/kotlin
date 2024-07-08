@@ -34,9 +34,9 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
         return computeRepresentativeTypeForBareType(type, it)
     }
 
-    val originalClassLookupTag = originalType.fullyExpandedType(session).classLikeLookupTag ?: return null
+    val originalClassLookupTag = originalType.fullyExpandedType(session).classLikeLookupTagIfAny ?: return null
 
-    val castTypeAlias = type.abbreviatedTypeOrSelf.classLikeLookupTag?.toTypeAliasSymbol(session)?.fir
+    val castTypeAlias = type.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toTypeAliasSymbol(session)?.fir
     if (castTypeAlias != null && !canBeUsedAsBareType(castTypeAlias)) return null
 
     val expandedCastType = type.fullyExpandedType(session)

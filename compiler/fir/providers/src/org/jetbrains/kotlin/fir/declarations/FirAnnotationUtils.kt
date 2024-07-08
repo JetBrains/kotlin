@@ -118,7 +118,7 @@ fun List<FirAnnotation>.getAnnotationsByClassId(classId: ClassId, session: FirSe
 private fun FirAnnotation.doesMatchesClassId(
     classId: ClassId,
     session: FirSession,
-): Boolean = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.classLikeLookupTag?.classId == classId
+): Boolean = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.classLikeLookupTagIfAny?.classId == classId
 
 fun List<FirAnnotation>.filterOutAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
     return filterNot {
@@ -130,7 +130,7 @@ fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, s
     return firstOrNull {
         it.annotationTypeRef.coneTypeSafe<ConeKotlinType>()
             ?.fullyExpandedType(session)
-            ?.classLikeLookupTag
+            ?.classLikeLookupTagIfAny
             ?.classId in classIds
     }
 }
@@ -231,6 +231,6 @@ private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
     ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
 
 fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>): Boolean = annotations.any {
-    val lookupTag = it.annotationTypeRef.coneType.classLikeLookupTag ?: return@any false
+    val lookupTag = it.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return@any false
     lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
 }

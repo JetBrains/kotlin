@@ -461,7 +461,7 @@ private fun ConeKotlinType.asPsiTypeElement(
 
     if (!allowErrorTypes && (this is ConeErrorType)) return null
 
-    this.classLikeLookupTag?.toSymbol(session)?.lazyResolveToPhase(FirResolvePhase.STATUS)
+    this.classLikeLookupTagIfAny?.toSymbol(session)?.lazyResolveToPhase(FirResolvePhase.STATUS)
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
 

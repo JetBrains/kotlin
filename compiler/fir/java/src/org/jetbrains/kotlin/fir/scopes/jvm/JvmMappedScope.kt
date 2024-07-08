@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.classLikeLookupTag
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -327,7 +327,7 @@ class JvmMappedScope(
 
             fun FirConstructor.isTrivialCopyConstructor(): Boolean =
                 valueParameters.singleOrNull()?.let {
-                    it.returnTypeRef.coneType.lowerBoundIfFlexible().classLikeLookupTag == firKotlinClass.symbol.toLookupTag()
+                    it.returnTypeRef.coneType.lowerBoundIfFlexible().classLikeLookupTagIfAny == firKotlinClass.symbol.toLookupTag()
                 } ?: false
 
             // In K1 it is handled by JvmBuiltInsCustomizer.getConstructors

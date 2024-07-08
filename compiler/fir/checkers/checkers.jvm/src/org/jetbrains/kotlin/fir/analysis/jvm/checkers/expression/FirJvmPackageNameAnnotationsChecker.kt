@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.types.classLikeLookupTag
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -26,7 +26,7 @@ object FirJvmPackageNameAnnotationsChecker : FirAnnotationChecker(MppCheckerKind
     private val jvmPackageNameClassId = ClassId.topLevel(FqName("kotlin.jvm.JvmPackageName"))
 
     override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
-        val lookupTag = expression.annotationTypeRef.coneType.classLikeLookupTag ?: return
+        val lookupTag = expression.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return
         if (lookupTag.classId != jvmPackageNameClassId) return
 
         val nameValue = expression.getStringArgument(StandardNames.NAME, context.session) ?: return

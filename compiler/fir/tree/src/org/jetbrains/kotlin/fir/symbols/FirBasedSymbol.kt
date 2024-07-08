@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.types.classLikeLookupTag
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
@@ -131,7 +131,7 @@ fun resolveAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>) {
 @SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {
     return resolvedAnnotationsWithClassIds(anchorElement).mapNotNull {
-        it.annotationTypeRef.coneType.classLikeLookupTag?.classId
+        it.annotationTypeRef.coneType.classLikeLookupTagIfAny?.classId
     }
 }
 

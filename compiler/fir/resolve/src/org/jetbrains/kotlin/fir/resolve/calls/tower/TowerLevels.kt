@@ -422,7 +422,7 @@ internal class ScopeTowerLevel(
                 return when {
                     lookupTag != null -> {
                         bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
-                            implicitReceiverValue.type.fullyExpandedType(session).lookupTag == lookupTag
+                            implicitReceiverValue.type.fullyExpandedType(session).lookupTagIfAny == lookupTag
                         }
                     }
                     else -> null

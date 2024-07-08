@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.lookupTag
+import org.jetbrains.kotlin.fir.types.lookupTagIfAny
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -94,7 +94,7 @@ class FirSealedClassInheritorsProcessor(
         }
 
         private fun extractClassFromTypeRef(typeRef: FirTypeRef): FirRegularClass? {
-            val lookupTag = typeRef.coneType.lookupTag ?: return null
+            val lookupTag = typeRef.coneType.lookupTagIfAny ?: return null
             val classLikeSymbol: FirClassifierSymbol<*> = lookupTag.toSymbol(session) ?: return null
             return when (classLikeSymbol) {
                 is FirRegularClassSymbol -> classLikeSymbol.fir

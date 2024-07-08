@@ -341,8 +341,8 @@ class FirSyntheticPropertiesScope private constructor(
      * }
      */
     private fun isJavaTypeOnThePath(baseType: ConeSimpleKotlinType?): Boolean {
-        val lookupTagToStop = baseType?.lookupTag ?: return false
-        val dispatchReceiverClassSymbol = dispatchReceiverType.lookupTag?.toSymbol(session) ?: return false
+        val lookupTagToStop = baseType?.lookupTagIfAny ?: return false
+        val dispatchReceiverClassSymbol = dispatchReceiverType.lookupTagIfAny?.toSymbol(session) ?: return false
 
         val typeContext = session.typeContext
         fun checkType(type: ConeClassLikeType): Boolean {

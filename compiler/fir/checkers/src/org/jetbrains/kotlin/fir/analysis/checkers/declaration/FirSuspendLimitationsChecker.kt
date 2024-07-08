@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
-import org.jetbrains.kotlin.fir.types.classLikeLookupTag
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -37,7 +37,7 @@ object FirSuspendLimitationsChecker : FirFunctionChecker(MppCheckerKind.Common) 
 
     private fun FirAnnotation.isKotlinTestAnnotation(session: FirSession): Boolean {
         val nonExpandedType = annotationTypeRef.coneType.abbreviatedTypeOrSelf
-        return nonExpandedType.classLikeLookupTag?.classId == StandardClassIds.Annotations.Test
+        return nonExpandedType.classLikeLookupTagIfAny?.classId == StandardClassIds.Annotations.Test
                 || toAnnotationClassId(session) == StandardClassIds.Annotations.Test
     }
 }

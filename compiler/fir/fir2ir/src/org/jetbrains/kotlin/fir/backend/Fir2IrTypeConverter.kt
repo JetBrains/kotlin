@@ -248,10 +248,10 @@ class Fir2IrTypeConverter(
 
     private fun ConeFlexibleType.hasFlexibleArrayElementVariance(): Boolean =
         lowerBound.let { lowerBound ->
-            lowerBound.classLikeLookupTag?.classId == StandardClassIds.Array &&
+            lowerBound.classLikeLookupTagIfAny?.classId == StandardClassIds.Array &&
                     lowerBound.typeArguments.single().kind == ProjectionKind.INVARIANT
         } && upperBound.let { upperBound ->
-            upperBound.classLikeLookupTag?.classId == StandardClassIds.Array &&
+            upperBound.classLikeLookupTagIfAny?.classId == StandardClassIds.Array &&
                     upperBound.typeArguments.single().kind == ProjectionKind.OUT
         }
 

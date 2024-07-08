@@ -102,7 +102,7 @@ fun FirSession.doUnify(
     // Foo? ~ Foo || in Foo ~ Foo || Foo ~ Bar
     if (originalType?.nullability?.isNullable != typeWithParameters?.nullability?.isNullable) return true
     if (originalTypeProjection.kind != typeWithParametersProjection.kind) return true
-    if (originalType?.lookupTag != typeWithParameters?.lookupTag) return true
+    if (originalType?.lookupTagIfAny != typeWithParameters?.lookupTagIfAny) return true
     if (originalType == null || typeWithParameters == null) return true
 
     // Foo<A> ~ Foo<B, C>

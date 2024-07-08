@@ -206,7 +206,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         upperBound: ConeKotlinType//,
         //position: DeclaredUpperBoundConstraintPosition
     ) {
-        if (upperBound.lowerBoundIfFlexible().classLikeLookupTag?.classId == StandardClassIds.Any &&
+        if (upperBound.lowerBoundIfFlexible().classLikeLookupTagIfAny?.classId == StandardClassIds.Any &&
             upperBound.upperBoundIfFlexible().isMarkedNullable
         ) {
             return

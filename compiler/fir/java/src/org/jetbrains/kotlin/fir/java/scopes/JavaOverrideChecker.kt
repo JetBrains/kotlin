@@ -133,7 +133,7 @@ class JavaOverrideChecker internal constructor(
         // Both candidate and base are not primitive
         if (!candidateHasPrimitiveReturnType) return true
 
-        return candidateType.classLikeLookupTag == baseType.classLikeLookupTag
+        return candidateType.classLikeLookupTagIfAny == baseType.classLikeLookupTagIfAny
     }
 
     private fun ConeKotlinType.isPrimitiveInJava(isReturnType: Boolean): Boolean = with(context) {

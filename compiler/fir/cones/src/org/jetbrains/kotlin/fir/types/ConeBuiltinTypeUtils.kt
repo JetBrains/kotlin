@@ -58,13 +58,13 @@ val ConeKotlinType.isArrayTypeOrNullableArrayType: Boolean get() = isArrayType(i
 
 // Same as [KotlinBuiltIns#isNonPrimitiveArray]
 val ConeKotlinType.isNonPrimitiveArray: Boolean
-    get() = classLikeLookupTag?.classId == StandardClassIds.Array
+    get() = classLikeLookupTagIfAny?.classId == StandardClassIds.Array
 
 val ConeKotlinType.isPrimitiveArray: Boolean
-    get() = classLikeLookupTag?.classId in StandardClassIds.primitiveArrayTypeByElementType.values
+    get() = classLikeLookupTagIfAny?.classId in StandardClassIds.primitiveArrayTypeByElementType.values
 
 val ConeKotlinType.isUnsignedArray: Boolean
-    get() = classLikeLookupTag?.classId in StandardClassIds.unsignedArrayTypeByElementType.values
+    get() = classLikeLookupTagIfAny?.classId in StandardClassIds.unsignedArrayTypeByElementType.values
 
 val ConeKotlinType.isPrimitiveOrUnsignedArray: Boolean
     get() = isPrimitiveArray || isUnsignedArray

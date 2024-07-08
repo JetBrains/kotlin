@@ -194,7 +194,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         val session = context.session
 
         val enclosingSuspendFunctionDispatchReceiverOwnerSymbol =
-            enclosingSuspendFunction.dispatchReceiverType?.classLikeLookupTag?.toRegularClassSymbol(session)
+            enclosingSuspendFunction.dispatchReceiverType?.classLikeLookupTagIfAny?.toRegularClassSymbol(session)
         val enclosingSuspendFunctionExtensionReceiverOwnerSymbol = enclosingSuspendFunction.takeIf { it.receiverParameter != null }?.symbol
 
         val (dispatchReceiverExpression, extensionReceiverExpression, extensionReceiverParameterType) =

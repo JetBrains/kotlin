@@ -611,7 +611,7 @@ internal object CheckVisibility : ResolutionStage() {
         }
 
         if (declaration is FirConstructor) {
-            val classSymbol = declaration.returnTypeRef.coneType.classLikeLookupTag?.toSymbol(context.session)
+            val classSymbol = declaration.returnTypeRef.coneType.classLikeLookupTagIfAny?.toSymbol(context.session)
 
             if (classSymbol is FirRegularClassSymbol) {
                 if (classSymbol.fir.classKind.isSingleton) {

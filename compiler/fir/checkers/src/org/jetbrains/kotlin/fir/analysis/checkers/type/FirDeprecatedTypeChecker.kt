@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
-import org.jetbrains.kotlin.fir.types.classLikeLookupTag
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 
 object FirDeprecatedTypeChecker : FirTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = typeRef.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
         if (typeRef !is FirResolvedTypeRef) return
-        val symbol = typeRef.type.abbreviatedTypeOrSelf.classLikeLookupTag?.toSymbol(context.session) ?: return
+        val symbol = typeRef.type.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toSymbol(context.session) ?: return
 
         FirDeprecationChecker.reportApiStatusIfNeeded(source, symbol, context, reporter)
     }
