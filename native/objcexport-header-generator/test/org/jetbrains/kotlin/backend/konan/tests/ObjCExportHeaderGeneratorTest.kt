@@ -465,6 +465,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("internalPublicApi"))
     }
 
+    @Test
+    fun `test - extension with primitive parameter`() {
+        doTest(headersTestDataDir.resolve("extensionWithPrimitiveParameter"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

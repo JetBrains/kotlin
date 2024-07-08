@@ -38,21 +38,36 @@ fun ObjCExportContext.valueParametersAssociated(
         val functionParameter = functionParameters.elementAtOrNull(0)
         result.addIfNotNull(exportSession.mapBridgeToFunctionParameters(bridgeParameter, functionParameter))
     } else {
-        result.addAll(exportSession.mapParameters(bridge, functionParameters))
+        result.addAll(exportSession.mapParameters(function, bridge, functionParameters))
     }
 
     if (result.isEmpty() && bridgeParameters.isNotEmpty()) {
-        result.addAll(exportSession.mapParameters(bridge, functionParameters))
+        result.addAll(exportSession.mapParameters(function, bridge, functionParameters))
     }
 
     return result
 }
 
 private fun KtObjCExportSession.mapParameters(
+    function: KaFunctionSymbol,
     bridge: MethodBridge,
     valueParameters: List<KaValueParameterSymbol>,
 ): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> {
-    return bridge.valueParameters.mapIndexed() { index, valueParameterBridge ->
+
+    val params = if (function.isExtension) {
+        /**
+         * We drop first parameter because first parameter of extension is always extension type itself
+         *
+         * fun String.foo(bar: Int) = Unit
+         * bridge.valueParameters[0] is String
+         * bridge.valueParameters[1] is Int
+         */
+        bridge.valueParameters.drop(1)
+    } else {
+        bridge.valueParameters
+    }
+
+    return params.mapIndexed { index, valueParameterBridge ->
         mapBridgeToFunctionParameters(valueParameterBridge, valueParameters.elementAtOrNull(index))
     }.filterNotNull()
 }
