@@ -1,1 +1,0 @@
-org.jetbrains.kotlin.util.FileAnalysisException: While analysing /invalidAnnotation.fir.kt:11:5: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Expected expression 'FirAnnotationCallImpl' to be resolved

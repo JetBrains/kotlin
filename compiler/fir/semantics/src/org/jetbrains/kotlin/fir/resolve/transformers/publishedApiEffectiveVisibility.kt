@@ -56,9 +56,7 @@ fun computePublishedApiEffectiveVisibility(
     forClass: Boolean,
     session: FirSession,
 ): EffectiveVisibility? {
-    val hasPublishedApiAnnotation = annotations.any {
-        (it.resolvedType as? ConeClassLikeType)?.lookupTag?.classId == StandardClassIds.Annotations.PublishedApi
-    }
+    val hasPublishedApiAnnotation = annotations.hasAnnotationSafe(StandardClassIds.Annotations.PublishedApi, session)
 
     return computePublishedApiEffectiveVisibility(
         hasPublishedApiAnnotation,

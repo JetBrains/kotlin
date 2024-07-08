@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // ISSUE: KT-49962
+// COMPARE_WITH_LIGHT_TREE
 
 import java.io.*
 
