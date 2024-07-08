@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
+import org.jetbrains.kotlin.test.services.fir.FirWithoutAliasExpansionTestSuppressor
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -66,8 +67,12 @@ abstract class AbstractFirLightTreeDiagnosticsTest : AbstractFirDiagnosticTestBa
 abstract class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFirLightTreeDiagnosticsTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.defaultDirectives {
-            +DISABLE_TYPEALIAS_EXPANSION
+        with(builder) {
+            defaultDirectives {
+                +DISABLE_TYPEALIAS_EXPANSION
+            }
+
+            useAfterAnalysisCheckers(::FirWithoutAliasExpansionTestSuppressor)
         }
     }
 }

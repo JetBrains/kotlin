@@ -100,6 +100,12 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             Prints declaration attributes to dumps in load compiled kotlin tests
         """
     )
+
+    val SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE by stringDirective(
+        description = """S
+            Suppresses AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest
+        """
+    )
 }
 
 object DumpCfgOption {
