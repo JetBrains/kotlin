@@ -44,8 +44,6 @@ struct Allocator {
 
     explicit Allocator(Core& core) : core_(&core) {}
 
-    Allocator(const Allocator&) noexcept = default;
-
     template <typename U>
     Allocator(const Allocator<U, Core>& other) noexcept : core_(other.core_) {}
 

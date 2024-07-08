@@ -150,7 +150,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
     private val DEFAULT_CPP_FLAGS = listOfNotNull(
             "-gdwarf-2".takeIf { project.kotlinBuildProperties.getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false) },
             "-std=c++17",
-            // "-Werror", // See https://youtrack.jetbrains.com/issue/KT-67730
+            "-Werror",
             "-O2",
             "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
             "-Wall",
