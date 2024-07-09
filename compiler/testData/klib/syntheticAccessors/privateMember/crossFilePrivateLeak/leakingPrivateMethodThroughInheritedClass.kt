@@ -1,4 +1,8 @@
 // IGNORE_BACKEND: JS_IR
+// ^^^ This test is muted for JS because the produced IR can't be compiled to JS AST:
+//     - Private member declaration `Parent.x` is moved to the top level by `PrivateMembersLowering`.
+//     - `translateCall(IrCall, ...): JsExpression` processes `super.x()` call and attempts to
+//       obtain a dispatch receiver, which is missing for top level declaration.
 
 // FILE: A.kt
 open class Parent {
@@ -6,7 +10,7 @@ open class Parent {
 }
 
 class Child : Parent() {
-    @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+    @Suppress("INVISIBLE_REFERENCE")
     internal inline fun internalInlineMethod() = super.x()
 }
 
