@@ -27,19 +27,13 @@ fun Example(x: Int) {
 @NonRestartableComposable
 @Composable
 fun Example(x: Int, %composer: Composer?, %changed: Int) {
-  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<B()>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  if (%composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "<B()>")
-  val tmp0_group = B(%composer, 0)
-  %composer.endReplaceGroup()
-  tmp0_group) {
+  if (B(%composer, 0)) {
     NA()
-  } else if (%composer.startReplaceGroup(<>)
-  %composer.endReplaceGroup()
-  true) {
+  } else {
     NA()
   }
   if (isTraceInProgress()) {

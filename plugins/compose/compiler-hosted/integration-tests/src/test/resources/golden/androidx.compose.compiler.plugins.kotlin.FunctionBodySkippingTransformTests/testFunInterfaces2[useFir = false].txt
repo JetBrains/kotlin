@@ -64,19 +64,13 @@ fun Test(%composer: Composer?, %changed: Int) {
         @Composable
         override fun getColor(%composer: Composer?, %changed: Int): Color {
           %composer.startReplaceGroup(<>)
-          sourceInformation(%composer, "C(getColor):Test.kt")
+          sourceInformation(%composer, "C(getColor)<condit...>:Test.kt")
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
           }
-          val tmp0 = if (%composer.startReplaceGroup(<>)
-          sourceInformation(%composer, "<condit...>")
-          val tmp1_group = condition(%composer, 0)
-          %composer.endReplaceGroup()
-          tmp1_group) {
+          val tmp0 = if (condition(%composer, 0)) {
             Companion.Red
-          } else if (%composer.startReplaceGroup(<>)
-          %composer.endReplaceGroup()
-          true) {
+          } else {
             Companion.Blue
           }
           if (isTraceInProgress()) {

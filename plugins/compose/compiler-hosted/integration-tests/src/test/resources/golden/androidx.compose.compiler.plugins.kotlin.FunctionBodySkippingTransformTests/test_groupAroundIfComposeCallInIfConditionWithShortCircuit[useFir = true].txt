@@ -21,11 +21,21 @@ fun Test(%composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    ReceiveValue(if (state && %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "<getCon...>")
-    val tmp0_group = getCondition(%composer, 0)
-    %composer.endReplaceGroup()
-    tmp0_group) 0 else 1, %composer, 0)
+    ReceiveValue(if (when {
+      state -> {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<getCon...>")
+        val tmp0_group = getCondition(%composer, 0)
+        %composer.endReplaceGroup()
+        tmp0_group
+      }
+      else -> {
+        %composer.startReplaceGroup(<>)
+        %composer.endReplaceGroup()
+        false
+      }
+    }
+    ) 0 else 1, %composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
