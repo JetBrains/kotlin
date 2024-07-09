@@ -109,7 +109,12 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
 
         fun analyzeExpectActual(sameDriElements: List<T>): List<T> {
             val (expects, actuals) = sameDriElements.partition { it.expectPresentInSet != null }
-            val groupedByOwnExpectWithActualSourceSetIds = expects.map { expect ->
+            // It's possible that there are no `expect` declarations, but there are `actual` declarations,
+            // e.g. in case `expect` is `internal` or filtered previously for some other reason.
+            // In this case we just merge `actual` declarations without `expect`
+            val groupedActualsWithSourceSets = if (expects.isEmpty()) {
+                listOf(actuals to actuals.flatMap { it.sourceSets }.toSet())
+            } else expects.map { expect ->
                 val actualsForGivenExpect = actuals.filter { actual ->
                     dependencyInfo[actual.sourceSets.single()]
                         ?.contains(expect.expectPresentInSet!!)
@@ -118,7 +123,7 @@ public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerg
                 (listOf(expect) + actualsForGivenExpect) to actualsForGivenExpect.flatMap { it.sourceSets }.toSet()
             }
             val reducedToOneDocumentableWithActualSourceSetIds =
-                groupedByOwnExpectWithActualSourceSetIds.map { it.first.reduce(reducer) to it.second }
+                groupedActualsWithSourceSets.map { it.first.reduce(reducer) to it.second }
             return reducedToOneDocumentableWithActualSourceSetIds.let(::mergeClashingElements)
         }
 
