@@ -587,7 +587,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
-        val moduleStructure = ModulesStructure(environmentForJS.project, mainModule, configuration, libraries, friendLibraries)
+        val moduleStructure = ModulesStructure(environmentForJS.project, mainModule, configuration, libraries, friendLibraries, arguments.omitDuplicateNames)
 
         runStandardLibrarySpecialCompatibilityChecks(moduleStructure.allDependencies, isWasm = arguments.wasm, messageCollector)
 
@@ -727,7 +727,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         arguments.granularity,
                         PhaseConfig(jsPhases),
                     )
-                }
+                },
+                omitDuplicateNames = arguments.omitDuplicateNames,
             )
 
             val artifacts = cacheUpdater.actualizeCaches()

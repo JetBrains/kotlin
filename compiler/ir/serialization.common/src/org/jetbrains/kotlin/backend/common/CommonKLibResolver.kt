@@ -23,6 +23,7 @@ object CommonKLibResolver {
         zipAccessor: ZipFileSystemAccessor? = null,
         lenient: Boolean = false,
         knownIrProviders: List<String> = listOf(),
+        omitDuplicateNames: Boolean = false,
     ): KotlinLibraryResolveResult =
         resolveWithoutDependencies(
             libraries,
@@ -30,6 +31,7 @@ object CommonKLibResolver {
             zipAccessor,
             lenient,
             knownIrProviders,
+            omitDuplicateNames,
         ).resolveWithDependencies()
 
     fun resolveWithoutDependencies(
@@ -38,6 +40,7 @@ object CommonKLibResolver {
         zipAccessor: ZipFileSystemAccessor?,
         lenient: Boolean = false,
         knownIrProviders: List<String> = listOf(),
+        omitDuplicateNames: Boolean = false,
     ): KLibResolution {
         val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, lenient) }
         val libraryAbsolutePaths = libraries.map { File(it).absolutePath }
@@ -59,7 +62,8 @@ object CommonKLibResolver {
                 unresolvedLibraries = unresolvedLibraries,
                 noStdLib = true,
                 noDefaultLibs = true,
-                noEndorsedLibs = true
+                noEndorsedLibs = true,
+                omitDuplicateNames = omitDuplicateNames,
             )
         )
     }

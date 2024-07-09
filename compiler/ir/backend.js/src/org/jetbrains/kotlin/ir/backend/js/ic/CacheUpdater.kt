@@ -80,7 +80,8 @@ class CacheUpdater(
     cacheDir: String,
     private val compilerConfiguration: CompilerConfiguration,
     private val irFactory: () -> IrFactory,
-    private val compilerInterfaceFactory: JsIrCompilerICInterfaceFactory
+    private val compilerInterfaceFactory: JsIrCompilerICInterfaceFactory,
+    private val omitDuplicateNames: Boolean = false,
 ) {
     private val stopwatch = StopwatchIC()
 
@@ -117,7 +118,8 @@ class CacheUpdater(
             val allResolvedDependencies = CommonKLibResolver.resolve(
                 allModules,
                 compilerConfiguration.messageCollector.toLogger(),
-                zipAccessor
+                zipAccessor,
+                omitDuplicateNames = omitDuplicateNames,
             )
 
             val libraries = allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->

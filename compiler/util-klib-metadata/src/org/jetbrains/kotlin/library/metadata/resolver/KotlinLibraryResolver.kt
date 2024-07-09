@@ -31,6 +31,7 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
         noStdLib: Boolean = false,
         noDefaultLibs: Boolean = false,
         noEndorsedLibs: Boolean = false,
+        omitDuplicateNames: Boolean = false,
     ): List<KotlinLibrary>
 
     fun List<KotlinLibrary>.resolveDependencies(): KotlinLibraryResolveResult

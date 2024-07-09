@@ -64,4 +64,14 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
             checkFrozen()
             field = value
         }
+
+    @Argument(
+        value = "-Xklib-omit-duplicate-names",
+        description = "Omit additional klibs having same `unique_name` property in the manifest"
+    )
+    var omitDuplicateNames = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 }

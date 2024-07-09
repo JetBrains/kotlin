@@ -36,9 +36,10 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         noStdLib: Boolean,
         noDefaultLibs: Boolean,
         noEndorsedLibs: Boolean,
+        omitDuplicateNames: Boolean,
     ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
         .leaveDistinct()
-        .omitDuplicateNames()
+        .omitDuplicateNames(omitDuplicateNames)
 
     /**
      * Returns the list of libraries based on [libraryNames], [noStdLib], [noDefaultLibs] and [noEndorsedLibs] criteria.
@@ -83,8 +84,8 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
      *  - Overall, we should not do any resolve inside the compiler (such as skipping KLIBs that happen to have repeated `unique_name`).
      *    This is an opaque process which better should be performed by the build system (e.g. Gradle). To be fixed in KT-64169
      */
-    private fun List<KotlinLibrary>.omitDuplicateNames(): List<KotlinLibrary> {
-        groupBy { it.uniqueName }.let { groupedByUniqName ->
+    private fun List<KotlinLibrary>.omitDuplicateNames(doOmitDuplicateNames: Boolean): List<KotlinLibrary> {
+        val deduplicatedLibs = groupBy { it.uniqueName }.let { groupedByUniqName ->
             val librariesWithDuplicatedUniqueNames = groupedByUniqName.filterValues { it.size > 1 }
             librariesWithDuplicatedUniqueNames.entries.sortedBy { it.key }.forEach { (uniqueName, libraries) ->
                 val libraryPaths = libraries.map { it.libraryFile.absolutePath }.sorted().joinToString()
@@ -92,7 +93,11 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
             }
             groupedByUniqName.map { it.value.first() } // This line is the reason of such issues as KT-63573.
         }
-        return this
+        return if (doOmitDuplicateNames) {
+            deduplicatedLibs
+        } else {
+            this
+        }
     }
 
     /**
