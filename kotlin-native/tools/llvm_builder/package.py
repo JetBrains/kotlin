@@ -255,6 +255,7 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination, dry_run):
     branch = default_branch if branch is None else branch
     # Download only single commit because we don't need whole history just for building LLVM.
     run_command([git, "clone", repo, "--branch", branch, "--depth", "1", "llvm-project"], dry_run)
+    run_command([git, '-C', 'llvm-project', 'apply', '../textualHeaderInclude.patch'], dry_run)
     return absolute_path(llvm_repo_destination)
 
 
