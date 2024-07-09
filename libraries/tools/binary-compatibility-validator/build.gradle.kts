@@ -1,34 +1,34 @@
-apply plugin: 'kotlin'
-
-configurations {
-    testArtifacts
+plugins {
+    kotlin("jvm")
 }
+
+val testArtifacts by configurations.creating
 
 dependencies {
     api("org.jetbrains.kotlinx:binary-compatibility-validator:0.15.1")
     api(libs.kotlinx.metadataJvm)
 
-    testApi RepoDependencies.kotlinTest(project, "junit")
+    testApi(kotlinTest("junit"))
 
-    testArtifacts project(':kotlin-stdlib')
-    testArtifacts project(':kotlin-stdlib-jdk7')
-    testArtifacts project(':kotlin-stdlib-jdk8')
-    testArtifacts project(':kotlin-reflect')
+    testArtifacts(project(":kotlin-stdlib"))
+    testArtifacts(project(":kotlin-stdlib-jdk7"))
+    testArtifacts(project(":kotlin-stdlib-jdk8"))
+    testArtifacts(project(":kotlin-reflect"))
 }
 
 sourceSets {
-    test {
+    "test" {
         java {
-            srcDir "src/test/kotlin"
+            srcDir("src/test/kotlin")
         }
     }
 }
 
-test {
-    dependsOn configurations.testArtifacts
+val test by tasks.existing(Test::class) {
+    dependsOn(testArtifacts)
 
-    systemProperty 'overwrite.output', System.getProperty("overwrite.output", "false")
-    systemProperty 'kotlinVersion', project.version
-    systemProperty 'testCasesClassesDirs', sourceSets.test.output.classesDirs.asPath
-    jvmArgs '-ea'
+    systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
+    systemProperty("kotlinVersion", project.version)
+    systemProperty("testCasesClassesDirs", sourceSets["test"].output.classesDirs.asPath)
+    jvmArgs("-ea")
 }
