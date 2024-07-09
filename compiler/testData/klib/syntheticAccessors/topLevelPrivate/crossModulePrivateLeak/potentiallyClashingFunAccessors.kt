@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: ANY
+// ^^^ Muted because of conflicting synthetic accessors for top-level callables. To be fixed in KT-69787.
 
 // MODULE: lib1
 // FILE: lib.kt
