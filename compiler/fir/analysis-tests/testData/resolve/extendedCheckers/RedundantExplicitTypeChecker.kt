@@ -1,4 +1,3 @@
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: TBD
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.TYPE)
@@ -71,7 +70,7 @@ class My {
 val ZERO: Int = 0
 
 fun main() {
-    val <!UNUSED_VARIABLE!>id<!>: <!REDUNDANT_EXPLICIT_TYPE!>Id<!> = 11
+    val <!UNUSED_VARIABLE!>id<!>: Id = 11
 }
 
 typealias Id = Int

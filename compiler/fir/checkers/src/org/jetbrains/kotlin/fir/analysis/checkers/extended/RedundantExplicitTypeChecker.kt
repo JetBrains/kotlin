@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -33,9 +34,9 @@ object RedundantExplicitTypeChecker : FirPropertyChecker(MppCheckerKind.Common) 
 
         if (typeReference.source?.kind is KtFakeSourceElementKind) return
 
-        val type = typeReference.coneType
+        val type = typeReference.coneType.fullyExpandedType(context.session)
 
-        if (type.toSymbol(context.session) is FirTypeAliasSymbol) return
+        if (type.abbreviatedType != null) return
         if (typeReference.annotations.isNotEmpty()) return
 
         when (initializer) {
