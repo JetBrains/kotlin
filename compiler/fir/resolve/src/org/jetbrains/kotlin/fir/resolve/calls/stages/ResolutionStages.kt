@@ -53,30 +53,6 @@ abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
 }
 
-internal object CheckExplicitReceiverConsistency : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val receiverKind = candidate.explicitReceiverKind
-        val explicitReceiver = callInfo.explicitReceiver?.unwrapSmartcastExpression()
-        when (receiverKind) {
-            NO_EXPLICIT_RECEIVER -> {
-                if (explicitReceiver != null && explicitReceiver !is FirResolvedQualifier && !explicitReceiver.isSuperReferenceExpression()) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver(actualType = explicitReceiver.resolvedType))
-                }
-            }
-            EXTENSION_RECEIVER, DISPATCH_RECEIVER -> {
-                if (explicitReceiver == null) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver())
-                }
-            }
-            BOTH_RECEIVERS -> {
-                if (explicitReceiver == null) {
-                    return sink.yieldDiagnostic(InapplicableWrongReceiver())
-                }
-            }
-        }
-    }
-}
-
 object CheckExtensionReceiver : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val callSite = callInfo.callSite
@@ -490,13 +466,6 @@ object CheckDslScopeViolation : ResolutionStage() {
 private fun FirExpression?.isSuperCall(): Boolean {
     if (this !is FirQualifiedAccessExpression) return false
     return calleeReference is FirSuperReference
-}
-
-private fun FirExpression.isSuperReferenceExpression(): Boolean {
-    return if (this is FirQualifiedAccessExpression) {
-        val calleeReference = calleeReference
-        calleeReference is FirSuperReference
-    } else false
 }
 
 internal object MapArguments : ResolutionStage() {
