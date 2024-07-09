@@ -1,3 +1,4 @@
+// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: TBD
 // FIR_IDENTICAL
 @Deprecated("Deprecated class")
 open class DeprecatedClass

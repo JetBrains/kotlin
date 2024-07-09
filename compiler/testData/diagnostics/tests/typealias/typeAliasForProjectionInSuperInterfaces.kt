@@ -1,3 +1,4 @@
+// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: TBD
 interface Inv<T>
 interface Out<out T>
 interface In<in T>

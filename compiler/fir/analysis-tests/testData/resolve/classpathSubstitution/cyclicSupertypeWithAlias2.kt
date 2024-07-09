@@ -1,3 +1,4 @@
+// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: TBD
 // ^Problem with FirCompilerLazyDeclarationResolverWithPhaseChecking
 
 // MODULE: topmost

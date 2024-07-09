@@ -1,3 +1,4 @@
+// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: TBD
 // NI_EXPECTED_FILE
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS)

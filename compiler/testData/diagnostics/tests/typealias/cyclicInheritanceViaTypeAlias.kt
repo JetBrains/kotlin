@@ -1,3 +1,4 @@
+// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: TBD
 class A : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!>() {
     open class Nested<T>
 }
