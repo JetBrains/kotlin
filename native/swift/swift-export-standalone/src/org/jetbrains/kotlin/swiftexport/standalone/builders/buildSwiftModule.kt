@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.sir.util.isValidSwiftIdentifier
-import org.jetbrains.kotlin.swiftexport.standalone.InputModule
-import org.jetbrains.kotlin.swiftexport.standalone.MultipleModulesHandlingStrategy
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
-import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
+import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
@@ -49,7 +46,7 @@ internal fun buildSwiftModule(
     val (useSiteModule, mainModule, scopeProvider) =
         createModuleWithScopeProviderFromBinary(config.distribution, input, dependencies)
     val moduleProvider = when (config.multipleModulesHandlingStrategy) {
-        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> SirOneToOneModuleProvider(mainModuleName = input.name)
+        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> SirOneToOneModuleProvider()
         MultipleModulesHandlingStrategy.IntoSingleModule -> SirSingleModuleProvider(swiftModuleName = input.name)
     }
     val moduleForPackageEnums = when (config.multipleModulesHandlingStrategy) {

@@ -71,12 +71,17 @@ object TestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val SWIFT_EXPORT_CONFIG by valueDirective(
-        "Specify config for Swift Export in the format %KEY_1%=%VALUE_1%, %KEY_2%=%VALUE_2%",
+    val EXPORT_TO_SWIFT by directive(
+        "Marks module for Swift Export",
         applicability = DirectiveApplicability.Module,
-        parser = {
-            it.split("=").let { Pair(it.first(), it.last()) }
-        }
+    )
+
+    val SWIFT_EXPORT_CONFIG by valueDirective(
+        description = """
+            Specify config for Swift Export in the format %KEY_1%=%VALUE_1%, %KEY_2%=%VALUE_2%. Implicitly marks module for Swift Export
+        """.trimIndent(),
+        applicability = DirectiveApplicability.Module,
+        parser = String::splitByEqualitySymbolIntoPairs
     )
 
     val FILE by stringDirective(
@@ -474,3 +479,15 @@ internal class Location(private val testDataFile: File, val lineNumber: Int? = n
         if (lineNumber != null) append(':').append(lineNumber + 1)
     }
 }
+
+fun TestModule.Exclusive.shouldBeExportedToSwift(): Boolean = markedExportedToSwift() || swiftExportConfigMap() != null
+
+fun TestModule.Exclusive.swiftExportConfigMap(): Map<String, String>? = @Suppress("UNCHECKED_CAST") (directives
+    .firstOrNull { it.directive.name == TestDirectives.SWIFT_EXPORT_CONFIG.name }
+    ?.values as? List<Pair<String, String>>)
+    ?.toMap()
+
+private fun TestModule.Exclusive.markedExportedToSwift(): Boolean = directives
+    .any { it.directive.name == TestDirectives.EXPORT_TO_SWIFT.name }
+
+private fun String.splitByEqualitySymbolIntoPairs(): Pair<String, String> = split("=").let { Pair(it.first(), it.last()) }

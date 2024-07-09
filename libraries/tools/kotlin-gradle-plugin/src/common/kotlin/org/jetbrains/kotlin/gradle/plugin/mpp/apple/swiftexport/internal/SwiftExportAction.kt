@@ -66,10 +66,6 @@ internal fun List<SwiftExportModule>.toPlainList(): List<GradleSwiftExportModule
 
         modules.add(kgpModule)
         processedModules.add(kgpModule)
-
-        module.dependencies.forEach {
-            processModule(it)
-        }
     }
 
     this.forEach {

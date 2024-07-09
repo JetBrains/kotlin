@@ -17,6 +17,13 @@ import dependency.three.*
 
 val deps_instance_2: Any = Bar()
 
+// MODULE: main_three(dependency_deeper_neighbor_exported)
+// FILE: main.kt
+import dependency.four.*
+
+typealias Foo = AnotherBar
+val deps_instance_3: Foo = Foo()
+
 // MODULE: dependency(dependency_deeper,dependency_deeper_neighbor)
 // FILE: foo_deps.kt
 package dependency.one
@@ -38,3 +45,10 @@ fun bar() = 5
 package dependency.three
 
 class Bar
+
+// MODULE: dependency_deeper_neighbor_exported()
+// EXPORT_TO_SWIFT
+// FILE: bar_deps_deeper.kt
+package dependency.four
+
+class AnotherBar

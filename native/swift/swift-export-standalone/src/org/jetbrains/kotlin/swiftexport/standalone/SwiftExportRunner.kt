@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
-import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.*
@@ -95,20 +94,35 @@ public sealed interface InputModule {
 
 public sealed class SwiftExportModule(
     public val name: String,
-    public val dependencies: List<SwiftExportModule>
+    public val dependencies: List<Reference>
 ) : Serializable {
 
+    public class Reference(
+        public val name: String
+    ) {
+        public lateinit var module: SwiftExportModule
+    }
+
+    // used by packages module only
     public class SwiftOnly(
         public val swiftApi: Path,
         name: String,
-        dependencies: List<SwiftExportModule>
-    ): SwiftExportModule(name, dependencies)
+    ) : SwiftExportModule(name, emptyList()) {
+        override fun equals(other: Any?): Boolean =
+            other is SwiftOnly && swiftApi == other.swiftApi && name == other.name
+
+        override fun hashCode(): Int {
+            var result = swiftApi.hashCode()
+            result = 31 * result + name.hashCode()
+            return result
+        }
+    }
 
     public class BridgesToKotlin(
         public val files: SwiftExportFiles,
         public val bridgeName: String,
         name: String,
-        dependencies: List<SwiftExportModule>,
+        dependencies: List<Reference>,
     ) : SwiftExportModule(name, dependencies)
 }
 
@@ -146,9 +160,8 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
 // fixme: KT-68864
 public fun runSwiftExport(
     input: InputModule.Binary,
-    dependencies: List<InputModule.Binary> = emptyList(),
     config: SwiftExportConfig,
-): Result<List<SwiftExportModule>> = runSwiftExport(input, dependencies, null, config)
+): Result<List<SwiftExportModule>> = runSwiftExport(input, emptyList(), null, config)
 
 /**
  * A root function for running Swift Export from build tool
@@ -220,20 +233,34 @@ public fun runSwiftExport(
             additionalSwiftLinesProvider = additionalSwiftLinesProvider,
         )
     }
-    return@runCatching listOf(
-        SwiftExportModule.BridgesToKotlin(
-            name = buildResult.mainModule.name,
-            dependencies = if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.IntoSingleModule) emptyList() else listOf(
-                SwiftExportModule.SwiftOnly(
-                    name = buildResult.moduleForPackageEnums.name,
-                    dependencies = emptyList(),
-                    swiftApi = buildResult.moduleForPackageEnums.createOutputFiles(config.outputPath.parent).swiftApi,
-                )
-            ),
-            bridgeName = bridgesModuleName,
-            files = buildResult.mainModule.createOutputFiles(config.outputPath)
+
+    val resultingDependencies = buildList {
+        if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.OneToOneModuleMapping) {
+            addReference(buildResult.moduleForPackageEnums.name)
+        }
+        buildResult.mainModule.imports
+            .filter { it.moduleName !in setOf(buildResult.moduleForPackageEnums.name, KotlinRuntimeModule.name, bridgesModuleName) }
+            .forEach { addReference(it.moduleName) }
+    }
+
+    return@runCatching buildList {
+        add(
+            SwiftExportModule.BridgesToKotlin(
+                name = buildResult.mainModule.name,
+                dependencies = resultingDependencies,
+                bridgeName = bridgesModuleName,
+                files = buildResult.mainModule.createOutputFiles(config.outputPath)
+            )
         )
-    )
+        if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.OneToOneModuleMapping) {
+            add(
+                SwiftExportModule.SwiftOnly(
+                    name = moduleForPackages!!.name,
+                    swiftApi = buildResult.moduleForPackageEnums.createOutputFiles(config.outputPath.parent).swiftApi
+                )
+            )
+        }
+    }
 }
 
 private fun SirModule.createOutputFiles(outputPath: Path): SwiftExportFiles = SwiftExportFiles(
@@ -241,3 +268,6 @@ private fun SirModule.createOutputFiles(outputPath: Path): SwiftExportFiles = Sw
     kotlinBridges = (outputPath / name / "$name.kt"),
     cHeaderBridges = (outputPath / name / "$name.h")
 )
+
+private fun MutableList<SwiftExportModule.Reference>.addReference(destinationModuleName: String): Boolean =
+    add(SwiftExportModule.Reference(destinationModuleName))
