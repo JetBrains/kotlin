@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/withLibDuplicatedUniqueName.kt
+-Xir-produce-klib-dir
+-Xir-only
+-libraries
+$STDLIB_JS$:$TESTDATA_DIR$/folderAsLib:$TESTDATA_DIR$/folderAsLibDuplicatedUniqueName
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

@@ -1,0 +1,5 @@
+warning: KLIB resolver: The same 'unique_name=LibraryExample' found in more than one library: $TESTDATA_DIR$/folderAsLib, $TESTDATA_DIR$/folderAsLibDuplicatedUniqueName
+compiler/testData/cli/js/withLibDuplicatedUniqueName.kt:8:13: error: unresolved reference 'pairSub'.
+    val y = pairSub(p)
+            ^^^^^^^
+COMPILATION_ERROR

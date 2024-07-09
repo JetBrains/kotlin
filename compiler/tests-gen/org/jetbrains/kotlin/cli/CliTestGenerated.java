@@ -1600,6 +1600,11 @@ public class CliTestGenerated extends AbstractCliTest {
     public void testWithLib() {
       runTest("compiler/testData/cli/js/withLib.args");
     }
+
+    @TestMetadata("withLibDuplicatedUniqueName.args")
+    public void testWithLibDuplicatedUniqueName() {
+      runTest("compiler/testData/cli/js/withLibDuplicatedUniqueName.args");
+    }
   }
 
   @TestMetadata("compiler/testData/cli/js-dce")
