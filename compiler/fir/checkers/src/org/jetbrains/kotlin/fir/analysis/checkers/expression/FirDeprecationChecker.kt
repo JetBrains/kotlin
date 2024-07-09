@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCallToDeprecatedOverrideOfHidden
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -53,7 +54,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         if (expression is FirDelegatedConstructorCall) {
             // Report deprecations on the constructor itself, not on the declaring class as that will be handled by FirDeprecatedTypeChecker
             val constructorOnlyDeprecation = referencedSymbol.getDeprecation(context.session, expression) ?: return
-            val isTypealiasExpansion = expression.constructedTypeRef.coneType.isTypealiasExpansion
+            val isTypealiasExpansion = expression.constructedTypeRef.coneType.fullyExpandedType(context.session).isTypealiasExpansion
 
             reportApiStatus(
                 source, referencedSymbol, isTypealiasExpansion,
