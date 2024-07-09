@@ -191,14 +191,6 @@ fun main() {
         // KLIB synthetic accessor tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData/klib/syntheticAccessors") {
             testClass<AbstractNativeKlibSyntheticAccessorTest>(
-                suiteTestClassName = "ClassicNativeKlibSyntheticAccessorTestGenerated",
-                annotations = listOf(
-                    *klibSyntheticAccessors(),
-                )
-            ) {
-                model(targetBackend = TargetBackend.NATIVE)
-            }
-            testClass<AbstractNativeKlibSyntheticAccessorTest>(
                 suiteTestClassName = "FirNativeKlibSyntheticAccessorTestGenerated",
                 annotations = listOf(
                     *klibSyntheticAccessors(),

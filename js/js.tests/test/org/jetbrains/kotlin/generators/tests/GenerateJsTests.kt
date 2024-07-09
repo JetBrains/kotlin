@@ -55,9 +55,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/klib/syntheticAccessors") {
-            testClass<AbstractClassicJsKlibSyntheticAccessorTest> {
-                model()
-            }
             testClass<AbstractFirJsKlibSyntheticAccessorTest> {
                 model()
             }

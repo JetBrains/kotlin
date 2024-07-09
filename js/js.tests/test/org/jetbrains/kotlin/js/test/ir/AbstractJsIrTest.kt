@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -209,18 +208,3 @@ open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
     testGroupOutputDirPrefix = "codegen/irWasmJsInteropJs/"
 )
-
-// TODO(KT-64570): Don't inherit from AbstractJsIrTest after we move the common prefix of lowerings before serialization.
-open class AbstractClassicJsKlibSyntheticAccessorTest : AbstractJsIrTest(
-    pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
-    testGroupOutputDirPrefix = "klib/syntheticAccessors-k1/",
-) {
-
-    override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForJsBlackBoxCodegenTest()
-        defaultDirectives {
-            +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
-            +CodegenTestDirectives.ENABLE_EXPERIMENTAL_DOUBLE_INLINING
-        }
-    }
-}
