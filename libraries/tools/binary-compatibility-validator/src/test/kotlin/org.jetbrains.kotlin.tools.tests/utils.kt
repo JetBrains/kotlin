@@ -25,7 +25,7 @@ fun List<ClassBinarySignature>.dumpAndCompareWith(to: File) {
     }
 }
 
-private fun assertEqualsToFile(expectedFile: File, actual: CharSequence) {
+fun assertEqualsToFile(expectedFile: File, actual: CharSequence) {
     val actualText = actual.trimTrailingWhitespacesAndAddNewlineAtEOF()
     val expectedText = expectedFile.readText().trimTrailingWhitespacesAndAddNewlineAtEOF()
 
@@ -96,6 +96,19 @@ private fun CharSequence.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
     this.lineSequence().map { it.trimEnd() }.joinToString(separator = "\n").let {
         if (it.endsWith("\n")) it else it + "\n"
     }
+
+fun getLibFile(base: File, namePattern: String, kotlinVersion: String?, extension: String): File {
+    val versionPattern = kotlinVersion?.let { "-" + Regex.escape(it) } ?: ".+"
+    val regex = Regex("$namePattern$versionPattern\\.$extension")
+    val files = (base.listFiles() ?: throw Exception("Cannot list files in $base"))
+        .filter { it.name.let {
+            it matches regex
+                    && !it.endsWith("-sources.jar")
+                    && !it.endsWith("-javadoc.jar") } }
+
+    return files.singleOrNull() ?: throw Exception("No single file matching $regex in $base:\n${files.joinToString("\n")}")
+}
+
 
 
 private val UPPER_CASE_CHARS = Regex("[A-Z]+")
