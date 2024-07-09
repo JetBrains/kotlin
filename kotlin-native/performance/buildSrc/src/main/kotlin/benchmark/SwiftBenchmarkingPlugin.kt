@@ -106,14 +106,15 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         return try {
             val processBuilder = ProcessBuilder(*this)
                     .directory(workingDir)
+                    .redirectErrorStream(true)
                     .redirectOutput(ProcessBuilder.Redirect.PIPE)
-                    .redirectError(ProcessBuilder.Redirect.PIPE)
             env.forEach { key, value ->
                 processBuilder.environment().set(key, value)
             }
-            processBuilder.start().apply {
-                waitFor(timeoutAmount, timeoutUnit)
-            }.inputStream.bufferedReader().readText()
+            val process = processBuilder.start()
+            val output = process.inputStream.bufferedReader().readText()
+            process.waitFor(timeoutAmount, timeoutUnit)
+            return output
         } catch (e: Exception) {
             println("Couldn't run command ${this.joinToString(" ")}")
             println(e.stackTrace.joinToString("\n"))
