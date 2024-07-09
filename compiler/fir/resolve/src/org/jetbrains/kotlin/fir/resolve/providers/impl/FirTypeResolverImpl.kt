@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
@@ -30,10 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @ThreadSafeMutableState
 class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
@@ -500,25 +494,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val diagnostic: ConeDiagnostic?,
         override val applicability: CandidateApplicability
     ) : AbstractCandidate() {
-
-        override val dispatchReceiver: ConeResolutionAtom?
-            get() = null
-
-        override val chosenExtensionReceiver: ConeResolutionAtom?
-            get() = null
-
-        override val explicitReceiverKind: ExplicitReceiverKind
-            get() = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
-
-        override val diagnostics: List<ResolutionDiagnostic>
-            get() = emptyList()
-
-        override val errors: List<ConstraintSystemError>
-            get() = emptyList()
-
-        override val callInfo: AbstractCallInfo
-            get() = shouldNotBeCalled()
-
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is TypeCandidate) return false

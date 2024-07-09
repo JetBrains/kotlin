@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private fun ConeDiagnostic.toKtDiagnostic(
-    session: FirSession,
     source: KtSourceElement?,
     callOrAssignmentSource: KtSourceElement?
 ): KtDiagnostic? = when (this) {
@@ -124,12 +123,16 @@ private fun ConeDiagnostic.toKtDiagnostic(
         } -> null
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
-            val (unsafeCall, candidate) = candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnsafeCall>()?.to(it) }
+            val (unsafeCall, candidate) = candidates.firstNotNullOf {
+                (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<UnsafeCall>()?.to(it)
+            }
             mapUnsafeCallError(candidate, unsafeCall, source, callOrAssignmentSource)
         }
 
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
-            val unstableSmartcast = this.candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnstableSmartCast>() }
+            val unstableSmartcast = this.candidates.firstNotNullOf {
+                (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<UnstableSmartCast>()
+            }
             unstableSmartcast.mapUnstableSmartCast()
         }
 
@@ -220,12 +223,12 @@ fun ConeDiagnostic.toFirDiagnostics(
     return when (this) {
         is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, this, source, callOrAssignmentSource)
         is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, this, source, callOrAssignmentSource)
-        else -> listOfNotNull(toKtDiagnostic(session, source, callOrAssignmentSource))
+        else -> listOfNotNull(toKtDiagnostic(source, callOrAssignmentSource))
     }
 }
 
 private fun mapUnsafeCallError(
-    candidate: AbstractCandidate,
+    candidate: AbstractCallCandidate<*>,
     rootCause: UnsafeCall,
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
@@ -487,7 +490,7 @@ private fun ConstraintSystemError.toDiagnostic(
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
     typeContext: ConeTypeContext,
-    candidate: AbstractCandidate,
+    candidate: AbstractCallCandidate<*>,
 ): KtDiagnostic? {
     return when (this) {
         is NewConstraintError -> {
@@ -605,7 +608,7 @@ private fun ConstraintSystemError.toDiagnostic(
     }
 }
 
-private fun AbstractCandidate.sourceOfCallToSymbolWith(
+private fun AbstractCallCandidate<*>.sourceOfCallToSymbolWith(
     typeVariable: ConeTypeVariable,
 ): KtSourceElement? {
     if (typeVariable !is ConeTypeParameterBasedTypeVariable) return null

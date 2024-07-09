@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
@@ -268,7 +268,11 @@ internal class KaFirResolver(
             val candidateCalls = mutableListOf<KaCall>()
             if (diagnostic is ConeDiagnosticWithCandidates) {
                 diagnostic.candidates.mapNotNullTo(candidateCalls) {
-                    createKtCall(psi, call, calleeReference, it, resolveFragmentOfCall)
+                    if (it is AbstractCallCandidate<*>) {
+                        createKtCall(psi, call, calleeReference, it, resolveFragmentOfCall)
+                    } else {
+                        null
+                    }
                 }
             } else {
                 candidateCalls.addIfNotNull(createKtCall(psi, call, calleeReference, null, resolveFragmentOfCall))
@@ -405,7 +409,7 @@ internal class KaFirResolver(
     private fun createKtCall(
         psi: KtElement,
         fir: FirResolvable,
-        candidate: AbstractCandidate?,
+        candidate: AbstractCallCandidate<*>?,
         resolveFragmentOfCall: Boolean,
     ): KaCall? {
         return createKtCall(psi, fir, fir.calleeReference, candidate, resolveFragmentOfCall)
@@ -415,7 +419,7 @@ internal class KaFirResolver(
         psi: KtElement,
         fir: FirElement,
         calleeReference: FirReference,
-        candidate: AbstractCandidate?,
+        candidate: AbstractCallCandidate<*>?,
         resolveFragmentOfCall: Boolean,
     ): KaCall? {
         val targetSymbol = candidate?.symbol
