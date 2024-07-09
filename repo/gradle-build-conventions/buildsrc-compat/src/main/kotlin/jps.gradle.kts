@@ -56,6 +56,7 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-maven-serialization",
         "libraries/tools/kotlin-noarg",
         "libraries/tools/kotlin-osgi-bundle",
+        "libraries/tools/kotlin-privacy-manifests-plugin",
         "libraries/tools/kotlin-power-assert",
         "libraries/tools/kotlin-prepush-hook",
         "libraries/tools/kotlin-sam-with-receiver",
