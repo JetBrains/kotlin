@@ -19,17 +19,26 @@ package androidx.compose.compiler.plugins.kotlin.k2
 import androidx.compose.compiler.plugins.kotlin.COMPOSE_PLUGIN_ID
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ComposeMetadata
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctionsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenPropertiesSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationStringParameter
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -52,6 +61,9 @@ fun FirBasedSymbol<*>.hasReadOnlyComposableAnnotation(session: FirSession): Bool
 fun FirAnnotationContainer.hasDisallowComposableCallsAnnotation(session: FirSession): Boolean =
     hasAnnotation(ComposeClassIds.DisallowComposableCalls, session)
 
+fun FirAnnotationContainer.hasComposableTargetMarkerAnnotation(session: FirSession): Boolean =
+    hasAnnotation(ComposeClassIds.ComposableTargetMarker, session)
+
 fun FirCallableSymbol<*>.isComposable(session: FirSession): Boolean =
     when (this) {
         is FirFunctionSymbol<*> ->
@@ -62,6 +74,21 @@ fun FirCallableSymbol<*>.isComposable(session: FirSession): Boolean =
             } ?: false
         else -> false
     }
+
+fun FirValueParameterSymbol.isComposable(context: CheckerContext): Boolean =
+    resolvedReturnType.customAnnotations.hasAnnotation(ComposeClassIds.Composable, context.session) ||
+            findSamFunction(context)?.isComposable(context.session) == true
+
+private fun FirValueParameterSymbol.findSamFunction(context: CheckerContext): FirNamedFunctionSymbol? {
+    val type = resolvedReturnType
+    val session = context.session
+    val classSymbol = type.toClassSymbol(session) ?: return null
+    val samFunction = classSymbol
+        .unsubstitutedScope(session, context.scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
+        .collectAllFunctions()
+        .singleOrNull { it.modality == Modality.ABSTRACT }
+    return samFunction
+}
 
 fun FirCallableSymbol<*>.isReadOnlyComposable(session: FirSession): Boolean =
     when (this) {
@@ -106,7 +133,7 @@ fun FirFunction.getDirectOverriddenFunctions(
             }
         }
         else -> listOf()
-    }
+    }.map { it.originalOrSelf() }
 }
 
 // TODO: Replace this with the FIR MainFunctionDetector once it lands upstream!

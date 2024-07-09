@@ -37,6 +37,7 @@ class ComposeFirExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::ComposableFunctionTypeKindExtension
         +::ComposeFirCheckersExtension
+        +::ComposableTargetSessionStorage
 
         registerDiagnosticContainers(ComposeErrors)
     }
@@ -115,7 +116,7 @@ class ComposeFirCheckersExtension(session: FirSession) : FirAdditionalCheckersEx
 
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> =
-            setOf(ComposableFunctionCallChecker)
+            setOf(ComposableFunctionCallChecker, ComposableTargetChecker)
 
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> =
             setOf(ComposablePropertyAccessExpressionChecker)

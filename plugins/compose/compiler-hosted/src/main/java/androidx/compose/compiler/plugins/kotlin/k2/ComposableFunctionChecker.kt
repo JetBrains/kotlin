@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
-import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -39,7 +38,7 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFunction) {
         val isComposable = declaration.hasComposableAnnotation(context.session)
 
-        val overrides = declaration.getDirectOverriddenFunctions(context).map { it.originalOrSelf() }
+        val overrides = declaration.getDirectOverriddenFunctions(context)
         // Check overrides for mismatched composable annotations
         for (override in overrides) {
             if (override.isComposable(context.session) != isComposable) {
@@ -48,9 +47,12 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                     FirErrors.CONFLICTING_OVERLOADS,
                     listOf(declaration.symbol, override)
                 )
+            } else if (override.isComposable(context.session) && !override.toScheme().canOverride(declaration.symbol.toScheme())) {
+                reporter.reportOn(
+                    source = declaration.source,
+                    factory = ComposeErrors.COMPOSE_APPLIER_DECLARATION_MISMATCH,
+                )
             }
-
-            // TODO(b/282135108): Check scheme of override against declaration
         }
 
         // Check that `actual` composable declarations have composable expects

@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.k2
 
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 
@@ -106,6 +107,25 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
             ComposeErrors.COMPOSABLE_INAPPLICABLE_TYPE,
             "@Composable annotation is not applicable to {0}",
             FirDiagnosticRenderers.RENDER_TYPE
+        )
+
+        map.put(
+            ComposeErrors.COMPOSE_APPLIER_CALL_MISMATCH,
+            "Calling a {1} composable function where a {0} composable was expected",
+            KtDiagnosticRenderers.TO_STRING,
+            KtDiagnosticRenderers.TO_STRING
+        )
+
+        map.put(
+            ComposeErrors.COMPOSE_APPLIER_PARAMETER_MISMATCH,
+            "A {1} composable parameter was provided where a {0} composable was expected",
+            KtDiagnosticRenderers.TO_STRING,
+            KtDiagnosticRenderers.TO_STRING
+        )
+
+        map.put(
+            ComposeErrors.COMPOSE_APPLIER_DECLARATION_MISMATCH,
+            "The composition target of an override must match the ancestor target"
         )
     }
 }

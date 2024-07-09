@@ -45,6 +45,7 @@ object ComposeClassIds {
     val ComposableLambda = internalClassIdFor("ComposableLambda")
     val ComposableOpenTarget = classIdFor("ComposableOpenTarget")
     val ComposableTarget = classIdFor("ComposableTarget")
+    val ComposableTargetMarker = classIdFor("ComposableTargetMarker")
     val ComposeVersion = classIdFor("ComposeVersion")
     val Composer = classIdFor("Composer")
     val DisallowComposableCalls = classIdFor("DisallowComposableCalls")
@@ -104,6 +105,7 @@ object ComposeFqNames {
     val ComposableTarget = ComposeClassIds.ComposableTarget.asSingleFqName()
     val ComposableTargetMarker = fqNameFor("ComposableTargetMarker")
     val ComposableTargetMarkerDescription = "description"
+    val ComposableTargetMarkerDescriptionName = Name.identifier(ComposableTargetMarkerDescription)
     val ComposableTargetApplierArgument = Name.identifier("applier")
     val ComposableOpenTarget = ComposeClassIds.ComposableOpenTarget.asSingleFqName()
     val ComposableOpenTargetIndexArgument = Name.identifier("index")

@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -81,6 +80,19 @@ object ComposeErrors : KtDiagnosticsContainer() {
 
     val MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL by error0<PsiElement>(
         SourceElementPositioningStrategies.DECLARATION_NAME
+    )
+
+    val COMPOSE_APPLIER_CALL_MISMATCH by warning2<PsiElement, String, String>(
+        SourceElementPositioningStrategy(
+            LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
+            PositioningStrategies.CALL_EXPRESSION
+        )
+    )
+
+    val COMPOSE_APPLIER_PARAMETER_MISMATCH by warning2<PsiElement, String, String>()
+
+    val COMPOSE_APPLIER_DECLARATION_MISMATCH by warning0<PsiElement>(
+        ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
     )
 
     val COMPOSABLE_INAPPLICABLE_TYPE by error1<PsiElement, ConeKotlinType>()

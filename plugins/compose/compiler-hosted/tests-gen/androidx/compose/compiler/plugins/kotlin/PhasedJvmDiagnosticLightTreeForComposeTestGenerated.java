@@ -29,4 +29,16 @@ public class PhasedJvmDiagnosticLightTreeForComposeTestGenerated extends Abstrac
   public void testNoOverrideWarning() {
     runTest("plugins/compose/compiler-hosted/testData/diagnostics/noOverrideWarning.kt");
   }
+
+  @Test
+  @TestMetadata("targetWarnings.kt")
+  public void testTargetWarnings() {
+    runTest("plugins/compose/compiler-hosted/testData/diagnostics/targetWarnings.kt");
+  }
+
+  @Test
+  @TestMetadata("targetWarningsOtherModule.kt")
+  public void testTargetWarningsOtherModule() {
+    runTest("plugins/compose/compiler-hosted/testData/diagnostics/targetWarningsOtherModule.kt");
+  }
 }

@@ -1,0 +1,3 @@
+/module_main_targetWarnings.kt:(336,342): warning: Calling a Vector composable function where a UI composable was expected
+
+/module_main_targetWarnings.kt:(428,430): warning: Calling a UI composable function where a Vector composable was expected
