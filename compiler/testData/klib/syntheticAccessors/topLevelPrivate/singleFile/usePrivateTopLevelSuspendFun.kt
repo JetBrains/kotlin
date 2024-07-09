@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: JS_IR
-// The test if failing for JS on IR visibility validation but for
-// invisible `internal fun sharedBoxCreate` from stdlib.
-// See https://youtrack.jetbrains.com/issue/KT-67304
+// ^^^ This test fails due to visibility violation on access to JS `internal` intrinsic functions
+//     `kotlin.sharedBoxCreate`, `kotlin.sharedBoxRead` and `kotlin.sharedBoxWrite`. To be fixed in KT-67304.
 // WITH_COROUTINES
 
 import kotlin.coroutines.*
