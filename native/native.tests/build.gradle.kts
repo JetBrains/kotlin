@@ -21,7 +21,6 @@ dependencies {
     testImplementation(project(":compiler:ir.serialization.native"))
     testImplementation(project(":compiler:fir:native"))
     testImplementation(project(":kotlin-util-klib-abi"))
-    testImplementation(project(":native:swift:sir"))
     testImplementation(project(":native:swift:swift-export-standalone"))
     testImplementation(projectTests(":kotlin-util-klib-abi"))
     testApi(platform(libs.junit.bom))

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createModuleMap
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.KotlinNativePaths
@@ -72,32 +71,17 @@ abstract class AbstractNativeSwiftExportTest {
         val modulesMarkedForExport = originalTestCase.modules.filterToSetOrEmpty { it.shouldBeExportedToSwift() }
         val modulesToExport = rootModules + modulesMarkedForExport
 
+        val input = modulesToExport.mapToSet {
+            it.constructSwiftInput(
+                originalTestCase.freeCompilerArgs,
+                constructSwiftExportConfig(it)
+            )
+        }
+
         // run swift export
-
-        // this code will be moved into swift-export-standalone during KT-68864. currently this is a hack
-        // ATTENTION:
-        // 1. Each call to `runSwiftExport` will end with a write operation of contents of this module onto file-system.
-        // 2. Each call to `runSwiftExport` will modify this module AND there is no synchronization mechanism inplace.
-        val moduleForPackages = buildModule {
-            name = "ExportedKotlinPackages"
-        }
-        val swiftExportOutputs = modulesToExport.flatMapToSet { rootModule ->
-            val (swiftExportInput, klibDeps) = rootModule.constructSwiftInput(originalTestCase.freeCompilerArgs)
-            runSwiftExport(
-                swiftExportInput,
-                klibDeps,
-                moduleForPackages,
-                constructSwiftExportConfig(rootModule)
-            ).getOrThrow()
-        }
-
-        // patch references (will be moved into runner during KT-68864)
-        swiftExportOutputs.forEach { realModule ->
-            realModule.dependencies.forEach { dep ->
-                dep.module = swiftExportOutputs.first { it.name == dep.name }
-            }
-        }
-
+        val swiftExportOutputs = runSwiftExport(
+            input
+        ).getOrThrow()
 
         // compile kotlin into binary
         val additionalKtFiles: Set<Path> = mutableSetOf<Path>()
@@ -140,12 +124,10 @@ abstract class AbstractNativeSwiftExportTest {
         )
     }
 
-    private data class SwiftInputModules(
-        val moduleToTranslate: InputModule.Binary,
-        val dependencies: List<InputModule.Binary>
-    )
-
-    private fun TestModule.Exclusive.constructSwiftInput(freeCompilerArgs: TestCompilerArgs): SwiftInputModules {
+    private fun TestModule.Exclusive.constructSwiftInput(
+        freeCompilerArgs: TestCompilerArgs,
+        config: SwiftExportConfig,
+    ): InputModule {
         val moduleToTranslate = this
         val klibToTranslate = testCompilationFactory.modulesToKlib(
             sourceModules = setOf(moduleToTranslate),
@@ -153,23 +135,10 @@ abstract class AbstractNativeSwiftExportTest {
             settings = testRunSettings,
             produceStaticCache = ProduceStaticCache.No,
         )
-        return SwiftInputModules(
-            moduleToTranslate = InputModule.Binary(
-                path = Path(klibToTranslate.klib.result.assertSuccess().resultingArtifact.path),
-                name = moduleToTranslate.name
-            ),
-            dependencies = moduleToTranslate.allRegularDependencies.map {
-                val klib = testCompilationFactory.modulesToKlib(
-                    sourceModules = setOf(it),
-                    freeCompilerArgs = freeCompilerArgs,
-                    settings = testRunSettings,
-                    produceStaticCache = ProduceStaticCache.No,
-                ).klib.result.assertSuccess().resultingArtifact
-                InputModule.Binary(
-                    path = Path(klib.path),
-                    name = it.name
-                )
-            }
+        return InputModule(
+            path = Path(klibToTranslate.klib.result.assertSuccess().resultingArtifact.path),
+            name = moduleToTranslate.name,
+            config = config,
         )
     }
 

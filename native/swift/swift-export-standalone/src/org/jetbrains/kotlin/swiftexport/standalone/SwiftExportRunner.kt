@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
+import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.*
@@ -82,15 +83,11 @@ public enum class ErrorTypeStrategy {
     }
 }
 
-public sealed interface InputModule {
-    public val name: String
-    public val path: Path
-
-    public class Binary(
-        override val name: String,
-        override val path: Path,
-    ) : InputModule
-}
+public data class InputModule(
+    public val name: String,
+    public val path: Path,
+    public val config: SwiftExportConfig,
+)
 
 public sealed class SwiftExportModule(
     public val name: String,
@@ -155,23 +152,50 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
     }
 }
 
-// temporal HACK.
-// Otherwise SirModule becomes part of public API and there is no reason to actually do that in long run.
-// fixme: KT-68864
-public fun runSwiftExport(
-    input: InputModule.Binary,
-    config: SwiftExportConfig,
-): Result<List<SwiftExportModule>> = runSwiftExport(input, emptyList(), null, config)
-
 /**
  * A root function for running Swift Export from build tool
  */
 public fun runSwiftExport(
-    input: InputModule.Binary,
-    dependencies: List<InputModule.Binary> = emptyList(),
-    moduleForPackages: SirModule?,
-    config: SwiftExportConfig,
+    input: Set<InputModule>,
+): Result<Set<SwiftExportModule>> = runCatching {
+    // ATTENTION:
+    // 1. Each call to `actualRunSwiftExport` will end with a write operation of contents of this module onto file-system.
+    // 2. Each call to `actualRunSwiftExport` will modify this module AND there is no synchronization mechanism inplace.
+    val moduleForPackages = buildModule {
+        name = "ExportedKotlinPackages"
+    }
+
+    val swiftExportOutputs = input.flatMap { rootModule ->
+        /**
+         * This value represents dependencies of current module.
+         * The actual dependency graph is unknown at this point - there is only an array of modules to translate. This particular value
+         * will be used to initialize Analysis API session. It is an error to pass module as a dependency to itself - therefor there is
+         * a need to remove the current translation module from the list of dependencies.
+         */
+        val dependencies = input - rootModule
+        actualRunSwiftExport(
+            input = rootModule,
+            dependencies = dependencies,
+            moduleForPackages = moduleForPackages,
+        ).getOrThrow()
+    }.toSet()
+
+    swiftExportOutputs.forEach { realModule ->
+        realModule.dependencies.forEach { dep ->
+            dep.module = swiftExportOutputs.first { it.name == dep.name }
+        }
+    }
+
+    return@runCatching swiftExportOutputs
+}
+
+
+private fun actualRunSwiftExport(
+    input: InputModule,
+    dependencies: Set<InputModule>,
+    moduleForPackages: SirModule,
 ): Result<List<SwiftExportModule>> = runCatching {
+    val config = input.config
     val stableDeclarationsOrder = config.settings.containsKey(STABLE_DECLARATIONS_ORDER)
     val renderDocComments = config.settings[RENDER_DOC_COMMENTS] != "false"
     val bridgeModuleNamePrefix = config.settings.getOrElse(BRIDGE_MODULE_NAME) {
@@ -255,7 +279,7 @@ public fun runSwiftExport(
         if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.OneToOneModuleMapping) {
             add(
                 SwiftExportModule.SwiftOnly(
-                    name = moduleForPackages!!.name,
+                    name = moduleForPackages.name,
                     swiftApi = buildResult.moduleForPackageEnums.createOutputFiles(config.outputPath.parent).swiftApi
                 )
             )

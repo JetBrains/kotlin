@@ -37,8 +37,8 @@ internal class SwiftModuleBuildResults(
 )
 
 internal fun buildSwiftModule(
-    input: InputModule.Binary,
-    dependencies: List<InputModule.Binary>,
+    input: InputModule,
+    dependencies: Set<InputModule>,
     moduleForPackages: SirModule?,
     config: SwiftExportConfig,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
@@ -104,8 +104,8 @@ private data class ModuleWithScopeProvider(
 
 private fun createModuleWithScopeProviderFromBinary(
     kotlinDistribution: Distribution,
-    input: InputModule.Binary,
-    dependencies: List<InputModule.Binary>,
+    input: InputModule,
+    dependencies: Set<InputModule>,
 ): ModuleWithScopeProvider {
     lateinit var binaryModule: KaLibraryModule
     lateinit var fakeSourceModule: KaSourceModule
@@ -142,7 +142,7 @@ private fun createModuleWithScopeProviderFromBinary(
 }
 
 private fun KtModuleProviderBuilder.addModuleForSwiftExportConsumption(
-    input: InputModule.Binary,
+    input: InputModule,
     stdlib: KaLibraryModule,
 ): KaLibraryModule = buildKtLibraryModule {
     addBinaryRoot(input.path)

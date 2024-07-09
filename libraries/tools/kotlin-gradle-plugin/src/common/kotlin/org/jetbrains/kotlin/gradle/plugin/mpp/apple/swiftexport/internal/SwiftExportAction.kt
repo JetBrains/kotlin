@@ -32,21 +32,23 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
 
     override fun execute() {
         runSwiftExport(
-            input = InputModule.Binary(
-                name = parameters.swiftApiModuleName.get(),
-                path = parameters.kotlinLibraryFile.getFile().toPath()
+            input = setOf(
+                InputModule(
+                    name = parameters.swiftApiModuleName.get(),
+                    path = parameters.kotlinLibraryFile.getFile().toPath(),
+                    config = SwiftExportConfig(
+                        settings = mapOf(
+                            SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.stableDeclarationsOrder.getOrElse(true).toString(),
+                            SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
+                            SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString(),
+                        ),
+                        logger = Companion,
+                        distribution = parameters.konanDistribution.get(),
+                        outputPath = parameters.outputPath.getFile().toPath(),
+                        multipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.IntoSingleModule
+                    )
+                )
             ),
-            config = SwiftExportConfig(
-                settings = mapOf(
-                    SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.stableDeclarationsOrder.getOrElse(true).toString(),
-                    SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
-                    SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString(),
-                ),
-                logger = Companion,
-                distribution = parameters.konanDistribution.get(),
-                outputPath = parameters.outputPath.getFile().toPath(),
-                multipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.IntoSingleModule
-            )
         ).apply {
             val modules = getOrThrow().toPlainList()
             val path = parameters.swiftModulesFile.getFile().canonicalPath
@@ -56,7 +58,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
     }
 }
 
-internal fun List<SwiftExportModule>.toPlainList(): List<GradleSwiftExportModule> {
+internal fun Set<SwiftExportModule>.toPlainList(): List<GradleSwiftExportModule> {
     val modules = mutableListOf<GradleSwiftExportModule>()
     val processedModules = mutableSetOf<GradleSwiftExportModule>()
 
