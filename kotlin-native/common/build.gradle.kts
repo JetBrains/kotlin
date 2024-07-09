@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.PlatformInfo
 
 /*
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
@@ -34,6 +35,9 @@ kotlinNativeInterop {
     create("files") {
         pkg("org.jetbrains.kotlin.backend.konan.files")
         linker("clang++")
+        if (PlatformInfo.isMac()) {
+            linkerOpts("-Xlinker", "-lto_library", "-Xlinker", "KT-69382")
+        }
         linkOutputs(bitcode.hostTarget.module("files").get().sourceSets.main.get().task.get())
         headers(layout.projectDirectory.files("src/files/headers/Files.h"))
     }
@@ -41,6 +45,9 @@ kotlinNativeInterop {
     create("env") {
         pkg("org.jetbrains.kotlin.backend.konan.env")
         linker("clang++")
+        if (PlatformInfo.isMac()) {
+            linkerOpts("-Xlinker", "-lto_library", "-Xlinker", "KT-69382")
+        }
         linkOutputs(bitcode.hostTarget.module("env").get().sourceSets.main.get().task.get())
         headers(layout.projectDirectory.files("src/env/headers/Env.h"))
     }

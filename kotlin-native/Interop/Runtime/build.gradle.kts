@@ -6,6 +6,7 @@
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -32,13 +33,18 @@ native {
     }
     val objSet = sourceSets["callbacks"]!!.transform(".c" to ".$obj")
 
+    val ldflags = mutableListOf<String>()
+    if (HostManager.hostIsMac) {
+        ldflags.addAll(listOf("-Xlinker", "-lto_library", "-Xlinker", "KT-69382"))
+    }
+
     target(solib("callbacks"), objSet) {
         tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags("-shared",
               "-o",ruleOut(), *ruleInAll(),
               "-L${project(":kotlin-native:libclangext").layout.buildDirectory.get().asFile}",
               "${nativeDependencies.libffiPath}/lib/libffi.$lib",
-              "-lclangext")
+              "-lclangext", *ldflags.toTypedArray())
     }
     tasks.named(solib("callbacks")).configure {
         dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
