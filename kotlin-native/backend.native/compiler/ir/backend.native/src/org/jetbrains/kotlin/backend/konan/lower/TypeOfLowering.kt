@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
@@ -37,7 +38,10 @@ internal class TypeOfLowering(val context: Context) : BodyLoweringPass {
 
                 return when {
                     Symbols.isTypeOfIntrinsic(expression.symbol) -> {
-                        with (KTypeGenerator(context, irFile, expression, needExactTypeParameters = true)) {
+                        val generator = KTypeGenerator(context.ir.symbols) {
+                            context.reportCompilationError(it, irFile, expression)
+                        }
+                        with (generator) {
                             data.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = true)
                         }
                     }

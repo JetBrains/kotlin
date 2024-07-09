@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
-import org.jetbrains.kotlin.backend.konan.reportCompilationError
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -28,12 +26,9 @@ private fun IrBuilderWithScope.irConstantInt(int: Int) = irConstantPrimitive(irI
 private fun IrBuilderWithScope.irConstantBoolean(boolean: Boolean) = irConstantPrimitive(irBoolean(boolean))
 
 internal class KTypeGenerator(
-        val context: KonanBackendContext,
-        val irFile: IrFile,
-        val irElement: IrElement,
-        val needExactTypeParameters: Boolean = false
+        val symbols: KonanSymbols,
+        val onRecursiveUpperBound: (String) -> Unit = {},
 ) {
-    private val symbols = context.ir.symbols
 
     fun IrBuilderWithScope.irKType(type: IrType, leaveReifiedForLater: Boolean = false) =
             irKType(type, leaveReifiedForLater, mutableSetOf())
@@ -80,8 +75,7 @@ internal class KTypeGenerator(
                     type = type,
             )
         } catch (t: RecursiveBoundsException) {
-            if (needExactTypeParameters)
-                this@KTypeGenerator.context.reportCompilationError(t.message!!, irFile, irElement)
+            onRecursiveUpperBound(t.message!!)
             return irConstantObject(symbols.kTypeImplForTypeParametersWithRecursiveBounds.owner, emptyMap())
         }
     }
@@ -99,7 +93,7 @@ internal class KTypeGenerator(
         "isMarkedNullable" to irConstantPrimitive(irBoolean(isMarkedNullable)),
     ), listOf(type))
 
-    private fun IrBuilderWithScope.irKClass(symbol: IrClassSymbol) = irKClass(this@KTypeGenerator.context, symbol)
+    private fun IrBuilderWithScope.irKClass(symbol: IrClassSymbol) = irKClass(symbols, symbol)
 
     private fun IrBuilderWithScope.irKTypeParameter(
             typeParameter: IrTypeParameter,
@@ -173,30 +167,29 @@ internal class KTypeGenerator(
     }
 }
 
-internal fun IrBuilderWithScope.irKClass(context: KonanBackendContext, symbol: IrClassSymbol): IrConstantValue {
-    val symbols = context.ir.symbols
+internal fun IrBuilderWithScope.irKClass(symbols: KonanSymbols, symbol: IrClassSymbol): IrConstantValue {
 
     fun IrClass.isNativePointedChild() : Boolean =
-            this.symbol == context.ir.symbols.nativePointed || getSuperClassNotAny()?.isNativePointedChild() == true
+            this.symbol == symbols.nativePointed || getSuperClassNotAny()?.isNativePointedChild() == true
 
     return when {
         symbol.owner.isExternalObjCClass() ->
             if (symbol.owner.isInterface)
-                irKClassUnsupported(context, "KClass for Objective-C protocols is not supported yet")
+                irKClassUnsupported(symbols, "KClass for Objective-C protocols is not supported yet")
             else
                 irConstantObject(symbols.kObjCClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
 
         symbol.owner.isObjCClass() ->
-            irKClassUnsupported(context, "KClass for Kotlin subclasses of Objective-C classes is not supported yet")
+            irKClassUnsupported(symbols, "KClass for Kotlin subclasses of Objective-C classes is not supported yet")
 
         symbol.owner.isNativePointedChild() ->
-            irKClassUnsupported(context, "KClass for interop types is not supported yet")
+            irKClassUnsupported(symbols, "KClass for interop types is not supported yet")
 
         else -> irConstantObject(symbols.kClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
     }
 }
 
-private fun IrBuilderWithScope.irKClassUnsupported(context: KonanBackendContext, message: String) =
-        irConstantObject(context.ir.symbols.kClassUnsupportedImpl.owner, mapOf(
+private fun IrBuilderWithScope.irKClassUnsupported(symbols: KonanSymbols, message: String) =
+        irConstantObject(symbols.kClassUnsupportedImpl.owner, mapOf(
                 "message" to irConstantString(message)
         ))

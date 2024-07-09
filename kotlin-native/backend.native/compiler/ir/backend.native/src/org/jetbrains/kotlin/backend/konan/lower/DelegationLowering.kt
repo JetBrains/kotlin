@@ -130,7 +130,7 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                             kPropertyField(irExprBody(createLocalKProperty(
                                     expression.symbol.owner.name.asString(),
                                     expression.getter.owner.returnType,
-                                    KTypeGenerator(this@PropertyDelegationLowering.context, irFile, expression),
+                                    KTypeGenerator(this@PropertyDelegationLowering.context.ir.symbols),
                                     this
                             )), kProperties.size)
                         }

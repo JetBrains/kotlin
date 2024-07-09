@@ -468,7 +468,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
         }
 
         private fun IrBuilderWithScope.getDescription() : IrConstantValue {
-            val kTypeGenerator = KTypeGenerator(this@FunctionReferenceBuilder.context, irFile, functionReference)
+            val kTypeGenerator = KTypeGenerator(this@FunctionReferenceBuilder.context.ir.symbols)
 
             return irConstantObject(
                     kFunctionDescriptionSymbol.owner,

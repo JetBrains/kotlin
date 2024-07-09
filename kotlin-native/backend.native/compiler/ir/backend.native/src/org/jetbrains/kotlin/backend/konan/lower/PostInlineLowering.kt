@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.llvm.ConstantConstructorIntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetConstantConstructorIntrinsicType
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
+import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -48,7 +48,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 expression.transformChildren(this, data)
 
                 return data.at(expression).run {
-                    (expression.symbol as? IrClassSymbol)?.let { irKClass(this@PostInlineLowering.context, it) }
+                    (expression.symbol as? IrClassSymbol)?.let { irKClass(symbols, it) }
                             ?:
                             // E.g. for `T::class` in a body of an inline function itself.
                             irCall(symbols.throwNullPointerException.owner)
@@ -102,10 +102,14 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
 
             override fun visitConstantObject(expression: IrConstantObject, data: IrBuilderWithScope): IrConstantValue {
                 return if (tryGetConstantConstructorIntrinsicType(expression.constructor) == ConstantConstructorIntrinsicType.KTYPE_IMPL) {
-                    // Inline functions themselves are not called (they have been inlined at all call sites),
-                    // so it is ok not to build exact type parameters for them.
-                    val needExactTypeParameters = (container as? IrSimpleFunction)?.isInline != true
-                    with(KTypeGenerator(context, irFile, expression, needExactTypeParameters)) {
+                    val generator = KTypeGenerator(context.ir.symbols) {
+                        // Inline functions themselves are not called (they have been inlined at all call sites),
+                        // so it is ok not to build exact type parameters for them.
+                        if ((container as? IrSimpleFunction)?.isInline != true) {
+                            context.reportCompilationError(it, irFile, expression)
+                        }
+                    }
+                    with(generator) {
                         data.at(expression).irKType(expression.typeArguments[0], leaveReifiedForLater = false)
                     }
                 } else
