@@ -608,6 +608,126 @@ internal class BackendInliner(
         return result
     }
 
+    private fun inlineInLoops() {
+        val functionsWithLoops = callGraph.directEdges.keys.filter { functionSymbol ->
+            val function = moduleDFG.functions[functionSymbol]!!
+            function.body.allScopes.any { it.depth > 0 }
+        }
+        val iterations = 10
+        (0..<iterations).forEach { iter ->
+            println("ITER $iter")
+            for (functionSymbol in functionsWithLoops) {
+                val irFunction = functionSymbol.irFunction ?: continue
+                val irBody = irFunction.body ?: continue
+                val function = moduleDFG.functions[functionSymbol]!!
+                val functionsToInline = mutableSetOf<IrFunction>()
+                val devirtualizedCallSitesFromFunctionsToInline = mutableMapOf<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
+                for (scope in function.body.allScopes) {
+                    if (scope.depth == 0) continue
+                    for (node in scope.nodes) {
+                        if (node !is DataFlowIR.Node.StaticCall) continue
+                        val calleeSymbol = node.callee
+                        val calleeIrFunction = calleeSymbol.irFunction ?: continue
+                        val callee = moduleDFG.functions[calleeSymbol] ?: continue
+                        var isALoop = false
+                        callee.body.forEachNonScopeNode {
+                            if (it is DataFlowIR.Node.Call && it.callee == calleeSymbol)
+                                isALoop = true
+                        }
+
+                        val calleeSize = callee.body.allScopes.sumOf { it.nodes.size }
+                        //                        //if (irFunction.name.asString() == "foo")
+                        //                        println("        $isALoop $calleeSize")
+                        val threshold = if (calleeIrFunction is IrSimpleFunction) 66 else 66
+                        val shouldInline = !isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
+                                && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION || options.inlineBoxUnbox)
+                                && !calleeIrFunction.hasAnnotation(noInline)
+                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
+                                && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
+                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.let {
+                            it.parentClassOrNull?.isSingleFieldValueClass == true && it.backingField != null
+                        } != true
+                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } != true
+                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true
+
+                        if (shouldInline) {
+                            if (functionsToInline.add(calleeIrFunction)) {
+                                //                                if (calleeIrFunction is IrConstructor && calleeIrFunction.constructedClass.name.asString() == "ConcurrentModificationException") {
+                                //                                    println("ZZZ: ${calleeIrFunction.render()}")
+                                //                                    calleeIrFunction.constructedClass.getAllSuperclasses()
+                                //                                }
+                                callee.body.forEachVirtualCall {
+                                    val devirtualizedCallSite = devirtualizedCallSites[it]
+                                    if (devirtualizedCallSite != null)
+                                        devirtualizedCallSitesFromFunctionsToInline[it.irCallSite!!] = devirtualizedCallSite
+                                }
+                            }
+                        }
+
+                        updateMemoryUsage()
+
+                        if (functionsToInline.isEmpty()) {
+                            //                        println("Nothing to inline to ${irFunction.render()}")
+                            //                        function.body.forEachVirtualCall { node ->
+                            //                            val devirtualizedCallSite = devirtualizedCallSites[node]
+                            //                            if (devirtualizedCallSite != null)
+                            //                                rebuiltDevirtualizedCallSites[node] = devirtualizedCallSite
+                            //                        }
+                        } else {
+                            //                        println("Preparing to inline to ${irFunction.render()}")
+                            ////                        functionsToInline.forEach { println("    ${it.dump()}") }
+                            //                        functionsToInline.forEach { println("    ${it.render()}") }
+                            //                        println("BEFORE: ${irFunction.dump()}")
+                            val inliner = FunctionInlining(
+                                    context,
+                                    inlineFunctionResolver = object : InlineFunctionResolver() {
+                                        override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol) =
+                                                symbol.owner !in functionsToInline
+                                                        || (symbol.owner as? IrConstructor)?.constructedClass?.name?.asString() == "IllegalArgumentException"
+
+                                    },
+                                    devirtualizedCallSitesFromFunctionsToInline,
+                            )
+                            val devirtualizedCallSitesFromInlinedFunctions = inliner.lower(irBody, irFunction)
+
+                            ////                        if (count == 941)
+                            //                            println("AFTER: ${irFunction.dump()}")
+
+                            LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
+                                    .forEach { (irElement, liveVariables) ->
+                                        generationState.liveVariablesAtSuspensionPoints[irElement as IrSuspensionPoint] = liveVariables
+                                    }
+
+                            val devirtualizedCallSitesFromFunction = mutableMapOf<IrCall, DevirtualizationAnalysis.DevirtualizedCallSite>()
+                            function.body.forEachVirtualCall {
+                                val devirtualizedCallSite = devirtualizedCallSites[it]
+                                if (devirtualizedCallSite != null) {
+                                    devirtualizedCallSitesFromFunction[it.irCallSite!!] = devirtualizedCallSite
+                                    devirtualizedCallSites.remove(it)
+                                }
+                            }
+
+                            val rebuiltFunction = FunctionDFGBuilder(generationState, moduleDFG.symbolTable).build(irFunction, irBody)
+                            moduleDFG.functions[functionSymbol] = rebuiltFunction
+                            rebuiltFunction.body.forEachVirtualCall {
+                                val irCallSite = it.irCallSite!!
+                                val devirtualizedCallSite = devirtualizedCallSitesFromInlinedFunctions[irCallSite]
+                                        ?: devirtualizedCallSitesFromFunction[irCallSite]
+                                if (devirtualizedCallSite != null)
+                                    devirtualizedCallSites[it] = devirtualizedCallSite
+                            }
+
+                            updateMemoryUsage()
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+//    fun run() = inlineInLoops()
+
     fun run() {
 //        val allFunctionsToInline = run2()
         val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
@@ -871,6 +991,8 @@ internal class BackendInliner(
                 }
             }
         }
+
+        inlineInLoops()
 
         println("During BackendInlinerPhase: $maxMemoryUsage")
 
