@@ -30,22 +30,13 @@ fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
   }
   val tmp0 = if (x > 0) {
     %composer.startReplaceGroup(<>)
-    sourceInformation(%composer, "")
-    val tmp3_group = <block>{
-      if (%composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "<B()>")
-      val tmp1_group = B(%composer, 0)
-      %composer.endReplaceGroup()
-      tmp1_group) 1 else if (%composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "<B()>")
-      val tmp2_group = B(%composer, 0)
-      %composer.endReplaceGroup()
-      tmp2_group) 2 else if (%composer.startReplaceGroup(<>)
-      %composer.endReplaceGroup()
-      true) 3
+    sourceInformation(%composer, "<B()>,<B()>")
+    val tmp2_group = <block>{
+      val tmp1_group = if (B(%composer, 0)) 1 else if (B(%composer, 0)) 2 else 3
+      tmp1_group
     }
     %composer.endReplaceGroup()
-    tmp3_group
+    tmp2_group
   } else {
     %composer.startReplaceGroup(<>)
     %composer.endReplaceGroup()

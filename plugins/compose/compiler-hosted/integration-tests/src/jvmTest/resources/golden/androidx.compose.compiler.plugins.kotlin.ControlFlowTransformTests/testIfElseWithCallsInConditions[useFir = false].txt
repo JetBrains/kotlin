@@ -35,23 +35,16 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  if (%composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "<B(a)>")
-  val tmp0_group = B(a, %composer, 0)
-  %composer.endReplaceGroup()
-  tmp0_group) {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "<B(a)>,<B(b)>")
+  if (B(a, %composer, 0)) {
     NA()
-  } else if (%composer.startReplaceGroup(<>)
-  sourceInformation(%composer, "<B(b)>")
-  val tmp1_group = B(b, %composer, 0)
-  %composer.endReplaceGroup()
-  tmp1_group) {
+  } else if (B(b, %composer, 0)) {
     NA()
-  } else if (%composer.startReplaceGroup(<>)
-  %composer.endReplaceGroup()
-  true) {
+  } else {
     NA()
   }
+  %composer.endReplaceGroup()
   if (isTraceInProgress()) {
     traceEventEnd()
   }

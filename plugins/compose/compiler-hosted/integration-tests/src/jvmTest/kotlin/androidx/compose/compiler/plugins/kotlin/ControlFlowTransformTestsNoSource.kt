@@ -136,4 +136,115 @@ class ControlFlowTransformTestsNoSource(
             }
         """
     )
+
+    @Test // b/346821372 regression test
+    fun transformIf_Simple_NoAdditionalGroups() = verifyGoldenComposeIrTransform(
+        extra = b346821372Extra,
+        source = """
+            import androidx.compose.runtime.*
+           
+            @Composable
+            fun Test() {
+               ReceiveValue(if (getCondition()) 0 else 1)
+            }
+        """
+    )
+
+    @Test // b/346821372 regression test
+    fun transformIf_ANDAND_NoAdditionalGroups() = verifyGoldenComposeIrTransform(
+        extra = b346821372Extra,
+        source = """
+            import androidx.compose.runtime.*
+           
+            @Composable
+            fun Test() {
+               ReceiveValue(if (getCondition() && state) 0 else 1)
+            }
+        """
+    )
+
+    @Test // b/346821372 regression test
+    fun transformIf_ANDAND_ResultGroup() = verifyGoldenComposeIrTransform(
+        extra = b346821372Extra,
+        source = """
+            import androidx.compose.runtime.*
+           
+            @Composable
+            fun Test() {
+               ReceiveValue(if (state && getCondition()) 0 else 1)
+            }
+        """
+    )
+
+    @Test // b/346821372 regression test
+    fun transformIf_OROR_NoAdditionalGroups() = verifyGoldenComposeIrTransform(
+        extra = b346821372Extra,
+        source = """
+            import androidx.compose.runtime.*
+           
+            @Composable
+            fun Test() {
+               ReceiveValue(if (getCondition() || state) 0 else 1)
+            }
+        """
+    )
+
+    @Test // b/346821372 regression test
+    fun transformIf_OROR_ResultGroup() = verifyGoldenComposeIrTransform(
+        extra = b346821372Extra,
+        source = """
+            import androidx.compose.runtime.*
+           
+            @Composable
+            fun Test() {
+               ReceiveValue(if (state || getCondition()) 0 else 1)
+            }
+        """
+    )
+
+    @Test // b/346821372 regression test
+    fun transformIf_Complex() = verifyGoldenComposeIrTransform(
+        extra = """
+            import androidx.compose.runtime.*
+
+            val state by mutableStateOf(true)
+            
+            @Composable fun getConditionA() = true
+            @Composable fun getConditionB() = true
+            @Composable fun getConditionC() = true
+
+            @Composable fun resultA() = true
+            @Composable fun resultB() = true
+            @Composable fun resultC() = true
+            @Composable fun resultS() = true
+
+            fun ReceiveValue(value: Int) { }
+        """,
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                ReceiveValue(if (when {
+                  getConditionA() -> resultA()
+                  getConditionB() -> resultB()
+                  getConditionC() -> resultC()
+                  state -> resultS()
+                  else -> false
+                }) 1 else 0)
+            }
+        """
+    )
 }
+
+private const val b346821372Extra = """
+    import androidx.compose.runtime.*
+
+    val state by mutableStateOf(true)
+
+    @Composable
+    fun getCondition() = remember { mutableStateOf(false) }.value
+
+    @Composable
+    fun ReceiveValue(value: Int) { }
+"""
