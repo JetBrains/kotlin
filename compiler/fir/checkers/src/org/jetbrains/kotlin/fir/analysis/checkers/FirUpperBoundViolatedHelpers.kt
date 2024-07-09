@@ -47,8 +47,6 @@ private fun checkUpperBoundViolated(
     reporter: DiagnosticReporter,
     isIgnoreTypeParameters: Boolean = false,
 ) {
-    if (notExpandedType.typeArguments.isEmpty()) return
-
     // If we have FirTypeRef information, add KtSourceElement information to each argument of the type and fully expand.
     val type = if (typeRef != null) {
         (notExpandedType.abbreviatedTypeOrSelf as? ConeClassLikeType)
@@ -57,8 +55,10 @@ private fun checkUpperBoundViolated(
             ?.withArguments { it.withSource(FirTypeRefSource(null, typeRef.source)) }
             ?: return
     } else {
-        notExpandedType
+        notExpandedType.fullyExpandedType(context.session)
     }
+
+    if (type.typeArguments.isEmpty()) return
 
     val prototypeClassSymbol = type.lookupTag.toRegularClassSymbol(context.session) ?: return
 
