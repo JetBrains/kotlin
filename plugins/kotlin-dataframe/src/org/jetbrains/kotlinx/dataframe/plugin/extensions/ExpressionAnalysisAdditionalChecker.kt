@@ -90,8 +90,8 @@ private class Checker(val cache: FirCache<String, PluginDataFrameSchema, KotlinT
             val targetProjection = expression.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance ?: return
             val targetType = targetProjection.typeRef.coneType as? ConeClassLikeType ?: return
             val target = pluginDataFrameSchema(targetType)
-            val sourceColumns = source.flatten()
-            val targetColumns = target.flatten()
+            val sourceColumns = source.flatten(includeFrames = true)
+            val targetColumns = target.flatten(includeFrames = true)
             val sourceMap = sourceColumns.associate { it.path.path to it.column }
             val missingColumns = mutableListOf<String>()
             var valid = true
