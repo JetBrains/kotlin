@@ -37,6 +37,7 @@ xerces = "2.12.2"
 compose-stable = "1.7.0-alpha08"
 compose-snapshot-id = "11953424"
 compose-snapshot-version = "1.8.0-SNAPSHOT"
+ant = "1.10.14"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -91,6 +92,8 @@ android-gradle-plugin-builder-model = { module = "com.android.tools.build:builde
 android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
 
 xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
+
+ant = { module = "org.apache.ant:ant", version.ref = "ant" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
