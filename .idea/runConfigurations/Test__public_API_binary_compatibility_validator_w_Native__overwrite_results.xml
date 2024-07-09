@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test: public API binary compatibility validator, overwrite results" type="GradleRunConfiguration" factoryName="Gradle" folderName="Stdlib">
+  <configuration default="false" name="Test: public API binary compatibility validator w/Native, overwrite results" type="GradleRunConfiguration" factoryName="Gradle" folderName="Stdlib">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/libraries/tools/binary-compatibility-validator" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="-Poverwrite.output=true" />
+      <option name="scriptParameters" value="-Poverwrite.output=true -Pkotlin.native.enabled=true" />
       <option name="taskDescriptions">
         <list />
       </option>
