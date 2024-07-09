@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
 import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -22,12 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExtensionFunctionType
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleArrayElementVariance
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleMutability
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.RawTypeAnnotation
 import org.jetbrains.kotlin.types.CommonFlexibleTypeBoundsChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
@@ -119,23 +113,19 @@ class Fir2IrTypeConverter(
 
                 val specialAnnotationsProvider = specialAnnotationsProvider
                 if (specialAnnotationsProvider != null) {
-                    fun has(classId: ClassId): Boolean {
-                        return annotations.any { it.toAnnotationClassId(session) == classId }
-                    }
-
-                    if (hasEnhancedNullability || has(EnhancedNullability)) {
+                    if (hasEnhancedNullability) {
                         typeAnnotations += specialAnnotationsProvider.generateEnhancedNullabilityAnnotationCall()
                     }
-                    if (hasFlexibleNullability || has(FlexibleNullability)) {
+                    if (hasFlexibleNullability) {
                         typeAnnotations += specialAnnotationsProvider.generateFlexibleNullabilityAnnotationCall()
                     }
-                    if (hasFlexibleMutability || has(FlexibleMutability)) {
+                    if (hasFlexibleMutability) {
                         typeAnnotations += specialAnnotationsProvider.generateFlexibleMutabilityAnnotationCall()
                     }
-                    if (hasFlexibleArrayElementVariance || has(FlexibleArrayElementVariance)) {
+                    if (hasFlexibleArrayElementVariance) {
                         typeAnnotations += specialAnnotationsProvider.generateFlexibleArrayElementVarianceAnnotationCall()
                     }
-                    if (addRawTypeAnnotation || has(RawTypeAnnotation)) {
+                    if (addRawTypeAnnotation) {
                         typeAnnotations += specialAnnotationsProvider.generateRawTypeAnnotationCall()
                     }
                 }

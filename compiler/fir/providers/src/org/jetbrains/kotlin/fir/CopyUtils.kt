@@ -99,6 +99,7 @@ fun List<FirAnnotation>.computeTypeAttributes(
                     )
 
             CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
+            CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.EnhancedNullability
             else -> {
                 val attributeFromPlugin = session.extensionService.typeAttributeExtensions.firstNotNullOfOrNull {
                     it.extractAttributeFromAnnotation(annotation)
