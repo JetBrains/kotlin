@@ -189,7 +189,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
 /**
  * Adds or replaces an `AbbreviatedTypeAttribute`.
  */
-fun ConeKotlinType.withAbbreviation(attribute: AbbreviatedTypeAttribute): ConeKotlinType {
+fun <T : ConeKotlinType> T.withAbbreviation(attribute: AbbreviatedTypeAttribute): T {
     val clearedAttributes = attributes.abbreviatedType?.let(attributes::remove) ?: attributes
     return withAttributes(clearedAttributes.add(attribute))
 }

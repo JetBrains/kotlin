@@ -91,7 +91,8 @@ private fun ConeClassLikeType.fullyExpandedTypeNoCache(
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType?,
 ): ConeClassLikeType {
     val directExpansionType = directExpansionType(useSiteSession, expandedConeType) ?: return this
-    return directExpansionType.fullyExpandedType(useSiteSession, expandedConeType)
+    val expansion = directExpansionType.fullyExpandedType(useSiteSession, expandedConeType)
+    return expansion.withAbbreviation(AbbreviatedTypeAttribute(this))
 }
 
 fun ConeClassLikeType.directExpansionType(
