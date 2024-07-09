@@ -83,7 +83,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
      *  - Overall, we should not do any resolve inside the compiler (such as skipping KLIBs that happen to have repeated `unique_name`).
      *    This is an opaque process which better should be performed by the build system (e.g. Gradle). To be fixed in KT-64169
      */
-    private fun List<KotlinLibrary>.omitDuplicateNames() =
+    private fun List<KotlinLibrary>.omitDuplicateNames(): List<KotlinLibrary> {
         groupBy { it.uniqueName }.let { groupedByUniqName ->
             val librariesWithDuplicatedUniqueNames = groupedByUniqName.filterValues { it.size > 1 }
             librariesWithDuplicatedUniqueNames.entries.sortedBy { it.key }.forEach { (uniqueName, libraries) ->
@@ -92,6 +92,8 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
             }
             groupedByUniqName.map { it.value.first() } // This line is the reason of such issues as KT-63573.
         }
+        return this
+    }
 
     /**
      * Given the list of root libraries does the following:
