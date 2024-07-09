@@ -20,17 +20,7 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.diagnostics.LightTreePositioningStrategies
-import org.jetbrains.kotlin.diagnostics.LightTreePositioningStrategy
-import org.jetbrains.kotlin.diagnostics.PositioningStrategies
-import org.jetbrains.kotlin.diagnostics.PositioningStrategy
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
-import org.jetbrains.kotlin.diagnostics.error0
-import org.jetbrains.kotlin.diagnostics.error2
-import org.jetbrains.kotlin.diagnostics.error3
-import org.jetbrains.kotlin.diagnostics.findChildByType
-import org.jetbrains.kotlin.diagnostics.markElement
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -51,7 +41,7 @@ object ComposeErrors {
     val NONREADONLY_CALL_IN_READONLY_COMPOSABLE by error0<PsiElement>()
 
     val CAPTURED_COMPOSABLE_INVOCATION by
-        error2<PsiElement, FirVariableSymbol<*>, FirCallableSymbol<*>>()
+    error2<PsiElement, FirVariableSymbol<*>, FirCallableSymbol<*>>()
 
     // composable calls are not allowed in try expressions
     // error goes on the `try` keyword
@@ -60,10 +50,10 @@ object ComposeErrors {
     )
 
     val MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION by error3<
-        PsiElement,
-        FirValueParameterSymbol, // unmarked
-        FirValueParameterSymbol, // marked
-        FirCallableSymbol<*>>()
+            PsiElement,
+            FirValueParameterSymbol, // unmarked
+            FirValueParameterSymbol, // marked
+            FirCallableSymbol<*>>()
 
     val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error0<PsiElement>()
 
@@ -91,6 +81,14 @@ object ComposeErrors {
         SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
+    val COMPOSE_APPLIER_CALL_MISMATCH by warning2<PsiElement, String, String>()
+
+    val COMPOSE_APPLIER_PARAMETER_MISMATCH by warning2<PsiElement, String, String>()
+
+    val COMPOSE_APPLIER_DECLARATION_MISMATCH by warning0<PsiElement>(
+        ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
+    )
+
     init {
         RootDiagnosticRendererFactory.registerFactory(ComposeErrorMessages)
     }
@@ -105,20 +103,20 @@ object ComposeSourceElementPositioningStrategies {
                 }
                 return PositioningStrategies.DEFAULT.mark(element)
             }
-    }
+        }
 
     private val LIGHT_TREE_TRY_KEYWORD: LightTreePositioningStrategy =
         object : LightTreePositioningStrategy() {
-        override fun mark(
-            node: LighterASTNode,
-            startOffset: Int,
-            endOffset: Int,
-            tree: FlyweightCapableTreeStructure<LighterASTNode>
-        ): List<TextRange> {
-            val target = tree.findChildByType(node, KtTokens.TRY_KEYWORD) ?: node
-            return markElement(target, startOffset, endOffset, tree, node)
+            override fun mark(
+                node: LighterASTNode,
+                startOffset: Int,
+                endOffset: Int,
+                tree: FlyweightCapableTreeStructure<LighterASTNode>,
+            ): List<TextRange> {
+                val target = tree.findChildByType(node, KtTokens.TRY_KEYWORD) ?: node
+                return markElement(target, startOffset, endOffset, tree, node)
+            }
         }
-    }
 
     private val PSI_DECLARATION_NAME_OR_DEFAULT: PositioningStrategy<PsiElement> =
         object : PositioningStrategy<PsiElement>() {

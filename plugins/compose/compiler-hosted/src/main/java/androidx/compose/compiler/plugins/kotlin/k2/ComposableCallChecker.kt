@@ -62,7 +62,7 @@ object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionCh
     ) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol()
             ?: return
-        if (calleeFunction.isComposable(context.session)) {
+        if (calleeFunction.isComposable(context)) {
             checkComposableCall(expression, calleeFunction, context, reporter)
         }
     }
@@ -81,7 +81,7 @@ object ComposableFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Com
         // https://youtrack.jetbrains.com/issue/KT-47708.
         if (calleeFunction.origin == FirDeclarationOrigin.SamConstructor) return
 
-        if (calleeFunction.isComposable(context.session)) {
+        if (calleeFunction.isComposable(context)) {
             checkComposableCall(expression, calleeFunction, context, reporter)
         } else if (calleeFunction.callableId.isInvoke()) {
             checkInvoke(expression, context, reporter)

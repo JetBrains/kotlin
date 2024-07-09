@@ -99,5 +99,24 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
             ComposeErrors.MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL,
             "Mismatched @Composable annotation between expect and actual declaration"
         )
+
+        map.put(
+            ComposeErrors.COMPOSE_APPLIER_CALL_MISMATCH,
+            "Calling a {1} composable function where a {0} composable was expected",
+            FirDiagnosticRenderers.TO_STRING,
+            FirDiagnosticRenderers.TO_STRING
+        )
+
+        map.put(
+            ComposeErrors.COMPOSE_APPLIER_PARAMETER_MISMATCH,
+            "A {1} composable parameter was provided where a {0} composable was expected",
+            FirDiagnosticRenderers.TO_STRING,
+            FirDiagnosticRenderers.TO_STRING
+        )
+
+        map.put(
+            ComposeErrors.COMPOSE_APPLIER_DECLARATION_MISMATCH,
+            "The composition target of an override must match the ancestor target"
+        )
     }
 }

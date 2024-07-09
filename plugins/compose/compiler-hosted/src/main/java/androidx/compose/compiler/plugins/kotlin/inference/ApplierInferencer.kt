@@ -164,7 +164,7 @@ interface ErrorReporter<Node> {
  * back-end IR nodes as well as allows for easier testing and debugging of the itself algorithm
  * without requiring either tree.
  */
-class ApplierInferencer<Type, Node>(
+open class ApplierInferencer<Type, Node>(
     private val typeAdapter: TypeAdapter<Type>,
     private val nodeAdapter: NodeAdapter<Type, Node>,
     private val lazySchemeStorage: LazySchemeStorage<Node>,

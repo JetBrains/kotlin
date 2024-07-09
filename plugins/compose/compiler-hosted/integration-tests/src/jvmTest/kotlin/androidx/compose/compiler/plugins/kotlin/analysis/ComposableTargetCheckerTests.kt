@@ -22,8 +22,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = false) {
+class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
     @Test
     fun testExplicitTargetAnnotations() = check(
         """
@@ -174,7 +173,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
         @Composable
         @ComposableTarget("N")
         fun T() {
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M${psiEnd()}()${firEnd()}
         }
 
         @Composable
@@ -191,7 +190,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
         @Composable
         fun T() {
             N()
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M${psiEnd()}()${firEnd()}
         }
 
         @Composable
@@ -225,8 +224,8 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
             W {
                 N()
             }
-            <!COMPOSE_APPLIER_PARAMETER_MISMATCH!>W<!> {
-                M()
+            ${psiParStart()}W${psiEnd()} {
+                ${firMisStart()}M()${firEnd()}
             }
         }
         """
@@ -254,14 +253,14 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
         }
 
         @Composable
-        fun OpenCustom(content: CustomComposable) {
-          content.call()
+        fun OpenCustom(oContent: CustomComposable) {
+          oContent.call()
         }
 
         @Composable
-        fun ClosedCustom(content: CustomComposable) {
+        fun ClosedCustom(cContent: CustomComposable) {
           N()
-          content.call()
+          cContent.call()
         }
 
         @Composable
@@ -285,16 +284,16 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
           OpenCustom {
             N()
           }
-          <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+          <!COMPOSE_APPLIER_CALL_MISMATCH!>M${psiEnd()}()${firEnd()}
         }
 
         @Composable
         fun ClosedDisagree() {
           ClosedCustom {
             N()
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M${psiEnd()}()${firEnd()}
           }
-          <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+          <!COMPOSE_APPLIER_CALL_MISMATCH!>M${psiEnd()}()${firEnd()}
         }
         """
     )
@@ -312,7 +311,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
 
         @Composable
         fun AssumesN() {
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M${psiEnd()}()${firEnd()}
         }
         """
     )
@@ -340,7 +339,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
         @Composable
         @NComposable
         fun AssumesN() {
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M${psiEnd()}()${firEnd()}
         }
         """
     )
@@ -369,7 +368,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
 
         @Composable
         fun AssumesN() {
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M${psiEnd()}()${firEnd()}
         }
         """
     )
@@ -387,7 +386,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
         @Composable
         fun UseText() {
            BasicText("Some text")
-           <!COMPOSE_APPLIER_CALL_MISMATCH!>Invalid<!>()
+           <!COMPOSE_APPLIER_CALL_MISMATCH!>Invalid${psiEnd()}()${firEnd()}
         }
         """,
         additionalPaths = listOf(
@@ -413,7 +412,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
 
         class Invalid : Base() {
           @Composable override fun Compose() {
-            <!COMPOSE_APPLIER_CALL_MISMATCH!>M<!>()
+            <!COMPOSE_APPLIER_CALL_MISMATCH!>M${psiEnd()}()${firEnd()}
           }
         }
 
@@ -439,7 +438,7 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
         }
 
         class Invalid : Base() {
-          <!COMPOSE_APPLIER_DECLARATION_MISMATCH!>@Composable @ComposableTarget("M") override fun Compose() { }<!>
+          ${psiDecStart()}@Composable @ComposableTarget("M") override fun ${firDecStart()}Compose${firEnd()}() { }${psiEnd()}
         }
 
         class Valid : Base () {
@@ -469,4 +468,11 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
           }
         }
         """)
+
+    private fun firEnd() = if (useFir) "<!>" else ""
+    private fun psiEnd() = if (!useFir) "<!>" else ""
+    private fun firMisStart() = if (useFir) "<!COMPOSE_APPLIER_CALL_MISMATCH!>" else ""
+    private fun psiParStart() = if (!useFir) "<!COMPOSE_APPLIER_PARAMETER_MISMATCH!>" else ""
+    private fun firDecStart() = if (useFir) "<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>" else ""
+    private fun psiDecStart() = if (!useFir) "<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>" else ""
 }

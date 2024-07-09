@@ -19,7 +19,9 @@ package androidx.compose.compiler.plugins.kotlin
 import com.intellij.util.keyFMap.KeyFMap
 import java.util.WeakHashMap
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import java.util.Collections
@@ -46,9 +48,37 @@ class WeakBindingTrace {
     operator fun <K : IrAttributeContainer, V> get(slice: ReadOnlySlice<K, V>, key: K): V? {
         return map[key.attributeOwnerId]?.get(slice.key)
     }
+
+
+    fun <K : FirElement, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
+        recordAny(slice, key, value)
+    }
+
+    operator fun <K : FirElement, V> get(slice: ReadOnlySlice<K, V>, key: K): V? = getAny(slice, key)
+
+    fun <K : CheckerContext, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
+        recordAny(slice, key, value)
+    }
+
+    operator fun <K : CheckerContext, V> get(slice: ReadOnlySlice<K, V>, key: K): V? = getAny(slice, key)
+
+    private fun <K : Any, V> getAny(slice: ReadOnlySlice<K, V>, key: K): V? = map[key]?.get(slice.key)
+    private fun <K : Any, V> recordAny(slice: WritableSlice<K, V>, key: K, value: V) {
+        var holder = map[key] ?: KeyFMap.EMPTY_MAP
+        val prev = holder.get(slice.key)
+        if (prev != null) holder = holder.minus(slice.key)
+        holder = holder.plus(slice.key, value!!)
+        map[key] = holder
+    }
 }
 
 private val ComposeTemporaryGlobalBindingTrace = WeakBindingTrace()
 
 @Suppress("unused")
 val IrPluginContext.irTrace: WeakBindingTrace get() = ComposeTemporaryGlobalBindingTrace
+
+@Suppress("unused")
+val CheckerContext.firTrace: WeakBindingTrace get() = ComposeTemporaryGlobalBindingTrace
+
+@Suppress("unused")
+val FirElement.firTrace: WeakBindingTrace get() = ComposeTemporaryGlobalBindingTrace

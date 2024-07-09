@@ -41,16 +41,20 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         // Check overrides for mismatched composable annotations
         for (override in declaration.getDirectOverriddenFunctions(context)) {
-            if (override.isComposable(context.session) != isComposable) {
+            if (override.isComposable(context) != isComposable) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.CONFLICTING_OVERLOADS,
                     listOf(declaration.symbol, override),
                     context
                 )
+            } else if (override.isComposable(context) && !override.toScheme(context).canOverride(declaration.symbol.toScheme(context))) {
+                reporter.reportOn(
+                    source = declaration.source,
+                    factory = ComposeErrors.COMPOSE_APPLIER_DECLARATION_MISMATCH,
+                    context = context
+                )
             }
-
-            // TODO(b/282135108): Check scheme of override against declaration
         }
 
         // Check that `actual` composable declarations have composable expects

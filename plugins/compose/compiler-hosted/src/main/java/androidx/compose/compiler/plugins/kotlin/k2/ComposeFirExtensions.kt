@@ -103,7 +103,7 @@ class ComposeFirCheckersExtension(session: FirSession) : FirAdditionalCheckersEx
 
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> =
-            setOf(ComposableFunctionCallChecker)
+            setOf(ComposableFunctionCallChecker, ComposableTargetChecker)
 
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> =
             setOf(ComposablePropertyAccessExpressionChecker)

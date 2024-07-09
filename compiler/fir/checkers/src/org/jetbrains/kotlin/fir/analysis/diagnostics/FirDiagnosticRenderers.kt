@@ -313,4 +313,6 @@ object FirDiagnosticRenderers {
             else -> "declaration"
         }
     }
+
+    val TO_STRING = Renderer { value: Any -> value.toString() }
 }
