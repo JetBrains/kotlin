@@ -211,6 +211,14 @@ tasks {
 
     withType<ShadowJar>().configureEach {
         relocate("com.github.gundy", "$kotlinEmbeddableRootPackage.com.github.gundy")
+        transform(KotlinModuleMetadataVersionBasedSkippingTransformer::class.java) {
+            /*
+             * Hack for
+             * This excludes .kotlin_module files for compiler modules from the fat jars.
+             * These files are required only at compilation time, but we include the modules only for runtime
+             */
+            pivotVersion = KotlinMetadataPivotVersion(1, 6, 0)
+        }
     }
 }
 

@@ -112,7 +112,7 @@ dependencies {
     implementation(libs.ktor.client.cio)
 
     compileOnly(libs.gradle.enterprise.gradlePlugin)
-
+    compileOnly(libs.ant) // for accessing the zip-related classes that are present in Gradle's runtime
     compileOnly(gradleApi())
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
