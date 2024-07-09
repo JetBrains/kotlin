@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -157,7 +158,8 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     }
                 globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
                 collectSyntaxDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments)
-                collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                val session = info.partsForDependsOnModules.last().session
+                collectDebugInfoDiagnostics(currentModule, file, firFile, session, lightTreeEnabled, lightTreeComparingModeEnabled)
                 fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics.map { it.diagnostic }, file)
             }
         }
@@ -208,6 +210,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         module: TestModule,
         testFile: TestFile,
         firFile: FirFile,
+        session: FirSession,
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean
     ) {
@@ -223,7 +226,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         object : FirDefaultVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 if (element is FirExpression) {
-                    consumer.reportExpressionTypeDiagnostic(element)
+                    consumer.reportExpressionTypeDiagnostic(element, session)
                 }
                 if (shouldRenderDynamic && element is FirResolvable) {
                     reportDynamic(element)
@@ -318,9 +321,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         globalMetadataInfoHandler.addMetadataInfosForFile(testFile, codeMetaInfos)
     }
 
-    private fun DebugDiagnosticConsumer.reportExpressionTypeDiagnostic(element: FirExpression) {
+    private fun DebugDiagnosticConsumer.reportExpressionTypeDiagnostic(element: FirExpression, session: FirSession) {
         report(DebugInfoDiagnosticFactory1.EXPRESSION_TYPE, element) {
-            val type = element.resolvedType
+            val type = element.resolvedType.fullyExpandedType(session)
             val originalType = (element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.resolvedType
 
             if (originalType != null) {

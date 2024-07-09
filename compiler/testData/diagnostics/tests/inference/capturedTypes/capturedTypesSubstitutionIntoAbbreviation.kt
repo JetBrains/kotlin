@@ -1,4 +1,3 @@
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: TBD
 typealias Action<K> = (@UnsafeVariance K) -> Unit
 typealias Action2<K> = (@UnsafeVariance K) -> K
 
