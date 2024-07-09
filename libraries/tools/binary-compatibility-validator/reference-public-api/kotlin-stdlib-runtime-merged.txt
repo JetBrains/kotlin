@@ -5103,6 +5103,7 @@ public abstract interface class kotlin/reflect/KTypeParameter : kotlin/reflect/K
 
 public final class kotlin/reflect/KTypeProjection {
 	public static final field Companion Lkotlin/reflect/KTypeProjection$Companion;
+	public static final field star Lkotlin/reflect/KTypeProjection;
 	public fun <init> (Lkotlin/reflect/KVariance;Lkotlin/reflect/KType;)V
 	public final fun component1 ()Lkotlin/reflect/KVariance;
 	public final fun component2 ()Lkotlin/reflect/KType;

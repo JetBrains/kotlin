@@ -40,7 +40,7 @@ plugins {
     id("idea-rt-hack")
     id("resolve-dependencies")
     id("org.gradle.crypto.checksum") version "1.4.0"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.1" apply false
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.15.1" apply false
     signing
     id("org.jetbrains.kotlin.jvm") apply false
     id("org.jetbrains.kotlin.plugin.serialization") apply false

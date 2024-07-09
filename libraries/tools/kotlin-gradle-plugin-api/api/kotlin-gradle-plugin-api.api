@@ -270,9 +270,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompile$DefaultImpls {
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lorg/gradle/api/Action;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompileKt {
-}
-
 public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinGradlePluginDsl : java/lang/annotation/Annotation {
 }
 
@@ -1366,9 +1363,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode :
 	public static final field MARKER Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinaryTypesKt {
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType : java/lang/Enum, org/gradle/api/Named {
