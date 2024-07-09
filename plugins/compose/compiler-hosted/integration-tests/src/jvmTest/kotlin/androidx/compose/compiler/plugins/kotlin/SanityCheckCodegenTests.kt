@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Ignore
 import org.junit.Test
 
@@ -139,4 +140,40 @@ class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
             """
         )
     }
+}
+
+class  SanityCheckGroupOptimizationCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(
+            ComposeConfiguration.FEATURE_FLAGS,
+            listOf(
+                FeatureFlag.StrongSkipping.featureName,
+                FeatureFlag.OptimizeNonSkippingGroups.featureName,
+            )
+        )
+    }
+
+    @Test
+    fun test_groupAroundIfComposeCallInIfConditionWithShortCircuit() = testCompile(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                ReceiveValue(if (getCondition()) 0 else 1)
+                ReceiveValue(if (state && getCondition()) 0 else 1)
+                ReceiveValue(if (getCondition() && state) 0 else 1)
+                ReceiveValue(if (getCondition() || state) 0 else 1)
+                ReceiveValue(if (state || getCondition()) 0 else 1)
+            }
+
+            val state by mutableStateOf(true)
+
+            @Composable
+            fun getCondition() = remember { mutableStateOf(false) }.value
+
+            @Composable
+            fun ReceiveValue(value: Int) { }
+        """
+    )
 }

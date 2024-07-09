@@ -3710,7 +3710,6 @@ class ComposableFunctionBodyTransformer(
         // conditionally executed.
         var needsWrappingGroup = false
         var resultsWithCalls = 0
-        var conditionsWithCalls = 0
         var hasElseBranch = false
 
         val transformed = IrWhenImpl(
@@ -3752,19 +3751,13 @@ class ComposableFunctionBodyTransformer(
                     condScopes.add(condScope)
                     resultScopes.add(resultScope)
 
-                    // If we are optimizing non-skipping groups we never use a wrapping group, each condition
-                    // is wrapped in a group instead.
-                    if (!FeatureFlag.OptimizeNonSkippingGroups.enabled) {
-                        // the first condition is always executed so if it has a composable call in it,
-                        // it doesn't necessitate a group. However, non-skipping group optimization is
-                        // enabled, we need a wrapping group if any conditions have a composable call.
-                        needsWrappingGroup =
-                            needsWrappingGroup || ((index != 0) && condScope.hasComposableCalls)
-                    }
+                    // the first condition is always executed so if it has a composable call in it,
+                    // it doesn't necessitate a group. However, non-skipping group optimization is
+                    // enabled, we need a wrapping group if any conditions have a composable call.
+                    needsWrappingGroup = needsWrappingGroup || ((index != 0) && condScope.hasComposableCalls)
+
                     if (resultScope.hasComposableCalls && !it.result.isGroupBalanced())
                         resultsWithCalls++
-                    if (condScope.hasComposableCalls && !it.condition.isGroupBalanced())
-                        conditionsWithCalls++
 
                     transformed.branches.add(
                         IrBranchImpl(
@@ -3786,13 +3779,6 @@ class ComposableFunctionBodyTransformer(
             resultsWithCalls > 0
         } else {
             resultsWithCalls > 1 && !needsWrappingGroup
-        }
-
-        val needsConditionGroups = if (FeatureFlag.OptimizeNonSkippingGroups.enabled) {
-            conditionsWithCalls > 0
-        } else {
-            // A wrapping group is used instead.
-            false
         }
 
         // If we are putting groups around the result branches, we need to guarantee that exactly
@@ -3828,7 +3814,7 @@ class ComposableFunctionBodyTransformer(
 
         forEachWith(transformed.branches, condScopes, resultScopes) { it, condScope, resultScope ->
             if (condScope.hasComposableCalls) {
-                if (needsWrappingGroup) {
+                if (needsWrappingGroup && !FeatureFlag.OptimizeNonSkippingGroups.enabled) {
                     // Generate a group around the conditional block when it has a composable call
                     // in it and we are generating a group around when block.
                     it.condition = it.condition.asReplaceGroup(condScope)
@@ -3853,10 +3839,6 @@ class ComposableFunctionBodyTransformer(
                 it.result = it.result.asReplaceGroup(resultScope)
             }
 
-            if (needsConditionGroups) {
-                it.condition = it.condition.asReplaceGroup(condScope)
-            }
-
             if (resultsWithCalls == 1 && resultScope.hasComposableCalls) {
                 // Realize all groups in the branch result with a conditional call - making sure
                 // that nested control structures are wrapped correctly.
@@ -3864,9 +3846,20 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
+        if (
+            FeatureFlag.OptimizeNonSkippingGroups.enabled && needsResultGroups && (
+                    transformed.origin == IrStatementOrigin.ANDAND || transformed.origin == IrStatementOrigin.OROR
+                    )
+        ) {
+            // When a IrWhen has a ANDAND or OROR origin it is required they also have a specific shape such as for ANDAND requires a
+            // `true -> false` clause at the end.  As we violate this by adding a wrapping group around all results, this origin is removed
+            // down-stream lowerings will no longer special case this IrWhen.
+            transformed.origin = IrStatementOrigin.WHEN
+        }
+
         return when {
-            !FeatureFlag.OptimizeNonSkippingGroups.enabled &&
-                    (resultsWithCalls == 1 || needsWrappingGroup) -> transformed.asCoalescableGroup(whenScope)
+            ((!FeatureFlag.OptimizeNonSkippingGroups.enabled && resultsWithCalls == 1) || needsWrappingGroup) ->
+                transformed.asCoalescableGroup(whenScope)
             else -> transformed
         }
     }

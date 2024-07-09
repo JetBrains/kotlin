@@ -6,6 +6,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import androidx.compose.compiler.plugins.kotlin.lower.fastForEach
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.runner.RunWith
 import org.junit.runner.Runner
@@ -31,18 +32,28 @@ class RuntimeTests {
 
 private fun createRuntimeRunners(cls: Class<*>): List<Runner> {
     AbstractCompilerTest.setSystemProperties()
-    val compilers = listOf(
-        RuntimeTestCompiler(useFir = false, sourceInformation = false),
-        RuntimeTestCompiler(useFir = false, sourceInformation = true),
-        RuntimeTestCompiler(useFir = true, sourceInformation = false),
-        RuntimeTestCompiler(useFir = true, sourceInformation = true)
+    val compilers = mutableListOf(
+        RuntimeTestCompiler(useFir = false, sourceInformation = false, optimizeNonSkippingGroups = false),
+        RuntimeTestCompiler(useFir = false, sourceInformation = true, optimizeNonSkippingGroups = false),
+        RuntimeTestCompiler(useFir = true, sourceInformation = false, optimizeNonSkippingGroups = false),
+        RuntimeTestCompiler(useFir = true, sourceInformation = true, optimizeNonSkippingGroups = false),
+        RuntimeTestCompiler(useFir = false, sourceInformation = false, optimizeNonSkippingGroups = true),
+        RuntimeTestCompiler(useFir = false, sourceInformation = true, optimizeNonSkippingGroups = true),
+        RuntimeTestCompiler(useFir = true, sourceInformation = false, optimizeNonSkippingGroups = true),
+        RuntimeTestCompiler(useFir = true, sourceInformation = true, optimizeNonSkippingGroups = true)
     )
 
-    return compilers.flatMap { compiler ->
+    val iterator = compilers.iterator()
+    val result = mutableListOf<Runner>()
+    while (iterator.hasNext()) {
+        val compiler = iterator.next()
         val classes = compiler.compileRuntimeClasses()
+        val description = compiler.description
         compiler.disposeTestRootDisposable()
-        classes.map { FirVariantRunner(it, compiler.description) }
+        iterator.remove()
+        classes.fastForEach { result.add(FirVariantRunner(it, description)) }
     }
+    return result
 }
 
 private class FirVariantRunner(private val cls: Class<*>, val type: String) : BlockJUnit4ClassRunner(cls) {
@@ -56,13 +67,21 @@ private val runtimeTestFiles = runtimeTestSourceRoot.walk().toSet()
 @Ignore
 private class RuntimeTestCompiler(
     useFir: Boolean,
-    private val sourceInformation: Boolean
+    private val sourceInformation: Boolean,
+    private val optimizeNonSkippingGroups: Boolean,
 ) : AbstractCodegenTest(useFir) {
-    val description: String = "[k${if (useFir) "1" else "2"}][source=$sourceInformation]"
+    val description: String = "[k${if (useFir) "1" else "2"}][source=$sourceInformation][groupOptimized=$optimizeNonSkippingGroups]"
 
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, sourceInformation)
         put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, sourceInformation)
+        if (optimizeNonSkippingGroups) {
+            put(ComposeConfiguration.FEATURE_FLAGS,
+                listOf(
+                    FeatureFlag.OptimizeNonSkippingGroups.featureName,
+                )
+            )
+        }
     }
 
     fun compileRuntimeClasses() =
