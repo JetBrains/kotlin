@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -51,12 +52,13 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
             // skip implicit super types like Enum or Any
             if (superTypeRef.source == null || superTypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
 
-            val coneType = superTypeRef.coneType.abbreviatedTypeOrSelf
-            if (!nullableSupertypeReported && coneType.nullability == ConeNullability.NULLABLE) {
+            val expandedSupertype = superTypeRef.coneType.fullyExpandedType(context.session)
+            val originalSupertype = expandedSupertype.abbreviatedTypeOrSelf
+            if (!nullableSupertypeReported && originalSupertype.nullability == ConeNullability.NULLABLE) {
                 reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE, context)
                 nullableSupertypeReported = true
             }
-            if (!extensionFunctionSupertypeReported && coneType.isExtensionFunctionType &&
+            if (!extensionFunctionSupertypeReported && originalSupertype.isExtensionFunctionType &&
                 !context.session.languageVersionSettings.supportsFeature(LanguageFeature.FunctionalTypeWithExtensionAsSupertype)
             ) {
                 reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, context)
@@ -65,8 +67,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
 
             checkAnnotationOnSuperclass(superTypeRef, context, reporter)
 
-            val fullyExpandedType = superTypeRef.coneType
-            val symbol = fullyExpandedType.toSymbol(context.session)
+            val symbol = expandedSupertype.toSymbol(context.session)
 
             if (symbol is FirRegularClassSymbol) {
                 if (!superClassSymbols.add(symbol)) {
@@ -97,8 +98,8 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
             checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
             checkNamedFunctionTypeParameter(superTypeRef, context, reporter)
 
-            if (!checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, context)) {
-                checkSupertypeOnTypeAliasWithTypeProjection(coneType, fullyExpandedType, superTypeRef, reporter, context)
+            if (!checkProjectionInImmediateArgumentToSupertype(originalSupertype, superTypeRef, reporter, context)) {
+                checkSupertypeOnTypeAliasWithTypeProjection(originalSupertype, expandedSupertype, superTypeRef, reporter, context)
             }
         }
 
