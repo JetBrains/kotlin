@@ -1,4 +1,3 @@
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: TBD
 @file:OptIn(ExperimentalSubclassOptIn::class)
 
 @RequiresOptIn

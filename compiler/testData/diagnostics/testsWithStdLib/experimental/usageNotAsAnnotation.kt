@@ -1,4 +1,3 @@
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: TBD
 // LANGUAGE: +NestedClassesInAnnotations
 // OPT_IN: kotlin.RequiresOptIn
 // DIAGNOSTICS: -UNUSED_PARAMETER
