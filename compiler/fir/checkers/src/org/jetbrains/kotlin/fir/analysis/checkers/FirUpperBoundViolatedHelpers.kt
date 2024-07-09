@@ -207,7 +207,7 @@ fun checkUpperBoundViolated(
                             argumentSource, FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION, upperBound, argumentType.type, context
                         )
                     } else {
-                        val extraMessage = if (upperBound.lowerBoundIfFlexible().originalIfDefinitelyNotNullable() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
+                        val extraMessage = if (upperBound.unwrapToSimpleTypeUsingLowerBound() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
                         reporter.reportOn(
                             argumentSource, FirErrors.UPPER_BOUND_VIOLATED,
                             upperBound, argumentType.type, extraMessage, context

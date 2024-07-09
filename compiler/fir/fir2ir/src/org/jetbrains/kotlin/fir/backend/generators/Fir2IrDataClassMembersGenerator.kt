@@ -350,7 +350,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                 val (symbol, hasDispatchReceiver) = when {
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol to false
                     else -> {
-                        val preparedType = type.unwrapFlexibleAndDefinitelyNotNull().coerceToAny()
+                        val preparedType = type.unwrapToSimpleTypeUsingLowerBound().coerceToAny()
                         val classForType = when (val classifier = preparedType.toSymbol(session)?.fir) {
                             is FirRegularClass -> classifier
                             is FirTypeParameter -> classifier.erasedUpperBound

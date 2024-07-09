@@ -55,7 +55,7 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
     val lookupTags = mutableListOf<ConeClassLikeLookupTag>()
 
     fun ConeKotlinType.collectClassIds() {
-        when (val unwrappedType = lowerBoundIfFlexible().fullyExpandedType(useSiteSession)) {
+        when (val unwrappedType = unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(useSiteSession)) {
             is ConeClassLikeType -> lookupTags.addIfNotNull(unwrappedType.lookupTag)
             is ConeIntersectionType -> unwrappedType.intersectedTypes.forEach { it.collectClassIds() }
             else -> {}

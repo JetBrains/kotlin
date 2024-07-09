@@ -160,7 +160,7 @@ private fun buildResultingTypeAndAdaptation(
                 //     - see testData/diagnostics/tests/inference/callableReferences/conversionLastStatementInLambda.kt
                 val hasSyntheticOuterCall = candidate.callInfo.hasSyntheticOuterCall
                 if (callableReferenceAdaptation.coercionStrategy != CoercionStrategy.COERCION_TO_UNIT ||
-                    hasSyntheticOuterCall && returnTypeWithoutCoercion.unwrapFlexibleAndDefinitelyNotNull() is ConeTypeParameterType
+                    hasSyntheticOuterCall && returnTypeWithoutCoercion.unwrapToSimpleTypeUsingLowerBound() is ConeTypeParameterType
                 ) {
                     returnTypeWithoutCoercion
                 } else {

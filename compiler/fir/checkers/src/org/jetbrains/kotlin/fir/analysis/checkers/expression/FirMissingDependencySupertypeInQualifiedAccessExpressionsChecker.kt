@@ -29,7 +29,7 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
         if (symbol == null) {
             val receiverType = expression.explicitReceiver?.resolvedType
-                ?.lowerBoundIfFlexible()?.originalIfDefinitelyNotNullable()?.fullyExpandedType(context.session)
+                ?.unwrapToSimpleTypeUsingLowerBound()?.fullyExpandedType(context.session)
             checkMissingDependencySuperTypes(receiverType, source, reporter, context)
             return
         }

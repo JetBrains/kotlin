@@ -281,6 +281,7 @@ fun ConeKotlinType.classSymbolOrUpperBound(session: FirSession): FirClassSymbol<
     return when (this) {
         is ConeSimpleKotlinType -> toClassSymbol(session)
         is ConeFlexibleType -> upperBound.toClassSymbol(session)
+        is ConeDefinitelyNotNullType -> original.toClassSymbol(session)
     }
 }
 

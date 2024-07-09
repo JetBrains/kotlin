@@ -116,8 +116,9 @@ class FirClassSubstitutionScope(
         return substitutor.substituteOrNull(this)
     }
 
-    private fun ConeSimpleKotlinType.substitute(substitutor: ConeSubstitutor): ConeSimpleKotlinType? {
-        return substitutor.substituteOrNull(this)?.lowerBoundIfFlexible()
+    private fun ConeSimpleKotlinType.substituteDispatchReceiverType(substitutor: ConeSubstitutor): ConeSimpleKotlinType? {
+        // DNN type is not possible here, so the cast is safe
+        return substitutor.substituteOrNull(this)?.lowerBoundIfFlexible() as ConeSimpleKotlinType?
     }
 
     fun createSubstitutionOverrideFunction(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
@@ -145,7 +146,7 @@ class FirClassSubstitutionScope(
             callableCopySubstitution == null &&
             newContextReceiverTypes.all { it == null }
         ) {
-            if (original.dispatchReceiverType?.substitute(substitutor) != null) {
+            if (original.dispatchReceiverType?.substituteDispatchReceiverType(substitutor) != null) {
                 return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
                     session,
                     symbolForOverride,
@@ -193,7 +194,7 @@ class FirClassSubstitutionScope(
         // If constructor has a dispatch receiver, it should be an inner class' constructor.
         // It means that we need to substitute its dispatcher as every other type,
         // instead of using dispatchReceiverTypeForSubstitutedMembers
-        val newDispatchReceiverType = original.dispatchReceiverType?.substitute(substitutor)
+        val newDispatchReceiverType = original.dispatchReceiverType?.substituteDispatchReceiverType(substitutor)
 
         val newParameterTypes = constructor.valueParameters.map {
             it.returnTypeRef.coneType.substitute(newSubstitutor)
@@ -249,7 +250,7 @@ class FirClassSubstitutionScope(
             callableCopySubstitutionForTypeUpdater == null &&
             newContextReceiverTypes.all { it == null }
         ) {
-            if (original.dispatchReceiverType?.substitute(substitutor) != null) {
+            if (original.dispatchReceiverType?.substituteDispatchReceiverType(substitutor) != null) {
                 return FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                     session,
                     symbolForOverride,
@@ -305,7 +306,7 @@ class FirClassSubstitutionScope(
         val receiverType = member.receiverParameter?.typeRef?.coneType
         val newReceiverType = receiverType?.substitute(substitutor)
 
-        val newDispatchReceiverType = dispatchReceiverTypeForSubstitutedMembers.substitute(substitutor)
+        val newDispatchReceiverType = dispatchReceiverTypeForSubstitutedMembers.substituteDispatchReceiverType(substitutor)
 
         val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         val deferredReturnTypeOfSubstitution = runIf(returnType == null) { DeferredReturnTypeOfSubstitution(substitutor, member.symbol) }

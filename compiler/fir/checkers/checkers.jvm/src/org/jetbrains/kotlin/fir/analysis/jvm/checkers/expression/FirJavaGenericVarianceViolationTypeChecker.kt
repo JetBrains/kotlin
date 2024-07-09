@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import kotlin.math.min
 
@@ -136,7 +135,14 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
                 lowerBound.removeOutProjection(isCovariant),
                 upperBound.removeOutProjection(isCovariant)
             )
+            is ConeInflexibleType -> removeOutProjection(isCovariant)
+        }
+    }
+
+    private fun ConeInflexibleType.removeOutProjection(isCovariant: Boolean): ConeInflexibleType {
+        return when (this) {
             is ConeSimpleKotlinType -> removeOutProjection(isCovariant)
+            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
         }
     }
 
@@ -152,7 +158,6 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
                     )
                 },
             )
-            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
             is ConeIntersectionType -> mapTypes { it.removeOutProjection(isCovariant) }
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                 lookupTag,
@@ -181,7 +186,10 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
         }
     }
 
-    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(subType: ConeKotlinType, superType: ConeSimpleKotlinType): Boolean {
+    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(
+        subType: ConeKotlinType,
+        superType: ConeInflexibleType,
+    ): Boolean {
         return AbstractTypeChecker.isSubtypeOfClass(this, subType.typeConstructor(), superType.typeConstructor())
     }
 

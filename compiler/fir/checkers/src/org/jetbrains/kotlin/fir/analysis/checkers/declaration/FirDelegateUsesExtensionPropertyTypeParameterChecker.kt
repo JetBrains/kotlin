@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -40,8 +39,8 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         context: CheckerContext,
     ): FirTypeParameterSymbol? {
         val expandedDelegateClassLikeType =
-            delegate.resolvedType.lowerBoundIfFlexible().fullyExpandedType(context.session)
-                .unwrapDefinitelyNotNull() as? ConeClassLikeType ?: return null
+            delegate.resolvedType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(context.session) as? ConeClassLikeType
+                ?: return null
         val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toClassSymbol(context.session) ?: return null
         val delegateClassScope by lazy(LazyThreadSafetyMode.NONE) { delegateClassSymbol.unsubstitutedScope(context) }
         for (it in typeArguments) {

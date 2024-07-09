@@ -78,5 +78,5 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         ref.unwrapBound().mapNotNull { extractTypeParamName(it.coneType) }.toSet()
 
     private fun extractTypeParamName(type: ConeKotlinType): Name? =
-        (type.unwrapFlexibleAndDefinitelyNotNull() as? ConeTypeParameterType)?.lookupTag?.name
+        (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType)?.lookupTag?.name
 }

@@ -56,7 +56,7 @@ fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeClassLikeType? {
 }
 
 /**
- * @see fullyExpandedType
+ * @see fullyExpandedType (the first function in the file)
  * @return the expanded type or the same instance if top-level constructor is not expandable type alias
  */
 fun ConeKotlinType.fullyExpandedType(
@@ -78,14 +78,30 @@ fun ConeKotlinType.fullyExpandedType(
 }
 
 /**
- * @see fullyExpandedType
+ * @see fullyExpandedType (the first function in the file)
  */
 fun ConeSimpleKotlinType.fullyExpandedType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
-): ConeSimpleKotlinType = when (this) {
-    is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
-    else -> this
+): ConeSimpleKotlinType {
+    return when (this) {
+        is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
+        else -> this
+    }
+}
+
+/**
+ * @see fullyExpandedType (the first function in the file)
+ */
+fun ConeInflexibleType.fullyExpandedType(
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
+): ConeInflexibleType {
+    return when (this) {
+        is ConeSimpleKotlinType -> fullyExpandedType(useSiteSession, expandedConeType)
+        // Expanding DNN type makes no sense, as its original type cannot be class-like type
+        is ConeDefinitelyNotNullType -> this
+    }
 }
 
 private fun ConeClassLikeType.fullyExpandedTypeNoCache(
@@ -147,7 +163,7 @@ fun createParametersSubstitutor(
         val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
         // TODO: Consider making code more generic and "ready" to any kind of types (KT-68497)
         val symbol =
-            (type.unwrapFlexibleAndDefinitelyNotNull() as? ConeTypeParameterType)?.lookupTag?.symbol
+            (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType)?.lookupTag?.symbol
                 ?: return super.substituteArgument(projection, index)
         val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection, index)
 

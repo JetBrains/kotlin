@@ -142,7 +142,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     ): ConeKotlinType {
         return if (typeParameter.shouldBeFlexible(session.typeContext)) {
             when (type) {
-                is ConeSimpleKotlinType -> ConeFlexibleType(
+                is ConeInflexibleType -> ConeFlexibleType(
                     type.withNullability(ConeNullability.NOT_NULL, session.typeContext),
                     type.withNullability(ConeNullability.NULLABLE, session.typeContext)
                 )

@@ -151,11 +151,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.constructor.variable.typeConstructor
     }
 
-    override fun KotlinTypeMarker.typeDepth() = when (this) {
-        is ConeSimpleKotlinType -> typeDepth()
-        is ConeFlexibleType -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
-        else -> errorWithAttachment("Type should be simple or flexible: ${this::class.java}") {
-            withConeTypeEntry("type", this@typeDepth as? ConeKotlinType)
+    override fun KotlinTypeMarker.typeDepth(): Int {
+        require(this is ConeKotlinType)
+        return when (this) {
+            is ConeSimpleKotlinType -> typeDepth()
+            is ConeFlexibleType -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
+            is ConeDefinitelyNotNullType -> original.typeDepth()
         }
     }
 

@@ -86,7 +86,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         assert(this is ConeKotlinType)
         return when (this) {
             is ConeClassLikeType -> fullyExpandedType(session)
-            is ConeSimpleKotlinType -> this
+            is ConeInflexibleType -> this
             is ConeFlexibleType -> null
             else -> errorWithAttachment("Unknown simpleType: ${this::class}") {
                 withConeTypeEntry("type", this@asSimpleType as? ConeKotlinType)
@@ -150,7 +150,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {
-        require(this is ConeSimpleKotlinType)
+        require(this is ConeInflexibleType)
         return this.getConstructor()
     }
 

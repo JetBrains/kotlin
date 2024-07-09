@@ -452,7 +452,7 @@ private class FirConstCheckVisitor(
     }
 
     private fun FirExpression.hasAllowedCompileTimeType(): Boolean {
-        val expClassId = getExpandedType().lowerBoundIfFlexible().fullyExpandedType(session).classId
+        val expClassId = resolvedType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(session).classId
         // TODO, KT-59823: add annotation for allowed constant types
         return expClassId in StandardClassIds.constantAllowedTypes
     }
