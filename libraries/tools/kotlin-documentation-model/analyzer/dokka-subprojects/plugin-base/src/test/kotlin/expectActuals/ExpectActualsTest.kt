@@ -305,4 +305,79 @@ class ExpectActualsTest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `public actual function should be present when expect is internal`() = testInline(
+        """
+        /src/common/test.kt
+        internal expect fun function(): String?
+        
+        /src/jvm/test.kt
+        public actual fun function(): String? = null
+        
+        /src/native/test.kt
+        public actual fun function(): String? = null
+        """.trimMargin(),
+        multiplatformConfiguration
+    ) {
+        documentablesTransformationStage = { module ->
+            val function = module.packages.single().functions.single { it.name == "function" }
+            assertTrue(function.isExpectActual)
+            // no `common` is present
+            assertEquals(
+                setOf("jvm", "native"),
+                function.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+            )
+        }
+    }
+
+    @Test
+    fun `public actual function should be present when expect is internal and other actual is internal`() = testInline(
+        """
+        /src/common/test.kt
+        internal expect fun function(): String?
+        
+        /src/jvm/test.kt
+        public actual fun function(): String? = null
+        
+        /src/native/test.kt
+        internal actual fun function(): String? = null
+        """.trimMargin(),
+        multiplatformConfiguration
+    ) {
+        documentablesTransformationStage = { module ->
+            val function = module.packages.single().functions.single { it.name == "function" }
+            assertTrue(function.isExpectActual)
+            // `common` - internal, `native` - internal, so only `jvm` is present
+            assertEquals(
+                setOf("jvm"),
+                function.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+            )
+        }
+    }
+
+    @Test
+    fun `public actual classe should be present when expect is internal`() = testInline(
+        """
+        /src/common/test.kt
+        internal expect class Class
+        
+        /src/jvm/test.kt
+        public actual class Class
+        
+        /src/native/test.kt
+        public actual class Class
+        """.trimMargin(),
+        multiplatformConfiguration
+    ) {
+        documentablesTransformationStage = { module ->
+            val classlike = module.packages.single().classlikes.single { it.name == "Class" }
+            assertTrue(classlike.isExpectActual)
+            // no `common` is present
+            assertEquals(
+                setOf("jvm", "native"),
+                classlike.sourceSets.map { it.sourceSetID.sourceSetName }.toSet()
+            )
+        }
+    }
 }
