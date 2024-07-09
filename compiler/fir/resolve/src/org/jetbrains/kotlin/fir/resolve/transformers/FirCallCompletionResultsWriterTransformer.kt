@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
@@ -193,10 +194,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         qualifiedAccessExpression.replaceConeTypeOrNull(type)
-
-        if (declaration !is FirErrorFunction) {
-            qualifiedAccessExpression.replaceTypeArguments(typeArguments)
-        }
+        qualifiedAccessExpression.replaceTypeArguments(typeArguments)
 
         runPCLARelatedTasksForCandidate(subCandidate)
 
@@ -874,7 +872,17 @@ class FirCallCompletionResultsWriterTransformer(
         // We must ensure that all extra type arguments are preserved in the result, so that they can still be resolved later (e.g. for
         // navigation in the IDE).
         return if (typeArguments.size < access.typeArguments.size) {
-            typeArguments + access.typeArguments.subList(typeArguments.size, access.typeArguments.size)
+            typeArguments + access.typeArguments.subList(typeArguments.size, access.typeArguments.size).map {
+                if (it !is FirPlaceholderProjection) it
+                else buildTypeProjectionWithVariance {
+                    source = it.source
+                    typeRef = buildErrorTypeRef {
+                        source = it.source
+                        diagnostic = ConeSimpleDiagnostic("Unmapped placeholder type argument")
+                    }
+                    variance = Variance.INVARIANT
+                }
+            }
         } else typeArguments
     }
 

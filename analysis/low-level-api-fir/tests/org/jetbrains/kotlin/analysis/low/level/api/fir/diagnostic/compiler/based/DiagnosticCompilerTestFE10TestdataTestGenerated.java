@@ -17757,6 +17757,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("underscoredTypeArgumentInErroneousCall.kt")
+      public void testUnderscoredTypeArgumentInErroneousCall() {
+        runTest("compiler/testData/diagnostics/tests/inference/underscoredTypeArgumentInErroneousCall.kt");
+      }
+
+      @Test
       @TestMetadata("underscoredTypeInForbiddenPositions.kt")
       public void testUnderscoredTypeInForbiddenPositions() {
         runTest("compiler/testData/diagnostics/tests/inference/underscoredTypeInForbiddenPositions.kt");
