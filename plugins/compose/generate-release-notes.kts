@@ -5,7 +5,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
@@ -57,12 +56,12 @@ data class Commit(
 
 fun commitToGitHubUrl(commit: String) = "https://github.com/JetBrains/kotlin/commit/$commit"
 fun changeIdToGerritUrl(changeId: String) = "https://android-review.googlesource.com/q/$changeId"
-fun issueToBuganizerUrl(issue: String): String = "https://issuetracker.google.com/issue/$issue"
+fun issueToBuganizerUrl(issue: String): String = "https://issuetracker.google.com/issues/$issue"
 
 fun Commit.asReleaseNote(): String {
     val commitLink = "[${commit.substring(0, 7)}](${commitToGitHubUrl(commit)})"
     val issueLinks = issues.map { issue -> "[b/$issue](${issueToBuganizerUrl(issue)})" }.joinToString(", ")
-    return "$commitLink ${relnote ?: title} $issueLinks"
+    return "- $issueLinks ${relnote ?: title}"
 }
 
 if (args.isEmpty()) {
@@ -83,10 +82,15 @@ val fromRevision = args[0]
 val toRevision = args[1]
 val path = args.getOrNull(2)
 
-getCommits(fromRevision, toRevision, path)
+val (fixes, features) = getCommits(fromRevision, toRevision, path)
     .filter {
         (it.relnote != null && !ignoreRelnotes.contains(it.relnote.toLowerCase())) ||
                 it.issues.isNotEmpty()
     }
-    .map { it.asReleaseNote() }
-    .forEach { println(it) }
+    .partition { it.issues.isNotEmpty() }
+
+println("### Compose compiler")
+println("#### New features")
+features.forEach { println(it.asReleaseNote()) }
+println("#### Fixes")
+fixes.forEach {  println(it.asReleaseNote()) }
