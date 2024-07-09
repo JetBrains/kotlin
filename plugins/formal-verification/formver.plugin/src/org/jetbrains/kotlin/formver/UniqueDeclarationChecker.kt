@@ -17,6 +17,7 @@ class UniqueDeclarationChecker(private val session: FirSession, private val conf
     FirSimpleFunctionChecker(MppCheckerKind.Common) {
 
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!config.checkUniqueness) return
         val errorCollector = ErrorCollector()
         try {
             val uniqueCheckerContext = UniqueChecker(session, config, errorCollector)

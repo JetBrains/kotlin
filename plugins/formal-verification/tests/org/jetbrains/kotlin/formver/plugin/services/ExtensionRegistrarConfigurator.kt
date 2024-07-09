@@ -44,12 +44,14 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
             UNIQUE_CHECK_ONLY in module.directives -> TargetsSelection.NO_TARGETS
             else -> TargetsSelection.ALL_TARGETS
         }
+        val checkUniqueness = UNIQUE_CHECK_ONLY in module.directives
         val config = PluginConfiguration(
             logLevel,
             errorStyle,
             UnsupportedFeatureBehaviour.THROW_EXCEPTION,
             conversionSelection = conversionSelection,
-            verificationSelection = verificationSelection
+            verificationSelection = verificationSelection,
+            checkUniqueness = checkUniqueness
         )
         FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(config))
     }
