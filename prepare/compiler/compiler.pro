@@ -269,9 +269,6 @@
     void setLazyListeners(java.util.concurrent.ConcurrentMap);
 }
 
--keep class com.intellij.openapi.util.KeyWithDefaultValue {
-    public static com.intellij.openapi.util.KeyWithDefaultValue create(java.lang.String, java.util.function.Supplier);
-}
 
 -keepclassmembers class com.intellij.util.PathUtil {
     public static java.lang.String getJarPathForClass(java.lang.Class);
