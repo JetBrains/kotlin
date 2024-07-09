@@ -582,10 +582,10 @@ fun ConeKotlinType.canHaveSubtypesAccordingToK1(session: FirSession): Boolean =
  * The original K1 function: [org.jetbrains.kotlin.types.TypeUtils.canHaveSubtypes].
  */
 private fun ConeKotlinType.hasSubtypesAboveNothingAccordingToK1(session: FirSession): Boolean {
-    if (this.isMarkedNullable) {
+    val expandedType = fullyExpandedType(session)
+    if (expandedType.isMarkedNullable) {
         return true
     }
-    val expandedType = fullyExpandedType(session)
     val classSymbol = expandedType.toClassSymbol(session) ?: return true
     // In K2 enum classes are final, though enum entries are their subclasses (which is a compiler implementation detail).
     if (classSymbol.isEnumClass || classSymbol.isExpect || classSymbol.modality != Modality.FINAL) {
