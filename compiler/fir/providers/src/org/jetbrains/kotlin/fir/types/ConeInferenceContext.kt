@@ -266,7 +266,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         constructorProjection: TypeArgumentMarker,
         constructorSupertypes: List<KotlinTypeMarker>,
         lowerType: KotlinTypeMarker?,
-        captureStatus: CaptureStatus
+        captureStatus: CaptureStatus,
+        identity: CapturedTypeConstructorMarker?
     ): CapturedTypeMarker {
         require(lowerType is ConeKotlinType?)
         require(constructorProjection is ConeTypeProjection)
@@ -274,7 +275,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return ConeCapturedType(
             captureStatus,
             lowerType,
-            constructor = ConeCapturedTypeConstructor(constructorProjection, constructorSupertypes as List<ConeKotlinType>)
+            constructor = ConeCapturedTypeConstructor(constructorProjection, constructorSupertypes as List<ConeKotlinType>, identity = identity as ConeCapturedTypeConstructor?)
         )
     }
 

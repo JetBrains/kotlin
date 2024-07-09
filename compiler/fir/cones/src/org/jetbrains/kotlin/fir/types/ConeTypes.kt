@@ -125,8 +125,38 @@ fun ConeKotlinType.unwrapFlexibleAndDefinitelyNotNull(): ConeKotlinType {
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
     var supertypes: List<ConeKotlinType>? = null,
-    val typeParameterMarker: TypeParameterMarker? = null
-) : CapturedTypeConstructorMarker
+    val typeParameterMarker: TypeParameterMarker? = null,
+    identity: ConeCapturedTypeConstructor?,
+) : CapturedTypeConstructorMarker {
+    // Unwrap transitive identity
+    val identity: ConeCapturedTypeConstructor? = identity?.identity ?: identity
+
+    init {
+        require(this.identity?.identity == null) {
+            "Captured type identity shouldn't have an external identity"
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConeCapturedTypeConstructor) return false
+
+        // TODO Do we need to check identity === other?
+        if (identity == null || identity !== other.identity) return false
+
+        if (projection != other.projection) return false
+        if (supertypes != other.supertypes) return false
+        if (typeParameterMarker != other.typeParameterMarker) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = projection.hashCode()
+        result = 31 * result + (typeParameterMarker?.hashCode() ?: 0)
+        return result
+    }
+}
 
 data class ConeCapturedType(
     val captureStatus: CaptureStatus,
@@ -134,17 +164,20 @@ data class ConeCapturedType(
     override val nullability: ConeNullability = ConeNullability.NOT_NULL,
     val constructor: ConeCapturedTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
-    val isProjectionNotNull: Boolean = false
+    val isProjectionNotNull: Boolean = false,
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
     constructor(
-        captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeTypeProjection,
+        captureStatus: CaptureStatus,
+        lowerType: ConeKotlinType?,
+        projection: ConeTypeProjection,
         typeParameterMarker: TypeParameterMarker
     ) : this(
         captureStatus,
         lowerType,
         constructor = ConeCapturedTypeConstructor(
             projection,
-            typeParameterMarker = typeParameterMarker
+            typeParameterMarker = typeParameterMarker,
+            identity = null,
         )
     )
 

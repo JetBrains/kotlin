@@ -613,7 +613,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         constructorProjection: TypeArgumentMarker,
         constructorSupertypes: List<KotlinTypeMarker>,
         lowerType: KotlinTypeMarker?,
-        captureStatus: CaptureStatus
+        captureStatus: CaptureStatus,
+        identity: CapturedTypeConstructorMarker?
     ): CapturedTypeMarker {
         errorSupportedOnlyInTypeInference()
     }

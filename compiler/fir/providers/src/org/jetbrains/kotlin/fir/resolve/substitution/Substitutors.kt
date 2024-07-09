@@ -30,20 +30,13 @@ inline fun ConeCapturedType.substitute(f: (ConeKotlinType) -> ConeKotlinType?): 
     val substitutedSuperTypes =
         this.constructor.supertypes?.map { f(it) ?: it }
 
-    // TODO(KT-64027): Creation of new captured types creates unexpected behavior by breaking substitution consistency.
-    //  E.g:
-    //  ```
-    //   substitution = { A => B }
-    //   substituteOrSelf(C<CapturedType(out A)_0>) -> C<CapturedType(out B)_1>
-    //   substituteOrSelf(C<CapturedType(out A)_0>) -> C<CapturedType(out B)_2>
-    //   C<CapturedType(out B)_1> <!:> C<CapturedType(out B)_2>
-    //  ```
-
     return copy(
+        captureStatus,
         constructor = ConeCapturedTypeConstructor(
             wrapProjection(constructor.projection, substitutedInnerType),
             substitutedSuperTypes,
-            typeParameterMarker = constructor.typeParameterMarker
+            typeParameterMarker = constructor.typeParameterMarker,
+            identity = constructor,
         ),
         lowerType = if (lowerType != null) substitutedInnerType else null,
     )

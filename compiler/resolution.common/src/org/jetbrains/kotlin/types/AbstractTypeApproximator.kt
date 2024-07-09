@@ -395,7 +395,42 @@ abstract class AbstractTypeApproximator(
             } else this
         }
 
-        val supertypes = capturedType.typeConstructor().supertypes()
+        val shouldApproximateCapturedType = conf.shouldApproximateCapturedType(ctx, capturedType)
+
+        val supertypes = capturedType.typeConstructor().supertypes().toList()
+
+        val foo = if (isK2 && !shouldApproximateCapturedType) {
+            val approximatedLowerType = capturedType.lowerType()?.let { approximateToSubType(it, conf, depth) }
+            val approximatedSuperTypes = supertypes.map {
+                val type = it.replaceRecursionWithStarProjection(capturedType)
+                approximateToSuperType(type, conf, depth)
+            }
+
+            if (approximatedLowerType == null && approximatedSuperTypes.all { it == null }) {
+                null
+            } else {
+                val typeConstructorProjection = capturedType.typeConstructorProjection()
+                val approximatedProjection = when {
+                    typeConstructorProjection.isStarProjection() -> typeConstructorProjection
+                    else -> if (toSuper) {
+                        approximateToSuperType(typeConstructorProjection.getType(), conf, depth)
+                    } else {
+                        approximateToSubType(typeConstructorProjection.getType(), conf, depth)
+                    }?.let { createTypeArgument(it, typeConstructorProjection.getVariance()) }
+                } ?: typeConstructorProjection
+
+                ctx.createCapturedType(
+                    approximatedProjection,
+                    approximatedSuperTypes.mapIndexed { i, it -> it ?: supertypes[i] },
+                    approximatedLowerType ?: capturedType.lowerType(),
+                    capturedType.captureStatus(),
+                    capturedType.typeConstructor(),
+                )
+            }
+        } else {
+            null
+        }
+
         val baseSuperType = when (supertypes.size) {
             0 -> nullableAnyType() // Let C = in Int, then superType for C and C? is Any?
             1 -> supertypes.single().replaceRecursionWithStarProjection(capturedType)
@@ -430,14 +465,13 @@ abstract class AbstractTypeApproximator(
         }
         val approximatedSubType by lazy(LazyThreadSafetyMode.NONE) { approximateToSubType(baseSubType, conf, depth) }
 
-        if (!conf.shouldApproximateCapturedType(ctx, capturedType)) {
+        if (!shouldApproximateCapturedType) {
             /**
              * Here everything is ok if bounds for this captured type should not be approximated.
              * But. If such bounds contains some unauthorized types, then we cannot leave this captured type "as is".
              * And we cannot create new capture type, because meaning of new captured type is not clear.
              * So, we will just approximate such types
              *
-             * TODO remove workaround when we can create captured types with external identity KT-65228.
              * todo handle flexible types
              */
             if (approximatedSuperType == null && approximatedSubType == null) {

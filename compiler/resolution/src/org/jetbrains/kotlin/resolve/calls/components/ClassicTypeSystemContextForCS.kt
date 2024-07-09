@@ -39,7 +39,8 @@ class ClassicTypeSystemContextForCS(
         constructorProjection: TypeArgumentMarker,
         constructorSupertypes: List<KotlinTypeMarker>,
         lowerType: KotlinTypeMarker?,
-        captureStatus: CaptureStatus
+        captureStatus: CaptureStatus,
+        identity: CapturedTypeConstructorMarker?
     ): CapturedTypeMarker {
         require(lowerType is UnwrappedType?, lowerType::errorMessage)
         require(constructorProjection is TypeProjectionBase, constructorProjection::errorMessage)

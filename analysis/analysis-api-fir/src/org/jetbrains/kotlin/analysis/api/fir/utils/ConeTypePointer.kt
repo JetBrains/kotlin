@@ -177,7 +177,8 @@ private class ConeCapturedTypePointer(
         val typeConstructor = ConeCapturedTypeConstructor(
             constructorProjection,
             constructorSupertypes,
-            constructorTypeParameterMarker
+            constructorTypeParameterMarker,
+            null,
         )
 
         return ConeCapturedType(
