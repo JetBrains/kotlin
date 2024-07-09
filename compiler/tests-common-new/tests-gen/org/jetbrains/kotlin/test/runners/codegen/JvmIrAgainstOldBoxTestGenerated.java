@@ -776,6 +776,18 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
       }
 
       @Test
+      @TestMetadata("superCallToKotlinInterfaceDefaultMethodFromDisabled.kt")
+      public void testSuperCallToKotlinInterfaceDefaultMethodFromDisabled() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallToKotlinInterfaceDefaultMethodFromDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt")
+      public void testSuperCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt");
+      }
+
+      @Test
       @TestMetadata("superPropAccess.kt")
       public void testSuperPropAccess() {
         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
@@ -818,6 +830,18 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
         @TestMetadata("superCallFromInterface2.kt")
         public void testSuperCallFromInterface2() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallToKotlinInterfaceDefaultMethodFromDisabled.kt")
+        public void testSuperCallToKotlinInterfaceDefaultMethodFromDisabled() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallToKotlinInterfaceDefaultMethodFromDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt")
+        public void testSuperCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt");
         }
 
         @Test

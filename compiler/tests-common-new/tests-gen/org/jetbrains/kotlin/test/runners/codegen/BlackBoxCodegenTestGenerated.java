@@ -9828,6 +9828,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("superCallToKotlinInterfaceDefaultMethodFromDisabled.kt")
+        public void testSuperCallToKotlinInterfaceDefaultMethodFromDisabled() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallToKotlinInterfaceDefaultMethodFromDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt")
+        public void testSuperCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt");
+        }
+
+        @Test
         @TestMetadata("superPropAccess.kt")
         public void testSuperPropAccess() {
           runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
@@ -9870,6 +9882,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
           @TestMetadata("superCallFromInterface2.kt")
           public void testSuperCallFromInterface2() {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
+          }
+
+          @Test
+          @TestMetadata("superCallToKotlinInterfaceDefaultMethodFromDisabled.kt")
+          public void testSuperCallToKotlinInterfaceDefaultMethodFromDisabled() {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallToKotlinInterfaceDefaultMethodFromDisabled.kt");
+          }
+
+          @Test
+          @TestMetadata("superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt")
+          public void testSuperCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled() {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallToKotlinInterfaceOverriddenDefaultMethodFromDisabled.kt");
           }
 
           @Test
@@ -52935,6 +52959,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("superCallToNonGenericImplThroughGenericDefaultImpls.kt")
     public void testSuperCallToNonGenericImplThroughGenericDefaultImpls() {
       runTest("compiler/testData/codegen/box/super/superCallToNonGenericImplThroughGenericDefaultImpls.kt");
+    }
+
+    @Test
+    @TestMetadata("superJavaInterfaceDefaultMethod.kt")
+    public void testSuperJavaInterfaceDefaultMethod() {
+      runTest("compiler/testData/codegen/box/super/superJavaInterfaceDefaultMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("superJavaInterfaceOverriddenDefaultMethod.kt")
+    public void testSuperJavaInterfaceOverriddenDefaultMethod() {
+      runTest("compiler/testData/codegen/box/super/superJavaInterfaceOverriddenDefaultMethod.kt");
     }
 
     @Test

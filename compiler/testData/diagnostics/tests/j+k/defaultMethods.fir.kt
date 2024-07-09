@@ -21,22 +21,22 @@ import JavaInterface.testStatic
 interface KotlinInterface : JavaInterface {
     fun fooo() {
         testStatic()
-        super.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+        super.test()
 
         object  {
             fun run () {
-                super@KotlinInterface.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+                super@KotlinInterface.test()
             }
         }
     }
 
     val propertyy: String
         get() {
-            super.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+            super.test()
 
             object  {
                 fun run () {
-                    super@KotlinInterface.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+                    super@KotlinInterface.test()
                 }
             }
             return ""
@@ -50,22 +50,22 @@ interface KotlinInterface : JavaInterface {
 interface KotlinInterfaceIndirectInheritance : KotlinInterface {
     fun foooo() {
         testStatic()
-        super.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+        super.test()
 
         object  {
             fun run () {
-                super@KotlinInterfaceIndirectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+                super@KotlinInterfaceIndirectInheritance.test()
             }
         }
     }
 
     val propertyyy: String
         get() {
-            super.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+            super.test()
 
             object  {
                 fun run () {
-                    super@KotlinInterfaceIndirectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+                    super@KotlinInterfaceIndirectInheritance.test()
                 }
             }
             return ""

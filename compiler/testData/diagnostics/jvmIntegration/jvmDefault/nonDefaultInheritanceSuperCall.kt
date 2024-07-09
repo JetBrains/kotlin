@@ -9,7 +9,7 @@ interface UExpression {
 }
 
 // MODULE: main(library)
-// KOTLINC_ARGS: -Xjvm-default=disable
+// KOTLINC_ARGS: -Xjvm-default=disable -XXLanguage:-AllowSuperCallToJavaInterface
 // FILE: source.kt
 import base.*
 

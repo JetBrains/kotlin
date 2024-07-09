@@ -8,7 +8,7 @@ public interface Test {
 // FILE: test.kt
 interface KTrait : Test {
     fun ktest() {
-        super.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+        super.test()
 
         test()
     }
@@ -17,7 +17,7 @@ interface KTrait : Test {
 
 interface KTrait2 : KTrait {
     fun ktest2() {
-        super.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+        super.test()
 
         test()
     }

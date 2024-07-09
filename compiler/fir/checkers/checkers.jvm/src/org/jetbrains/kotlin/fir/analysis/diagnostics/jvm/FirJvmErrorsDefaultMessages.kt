@@ -281,7 +281,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER,
-            "Interfaces can only call JVM-default members via super within JVM-default members. Please use '-Xjvm-default=all/all-compatibility' modes for such calls."
+            "Calling JVM-default members via super is supported only in Kotlin 2.1 and later.",
         )
         map.put(
             SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC,

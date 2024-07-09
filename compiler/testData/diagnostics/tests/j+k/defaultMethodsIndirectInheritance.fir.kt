@@ -26,7 +26,7 @@ import JavaInterface.testStatic
 interface KotlinInterface : JavaInterface {
     fun fooo() {
         testStatic()
-        super.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+        super.test()
         test()
         testOverride()
     }
@@ -39,7 +39,7 @@ interface KotlinInterface : JavaInterface {
 interface KotlinInterfaceIndirectInheritance : KotlinInterface {
     fun foooo() {
         testStatic()
-        super.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+        super.test()
         testOverride()
         super.testOverride()
     }
