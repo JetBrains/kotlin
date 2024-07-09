@@ -8,7 +8,7 @@ package kotlin.native.internal
 import kotlin.reflect.*
 
 internal object KVarianceMapper {
-    // this constants are copypasted to ReflectionSupport.kt
+    // this constants are copypasted to NativeReflectionIrBuilder.kt
     const val VARIANCE_STAR = -1
     const val VARIANCE_INVARIANT = 0
     const val VARIANCE_IN = 1

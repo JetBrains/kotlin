@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
@@ -119,24 +118,21 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
 
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
-                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
-                irBuilder.run {
-                    val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
-                    if (receiversCount == 2)
-                        throw AssertionError("Callable reference to properties with two receivers is not allowed: ${expression}")
-                    else { // Cache KProperties with no arguments.
-                        // TODO: what about `receiversCount == 1` case?
-                        val field = kProperties.getOrPut(expression.symbol.owner) {
-                            kPropertyField(irExprBody(createLocalKProperty(
-                                    expression.symbol.owner.name.asString(),
-                                    expression.getter.owner.returnType,
-                                    KTypeGenerator(this@PropertyDelegationLowering.context.ir.symbols),
-                                    this
-                            )), kProperties.size)
-                        }
-
-                        return irGetField(null, field)
+                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset).toNativeReflectionBuilder(context.ir.symbols)
+                val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
+                if (receiversCount == 2)
+                    throw AssertionError("Callable reference to properties with two receivers is not allowed: ${expression}")
+                else { // Cache KProperties with no arguments.
+                    // TODO: what about `receiversCount == 1` case?
+                    val field = kProperties.getOrPut(expression.symbol.owner) {
+                        val kProperty = irBuilder.createLocalKProperty(
+                                expression.symbol.owner.name.asString(),
+                                expression.getter.owner.returnType,
+                        )
+                        kPropertyField(irBuilder.irExprBody(kProperty), kProperties.size)
                     }
+
+                    return irBuilder.irGetField(null, field)
                 }
             }
         })
@@ -258,20 +254,16 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
         }
     }
 
-    private fun createLocalKProperty(propertyName: String,
-                                     propertyType: IrType,
-                                     kTypeGenerator: KTypeGenerator,
-                                     irBuilder: IrBuilderWithScope): IrConstantValue {
-        val symbols = context.ir.symbols
-        return irBuilder.run {
-            irConstantObject(
-                    symbols.kLocalDelegatedPropertyImpl.owner,
-                    mapOf(
-                            "name" to irConstantPrimitive(irString(propertyName)),
-                            "returnType" to with(kTypeGenerator) { irKType(propertyType) }
-                    )
-            )
-        }
+    private fun NativeReflectionIrBuilder.createLocalKProperty(propertyName: String,
+                                                               propertyType: IrType): IrConstantValue {
+        val symbols = this@PropertyDelegationLowering.context.ir.symbols
+        return irConstantObject(
+                symbols.kLocalDelegatedPropertyImpl.owner,
+                mapOf(
+                        "name" to irConstantPrimitive(irString(propertyName)),
+                        "returnType" to irKType(propertyType)
+                )
+        )
     }
 
     private fun isKMutablePropertyType(type: IrType): Boolean {

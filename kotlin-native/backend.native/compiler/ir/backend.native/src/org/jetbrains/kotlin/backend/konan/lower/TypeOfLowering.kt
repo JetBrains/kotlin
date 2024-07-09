@@ -38,12 +38,10 @@ internal class TypeOfLowering(val context: Context) : BodyLoweringPass {
 
                 return when {
                     Symbols.isTypeOfIntrinsic(expression.symbol) -> {
-                        val generator = KTypeGenerator(context.ir.symbols) {
+                        val generator = data.toNativeReflectionBuilder(context.ir.symbols) {
                             context.reportCompilationError(it, irFile, expression)
                         }
-                        with (generator) {
-                            data.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = true)
-                        }
+                        generator.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = true)
                     }
                     else -> expression
                 }

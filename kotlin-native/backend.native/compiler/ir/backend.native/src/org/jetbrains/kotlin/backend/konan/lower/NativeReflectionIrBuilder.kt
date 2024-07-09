@@ -21,21 +21,45 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.Variance
 
-private fun IrBuilderWithScope.irConstantString(string: String) = irConstantPrimitive(irString(string))
-private fun IrBuilderWithScope.irConstantInt(int: Int) = irConstantPrimitive(irInt(int))
-private fun IrBuilderWithScope.irConstantBoolean(boolean: Boolean) = irConstantPrimitive(irBoolean(boolean))
+internal fun IrBuilderWithScope.toNativeReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: (String) -> Unit = {}) = NativeReflectionIrBuilder(
+        context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound
+)
 
-internal class KTypeGenerator(
+internal class NativeReflectionIrBuilder(
+        context: IrGeneratorContext,
+        scope: Scope,
+        startOffset: Int, endOffset: Int,
         val symbols: KonanSymbols,
-        val onRecursiveUpperBound: (String) -> Unit = {},
-) {
+        val onRecursiveUpperBound: (String) -> Unit,
+) : IrBuilderWithScope(context, scope, startOffset, endOffset) {
 
-    fun IrBuilderWithScope.irKType(type: IrType, leaveReifiedForLater: Boolean = false) =
+    fun irKType(type: IrType, leaveReifiedForLater: Boolean = false) =
             irKType(type, leaveReifiedForLater, mutableSetOf())
+
+    fun irKClass(symbol: IrClassSymbol): IrConstantValue {
+        fun IrClass.isNativePointedChild(): Boolean =
+                this.symbol == symbols.nativePointed || getSuperClassNotAny()?.isNativePointedChild() == true
+
+        return when {
+            symbol.owner.isExternalObjCClass() ->
+                if (symbol.owner.isInterface)
+                    irKClassUnsupported(symbols, "KClass for Objective-C protocols is not supported yet")
+                else
+                    irConstantObject(symbols.kObjCClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
+
+            symbol.owner.isObjCClass() ->
+                irKClassUnsupported(symbols, "KClass for Kotlin subclasses of Objective-C classes is not supported yet")
+
+            symbol.owner.isNativePointedChild() ->
+                irKClassUnsupported(symbols, "KClass for interop types is not supported yet")
+
+            else -> irConstantObject(symbols.kClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
+        }
+    }
 
     private class RecursiveBoundsException(message: String) : Throwable(message)
 
-    private fun IrBuilderWithScope.irKType(
+    private fun irKType(
             type: IrType,
             leaveReifiedForLater: Boolean,
             seenTypeParameters: MutableSet<IrTypeParameter>
@@ -43,12 +67,12 @@ internal class KTypeGenerator(
         if (type !is IrSimpleType) {
             // Represent as non-denotable type:
             return irKTypeImpl(
-                kClassifier = irConstantPrimitive(irNull()),
-                irTypeArguments = emptyList(),
-                isMarkedNullable = false,
-                leaveReifiedForLater = leaveReifiedForLater,
-                seenTypeParameters = seenTypeParameters,
-                type = type,
+                    kClassifier = irConstantPrimitive(irNull()),
+                    irTypeArguments = emptyList(),
+                    isMarkedNullable = false,
+                    leaveReifiedForLater = leaveReifiedForLater,
+                    seenTypeParameters = seenTypeParameters,
+                    type = type,
             )
         }
         try {
@@ -80,22 +104,20 @@ internal class KTypeGenerator(
         }
     }
 
-    private fun IrBuilderWithScope.irKTypeImpl(
-        kClassifier: IrConstantValue,
-        irTypeArguments: List<IrTypeArgument>,
-        isMarkedNullable: Boolean,
-        leaveReifiedForLater: Boolean,
-        seenTypeParameters: MutableSet<IrTypeParameter>,
-        type: IrType,
+    private fun irKTypeImpl(
+            kClassifier: IrConstantValue,
+            irTypeArguments: List<IrTypeArgument>,
+            isMarkedNullable: Boolean,
+            leaveReifiedForLater: Boolean,
+            seenTypeParameters: MutableSet<IrTypeParameter>,
+            type: IrType,
     ): IrConstantValue = irConstantObject(symbols.kTypeImpl.owner, mapOf(
-        "classifier" to kClassifier,
-        "arguments" to irKTypeProjectionsList(irTypeArguments, leaveReifiedForLater, seenTypeParameters),
-        "isMarkedNullable" to irConstantPrimitive(irBoolean(isMarkedNullable)),
+            "classifier" to kClassifier,
+            "arguments" to irKTypeProjectionsList(irTypeArguments, leaveReifiedForLater, seenTypeParameters),
+            "isMarkedNullable" to irConstantPrimitive(irBoolean(isMarkedNullable)),
     ), listOf(type))
 
-    private fun IrBuilderWithScope.irKClass(symbol: IrClassSymbol) = irKClass(symbols, symbol)
-
-    private fun IrBuilderWithScope.irKTypeParameter(
+    private fun irKTypeParameter(
             typeParameter: IrTypeParameter,
             leaveReifiedForLater: Boolean,
             seenTypeParameters: MutableSet<IrTypeParameter>
@@ -119,7 +141,7 @@ internal class KTypeGenerator(
             else -> parent.fqNameForIrSerialization.asString()
         }
 
-    private fun IrBuilderWithScope.irKTypeArray(
+    private fun irKTypeArray(
             types: List<IrType>,
             leaveReifiedForLater: Boolean,
             seenTypeParameters: MutableSet<IrTypeParameter>
@@ -137,7 +159,7 @@ internal class KTypeGenerator(
         Variance.OUT_VARIANCE -> 2
     }
 
-    private fun IrBuilderWithScope.irKTypeProjectionsList(
+    private fun irKTypeProjectionsList(
             irTypeArguments: List<IrTypeArgument>,
             leaveReifiedForLater: Boolean,
             seenTypeParameters: MutableSet<IrTypeParameter>
@@ -165,31 +187,13 @@ internal class KTypeGenerator(
                         "type" to type
                 ))
     }
+
+    private fun irKClassUnsupported(symbols: KonanSymbols, message: String) =
+            irConstantObject(symbols.kClassUnsupportedImpl.owner, mapOf(
+                    "message" to irConstantString(message)
+            ))
+
+    private fun irConstantString(string: String) = irConstantPrimitive(irString(string))
+    private fun irConstantInt(int: Int) = irConstantPrimitive(irInt(int))
+    private fun irConstantBoolean(boolean: Boolean) = irConstantPrimitive(irBoolean(boolean))
 }
-
-internal fun IrBuilderWithScope.irKClass(symbols: KonanSymbols, symbol: IrClassSymbol): IrConstantValue {
-
-    fun IrClass.isNativePointedChild() : Boolean =
-            this.symbol == symbols.nativePointed || getSuperClassNotAny()?.isNativePointedChild() == true
-
-    return when {
-        symbol.owner.isExternalObjCClass() ->
-            if (symbol.owner.isInterface)
-                irKClassUnsupported(symbols, "KClass for Objective-C protocols is not supported yet")
-            else
-                irConstantObject(symbols.kObjCClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
-
-        symbol.owner.isObjCClass() ->
-            irKClassUnsupported(symbols, "KClass for Kotlin subclasses of Objective-C classes is not supported yet")
-
-        symbol.owner.isNativePointedChild() ->
-            irKClassUnsupported(symbols, "KClass for interop types is not supported yet")
-
-        else -> irConstantObject(symbols.kClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
-    }
-}
-
-private fun IrBuilderWithScope.irKClassUnsupported(symbols: KonanSymbols, message: String) =
-        irConstantObject(symbols.kClassUnsupportedImpl.owner, mapOf(
-                "message" to irConstantString(message)
-        ))

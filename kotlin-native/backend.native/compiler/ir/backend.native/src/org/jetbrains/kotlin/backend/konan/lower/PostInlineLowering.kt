@@ -47,11 +47,11 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
             override fun visitClassReference(expression: IrClassReference, data: IrBuilderWithScope): IrExpression {
                 expression.transformChildren(this, data)
 
-                return data.at(expression).run {
-                    (expression.symbol as? IrClassSymbol)?.let { irKClass(symbols, it) }
-                            ?:
-                            // E.g. for `T::class` in a body of an inline function itself.
-                            irCall(symbols.throwNullPointerException.owner)
+                val irClassSymbol = expression.symbol as? IrClassSymbol
+                return if (irClassSymbol == null) {
+                    data.at(expression).irCall(symbols.throwNullPointerException.owner)
+                } else {
+                    data.toNativeReflectionBuilder(symbols).at(expression).irKClass(irClassSymbol)
                 }
             }
 
@@ -102,16 +102,14 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
 
             override fun visitConstantObject(expression: IrConstantObject, data: IrBuilderWithScope): IrConstantValue {
                 return if (tryGetConstantConstructorIntrinsicType(expression.constructor) == ConstantConstructorIntrinsicType.KTYPE_IMPL) {
-                    val generator = KTypeGenerator(context.ir.symbols) {
+                    val generator = data.toNativeReflectionBuilder(context.ir.symbols) {
                         // Inline functions themselves are not called (they have been inlined at all call sites),
                         // so it is ok not to build exact type parameters for them.
                         if ((container as? IrSimpleFunction)?.isInline != true) {
                             context.reportCompilationError(it, irFile, expression)
                         }
                     }
-                    with(generator) {
-                        data.at(expression).irKType(expression.typeArguments[0], leaveReifiedForLater = false)
-                    }
+                    generator.at(expression).irKType(expression.typeArguments[0], leaveReifiedForLater = false)
                 } else
                     super.visitConstantObject(expression, data)
             }
