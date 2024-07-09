@@ -272,6 +272,12 @@ internal class ImplementationPrinter(
                 }
                 print(" {")
                 if (!field.isMutable) {
+                    if (field.name == "coneTypeOrNull") {
+                        println()
+                        withIndent {
+                            println("require(newConeTypeOrNull == coneTypeOrNull) { \"\${javaClass.simpleName}.replaceConeTypeOrNull() called with invalid type '\${newConeTypeOrNull}'. Current type is '\$coneTypeOrNull'\" }")
+                        }
+                    }
                     println("}")
                     return
                 }

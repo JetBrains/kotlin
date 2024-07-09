@@ -1400,11 +1400,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
     ): FirStatement {
         multiDelegatedConstructorCall.transformChildren(transformer, data)
-        multiDelegatedConstructorCall.replaceConeTypeOrNull(
-            multiDelegatedConstructorCall.delegatedConstructorCalls.firstNotNullOfOrNull {
-                it.constructedTypeRef.coneType
-            } ?: ConeErrorType(ConeSimpleDiagnostic("Unresolved type for ambiguous delegated constructor call"))
-        )
         return multiDelegatedConstructorCall
     }
 

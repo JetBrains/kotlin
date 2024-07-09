@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
@@ -434,7 +435,12 @@ class FirSignatureEnhancement(
             }
         }.apply {
             val newValueParameters = firMethod.valueParameters.zip(enhancedValueParameterTypes) { valueParameter, enhancedReturnType ->
-                valueParameter.defaultValue?.replaceConeTypeOrNull(enhancedReturnType.coneType)
+                // Java annotation default values with binary expressions like `1.0 / 0.0`
+                // are not properly supported and produce error expressions, see IDEA-207252.
+                // Updating the type of an error expression causes an exception.
+                if (valueParameter.defaultValue !is FirErrorExpression) {
+                    valueParameter.defaultValue?.replaceConeTypeOrNull(enhancedReturnType.coneType)
+                }
 
                 buildValueParameter {
                     source = valueParameter.source
