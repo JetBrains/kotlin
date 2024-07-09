@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.backend.konan.KonanPrimitiveType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
@@ -58,6 +56,7 @@ internal fun ObjCExportContext.translateToObjCReferenceType(type: KaType): ObjCR
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.mapReferenceTypeIgnoringNullability]
  */
+@OptIn(KaExperimentalApi::class)
 internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaType): ObjCNonNullReferenceType {
     with(analysisSession) {
         val fullyExpandedType = type.fullyExpandedType
@@ -132,7 +131,13 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
             val definingSymbol = fullyExpandedType.symbol.containingDeclaration
 
             if (definingSymbol is KaCallableSymbol) {
-                return ObjCIdType
+                val upperBound = definingSymbol.typeParameters.firstOrNull()?.upperBounds?.firstOrNull()
+                if (upperBound != null) {
+                    return mapToReferenceTypeIgnoringNullability(upperBound)
+                } else {
+                    return ObjCIdType
+                }
+
             }
 
             if (definingSymbol is KaClassSymbol && definingSymbol.classKind == KaClassKind.INTERFACE) {
