@@ -95,11 +95,20 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
     }
 
     private fun checkVarianceConflict(
-        type: FirTypeRef, variance: Variance,
+        typeRef: FirTypeRef, variance: Variance,
         context: CheckerContext, reporter: DiagnosticReporter,
         source: KtSourceElement? = null
     ) {
-        checkVarianceConflict(type.coneType, variance, type, type.coneType, context, reporter, source)
+        val expandedType = typeRef.coneType.fullyExpandedType(context.session)
+        checkVarianceConflict(
+            type = expandedType,
+            variance = variance,
+            typeRef = typeRef,
+            containingType = expandedType,
+            context = context,
+            reporter = reporter,
+            source = source
+        )
     }
 
     private fun checkVarianceConflict(
