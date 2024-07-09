@@ -11,6 +11,14 @@ public final class cases/enums/EnumClass : java/lang/Enum {
 	public static fun values ()[Lcases/enums/EnumClass;
 }
 
+public final class cases/enums/EnumWithInternalCompanion : java/lang/Enum {
+	public static final field A Lcases/enums/EnumWithInternalCompanion;
+	public static final field B Lcases/enums/EnumWithInternalCompanion;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcases/enums/EnumWithInternalCompanion;
+	public static fun values ()[Lcases/enums/EnumWithInternalCompanion;
+}
+
 public final class cases/enums/JavaEnum : java/lang/Enum {
 	public static final field JA Lcases/enums/JavaEnum;
 	public static final field JB Lcases/enums/JavaEnum;

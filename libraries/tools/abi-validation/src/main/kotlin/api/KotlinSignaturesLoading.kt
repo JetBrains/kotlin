@@ -127,11 +127,11 @@ private fun FieldNode.buildFieldSignature(
         foundAnnotations.addAll(companionClass?.visibleAnnotations.orEmpty())
         foundAnnotations.addAll(companionClass?.invisibleAnnotations.orEmpty())
     } else if (isStatic(access) && isFinal(access)) {
-        companionClass = ownerClass.companionName(ownerClass.kotlinMetadata)?.let {
+        val companionClassCandidate = ownerClass.companionName(ownerClass.kotlinMetadata)?.let {
             classes[it]
         }
 
-        val property = companionClass?.kmProperty(name)
+        val property = companionClassCandidate?.kmProperty(name)
 
         if (property != null && JvmFlag.Property.IS_MOVED_FROM_INTERFACE_COMPANION(property.flags)) {
             /*
@@ -140,7 +140,11 @@ private fun FieldNode.buildFieldSignature(
              *
              * See https://github.com/Kotlin/binary-compatibility-validator/issues/90
              */
-            foundAnnotations.addAll(companionClass!!.methods.annotationsFor(property.syntheticMethodForAnnotations))
+            foundAnnotations.addAll(
+                companionClassCandidate.methods.annotationsFor(
+                    property.syntheticMethodForAnnotations
+                )
+            )
         }
     }
 
