@@ -116,10 +116,9 @@ private fun ConeDiagnostic.toKtDiagnostic(
             if (it !is AbstractCallCandidate<*>) return@all false
             // Ambiguous candidates may be not fully processed, so argument mapping may be not initialized
             if (!it.argumentMappingInitialized) return@all false
-            it.argumentMapping.keys.any { atom ->
-                val arg = atom.expression
-                arg.resolvedType.hasError() && arg !is FirAnonymousFunctionExpression && arg !is FirCallableReferenceAccess
-            }
+            it.argumentMapping.keys.any(AbstractConeResolutionAtom::containsErrorTypeForSuppressingAmbiguityError) ||
+                    it.contextReceiverArguments?.any(AbstractConeResolutionAtom::containsErrorTypeForSuppressingAmbiguityError) == true ||
+                    it.chosenExtensionReceiver?.containsErrorTypeForSuppressingAmbiguityError() == true
         } -> null
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
@@ -199,6 +198,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source)
     is ConeMultipleLabelsAreForbidden -> FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN.createOn(this.source)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
+}
+
+private fun AbstractConeResolutionAtom.containsErrorTypeForSuppressingAmbiguityError(): Boolean {
+    val arg = expression
+    return arg.resolvedType.hasError() && arg !is FirAnonymousFunctionExpression && arg !is FirCallableReferenceAccess
 }
 
 /**

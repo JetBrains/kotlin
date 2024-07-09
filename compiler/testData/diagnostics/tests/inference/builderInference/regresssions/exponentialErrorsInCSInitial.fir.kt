@@ -50,7 +50,7 @@ public fun <E> List<E>.permutations1(k: Int = size) {
             currentIndices[<!ARGUMENT_TYPE_MISMATCH!>firstToIncrease<!>] = <!ARGUMENT_TYPE_MISMATCH!>newIndex<!>
             <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>currentElements[firstToIncrease]<!> = collection[newIndex-1]
 
-            for (t in <!ITERATOR_MISSING!>firstToIncrease<!NONE_APPLICABLE!>+<!>1 .. <!ARGUMENT_TYPE_MISMATCH!>k<!><!>) {
+            for (t in <!ITERATOR_MISSING!>firstToIncrease+1 .. <!ARGUMENT_TYPE_MISMATCH!>k<!><!>) {
                 val index = addStartMark()
                 currentIndices[t] = index
                 currentElements[t] = collection[index-1]
