@@ -53,6 +53,11 @@ abstract class FirInferenceSession {
      */
     open fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? = null
 
+    // TODO: This function would be hopefully removed once KT-55692 is fixed
+    @TemporaryInferenceSessionHook
+    open fun updateExpressionReturnTypeWithCurrentSubstitutorInPCLA(expression: FirExpression, resolutionMode: ResolutionMode) {
+    }
+
     companion object {
         val DEFAULT: FirInferenceSession = object : FirInferenceSession() {
             override fun <T> processPartiallyResolvedCall(
@@ -75,3 +80,6 @@ abstract class FirInferenceSession {
         }
     }
 }
+
+@RequiresOptIn
+annotation class TemporaryInferenceSessionHook
