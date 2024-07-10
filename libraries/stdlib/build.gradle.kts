@@ -130,7 +130,6 @@ kotlin {
                                 "-Xmultifile-parts-inherit",
                                 "-Xuse-14-inline-classes-mangling-scheme",
                                 "-Xno-new-java-annotation-targets",
-                                "-Xlink-via-signatures",
                                 diagnosticNamesArg,
                             )
                         )
