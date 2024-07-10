@@ -93,6 +93,10 @@
 -dontoptimize
 -dontobfuscate
 
+-keepclassmembers class com.intellij.** { *; }
+-keepclassmembers class org.jdom.** { *; }
+
+
 -keep class org.fusesource.** { *; }
 -keep class com.sun.jna.** { *; }
 
