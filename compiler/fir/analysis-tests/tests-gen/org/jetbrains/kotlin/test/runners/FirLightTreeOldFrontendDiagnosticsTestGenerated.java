@@ -17868,6 +17868,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("elvisWithNothingRHS.kt")
+        public void testElvisWithNothingRHS() {
+          runTest("compiler/testData/diagnostics/tests/inference/builderInference/elvisWithNothingRHS.kt");
+        }
+
+        @Test
         @TestMetadata("elvisWithReturnInLastStatementOfLastLambda.kt")
         public void testElvisWithReturnInLastStatementOfLastLambda() {
           runTest("compiler/testData/diagnostics/tests/inference/builderInference/elvisWithReturnInLastStatementOfLastLambda.kt");
@@ -18057,6 +18063,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         @TestMetadata("kt53639.kt")
         public void testKt53639() {
           runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt53639.kt");
+        }
+
+        @Test
+        @TestMetadata("kt68889.kt")
+        public void testKt68889() {
+          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt68889.kt");
         }
 
         @Test
