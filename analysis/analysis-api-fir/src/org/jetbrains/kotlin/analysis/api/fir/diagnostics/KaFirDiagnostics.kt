@@ -3084,6 +3084,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UselessElvisRightIsNull::class
     }
 
+    interface UnsafeResult : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UnsafeResult::class
+    }
+
     interface CannotCheckForErased : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CannotCheckForErased::class
         val type: KaType

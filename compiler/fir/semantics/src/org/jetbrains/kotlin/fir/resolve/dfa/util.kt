@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeContext
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 
 fun TypeStatement.smartCastedType(context: ConeTypeContext): ConeKotlinType =
-    if (exactType.isNotEmpty()) {
+    if (resultStatement == ResultStatement.INCONGRUENT) {
+        FirImplicitNothingTypeRef(null).coneType
+    } else if (exactType.isNotEmpty()) {
         context.intersectTypes(exactType.toMutableList().also { it += variable.originalType })
     } else {
         variable.originalType

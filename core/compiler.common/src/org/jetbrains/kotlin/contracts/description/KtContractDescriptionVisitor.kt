@@ -43,6 +43,8 @@ abstract class KtContractDescriptionVisitor<out R, in D, Type, Diagnostic> {
 
     open fun visitIsNullPredicate(isNullPredicate: KtIsNullPredicate<Type, Diagnostic>, data: D): R = visitBooleanExpression(isNullPredicate, data)
 
+    open fun visitIsSuccessPredicate(isSuccessPredicate: KtIsSuccessPredicate<Type, Diagnostic>, data: D): R = visitBooleanExpression(isSuccessPredicate, data)
+
     // Values
     open fun visitValue(value: KtContractDescriptionValue<Type, Diagnostic>, data: D): R = visitContractDescriptionElement(value, data)
 

@@ -62,10 +62,12 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     fun addTypeStatement(flow: MutableFlow, statement: TypeStatement): TypeStatement? {
         if (statement.exactType.isEmpty()) return null
         val variable = statement.variable
-        val oldExactType = flow.approvedTypeStatements[variable]?.exactType
+        val oldTypeStatement = flow.approvedTypeStatements[variable]
+        val oldExactType = oldTypeStatement?.exactType
         val newExactType = oldExactType?.addAll(statement.exactType) ?: statement.exactType.toPersistentSet()
+        val newResultStatement = (oldTypeStatement?.resultStatement ?: ResultStatement.UNKNOWN) and statement.resultStatement
         if (newExactType === oldExactType) return null
-        return PersistentTypeStatement(variable, newExactType).also { flow.approvedTypeStatements[variable] = it }
+        return PersistentTypeStatement(variable, newExactType, newResultStatement).also { flow.approvedTypeStatements[variable] = it }
     }
 
     fun addTypeStatements(flow: MutableFlow, statements: TypeStatements): List<TypeStatement> =
@@ -73,9 +75,10 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     fun addImplication(flow: MutableFlow, implication: Implication) {
         val effect = implication.effect
+        val previousEffect = flow.approvedTypeStatements[effect.variable]
         val redundant = effect == implication.condition || when (effect) {
             is TypeStatement ->
-                effect.isEmpty || flow.approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true
+                effect.isEmpty || (previousEffect?.exactType?.containsAll(effect.exactType) == true && previousEffect.resultStatement == effect.resultStatement )
             // Synthetic variables can only be referenced in tree order, so implications with synthetic variables can
             // only look like "if <expression> is A, then <part of that expression> is B". If we don't already have any
             // statements about a part of the expression, then we never will, as we're already exiting the entire expression.
@@ -278,7 +281,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                     when (val effect = it.effect) {
                         is OperationStatement -> queue += effect
                         is TypeStatement ->
-                            result.getOrPut(effect.variable) { MutableTypeStatement(effect.variable) } += effect
+                            result.getOrPut(effect.variable) { MutableTypeStatement(effect.variable, resultStatement = effect.resultStatement) } += effect
                     }
                 }
                 removeApprovedOrImpossible && knownValue != null
@@ -318,6 +321,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     private operator fun MutableTypeStatement.plusAssign(other: TypeStatement) {
         exactType += other.exactType
+        resultStatement = resultStatement.and(other.resultStatement)
     }
 
     fun and(a: TypeStatement?, b: TypeStatement): TypeStatement {
@@ -353,19 +357,20 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             unified.canBeNull(context.session) -> return null
             else -> context.anyType()
         }
-        return PersistentTypeStatement(variable, persistentSetOf(result))
+        val resultStatement = statements.map(TypeStatement::resultStatement).reduce(ResultStatement::or)
+        return PersistentTypeStatement(variable, persistentSetOf(result), resultStatement)
     }
 }
 
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
     is PersistentTypeStatement -> this
     // If this statement was obtained via `toMutable`, `toPersistentSet` will call `build`.
-    else -> PersistentTypeStatement(variable, exactType.toPersistentSet())
+    else -> PersistentTypeStatement(variable, exactType.toPersistentSet(), resultStatement)
 }
 
 private fun TypeStatement.toMutable(): MutableTypeStatement = when (this) {
-    is PersistentTypeStatement -> MutableTypeStatement(variable, exactType.builder())
-    else -> MutableTypeStatement(variable, LinkedHashSet(exactType))
+    is PersistentTypeStatement -> MutableTypeStatement(variable, exactType.builder(), resultStatement)
+    else -> MutableTypeStatement(variable, LinkedHashSet(exactType), resultStatement)
 }
 
 @JvmName("replaceVariableInStatements")

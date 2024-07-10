@@ -75,6 +75,10 @@ private fun Context.renderKaContractBooleanExpression(value: KaContractBooleanEx
                 appendProperty(value::argument, ::renderKaContractParameterValue)
                 appendSimpleProperty(value::isNegated, endWithNewLine)
             }
+            is KaContractIsSuccessPredicateExpression -> {
+                appendProperty(value::argument, ::renderKaContractParameterValue)
+                appendSimpleProperty(value::isNegated, endWithNewLine)
+            }
             is KaContractBooleanValueParameterExpression -> {
                 appendProperty(value::parameterSymbol, ::renderKaParameterSymbol, endWithNewLine)
             }

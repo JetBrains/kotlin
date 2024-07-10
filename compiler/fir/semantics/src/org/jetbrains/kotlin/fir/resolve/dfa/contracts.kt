@@ -60,6 +60,12 @@ fun LogicSystem.approveContractStatement(
             } ?: mapOf()
         is ConeIsNullPredicate ->
             arguments.getOrNull(arg.parameterIndex + 1)?.processEqNull(inverted == isNegated) ?: mapOf()
+        is ConeIsSuccessPredicate -> {
+            val argument = arguments.getOrNull(arg.parameterIndex + 1) as? RealVariable
+            val actuallyNegated = if (inverted) this.isNegated else !this.isNegated
+            val resultStatement = if (actuallyNegated) ResultStatement.FAILURE else ResultStatement.SUCCESS
+            argument?.let { mapOf(it to MutableTypeStatement(it, resultStatement = resultStatement)) }
+        }
         is ConeBooleanValueParameterReference ->
             arguments.getOrNull(parameterIndex + 1)?.let { approveOperationStatement(it eq !inverted) } ?: mapOf()
         is ConeBinaryLogicExpression -> {

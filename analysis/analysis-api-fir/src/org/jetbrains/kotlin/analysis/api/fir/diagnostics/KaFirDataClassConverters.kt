@@ -4414,6 +4414,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.UNSAFE_RESULT) { firDiagnostic ->
+        UnsafeResultImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CANNOT_CHECK_FOR_ERASED) { firDiagnostic ->
         CannotCheckForErasedImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

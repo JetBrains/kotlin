@@ -113,6 +113,16 @@ internal class StubBasedFirContractDeserializer(
             )
         }
 
+        override fun visitIsSuccessPredicate(
+            isSuccessPredicate: KtIsSuccessPredicate<KotlinTypeBean, Nothing?>,
+            data: Nothing?
+        ): ConeContractDescriptionElement {
+            return ConeIsSuccessPredicate(
+                isSuccessPredicate.arg.accept(this, data) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
+                isSuccessPredicate.isNegated
+            )
+        }
+
         override fun visitValueParameterReference(
             valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>,
             data: Nothing?

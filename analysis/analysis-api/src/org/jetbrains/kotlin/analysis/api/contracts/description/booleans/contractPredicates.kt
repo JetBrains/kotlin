@@ -42,3 +42,15 @@ public interface KaContractIsNullPredicateExpression : KaContractBooleanExpressi
 @Deprecated("Use 'KaContractIsNullPredicateExpression' instead.", ReplaceWith("KaContractIsNullPredicateExpression"))
 @KaExperimentalApi
 public typealias KtContractIsNullPredicateExpression = KaContractIsNullPredicateExpression
+
+/**
+ * See: [KaContractBooleanExpression].
+ */
+@KaExperimentalApi
+public interface KaContractIsSuccessPredicateExpression : KaContractBooleanExpression {
+    public val argument: KaContractParameterValue
+
+    public val isNegated: Boolean
+
+    public fun negated(): KaContractIsNullPredicateExpression
+}

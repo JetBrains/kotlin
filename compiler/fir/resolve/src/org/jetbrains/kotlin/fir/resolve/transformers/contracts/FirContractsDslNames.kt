@@ -29,6 +29,10 @@ object FirContractsDslNames {
     val UNKNOWN_KIND: CallableId = invocationKind("UNKNOWN")
     val AT_MOST_ONCE_KIND: CallableId = invocationKind("AT_MOST_ONCE")
 
+    // Result-related calls
+    val RESULT_IS_SUCCESS: CallableId = id("kotlin", "Result", "isSuccess")
+    val RESULT_IS_FAILURE: CallableId = id("kotlin", "Result", "isFailure")
+
     private const val CONTRACT_BUILDER = "ContractBuilder"
 
     private fun contractBuilder(name: String): CallableId = id(CONTRACT_PACKAGE, CONTRACT_BUILDER, name)

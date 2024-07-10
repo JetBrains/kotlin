@@ -24,9 +24,29 @@ data class OperationStatement(override val variable: DataFlowVariable, val opera
     }
 }
 
+enum class ResultStatement {
+    UNKNOWN,
+    SUCCESS,
+    FAILURE,
+    INCONGRUENT;
+
+    infix fun and(other: ResultStatement): ResultStatement = when {
+        this == other -> this
+        this == UNKNOWN -> other
+        other == UNKNOWN -> this
+        else -> INCONGRUENT
+    }
+
+    infix fun or(other: ResultStatement): ResultStatement = when {
+        this == other -> this
+        else -> UNKNOWN
+    }
+}
+
 sealed class TypeStatement : Statement() {
     abstract override val variable: RealVariable
     abstract val exactType: Set<ConeKotlinType>
+    abstract val resultStatement: ResultStatement
 
     val isEmpty: Boolean
         get() = exactType.isEmpty()
@@ -34,9 +54,11 @@ sealed class TypeStatement : Statement() {
     val isNotEmpty: Boolean
         get() = !isEmpty
 
-    final override fun toString(): String {
-        return "$variable: ${exactType.joinToString(separator = " & ")}"
-    }
+    final override fun toString(): String =
+        if (resultStatement == ResultStatement.UNKNOWN)
+            "$variable: ${exactType.joinToString(separator = " & ")}"
+        else
+            "$variable: ${exactType.joinToString(separator = " & ")} ($resultStatement)"
 }
 
 class Implication(

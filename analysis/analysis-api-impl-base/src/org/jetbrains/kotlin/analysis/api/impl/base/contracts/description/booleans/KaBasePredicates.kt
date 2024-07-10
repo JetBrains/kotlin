@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractParameterValue
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsInstancePredicateExpression
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsNullPredicateExpression
+import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsSuccessPredicateExpression
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -59,6 +60,30 @@ class KaBaseContractIsNullPredicateExpression(
     override fun equals(other: Any?): Boolean {
         return this === other ||
                 other is KaBaseContractIsNullPredicateExpression &&
+                other.backingArgument == backingArgument &&
+                other.backingIsNegated == backingIsNegated
+    }
+
+    override fun hashCode(): Int = Objects.hashCode(backingArgument, backingIsNegated)
+}
+
+@KaImplementationDetail
+class KaBaseContractIsSuccessPredicateExpression(
+    private val backingArgument: KaContractParameterValue,
+    private val backingIsNegated: Boolean
+) : KaContractIsSuccessPredicateExpression {
+    override val token: KaLifetimeToken get() = backingArgument.token
+
+    override val argument: KaContractParameterValue get() = withValidityAssertion { backingArgument }
+
+    override val isNegated: Boolean get() = withValidityAssertion { backingIsNegated }
+
+    override fun negated(): KaContractIsNullPredicateExpression =
+        KaBaseContractIsNullPredicateExpression(argument, !isNegated)
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is KaBaseContractIsSuccessPredicateExpression &&
                 other.backingArgument == backingArgument &&
                 other.backingIsNegated == backingIsNegated
     }

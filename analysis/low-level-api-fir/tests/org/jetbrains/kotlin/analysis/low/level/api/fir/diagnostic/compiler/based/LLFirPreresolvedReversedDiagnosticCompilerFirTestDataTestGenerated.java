@@ -7536,6 +7536,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       }
 
       @Test
+      @TestMetadata("result.kt")
+      public void testResult() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts/result.kt");
+      }
+
+      @Test
       @TestMetadata("tryWithLambdaInside.kt")
       public void testTryWithLambdaInside() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts/tryWithLambdaInside.kt");

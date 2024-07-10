@@ -16,11 +16,13 @@ import kotlin.contracts.contract
 data class PersistentTypeStatement(
     override val variable: RealVariable,
     override val exactType: PersistentSet<ConeKotlinType>,
+    override val resultStatement: ResultStatement,
 ) : TypeStatement()
 
 class MutableTypeStatement(
     override val variable: RealVariable,
     override val exactType: MutableSet<ConeKotlinType> = linkedSetOf(),
+    override var resultStatement: ResultStatement = ResultStatement.UNKNOWN,
 ) : TypeStatement()
 
 // --------------------------------------- Aliases ---------------------------------------

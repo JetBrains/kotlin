@@ -52,6 +52,14 @@ enum class KotlinContractEffectType {
             )
         }
     },
+    IS_SUCCESS {
+        override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
+            return KtIsSuccessPredicate(
+                PARAMETER_REFERENCE.deserialize(dataStream) as KtValueParameterReference,
+                dataStream.readBoolean()
+            )
+        }
+    },
     IS_INSTANCE {
         override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
             return KtIsInstancePredicate(

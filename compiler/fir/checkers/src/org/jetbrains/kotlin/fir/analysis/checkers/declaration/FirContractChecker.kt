@@ -128,6 +128,10 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             return isNullPredicate.arg.accept(this, data)
         }
 
+        override fun visitIsSuccessPredicate(isSuccessPredicate: ConeIsSuccessPredicate, data: Nothing?): ConeDiagnostic? {
+            return isSuccessPredicate.arg.accept(this, data)
+        }
+
         override fun visitErroneousConstantReference(
             erroneousConstantReference: KtErroneousConstantReference<ConeKotlinType, ConeDiagnostic>,
             data: Nothing?

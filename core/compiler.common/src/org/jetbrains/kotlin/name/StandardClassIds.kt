@@ -242,6 +242,12 @@ object StandardClassIds {
         val not = "not".callableId(Boolean)
 
         val contract = "contract".callableId(BASE_CONTRACTS_PACKAGE)
+
+        val isSuccess = "isSuccess".callableId(Result)
+        val isFailure = "isFailure".callableId(Result)
+
+        val result = "result".callableId(Result)
+        val exception = "exception".callableId(Result)
     }
 
     object Collections {

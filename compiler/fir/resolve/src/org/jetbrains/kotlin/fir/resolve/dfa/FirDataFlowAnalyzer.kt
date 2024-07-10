@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -294,7 +295,7 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.enterCodeFragment(codeFragment).mergeIncomingFlow { _, flow ->
             val smartCasts = codeFragment.codeFragmentContext?.smartCasts.orEmpty()
             for ((realVariable, exactTypes) in smartCasts) {
-                flow.addTypeStatement(PersistentTypeStatement(variableStorage.remember(realVariable), exactTypes.toPersistentSet()))
+                flow.addTypeStatement(PersistentTypeStatement(variableStorage.remember(realVariable), exactTypes.toPersistentSet(), ResultStatement.UNKNOWN))
             }
         }
     }
@@ -1003,6 +1004,14 @@ abstract class FirDataFlowAnalyzer(
             return exitBooleanNot(flow, qualifiedAccess as FirFunctionCall)
         }
 
+        if (callee is FirPropertyAccessor) {
+            val callableId = callee.propertySymbol.callableId
+            if (callableId == StandardClassIds.Callables.isSuccess || callableId == StandardClassIds.Callables.isFailure) {
+                // Special hardcoded contract for Result.isSuccess and Result.isFailure
+                return exitResultCheck(flow, callableId, qualifiedAccess as FirQualifiedAccessExpression)
+            }
+        }
+
         val originalFunction = callee.originalIfFakeOverride()
         val contractDescription = (originalFunction?.symbol ?: callee.symbol).resolvedContractDescription ?: return
         val conditionalEffects = contractDescription.effects.mapNotNull { it.effect as? ConeConditionalEffectDeclaration }
@@ -1251,6 +1260,26 @@ abstract class FirDataFlowAnalyzer(
             }
         }
     }
+
+    private fun exitResultCheck(flow: MutableFlow, callableId: CallableId, expression: FirQualifiedAccessExpression) {
+        val operand = expression.candidate()?.dispatchReceiverExpression() ?: expression.dispatchReceiver!!
+        val operandVariable = flow.getVariableIfUsedOrReal(operand) ?: return
+        if (!operandVariable.isReal()) return
+        val expressionVariable = flow.getOrCreateVariable(expression) ?: return
+        when (callableId) {
+            StandardClassIds.Callables.isSuccess -> {
+                flow.addImplication((expressionVariable eq true) implies (operandVariable resultIs ResultStatement.SUCCESS))
+                flow.addImplication((expressionVariable eq false) implies (operandVariable resultIs ResultStatement.FAILURE))
+            }
+            StandardClassIds.Callables.isFailure -> {
+                flow.addImplication((expressionVariable eq true) implies (operandVariable resultIs ResultStatement.FAILURE))
+                flow.addImplication((expressionVariable eq false) implies (operandVariable resultIs ResultStatement.SUCCESS))
+            }
+        }
+    }
+
+    infix fun RealVariable.resultIs(resultStatement: ResultStatement): MutableTypeStatement =
+        MutableTypeStatement(this, linkedSetOf(components.session.builtinTypes.anyType.coneType), resultStatement)
 
     // ----------------------------------- Annotations -----------------------------------
 

@@ -160,6 +160,11 @@ class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDesc
         buffer.append(" ${if (isNullPredicate.isNegated) "!=" else "=="} null")
     }
 
+    override fun visitIsSuccessPredicate(isSuccessPredicate: KtIsSuccessPredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        isSuccessPredicate.arg.accept(this, data)
+        buffer.append(if (isSuccessPredicate.isNegated) ".isFailure" else ".isSuccess")
+    }
+
     override fun visitConstantDescriptor(constantReference: KtConstantReference<KotlinTypeBean, Nothing?>, data: Nothing?) {
         buffer.append(constantReference.name)
     }

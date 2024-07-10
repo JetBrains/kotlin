@@ -41,3 +41,15 @@ class KtIsNullPredicate<Type, Diagnostic>(val arg: KtValueParameterReference<Typ
     fun negated(): KtIsNullPredicate<Type, Diagnostic> =
         KtIsNullPredicate(arg, isNegated.not())
 }
+
+class KtIsSuccessPredicate<Type, Diagnostic>(val arg: KtValueParameterReference<Type, Diagnostic>, val isNegated: Boolean) :
+    KtBooleanExpression<Type, Diagnostic> {
+    override val erroneous: Boolean
+        get() = arg.erroneous
+
+    override fun <R, D> accept(contractDescriptionVisitor: KtContractDescriptionVisitor<R, D, Type, Diagnostic>, data: D): R =
+        contractDescriptionVisitor.visitIsSuccessPredicate(this, data)
+
+    fun negated(): KtIsSuccessPredicate<Type, Diagnostic> =
+        KtIsSuccessPredicate(arg, isNegated.not())
+}

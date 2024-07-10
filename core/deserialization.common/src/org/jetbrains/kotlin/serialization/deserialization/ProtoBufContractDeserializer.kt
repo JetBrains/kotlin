@@ -97,6 +97,11 @@ abstract class ProtoBufContractDeserializer<Type, Diagnostic, Owner> {
                 KtIsNullPredicate(variable, isInverted)
             }
 
+            PrimitiveExpressionType.SUCCESS_CHECK -> {
+                val variable = extractVariable(proto, owner) ?: return null
+                KtIsSuccessPredicate(variable, isInverted)
+            }
+
             null -> null
         }
     }
@@ -180,7 +185,8 @@ abstract class ProtoBufContractDeserializer<Type, Diagnostic, Owner> {
         RECEIVER_REFERENCE,
         CONSTANT,
         INSTANCE_CHECK,
-        NULLABILITY_CHECK
+        NULLABILITY_CHECK,
+        SUCCESS_CHECK
     }
 
     // Expressions with such type can take other expressions as arguments.

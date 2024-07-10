@@ -53,6 +53,9 @@ public value class Result<out T> @PublishedApi internal constructor(
             else -> value as T
         }
 
+    @InlineOnly
+    public inline val result: T get() = value as T
+
     /**
      * Returns the encapsulated [Throwable] exception if this instance represents [failure][isFailure] or `null`
      * if it is [success][isSuccess].
@@ -64,6 +67,9 @@ public value class Result<out T> @PublishedApi internal constructor(
             is Failure -> value.exception
             else -> null
         }
+
+    @InlineOnly
+    public inline val exception: Throwable get() = exceptionOrNull()!!
 
     /**
      * Returns a string `Success(v)` if this instance represents [success][Result.isSuccess]

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -149,6 +150,10 @@ class ConeEffectExtractor(
                 val name = (qualifiedAccessExpression.calleeReference as? FirNamedReference)?.name ?: Name.special("unresolved")
                 return ConeContractDescriptionError.UnresolvedCall(name).asElement()
             }
+        val callableId = symbol.callableId
+        if (callableId == FirContractsDslNames.RESULT_IS_SUCCESS || callableId == FirContractsDslNames.RESULT_IS_FAILURE) {
+            return visitResultCheckExpression(callableId, qualifiedAccessExpression)
+        }
         val parameter = symbol.fir as? FirValueParameter
             ?: return KtErroneousValueParameterReference(
                 ConeContractDescriptionError.IllegalParameter(symbol, "$symbol is not a value parameter")
@@ -160,6 +165,15 @@ class ConeEffectExtractor(
 
         val name = parameter.name.asString()
         return toValueParameterReference(type, index, name)
+    }
+
+    private fun visitResultCheckExpression(
+        callableId: CallableId,
+        qualifiedAccessExpression: FirQualifiedAccessExpression
+    ): ConeContractDescriptionElement {
+        val argument = qualifiedAccessExpression.explicitReceiver?.asContractValueExpression() ?: return noReceiver(callableId)
+        val isSuccess = callableId == FirContractsDslNames.RESULT_IS_SUCCESS
+        return ConeIsSuccessPredicate(argument, isSuccess)
     }
 
     override fun visitPropertyAccessExpression(

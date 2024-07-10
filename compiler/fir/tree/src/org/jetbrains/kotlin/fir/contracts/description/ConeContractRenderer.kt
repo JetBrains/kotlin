@@ -113,6 +113,11 @@ class ConeContractRenderer : KtContractDescriptionVisitor<Unit, Nothing?, ConeKo
         printer.print(" ${if (isNullPredicate.isNegated) "!=" else "=="} null")
     }
 
+    override fun visitIsSuccessPredicate(isSuccessPredicate: KtIsSuccessPredicate<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
+        isSuccessPredicate.arg.accept(this, data)
+        printer.print(if (isSuccessPredicate.isNegated) ".isFailure" else ".isSuccess")
+    }
+
     override fun visitConstantDescriptor(constantReference: KtConstantReference<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         printer.print(constantReference.name)
     }

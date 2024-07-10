@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.boolean
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractBooleanValueParameterExpression
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractIsInstancePredicateExpression
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractIsNullPredicateExpression
+import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractIsSuccessPredicateExpression
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.booleans.KaBaseContractLogicalNotExpression
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.contracts.description.*
@@ -107,6 +108,9 @@ private class ConeContractDescriptionElementToAnalysisApi(
 
     override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Unit): KaContractIsNullPredicateExpression =
         KaBaseContractIsNullPredicateExpression(isNullPredicate.arg.accept(), isNullPredicate.isNegated)
+
+    override fun visitIsSuccessPredicate(isSuccessPredicate: ConeIsSuccessPredicate, data: Unit): KaContractIsSuccessPredicateExpression =
+        KaBaseContractIsSuccessPredicateExpression(isSuccessPredicate.arg.accept(), isSuccessPredicate.isNegated)
 
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: ConeBooleanConstantReference,
