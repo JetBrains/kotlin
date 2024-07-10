@@ -212,6 +212,52 @@ tasks {
 
     withType<ShadowJar>().configureEach {
         relocate("com.github.gundy", "$kotlinEmbeddableRootPackage.com.github.gundy")
+        val baseSourcePackage = "org.jetbrains.kotlin"
+        val baseTargetPackage = "org.jetbrains.kotlin.gradle.internal"
+        val packages: Map<String, List<String>> = mapOf(
+            "analyzer" to emptyList(),
+            "build" to listOf(
+                "org.jetbrains.kotlin.build.report.**",
+            ),
+            "builtins" to emptyList(),
+            "config" to listOf(
+                "org.jetbrains.kotlin.config.JvmTarget**", // used a lot in buildscripts
+                "org.jetbrains.kotlin.config.KotlinCompilerVersion", // used a lot in buildscripts
+                "org.jetbrains.kotlin.config.Services**", // required to initialize `CompilerEnvironment`
+            ),
+            "constant" to emptyList(),
+            "container" to emptyList(),
+            "contracts" to emptyList(),
+            "descriptors" to emptyList(),
+            "extensions" to emptyList(),
+            "idea" to emptyList(),
+            "ir" to emptyList(),
+            "kapt3.diagnostic" to emptyList(),
+            "load" to emptyList(),
+            "metadata" to emptyList(),
+            "modules" to emptyList(),
+            "mpp" to emptyList(),
+            "name" to emptyList(),
+            "platform" to emptyList(),
+            "progress" to emptyList(),
+            "renderer" to emptyList(),
+            "resolve" to emptyList(),
+            "serialization" to emptyList(),
+            "storage" to emptyList(),
+            "types" to emptyList(),
+            "type" to emptyList(),
+            "utils" to emptyList(),
+            "util" to listOf(
+                "org.jetbrains.kotlin.util.Logger", // symbol from a standalone published artifact, don't relocate usages
+                "org.jetbrains.kotlin.util.UtilKt", // class from kotlin-util-io which is a transitive API dependency of KGP-API, don't relocate usages
+                "org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt", // used in standalone published artifacts that the plugin depends on
+            ),
+        )
+        packages.forEach { (pkg, exclusions) ->
+            relocate("$baseSourcePackage.$pkg.", "$baseTargetPackage.$pkg.") {
+                exclusions.forEach { exclude(it) }
+            }
+        }
         transform(KotlinModuleMetadataVersionBasedSkippingTransformer::class.java) {
             /*
              * This excludes .kotlin_module files for compiler modules from the fat jars.
