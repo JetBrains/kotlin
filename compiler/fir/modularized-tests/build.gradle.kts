@@ -12,6 +12,8 @@ repositories {
     mavenLocal()
 }
 
+val distDir: String by rootProject.extra
+
 dependencies {
     testApi(intellijCore())
 
@@ -35,6 +37,8 @@ dependencies {
     if (asyncProfilerClasspath != null) {
         testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
     }
+
+    testRuntimeOnly(files(distDir + "/kotlinc/lib/kotlin-compiler.jar"))
 }
 
 sourceSets {
@@ -46,6 +50,9 @@ projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb 
     dependsOn(":dist")
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
+
+    // Disable some codepath that fails due to some wrong ij platform class being loaded
+    systemProperty("idea.disposer.debug", "off")
 
     run {
         val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
