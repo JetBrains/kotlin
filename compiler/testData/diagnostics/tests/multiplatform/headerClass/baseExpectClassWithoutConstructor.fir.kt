@@ -3,7 +3,7 @@
 
 expect open class A
 expect class B : A
-open <!UNRESOLVED_REFERENCE!>class C<!> : <!SUPERTYPE_NOT_INITIALIZED, SUPERTYPE_NOT_INITIALIZED{METADATA}!>A<!>
+open <!UNRESOLVED_REFERENCE!>class C<!> : <!SUPERTYPE_NOT_INITIALIZED!>A<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
