@@ -13,7 +13,7 @@ annotation class MyOptIn
 @SinceKotlin("1.8")
 @Deprecated(message = "Some text")
 @DeprecatedSinceKotlin("1.8")
-@Suppress(<!ERROR_SUPPRESSION, ERROR_SUPPRESSION{METADATA}!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
 @MyOptIn
 @WasExperimental(MyOptIn::class)
 @kotlin.internal.RequireKotlin(version = "1.8")

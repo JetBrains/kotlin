@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FIR_NON_SUPPRESSIBLE_ERROR_NAMES
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 
-object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
+object FirAnnotationExpressionChecker : FirAnnotationCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
     private val versionArgumentName = Name.identifier("version")
     private val deprecatedSinceKotlinFqName = FqName("kotlin.DeprecatedSinceKotlin")
     private val sinceKotlinFqName = FqName("kotlin.SinceKotlin")
