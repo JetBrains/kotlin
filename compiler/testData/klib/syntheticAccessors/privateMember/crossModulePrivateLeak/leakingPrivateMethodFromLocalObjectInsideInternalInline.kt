@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: ANY
+// ^^^ Muted because accessing object literal is considered as a visibility violation. To be fixed in KT-69802.
 
 // MODULE: lib
 // FILE: A.kt
