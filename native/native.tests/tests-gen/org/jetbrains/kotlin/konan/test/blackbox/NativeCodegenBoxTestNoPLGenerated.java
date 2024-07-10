@@ -40228,19 +40228,19 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses")
+        @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses")
         @TestDataPath("$PROJECT_ROOT")
         @UseExtTestCaseGroupProvider()
         @UsePartialLinkage(mode = Mode.DISABLED)
         @Tag("no-partial-linkage-may-be-skipped")
-        public class ValueClasses {
+        public class InlineClasses {
           @Test
-          public void testAllFilesPresentInValueClasses() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          public void testAllFilesPresentInInlineClasses() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/nonNullObject")
+          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject")
           @TestDataPath("$PROJECT_ROOT")
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
@@ -40248,11 +40248,11 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
           public class NonNullObject {
             @Test
             public void testAllFilesPresentInNonNullObject() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/nonNullObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
 
             @Nested
-            @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/nonNullObject/defaultArguments")
+            @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
@@ -40260,13 +40260,13 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             public class DefaultArguments {
               @Test
               public void testAllFilesPresentInDefaultArguments() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/nonNullObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nonNullObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
               }
             }
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/nullableObject")
+          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject")
           @TestDataPath("$PROJECT_ROOT")
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
@@ -40274,11 +40274,11 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
           public class NullableObject {
             @Test
             public void testAllFilesPresentInNullableObject() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/nullableObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
 
             @Nested
-            @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/nullableObject/defaultArguments")
+            @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
@@ -40286,13 +40286,13 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             public class DefaultArguments {
               @Test
               public void testAllFilesPresentInDefaultArguments() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/nullableObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
               }
             }
           }
 
           @Nested
-          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/primitive")
+          @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive")
           @TestDataPath("$PROJECT_ROOT")
           @UseExtTestCaseGroupProvider()
           @UsePartialLinkage(mode = Mode.DISABLED)
@@ -40300,11 +40300,11 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
           public class Primitive {
             @Test
             public void testAllFilesPresentInPrimitive() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/primitive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
 
             @Nested
-            @TestMetadata("compiler/testData/codegen/box/reflection/callBy/valueClasses/primitive/defaultArguments")
+            @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
             @UseExtTestCaseGroupProvider()
             @UsePartialLinkage(mode = Mode.DISABLED)
@@ -40312,7 +40312,7 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             public class DefaultArguments {
               @Test
               public void testAllFilesPresentInDefaultArguments() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/valueClasses/primitive/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/primitive/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
               }
             }
           }
