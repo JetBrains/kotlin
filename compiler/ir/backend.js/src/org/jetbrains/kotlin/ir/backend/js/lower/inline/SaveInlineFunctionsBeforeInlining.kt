@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIn
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
+// TODO: KT-67220: consider removing it
 internal class SaveInlineFunctionsBeforeInlining(context: JsIrBackendContext) : DeclarationTransformer {
     private val inlineFunctionsBeforeInlining = context.mapping.inlineFunctionsBeforeInlining
 

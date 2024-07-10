@@ -259,6 +259,7 @@ internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
 )
 
+// TODO: KT-67220: consider removing it
 private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
     ::SaveInlineFunctionsBeforeInlining,
     name = "SaveInlineFunctionsBeforeInlining",
