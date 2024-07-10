@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: ANY
+// ^^^ Muted because accessor for function/constructor/property references are not generated. To be fixed in KT-69797.
 
 // FILE: A.kt
 class A {
