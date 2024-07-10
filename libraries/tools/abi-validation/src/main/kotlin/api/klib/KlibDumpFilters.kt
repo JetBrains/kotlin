@@ -78,7 +78,7 @@ public class KlibDumpFilters internal constructor(
          * Default KLib ABI dump filters which declares no filters
          * and uses the latest KLib ABI signature version available.
          */
-        public val DEFAULT: KlibDumpFilters = KLibDumpFilters {}
+        public val DEFAULT: KlibDumpFilters = KlibDumpFilters {}
     }
 }
 
@@ -89,7 +89,25 @@ public class KlibDumpFilters internal constructor(
  * Supplied [KlibDumpFilters.Builder] is valid only during the scope of [builderAction] execution.
  */
 @ExperimentalBCVApi
+@Deprecated(
+    "Use KlibDumpFilters instead",
+    ReplaceWith("KlibDumpFilters(builderAction)"),
+    DeprecationLevel.WARNING
+)
 public fun KLibDumpFilters(builderAction: KlibDumpFilters.Builder.() -> Unit): KlibDumpFilters {
+    val builder = KlibDumpFilters.Builder()
+    builderAction(builder)
+    return builder.build()
+}
+
+/**
+ * Builds a new [KlibDumpFilters] instance by invoking a [builderAction] on a temporary
+ * [KlibDumpFilters.Builder] instance and then converting it into filters.
+ *
+ * Supplied [KlibDumpFilters.Builder] is valid only during the scope of [builderAction] execution.
+ */
+@ExperimentalBCVApi
+public fun KlibDumpFilters(builderAction: KlibDumpFilters.Builder.() -> Unit): KlibDumpFilters {
     val builder = KlibDumpFilters.Builder()
     builderAction(builder)
     return builder.build()
