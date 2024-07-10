@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isThrowable
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 
 fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? {
-    require(symbol.classKind == KaClassKind.CLASS || symbol.classKind == KaClassKind.ENUM_CLASS)
+    require(symbol.classKind == KaClassKind.CLASS || symbol.classKind == KaClassKind.ENUM_CLASS || symbol.classKind == KaClassKind.COMPANION_OBJECT)
     if (!analysisSession.isVisibleInObjC(symbol)) return null
 
     val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
@@ -34,7 +35,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? {
         /* The order of members tries to replicate the K1 implementation explicitly */
         this += translateToObjCConstructors(symbol)
 
-        if (analysisSession.getNeedsCompanionProperty(symbol)) {
+        if (symbol.isCompanion || analysisSession.hasCompanionObject(symbol)) {
             this += buildCompanionProperty(symbol)
         }
 

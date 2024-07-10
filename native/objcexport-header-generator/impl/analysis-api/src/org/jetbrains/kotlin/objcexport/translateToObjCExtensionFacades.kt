@@ -1,5 +1,8 @@
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
@@ -44,9 +47,14 @@ internal val ObjCInterface.isExtensionsFacade: Boolean
  *
  * Where `Foo` would be the "top level interface file extensions facade" returned by this function.
  *
+ * ## What function returns
+ * Function returns extended type(s) and extension facade(s).
+ * If extended type is translated already it will be filtered out by [KtObjCExportHeaderGenerator]
+ * See [org.jetbrains.kotlin.objcexport.KtObjCExportHeaderGenerator.addObjCStubIfNotTranslated]
+ *
  * See related [translateToObjCTopLevelFacade]
  */
-fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExportFile): List<ObjCInterface> {
+fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExportFile): List<ObjCClass> {
     val extensions = file.callableSymbols
         .filter { analysisSession.getClassIfCategory(it) != null && it.isExtension }
         .sortedWith(StableCallableOrder)
@@ -67,9 +75,14 @@ fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExport
             }
         }
 
-    return extensions.mapNotNull { (objCName, extensionSymbols) ->
-        ObjCInterfaceImpl(
-            name = objCName ?: return@mapNotNull null,
+    return extensions.flatMap { (objCName, extensionSymbols) ->
+        val extensionTypes = extensionSymbols
+            .map { it.receiverParameter?.returnType }
+            .mapNotNull { it?.symbol as? KaClassSymbol }
+            .mapNotNull { translateToObjCClass(it) }
+
+        extensionTypes + ObjCInterfaceImpl(
+            name = objCName ?: return@flatMap emptyList(),
             comment = null,
             origin = null,
             attributes = emptyList(),

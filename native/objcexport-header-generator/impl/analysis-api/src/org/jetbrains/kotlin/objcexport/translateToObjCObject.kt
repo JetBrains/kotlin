@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
@@ -31,7 +32,7 @@ fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? {
 
     val objectMembers = mutableListOf<ObjCExportStub>()
     objectMembers += translateToObjCConstructors(symbol)
-    objectMembers += getDefaultMembers(symbol)
+    objectMembers += getDefaultMembers(symbol, objectMembers)
     objectMembers += with(analysisSession) {
         symbol.declaredMemberScope.callables
             .sortedWith(StableCallableOrder)
@@ -52,21 +53,11 @@ fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? {
     )
 }
 
-private fun ObjCExportContext.getDefaultMembers(symbol: KaClassSymbol): List<ObjCExportStub> {
+private fun ObjCExportContext.getDefaultMembers(symbol: KaClassSymbol, members: List<ObjCExportStub>): List<ObjCExportStub> {
 
     val result = mutableListOf<ObjCExportStub>()
 
-    result.add(
-        ObjCMethod(
-            null,
-            null,
-            false,
-            ObjCInstanceType,
-            listOf(getObjectInstanceSelector(symbol)),
-            emptyList(),
-            listOf(swiftNameAttribute("init()"))
-        )
-    )
+    result.addIfNotNull(addInitIfNeeded(symbol, members))
 
     result.add(
         ObjCProperty(
@@ -99,7 +90,7 @@ private fun ObjCExportContext.toPropertyType(symbol: KaClassSymbol) = ObjCClassT
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getObjectInstanceSelector]
  */
-private fun ObjCExportContext.getObjectInstanceSelector(objectSymbol: KaClassSymbol): String {
+internal fun ObjCExportContext.getObjectInstanceSelector(objectSymbol: KaClassSymbol): String {
     return getObjCClassOrProtocolName(objectSymbol, bareName = true)
         .objCName
         .replaceFirstChar(Char::lowercaseChar)
