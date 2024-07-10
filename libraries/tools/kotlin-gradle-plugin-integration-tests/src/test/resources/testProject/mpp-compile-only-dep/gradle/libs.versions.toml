@@ -1,0 +1,4 @@
+[libraries]
+
+atomicfu = "org.jetbrains.kotlinx:atomicfu:latest.release"
+kotlinxHtml = "org.jetbrains.kotlinx:kotlinx-html:latest.release"

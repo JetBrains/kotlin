@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -23,7 +24,7 @@ class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
 
     private fun setupKmpProject(
         preApplyCode: Project.() -> Unit = {},
-        configure: Project.() -> Unit
+        configure: Project.() -> Unit,
     ): Project {
         val project = buildProjectWithMPP(preApplyCode = preApplyCode) {
             kotlin {
@@ -120,6 +121,28 @@ class MultiplatformIncorrectCompileOnlyDependenciesValidationTest {
                 expected = "(source sets: jsMain, linuxX64Main, macosX64Main, mingwX64Main, wasmJsMain, wasmWasiMain)",
                 actual = actualWarning.message,
             )
+        }
+    }
+
+    @Test
+    fun `when compileOnly dependency is correctly exposed as api, but the versions don't match, expect no warning`() {
+        val project = setupKmpProject {
+            kotlin {
+                sourceSets.apply {
+                    commonMain {
+                        dependencies {
+                            compileOnly("org.jetbrains.kotlinx:atomicfu:0.24.0")
+                            api("org.jetbrains.kotlinx:atomicfu:0.25.0")
+                        }
+                    }
+                }
+            }
+        }
+
+        project.runLifecycleAwareTest {
+            val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
+
+            diagnostics.assertNoDiagnostics(IncorrectCompileOnlyDependencyWarning)
         }
     }
 
