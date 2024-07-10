@@ -8,7 +8,7 @@
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{METADATA}!>class DerivedA1<!> : BaseAImpl()
 class DerivedA2 : BaseAImpl() {
-    override fun foo() = super.<!ABSTRACT_SUPER_CALL, ABSTRACT_SUPER_CALL{METADATA}!>foo<!>()
+    override fun foo() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
 
 
@@ -20,7 +20,7 @@ class DerivedA2 : BaseAImpl() {
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class DerivedB1<!> : BaseBImpl()
 class DerivedB2 : BaseBImpl() {
-    override fun foo() = super.<!ABSTRACT_SUPER_CALL, ABSTRACT_SUPER_CALL{METADATA}!>foo<!>()
+    override fun foo() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
 
 
@@ -32,7 +32,7 @@ class DerivedB2 : BaseBImpl() {
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class DerivedC1<!> : BaseCImpl()
 class DerivedC2 : BaseCImpl() {
-    override fun foo() = super.<!ABSTRACT_SUPER_CALL, ABSTRACT_SUPER_CALL{METADATA}!>foo<!>()
+    override fun foo() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
 
 
@@ -41,7 +41,7 @@ class DerivedC2 : BaseCImpl() {
     fun foo()
 }<!>
 abstract class BaseDImpl() : BaseD {
-    fun bar() = super.<!ABSTRACT_SUPER_CALL, ABSTRACT_SUPER_CALL{METADATA}!>foo<!>()
+    fun bar() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
 
 
@@ -50,7 +50,7 @@ abstract class BaseDImpl() : BaseD {
     fun foo()
 }<!>
 sealed class BaseEImpl() : BaseE {
-    fun bar() = super.<!ABSTRACT_SUPER_CALL, ABSTRACT_SUPER_CALL{METADATA}!>foo<!>()
+    fun bar() = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
 }
 
 
