@@ -26,7 +26,7 @@
     <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
     <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}<!>
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect <!CONST_VAL_WITHOUT_INITIALIZER, CONST_VAL_WITHOUT_INITIALIZER{METADATA}!>const<!> val constVal: Int<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int<!>
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String<!>
 
