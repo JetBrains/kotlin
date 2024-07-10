@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.fir.firPlatformSpecificCastChecker
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
-object FirCastOperatorsChecker : FirTypeOperatorCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+@OptIn(CheckersCornerCase::class)
+object FirCastOperatorsChecker : FirTypeOperatorCallChecker(CheckerSessionKind.DeclarationSite) {
     override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val arguments = expression.argumentList.arguments
         require(arguments.size == 1) { "Type operator call with non-1 arguments" }

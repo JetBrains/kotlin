@@ -13,7 +13,7 @@ interface I
 fun testCommon(base: Base) {
     if (base is I) {
         val x = <!NO_ELSE_IN_WHEN, NO_ELSE_IN_WHEN{METADATA}!>when<!> (base) { // must be an error
-            <!USELESS_IS_CHECK, USELESS_IS_CHECK{METADATA}!>is A<!> -> 1
+            <!USELESS_IS_CHECK!>is A<!> -> 1
             B -> 2
         }
     }
