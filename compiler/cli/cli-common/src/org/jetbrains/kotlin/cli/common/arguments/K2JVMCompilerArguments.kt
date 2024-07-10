@@ -307,7 +307,7 @@ This can be used in the event of problems with the new implementation."""
         value = "-Xuse-fast-jar-file-system",
         description = "Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental."
     )
-    var useFastJarFileSystem = false
+    var useFastJarFileSystem: Boolean? = null
         set(value) {
             checkFrozen()
             field = value

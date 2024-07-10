@@ -613,6 +613,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/extraHelp.args");
     }
 
+    @TestMetadata("fastJarFsDisabledAfterK2.args")
+    public void testFastJarFsDisabledAfterK2() {
+      runTest("compiler/testData/cli/jvm/fastJarFsDisabledAfterK2.args");
+    }
+
+    @TestMetadata("fastJarFsEnabledBeforeK2.args")
+    public void testFastJarFsEnabledBeforeK2() {
+      runTest("compiler/testData/cli/jvm/fastJarFsEnabledBeforeK2.args");
+    }
+
     @TestMetadata("fileClassAndMultifileClassClash.args")
     public void testFileClassAndMultifileClassClash() {
       runTest("compiler/testData/cli/jvm/fileClassAndMultifileClassClash.args");
