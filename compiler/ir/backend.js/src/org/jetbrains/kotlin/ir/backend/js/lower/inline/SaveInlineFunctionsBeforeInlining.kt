@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -23,7 +24,7 @@ internal class SaveInlineFunctionsBeforeInlining(
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrFunction && declaration.isInline && (!cacheOnlyPrivateFunctions || declaration.isConsideredAsPrivateForInlining())) {
-            inlineFunctionsBeforeInlining[declaration] = declaration.deepCopyWithSymbols(declaration.parent)
+            inlineFunctionsBeforeInlining.getOrPut(declaration) { declaration.deepCopyWithSymbols(declaration.parent) }
         }
 
         return null
