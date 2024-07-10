@@ -10,15 +10,19 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
+import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
 // TODO: KT-67220: consider removing it
-internal class SaveInlineFunctionsBeforeInlining(context: JsIrBackendContext) : DeclarationTransformer {
+internal class SaveInlineFunctionsBeforeInlining(
+    context: JsIrBackendContext,
+    private val cacheOnlyPrivateFunctions: Boolean
+) : DeclarationTransformer {
     private val inlineFunctionsBeforeInlining = context.mapping.inlineFunctionsBeforeInlining
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrFunction && declaration.isInline) {
+        if (declaration is IrFunction && declaration.isInline && (!cacheOnlyPrivateFunctions || declaration.isConsideredAsPrivateForInlining())) {
             inlineFunctionsBeforeInlining[declaration] = declaration.deepCopyWithSymbols(declaration.parent)
         }
 

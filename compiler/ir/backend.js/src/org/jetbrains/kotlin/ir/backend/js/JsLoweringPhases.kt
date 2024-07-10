@@ -260,8 +260,24 @@ internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
 )
 
 // TODO: KT-67220: consider removing it
+private val cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase = makeIrModulePhase(
+    { context: JsIrBackendContext ->
+        SaveInlineFunctionsBeforeInlining(context, cacheOnlyPrivateFunctions = true)
+    },
+    name = "CacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase",
+    description = "Cache copies of inline functions before InlineOnlyPrivateFunctions phase",
+    prerequisite = setOf(
+        sharedVariablesLoweringPhase,
+        localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
+        wrapInlineDeclarationsWithReifiedTypeParametersLowering
+    )
+)
+
+// TODO: KT-67220: consider removing it
 private val cacheInlineFunctionsBeforeInliningAllFunctionsPhase = makeIrModulePhase(
-    ::SaveInlineFunctionsBeforeInlining,
+    { context: JsIrBackendContext ->
+        SaveInlineFunctionsBeforeInlining(context, cacheOnlyPrivateFunctions = false)
+    },
     name = "CacheInlineFunctionsBeforeInliningAllFunctionsPhase",
     description = "Cache copies of inline functions before InlineAllFunctions phase",
     prerequisite = setOf(
@@ -860,6 +876,7 @@ fun getJsLowerings(
     arrayConstructorPhase,
     legacySyntheticAccessorLoweringPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+    cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
     inlineOnlyPrivateFunctionsPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
     syntheticAccessorGenerationPhase.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
