@@ -159,7 +159,7 @@ private class SyntheticAccessorTransformer(
 
         val callee = expression.symbol.owner
         val withSuper = (expression as? IrCall)?.superQualifierSymbol != null
-        val generateReflectiveAccess = shouldGenerateReflectiveAccess(expression, withSuper)
+        val generateSpecialAccessWithoutSyntheticAccessor = shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression, withSuper)
         val thisSymbol = (expression as? IrCall)?.dispatchReceiver?.type?.classifierOrNull as? IrClassSymbol
 
         if (expression is IrCall && callee.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic) {
@@ -167,7 +167,7 @@ private class SyntheticAccessorTransformer(
         }
 
         val accessor = when {
-            generateReflectiveAccess -> return super.visitFunctionAccess(expression)
+            generateSpecialAccessWithoutSyntheticAccessor -> return super.visitFunctionAccess(expression)
             callee is IrConstructor && accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(callee) ->
                 accessorGenerator.getSyntheticConstructorOfSealedClass(callee)
             callee is IrConstructor && accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(callee) ->
@@ -181,22 +181,22 @@ private class SyntheticAccessorTransformer(
         return super.visitExpression(accessorGenerator.modifyFunctionAccessExpression(expression, accessor.symbol))
     }
 
-    private fun shouldGenerateReflectiveAccess(expression: IrFunctionAccessExpression, withSuper: Boolean) =
+    private fun shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression: IrFunctionAccessExpression, withSuper: Boolean) =
         when {
             context.evaluatorData == null -> false
             expression is IrCall -> {
                 val inJvmStaticWrapper = (currentFunction?.irElement as? IrFunction)?.origin == JVM_STATIC_WRAPPER
-                !inJvmStaticWrapper && !expression.symbol.isAccessibleWithoutReflection(withSuper)
+                !inJvmStaticWrapper && !expression.symbol.isDirectlyAccessible(withSuper)
             }
-            expression is IrConstructorCall -> !expression.symbol.isAccessibleWithoutReflection(false)
+            expression is IrConstructorCall -> !expression.symbol.isDirectlyAccessible(false)
             else -> false
         }
 
-    private fun shouldGenerateReflectiveAccess(symbol: IrSymbol): Boolean {
-        return context.evaluatorData != null && !symbol.isAccessibleWithoutReflection(withSuper = false)
+    private fun shouldGenerateSpecialAccessWithoutSyntheticAccessor(symbol: IrSymbol): Boolean {
+        return context.evaluatorData != null && !symbol.isDirectlyAccessible(withSuper = false)
     }
 
-    private fun IrSymbol.isAccessibleWithoutReflection(withSuper: Boolean) =
+    private fun IrSymbol.isDirectlyAccessible(withSuper: Boolean) =
         isAccessible(context, currentScope, inlineScopeResolver, withSuper, null, fromOtherClassLoader = true)
 
     private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
@@ -261,7 +261,7 @@ private class SyntheticAccessorTransformer(
             return super.visitExpression(expression)
         }
 
-        if (shouldGenerateReflectiveAccess(expression.symbol)) {
+        if (shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression.symbol)) {
             return super.visitExpression(expression)
         }
 
@@ -281,7 +281,7 @@ private class SyntheticAccessorTransformer(
             return super.visitExpression(expression)
         }
 
-        if (shouldGenerateReflectiveAccess(expression.symbol)) {
+        if (shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression.symbol)) {
             return super.visitExpression(expression)
         }
 

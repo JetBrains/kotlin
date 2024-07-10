@@ -52,11 +52,11 @@ import org.jetbrains.org.objectweb.asm.Type
 // hierarchy of the involved classes, so is emulated in fragment compilation by
 // the use of `invokespecial` - see `invokeSpecialForCall` below.
 @PhaseDescription(
-    name = "ReflectiveCalls",
-    description = "Avoid the need for accessors by replacing direct access to inaccessible members with accesses via reflection",
+    name = "SpecialAccess",
+    description = "Avoid the need for accessors by replacing direct access to inaccessible members with accesses via reflection or invokespecial calls",
     prerequisite = [JvmDefaultParameterCleaner::class]
 )
-internal class ReflectiveAccessLowering(
+internal class SpecialAccessLowering(
     val context: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
@@ -365,7 +365,7 @@ internal class ReflectiveAccessLowering(
                     createTmpVariable(
                         getDeclaredConstructor(
                             javaClassObject(call.symbol.owner.parentAsClass.defaultType),
-                            this@ReflectiveAccessLowering.context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(call.symbol.owner)
+                            this@SpecialAccessLowering.context.defaultMethodSignatureMapper.mapSignatureSkipGeneric(call.symbol.owner)
                         ),
                         nameHint = "constructor",
                         irType = reflectSymbols.javaLangReflectConstructor.defaultType
