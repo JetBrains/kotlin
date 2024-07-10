@@ -6,7 +6,6 @@
 package kotlinx.validation.api.klib
 
 import kotlinx.validation.ExperimentalBCVApi
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -38,8 +37,7 @@ import java.io.FileNotFoundException
  * ```kotlin
  * val mergedDump = KlibDump.from(File("/path/to/merged.klib.api"))
  * val newTargetDump = KlibDump.fromKlib(File("/path/to/library-linuxX64.klib"))
- * mergedDump.remove(newTargetDump.targets)
- * mergedDump.merge(newTargetDump)
+ * mergedDump.replace(newTargetDump)
  * mergedDump.saveTo(File("/path/to/merged.klib.api"))
  * ```
  */
@@ -72,6 +70,7 @@ public class KlibDump {
      * @throws IllegalArgumentException if [dumpFile] contains multiple targets
      * and [configurableTargetName] is not null.
      * @throws IllegalArgumentException if [dumpFile] is not a file.
+     * @throws IllegalArgumentException if [dumpFile] is empty.
      * @throws FileNotFoundException if [dumpFile] does not exist.
      *
      * @sample samples.KlibDumpSamples.mergeDumps
@@ -80,6 +79,29 @@ public class KlibDump {
         if(!dumpFile.exists()) { throw FileNotFoundException("File does not exist: ${dumpFile.absolutePath}") }
         require(dumpFile.isFile) { "Not a file: ${dumpFile.absolutePath}" }
         merger.merge(dumpFile, configurableTargetName)
+    }
+
+    /**
+     * Reads a textual KLib dump from the [dump] char sequence and merges it into this dump.
+     *
+     * If a dump contains only a single target, it's possible to specify a custom configurable target name.
+     * Please refer to [KlibTarget.configurableName] for more details on the meaning of that name.
+     *
+     * By default, [configurableTargetName] is null and information about a target will be taken directly from
+     * the loaded dump.
+     *
+     * It's an error to specify non-null [configurableTargetName] for a dump containing multiple targets.
+     * It's also an error to merge dumps having some targets in common.
+     *
+     * @throws IllegalArgumentException if this dump and the provided [dump] shares same targets.
+     * @throws IllegalArgumentException if the provided [dump] contains multiple targets
+     * and [configurableTargetName] is not null.
+     * @throws IllegalArgumentException if the provided [dump] is empty.
+     *
+     * @sample samples.KlibDumpSamples.updateMergedDump
+     */
+    public fun merge(dump: CharSequence, configurableTargetName: String? = null) {
+        merger.merge(dump.lineSequence().iterator(), configurableTargetName)
     }
 
     /**
@@ -99,6 +121,19 @@ public class KlibDump {
             "Cannot merge dump as this and other dumps share some targets: $intersection"
         }
         merger.merge(other.merger)
+    }
+
+    /**
+     * Removes the targets from this dump that are contained in the [other] targets set and all their declarations.
+     * Then merges the [other] dump with this one.
+     *
+     * The operation does not modify [other].
+     *
+     * @sample samples.KlibDumpSamples.updateMergedDump
+     */
+    public fun replace(other: KlibDump) {
+        remove(other.targets)
+        merge(other)
     }
 
     /**
@@ -134,10 +169,13 @@ public class KlibDump {
     /**
      * Serializes the dump and writes it to [to].
      *
+     * @return the target [to] where the dump was written.
+     *
      * @sample samples.KlibDumpSamples.mergeDumps
      */
-    public fun saveTo(to: Appendable) {
+    public fun <A : Appendable> saveTo(to: A): A {
         merger.dump(to)
+        return to
     }
 
     public companion object {
@@ -164,6 +202,28 @@ public class KlibDump {
             if(!dumpFile.exists()) { throw FileNotFoundException("File does not exist: ${dumpFile.absolutePath}") }
             require(dumpFile.isFile) { "Not a file: ${dumpFile.absolutePath}" }
             return KlibDump().apply { merge(dumpFile, configurableTargetName) }
+        }
+
+        /**
+         * Reads a dump from a textual form.
+         *
+         * If a dump contains only a single target, it's possible to specify a custom configurable target name.
+         * Please refer to [KlibTarget.configurableName] for more details on the meaning of that name.
+         *
+         * By default, [configurableTargetName] is null and information about a target will be taken directly from
+         * the loaded dump.
+         *
+         * It's an error to specify non-null [configurableTargetName] for a dump containing multiple targets.
+         *
+         * @throws IllegalArgumentException if this dump and the provided [dump] shares same targets.
+         * @throws IllegalArgumentException if the provided [dump] contains multiple targets
+         * and [configurableTargetName] is not null.
+         * @throws IllegalArgumentException if the provided [dump] is empty.
+         *
+         * @sample samples.KlibDumpSamples.updateMergedDump
+         */
+        public fun from(dump: CharSequence, configurableTargetName: String? = null): KlibDump {
+            return KlibDump().apply { merge(dump, configurableTargetName) }
         }
 
         /**
@@ -278,6 +338,8 @@ public fun KlibDump.mergeFromKlib(
 
 /**
  * Serializes the dump and writes it to [file].
+ *
+ * @return the target [file].
  */
 @ExperimentalBCVApi
-public fun KlibDump.saveTo(file: File): Unit = file.bufferedWriter().use { saveTo(it) }
+public fun KlibDump.saveTo(file: File): File = file.apply { bufferedWriter().use { saveTo(it) } }
