@@ -1,4 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -212,21 +211,6 @@ tasks {
 
     withType<ShadowJar>().configureEach {
         relocate("com.github.gundy", "$kotlinEmbeddableRootPackage.com.github.gundy")
-        val notRelocatedKotlinPackages = listOf(
-            "org.jetbrains.kotlin.gradle.**",
-            "org.jetbrains.kotlin.statistics.**",
-            "org.jetbrains.kotlin.tooling.**",
-            "org.jetbrains.kotlin.build.report.**",
-            "org.jetbrains.kotlin.compilerRunner.**",
-            "org.jetbrains.kotlin.buildtools.api.**",
-            "org.jetbrains.kotlin.commonizer.**",
-            "org.jetbrains.kotlin.konan.**",
-            "org.jetbrains.kotlin.daemon.**",
-            "org.jetbrains.kotlin.config.Services**",
-            "org.jetbrains.kotlin.cli.common.messages.MessageCollector**",
-            "org.jetbrains.kotlin.util.UtilKt",
-        )
-        relocate(SimpleRelocator("org.jetbrains.kotlin.", "org.jetbrains.kotlin.gradle.internal.", emptyList(), notRelocatedKotlinPackages))
         transform(KotlinModuleMetadataVersionBasedSkippingTransformer::class.java) {
             /*
              * Hack for
