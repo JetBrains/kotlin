@@ -11,7 +11,7 @@ expect annotation class A()
 
 fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A<!>) = a.toString()
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!><!WRONG_ANNOTATION_TARGET!>@OptionalExpectation<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!><!WRONG_ANNOTATION_TARGET, WRONG_ANNOTATION_TARGET{METADATA}!>@OptionalExpectation<!>
 expect class NotAnAnnotationClass<!>
 
 <!OPTIONAL_EXPECTATION_NOT_ON_EXPECTED!>@OptionalExpectation<!>

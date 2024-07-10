@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -NO_ACTUAL_FOR_EXPECT
 // MODULE: m1-common
 // FILE: common.kt

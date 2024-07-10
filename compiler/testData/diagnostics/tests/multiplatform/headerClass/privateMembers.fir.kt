@@ -2,11 +2,11 @@
 // FILE: common.kt
 
 expect class A private constructor() {
-    <!EXPECTED_PRIVATE_DECLARATION!>private<!> fun foo()
-    <!EXPECTED_PRIVATE_DECLARATION!>private<!> val bar: String
-    <!EXPECTED_PRIVATE_DECLARATION!>private<!> fun Int.memExt(): Any
+    <!EXPECTED_PRIVATE_DECLARATION, EXPECTED_PRIVATE_DECLARATION{METADATA}!>private<!> fun foo()
+    <!EXPECTED_PRIVATE_DECLARATION, EXPECTED_PRIVATE_DECLARATION{METADATA}!>private<!> val bar: String
+    <!EXPECTED_PRIVATE_DECLARATION, EXPECTED_PRIVATE_DECLARATION{METADATA}!>private<!> fun Int.memExt(): Any
 
-    <!EXPECTED_PRIVATE_DECLARATION!>private<!> class Nested
+    <!EXPECTED_PRIVATE_DECLARATION, EXPECTED_PRIVATE_DECLARATION{METADATA}!>private<!> class Nested
 
     var baz: Any?
         private set
