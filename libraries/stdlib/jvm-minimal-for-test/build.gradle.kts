@@ -106,7 +106,6 @@ kotlin {
                                 "-Xmultifile-parts-inherit",
                                 "-Xuse-14-inline-classes-mangling-scheme",
                                 "-Xno-new-java-annotation-targets",
-                                "-Xlink-via-signatures",
                                 "-Xstdlib-compilation",
                                 "-Xdont-warn-on-error-suppression",
                                 "-opt-in=kotlin.contracts.ExperimentalContracts",
