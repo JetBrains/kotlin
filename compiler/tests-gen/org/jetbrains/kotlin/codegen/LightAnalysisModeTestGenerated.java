@@ -39940,17 +39940,17 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
           @TestDataPath("$PROJECT_ROOT")
           @RunWith(JUnit3RunnerWithInners.class)
           public static class DefaultArguments extends AbstractLightAnalysisModeTest {
-            @TestMetadata("constructorWithInlineClassParameters.kt")
-            public void ignoreConstructorWithInlineClassParameters() {
-              runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/constructorWithInlineClassParameters.kt");
-            }
-
             private void runTest(String testDataFilePath) {
               KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
             }
 
             public void testAllFilesPresentInDefaultArguments() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("constructorWithInlineClassParameters.kt")
+            public void testConstructorWithInlineClassParameters() {
+              runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/constructorWithInlineClassParameters.kt");
             }
 
             @TestMetadata("extensionFunctionsWithInlineClassParameters.kt")

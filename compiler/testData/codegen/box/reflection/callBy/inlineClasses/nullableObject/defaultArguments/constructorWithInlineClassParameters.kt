@@ -1,8 +1,8 @@
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
 
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @JvmInline
 value class A(val x: String?)
@@ -111,15 +111,25 @@ data class TestCtor65_2(
 )
 
 fun box(): String {
-    assertEquals(TestCtor1_1(), ::TestCtor1_1.callBy(mapOf()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(TestCtor1_1(), ::TestCtor1_1.callBy(mapOf()))
+    }
     assertEquals(TestCtor1_2(), ::TestCtor1_2.callBy(mapOf()))
-    assertEquals(TestCtor32_1(), ::TestCtor32_1.callBy(mapOf()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(TestCtor32_1(), ::TestCtor32_1.callBy(mapOf()))
+    }
     assertEquals(TestCtor32_2(), ::TestCtor32_2.callBy(mapOf()))
-    assertEquals(TestCtor33_1(), ::TestCtor33_1.callBy(mapOf()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(TestCtor33_1(), ::TestCtor33_1.callBy(mapOf()))
+    }
     assertEquals(TestCtor33_2(), ::TestCtor33_2.callBy(mapOf()))
-    assertEquals(TestCtor64_1(), ::TestCtor64_1.callBy(mapOf()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(TestCtor64_1(), ::TestCtor64_1.callBy(mapOf()))
+    }
     assertEquals(TestCtor64_2(), ::TestCtor64_2.callBy(mapOf()))
-    assertEquals(TestCtor65_1(), ::TestCtor65_1.callBy(mapOf()))
+    assertFailsWith<Error>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
+        assertEquals(TestCtor65_1(), ::TestCtor65_1.callBy(mapOf()))
+    }
     assertEquals(TestCtor65_2(), ::TestCtor65_2.callBy(mapOf()))
 
     return "OK"
