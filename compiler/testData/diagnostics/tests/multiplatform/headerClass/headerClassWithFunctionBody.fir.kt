@@ -11,7 +11,7 @@
 
     constructor() : <!EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL!>this<!>("no")
 
-    val prop: String = <!EXPECTED_PROPERTY_INITIALIZER, EXPECTED_PROPERTY_INITIALIZER{METADATA}!>"no"<!>
+    val prop: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
     var getSet: String
         <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"

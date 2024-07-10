@@ -8,7 +8,7 @@ interface Foo {
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class NonAbstractClass : Foo {
     <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS!>abstract<!> fun bar()
 
-    <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS{METADATA}!>abstract<!> val baz: Int
+    <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS!>abstract<!> val baz: Int
 
     <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS!>abstract<!> override fun foo()
 }<!>
