@@ -1,23 +1,23 @@
 // MODULE: m1-common
 // FILE: common.kt
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect class Foo {
-    <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{METADATA}!>init<!> {
+    <!EXPECTED_DECLARATION_WITH_BODY!>init<!> {
         "no"
     }
 
-    <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{METADATA}!>constructor(s: String)<!> {
+    <!EXPECTED_DECLARATION_WITH_BODY!>constructor(s: String)<!> {
         "no"
     }
 
-    constructor() : <!EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL{METADATA}!>this<!>("no")
+    constructor() : <!EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL!>this<!>("no")
 
     val prop: String = <!EXPECTED_PROPERTY_INITIALIZER, EXPECTED_PROPERTY_INITIALIZER{METADATA}!>"no"<!>
 
     var getSet: String
-        <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{METADATA}!>get()<!> = "no"
-        <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{METADATA}!>set(value)<!> {}
+        <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+        <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
-    <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{METADATA}!>fun functionWithBody(x: Int): Int<!> {
+    <!EXPECTED_DECLARATION_WITH_BODY!>fun functionWithBody(x: Int): Int<!> {
         return x + 1
     }
 }<!>

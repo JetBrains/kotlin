@@ -3,7 +3,7 @@
 
 expect class B {
     class N {
-        <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{METADATA}!>fun body()<!> {}
+        <!EXPECTED_DECLARATION_WITH_BODY!>fun body()<!> {}
         <!WRONG_MODIFIER_TARGET!>expect<!> fun extraHeader()
     }
 }
