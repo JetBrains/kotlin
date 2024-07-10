@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
+import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.ALL
+import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
+import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.FIRST
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
@@ -36,9 +39,10 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         noStdLib: Boolean,
         noDefaultLibs: Boolean,
         noEndorsedLibs: Boolean,
+        duplicatedUniqueNameStrategy: String,
     ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
         .leaveDistinct()
-        .omitDuplicateNames()
+        .omitDuplicateNames(duplicatedUniqueNameStrategy)
 
     /**
      * Returns the list of libraries based on [libraryNames], [noStdLib], [noDefaultLibs] and [noEndorsedLibs] criteria.
@@ -83,15 +87,29 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
      *  - Overall, we should not do any resolve inside the compiler (such as skipping KLIBs that happen to have repeated `unique_name`).
      *    This is an opaque process which better should be performed by the build system (e.g. Gradle). To be fixed in KT-64169
      */
-    private fun List<KotlinLibrary>.omitDuplicateNames() =
-        groupBy { it.uniqueName }.let { groupedByUniqName ->
+    private fun List<KotlinLibrary>.omitDuplicateNames(duplicatedUniqueNameStrategy: String) : List<KotlinLibrary> {
+        val deduplicatedLibs = groupBy { it.uniqueName }.let { groupedByUniqName ->
             val librariesWithDuplicatedUniqueNames = groupedByUniqName.filterValues { it.size > 1 }
             librariesWithDuplicatedUniqueNames.entries.sortedBy { it.key }.forEach { (uniqueName, libraries) ->
                 val libraryPaths = libraries.map { it.libraryFile.absolutePath }.sorted().joinToString()
-                logger.strongWarning("KLIB resolver: The same 'unique_name=$uniqueName' found in more than one library: $libraryPaths")
+                val message = "KLIB resolver: The same 'unique_name=$uniqueName' found in more than one library: $libraryPaths"
+                if (duplicatedUniqueNameStrategy == ALL || duplicatedUniqueNameStrategy == FIRST)
+                    logger.strongWarning(message)
+                else {
+                    logger.error(message + "\n" +
+                                "Please file an issue to https://kotl.in/issue and meanwhile use CLI flag `-Xklib-duplicated-unique-name-strategy` with one of the following values:\n" +
+                                "$ALL: Use all KLIB dependencies, even when they have same `unique_name` property.\n" +
+                                "$FIRST: Use the first KLIB dependency with clashing `unique_name` property. No order guarantees are given though.\n" +
+                                "$DENY: Fail a compilation with the error."
+                    )
+                }
             }
             groupedByUniqName.map { it.value.first() } // This line is the reason of such issues as KT-63573.
         }
+        return if (duplicatedUniqueNameStrategy == FIRST)
+            deduplicatedLibs
+        else this
+    }
 
     /**
      * Given the list of root libraries does the following:

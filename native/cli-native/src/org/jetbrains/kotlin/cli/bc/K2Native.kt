@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
+import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.FIRST
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
@@ -116,6 +118,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY,
             arguments.narrowedSyntheticAccessorsVisibility
         )
+        val duplicatedUniqueNameStrategy = arguments.duplicatedUniqueNameStrategy ?: if (arguments.metadataKlib) FIRST else DENY
+        configuration.put(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY, duplicatedUniqueNameStrategy)
 
         return environment
     }

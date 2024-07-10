@@ -32,4 +32,8 @@ object KlibConfigurationKeys {
             "Narrow the visibility of generated synthetic accessors to _internal_" +
                     " if such accessors are only used in inline functions that are not a part of public ABI"
         )
+
+    @JvmField
+    val DUPLICATED_UNIQUE_NAME_STRATEGY: CompilerConfigurationKey<String> =
+        CompilerConfigurationKey.create("Duplicated KLIB dependencies handling strategy")
 }

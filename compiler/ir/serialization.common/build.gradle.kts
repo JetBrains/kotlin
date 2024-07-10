@@ -15,6 +15,7 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
     compileOnly(intellijCore())
+    compileOnly(project(":compiler:cli-common"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()

@@ -83,6 +83,8 @@ where advanced options include:
   -Xdump-directory           Dump the backend state into this directory.
   -Xdump-fqname              Dump the declaration with the given FqName.
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
+  -Xklib-duplicated-unique-name-strategy={deny|allow-all-with-warning|allow-first-with-warning}
+                             Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.
   -Xenable-builder-inference Use builder inference by default for all calls with lambdas that can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
   -Xklib-enable-signature-clash-checks

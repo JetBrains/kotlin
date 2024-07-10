@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
 import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -48,10 +50,11 @@ class KonanLibrariesResolveSupport(
     internal val resolvedLibraries = run {
         val additionalLibraryFiles = (includedLibraryFiles + listOfNotNull(libraryToCacheFile)).toSet()
         resolver.resolveWithDependencies(
-                unresolvedLibraries + additionalLibraryFiles.map { RequiredUnresolvedLibrary(it.absolutePath) },
-                noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
-                noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
-                noEndorsedLibs = configuration.getBoolean(KonanConfigKeys.NOENDORSEDLIBS)
+            unresolvedLibraries + additionalLibraryFiles.map { RequiredUnresolvedLibrary(it.absolutePath) },
+            noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
+            noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
+            noEndorsedLibs = configuration.getBoolean(KonanConfigKeys.NOENDORSEDLIBS),
+            duplicatedUniqueNameStrategy = configuration.get(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY, DENY),
         )
     }
 

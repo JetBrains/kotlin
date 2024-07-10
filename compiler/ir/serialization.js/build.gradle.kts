@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":wasm:wasm.config"))
 
     compileOnly(intellijCore())
+    compileOnly(project(":compiler:cli-common"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()

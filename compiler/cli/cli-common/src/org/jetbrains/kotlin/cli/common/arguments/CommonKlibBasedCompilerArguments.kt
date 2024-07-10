@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.ALL
+import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
+import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.FIRST
+
 abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
     companion object {
         @JvmStatic
@@ -64,4 +68,21 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
             checkFrozen()
             field = value
         }
+
+    @Argument(
+        value = "-Xklib-duplicated-unique-name-strategy",
+        valueDescription = "{$DENY|$ALL|$FIRST}",
+        description = "Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value."
+    )
+    var duplicatedUniqueNameStrategy: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+}
+
+object DuplicatedUniqueNameStrategies {
+    const val DENY = "deny"
+    const val ALL = "allow-all-with-warning"
+    const val FIRST = "allow-first-with-warning"
 }
