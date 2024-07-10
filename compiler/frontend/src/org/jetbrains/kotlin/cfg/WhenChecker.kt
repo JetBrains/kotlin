@@ -217,7 +217,8 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
         return if (classDescriptor.kind != ClassKind.ENUM_ENTRY) {
             WhenMissingCase.IsTypeCheckIsMissing(
                 classId = DescriptorUtils.getClassIdForNonLocalClass(classDescriptor),
-                isSingleton = classDescriptor.kind.isSingleton
+                isSingleton = classDescriptor.kind.isSingleton,
+                ownTypeParametersCount = classDescriptor.declaredTypeParameters.size,
             )
         } else {
             val enumClassId = classId.outerClassId ?: error("Enum should have class id")

@@ -342,7 +342,11 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         whenExpression.accept(ConditionChecker, Flags(allSubclasses, checkedSubclasses, session))
         (allSubclasses - checkedSubclasses).mapNotNullTo(destination) {
             when (it) {
-                is FirClassSymbol<*> -> WhenMissingCase.IsTypeCheckIsMissing(it.classId, it.fir.classKind.isSingleton)
+                is FirClassSymbol<*> -> WhenMissingCase.IsTypeCheckIsMissing(
+                    it.classId,
+                    it.fir.classKind.isSingleton,
+                    it.ownTypeParameterSymbols.size
+                )
                 is FirVariableSymbol<*> -> WhenMissingCase.EnumCheckIsMissing(it.callableId)
                 else -> null
             }

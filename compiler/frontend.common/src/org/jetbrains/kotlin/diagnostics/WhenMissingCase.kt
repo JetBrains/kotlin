@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.renderer.render
 
 sealed class WhenMissingCase {
     abstract val branchConditionText: String
@@ -38,24 +39,30 @@ sealed class WhenMissingCase {
         override val branchConditionText: String = value.toString()
     }
 
-    class IsTypeCheckIsMissing(val classId: ClassId, val isSingleton: Boolean) : WhenMissingCase() {
+    class IsTypeCheckIsMissing(val classId: ClassId, val isSingleton: Boolean, val ownTypeParametersCount: Int) : WhenMissingCase() {
         override val branchConditionText: String = run {
-            val fqName = classId.asSingleFqName().toString()
-            if (isSingleton) fqName else "is $fqName"
+            val fqName = classId.asSingleFqName().render()
+            val type = "$fqName$typeArguments"
+            if (isSingleton) type else "is $type"
         }
 
         override fun toString(): String {
-            val className = classId.shortClassName
-            val name = if (className.isSpecial) className.asString() else className.identifier
-            return if (isSingleton) name else "is $name"
+            val shortName = classId.shortClassName.render()
+            val type = "$shortName$typeArguments"
+            return if (isSingleton) type else "is $type"
         }
+
+        private val typeArguments: String
+            get() = if (ownTypeParametersCount != 0) {
+                CharArray(ownTypeParametersCount) { '*' }.joinToString(prefix = "<", postfix = ">")
+            } else ""
     }
 
     class EnumCheckIsMissing(val callableId: CallableId) : WhenMissingCase() {
-        override val branchConditionText: String = callableId.asSingleFqName().toString()
+        override val branchConditionText: String = callableId.asSingleFqName().render()
 
         override fun toString(): String {
-            return callableId.callableName.identifier
+            return callableId.callableName.render()
         }
     }
 
