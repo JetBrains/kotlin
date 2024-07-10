@@ -1014,7 +1014,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                 JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
                 String value = stringLiteral.getValue();
                 if (IdentifierPolicyKt.isValidES5Identifier(value)) {
-                   labelExpr = new JsNameRef(value).withMetadataFrom(stringLiteral);
+                    String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
+                    labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
                 }
             }
             // labels can be either string, integral, or decimal literals
