@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.types.coneType
 
-object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.symbol.hasExplicitReturnType) {
             declaration.initializer?.checkExpressionForEnhancedTypeMismatch(
@@ -34,7 +33,7 @@ object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker(CheckerSess
     }
 }
 
-object FirFunctionJavaNullabilityWarningChecker : FirFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirFunctionJavaNullabilityWarningChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val body = declaration.body
         if (body is FirSingleExpressionBlock && declaration.symbol.hasExplicitReturnType) {
@@ -48,7 +47,7 @@ object FirFunctionJavaNullabilityWarningChecker : FirFunctionChecker(CheckerSess
     }
 }
 
-object FirValueParameterJavaNullabilityWarningChecker : FirValueParameterChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirValueParameterJavaNullabilityWarningChecker : FirValueParameterChecker() {
     override fun check(declaration: FirValueParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.defaultValue?.checkExpressionForEnhancedTypeMismatch(
             declaration.returnTypeRef.coneType,

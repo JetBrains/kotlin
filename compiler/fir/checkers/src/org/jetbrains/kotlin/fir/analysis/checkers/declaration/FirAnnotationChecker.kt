@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-object FirAnnotationChecker : FirBasicDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirAnnotationChecker : FirBasicDeclarationChecker() {
     private val deprecatedClassId = FqName("kotlin.Deprecated")
     private val deprecatedSinceKotlinClassId = FqName("kotlin.DeprecatedSinceKotlin")
 

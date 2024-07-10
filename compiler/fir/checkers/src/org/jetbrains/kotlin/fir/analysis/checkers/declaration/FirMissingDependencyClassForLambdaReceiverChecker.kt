@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -14,7 +13,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.receiverType
 
 object FirMissingDependencyClassForLambdaReceiverChecker :
-    FirAnonymousFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers), FirMissingDependencyClassProxy {
+    FirAnonymousFunctionChecker(), FirMissingDependencyClassProxy {
     override fun check(
         declaration: FirAnonymousFunction,
         context: CheckerContext,

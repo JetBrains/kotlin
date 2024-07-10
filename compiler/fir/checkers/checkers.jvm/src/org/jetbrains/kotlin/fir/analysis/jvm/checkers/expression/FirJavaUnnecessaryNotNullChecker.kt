@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCheckNotNullCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
 
-object FirJavaUnnecessaryNotNullChecker: FirCheckNotNullCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirJavaUnnecessaryNotNullChecker: FirCheckNotNullCallChecker() {
     override fun check(expression: FirCheckNotNullCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val argument = expression.arguments.singleOrNull() ?: return
         val argumentType = EnhancedForWarningConeSubstitutor(context.session.typeContext)

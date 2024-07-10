@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.fir.types.isTypealiasExpansion
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-object FirDeprecationChecker : FirBasicExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirDeprecationChecker : FirBasicExpressionChecker() {
 
     private val filteredSourceKinds: Set<KtFakeSourceElementKind> = setOf(
         KtFakeSourceElementKind.PropertyFromParameter,

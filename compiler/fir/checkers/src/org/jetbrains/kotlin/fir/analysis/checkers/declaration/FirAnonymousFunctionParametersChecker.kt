@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 
-object FirAnonymousFunctionParametersChecker : FirAnonymousFunctionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirAnonymousFunctionParametersChecker : FirAnonymousFunctionChecker() {
     override fun check(declaration: FirAnonymousFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         for (valueParameter in declaration.valueParameters) {
             val source = valueParameter.source ?: continue

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 
-object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker() {
     override fun check(declaration: FirBackingField, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirDefaultPropertyBackingField) {
             return

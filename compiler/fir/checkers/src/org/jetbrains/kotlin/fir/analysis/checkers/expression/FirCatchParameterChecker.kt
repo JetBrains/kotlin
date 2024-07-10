@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.defaultValueForParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isTypeMismatchDueToNullability
 import org.jetbrains.kotlin.fir.types.typeContext
 
-object FirCatchParameterChecker : FirTryExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirCatchParameterChecker : FirTryExpressionChecker() {
     override fun check(expression: FirTryExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         for (catchEntry in expression.catches) {
             val catchParameter = catchEntry.parameter

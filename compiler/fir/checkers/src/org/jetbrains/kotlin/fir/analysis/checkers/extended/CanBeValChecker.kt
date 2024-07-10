@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
 import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.calleeReference
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.util.getChildren
 
-object CanBeValChecker : AbstractFirPropertyInitializationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
     override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
         val collector = ReassignedVariableCollector(data).apply { data.graph.traverse(this) }
         val iterator = data.properties.iterator()

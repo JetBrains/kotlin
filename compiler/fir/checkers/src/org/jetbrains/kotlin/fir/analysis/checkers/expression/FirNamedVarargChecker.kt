@@ -13,7 +13,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.*
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-object FirNamedVarargChecker : FirCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirNamedVarargChecker : FirCallChecker() {
     override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall &&
             expression !is FirAnnotation &&

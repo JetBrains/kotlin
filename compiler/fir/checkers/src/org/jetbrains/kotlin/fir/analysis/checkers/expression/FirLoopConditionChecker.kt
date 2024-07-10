@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkCondition
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 
-object FirLoopConditionChecker : FirLoopExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirLoopConditionChecker : FirLoopExpressionChecker() {
     override fun check(expression: FirLoop, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression is FirErrorLoop) return
         val condition = expression.condition

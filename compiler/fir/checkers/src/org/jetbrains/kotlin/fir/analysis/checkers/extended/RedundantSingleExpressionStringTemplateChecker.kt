@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirStringConcatenationCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.util.getChildren
 
-object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCallChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object RedundantSingleExpressionStringTemplateChecker : FirStringConcatenationCallChecker() {
     override fun check(expression: FirStringConcatenationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         for (argumentExpression in expression.arguments) {
             if (argumentExpression.resolvedType.fullyExpandedClassId(context.session) == StandardClassIds.String &&

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
-object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker() {
     override fun check(expression: FirArrayLiteral, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!isInsideAnnotationCall(context) &&
             (context.callsOrAssignments.isNotEmpty() || !isInsideAnnotationClass(context))

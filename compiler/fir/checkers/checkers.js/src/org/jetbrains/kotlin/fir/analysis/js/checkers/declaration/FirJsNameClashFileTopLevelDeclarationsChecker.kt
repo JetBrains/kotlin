@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFileChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
-object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker() {
     private fun MutableMap<String, MutableList<FirJsStableName>>.addStableName(
         symbol: FirBasedSymbol<*>,
         context: CheckerContext

@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.isLeftValidForDefinitelyNotNullable
 import org.jetbrains.kotlin.fir.types.isRightValidForDefinitelyNotNullable
 
-object FirDefinitelyNotNullableChecker : FirIntersectionTypeRefChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+object FirDefinitelyNotNullableChecker : FirIntersectionTypeRefChecker() {
     override fun check(typeRef: FirIntersectionTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (typeRef.isMarkedNullable) {
             reporter.reportOn(typeRef.source, FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE, context)
