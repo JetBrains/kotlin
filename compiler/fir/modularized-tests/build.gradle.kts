@@ -12,6 +12,8 @@ repositories {
     mavenLocal()
 }
 
+val distDir: String by rootProject.extra
+
 dependencies {
     testApi(intellijCore())
 
@@ -35,6 +37,8 @@ dependencies {
     if (asyncProfilerClasspath != null) {
         testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
     }
+
+    testRuntimeOnly(files(distDir + "/kotlinc/lib/kotlin-compiler.jar"))
 }
 
 sourceSets {
