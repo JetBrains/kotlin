@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// SKIP_KLIB_TEST
 // WITH_REFLECT
 
 import kotlin.reflect.KProperty1

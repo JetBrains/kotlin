@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirLightTreeCompileJavaAgai
 import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirPsiCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.ir.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
-import org.jetbrains.kotlin.klib.AbstractKlibIrTextTestCase
-import org.jetbrains.kotlin.klib.AbstractKlibJsIrTextTestCase
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
@@ -440,21 +438,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractIrScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR, excludedPattern = excludedCustomTestdataPattern)
-            }
-        }
-
-        testGroup(
-            testsRoot = "compiler/tests-gen",
-            testDataRoot = "compiler/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective", // FIXME: This is a temporary hack to smooth the transition to the new test infrastructure
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_KLIB: \"")
-        ) {
-            testClass<AbstractKlibJsIrTextTestCase> {
-                model("ir/irText/js", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
-            }
-
-            testClass<AbstractKlibIrTextTestCase> {
-                model("ir/irText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
             }
         }
 
