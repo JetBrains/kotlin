@@ -159,8 +159,9 @@ private class SyntheticAccessorTransformer(
 
         val callee = expression.symbol.owner
         val withSuper = (expression as? IrCall)?.superQualifierSymbol != null
-        val generateSpecialAccessWithoutSyntheticAccessor = shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression, withSuper)
         val thisSymbol = (expression as? IrCall)?.dispatchReceiver?.type?.classifierOrNull as? IrClassSymbol
+        val generateSpecialAccessWithoutSyntheticAccessor =
+            shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression, withSuper, thisSymbol)
 
         if (expression is IrCall && callee.symbol == context.ir.symbols.indyLambdaMetafactoryIntrinsic) {
             return super.visitExpression(handleLambdaMetafactoryIntrinsic(expression, thisSymbol))
@@ -181,23 +182,27 @@ private class SyntheticAccessorTransformer(
         return super.visitExpression(accessorGenerator.modifyFunctionAccessExpression(expression, accessor.symbol))
     }
 
-    private fun shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression: IrFunctionAccessExpression, withSuper: Boolean) =
+    private fun shouldGenerateSpecialAccessWithoutSyntheticAccessor(
+        expression: IrFunctionAccessExpression,
+        withSuper: Boolean,
+        thisObjReference: IrClassSymbol?,
+    ): Boolean =
         when {
             context.evaluatorData == null -> false
             expression is IrCall -> {
                 val inJvmStaticWrapper = (currentFunction?.irElement as? IrFunction)?.origin == JVM_STATIC_WRAPPER
-                !inJvmStaticWrapper && !expression.symbol.isDirectlyAccessible(withSuper)
+                !inJvmStaticWrapper && !expression.symbol.isDirectlyAccessible(withSuper, thisObjReference)
             }
-            expression is IrConstructorCall -> !expression.symbol.isDirectlyAccessible(false)
+            expression is IrConstructorCall -> !expression.symbol.isDirectlyAccessible(withSuper = false, thisObjReference)
             else -> false
         }
 
     private fun shouldGenerateSpecialAccessWithoutSyntheticAccessor(symbol: IrSymbol): Boolean {
-        return context.evaluatorData != null && !symbol.isDirectlyAccessible(withSuper = false)
+        return context.evaluatorData != null && !symbol.isDirectlyAccessible(withSuper = false, thisObjReference = null)
     }
 
-    private fun IrSymbol.isDirectlyAccessible(withSuper: Boolean) =
-        isAccessible(context, currentScope, inlineScopeResolver, withSuper, null, fromOtherClassLoader = true)
+    private fun IrSymbol.isDirectlyAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean =
+        isAccessible(context, currentScope, inlineScopeResolver, withSuper, thisObjReference, fromOtherClassLoader = true)
 
     private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
         val implFunRef = call.getValueArgument(1) as? IrFunctionReference
