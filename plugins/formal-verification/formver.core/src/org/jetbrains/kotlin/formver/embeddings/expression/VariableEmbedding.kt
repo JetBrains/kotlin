@@ -51,8 +51,6 @@ sealed interface VariableEmbedding : PureExpEmbedding, PropertyAccessEmbedding {
 
     fun allAccessInvariants() = accessInvariants() + listOfNotNull(sharedPredicateAccessInvariant())
 
-    fun dynamicInvariants(): List<ExpEmbedding> = type.dynamicInvariants().fillHoles(this)
-
     override val debugTreeView: TreeView
         get() = NamedBranchingNode("Var", PlaintextLeaf(name.mangled))
 }

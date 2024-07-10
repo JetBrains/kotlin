@@ -72,15 +72,6 @@ interface TypeEmbedding {
     fun pureInvariants(): List<TypeInvariantEmbedding> = emptyList()
 
     /**
-     * Invariants that should correlate the old and new value of a value of this type
-     * over a function call. When a caller gives away permissions to the callee, these
-     * dynamic invariants give properties about the modifications of the argument as
-     * part of the functions post conditions.
-     * This is exclusively necessary for CallsInPlace.
-     */
-    fun dynamicInvariants(): List<TypeInvariantEmbedding> = emptyList()
-
-    /**
      * Get a nullable version of this type embedding.
      *
      * Note that nullability doesn't stack, hence nullable types must return themselves.
@@ -158,6 +149,7 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
     }
 
     override fun accessInvariants(): List<TypeInvariantEmbedding> = elementType.accessInvariants().map { IfNonNullInvariant(it) }
+    override fun pureInvariants(): List<TypeInvariantEmbedding> = elementType.pureInvariants().map { IfNonNullInvariant(it) }
 
     // Note: this function will replace accessInvariants when nested unfold will be implemented
     override fun sharedPredicateAccessInvariant(): TypeInvariantEmbedding? =

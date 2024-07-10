@@ -257,7 +257,6 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                         addIfNotNull(it.type.uniquePredicateAccessInvariant()?.fillHole(it))
                     }
                 }
-                addAll(subSignature.params.flatMap { it.dynamicInvariants() })
                 addAll(returnVariable.pureInvariants())
                 addAll(returnVariable.provenInvariants())
                 addAll(returnVariable.allAccessInvariants())
