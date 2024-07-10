@@ -65,9 +65,12 @@ class DeclarationGenerator(
     }
 
     override fun visitFunction(declaration: IrFunction) {
-        // Inline class constructors are currently empty
-        if (declaration is IrConstructor && backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass))
+        // Constructor of inline class or with `@WasmPrimitiveConstructor` is empty
+        if (declaration is IrConstructor &&
+            (backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass) || declaration.hasWasmPrimitiveConstructorAnnotation())
+        ) {
             return
+        }
 
         val isIntrinsic = declaration.hasWasmNoOpCastAnnotation() || declaration.getWasmOpAnnotation() != null
         if (isIntrinsic) {
