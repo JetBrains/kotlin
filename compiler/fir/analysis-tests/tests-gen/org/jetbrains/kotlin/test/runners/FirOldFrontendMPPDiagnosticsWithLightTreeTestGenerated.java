@@ -242,6 +242,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("expectMM1.kt")
+  public void testExpectMM1() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/expectMM1.kt");
+  }
+
+  @Test
   @TestMetadata("expectObjectWithAbstractMember.kt")
   public void testExpectObjectWithAbstractMember() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/expectObjectWithAbstractMember.kt");

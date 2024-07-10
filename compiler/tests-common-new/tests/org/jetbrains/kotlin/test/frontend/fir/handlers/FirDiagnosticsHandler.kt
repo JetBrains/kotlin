@@ -675,7 +675,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         lazyDeclarationResolver.disableLazyResolveContractChecksInside {
             result += platformPart.session.runCheckers(
                 platformPart.firAnalyzerFacade.scopeSession,
-                allFiles,
+                platformPart.firFiles.values,
                 DiagnosticReporterFactory.createPendingReporter(),
                 mppCheckerKind = MppCheckerKind.Platform
             ).mapValues { entry -> entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM) } }

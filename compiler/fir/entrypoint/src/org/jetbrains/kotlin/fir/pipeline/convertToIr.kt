@@ -61,12 +61,9 @@ data class Fir2IrActualizedResult(
 )
 
 fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
-    val platformModule = this.last()
-    val session = platformModule.session
-    val scopeSession = platformModule.scopeSession
-
-    val allFiles = this.flatMap { it.fir }
-    session.runCheckers(scopeSession, allFiles, reporter, MppCheckerKind.Platform)
+    for (analysisResult in this) {
+        analysisResult.session.runCheckers(analysisResult.scopeSession, analysisResult.fir, reporter, MppCheckerKind.Platform)
+    }
 }
 
 fun FirResult.convertToIrAndActualize(
