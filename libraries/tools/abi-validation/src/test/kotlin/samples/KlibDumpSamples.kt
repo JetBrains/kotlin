@@ -20,7 +20,7 @@ class KlibDumpSamples {
     @Rule
     var tempFolder = TemporaryFolder()
 
-    fun createDumpWithContent(content: String): File {
+    fun createDumpFileWithContent(content: String): File {
         val file = tempFolder.newFile()
         file.writer().use {
             it.write(content)
@@ -31,7 +31,7 @@ class KlibDumpSamples {
     @OptIn(ExperimentalBCVApi::class)
     @Test
     fun mergeDumps() {
-        val linuxX64Dump = createDumpWithContent("""
+        val linuxX64Dump = createDumpFileWithContent("""
             // Rendering settings:
             // - Signature version: 2
             // - Show manifest properties: false
@@ -51,7 +51,7 @@ class KlibDumpSamples {
             final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
         """.trimIndent())
 
-        val linuxArm64Dump = createDumpWithContent("""
+        val linuxArm64Dump = createDumpFileWithContent("""
             // Rendering settings:
             // - Signature version: 2
             // - Show manifest properties: false
@@ -103,7 +103,7 @@ class KlibDumpSamples {
     @OptIn(ExperimentalBCVApi::class)
     @Test
     fun mergeDumpObjects() {
-        val linuxX64Dump = createDumpWithContent("""
+        val linuxX64Dump = createDumpFileWithContent("""
             // Rendering settings:
             // - Signature version: 2
             // - Show manifest properties: false
@@ -123,7 +123,7 @@ class KlibDumpSamples {
             final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
         """.trimIndent())
 
-        val linuxArm64Dump = createDumpWithContent("""
+        val linuxArm64Dump = createDumpFileWithContent("""
             // Rendering settings:
             // - Signature version: 2
             // - Show manifest properties: false
@@ -195,9 +195,106 @@ class KlibDumpSamples {
 
     @OptIn(ExperimentalBCVApi::class)
     @Test
+    fun updateMergedDump() {
+        val linuxX64Dump = """
+            // Rendering settings:
+            // - Signature version: 2
+            // - Show manifest properties: false
+            // - Show declarations: true
+
+            // Library unique name: <org.example:bcv-klib-test>
+            // Platform: NATIVE
+            // Native targets: linux_x64
+            // Compiler version: 1.9.22
+            // ABI version: 1.8.0
+            final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
+                final val value // org.example/ShardedClass.value|{}value[0]
+                    final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+                constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+                final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
+            }
+            final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
+        """.trimIndent()
+
+        val linuxArm64Dump = """
+            // Rendering settings:
+            // - Signature version: 2
+            // - Show manifest properties: false
+            // - Show declarations: true
+
+            // Library unique name: <org.example:bcv-klib-test>
+            // Platform: NATIVE
+            // Native targets: linux_arm64
+            // Compiler version: 1.9.22
+            // ABI version: 1.8.0
+            final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
+                final val value // org.example/ShardedClass.value|{}value[0]
+                    final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+                constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+                final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
+            }
+        """.trimIndent()
+
+        val mergedDump = KlibDump()
+        mergedDump.merge(KlibDump.from(linuxArm64Dump))
+        mergedDump.merge(KlibDump.from(linuxX64Dump, configurableTargetName = "linuxX86_64"))
+
+        val newLinuxX64Dump = """
+            // Rendering settings:
+            // - Signature version: 2
+            // - Show manifest properties: false
+            // - Show declarations: true
+
+            // Library unique name: <org.example:bcv-klib-test>
+            // Platform: NATIVE
+            // Native targets: linux_x64
+            // Compiler version: 1.9.22
+            // ABI version: 1.8.0
+            final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
+                final val value // org.example/ShardedClass.value|{}value[0]
+                    final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+                constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+                final fun store(kotlin/Int): kotlin/Int // org.example/ShardedClass.store|store(kotlin.Long){}[0]
+            }
+            final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
+        """.trimIndent()
+
+        mergedDump.replace(KlibDump.from(newLinuxX64Dump, configurableTargetName = "linuxX86_64"))
+
+        val mergedDumpContent = mergedDump.saveTo(StringBuilder()).toString()
+        assertEquals("""
+            // Klib ABI Dump
+            // Targets: [linuxArm64, linuxX64.linuxX86_64]
+            // Rendering settings:
+            // - Signature version: 2
+            // - Show manifest properties: false
+            // - Show declarations: true
+
+            // Library unique name: <org.example:bcv-klib-test>
+            final class org.example/ShardedClass { // org.example/ShardedClass|null[0]
+                constructor <init>(kotlin/Int) // org.example/ShardedClass.<init>|<init>(kotlin.Int){}[0]
+
+                final val value // org.example/ShardedClass.value|{}value[0]
+                    final fun <get-value>(): kotlin/Int // org.example/ShardedClass.value.<get-value>|<get-value>(){}[0]
+
+                // Targets: [linuxArm64]
+                final fun add(kotlin/Int): kotlin/Int // org.example/ShardedClass.add|add(kotlin.Int){}[0]
+            
+                // Targets: [linuxX64.linuxX86_64]
+                final fun store(kotlin/Int): kotlin/Int // org.example/ShardedClass.store|store(kotlin.Long){}[0]
+            }
+
+            // Targets: [linuxX64.linuxX86_64]
+            final fun org.example/ShardedClass(kotlin/Int, kotlin/Float, kotlin/Long): org.example/ShardedClass // org.example/ShardedClass|ShardedClass(kotlin.Int;kotlin.Float;kotlin.Long){}[0]
+            
+            """.trimIndent(), mergedDumpContent)
+    }
+
+    @OptIn(ExperimentalBCVApi::class)
+    @Test
     fun extractTargets() {
         // Oh no, we're running on Windows and Apple targets are unsupported, let's filter it out!
-        val mergedDump = createDumpWithContent("""
+        val mergedDump = createDumpFileWithContent("""
             // Klib ABI Dump
             // Targets: [iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64]
             // Rendering settings:
@@ -243,7 +340,7 @@ class KlibDumpSamples {
         // We want to get a dump for iosArm64, but our host compiler doesn't support it.
         val unsupportedTarget = KlibTarget.parse("iosArm64")
         // Thankfully, we have an old merged dump ...
-        val oldMergedDump = createDumpWithContent("""
+        val oldMergedDump = createDumpFileWithContent("""
             // Klib ABI Dump
             // Targets: [iosArm64, linuxArm64]
             // Rendering settings:
@@ -260,7 +357,7 @@ class KlibDumpSamples {
         """.trimIndent())
 
         // ... and a new dump for linuxArm64
-        val linuxDump = createDumpWithContent("""
+        val linuxDump = createDumpFileWithContent("""
             // Klib ABI Dump
             // Targets: [linuxArm64]
             // Rendering settings:
