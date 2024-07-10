@@ -58,7 +58,7 @@ public abstract class KotlinKlibAbiBuildTask : BuildTaskBase() {
         outputFile.delete()
         outputFile.parentFile.mkdirs()
 
-        val dump = KlibDump.fromKlib(klibFile.singleFile, target.get().configurableName, KLibDumpFilters {
+        val dump = KlibDump.fromKlib(klibFile.singleFile, target.get().configurableName, KlibDumpFilters {
             ignoredClasses.addAll(this@KotlinKlibAbiBuildTask.ignoredClasses.get())
             ignoredPackages.addAll(this@KotlinKlibAbiBuildTask.ignoredPackages.get())
             nonPublicMarkers.addAll(this@KotlinKlibAbiBuildTask.nonPublicMarkers.get())

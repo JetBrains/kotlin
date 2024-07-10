@@ -184,6 +184,7 @@ public final class kotlinx/validation/api/klib/KlibDumpFilters$Companion {
 
 public final class kotlinx/validation/api/klib/KlibDumpFiltersKt {
 	public static final fun KLibDumpFilters (Lkotlin/jvm/functions/Function1;)Lkotlinx/validation/api/klib/KlibDumpFilters;
+	public static final fun KlibDumpFilters (Lkotlin/jvm/functions/Function1;)Lkotlinx/validation/api/klib/KlibDumpFilters;
 }
 
 public final class kotlinx/validation/api/klib/KlibDumpKt {
