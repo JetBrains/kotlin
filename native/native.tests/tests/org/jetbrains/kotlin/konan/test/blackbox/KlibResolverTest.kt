@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDENCY_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_LIBRARY_VERSION
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -200,6 +201,44 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 compilerOutput = cte.reason,
                 missingLibrary = "/klib-files.unpacked.paths.transformed/lib1",
                 baseDir = buildDir
+            )
+        }
+    }
+
+    @Test
+    fun testWarningAboutDuplicatedUniqueNames() {
+        val modules = createModules(
+            Module("a"),
+            Module("b"),
+            Module("c", "a", "b"),
+        )
+        val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
+
+        // Compilation with patched manifest -- should fail.
+        try {
+            modules.compileModules(
+                produceUnpackedKlibs = true,
+                useLibraryNamesInCliArguments = false
+            ) { module, klib ->
+                if (module.name == "a" || module.name == "b") {
+                    // set the same `unique_name`
+                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                        @Suppress("DEPRECATION")
+                        properties[KLIB_PROPERTY_UNIQUE_NAME] = DUPLICATED_UNIQUE_NAME
+                    }
+                }
+            }
+
+            fail { "Normally unreachable code" }
+        } catch (cte: CompilationToolException) {
+            assertCompilerOutputHasKlibResolverIssue(
+                assertions = JUnit5Assertions,
+                compilerOutput = cte.reason,
+                missingLibrary = "one of dependent libraries",
+                baseDir = buildDir,
+                prefixPatterns = listOf(
+                    { "warning: KLIB resolver: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library" },
+                )
             )
         }
     }
