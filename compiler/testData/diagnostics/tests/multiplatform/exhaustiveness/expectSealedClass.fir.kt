@@ -5,8 +5,8 @@
 // FILE: common.kt
 expect sealed class Base()
 
-class A : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>()
-object B : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>()
+class A : Base()
+object B : Base()
 
 fun testCommon(base: Base) {
     val x = <!NO_ELSE_IN_WHEN, NO_ELSE_IN_WHEN{METADATA}!>when<!> (base) { // must be an error

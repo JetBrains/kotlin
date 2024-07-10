@@ -5,7 +5,7 @@
 // FILE: common.kt
 expect sealed class Base()
 
-class CommonDerived : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>()
+class CommonDerived : Base()
 
 // should be an error
 fun commonTest(x: Base) = <!NO_ELSE_IN_WHEN, NO_ELSE_IN_WHEN{METADATA}!>when<!> (x) {
