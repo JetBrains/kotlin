@@ -1,0 +1,12 @@
+// Explicit members
+property pkg.ExplicitProperty.entryPoint
+function pkg.ExplicitFunction.entryPoint
+callable pkg.ExplicitCallable.entryPoint
+
+// Constructors
+function pkg.Constructor.<init>
+
+// Wildcard members
+property pkg.WildcardProperty.*
+function pkg.WildcardFunction.*
+callable pkg.WildcardCallable.*

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.name.ClassId
@@ -30,6 +31,7 @@ class ObjCExportMapper(
     internal val deprecationResolver: DeprecationResolver? = null,
     private val local: Boolean = false,
     internal val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport,
+    internal val entryPoints: ObjCEntryPoints = ObjCEntryPoints.ALL,
 ) {
     fun getCustomTypeMapper(descriptor: ClassDescriptor): CustomTypeMapper? = CustomTypeMappers.getMapper(descriptor)
 
@@ -49,7 +51,7 @@ class ObjCExportMapper(
 internal fun isSpecialMapped(descriptor: ClassDescriptor): Boolean {
     // TODO: this method duplicates some of the [ObjCExportTranslatorImpl.mapReferenceType] logic.
     return KotlinBuiltIns.isAny(descriptor) ||
-            descriptor.getAllSuperClassifiers().any { it is ClassDescriptor && CustomTypeMappers.hasMapper(it) }
+        descriptor.getAllSuperClassifiers().any { it is ClassDescriptor && CustomTypeMappers.hasMapper(it) }
 }
 
 /**
@@ -125,25 +127,26 @@ fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescriptor): Bool
     // because they are useless in Objective-C/Swift.
     isComponentNMethod(descriptor) && descriptor.overriddenDescriptors.isEmpty() -> false
     descriptor.isHiddenFromObjC() -> false
+    !entryPoints.shouldBeExposed(descriptor) -> false
     else -> true
 }
+
+private fun AnnotationDescriptor.hidesFromObjC(): Boolean =
+    annotationClass?.annotations?.any { it.fqName == KonanFqNames.hidesFromObjC } ?: false
 
 private fun CallableMemberDescriptor.isHiddenFromObjC(): Boolean = when {
     // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
     overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isHiddenFromObjC()
-    else -> annotations.any { annotation ->
-        annotation.annotationClass?.annotations?.any { it.fqName == KonanFqNames.hidesFromObjC } == true
-    }
+    else -> annotations.any(AnnotationDescriptor::hidesFromObjC)
 }
 
 /**
  * Check if the given class or its enclosing declaration is marked as @HiddenFromObjC.
  */
 internal fun ClassDescriptor.isHiddenFromObjC(): Boolean = when {
-    (this.containingDeclaration as? ClassDescriptor)?.isHiddenFromObjC() == true -> true
-    else -> annotations.any { annotation ->
-        annotation.annotationClass?.annotations?.any { it.fqName == KonanFqNames.hidesFromObjC } == true
-    }
+    containingDeclaration.let { it as? ClassDescriptor }?.isHiddenFromObjC() ?: false -> true
+    annotations.any(AnnotationDescriptor::hidesFromObjC) -> true
+    else -> false
 }
 
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
@@ -211,10 +214,15 @@ private fun ObjCExportMapper.isHiddenByDeprecation(descriptor: ClassDescriptor):
 
 // Note: the logic is partially duplicated in ObjCExportLazyImpl.translateClasses.
 internal fun ObjCExportMapper.shouldBeVisible(descriptor: ClassDescriptor): Boolean =
-    descriptor.isEffectivelyPublicApi && when (descriptor.kind) {
-        ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
-        ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
-    } && !descriptor.isExpect && !descriptor.isInlined() && !isHiddenByDeprecation(descriptor) && !descriptor.isHiddenFromObjC()
+    descriptor.isEffectivelyPublicApi &&
+        when (descriptor.kind) {
+            ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
+            ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
+        } &&
+        !descriptor.isExpect &&
+        !descriptor.isInlined() &&
+        !isHiddenByDeprecation(descriptor) &&
+        !descriptor.isHiddenFromObjC()
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
     descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }
@@ -369,7 +377,7 @@ private fun ObjCExportMapper.bridgeReturnType(
         }
 
         descriptor.containingDeclaration.let { it is ClassDescriptor && KotlinBuiltIns.isAny(it) } &&
-                descriptor.name.asString() == "hashCode" -> {
+            descriptor.name.asString() == "hashCode" -> {
             assert(!convertExceptionsToErrors)
             MethodBridge.ReturnValue.HashCode
         }
@@ -460,4 +468,3 @@ internal fun ObjCExportMapper.bridgePropertyType(descriptor: PropertyDescriptor)
 
     return bridgeType(descriptor.type)
 }
-
