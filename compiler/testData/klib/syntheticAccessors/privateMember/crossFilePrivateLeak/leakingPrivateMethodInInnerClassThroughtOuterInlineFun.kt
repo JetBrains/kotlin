@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: ANY
-
 // FILE: A.kt
 class A {
     inner class Inner{
@@ -7,9 +5,11 @@ class A {
 
         internal inline fun internalInlineMethod() = privateMethod()
     }
+    @Suppress("INVISIBLE_REFERENCE")
     internal inline fun internalInlineMethodInOuterClass() = Inner().privateMethod()
 }
 
+@Suppress("INVISIBLE_REFERENCE")
 internal inline fun internalInlineMethodOutsideOfOuterClass() = A().Inner().privateMethod()
 
 // FILE: main.kt

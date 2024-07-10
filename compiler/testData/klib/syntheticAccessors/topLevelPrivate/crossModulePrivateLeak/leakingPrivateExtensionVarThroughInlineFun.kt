@@ -1,7 +1,3 @@
-import A
-
-// IGNORE_BACKEND: ANY
-
 // MODULE: lib
 // FILE: a.kt
 private var _privateVar = 21
@@ -21,11 +17,9 @@ internal inline fun customGetVar(): Int = 0.privateVar
 // FILE: main.kt
 fun box(): String {
     var result = 0
-    A().run {
-        result += customGetVar()
-        customSetVar(1)
-        result += customGetVar()
-    }
+    result += customGetVar()
+    customSetVar(1)
+    result += customGetVar()
     if (result != 13) return result.toString()
     return "OK"
 }

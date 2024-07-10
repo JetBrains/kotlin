@@ -1,14 +1,12 @@
-// IGNORE_BACKEND: ANY
-
 // MODULE: lib
 // FILE: A.kt
 class A {
-    companion object{
+    companion object {
         private fun privateMethod() = "OK"
     }
 }
 
-// the function calls INVISIBLE_MEMBER
+@Suppress("INVISIBLE_REFERENCE")
 internal inline fun internalInlineMethod() = A.privateMethod()
 
 // MODULE: main()(lib)

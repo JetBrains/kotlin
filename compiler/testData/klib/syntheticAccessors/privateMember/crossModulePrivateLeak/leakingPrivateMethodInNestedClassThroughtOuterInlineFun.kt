@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: ANY
-
 // MODULE: lib
 // FILE: A.kt
 class A {
@@ -8,9 +6,11 @@ class A {
 
         internal inline fun internalInlineMethod() = privateMethod()
     }
+    @Suppress("INVISIBLE_REFERENCE")
     internal inline fun internalInlineMethodInOuterClass() = Nested().privateMethod()
 }
 
+@Suppress("INVISIBLE_REFERENCE")
 internal inline fun internalInlineMethodOutsideOfOuterClass() = A.Nested().privateMethod()
 
 // MODULE: main()(lib)

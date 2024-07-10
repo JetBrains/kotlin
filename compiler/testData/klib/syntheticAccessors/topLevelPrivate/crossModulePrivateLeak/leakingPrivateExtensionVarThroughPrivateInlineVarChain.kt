@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: ANY
-
 // MODULE: lib
 // FILE: a.kt
 private var _privateVar = 21
@@ -31,11 +29,9 @@ internal inline var Int.inlineVar: Int
 // FILE: main.kt
 fun box(): String {
     var result = 0
-    A().run {
-        result += 0.inlineVar
-        inlineVar = 10
-        result += 0.inlineVar
-    }
+    result += 0.inlineVar
+    0.inlineVar = 10
+    result += 0.inlineVar
     if (result != 22) return result.toString()
     return "OK"
 }
