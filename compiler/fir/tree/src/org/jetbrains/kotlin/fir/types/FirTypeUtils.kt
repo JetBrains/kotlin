@@ -156,7 +156,9 @@ fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection = when (this) {
         val type = typeRef.coneType
         type.toTypeProjection(this.variance)
     }
-    else -> errorWithAttachment("Unexpected ${this::class.simpleName}") { withFirEntry("projection", this@toConeTypeProjection) }
+    is FirPlaceholderProjection -> errorWithAttachment("Placeholder projection cannot be mapped. Placeholders are replaced during analysis. If the containing element was already analyzed and a placeholder is still present, it indicates a bug.") {
+        withFirEntry("projection", this@toConeTypeProjection)
+    }
 }
 
 fun ConeKotlinType.arrayElementType(checkUnsignedArrays: Boolean = true): ConeKotlinType? {

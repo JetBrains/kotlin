@@ -223,7 +223,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             }
             append(typeRef.renderTypeAsKotlinType())
         }
-        else -> errorWithFirSpecificEntries("Invalid type reference", fir = this)
+        is FirPlaceholderProjection -> "_"
     }
 
     private fun isTheSameTypes(

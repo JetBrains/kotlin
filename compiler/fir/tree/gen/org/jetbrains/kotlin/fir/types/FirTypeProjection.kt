@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.typeProjection]
  */
-abstract class FirTypeProjection : FirPureAbstractElement(), FirElement {
+sealed class FirTypeProjection : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
