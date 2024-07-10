@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckersCornerCase
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -33,14 +34,16 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
-object FirTopLevelPropertiesChecker : FirFileChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+@OptIn(CheckersCornerCase::class)
+object FirTopLevelPropertiesChecker : FirFileChecker(CheckerSessionKind.DeclarationSite) {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         val topLevelProperties = declaration.declarations.filterIsInstance<FirProperty>()
         checkFileLikeDeclaration(declaration, topLevelProperties, context, reporter)
     }
 }
 
-object FirScriptPropertiesChecker : FirScriptChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+@OptIn(CheckersCornerCase::class)
+object FirScriptPropertiesChecker : FirScriptChecker(CheckerSessionKind.DeclarationSite) {
     override fun check(declaration: FirScript, context: CheckerContext, reporter: DiagnosticReporter) {
         val topLevelProperties = declaration.declarations.filterIsInstance<FirProperty>()
         checkFileLikeDeclaration(declaration, topLevelProperties, context, reporter)
