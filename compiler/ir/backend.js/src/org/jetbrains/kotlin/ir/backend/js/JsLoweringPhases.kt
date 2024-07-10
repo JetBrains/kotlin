@@ -260,10 +260,10 @@ internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
 )
 
 // TODO: KT-67220: consider removing it
-private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
+private val cacheInlineFunctionsBeforeInliningAllFunctionsPhase = makeIrModulePhase(
     ::SaveInlineFunctionsBeforeInlining,
-    name = "SaveInlineFunctionsBeforeInlining",
-    description = "Save inline function before inlining",
+    name = "CacheInlineFunctionsBeforeInliningAllFunctionsPhase",
+    description = "Cache copies of inline functions before InlineAllFunctions phase",
     prerequisite = setOf(
         sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
@@ -280,7 +280,7 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
     },
     name = "InlineAllFunctions",
     description = "The second phase of inlining (inline all functions)",
-    prerequisite = setOf(saveInlineFunctionsBeforeInlining)
+    prerequisite = setOf(cacheInlineFunctionsBeforeInliningAllFunctionsPhase)
 )
 
 private val copyInlineFunctionBodyLoweringPhase = makeIrModulePhase(
@@ -865,7 +865,7 @@ fun getJsLowerings(
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
     validateIrAfterInliningOnlyPrivateFunctions.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
-    saveInlineFunctionsBeforeInlining,
+    cacheInlineFunctionsBeforeInliningAllFunctionsPhase,
     inlineAllFunctionsPhase,
     validateIrAfterInliningAllFunctions,
     // END: Common Native/JS prefix.
