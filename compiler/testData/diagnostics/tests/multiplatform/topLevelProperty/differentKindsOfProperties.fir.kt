@@ -34,7 +34,7 @@
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
 
 fun test(): String {
-    <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET{METADATA}!>expect<!> val localVariable: String
+    <!WRONG_MODIFIER_TARGET!>expect<!> val localVariable: String
     localVariable = "no"
     return localVariable
 }

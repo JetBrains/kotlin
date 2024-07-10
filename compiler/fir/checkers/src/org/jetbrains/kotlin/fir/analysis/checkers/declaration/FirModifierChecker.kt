@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.DATA_KEYWORD
 import org.jetbrains.kotlin.resolve.*
 
-object FirModifierChecker : FirBasicDeclarationChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+@OptIn(CheckersCornerCase::class)
+object FirModifierChecker : FirBasicDeclarationChecker(CheckerSessionKind.DeclarationSite) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirFile) return
 
