@@ -8,7 +8,7 @@ expect class B()
 expect fun foo(test: String)
 
 fun test() {
-    A()
+    <!DEPRECATION_ERROR!>A<!>()
     B()
     foo("")
 }

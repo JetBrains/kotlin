@@ -6,7 +6,7 @@
 expect class N
 
 @JvmInline
-value class A(val n: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>N<!>)
+value class A(val <!ABBREVIATED_NOTHING_PROPERTY_TYPE!>n<!>: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>N<!>)
 
 expect class U
 
