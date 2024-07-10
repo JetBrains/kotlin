@@ -13,7 +13,7 @@ expect interface Base2<T>{
 class Test<T>(val x : Base1<T>, val y : Base2<T>) : Base1<T> by x, Base2<T> by y {
     override fun foo(t: T): T { return t }
     override val a : T
-        get() = 1 <!UNCHECKED_CAST!>as T<!>
+        get() = 1 <!UNCHECKED_CAST, UNCHECKED_CAST{METADATA}!>as T<!>
 }
 
 class Test2(val x : Base1<Int>, val y : Base2<Int>): Base1<Int> by x, Base2<Int> by y {

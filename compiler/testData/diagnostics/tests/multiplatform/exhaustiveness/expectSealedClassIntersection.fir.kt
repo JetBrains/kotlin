@@ -5,15 +5,15 @@
 // FILE: common.kt
 expect sealed class Base()
 
-class A : Base()
-object B : Base()
+class A : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>()
+object B : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>()
 
 interface I
 
 fun testCommon(base: Base) {
     if (base is I) {
-        val x = <!NO_ELSE_IN_WHEN!>when<!> (base) { // must be an error
-            <!USELESS_IS_CHECK!>is A<!> -> 1
+        val x = <!NO_ELSE_IN_WHEN, NO_ELSE_IN_WHEN{METADATA}!>when<!> (base) { // must be an error
+            <!USELESS_IS_CHECK, USELESS_IS_CHECK{METADATA}!>is A<!> -> 1
             B -> 2
         }
     }

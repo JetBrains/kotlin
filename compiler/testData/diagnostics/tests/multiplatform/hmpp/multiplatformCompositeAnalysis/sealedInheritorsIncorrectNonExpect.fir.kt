@@ -12,7 +12,7 @@ class SealedExpectActual1() : SealedExpectActual(1)
 package test
 
 /* sealed inheritors are allowed in dependsOn source sets only for expect delclations */
-class SealedExpectActual2() : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>SealedExpectActual<!>(2)
+class SealedExpectActual2() : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE, SEALED_INHERITOR_IN_DIFFERENT_MODULE{METADATA}!>SealedExpectActual<!>(2)
 
 // MODULE: main()()(intermediate)
 // TARGET_PLATFORM: JVM

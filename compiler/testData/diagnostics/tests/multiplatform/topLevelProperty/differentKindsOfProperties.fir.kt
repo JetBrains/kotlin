@@ -17,8 +17,8 @@
     <!WRONG_MODIFIER_TARGET!>expect<!> get
     <!WRONG_MODIFIER_TARGET!>expect<!> set<!>
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect val backingFieldVal: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!><!>
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!><!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect val backingFieldVal: String = <!EXPECTED_PROPERTY_INITIALIZER, EXPECTED_PROPERTY_INITIALIZER{METADATA}!>"no"<!><!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER, EXPECTED_PROPERTY_INITIALIZER{METADATA}!>"no"<!><!>
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect val customAccessorVal: String
     <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"<!>
@@ -28,13 +28,13 @@
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int<!>
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect <!EXPECTED_LATEINIT_PROPERTY, EXPECTED_LATEINIT_PROPERTY{METADATA}!>lateinit<!> var lateinitVar: String<!>
 
-<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect val delegated: String by <!EXPECTED_DELEGATED_PROPERTY!>Delegate<!><!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect val delegated: String by <!EXPECTED_DELEGATED_PROPERTY, EXPECTED_DELEGATED_PROPERTY{METADATA}!>Delegate<!><!>
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
 
 fun test(): String {
-    <!WRONG_MODIFIER_TARGET!>expect<!> val localVariable: String
+    <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET{METADATA}!>expect<!> val localVariable: String
     localVariable = "no"
     return localVariable
 }

@@ -4,7 +4,7 @@
 // MODULE: m1-common
 expect sealed class SealedClass()
 
-class Derived1 : SealedClass()
+class Derived1 : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>SealedClass<!>()
 
 // MODULE: m1-jvm()()(m1-common)
 actual typealias SealedClass = MySealedClass
