@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.types.isUnitOrFlexibleUnit
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
 import org.jetbrains.kotlin.fir.resolve.transformWhenSubjectExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
@@ -257,7 +257,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
 
         var isLhsNotNull = false
 
-        // TODO Check if the type of the RHS being null can lead to a bug, see KT-61837
+        // TODO: This whole `if` should be probably removed once we get rid of seemingly redundant
+        //  @Exact annotation on the return type of the synthetic function, see KT-55692
+        // TODO: Check if the type of the RHS being null can lead to a bug, see KT-61837
         @OptIn(UnresolvedExpressionTypeAccess::class)
         if (result.rhs.coneTypeOrNull?.isNothing == true) {
             val lhsType = result.lhs.resolvedType
@@ -266,6 +268,14 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 lhsType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
                     .convertToNonRawVersion()
             result.replaceConeTypeOrNull(newReturnType)
+
+            // For regularly resolved synthetic call, this hook is being called on the whole expression,
+            // thus correctly substituting necessary (fixed or fixed-on-demand) type variables.
+            // But it's not expected to do that on the arguments of such calls,
+            // so in `lhsType` (which above is being transferred to `result`) there might be some type variables left.
+            @OptIn(TemporaryInferenceSessionHook::class)
+            context.inferenceSession.updateExpressionReturnTypeWithCurrentSubstitutorInPCLA(result, data)
+
             isLhsNotNull = true
         }
 

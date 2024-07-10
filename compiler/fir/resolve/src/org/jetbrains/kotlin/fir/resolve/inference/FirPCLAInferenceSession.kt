@@ -128,6 +128,11 @@ class FirPCLAInferenceSession(
         outerCandidate.onPCLACompletionResultsWritingCallbacks += onCompletionResultsWriting
     }
 
+    @OptIn(TemporaryInferenceSessionHook::class) // Needed to override
+    override fun updateExpressionReturnTypeWithCurrentSubstitutorInPCLA(expression: FirExpression, resolutionMode: ResolutionMode) {
+        expression.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
+    }
+
     private fun FirExpression.updateReturnTypeWithCurrentSubstitutor(
         resolutionMode: ResolutionMode,
     ) {
