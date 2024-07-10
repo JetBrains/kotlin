@@ -13,6 +13,7 @@ fun copyCommonKlibBasedCompilerArguments(from: CommonKlibBasedCompilerArguments,
     to.enableSignatureClashChecks = from.enableSignatureClashChecks
     to.experimentalDoubleInlining = from.experimentalDoubleInlining
     to.normalizeAbsolutePath = from.normalizeAbsolutePath
+    to.omitDuplicateNames = from.omitDuplicateNames
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
     to.partialLinkageMode = from.partialLinkageMode
     to.relativePathBases = from.relativePathBases?.copyOf()

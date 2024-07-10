@@ -114,6 +114,7 @@ where advanced options include:
   -Xno-inline                Disable method inlining.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
   -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
+  -Xklib-omit-duplicate-names Omit additional klibs having same `unique_name` property in the manifest
   -Xpartial-linkage-loglevel={info|warning|error}
                              Define the compile-time log level for partial linkage.
   -Xpartial-linkage={enable|disable}
