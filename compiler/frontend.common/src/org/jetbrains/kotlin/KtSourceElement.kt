@@ -47,7 +47,7 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     /**
      * for errors on smartcast types then the type is brought in by an implicit this receiver expression
      */
-    object ImplicitThisReceiverExpression : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = false)
+    object ImplicitThisReceiverExpression : KtFakeSourceElementKind()
 
     /**
      * for type arguments that were inferred as opposed to specified
