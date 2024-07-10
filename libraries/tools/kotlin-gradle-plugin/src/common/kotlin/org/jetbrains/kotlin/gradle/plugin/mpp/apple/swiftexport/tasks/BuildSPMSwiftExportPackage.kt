@@ -98,13 +98,20 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             "BUILT_PRODUCTS_DIR" to interfacesPath.getFile().canonicalPath,
         )
 
+        val scheme = swiftApiModuleName.get()
+
         val buildArguments = mapOf(
             "ARCHS" to target.map { it.appleArchitecture }.get(),
             "CONFIGURATION" to configuration.get(),
+            /*
+            We need to add -public-autolink-library flag because bridge module is imported with @_implementationOnly
+            All object files will be merged in `lib${swiftApiModuleName}.a`
+            More information can be found here: https://github.com/swiftlang/swift/pull/35936
+             */
+            "OTHER_SWIFT_FLAGS" to "-Xfrontend -public-autolink-library -Xfrontend $scheme"
         )
 
         val derivedData = packageDerivedData.getFile()
-        val scheme = swiftApiModuleName.get()
 
         val command = listOf(
             "xcodebuild",
