@@ -29,14 +29,10 @@ abstract class YarnSetupTask : AbstractSetupTask<YarnEnv, YarnRootExtension>() {
         get() = "yarn"
 
     override fun extract(archive: File) {
-        val dirInTar = archive.name.removeSuffix(".tar.gz")
         fs.copy {
             it.from(archiveOperations.tarTree(archive))
             it.into(destination.parentFile)
             it.includeEmptyDirs = false
-            it.eachFile { fileCopy ->
-                fileCopy.path = fileCopy.path.removePrefix(dirInTar)
-            }
         }
     }
 
