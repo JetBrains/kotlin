@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.CheckerSessionKind
+import org.jetbrains.kotlin.fir.analysis.checkers.CheckersCornerCase
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
-object FirExhaustiveWhenChecker : FirWhenExpressionChecker(CheckerSessionKind.DeclarationSiteForExpectsPlatformForOthers) {
+@OptIn(CheckersCornerCase::class)
+object FirExhaustiveWhenChecker : FirWhenExpressionChecker(CheckerSessionKind.DeclarationSite) {
     override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         reportNotExhaustive(expression, context, reporter)
         reportElseMisplaced(expression, reporter, context)
