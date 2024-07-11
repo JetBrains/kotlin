@@ -214,6 +214,18 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTe
   }
 
   @Test
+  @TestMetadata("recursiveValueClass.kt")
+  public void testRecursiveValueClass() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/recursiveValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveValueClassAsImplicitType.kt")
+  public void testRecursiveValueClassAsImplicitType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/recursiveValueClassAsImplicitType.kt");
+  }
+
+  @Test
   @TestMetadata("suspendFunctionValueParameterNoStdlib.kt")
   public void testSuspendFunctionValueParameterNoStdlib() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/suspendFunctionValueParameterNoStdlib.kt");
@@ -229,6 +241,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTe
   @TestMetadata("typeAnnotation.kt")
   public void testTypeAnnotation() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/typeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClass.kt")
+  public void testValueClass() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/valueClass.kt");
   }
 
   @Test

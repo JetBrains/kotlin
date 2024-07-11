@@ -1,0 +1,2 @@
+KaType: pack.ValueClass?
+PsiType: @org.jetbrains.annotations.Nullable() pack.OriginalClass

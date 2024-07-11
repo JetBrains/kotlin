@@ -92,7 +92,8 @@ internal class KaFirJavaInteroperabilityComponent(
         mode: KaTypeMappingMode,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
-        preserveAnnotations: Boolean
+        preserveAnnotations: Boolean,
+        forceValueClassResolution: Boolean,
     ): PsiType? = withValidityAssertion {
         val coneType = this.coneType
 
@@ -109,6 +110,7 @@ internal class KaFirJavaInteroperabilityComponent(
             mode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards),
             useSitePosition = useSitePosition,
             allowErrorTypes = allowErrorTypes,
+            forceValueClassResolution = forceValueClassResolution,
         ) ?: return null
 
         val psiType = typeElement.type
@@ -458,12 +460,15 @@ private fun ConeKotlinType.asPsiTypeElement(
     mode: TypeMappingMode,
     useSitePosition: PsiElement,
     allowErrorTypes: Boolean,
+    forceValueClassResolution: Boolean,
 ): PsiTypeElement? {
     if (this !is SimpleTypeMarker) return null
 
     if (!allowErrorTypes && (this is ConeErrorType)) return null
 
-    this.classLikeLookupTagIfAny?.toSymbol(session)?.lazyResolveToPhase(FirResolvePhase.STATUS)
+    if (forceValueClassResolution && !mode.needInlineClassWrapping) {
+        this.classLikeLookupTagIfAny?.toSymbol(session)?.lazyResolveToPhase(FirResolvePhase.STATUS)
+    }
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
 

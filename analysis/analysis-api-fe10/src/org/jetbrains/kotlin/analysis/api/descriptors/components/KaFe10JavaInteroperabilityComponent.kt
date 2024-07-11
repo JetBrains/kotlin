@@ -70,7 +70,8 @@ internal class KaFe10JavaInteroperabilityComponent(
         mode: KaTypeMappingMode,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
-        preserveAnnotations: Boolean
+        preserveAnnotations: Boolean,
+        forceValueClassResolution: Boolean,
     ): PsiType? = withValidityAssertion {
         val kotlinType = (this as KaFe10Type).fe10Type
 
