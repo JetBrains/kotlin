@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -USELESS_CAST -UNUSED_PARAMETER -UNUSED_VARIABLE
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedOrVararg
 
 // FILE: j/Base.java
 package j;
@@ -59,7 +60,7 @@ fun test() {
 
     val test7 = select(d1 as Base, d2)
 
-    val test8 = selectn(d1, d2)
+    val test8 = <!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>selectn<!>(d1, d2)
 
     val test9 = selectn<Base>(d1, d2)
 

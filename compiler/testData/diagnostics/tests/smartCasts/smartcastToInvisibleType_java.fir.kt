@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUES: KT-44802, KT-56744
 // INFERENCE_HELPERS
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedOrVararg
 
 // FILE: foo/PackagePrivateInterface.java
 package foo;
@@ -33,7 +34,7 @@ fun testSmartcast(x: Any) {
 }
 
 fun testInference(a: A, b: B) {
-    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PackagePrivateInterface")!>select(a, b)<!>
+    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PackagePrivateInterface")!><!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>select<!>(a, b)<!>
     x.<!INVISIBLE_REFERENCE!>foo<!>()
 }
 
