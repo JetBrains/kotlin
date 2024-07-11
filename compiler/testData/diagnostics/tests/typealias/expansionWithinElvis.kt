@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
 // ISSUE: KT-69298
 
 typealias UntypedValue = Any?

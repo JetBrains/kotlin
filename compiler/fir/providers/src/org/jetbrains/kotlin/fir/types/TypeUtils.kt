@@ -113,6 +113,18 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
     avoidComprehensiveCheck: Boolean = false,
     preserveAttributes: Boolean = false,
 ): ConeKotlinType {
+    // It's necessary to properly handling the situation like `typealias Foo = Any?`
+    // NB: It's not related to actual type aliases since they can't refer nullable types
+    fullyExpandedType(typeContext.session).let { expandedType ->
+        if (expandedType !== this) {
+            return expandedType.makeConeTypeDefinitelyNotNullOrNotNull(
+                typeContext,
+                avoidComprehensiveCheck,
+                preserveAttributes
+            )
+        }
+    }
+
     if (this is ConeIntersectionType) {
         return ConeIntersectionType(intersectedTypes.map {
             it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext, avoidComprehensiveCheck)
