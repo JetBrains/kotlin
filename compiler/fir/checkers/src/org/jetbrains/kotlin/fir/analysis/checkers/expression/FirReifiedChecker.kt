@@ -18,18 +18,27 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.text
 
 object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeReference = expression.calleeReference
         val typeArguments = expression.typeArguments
-        val typeParameters = calleeReference.toResolvedCallableSymbol()?.typeParameterSymbols ?: return
+        val callableSymbol = calleeReference.toResolvedCallableSymbol()
+        val typeParameters = callableSymbol?.typeParameterSymbols ?: return
 
         val count = minOf(typeArguments.size, typeParameters.size)
+        val varargParameter = (callableSymbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.singleOrNull { it.isVararg }
+        val varargElementType = varargParameter?.resolvedReturnType?.arrayElementType()
+        val varargTypeParameter = (varargElementType as? ConeTypeParameterType?)?.lookupTag?.typeParameterSymbol
         for (index in 0 until count) {
             val typeArgumentProjection = typeArguments.elementAt(index)
             val source = typeArgumentProjection.source ?: calleeReference.source ?: continue
@@ -37,15 +46,24 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType(context.session) ?: continue
             val typeParameter = typeParameters[index]
 
+            val isExplicit = typeArgumentProjection.source?.kind == KtRealSourceElementKind
+            val isPlaceHolder = isExplicit && typeArgumentProjection.source.text == "_"
+
             if (typeParameter.isReifiedTypeParameterOrFromKotlinArray()) {
                 checkArgumentAndReport(
                     typeArgument,
                     typeParameter,
                     source,
-                    isExplicit = typeArgumentProjection.source?.kind == KtRealSourceElementKind,
+                    isExplicit = isExplicit,
                     isArray = false,
+                    isPlaceHolder = isPlaceHolder,
                     context,
                     reporter
+                )
+            } else if (
+                varargTypeParameter == typeParameter && isTypeArgumentVisibilityBroken(context, typeArgument) && (!isExplicit || isPlaceHolder)) {
+                reporter.reportOn(
+                    source, FirErrors.INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT, typeParameter, typeArgument, varargParameter, context
                 )
             }
         }
@@ -69,6 +87,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         source: KtSourceElement,
         isExplicit: Boolean,
         isArray: Boolean,
+        isPlaceHolder: Boolean,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
@@ -77,9 +96,21 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).
             // Therefore, we check the arguments of the expanded type, not the ones that went into the type alias.
             fullyExpandedType.typeArguments.forEach {
-                if (it is ConeKotlinType) checkArgumentAndReport(it, typeParameter, source, isExplicit, isArray = true, context, reporter)
+                if (it is ConeKotlinType) checkArgumentAndReport(
+                    it,
+                    typeParameter,
+                    source,
+                    isExplicit,
+                    isArray = true,
+                    isPlaceHolder = isPlaceHolder,
+                    context,
+                    reporter,
+                )
             }
             return
+        }
+        if (isTypeArgumentVisibilityBroken(context, fullyExpandedType) && (!isExplicit || isPlaceHolder)) {
+            reporter.reportOn(source, FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT, typeParameter, fullyExpandedType, context)
         }
 
         if (typeArgument is ConeTypeParameterType) {
@@ -102,4 +133,16 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         }
     }
 
+    @OptIn(SymbolInternals::class)
+    private fun isTypeArgumentVisibilityBroken(
+        context: CheckerContext,
+        fullyExpandedType: ConeKotlinType,
+    ): Boolean {
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedOrVararg)) return false
+        val visibilityChecker = context.session.visibilityChecker
+        val classSymbol = fullyExpandedType.toClassSymbol(context.session)
+        val containingFile = context.containingFile
+        if (classSymbol == null || containingFile == null) return false
+        return !visibilityChecker.isClassLikeVisible(classSymbol.fir, context.session, containingFile, context.containingDeclarations)
+    }
 }

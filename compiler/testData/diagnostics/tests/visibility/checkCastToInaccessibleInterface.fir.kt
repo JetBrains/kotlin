@@ -1,7 +1,7 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidInferOfInvisibleTypeAsReifiedOrVararg
 // DONT_WARN_ON_ERROR_SUPPRESSION
 // WITH_STDLIB
-// DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
 
 // FILE: test1/source.kt
 package test1
@@ -32,19 +32,19 @@ object `_`
 fun main() {
     println(f1<_>(Public1, Public2)) // ok
     println(f1(Public1, Public2)) // ok
-    println(f2<_>(Public1, Public2)) // fails in run time
-    println(f2(Public1, Public2)) // fails in run time
+    println(f2<<!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // fails in run time
+    println(<!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_ERROR!>f2<!>(Public1, Public2)) // fails in run time
     println(f2_(Public1, Public2)) // fails in compile time
-    println(f3<_>(Public1, Public2)) // fails in run time
-    println(f3(Public1, Public2)) // fails in run time
-    println(f4(Public1, Public2)) // ok
-    println(f4<_>(Public1, Public2)) // ok
-    println(f5(Public1, Public2)) // fails in run time
-    println(f5<_>(Public1, Public2)) // fails in run time
-    println(f6(Public1, Public2)) // fails in run time
-    println(f6<_>(Public1, Public2)) // fails in run time
-    println(f7(arrayOf(Public1, Public2))) // fails in run time
-    println(f7<_>(arrayOf(Public1, Public2))) // fails in run time
+    println(f3<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // fails in run time
+    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>f3<!>(Public1, Public2)) // fails in run time
+    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>f4<!>(Public1, Public2)) // ok
+    println(f4<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // ok
+    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>f5<!>(Public1, Public2)) // fails in run time
+    println(f5<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // fails in run time
+    println(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>f6<!>(Public1, Public2)) // fails in run time
+    println(f6<<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>_<!>>(Public1, Public2)) // fails in run time
+    println(f7(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>arrayOf<!>(Public1, Public2))) // fails in run time
+    println(f7<_>(<!INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_ERROR!>arrayOf<!>(Public1, Public2))) // fails in run time
 
     println(f2<test1.PrivateInFileInterface>(Public1, Public2)) // KT-73153
     println(f3<test1.PrivateInFileInterface>(Public1, Public2)) // KT-73153
