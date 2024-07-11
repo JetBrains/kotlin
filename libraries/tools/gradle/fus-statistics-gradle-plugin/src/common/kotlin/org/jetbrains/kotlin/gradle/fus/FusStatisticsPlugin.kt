@@ -19,6 +19,7 @@ class FusStatisticsPlugin @Inject constructor(
     private val providerFactory: ProviderFactory
 ) : Plugin<Project> {
     override fun apply(project: Project) {
-        GradleBuildFusStatisticsBuildService.registerIfAbsent(project)
+        val buildUidService = BuildUidService.registerIfAbsent(project)
+        GradleBuildFusStatisticsBuildService.registerIfAbsent(project, buildUidService)
     }
 }

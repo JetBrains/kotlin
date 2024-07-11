@@ -27,23 +27,19 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
-//Because of https://github.com/gradle/gradle/issues/23359 gradle issue, two build services interaction is not reliable at the end of the build
+//Because of https://github.com/gradle/gradle/issues/23359 gradle issue:
+//interaction between two build services is not reliable at the end of the build
 //Switch back to proper BuildService as soon as this issue is fixed
-class BuildReportsService {
+class BuildReportsService(private val buildUid: String) {
 
     private val log = Logging.getLogger(this.javaClass)
     private val loggerAdapter = GradleLoggerAdapter(log)
 
     private val startTime = System.nanoTime()
-    private val buildUuid = UUID.randomUUID().toString()
     private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
 
     private val tags = LinkedHashSet<StatTag>()
     private var customValues = 0 // doesn't need to be thread-safe
-
-    init {
-        log.info("Build report service is registered. Unique build id: $buildUuid")
-    }
 
     fun close(
         buildOperationRecords: Collection<BuildOperationRecord>,
@@ -68,7 +64,7 @@ class BuildReportsService {
                 it.includeMetricsInReport,
             ).process(
                 ReadableFileReportData(
-                    transformOperationRecordsToCompileStatisticsData(buildOperationRecords, parameters, onlyKotlinTask = false),
+                    transformOperationRecordsToCompileStatisticsData(buildOperationRecords, parameters, onlyKotlinTask = false, buildUid),
                     parameters.startParameters,
                     failureMessages.filter { it.isNotEmpty() },
                 ),
@@ -88,7 +84,7 @@ class BuildReportsService {
             JsonReportService(it, parameters.projectName).process(buildData, loggerAdapter)
         }
 
-        //It's expected that bad internet connection can cause a significant delay for big project
+        //It's expected that bad internet connection can cause a significant delay for a big project
         executorService.shutdown()
     }
 
@@ -96,6 +92,7 @@ class BuildReportsService {
         buildOperationRecords: Collection<BuildOperationRecord>,
         parameters: BuildReportParameters,
         onlyKotlinTask: Boolean,
+        buildUid: String,
         metricsToShow: Set<String>? = null,
     ) = buildOperationRecords.mapNotNull {
         prepareData(
@@ -104,7 +101,7 @@ class BuildReportsService {
             it.startTimeMs,
             it.totalTimeMs + it.startTimeMs,
             parameters.projectName,
-            buildUuid,
+            buildUid,
             parameters.label,
             parameters.kotlinVersion,
             it,
@@ -137,7 +134,7 @@ class BuildReportsService {
             projectName = parameters.projectName,
             startParameters = parameters.startParameters
                 .includeVerboseEnvironment(parameters.reportingSettings.httpReportSettings.verboseEnvironment),
-            buildUuid = buildUuid,
+            buildUuid = buildUid,
             label = parameters.label,
             totalTime = TimeUnit.NANOSECONDS.toMillis((System.nanoTime() - startTime)),
             finishTime = System.currentTimeMillis(),
@@ -173,7 +170,7 @@ class BuildReportsService {
                 prepareData(
                     event,
                     parameters.projectName,
-                    buildUuid,
+                    buildUid,
                     parameters.label,
                     parameters.kotlinVersion,
                     buildOperationRecord,
@@ -194,13 +191,14 @@ class BuildReportsService {
         buildOperationRecord: BuildOperationRecord,
         parameters: BuildReportParameters,
         buildScanExtension: BuildScanExtensionHolder,
+        buildUid: String,
     ) {
         val buildScanSettings = parameters.reportingSettings.buildScanReportSettings ?: return
 
         val (collectDataDuration, compileStatData) = measureTimeMillisWithResult {
             prepareData(
                 event,
-                parameters.projectName, buildUuid, parameters.label,
+                parameters.projectName, buildUid, parameters.label,
                 parameters.kotlinVersion,
                 buildOperationRecord,
                 metricsToShow = buildScanSettings.metrics
@@ -217,6 +215,7 @@ class BuildReportsService {
         buildOperationRecords: Collection<BuildOperationRecord>,
         parameters: BuildReportParameters,
         buildScanExtension: BuildScanExtensionHolder,
+        buildUid: String,
     ) {
         val buildScanSettings = parameters.reportingSettings.buildScanReportSettings ?: return
 
@@ -225,7 +224,8 @@ class BuildReportsService {
                 buildOperationRecords,
                 parameters,
                 onlyKotlinTask = true,
-                metricsToShow = buildScanSettings.metrics
+                buildUid = buildUid,
+                metricsToShow = buildScanSettings.metrics,
             )
         }
         log.debug("Collect data takes $collectDataDuration: $compileStatData")
@@ -314,7 +314,7 @@ class BuildReportsService {
 
         val timeData =
             data.getBuildTimesMetrics()
-                .map { (key, value) -> "${key.getReadableString()}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
+                .map { (key, value) -> "${key.getReadableString()}: ${value}ms" } //sometimes it is better to have a separate variable to be able to debug
         val perfData = data.getPerformanceMetrics().map { (key, value) ->
             when (key.getType()) {
                 ValueType.BYTES -> "${key.getReadableString()}: ${formatSize(value)}"
@@ -347,9 +347,8 @@ class BuildReportsService {
         return splattedString
     }
 
-    internal fun initBuildScanTags(buildScan: BuildScanExtensionHolder, label: String?) {
-        buildScan.buildScan.tag(buildUuid)
-        label?.also {
+    internal fun initBuildScanTags(buildScan: BuildScanExtensionHolder, vararg tags: String?) {
+        tags.filterNotNull().forEach {
             buildScan.buildScan.tag(it)
         }
     }

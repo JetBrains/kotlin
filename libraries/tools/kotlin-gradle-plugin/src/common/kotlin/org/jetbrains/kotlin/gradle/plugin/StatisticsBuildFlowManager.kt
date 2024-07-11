@@ -10,6 +10,7 @@ import org.gradle.api.flow.*
 import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.Input
+import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildScanExtensionHolder
@@ -46,12 +47,18 @@ internal class BuildScanFlowAction : FlowAction<BuildScanFlowAction.Parameters> 
         @get:ServiceReference
         val buildMetricService: Property<BuildMetricsService>
 
+        @get:ServiceReference
+        val buildUidService: Property<BuildUidService>
+
         @get: Input
         val buildScanExtensionHolder: Property<BuildScanExtensionHolder>
     }
 
     override fun execute(parameters: Parameters) {
-        parameters.buildMetricService.orNull?.addBuildScanReport(parameters.buildScanExtensionHolder.orNull)
+        parameters.buildMetricService.orNull?.addBuildScanReport(
+            parameters.buildScanExtensionHolder.orNull,
+            parameters.buildUidService.orNull?.buildId ?: "Unknown Build ID"
+        )
     }
 }
 

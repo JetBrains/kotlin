@@ -1,14 +1,24 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.kotlin:fus-statistics-gradle-plugin:2.0.255-SNAPSHOT")
+    }
+}
+
 plugins {
     id("gradle-plugin-common-configuration")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+//    id ("org.jetbrains.kotlin.fus-statistics-gradle-plugin") version "2.0.255-SNAPSHOT"
 }
+
+plugins.apply("org.jetbrains.kotlin.fus-statistics-gradle-plugin")
 
 repositories {
     google()
     mavenCentral()
+    mavenLocal()
     gradlePluginPortal()
 }
 
@@ -101,6 +111,7 @@ dependencies {
     commonImplementation(project(":native:kotlin-klib-commonizer-api"))
     commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
+    commonImplementation("org.jetbrains.kotlin:fus-statistics-gradle-plugin:2.0.255-SNAPSHOT")
 
     commonRuntimeOnly(project(":kotlin-compiler-runner")) {
         // Excluding dependency with not-relocated 'com.intellij' types

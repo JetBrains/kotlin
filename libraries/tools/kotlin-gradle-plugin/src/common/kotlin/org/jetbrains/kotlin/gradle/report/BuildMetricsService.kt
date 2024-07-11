@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import java.lang.management.ManagementFactory
+import org.jetbrains.kotlin.gradle.fus.BuildUidService
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
@@ -49,7 +50,7 @@ internal interface UsesBuildMetricsService : Task {
 
 abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters>, AutoCloseable, OperationCompletionListener {
 
-    //Part of BuildReportService
+    //Part of the BuildReportService
     interface Parameters : BuildServiceParameters {
         val startParameters: Property<BuildStartParameters>
         val reportingSettings: Property<ReportingSettings>
@@ -62,7 +63,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         val buildConfigurationTags: ListProperty<StatTag>
     }
 
-    private val buildReportService = BuildReportsService()
+    private val buildReportService = BuildReportsService("unknown")
 
     // Tasks and transforms' records
     private val buildOperationRecords = ConcurrentLinkedQueue<BuildOperationRecord>()
@@ -166,6 +167,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
 
         private fun registerIfAbsentImpl(
             project: Project,
+            buildIdService: Provider<BuildIdService>,
         ): Provider<BuildMetricsService>? {
             // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
@@ -200,15 +202,19 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 //init gradle tags for build scan and http reports
                 it.parameters.buildConfigurationTags.value(setupTags(project))
             }.also {
-                subscribeForTaskEvents(project, it)
+                subscribeForTaskEvents(project, it, buildIdService.get().buildUid)
             }
 
         }
 
-        private fun subscribeForTaskEvents(project: Project, buildMetricServiceProvider: Provider<BuildMetricsService>) {
+        private fun subscribeForTaskEvents(
+            project: Project,
+            buildMetricServiceProvider: Provider<BuildMetricsService>,
+            buildUid: String,
+        ) {
             val buildScanHolder = initBuildScanExtensionHolder(project, buildMetricServiceProvider)
             if (buildScanHolder != null) {
-                subscribeForTaskEventsForBuildScan(project, buildMetricServiceProvider, buildScanHolder)
+                subscribeForTaskEventsForBuildScan(project, buildMetricServiceProvider, buildScanHolder, buildUid)
             }
 
             val gradle80withBuildScanReport =
@@ -252,23 +258,28 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             project: Project,
             buildMetricServiceProvider: Provider<BuildMetricsService>,
             buildScanHolder: BuildScanExtensionHolder,
+            buildUid: String,
         ) {
             when {
                 GradleVersion.current().baseVersion < GradleVersion.version("8.0") -> {
                     buildScanHolder.buildScan.buildFinished {
-                        buildMetricServiceProvider.map { it.addBuildScanReport(buildScanHolder) }.get()
+                        buildMetricServiceProvider.map { it.addBuildScanReport(buildScanHolder, buildUid) }.get()
                     }
                 }
                 GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> {
                     val buildMetricService = buildMetricServiceProvider.get()
-                    buildMetricService.buildReportService.initBuildScanTags(buildScanHolder, buildMetricService.parameters.label.orNull)
+                    buildMetricService.buildReportService.initBuildScanTags(
+                        buildScanHolder,
+                        buildMetricService.parameters.label.orNull,
+                        buildUid
+                    )
                     BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
                         OperationCompletionListener { event ->
                             if (event is TaskFinishEvent) {
                                 val buildOperation = buildMetricService.updateBuildOperationRecord(event)
                                 val buildParameters = buildMetricService.parameters.toBuildReportParameters()
                                 val buildReportService = buildMetricServiceProvider.map { it.buildReportService }.get()
-                                buildReportService.addBuildScanReport(event, buildOperation, buildParameters, buildScanHolder)
+                                buildReportService.addBuildScanReport(event, buildOperation, buildParameters, buildScanHolder, buildUid)
                                 buildReportService.onFinish(event, buildOperation, buildParameters)
                             }
                         }
@@ -281,8 +292,8 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
         }
 
-        fun registerIfAbsent(project: Project) =
-            registerIfAbsentImpl(project)?.also { serviceProvider ->
+        fun registerIfAbsent(project: Project, buildIdService: Provider<BuildUidService>) =
+            registerIfAbsentImpl(project, buildIdService)?.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesBuildMetricsService::class.java.name) {
                     project.tasks.withType<UsesBuildMetricsService>().configureEach { task ->
                         task.buildMetricsService.value(serviceProvider).disallowChanges()
@@ -308,10 +319,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
     }
 
-    internal fun addBuildScanReport(buildScan: BuildScanExtensionHolder?) {
+    internal fun addBuildScanReport(buildScan: BuildScanExtensionHolder?, buildUid: String) {
         if (buildScan == null) return
-        buildReportService.initBuildScanTags(buildScan, parameters.label.orNull)
-        buildReportService.addBuildScanReport(buildOperationRecords, parameters.toBuildReportParameters(), buildScan)
+        buildReportService.initBuildScanTags(buildScan, parameters.label.orNull, buildUid)
+        buildReportService.addBuildScanReport(buildOperationRecords, parameters.toBuildReportParameters(), buildScan, buildUid)
         parameters.buildConfigurationTags.orNull?.forEach { buildScan.buildScan.tag(it.readableString) }
         buildReportService.addCollectedTags(buildScan)
     }

@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import kotlin.reflect.KClass
+import org.jetbrains.kotlin.gradle.fus.BuildUidService
 
 /**
  * Base Kotlin plugin that is responsible for creating basic build services, configurations,
@@ -95,7 +96,8 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, pluginVersion)
         }
 
-        BuildMetricsService.registerIfAbsent(project)
+        val buildUidService = BuildUidService.registerIfAbsent(project)
+        BuildMetricsService.registerIfAbsent(project, buildUidService)
         KotlinNativeBundleBuildService.registerIfAbsent(project)
     }
 

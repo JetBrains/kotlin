@@ -10,9 +10,9 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
 import org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService
-import java.util.*
 
 abstract class GradleBuildFusStatisticsBuildService : GradleBuildFusStatisticsService,
     BuildService<GradleBuildFusStatisticsBuildService.Parameters>, AutoCloseable {
@@ -20,13 +20,14 @@ abstract class GradleBuildFusStatisticsBuildService : GradleBuildFusStatisticsSe
         val fusStatisticsRootDirPath: Property<String>
         val buildId: Property<String>
     }
+//    private var buildUid: String? = null
 
     companion object {
         private var statisticsIsEnabled: Boolean = true //KT-59629 Wait for user confirmation before start to collect metrics
         private const val FUS_STATISTICS_PATH = "kotlin.fus.statistics.path"
         private val serviceClass = GradleBuildFusStatisticsBuildService::class.java
         private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
-        fun registerIfAbsent(project: Project): Provider<out GradleBuildFusStatisticsService>? {
+        fun registerIfAbsent(project: Project, buildUidService: Provider<out BuildUidService>): Provider<out GradleBuildFusStatisticsService> {
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
                 return it.service as Provider<GradleBuildFusStatisticsService>
@@ -40,7 +41,7 @@ abstract class GradleBuildFusStatisticsBuildService : GradleBuildFusStatisticsSe
                         project.gradle.gradleUserHomeDir.path
                     }
                     it.parameters.fusStatisticsRootDirPath.set(customPath)
-                    it.parameters.buildId.set(UUID.randomUUID().toString())
+                    it.parameters.buildId.set(buildUidService.get().buildId)
                 }
             } else {
                 project.gradle.sharedServices.registerIfAbsent(serviceName, DummyGradleBuildFusStatisticsService::class.java) {}
