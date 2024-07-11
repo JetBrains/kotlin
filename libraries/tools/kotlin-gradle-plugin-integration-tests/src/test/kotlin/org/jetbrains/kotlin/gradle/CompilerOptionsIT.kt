@@ -38,6 +38,23 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
                 )
 
+            if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_7_6)) {
+                subProject("buildSrc").buildGradleKts.modify {
+                    //language=kts
+                    """
+                    $it
+
+                    afterEvaluate {
+                        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+                            // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
+                            compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
+                            compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
+                        }
+                    }
+                    """.trimIndent()
+                }
+            }
+
             build("tasks") {
                 assertOutputContains("kotlinOptions.freeCompilerArgs were changed on task :compileKotlin execution phase:")
             }

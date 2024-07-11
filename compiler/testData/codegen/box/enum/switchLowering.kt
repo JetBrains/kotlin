@@ -2,7 +2,6 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-// LANGUAGE:-ProhibitComparisonOfIncompatibleEnums
 // WITH_STDLIB
 
 import kotlin.test.*
@@ -22,16 +21,6 @@ enum class E {
 }
 
 fun produceEntry() = EnumA.A
-
-// Check that we fail on comparison of different enum types.
-fun differentEnums() {
-    sb.appendLine(when (produceEntry()) {
-        EnumB.A -> "EnumB.A"
-        EnumA.A -> "EnumA.A"
-        EnumA.B -> "EnumA.B"
-        else    -> "nah"
-    })
-}
 
 // Nullable subject shouldn't be lowered.
 fun nullable() {
@@ -84,7 +73,6 @@ fun nestedWhen() {
 }
 
 fun box(): String {
-    differentEnums()
     nullable()
     operatorOverloading()
     smoke1()
@@ -92,7 +80,6 @@ fun box(): String {
     nestedWhen()
 
     assertEquals("""
-        EnumA.A
         ok
         ok
         ok

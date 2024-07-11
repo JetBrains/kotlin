@@ -1,4 +1,5 @@
-// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 inline class FileSize(val bytesSize: Long): <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Comparable<!> {
     fun getBytes() = bytesSize

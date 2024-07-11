@@ -1,4 +1,4 @@
-// LANGUAGE: +AssigningArraysToVarargsInNamedFormInAnnotations, +ProhibitAssigningSingleElementsToVarargsInNamedForm -AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
+// LANGUAGE: +AssigningArraysToVarargsInNamedFormInAnnotations, +ProhibitAssigningSingleElementsToVarargsInNamedForm
 // DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
 fun foo(vararg s: Int) {}
@@ -7,9 +7,9 @@ open class Cls(vararg p: Long)
 
 fun test(i: IntArray) {
     foo(s = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>1<!>)
-    foo(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>i<!>)
+    foo(s = i)
     foo(s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>i<!>)
-    foo(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>intArrayOf(1)<!>)
+    foo(s = intArrayOf(1))
     foo(s = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>intArrayOf(1)<!>)
     foo(1)
 
@@ -27,7 +27,7 @@ fun anyFoo(vararg a: Any) {}
 
 fun testAny() {
     anyFoo(a = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>""<!>)
-    anyFoo(a = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>arrayOf("")<!>)
+    anyFoo(a = arrayOf(""))
     anyFoo(a = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>arrayOf("")<!>)
 }
 
@@ -36,11 +36,11 @@ fun <T> genFoo(vararg t: T) {}
 fun testGen() {
     genFoo<Int>(t = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>1<!>)
     genFoo<Int?>(t = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, NULL_FOR_NONNULL_TYPE!>null<!>)
-    genFoo<Array<Int>>(t = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>arrayOf()<!>)
+    genFoo<Array<Int>>(t = arrayOf())
     genFoo<Array<Int>>(t = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>arrayOf(arrayOf())<!>)
 
     <!CANNOT_INFER_PARAMETER_TYPE!>genFoo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>t = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>""<!><!>)
-    genFoo(t = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>arrayOf("")<!>)
+    genFoo(t = arrayOf(""))
     genFoo(t = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>arrayOf("")<!>)
 }
 

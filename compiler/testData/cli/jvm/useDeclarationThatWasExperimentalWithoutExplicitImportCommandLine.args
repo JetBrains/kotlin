@@ -2,6 +2,6 @@ $TESTDATA_DIR$/useDeclarationThatWasExperimentalWithoutMarker.kt
 -d
 $TEMP_DIR$
 -language-version
-1.5
+1.6
 -opt-in
 kotlin.ExperimentalStdlibApi

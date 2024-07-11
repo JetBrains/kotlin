@@ -1,5 +1,4 @@
 package test
 
-import kotlin.reflect.*
-
-abstract class Some : KSuspendFunction0<Unit>
+@JvmInline
+value class Holder<T>(val value: T)

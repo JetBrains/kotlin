@@ -21,7 +21,7 @@ private const val EMPTY_MAIN_FUN = "fun main() {}"
 
 class CustomCliTest : TestCaseWithTmpdir() {
     fun testArgfileWithNonTrivialWhitespaces() {
-        val text = "-include-runtime\r\n\t\t-language-version\n\t1.5\r\n-version"
+        val text = "-include-runtime\r\n\t\t-language-version\n\t1.8\r\n-version"
         val argfile = File(tmpdir, "argfile").apply { writeText(text, Charsets.UTF_8) }
         CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("@" + argfile.absolutePath))
     }

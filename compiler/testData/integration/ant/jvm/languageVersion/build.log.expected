@@ -3,10 +3,9 @@ Buildfile: [TestData]/build.xml
 
 build:
   [kotlinc] Compiling [[TestData]/main.kt] => [[Temp]/hello.jar]
-  [kotlinc] warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
-  [kotlinc] [TestData]/main.kt:1:15: error: suspend function type is allowed as a supertype only since version 1.6
-  [kotlinc] interface A : suspend () -> Unit
-  [kotlinc]               ^^^^^^^^^^^^^^^^^^
+  [kotlinc] [TestData]/main.kt:2:34: error: the feature "generic inline class parameter" is only available since language version 1.8
+  [kotlinc] value class Holder<T>(val value: T)
+  [kotlinc]                                  ^
 
 ERR:
 

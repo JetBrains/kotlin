@@ -1,5 +1,5 @@
+// FIR_IDENTICAL
 // CHECK_TYPE
-// LANGUAGE: -ProhibitProtectedCallFromInline
 // FILE: module1/AbstractModule.java
 package module1;
 
@@ -18,7 +18,7 @@ fun <T> javaClass(): Class<T> = null!!
 
 public class AppServiceModule : AbstractModule<String>() {
     inline fun <reified T> AbstractModule<Int>.bind() {
-        val x = <!PROTECTED_CALL_FROM_PUBLIC_INLINE_WARNING!>bind<!>(javaClass<T>())
+        val x = <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>bind<!>(javaClass<T>())
 
         x checkType { _<String>() } // check that Class receiver is used instead of extension one
     }

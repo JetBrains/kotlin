@@ -1,4 +1,3 @@
-// FREE_COMPILER_ARGS: -XXLanguage:-ProhibitTailrecOnVirtualMember
 // DISABLE_NATIVE: gcScheduler=AGGRESSIVE
 
 import kotlin.test.*

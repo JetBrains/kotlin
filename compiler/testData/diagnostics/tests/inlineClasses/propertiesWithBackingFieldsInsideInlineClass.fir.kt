@@ -1,5 +1,5 @@
-// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER, -INLINE_CLASS_DEPRECATED
 
 interface A {
     val goodSize: Int

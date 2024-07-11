@@ -2172,12 +2172,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
         @TestDataPath("$PROJECT_ROOT")
         public class Errors {
           @Test
-          @TestMetadata("typeReferences.1.3.kt")
-          public void testTypeReferences_1_3() {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/typeReferences.1.3.kt");
-          }
-
-          @Test
           @TestMetadata("typeReferences.1.4.kt")
           public void testTypeReferences_1_4() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/typeReferences.1.4.kt");
@@ -2392,33 +2386,15 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestDataPath("$PROJECT_ROOT")
     public class TrailingComma {
       @Test
-      @TestMetadata("typeArgumentsWithDisabledFeature.kt")
-      public void testTypeArgumentsWithDisabledFeature() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/typeArgumentsWithDisabledFeature.kt");
-      }
-
-      @Test
       @TestMetadata("typeArgumentsWithEnabledFeature.kt")
       public void testTypeArgumentsWithEnabledFeature() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/typeArgumentsWithEnabledFeature.kt");
       }
 
       @Test
-      @TestMetadata("typeParametersWithDisabledFeature.kt")
-      public void testTypeParametersWithDisabledFeature() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/typeParametersWithDisabledFeature.kt");
-      }
-
-      @Test
       @TestMetadata("typeParametersWithEnabledFeature.kt")
       public void testTypeParametersWithEnabledFeature() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/typeParametersWithEnabledFeature.kt");
-      }
-
-      @Test
-      @TestMetadata("valueArgumentsWithDisabledFeature.kt")
-      public void testValueArgumentsWithDisabledFeature() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/valueArgumentsWithDisabledFeature.kt");
       }
 
       @Test

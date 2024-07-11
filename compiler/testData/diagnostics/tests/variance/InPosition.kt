@@ -1,4 +1,4 @@
-// LANGUAGE: -TrailingCommas
+// FIR_IDENTICAL
 
 interface In<in T>
 interface Out<out T>
@@ -41,7 +41,7 @@ interface Test<in I, out O, P> {
     fun neOk11(i: Inv<in <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>>)
     fun neOk12(i: Inv<out <!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>)
 
-    fun neOk30(i: Pair<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><O<!UNSUPPORTED_FEATURE!>,<!> ><!>)
+    fun neOk30(i: Pair<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><O, ><!>)
     fun neOk31(i: Pair<<!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>, <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>>)
     fun neOk32(i: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>)
     fun neOk33(i: Inv<<!SYNTAX!><!>>)

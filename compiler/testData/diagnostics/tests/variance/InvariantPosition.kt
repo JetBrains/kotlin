@@ -1,4 +1,4 @@
-// LANGUAGE: -TrailingCommas
+// FIR_IDENTICAL
 
 interface In<in T>
 interface Out<out T>
@@ -38,7 +38,7 @@ interface Test<in I, out O, P> {
     var neOk22: Inv<out <!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>
     var neOk23: Inv<out <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>>
 
-    var neOk30: Pair<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><I<!UNSUPPORTED_FEATURE!>,<!> ><!>
+    var neOk30: Pair<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><I, ><!>
     var neOk31: Pair<<!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>, <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>>
     var neOk32: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>
     var neOk33: Inv<<!SYNTAX!><!>>

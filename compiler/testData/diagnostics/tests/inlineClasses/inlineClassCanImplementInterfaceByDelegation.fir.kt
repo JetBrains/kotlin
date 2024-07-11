@@ -1,4 +1,5 @@
-// LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +InlineClassImplementationByDelegation
+// LANGUAGE: +InlineClasses, +InlineClassImplementationByDelegation
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // SKIP_TXT
 
 interface IFoo

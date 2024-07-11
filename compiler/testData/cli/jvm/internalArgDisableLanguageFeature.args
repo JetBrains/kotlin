@@ -3,4 +3,4 @@ $TESTDATA_DIR$/internalArgDisableLanguageFeature.kt
 $TEMP_DIR$
 -language-version
 1.9
--XXLanguage\:-SealedInterfaces
+-XXLanguage\:-GenericInlineClassParameter

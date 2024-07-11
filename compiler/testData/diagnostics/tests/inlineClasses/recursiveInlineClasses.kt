@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
-// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 inline class Test1(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Test1<!>)
 

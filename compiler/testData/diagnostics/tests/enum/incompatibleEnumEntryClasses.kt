@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
 
 interface I {
     fun foo()
@@ -42,13 +41,13 @@ enum class E2 : I {
 }
 
 fun foo1(e1: E1, e2: E2) {
-    <!INCOMPATIBLE_ENUM_COMPARISON!>e1 == e2<!>
-    <!INCOMPATIBLE_ENUM_COMPARISON!>e1 != e2<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e1 == e2<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e1 != e2<!>
 
-    <!INCOMPATIBLE_ENUM_COMPARISON!>e1 == E2.A<!>
-    <!INCOMPATIBLE_ENUM_COMPARISON!>E1.B == e2<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e1 == E2.A<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>E1.B == e2<!>
 
-    <!INCOMPATIBLE_ENUM_COMPARISON!>E1.A == E2.B<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>E1.A == E2.B<!>
 
     e1 == E1.A
     E1.A == e1
@@ -59,10 +58,10 @@ fun foo1(e1: E1, e2: E2) {
 fun foo2(e1: E1, e2: E2) {
     when (e1) {
         E1.A -> {}
-        <!INCOMPATIBLE_ENUM_COMPARISON!>E2.A<!> -> {}
-        <!INCOMPATIBLE_ENUM_COMPARISON!>E2.B<!> -> {}
+        <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>E2.A<!> -> {}
+        <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>E2.B<!> -> {}
         e1 -> {}
-        <!INCOMPATIBLE_ENUM_COMPARISON!>e2<!> -> {}
+        <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e2<!> -> {}
         else -> {}
     }
 }

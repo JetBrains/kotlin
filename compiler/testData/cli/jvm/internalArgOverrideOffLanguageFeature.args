@@ -3,5 +3,5 @@ $TESTDATA_DIR$/languageVersion.kt
 $TEMP_DIR$
 -language-version
 1.9
--XXLanguage\:+SuspendFunctionAsSupertype
--XXLanguage\:-SuspendFunctionAsSupertype
+-XXLanguage\:+GenericInlineClassParameter
+-XXLanguage\:-GenericInlineClassParameter

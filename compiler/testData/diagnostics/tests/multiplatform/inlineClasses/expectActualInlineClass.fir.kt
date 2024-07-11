@@ -1,4 +1,5 @@
-// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // MODULE: m1-common
 // FILE: common.kt
 

@@ -2694,12 +2694,6 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
       }
 
       @Test
-      @TestMetadata("arrayAsVarargAfterSamArgument.kt")
-      public void testArrayAsVarargAfterSamArgument() {
-        runTest("compiler/testData/ir/irText/expressions/sam/arrayAsVarargAfterSamArgument.kt");
-      }
-
-      @Test
       @TestMetadata("genericSamProjectedOut.kt")
       public void testGenericSamProjectedOut() {
         runTest("compiler/testData/ir/irText/expressions/sam/genericSamProjectedOut.kt");

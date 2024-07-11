@@ -768,11 +768,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
   public static class ArgumentOrder extends AbstractLightAnalysisModeTest {
-    @TestMetadata("kt17691.kt")
-    public void ignoreKt17691() {
-      runTest("compiler/testData/codegen/box/argumentOrder/kt17691.kt");
-    }
-
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
@@ -13301,11 +13296,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Convention extends AbstractLightAnalysisModeTest {
-      @TestMetadata("kt16520_old.kt")
-      public void ignoreKt16520_old() {
-        runTest("compiler/testData/codegen/box/defaultArguments/convention/kt16520_old.kt");
-      }
-
       private void runTest(String testDataFilePath) {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
       }
@@ -15020,11 +15010,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("defaultArgsWithSideEffects2.kt")
         public void testDefaultArgsWithSideEffects2() {
           runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsWithSideEffects2.kt");
-        }
-
-        @TestMetadata("defaultArgsWithSideEffectsOld.kt")
-        public void testDefaultArgsWithSideEffectsOld() {
-          runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsWithSideEffectsOld.kt");
         }
 
         @TestMetadata("extensionTailCall.kt")
@@ -17309,11 +17294,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/finally/kt31923_return.kt");
     }
 
-    @TestMetadata("kt31923_wrong.kt")
-    public void testKt31923_wrong() {
-      runTest("compiler/testData/codegen/box/finally/kt31923_wrong.kt");
-    }
-
     @TestMetadata("kt3549.kt")
     public void testKt3549() {
       runTest("compiler/testData/codegen/box/finally/kt3549.kt");
@@ -19201,19 +19181,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/ieee754/double.kt");
     }
 
-    @TestMetadata("equalsDouble.kt")
-    public void testEqualsDouble() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsDouble.kt");
-    }
-
     @TestMetadata("equalsDouble_properIeeeComparisons.kt")
     public void testEqualsDouble_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/equalsDouble_properIeeeComparisons.kt");
-    }
-
-    @TestMetadata("equalsFloat.kt")
-    public void testEqualsFloat() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsFloat.kt");
     }
 
     @TestMetadata("equalsFloat_properIeeeComparisons.kt")
@@ -19221,29 +19191,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/ieee754/equalsFloat_properIeeeComparisons.kt");
     }
 
-    @TestMetadata("equalsNaN.kt")
-    public void testEqualsNaN() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsNaN.kt");
-    }
-
     @TestMetadata("equalsNaN_properIeeeComparisons.kt")
     public void testEqualsNaN_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/equalsNaN_properIeeeComparisons.kt");
     }
 
-    @TestMetadata("equalsNullableDouble.kt")
-    public void testEqualsNullableDouble() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsNullableDouble.kt");
-    }
-
     @TestMetadata("equalsNullableDouble_properIeeeComparisons.kt")
     public void testEqualsNullableDouble_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/equalsNullableDouble_properIeeeComparisons.kt");
-    }
-
-    @TestMetadata("equalsNullableFloat.kt")
-    public void testEqualsNullableFloat() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsNullableFloat.kt");
     }
 
     @TestMetadata("equalsNullableFloat_properIeeeComparisons.kt")
@@ -19286,19 +19241,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/ieee754/generic_AgainstCompiled.kt");
     }
 
-    @TestMetadata("greaterDouble.kt")
-    public void testGreaterDouble() {
-      runTest("compiler/testData/codegen/box/ieee754/greaterDouble.kt");
-    }
-
     @TestMetadata("greaterDouble_properIeeeComparisons.kt")
     public void testGreaterDouble_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/greaterDouble_properIeeeComparisons.kt");
-    }
-
-    @TestMetadata("greaterFloat.kt")
-    public void testGreaterFloat() {
-      runTest("compiler/testData/codegen/box/ieee754/greaterFloat.kt");
     }
 
     @TestMetadata("greaterFloat_properIeeeComparisons.kt")
@@ -19316,11 +19261,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/ieee754/kt48648_genericField.kt");
     }
 
-    @TestMetadata("lessDouble.kt")
-    public void testLessDouble() {
-      runTest("compiler/testData/codegen/box/ieee754/lessDouble.kt");
-    }
-
     @TestMetadata("lessDouble_properIeeeAndNewInference.kt")
     public void testLessDouble_properIeeeAndNewInference() {
       runTest("compiler/testData/codegen/box/ieee754/lessDouble_properIeeeAndNewInference.kt");
@@ -19329,11 +19269,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("lessDouble_properIeeeComparisons.kt")
     public void testLessDouble_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/lessDouble_properIeeeComparisons.kt");
-    }
-
-    @TestMetadata("lessFloat.kt")
-    public void testLessFloat() {
-      runTest("compiler/testData/codegen/box/ieee754/lessFloat.kt");
     }
 
     @TestMetadata("lessFloat_properIeeeComparisons.kt")
@@ -19391,16 +19326,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/ieee754/smartCastOnWhenSubjectAfterCheckInBranch_properIeeeComparisons.kt");
     }
 
-    @TestMetadata("smartCastToDifferentTypes.kt")
-    public void testSmartCastToDifferentTypes() {
-      runTest("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypes.kt");
-    }
-
-    @TestMetadata("smartCastToDifferentTypesWithNumericPromotion.kt")
-    public void testSmartCastToDifferentTypesWithNumericPromotion() {
-      runTest("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotion.kt");
-    }
-
     @TestMetadata("smartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons.kt")
     public void testSmartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons.kt");
@@ -19419,16 +19344,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("smartCastToInt.kt")
     public void testSmartCastToInt() {
       runTest("compiler/testData/codegen/box/ieee754/smartCastToInt.kt");
-    }
-
-    @TestMetadata("when.kt")
-    public void testWhen() {
-      runTest("compiler/testData/codegen/box/ieee754/when.kt");
-    }
-
-    @TestMetadata("whenNoSubject.kt")
-    public void testWhenNoSubject() {
-      runTest("compiler/testData/codegen/box/ieee754/whenNoSubject.kt");
     }
 
     @TestMetadata("whenNoSubject_properIeeeComparisons.kt")
@@ -19832,11 +19747,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/inference/safeCastWithElvis.kt");
     }
 
-    @TestMetadata("specialCallsWithCallableReferences.kt")
-    public void testSpecialCallsWithCallableReferences() {
-      runTest("compiler/testData/codegen/box/inference/specialCallsWithCallableReferences.kt");
-    }
-
     @TestMetadata("substituteIntersectionTypeInsideCapType.kt")
     public void testSubstituteIntersectionTypeInsideCapType() {
       runTest("compiler/testData/codegen/box/inference/substituteIntersectionTypeInsideCapType.kt");
@@ -20044,19 +19954,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/inference/pcla/receiverUsesOuterTVButReturnTypeIsProper.kt");
       }
 
-      @TestMetadata("specialCallsWithCallableReferences.kt")
-      public void testSpecialCallsWithCallableReferences() {
-        runTest("compiler/testData/codegen/box/inference/pcla/specialCallsWithCallableReferences.kt");
-      }
-
       @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
       public void testSpecialCallsWithCallableReferencesDontRewriteAtSlice() {
         runTest("compiler/testData/codegen/box/inference/pcla/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
-      }
-
-      @TestMetadata("specialCallsWithCallableReferencesErrorType.kt")
-      public void testSpecialCallsWithCallableReferencesErrorType() {
-        runTest("compiler/testData/codegen/box/inference/pcla/specialCallsWithCallableReferencesErrorType.kt");
       }
 
       @TestMetadata("specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt")
@@ -23126,26 +23026,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
     }
 
-    @TestMetadata("noReturnTypeMangling.kt")
-    public void testNoReturnTypeMangling() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeMangling.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-    }
-
-    @TestMetadata("noReturnTypeManglingGeneric.kt")
-    public void testNoReturnTypeManglingGeneric() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-    }
-
-    @TestMetadata("noReturnTypeManglingJvmName.kt")
-    public void testNoReturnTypeManglingJvmName() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingJvmName.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-    }
-
-    @TestMetadata("noReturnTypeManglingJvmNameGeneric.kt")
-    public void testNoReturnTypeManglingJvmNameGeneric() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingJvmNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-    }
-
     @TestMetadata("nonImmediateInlineClassUpperBound.kt")
     public void testNonImmediateInlineClassUpperBound() {
       runTest("compiler/testData/codegen/box/inlineClasses/nonImmediateInlineClassUpperBound.kt");
@@ -23584,6 +23464,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("whenWithSubjectGeneric.kt")
     public void testWhenWithSubjectGeneric() {
       runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubjectGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @TestMetadata("withReturnTypeMangling.kt")
+    public void testWithReturnTypeMangling() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeMangling.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @TestMetadata("withReturnTypeManglingGeneric.kt")
+    public void testWithReturnTypeManglingGeneric() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @TestMetadata("withReturnTypeManglingJvmName.kt")
+    public void testWithReturnTypeManglingJvmName() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingJvmName.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+    }
+
+    @TestMetadata("withReturnTypeManglingJvmNameGeneric.kt")
+    public void testWithReturnTypeManglingJvmNameGeneric() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingJvmNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
     }
 
     @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda")
@@ -34481,19 +34381,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/operatorConventions/kt20387.kt");
     }
 
-    @TestMetadata("kt39880.kt")
-    public void testKt39880() {
-      runTest("compiler/testData/codegen/box/operatorConventions/kt39880.kt");
-    }
-
     @TestMetadata("kt4152.kt")
     public void testKt4152() {
       runTest("compiler/testData/codegen/box/operatorConventions/kt4152.kt");
-    }
-
-    @TestMetadata("kt42722.kt")
-    public void testKt42722() {
-      runTest("compiler/testData/codegen/box/operatorConventions/kt42722.kt");
     }
 
     @TestMetadata("kt44647.kt")
@@ -35065,11 +34955,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("varargOfObjects_after.kt")
     public void testVarargOfObjects_after() {
       runTest("compiler/testData/codegen/box/polymorphicSignature/varargOfObjects_after.kt");
-    }
-
-    @TestMetadata("varargOfObjects_before.kt")
-    public void testVarargOfObjects_before() {
-      runTest("compiler/testData/codegen/box/polymorphicSignature/varargOfObjects_before.kt");
     }
 
     @TestMetadata("voidReturnType.kt")
@@ -36196,11 +36081,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("propertyInUpperCaseWithJava.kt")
     public void testPropertyInUpperCaseWithJava() {
       runTest("compiler/testData/codegen/box/properties/propertyInUpperCaseWithJava.kt");
-    }
-
-    @TestMetadata("protectedJavaFieldInInline.kt")
-    public void testProtectedJavaFieldInInline() {
-      runTest("compiler/testData/codegen/box/properties/protectedJavaFieldInInline.kt");
     }
 
     @TestMetadata("protectedJavaProperty.kt")
@@ -43847,11 +43727,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @TestMetadata("arrayAsVarargAfterSamArgument.kt")
-    public void testArrayAsVarargAfterSamArgument() {
-      runTest("compiler/testData/codegen/box/sam/arrayAsVarargAfterSamArgument.kt");
-    }
-
     @TestMetadata("castFromAny.kt")
     public void testCastFromAny() {
       runTest("compiler/testData/codegen/box/sam/castFromAny.kt");
@@ -45465,16 +45340,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/statics/inheritedPropertyInObject.kt");
     }
 
-    @TestMetadata("inlineCallsStaticMethod.kt")
-    public void testInlineCallsStaticMethod() {
-      runTest("compiler/testData/codegen/box/statics/inlineCallsStaticMethod.kt");
-    }
-
-    @TestMetadata("inlineCallsStaticMethodFromOtherPackage.kt")
-    public void testInlineCallsStaticMethodFromOtherPackage() {
-      runTest("compiler/testData/codegen/box/statics/inlineCallsStaticMethodFromOtherPackage.kt");
-    }
-
     @TestMetadata("kt8089.kt")
     public void testKt8089() {
       runTest("compiler/testData/codegen/box/statics/kt8089.kt");
@@ -45493,11 +45358,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("protectedStatic2.kt")
     public void testProtectedStatic2() {
       runTest("compiler/testData/codegen/box/statics/protectedStatic2.kt");
-    }
-
-    @TestMetadata("protectedStaticAndInline.kt")
-    public void testProtectedStaticAndInline() {
-      runTest("compiler/testData/codegen/box/statics/protectedStaticAndInline.kt");
     }
 
     @TestMetadata("simpleStaticInJavaSuperChain.kt")
@@ -46552,11 +46412,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestMetadata("delegationAndThrows.kt")
     public void testDelegationAndThrows() {
       runTest("compiler/testData/codegen/box/throws/delegationAndThrows.kt");
-    }
-
-    @TestMetadata("delegationAndThrows_1_3.kt")
-    public void testDelegationAndThrows_1_3() {
-      runTest("compiler/testData/codegen/box/throws/delegationAndThrows_1_3.kt");
     }
 
     @TestMetadata("delegationAndThrows_AgainstCompiled.kt")
@@ -48159,11 +48014,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/vararg/referenceToContainsFromVarargParameter.kt");
     }
 
-    @TestMetadata("singleAssignmentToVarargsInFunction.kt")
-    public void testSingleAssignmentToVarargsInFunction() {
-      runTest("compiler/testData/codegen/box/vararg/singleAssignmentToVarargsInFunction.kt");
-    }
-
     @TestMetadata("spreadCopiesArray.kt")
     public void testSpreadCopiesArray() {
       runTest("compiler/testData/codegen/box/vararg/spreadCopiesArray.kt");
@@ -48573,16 +48423,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       @TestMetadata("bigEnum.kt")
       public void testBigEnum() {
         runTest("compiler/testData/codegen/box/when/enumOptimization/bigEnum.kt");
-      }
-
-      @TestMetadata("differentEnumClasses.kt")
-      public void testDifferentEnumClasses() {
-        runTest("compiler/testData/codegen/box/when/enumOptimization/differentEnumClasses.kt");
-      }
-
-      @TestMetadata("differentEnumClasses2.kt")
-      public void testDifferentEnumClasses2() {
-        runTest("compiler/testData/codegen/box/when/enumOptimization/differentEnumClasses2.kt");
       }
 
       @TestMetadata("duplicatingItems.kt")

@@ -1,4 +1,4 @@
 source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasLineThatContains("Suspend function type is allowed as a supertype only since version 1.6");
+assertBuildLogHasLineThatContains("The feature \"generic inline class parameter\" is only available since language version 1.8");

@@ -823,11 +823,6 @@ public class FirLightTreeWriteFlagsTestGenerated extends AbstractFirLightTreeWri
     public void testOpenFunction() {
       runTest("compiler/testData/writeFlags/jvmOverloads/openFunction.kt");
     }
-
-    @TestMetadata("openFunction_1_3.kt")
-    public void testOpenFunction_1_3() {
-      runTest("compiler/testData/writeFlags/jvmOverloads/openFunction_1_3.kt");
-    }
   }
 
   @TestMetadata("compiler/testData/writeFlags/lambda")
@@ -1193,11 +1188,6 @@ public class FirLightTreeWriteFlagsTestGenerated extends AbstractFirLightTreeWri
 
       public void testAllFilesPresentInSyntheticAnnotationsMethod() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/property/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-      }
-
-      @TestMetadata("doNotUseGetterName.kt")
-      public void testDoNotUseGetterName() {
-        runTest("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/doNotUseGetterName.kt");
       }
 
       @TestMetadata("privateProperty.kt")

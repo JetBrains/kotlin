@@ -1,5 +1,5 @@
-@SinceKotlin("1.5")
+@SinceKotlin("1.8")
 fun old() {}
 
-@SinceKotlin("1.6")
+@SinceKotlin("1.9")
 fun new() {}

@@ -1,5 +1,4 @@
-// LANGUAGE: -NoConstantValueAttributeForNonConstVals
-// IGNORE_BACKEND: JVM_IR
+// NO_CHECK_SOURCE_VS_BINARY
 //ALLOW_AST_ACCESS
 
 package test

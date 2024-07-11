@@ -525,13 +525,13 @@ class ScriptingHostTest : TestCase() {
 
     @Test
     fun testCompileOptionsLanguageVersion() {
-        val script = "sealed interface Interface {\n    fun invoke()\n}"
+        val script = "value class Holder<T>(val value: T)"
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
-            compilerOptions(CommonCompilerArguments::languageVersion.cliArgument, "1.4")
+            compilerOptions(CommonCompilerArguments::languageVersion.cliArgument, "1.7")
         }
         val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        res.reports.find { it.message.startsWith("The feature \"sealed interfaces\" is only available since language version 1.5") }
+        res.reports.find { it.message.startsWith("The feature \"generic inline class parameter\" is only available since language version 1.8") }
             ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 

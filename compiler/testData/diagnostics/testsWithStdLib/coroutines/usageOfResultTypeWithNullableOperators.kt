@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_EXPRESSION
-// LANGUAGE: -AllowNullOperatorsForResult
 
 fun <T> id(x: T): T = x
 

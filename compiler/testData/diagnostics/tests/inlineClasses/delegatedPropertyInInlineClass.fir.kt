@@ -1,4 +1,5 @@
-// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 
 class Val {
     operator fun getValue(thisRef: Any?, kProp: Any?) = 1

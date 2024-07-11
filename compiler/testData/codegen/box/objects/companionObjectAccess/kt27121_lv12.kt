@@ -1,5 +1,3 @@
-// LANGUAGE: -ProperVisibilityForCompanionObjectInstanceField
-
 interface A {
     fun test() = ok()
 

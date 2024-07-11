@@ -941,12 +941,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("kt17691.kt")
-    public void testKt17691() {
-      runTest("compiler/testData/codegen/box/argumentOrder/kt17691.kt");
-    }
-
-    @Test
     @TestMetadata("kt17691WithEnabledFeature.kt")
     public void testKt17691WithEnabledFeature() {
       runTest("compiler/testData/codegen/box/argumentOrder/kt17691WithEnabledFeature.kt");
@@ -16342,12 +16336,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       }
 
       @Test
-      @TestMetadata("kt16520_old.kt")
-      public void testKt16520_old() {
-        runTest("compiler/testData/codegen/box/defaultArguments/convention/kt16520_old.kt");
-      }
-
-      @Test
       @TestMetadata("kt9140.kt")
       public void testKt9140() {
         runTest("compiler/testData/codegen/box/defaultArguments/convention/kt9140.kt");
@@ -18248,12 +18236,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         @TestMetadata("defaultArgsWithSideEffects2.kt")
         public void testDefaultArgsWithSideEffects2() {
           runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsWithSideEffects2.kt");
-        }
-
-        @Test
-        @TestMetadata("defaultArgsWithSideEffectsOld.kt")
-        public void testDefaultArgsWithSideEffectsOld() {
-          runTest("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/defaultArgsWithSideEffectsOld.kt");
         }
 
         @Test
@@ -20895,12 +20877,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("kt31923_wrong.kt")
-    public void testKt31923_wrong() {
-      runTest("compiler/testData/codegen/box/finally/kt31923_wrong.kt");
-    }
-
-    @Test
     @TestMetadata("kt3549.kt")
     public void testKt3549() {
       runTest("compiler/testData/codegen/box/finally/kt3549.kt");
@@ -23087,21 +23063,9 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("equalsDouble.kt")
-    public void testEqualsDouble() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsDouble.kt");
-    }
-
-    @Test
     @TestMetadata("equalsDouble_properIeeeComparisons.kt")
     public void testEqualsDouble_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/equalsDouble_properIeeeComparisons.kt");
-    }
-
-    @Test
-    @TestMetadata("equalsFloat.kt")
-    public void testEqualsFloat() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsFloat.kt");
     }
 
     @Test
@@ -23111,33 +23075,15 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("equalsNaN.kt")
-    public void testEqualsNaN() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsNaN.kt");
-    }
-
-    @Test
     @TestMetadata("equalsNaN_properIeeeComparisons.kt")
     public void testEqualsNaN_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/equalsNaN_properIeeeComparisons.kt");
     }
 
     @Test
-    @TestMetadata("equalsNullableDouble.kt")
-    public void testEqualsNullableDouble() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsNullableDouble.kt");
-    }
-
-    @Test
     @TestMetadata("equalsNullableDouble_properIeeeComparisons.kt")
     public void testEqualsNullableDouble_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/equalsNullableDouble_properIeeeComparisons.kt");
-    }
-
-    @Test
-    @TestMetadata("equalsNullableFloat.kt")
-    public void testEqualsNullableFloat() {
-      runTest("compiler/testData/codegen/box/ieee754/equalsNullableFloat.kt");
     }
 
     @Test
@@ -23189,21 +23135,9 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("greaterDouble.kt")
-    public void testGreaterDouble() {
-      runTest("compiler/testData/codegen/box/ieee754/greaterDouble.kt");
-    }
-
-    @Test
     @TestMetadata("greaterDouble_properIeeeComparisons.kt")
     public void testGreaterDouble_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/greaterDouble_properIeeeComparisons.kt");
-    }
-
-    @Test
-    @TestMetadata("greaterFloat.kt")
-    public void testGreaterFloat() {
-      runTest("compiler/testData/codegen/box/ieee754/greaterFloat.kt");
     }
 
     @Test
@@ -23225,12 +23159,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("lessDouble.kt")
-    public void testLessDouble() {
-      runTest("compiler/testData/codegen/box/ieee754/lessDouble.kt");
-    }
-
-    @Test
     @TestMetadata("lessDouble_properIeeeAndNewInference.kt")
     public void testLessDouble_properIeeeAndNewInference() {
       runTest("compiler/testData/codegen/box/ieee754/lessDouble_properIeeeAndNewInference.kt");
@@ -23240,12 +23168,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("lessDouble_properIeeeComparisons.kt")
     public void testLessDouble_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/lessDouble_properIeeeComparisons.kt");
-    }
-
-    @Test
-    @TestMetadata("lessFloat.kt")
-    public void testLessFloat() {
-      runTest("compiler/testData/codegen/box/ieee754/lessFloat.kt");
     }
 
     @Test
@@ -23315,18 +23237,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("smartCastToDifferentTypes.kt")
-    public void testSmartCastToDifferentTypes() {
-      runTest("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypes.kt");
-    }
-
-    @Test
-    @TestMetadata("smartCastToDifferentTypesWithNumericPromotion.kt")
-    public void testSmartCastToDifferentTypesWithNumericPromotion() {
-      runTest("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotion.kt");
-    }
-
-    @Test
     @TestMetadata("smartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons.kt")
     public void testSmartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/smartCastToDifferentTypesWithNumericPromotion_properIeeeComparisons.kt");
@@ -23348,18 +23258,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("smartCastToInt.kt")
     public void testSmartCastToInt() {
       runTest("compiler/testData/codegen/box/ieee754/smartCastToInt.kt");
-    }
-
-    @Test
-    @TestMetadata("when.kt")
-    public void testWhen() {
-      runTest("compiler/testData/codegen/box/ieee754/when.kt");
-    }
-
-    @Test
-    @TestMetadata("whenNoSubject.kt")
-    public void testWhenNoSubject() {
-      runTest("compiler/testData/codegen/box/ieee754/whenNoSubject.kt");
     }
 
     @Test
@@ -23839,12 +23737,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("specialCallsWithCallableReferences.kt")
-    public void testSpecialCallsWithCallableReferences() {
-      runTest("compiler/testData/codegen/box/inference/specialCallsWithCallableReferences.kt");
-    }
-
-    @Test
     @TestMetadata("substituteIntersectionTypeInsideCapType.kt")
     public void testSubstituteIntersectionTypeInsideCapType() {
       runTest("compiler/testData/codegen/box/inference/substituteIntersectionTypeInsideCapType.kt");
@@ -24088,21 +23980,9 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       }
 
       @Test
-      @TestMetadata("specialCallsWithCallableReferences.kt")
-      public void testSpecialCallsWithCallableReferences() {
-        runTest("compiler/testData/codegen/box/inference/pcla/specialCallsWithCallableReferences.kt");
-      }
-
-      @Test
       @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
       public void testSpecialCallsWithCallableReferencesDontRewriteAtSlice() {
         runTest("compiler/testData/codegen/box/inference/pcla/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
-      }
-
-      @Test
-      @TestMetadata("specialCallsWithCallableReferencesErrorType.kt")
-      public void testSpecialCallsWithCallableReferencesErrorType() {
-        runTest("compiler/testData/codegen/box/inference/pcla/specialCallsWithCallableReferencesErrorType.kt");
       }
 
       @Test
@@ -27703,30 +27583,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("noReturnTypeMangling.kt")
-    public void testNoReturnTypeMangling() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeMangling.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
-    }
-
-    @Test
-    @TestMetadata("noReturnTypeManglingGeneric.kt")
-    public void testNoReturnTypeManglingGeneric() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
-    }
-
-    @Test
-    @TestMetadata("noReturnTypeManglingJvmName.kt")
-    public void testNoReturnTypeManglingJvmName() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingJvmName.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
-    }
-
-    @Test
-    @TestMetadata("noReturnTypeManglingJvmNameGeneric.kt")
-    public void testNoReturnTypeManglingJvmNameGeneric() {
-      runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingJvmNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
-    }
-
-    @Test
     @TestMetadata("nonImmediateInlineClassUpperBound.kt")
     public void testNonImmediateInlineClassUpperBound() {
       runTest("compiler/testData/codegen/box/inlineClasses/nonImmediateInlineClassUpperBound.kt");
@@ -28252,6 +28108,30 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("whenWithSubjectGeneric.kt")
     public void testWhenWithSubjectGeneric() {
       runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubjectGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+    }
+
+    @Test
+    @TestMetadata("withReturnTypeMangling.kt")
+    public void testWithReturnTypeMangling() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeMangling.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+    }
+
+    @Test
+    @TestMetadata("withReturnTypeManglingGeneric.kt")
+    public void testWithReturnTypeManglingGeneric() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+    }
+
+    @Test
+    @TestMetadata("withReturnTypeManglingJvmName.kt")
+    public void testWithReturnTypeManglingJvmName() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingJvmName.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+    }
+
+    @Test
+    @TestMetadata("withReturnTypeManglingJvmNameGeneric.kt")
+    public void testWithReturnTypeManglingJvmNameGeneric() {
+      runTest("compiler/testData/codegen/box/inlineClasses/withReturnTypeManglingJvmNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
     }
 
     @Nested
@@ -41461,21 +41341,9 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("kt39880.kt")
-    public void testKt39880() {
-      runTest("compiler/testData/codegen/box/operatorConventions/kt39880.kt");
-    }
-
-    @Test
     @TestMetadata("kt4152.kt")
     public void testKt4152() {
       runTest("compiler/testData/codegen/box/operatorConventions/kt4152.kt");
-    }
-
-    @Test
-    @TestMetadata("kt42722.kt")
-    public void testKt42722() {
-      runTest("compiler/testData/codegen/box/operatorConventions/kt42722.kt");
     }
 
     @Test
@@ -42134,12 +42002,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("varargOfObjects_after.kt")
     public void testVarargOfObjects_after() {
       runTest("compiler/testData/codegen/box/polymorphicSignature/varargOfObjects_after.kt");
-    }
-
-    @Test
-    @TestMetadata("varargOfObjects_before.kt")
-    public void testVarargOfObjects_before() {
-      runTest("compiler/testData/codegen/box/polymorphicSignature/varargOfObjects_before.kt");
     }
 
     @Test
@@ -43488,12 +43350,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("propertyInUpperCaseWithJava.kt")
     public void testPropertyInUpperCaseWithJava() {
       runTest("compiler/testData/codegen/box/properties/propertyInUpperCaseWithJava.kt");
-    }
-
-    @Test
-    @TestMetadata("protectedJavaFieldInInline.kt")
-    public void testProtectedJavaFieldInInline() {
-      runTest("compiler/testData/codegen/box/properties/protectedJavaFieldInInline.kt");
     }
 
     @Test
@@ -55501,12 +55357,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("arrayAsVarargAfterSamArgument.kt")
-    public void testArrayAsVarargAfterSamArgument() {
-      runTest("compiler/testData/codegen/box/sam/arrayAsVarargAfterSamArgument.kt");
-    }
-
-    @Test
     @TestMetadata("castFromAny.kt")
     public void testCastFromAny() {
       runTest("compiler/testData/codegen/box/sam/castFromAny.kt");
@@ -57343,18 +57193,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("inlineCallsStaticMethod.kt")
-    public void testInlineCallsStaticMethod() {
-      runTest("compiler/testData/codegen/box/statics/inlineCallsStaticMethod.kt");
-    }
-
-    @Test
-    @TestMetadata("inlineCallsStaticMethodFromOtherPackage.kt")
-    public void testInlineCallsStaticMethodFromOtherPackage() {
-      runTest("compiler/testData/codegen/box/statics/inlineCallsStaticMethodFromOtherPackage.kt");
-    }
-
-    @Test
     @TestMetadata("kt8089.kt")
     public void testKt8089() {
       runTest("compiler/testData/codegen/box/statics/kt8089.kt");
@@ -57376,12 +57214,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("protectedStatic2.kt")
     public void testProtectedStatic2() {
       runTest("compiler/testData/codegen/box/statics/protectedStatic2.kt");
-    }
-
-    @Test
-    @TestMetadata("protectedStaticAndInline.kt")
-    public void testProtectedStaticAndInline() {
-      runTest("compiler/testData/codegen/box/statics/protectedStaticAndInline.kt");
     }
 
     @Test
@@ -58574,12 +58406,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     @TestMetadata("delegationAndThrows.kt")
     public void testDelegationAndThrows() {
       runTest("compiler/testData/codegen/box/throws/delegationAndThrows.kt");
-    }
-
-    @Test
-    @TestMetadata("delegationAndThrows_1_3.kt")
-    public void testDelegationAndThrows_1_3() {
-      runTest("compiler/testData/codegen/box/throws/delegationAndThrows_1_3.kt");
     }
 
     @Test
@@ -60421,12 +60247,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
-    @TestMetadata("singleAssignmentToVarargsInFunction.kt")
-    public void testSingleAssignmentToVarargsInFunction() {
-      runTest("compiler/testData/codegen/box/vararg/singleAssignmentToVarargsInFunction.kt");
-    }
-
-    @Test
     @TestMetadata("spreadCopiesArray.kt")
     public void testSpreadCopiesArray() {
       runTest("compiler/testData/codegen/box/vararg/spreadCopiesArray.kt");
@@ -61273,18 +61093,6 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       @TestMetadata("bigEnum.kt")
       public void testBigEnum() {
         runTest("compiler/testData/codegen/box/when/enumOptimization/bigEnum.kt");
-      }
-
-      @Test
-      @TestMetadata("differentEnumClasses.kt")
-      public void testDifferentEnumClasses() {
-        runTest("compiler/testData/codegen/box/when/enumOptimization/differentEnumClasses.kt");
-      }
-
-      @Test
-      @TestMetadata("differentEnumClasses2.kt")
-      public void testDifferentEnumClasses2() {
-        runTest("compiler/testData/codegen/box/when/enumOptimization/differentEnumClasses2.kt");
       }
 
       @Test

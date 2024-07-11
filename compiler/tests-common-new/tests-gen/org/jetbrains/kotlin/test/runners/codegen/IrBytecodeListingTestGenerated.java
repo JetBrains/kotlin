@@ -80,12 +80,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
   }
 
   @Test
-  @TestMetadata("companionObjectVisibility_before.kt")
-  public void testCompanionObjectVisibility_before() {
-    runTest("compiler/testData/codegen/bytecodeListing/companionObjectVisibility_before.kt");
-  }
-
-  @Test
   @TestMetadata("defaultImpls.kt")
   public void testDefaultImpls() {
     runTest("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
@@ -1834,12 +1828,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
       public void testNew() {
         runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/stdlibManglingIn1430/new.kt");
       }
-
-      @Test
-      @TestMetadata("old.kt")
-      public void testOld() {
-        runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/stdlibManglingIn1430/old.kt");
-      }
     }
   }
 
@@ -2350,12 +2338,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("permittedSubclasses_1_7.kt")
     public void testPermittedSubclasses_1_7() {
       runTest("compiler/testData/codegen/bytecodeListing/sealed/permittedSubclasses_1_7.kt");
-    }
-
-    @Test
-    @TestMetadata("sealedClassConstructor_1_4.kt")
-    public void testSealedClassConstructor_1_4() {
-      runTest("compiler/testData/codegen/bytecodeListing/sealed/sealedClassConstructor_1_4.kt");
     }
 
     @Test

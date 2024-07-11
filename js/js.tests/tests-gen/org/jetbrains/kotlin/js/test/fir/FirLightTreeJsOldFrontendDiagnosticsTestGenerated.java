@@ -153,12 +153,6 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
     public void testArrays_after() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral/arrays_after.kt");
     }
-
-    @Test
-    @TestMetadata("arrays_before.kt")
-    public void testArrays_before() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLib/classLiteral/arrays_before.kt");
-    }
   }
 
   @Nested

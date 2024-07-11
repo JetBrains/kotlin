@@ -1,5 +1,3 @@
 $TESTDATA_DIR$/resultInReturnType.kt
 -d
 $TEMP_DIR$
--language-version
-1.5

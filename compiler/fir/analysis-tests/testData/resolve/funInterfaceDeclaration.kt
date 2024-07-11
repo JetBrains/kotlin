@@ -1,5 +1,3 @@
-// LANGUAGE: -SuspendFunctionsInFunInterfaces
-
 <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface Test1{
     fun foo()
     fun boo()
@@ -16,7 +14,7 @@ fun interface Test5{
     fun foo(<!FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE!>a: Int = 5<!>)
 }
 fun interface Test6{
-    <!FUN_INTERFACE_WITH_SUSPEND_FUNCTION!>suspend<!> fun foo()
+    suspend fun foo()
 }
 fun interface Test7{
     fun foo()
@@ -41,5 +39,5 @@ interface Test11 {
 interface Test14 {
     suspend fun test()
 }
-<!FUN_INTERFACE_WITH_SUSPEND_FUNCTION!>fun<!> interface Test15 : Test14
+fun interface Test15 : Test14
 

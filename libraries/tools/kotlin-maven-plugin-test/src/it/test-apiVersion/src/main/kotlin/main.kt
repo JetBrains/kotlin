@@ -1,4 +1,1 @@
-fun test2() {
-    "".uppercase()
-}
-
+value class Holder<T>(val value: T)

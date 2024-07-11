@@ -24,7 +24,7 @@ class UpToDateIT : KGPBaseTest() {
             gradleVersion,
             propertyMutationChain(
                 "compileKotlin.kotlinOptions.languageVersion",
-                "null", "'1.6'", "'1.5'", "'1.4'", "null"
+                "null", "'1.9'", "'1.8'", "'1.7'", "'1.6'", "null"
             )
         )
     }
@@ -36,7 +36,7 @@ class UpToDateIT : KGPBaseTest() {
             gradleVersion,
             propertyMutationChain(
                 "compileKotlin.kotlinOptions.apiVersion",
-                "null", "'1.6'", "'1.5'", "'1.4'", "null"
+                "null", "'1.9'", "'1.8'", "'1.7'", "'1.6'", "null"
             )
         )
     }

@@ -1,5 +1,3 @@
-// LANGUAGE: -TrailingCommas
-
 interface In<in T>
 interface Out<out T>
 interface Inv<T>
@@ -33,7 +31,7 @@ interface Test<in I, out O, P> {
     fun neOk10(): Inv<in <!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>
     fun neOk11(): Inv<out <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>>
 
-    fun neOk30(): Pair<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><I<!UNSUPPORTED_FEATURE!>,<!> ><!>
+    fun neOk30(): Pair<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><I, ><!>
     fun neOk31(): Pair<<!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>, <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>>
     fun neOk32(): <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>
     fun neOk33(): Inv<<!SYNTAX!><!>>

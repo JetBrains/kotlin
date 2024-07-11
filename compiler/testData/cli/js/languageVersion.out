@@ -1,5 +1,4 @@
-warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/js/languageVersion.kt:5:23: error: KSuspendFunctionN interfaces are not allowed as supertypes
-abstract class Some : KSuspendFunction0<Unit>
-                      ^^^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/cli/js/languageVersion.kt:3:34: error: the feature "generic inline class parameter" is only available since language version 1.8
+value class Holder<T>(val value: T)
+                                 ^
 COMPILATION_ERROR

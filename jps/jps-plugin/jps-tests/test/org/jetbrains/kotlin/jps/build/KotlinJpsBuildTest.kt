@@ -284,7 +284,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         assertEquals(1, myProject.modules.size)
         val module = myProject.modules.first()
         val args = module.kotlinCompilerArguments
-        args.apiVersion = "1.4"
+        args.apiVersion = "1.6"
         myProject.kotlinCommonCompilerArguments = args
 
         buildAllModules().assertSuccessful()
