@@ -1482,15 +1482,17 @@ private fun FirValueParameter.getTypeOrTypeParameterId(): Pair<String?, Pair<Cla
         else -> (type.classId?.toString() ?: type.toString()) to null
     }
 
+private fun ConeKotlinType.getTypeId() = this.renderReadableWithFqNames()
+
 private inline fun <reified FF : FirFunction, reified IS : IrSymbol> Map<FF, IS>.getCachedPairByCommonFunction(
     firFunction: FF
 ): Map.Entry<FF, IS>? {
     val callableId = firFunction.symbol.callableId
-    val receiver = firFunction.receiverParameter?.typeRef?.coneType
+    val receiver = firFunction.receiverParameter?.typeRef?.coneType?.getTypeId()
     val typeParameterIds = firFunction.typeParameters.map { it.symbol.fir.getContaininingId() }
     val argTypeIds = firFunction.valueParameters.map { it.getTypeOrTypeParameterId() }
     return getCachedIrSymbolByCommonDeclaration {
-        it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver &&
+        it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType?.getTypeId() == receiver &&
                 it.typeParameters.map { it.symbol.fir.getContaininingId() } == typeParameterIds &&
                 it.valueParameters.map { it.getTypeOrTypeParameterId() } == argTypeIds &&
                 it.symbol.isExpect == firFunction.symbol.isExpect
@@ -1501,9 +1503,9 @@ internal inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol>
     firCallable: FC,
 ): Map.Entry<FC, IS>? {
     val callableId = firCallable.symbol.callableId
-    val receiver = firCallable.receiverParameter?.typeRef?.coneType
+    val receiver = firCallable.receiverParameter?.typeRef?.coneType?.getTypeId()
     return getCachedIrSymbolByCommonDeclaration {
-        it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver &&
+        it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType?.getTypeId() == receiver &&
                 it.symbol.isExpect == firCallable.symbol.isExpect
     }
 }
