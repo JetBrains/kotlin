@@ -119,7 +119,7 @@ internal class SymbolLightClassForFacade(
             // If this facade represents multiple files, only `const` properties need to be generated.
             if (multiFileClass && !propertySymbol.isConst) continue
 
-            createField(
+            createAndAddField(
                 propertySymbol,
                 nameGenerator,
                 isStatic = true,

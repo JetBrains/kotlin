@@ -84,7 +84,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
             it.declaredMemberScope.callables
                 .filterIsInstance<KaPropertySymbol>()
                 .forEach { propertySymbol ->
-                    createField(
+                    createAndAddField(
                         propertySymbol,
                         nameGenerator,
                         isStatic = false,

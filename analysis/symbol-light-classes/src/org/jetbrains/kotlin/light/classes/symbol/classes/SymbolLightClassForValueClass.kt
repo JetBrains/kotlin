@@ -9,9 +9,11 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -20,7 +22,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject {
     constructor(
@@ -66,33 +67,21 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
             val result = mutableListOf<KtLightMethod>()
 
             val declaredMemberScope = classSymbol.declaredMemberScope
-            val applicableDeclarations = declaredMemberScope.callables
-                .filter {
-                    (it as? KaPropertySymbol)?.isOverride == true || (it as? KaNamedFunctionSymbol)?.isOverride == true
-                }
-                .filterNot {
-                    it.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN
-                }
+            val applicableDeclarations = declaredMemberScope.callables.filter {
+                (it as? KaPropertySymbol)?.isOverride == true || (it as? KaNamedFunctionSymbol)?.isOverride == true
+            }
 
             createMethods(applicableDeclarations, result, suppressStatic = false)
 
-            val inlineClassParameterSymbol = declaredMemberScope.constructors
-                .singleOrNull { it.isPrimary }
-                ?.valueParameters
-                ?.singleOrNull()
+            val propertySymbol = propertySymbol(classSymbol)
 
-            if (inlineClassParameterSymbol != null) {
-                val propertySymbol = declaredMemberScope.callables(inlineClassParameterSymbol.name)
-                    .singleOrNull { it is KaPropertySymbol && it.isFromPrimaryConstructor } as? KaPropertySymbol
-
-                if (propertySymbol != null) {
-                    // (inline or) value class primary constructor must have only final read-only (val) property parameter
-                    // Even though the property parameter is mutable (for some reasons, e.g., testing or not checked yet),
-                    // we can enforce immutability here.
-                    createPropertyAccessors(result, propertySymbol, isTopLevel = false, isMutable = false)
-                }
+            // Only public properties have accessors for value classes
+            if (propertySymbol != null && propertySymbol.visibility == KaSymbolVisibility.PUBLIC) {
+                // (inline or) value class primary constructor must have only final read-only (val) property parameter
+                // Even though the property parameter is mutable (for some reasons, e.g., testing or not checked yet),
+                // we can enforce immutability here.
+                createPropertyAccessors(result, propertySymbol, isTopLevel = false, isMutable = false)
             }
-
 
             result
         }
@@ -100,12 +89,21 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
 
     override fun getOwnFields(): List<KtLightField> = cachedValue {
         withClassSymbol { classSymbol ->
-            mutableListOf<KtLightField>().apply {
-                addPropertyBackingFields(this, classSymbol, SymbolLightField.FieldNameGenerator())
-            }
+            val propertySymbol = propertySymbol(classSymbol)
+            val field = propertySymbol?.let { createField(propertySymbol, SymbolLightField.FieldNameGenerator(), isStatic = false) }
+            listOfNotNull(field)
         }
     }
 
     override fun copy(): SymbolLightClassForValueClass =
         SymbolLightClassForValueClass(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+}
+
+private fun KaSession.propertySymbol(classSymbol: KaNamedClassSymbol): KaKotlinPropertySymbol? {
+    return classSymbol.declaredMemberScope
+        .constructors
+        .singleOrNull { it.isPrimary }
+        ?.valueParameters
+        ?.singleOrNull()
+        ?.generatedPrimaryConstructorProperty
 }

@@ -114,7 +114,7 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
                 filter { it.isConstOrJvmField }
             }
             ?.forEach {
-                createField(
+                createAndAddField(
                     declaration = it,
                     nameGenerator = nameGenerator,
                     isStatic = true,
