@@ -67,6 +67,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     @DisplayName("Compiles with common sources in transitive dependencies")
     @GradleTest
     fun testCommonSourceSetsInTransitiveDependencies(
