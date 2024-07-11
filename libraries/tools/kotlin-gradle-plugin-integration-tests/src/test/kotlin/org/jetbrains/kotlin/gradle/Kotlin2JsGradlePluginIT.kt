@@ -980,6 +980,26 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("yarn is set up from local archive")
+    @GradleTest
+    fun testYarnSetupFromLocalArchive(gradleVersion: GradleVersion) {
+        project("yarn-setup", gradleVersion) {
+            build("yarnFolderRemove")
+
+            buildGradleKts.appendText(
+                """
+                |
+                |project.rootProject.extensions.findByType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>()?.apply {
+                |    downloadBaseUrl = "file://${"$"}{projectDir.absolutePath}"
+                |    version = "1.22.22"
+                |}
+                """.trimMargin()
+            )
+
+            build("kotlinYarnSetup")
+        }
+    }
+
     @DisplayName("NPM dependencies are installed")
     @GradleTest
     fun testNpmDependencies(gradleVersion: GradleVersion) {
