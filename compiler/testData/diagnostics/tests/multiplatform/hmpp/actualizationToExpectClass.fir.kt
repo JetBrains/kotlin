@@ -7,7 +7,7 @@ expect class Common
 
 //MODULE: intermediate()()(common)
 expect class Intermediate
-actual typealias Common = Intermediate
+<!ACTUAL_TYPE_ALIAS_TO_EXPECT!>actual typealias Common = Intermediate<!>
 
 expect fun intermediateFun(a: Common, b: Intermediate)
 expect var intermediateProp: Intermediate
