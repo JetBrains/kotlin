@@ -2767,6 +2767,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ActualTypeAliasToNothing::class
     }
 
+    interface ActualTypeAliasToExpect : KaFirDiagnostic<KtTypeAlias> {
+        override val diagnosticClass get() = ActualTypeAliasToExpect::class
+    }
+
     interface ActualFunctionWithDefaultArguments : KaFirDiagnostic<KtFunction> {
         override val diagnosticClass get() = ActualFunctionWithDefaultArguments::class
     }
