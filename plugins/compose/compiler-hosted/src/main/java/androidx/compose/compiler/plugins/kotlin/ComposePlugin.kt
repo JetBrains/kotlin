@@ -355,7 +355,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
  * AbstractComposeLowering by using the FeatureFlag.enabled extension property. For example
  * testing if StrongSkipping is enabled can be checked by checking
  *
- *   FeatureFlag.StrongSkipping.enabled
+ *    FeatureFlag.StrongSkipping.enabled
  *
  * The `default` field is the source of truth for the default of the property. Turning it
  * to `true` here will make it default on even if the value was previous enabled through
@@ -371,7 +371,9 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
 enum class FeatureFlag(val featureName: String, val default: Boolean) {
     StrongSkipping("StrongSkipping", default = false),
     IntrinsicRemember("IntrinsicRemember", default = true),
-    OptimizeNonSkippingGroups("OptimizeNonSkippingGroups", default = false);
+    OptimizeNonSkippingGroups("OptimizeNonSkippingGroups", default = false),
+    PausableComposition("PausableComposition", default = false),
+    ;
 
     val disabledName get() = "-$featureName"
     fun name(enabled: Boolean) = if (enabled) featureName else disabledName
@@ -383,8 +385,8 @@ enum class FeatureFlag(val featureName: String, val default: Boolean) {
                 featureName.startsWith("-") -> featureName.substring(1) to false
                 else -> featureName to true
             }
-            return FeatureFlag.values().firstOrNull {
-                featureToSearch.trim().compareTo(it.featureName, ignoreCase = true) == 0
+            return FeatureFlag.entries.firstOrNull {
+                featureToSearch.trim().equals(it.featureName, ignoreCase = true)
             } to enabled
         }
     }

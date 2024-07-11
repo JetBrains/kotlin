@@ -66,6 +66,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
         StrongSkipping("StrongSkipping"),
         IntrinsicRemember("IntrinsicRemember"),
         OptimizeNonSkippingGroups("OptimizeNonSkippingGroups"),
+        PausableComposition("PausableComposition"),
     }
 
     companion object {
@@ -124,5 +125,22 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          */
         @JvmField
         val OptimizeNonSkippingGroups: ComposeFeatureFlag = Enabled(Feature.OptimizeNonSkippingGroups)
+
+        /**
+         * Change the code generation of composable function to enable pausing when part of pausable composition.
+         *
+         * Pausable composition is an experimental runtime feature. Experiments with this feature can be run by enabling this feature flag
+         * and using a runtime version that supports pausable composition. If the runtime used does not support pausable composition, no
+         * change is made to the code generation.
+         *
+         * This feature is still considered experimental and is thus disabled by default. It can be enabled by adding,
+         *```
+         * composeCompiler {
+         *   featureFlag = setOf(ComposeFeatureFlag.PausableComposition)
+         * }
+         * ```
+         */
+        @JvmField
+        val PausableComposition: ComposeFeatureFlag = Enabled(Feature.PausableComposition)
     }
 }

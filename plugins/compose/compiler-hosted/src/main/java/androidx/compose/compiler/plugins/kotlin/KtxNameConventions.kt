@@ -26,4 +26,5 @@ object KtxNameConventions {
     val ENDTOMARKER = Name.identifier("endToMarker")
     val REMEMBER_COMPOSABLE_LAMBDA = "rememberComposableLambda"
     val REMEMBER_COMPOSABLE_LAMBDAN = "rememberComposableLambdaN"
+    val SHOULD_EXECUTE = Name.identifier("shouldExecute")
 }
