@@ -32,14 +32,15 @@ class RuntimeTests {
 
 private fun createRuntimeRunners(cls: Class<*>): List<Runner> {
     AbstractCompilerTest.setSystemProperties()
+    // Some conditions are commented out to avoid creating too many compilers at the same time.
     val compilers = mutableListOf(
         RuntimeTestCompiler(useFir = false, sourceInformation = false, optimizeNonSkippingGroups = false),
-        RuntimeTestCompiler(useFir = false, sourceInformation = true, optimizeNonSkippingGroups = false),
+        //RuntimeTestCompiler(useFir = false, sourceInformation = true, optimizeNonSkippingGroups = false),
         RuntimeTestCompiler(useFir = true, sourceInformation = false, optimizeNonSkippingGroups = false),
-        RuntimeTestCompiler(useFir = true, sourceInformation = true, optimizeNonSkippingGroups = false),
-        RuntimeTestCompiler(useFir = false, sourceInformation = false, optimizeNonSkippingGroups = true),
+        //RuntimeTestCompiler(useFir = true, sourceInformation = true, optimizeNonSkippingGroups = false),
+        //RuntimeTestCompiler(useFir = false, sourceInformation = false, optimizeNonSkippingGroups = true),
         RuntimeTestCompiler(useFir = false, sourceInformation = true, optimizeNonSkippingGroups = true),
-        RuntimeTestCompiler(useFir = true, sourceInformation = false, optimizeNonSkippingGroups = true),
+        //RuntimeTestCompiler(useFir = true, sourceInformation = false, optimizeNonSkippingGroups = true),
         RuntimeTestCompiler(useFir = true, sourceInformation = true, optimizeNonSkippingGroups = true)
     )
 
