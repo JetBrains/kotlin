@@ -164,7 +164,18 @@ public sealed class KaPropertySymbol :
     KaTypeParameterOwnerSymbol,
     @Suppress("DEPRECATION") KaSymbolWithKind {
 
+    /**
+     * Checks if the property has a non-null [getter].
+     *
+     * Note: to check if the property has a **default** implicit getter, see [KaPropertyGetterSymbol.isDefault].
+     */
     public abstract val hasGetter: Boolean
+
+    /**
+     * Checks if the property has a non-null [setter].
+     *
+     * Note: to check if the property has a default implicit setter, see [KaPropertySetterSymbol.isDefault].
+     */
     public abstract val hasSetter: Boolean
 
     public abstract val getter: KaPropertyGetterSymbol?
