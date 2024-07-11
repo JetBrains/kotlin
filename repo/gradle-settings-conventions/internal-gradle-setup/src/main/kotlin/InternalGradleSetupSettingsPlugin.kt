@@ -26,7 +26,8 @@ private val isInIdea
 internal const val CONSENT_DECISION_GRADLE_PROPERTY = "kotlin.build.internal.gradle.setup.consent.give"
 
 private val syntheticPropertiesGenerators = listOf(
-    BuildScanUsernameGenerator()
+    BuildScanUsernameGenerator(),
+    BuildScanHostnameGenerator()
 )
 
 abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
