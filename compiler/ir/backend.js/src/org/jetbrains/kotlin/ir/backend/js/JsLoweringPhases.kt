@@ -48,15 +48,7 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
             checkInlineFunctionCallSites = { inlineFunctionUseSite ->
                 // Call sites of only non-private functions are allowed at this stage.
                 val inlineFunction = inlineFunctionUseSite.symbol.owner
-                when {
-                    // TODO: remove this condition after the fix of KT-69470:
-                    inlineFunctionUseSite is IrFunctionReference &&
-                            inlineFunction.visibility == DescriptorVisibilities.LOCAL -> true // temporarily permitted
-
-                    inlineFunction.isConsideredAsPrivateForInlining() -> false // forbidden
-
-                    else -> true // permitted
-                }
+                !inlineFunction.isConsideredAsPrivateForInlining()
             }
         )
     },

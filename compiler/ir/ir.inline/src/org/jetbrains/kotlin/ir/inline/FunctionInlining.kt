@@ -772,5 +772,4 @@ enum class NonReifiedTypeParameterRemappingMode {
 /**
  * Checks if the given function should be treated by 1st phase of inlining (inlining of private functions).
  */
-fun IrFunction.isConsideredAsPrivateForInlining(): Boolean =
-    DescriptorVisibilities.isPrivate(visibility) || visibility == DescriptorVisibilities.LOCAL
+fun IrFunction.isConsideredAsPrivateForInlining(): Boolean = DescriptorVisibilities.isPrivate(visibility)
