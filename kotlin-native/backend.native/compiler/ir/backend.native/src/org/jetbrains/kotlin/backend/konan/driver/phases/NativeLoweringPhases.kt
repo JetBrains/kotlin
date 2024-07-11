@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
+import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
@@ -81,6 +82,12 @@ internal val validateIrAfterInliningOnlyPrivateFunctions = createSimpleNamedComp
                     }
             ).lower(module)
         }
+)
+
+internal val dumpSyntheticAccessorsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "DumpSyntheticAccessorsPhase",
+        description = "Dump synthetic accessors and their call sites (used only for testing and debugging)",
+        op = { context, module -> DumpSyntheticAccessors(context.context).lower(module) },
 )
 
 internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(

@@ -78,6 +78,7 @@ where advanced options include:
   -Xdump-directory           Dump the backend state into this directory.
   -Xdump-fqname              Dump the declaration with the given FqName.
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
+  -Xdump-synthetic-accessors-to Path to a directory to dump synthetic accessors and their use sites.
   -Xenable-builder-inference Use builder inference by default for all calls with lambdas that can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
   -Xklib-enable-signature-clash-checks

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
@@ -54,6 +55,12 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     },
     name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
     description = "Validate IR after only private functions have been inlined",
+)
+
+private val dumpSyntheticAccessorsPhase = makeIrModulePhase<JsIrBackendContext>(
+    ::DumpSyntheticAccessors,
+    name = "DumpSyntheticAccessorsPhase",
+    description = "Dump synthetic accessors and their call sites (used only for testing and debugging)",
 )
 
 private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
@@ -874,6 +881,10 @@ fun getJsLowerings(
     // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
     // just because it goes so in Native.
     validateIrAfterInliningOnlyPrivateFunctions.takeIf { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
+    dumpSyntheticAccessorsPhase.takeIf {
+        configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) &&
+                configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
+    },
     cacheInlineFunctionsBeforeInliningAllFunctionsPhase,
     inlineAllFunctionsPhase,
     validateIrAfterInliningAllFunctions,

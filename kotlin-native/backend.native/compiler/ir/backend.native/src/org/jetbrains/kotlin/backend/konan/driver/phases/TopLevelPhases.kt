@@ -354,6 +354,9 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
         runLowerings(getLoweringsUpToAndIncludingSyntheticAccessors(), allModulesToLower)
         if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
             runIrValidationPhase(validateIrAfterInliningOnlyPrivateFunctions, allModulesToLower)
+            if (context.config.configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null) {
+                runIrValidationPhase(dumpSyntheticAccessorsPhase, allModulesToLower)
+            }
         }
         runLowerings(listOf(inlineAllFunctionsPhase), allModulesToLower)
     }

@@ -21,4 +21,8 @@ object KlibConfigurationKeys {
     @JvmField
     val EXPERIMENTAL_DOUBLE_INLINING: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("Turns on experimental double-inlining mode")
+
+    @JvmField
+    val SYNTHETIC_ACCESSORS_DUMP_DIR: CompilerConfigurationKey<String?> =
+        CompilerConfigurationKey.create("Path to a directory to dump synthetic accessors and their use sites")
 }

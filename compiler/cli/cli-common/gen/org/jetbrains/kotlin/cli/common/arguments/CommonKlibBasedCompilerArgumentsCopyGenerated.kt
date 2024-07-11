@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 fun copyCommonKlibBasedCompilerArguments(from: CommonKlibBasedCompilerArguments, to: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {
     copyCommonCompilerArguments(from, to)
 
+    to.dumpSyntheticAccessorsTo = from.dumpSyntheticAccessorsTo
     to.enableSignatureClashChecks = from.enableSignatureClashChecks
     to.experimentalDoubleInlining = from.experimentalDoubleInlining
     to.normalizeAbsolutePath = from.normalizeAbsolutePath
