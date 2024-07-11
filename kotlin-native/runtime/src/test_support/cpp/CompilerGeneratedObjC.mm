@@ -159,6 +159,18 @@ void Kotlin_MutableList_setObject(KRef list, KInt index, KRef obj) {
     throw std::runtime_error("Not implemented for tests");
 }
 
+KInt Kotlin_hashCode(KRef str) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+KBoolean Kotlin_equals(KRef lhs, KRef rhs) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
+OBJ_GETTER(Kotlin_toString, KRef obj) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 } // extern "C"
 
 #endif // KONAN_OBJC_INTEROP
