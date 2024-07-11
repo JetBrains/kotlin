@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
@@ -92,20 +91,6 @@ private val IrDeclarationWithName.callableIdImpl: CallableId
             is IrPackageFragment -> CallableId(parent.packageFqName, name)
             else -> null
         } ?: error("$this has no callableId")
-    }
-
-@Suppress("unused")
-@Deprecated(
-    "This function is deprecated because it has confusing name and behavior. " +
-            "Please use IrDeclarationWithName.name or IrDeclaration.getNameWithAssert",
-    ReplaceWith("(this as? IrDeclarationWithName)?.name", "org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName"),
-    DeprecationLevel.ERROR
-)
-val IrDeclaration.nameForIrSerialization: Name
-    get() = when (this) {
-        is IrDeclarationWithName -> this.name
-        is IrConstructor -> SpecialNames.INIT
-        else -> error(this)
     }
 
 fun IrDeclaration.getNameWithAssert(): Name =

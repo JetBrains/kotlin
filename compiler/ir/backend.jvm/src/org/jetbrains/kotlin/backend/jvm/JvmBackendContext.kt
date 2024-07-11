@@ -55,25 +55,6 @@ class JvmBackendContext(
     val irProviders: List<IrProvider>,
     val irPluginContext: IrPluginContext?,
 ) : CommonBackendContext {
-
-    @Suppress("UNUSED_PARAMETER")
-    @Deprecated("irModuleFragment parameter is not needed anymore.", level = DeprecationLevel.ERROR)
-    constructor(
-        state: GenerationState,
-        irBuiltIns: IrBuiltIns,
-        irModuleFragment: IrModuleFragment,
-        symbolTable: SymbolTable,
-        phaseConfig: PhaseConfig,
-        generatorExtensions: JvmGeneratorExtensions,
-        backendExtension: JvmBackendExtension,
-        irSerializer: JvmIrSerializer?,
-        irProviders: List<IrProvider>,
-        irDeserializer: JvmIrDeserializer,
-    ) : this(
-        state, irBuiltIns, symbolTable, phaseConfig, generatorExtensions,
-        backendExtension, irSerializer, irDeserializer, irProviders, irPluginContext = null
-    )
-
     data class LocalFunctionData(
         val localContext: LocalDeclarationsLowering.LocalFunctionContext,
         val newParameterToOld: Map<IrValueParameter, IrValueParameter>,

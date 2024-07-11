@@ -81,20 +81,6 @@ abstract class IrSimpleType : IrType(), SimpleTypeMarker, TypeArgumentListMarker
     abstract val arguments: List<IrTypeArgument>
     abstract val abbreviation: IrTypeAbbreviation?
 
-    /**
-     * This property was deprecated and replaced with [nullability] property.
-     *
-     * Anyway, in most cases one of utils function would be more suitable, than direct usage.
-     *
-     * Check [nullability] property documentation for details
-     */
-    @Deprecated(
-        level = DeprecationLevel.WARNING,
-        message = "hasQuestionMark has ambiguous meaning. Use isNullable() or isMarkedNullable() instead.",
-    )
-    val hasQuestionMark: Boolean
-        get() = nullability == SimpleTypeNullability.MARKED_NULLABLE
-
     override val variance: Variance
         get() = Variance.INVARIANT
 }

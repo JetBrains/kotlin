@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -18,14 +17,12 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.linkage.partial.isPartialLinkageRuntimeError
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.name.Name
 
 class DeclarationIrBuilder(
     generatorContext: IrGeneratorContext,
@@ -224,28 +221,4 @@ fun IrConstructor.delegationKind(irBuiltIns: IrBuiltIns): ConstructorDelegationK
         return delegationKind
     else
         throw AssertionError("Expected exactly one delegating constructor call but $numberOfDelegatingCalls encountered: ${symbol.owner}")
-}
-
-@Deprecated(
-    "Replaced by delegationKind() that is aware of the possible partial linkage side effects",
-    ReplaceWith("delegationKind(irBuiltIns)")
-)
-fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean = delegationKind(irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER
-
-fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int, name: Name = this.name) = when (this) {
-    is ValueParameterDescriptor -> this.copy(newOwner, name, index)
-    is ReceiverParameterDescriptor -> ValueParameterDescriptorImpl(
-        containingDeclaration = newOwner,
-        original = null,
-        index = index,
-        annotations = annotations,
-        name = name,
-        outType = type,
-        declaresDefaultValue = false,
-        isCrossinline = false,
-        isNoinline = false,
-        varargElementType = null,
-        source = source
-    )
-    else -> throw Error("Unexpected parameter descriptor: $this")
 }
