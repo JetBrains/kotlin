@@ -42,7 +42,7 @@ FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
             fixedBlockPages_[blockSize].Sweep(sweepHandle, finalizerQueue);
         }
         nextFitPages_.Sweep(sweepHandle, finalizerQueue);
-        singleObjectPages_.SweepAndFree(sweepHandle, finalizerQueue);
+        singleObjectPages_.Sweep(sweepHandle, finalizerQueue);
     }
     CustomAllocDebug("Heap: before extra sweep FinalizerQueue size == %zu", finalizerQueue.size());
     {
@@ -117,11 +117,11 @@ std::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
 
 void Heap::ClearForTests() noexcept {
     for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
-        fixedBlockPages_[blockSize].ClearForTests();
+        fixedBlockPages_[blockSize].Clear();
     }
-    nextFitPages_.ClearForTests();
-    singleObjectPages_.ClearForTests();
-    extraObjectPages_.ClearForTests();
+    nextFitPages_.Clear();
+    singleObjectPages_.Clear();
+    extraObjectPages_.Clear();
 }
 
 } // namespace kotlin::alloc

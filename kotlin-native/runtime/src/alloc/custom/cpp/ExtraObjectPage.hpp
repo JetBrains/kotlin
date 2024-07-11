@@ -20,7 +20,7 @@
 
 namespace kotlin::alloc {
 
-class alignas(kPageAlignment) ExtraObjectPage : public AnyPage<ExtraObjectPage> {
+class alignas(kPageAlignment) ExtraObjectPage : public MultiObjectPage<ExtraObjectPage> {
 public:
     static inline constexpr const size_t SIZE = 64 * KiB;
 

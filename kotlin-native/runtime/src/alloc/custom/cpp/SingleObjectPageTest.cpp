@@ -26,7 +26,7 @@ void mark(void* obj) {
 
 SingleObjectPage* alloc(uint64_t blockSize) {
     SingleObjectPage* page = SingleObjectPage::Create(blockSize);
-    uint8_t* ptr = page->TryAllocate();
+    uint8_t* ptr = page->Allocate();
     EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, blockSize * 8 - 1) == 0);
     reinterpret_cast<uint64_t*>(ptr)[1] = reinterpret_cast<uint64_t>(&fakeType);
     return page;
@@ -38,8 +38,7 @@ TEST(CustomAllocTest, SingleObjectPageSweepEmptyPage) {
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweep();
     kotlin::alloc::FinalizerQueue finalizerQueue;
-    EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
-    page->Destroy();
+    EXPECT_FALSE(page->SweepAndDestroy(gcScope, finalizerQueue));
 }
 
 TEST(CustomAllocTest, SingleObjectPageSweepFullPage) {
@@ -50,8 +49,7 @@ TEST(CustomAllocTest, SingleObjectPageSweepFullPage) {
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweep();
     kotlin::alloc::FinalizerQueue finalizerQueue;
-    EXPECT_TRUE(page->Sweep(gcScope, finalizerQueue));
-    page->Destroy();
+    EXPECT_TRUE(page->SweepAndDestroy(gcScope, finalizerQueue));
 }
 
 #undef MIN_BLOCK_SIZE

@@ -11,11 +11,14 @@
 #include <vector>
 
 #include "AnyPage.hpp"
+#include "AllocationSize.hpp"
 #include "AtomicStack.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
+
+class SingleObjectPage;
 
 class alignas(kPageAlignment) SingleObjectPage : public AnyPage<SingleObjectPage> {
 public:
@@ -29,27 +32,25 @@ public:
 
     uint8_t* Data() noexcept;
 
-    uint8_t* TryAllocate() noexcept;
+    uint8_t* Allocate() noexcept;
 
-    bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
+    bool SweepAndDestroy(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
     template <typename F>
     void TraverseAllocatedBlocks(F process) noexcept(noexcept(process(std::declval<uint8_t*>()))) {
-        if (isAllocated_) {
-            process(data_);
-        }
+        process(data_);
     }
 
 private:
     friend class Heap;
 
-    explicit SingleObjectPage(size_t size) noexcept;
+    explicit SingleObjectPage(AllocationSize objectSize) noexcept;
+
+    static AllocationSize pageSize(AllocationSize objectSize) noexcept;
 
     // Testing method
     std::vector<uint8_t*> GetAllocatedBlocks() noexcept;
 
-    bool isAllocated_ = false;
-    size_t size_;
     struct alignas(8) {
         uint8_t data_[];
     };

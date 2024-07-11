@@ -53,25 +53,29 @@ TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
 }
 
 TEST(CustomAllocTest, FixedBlockPageThreshold) {
+    std::list<TypeInfo> types;
     Heap heap;
     CustomAllocator ca(heap);
     const int FROM = FixedBlockPage::MAX_BLOCK_SIZE - 10;
     const int TO = FixedBlockPage::MAX_BLOCK_SIZE + 10;
     for (int blocks = FROM; blocks <= TO; ++blocks) {
-        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
-        ca.CreateObject(&fakeType);
+        auto& type = types.emplace_back();
+        type = {.typeInfo_ = &type, .instanceSize_ = 8 * blocks, .flags_ = 0};
+        ca.CreateObject(&type);
     }
 }
 
 TEST(CustomAllocTest, NextFitPageThreshold) {
+    std::list<TypeInfo> types;
     Heap heap;
     CustomAllocator ca(heap);
     const int MAX_BLOCK_SIZE = NextFitPage::maxBlockSize();
     const int FROM = MAX_BLOCK_SIZE - 10;
     const int TO = MAX_BLOCK_SIZE + 10;
     for (int blocks = FROM; blocks <= TO; ++blocks) {
-        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
-        ca.CreateObject(&fakeType);
+        auto& type = types.emplace_back();
+        type = {.typeInfo_ = &type, .instanceSize_ = 8 * blocks, .flags_ = 0};
+        ca.CreateObject(&type);
     }
 }
 

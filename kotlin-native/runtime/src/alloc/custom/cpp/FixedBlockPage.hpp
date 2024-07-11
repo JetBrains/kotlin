@@ -31,7 +31,7 @@ struct alignas(8) FixedBlockCell {
     };
 };
 
-class alignas(kPageAlignment) FixedBlockPage : public AnyPage<FixedBlockPage> {
+class alignas(kPageAlignment) FixedBlockPage : public MultiObjectPage<FixedBlockPage> {
 public:
     static inline constexpr const size_t SIZE = 256 * KiB;
 

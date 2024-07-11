@@ -125,7 +125,7 @@ uint8_t* CustomAllocator::Allocate(AllocationSize size) noexcept {
 
 uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
-    uint8_t* block = heap_.GetSingleObjectPage(cellCount, finalizerQueue_)->TryAllocate();
+    uint8_t* block = heap_.GetSingleObjectPage(cellCount, finalizerQueue_)->Allocate();
     return block;
 }
 

@@ -33,17 +33,6 @@ public:
         }
     }
 
-    void SweepAndFree(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
-        T* page;
-        while ((page = unswept_.Pop())) {
-            if (page->Sweep(sweepHandle, finalizerQueue)) {
-                ready_.Push(page);
-            } else {
-                page->Destroy();
-            }
-        }
-    }
-
     T* GetPage(uint32_t cellCount, FinalizerQueue& finalizerQueue, std::atomic<std::size_t>& concurrentSweepersCount_) noexcept {
         T* page;
         if ((page = ready_.Pop())) {
@@ -86,11 +75,7 @@ public:
     }
 
     ~PageStore() noexcept {
-        T* page;
-        while ((page = empty_.Pop())) page->Destroy();
-        while ((page = ready_.Pop())) page->Destroy();
-        while ((page = used_.Pop())) page->Destroy();
-        while ((page = unswept_.Pop())) page->Destroy();
+        Clear();
     }
 
 private:
@@ -119,7 +104,7 @@ private:
         return pages;
     }
 
-    void ClearForTests() noexcept {
+    void Clear() noexcept {
         while (T* page = empty_.Pop()) page->Destroy();
         while (T* page = ready_.Pop()) page->Destroy();
         while (T* page = used_.Pop()) page->Destroy();
@@ -138,6 +123,63 @@ private:
     AtomicStack<T> ready_;
     AtomicStack<T> used_;
     AtomicStack<T> unswept_;
+};
+
+template <>
+class PageStore<SingleObjectPage> {
+public:
+    using GCSweepScope = typename SingleObjectPage::GCSweepScope;
+
+    void PrepareForGC() noexcept {
+        unswept_.TransferAllFrom(std::move(used_));
+    }
+
+    void Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
+        while (auto* page = unswept_.Pop()) {
+            if (page->SweepAndDestroy(sweepHandle, finalizerQueue)) {
+                used_.Push(page);
+            }
+        }
+    }
+
+    SingleObjectPage* NewPage(uint64_t cellCount) noexcept {
+        auto* page = SingleObjectPage::Create(cellCount);
+        used_.Push(page);
+        return page;
+    }
+
+    bool isEmpty() noexcept {
+        return used_.isEmpty() && unswept_.isEmpty();
+    }
+
+    ~PageStore() noexcept {
+        Clear();
+    }
+
+private:
+    friend class Heap;
+
+    // Testing method
+    std::vector<SingleObjectPage*> GetPages() noexcept {
+        std::vector<SingleObjectPage*> pages;
+        for (auto* page : used_.GetElements()) pages.push_back(page);
+        for (auto* page : unswept_.GetElements()) pages.push_back(page);
+        return pages;
+    }
+
+    void Clear() noexcept {
+        while (auto* page = used_.Pop()) page->Destroy();
+        while (auto* page = unswept_.Pop()) page->Destroy();
+    }
+
+    template <typename F>
+    void TraversePages(F process) noexcept(noexcept(process(std::declval<SingleObjectPage*>()))) {
+        used_.TraverseElements(process);
+        unswept_.TraverseElements(process);
+    }
+
+    AtomicStack<SingleObjectPage> used_;
+    AtomicStack<SingleObjectPage> unswept_;
 };
 
 } // namespace kotlin::alloc
