@@ -58,10 +58,6 @@ open class SymbolTable(
         )
     }
 
-    fun referenceScript(signature: IdSignature): IrScriptSymbol {
-        return scriptSlice.referenced(signature) { IrScriptSymbolImpl(signature = signature) }
-    }
-
     // ------------------------------------ class ------------------------------------
 
     fun declareClass(
@@ -74,10 +70,6 @@ open class SymbolTable(
             symbolFactory,
             classFactory
         )
-    }
-
-    fun declareClassWithSignature(signature: IdSignature, symbol: IrClassSymbol) {
-        classSlice.set(signature, symbol)
     }
 
     fun declareClassIfNotExists(
@@ -136,14 +128,6 @@ open class SymbolTable(
         constructorFactory: (IrConstructorSymbol) -> IrConstructor,
     ): IrConstructor {
         return constructorSlice.declareIfNotExists(signature, symbolFactory, constructorFactory)
-    }
-
-    fun declareConstructorWithSignature(signature: IdSignature, symbol: IrConstructorSymbol) {
-        constructorSlice.set(signature, symbol)
-    }
-
-    fun referenceConstructorIfAny(signature: IdSignature): IrConstructorSymbol? {
-        return constructorSlice.get(signature)
     }
 
     override fun referenceConstructor(signature: IdSignature): IrConstructorSymbol {
@@ -222,10 +206,6 @@ open class SymbolTable(
         )
     }
 
-    fun declareFieldWithSignature(signature: IdSignature, symbol: IrFieldSymbol) {
-        fieldSlice.set(signature, symbol)
-    }
-
     override fun referenceField(signature: IdSignature): IrFieldSymbol {
         return referenceFieldImpl(
             signature,
@@ -268,14 +248,6 @@ open class SymbolTable(
         propertyFactory: (IrPropertySymbol) -> IrProperty,
     ): IrProperty {
         return propertySlice.declareIfNotExists(signature, symbolFactory, propertyFactory)
-    }
-
-    fun declarePropertyWithSignature(signature: IdSignature, symbol: IrPropertySymbol) {
-        propertySlice.set(signature, symbol)
-    }
-
-    fun referencePropertyIfAny(signature: IdSignature): IrPropertySymbol? {
-        return propertySlice.get(signature)
     }
 
     override fun referenceProperty(signature: IdSignature): IrPropertySymbol {
@@ -367,24 +339,12 @@ open class SymbolTable(
         return functionSlice.declareIfNotExists(signature, symbolFactory, functionFactory)
     }
 
-    fun declareSimpleFunctionWithSignature(signature: IdSignature, symbol: IrSimpleFunctionSymbol) {
-        functionSlice.set(signature, symbol)
-    }
-
-    fun referenceSimpleFunctionIfAny(signature: IdSignature): IrSimpleFunctionSymbol? =
-        functionSlice.get(signature)
-
     override fun referenceSimpleFunction(signature: IdSignature): IrSimpleFunctionSymbol {
         return referenceSimpleFunctionImpl(
             signature,
             { IrSimpleFunctionSymbolImpl(signature = signature) },
             { IrSimpleFunctionSymbolImpl().also { it.privateSignature = signature } }
         )
-    }
-
-    @DelicateSymbolTableApi
-    fun removeSimpleFunction(function: IrSimpleFunctionSymbol) {
-        function.signature?.let { functionSlice.remove(it) }
     }
 
     @SymbolTableInternals
