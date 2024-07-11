@@ -160,22 +160,6 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>, classSymbol: KaNamedClassSymbol) {
         if (!classSymbol.isData) return
 
-        fun createMethodFromAny(functionSymbol: KaNamedFunctionSymbol) {
-            // Similar to `copy`, synthetic members from `Any` should refer to `data` class as origin, not the function in `Any`.
-            val lightMemberOrigin = classOrObjectDeclaration?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER) }
-            result.add(
-                SymbolLightSimpleMethod(
-                    ktAnalysisSession = this@KaSession,
-                    functionSymbol,
-                    lightMemberOrigin,
-                    this,
-                    METHOD_INDEX_BASE,
-                    false,
-                    suppressStatic = false,
-                )
-            )
-        }
-
         // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
         // That's why we use declared scope for 'component*' and 'copy', and member scope for 'equals/hashCode/toString'
         val componentAndCopyFunctions = classSymbol.declaredMemberScope
@@ -184,8 +168,27 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             .filterIsInstance<KaNamedFunctionSymbol>()
 
         createMethods(componentAndCopyFunctions, result)
+        generateMethodsFromAny(classSymbol, result)
+    }
 
-        // Compiler will generate 'equals/hashCode/toString' for data class if they are not final.
+    private fun KaSession.createMethodFromAny(functionSymbol: KaNamedFunctionSymbol, result: MutableList<KtLightMethod>) {
+        // Similar to `copy`, synthetic members from `Any` should refer to `data` class as origin, not the function in `Any`.
+        val lightMemberOrigin = classOrObjectDeclaration?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER) }
+        result.add(
+            SymbolLightSimpleMethod(
+                ktAnalysisSession = this,
+                functionSymbol,
+                lightMemberOrigin,
+                this@SymbolLightClassForClassOrObject,
+                METHOD_INDEX_BASE,
+                false,
+                suppressStatic = false,
+            )
+        )
+    }
+
+    protected fun KaSession.generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<KtLightMethod>) {
+        // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final.
         // We want to mimic that.
         val generatedFunctionsFromAny = classSymbol.memberScope
             .callables(EQUALS, HASHCODE_NAME, TO_STRING)
@@ -195,9 +198,9 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         val functionsFromAnyByName = generatedFunctionsFromAny.associateBy { it.name }
 
         // NB: functions from `Any` are not in an alphabetic order.
-        functionsFromAnyByName[TO_STRING]?.let { createMethodFromAny(it) }
-        functionsFromAnyByName[HASHCODE_NAME]?.let { createMethodFromAny(it) }
-        functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it) }
+        functionsFromAnyByName[TO_STRING]?.let { createMethodFromAny(it, result) }
+        functionsFromAnyByName[HASHCODE_NAME]?.let { createMethodFromAny(it, result) }
+        functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it, result) }
     }
 
     context(KaSession)

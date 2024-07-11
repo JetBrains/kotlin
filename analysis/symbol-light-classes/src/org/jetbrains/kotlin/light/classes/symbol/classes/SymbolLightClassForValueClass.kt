@@ -77,6 +77,7 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
                 }
 
             createMethods(applicableDeclarations, result, suppressStatic = false)
+            generateMethodsFromAny(classSymbol, result)
 
             val propertySymbol = propertySymbol(classSymbol)
 
