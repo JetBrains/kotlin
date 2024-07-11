@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
 
-const val STUB_FOR_INLINING = "stub_for_inlining"
+private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
 
 // This lowering transforms CR passed to inline function to lambda which would be inlined
 //
@@ -99,7 +99,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
         context.irFactory.buildFun {
             setSourceRange(this@wrapField)
             origin = LoweredDeclarationOrigins.INLINE_LAMBDA
-            name = Name.identifier(STUB_FOR_INLINING)
+            name = STUB_FOR_INLINING
             visibility = DescriptorVisibilities.LOCAL
             returnType = field.type
             isInline = true
@@ -122,7 +122,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
         context.irFactory.buildFun {
             setSourceRange(this@wrapFunction)
             origin = LoweredDeclarationOrigins.INLINE_LAMBDA
-            name = Name.identifier(STUB_FOR_INLINING)
+            name = STUB_FOR_INLINING
             visibility = DescriptorVisibilities.LOCAL
             returnType = ((type as IrSimpleType).arguments.last() as IrTypeProjection).type
             isSuspend = referencedFunction.isSuspend
