@@ -35,6 +35,10 @@ val cflags = mutableListOf( "-I${nativeDependencies.llvmPath}/include",
                             *platformManager.hostPlatform.clangForJni.hostCompilerArgsForJni)
 
 val ldflags = mutableListOf("${nativeDependencies.llvmPath}/$libclang", "-L${libclangextDir.absolutePath}", "-lclangext")
+if (HostManager.hostIsMac) {
+    ldflags.addAll(listOf("-Xlinker", "-lto_library", "-Xlinker", "KT-69382"))
+}
+
 
 if (libclangextIsEnabled) {
     assert(HostManager.hostIsMac)

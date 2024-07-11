@@ -23,6 +23,7 @@ kotlinNativeInterop {
             //
             // To enforce linking with proper libc++, pass the default path explicitly:
             linkerOpts("-L${hostPlatform.absoluteTargetSysRoot}/usr/lib")
+            linkerOpts("-Xlinker", "-lto_library", "-Xlinker", "KT-69382")
         }
         linkerOpts("-L$llvmDir/lib", "-L${rootProject.project(":kotlin-native:llvmDebugInfoC").layout.buildDirectory.get().asFile}", "-L${rootProject.project(":kotlin-native:libllvmext").layout.buildDirectory.get().asFile}")
     }
