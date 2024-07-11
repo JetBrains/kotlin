@@ -27,4 +27,5 @@ object ComposeNames {
     val REMEMBER_COMPOSABLE_LAMBDA = "rememberComposableLambda"
     val REMEMBER_COMPOSABLE_LAMBDAN = "rememberComposableLambdaN"
     val DEFAULT_IMPLS = Name.identifier("ComposeDefaultImpls")
+    val SHOULD_EXECUTE = Name.identifier("shouldExecute")
 }
