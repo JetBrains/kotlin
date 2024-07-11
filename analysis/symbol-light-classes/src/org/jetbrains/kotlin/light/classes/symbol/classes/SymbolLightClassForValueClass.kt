@@ -9,7 +9,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -19,12 +18,11 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject {
+internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject {
     constructor(
         classOrObject: KtClassOrObject,
         ktModule: KaModule,
@@ -108,6 +106,6 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
         }
     }
 
-    override fun copy(): SymbolLightClassForInlineClass =
-        SymbolLightClassForInlineClass(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+    override fun copy(): SymbolLightClassForValueClass =
+        SymbolLightClassForValueClass(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
 }

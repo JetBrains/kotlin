@@ -62,7 +62,7 @@ internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktMod
 
 internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule: KaModule): SymbolLightClassBase = when {
     ktClassOrObject.hasModifier(INLINE_KEYWORD) || ktClassOrObject.hasModifier(VALUE_KEYWORD) ->
-        SymbolLightClassForInlineClass(ktClassOrObject, ktModule)
+        SymbolLightClassForValueClass(ktClassOrObject, ktModule)
 
     ktClassOrObject is KtClass && ktClassOrObject.isAnnotation() -> SymbolLightClassForAnnotationClass(ktClassOrObject, ktModule)
     ktClassOrObject is KtClass && ktClassOrObject.isInterface() -> SymbolLightClassForInterface(ktClassOrObject, ktModule)
@@ -101,7 +101,7 @@ internal fun createLightClassNoCache(
     )
 
     else -> if (classSymbol.isInline) {
-        SymbolLightClassForInlineClass(
+        SymbolLightClassForValueClass(
             ktAnalysisSession = this@KaSession,
             ktModule = ktModule,
             classSymbol = classSymbol,
