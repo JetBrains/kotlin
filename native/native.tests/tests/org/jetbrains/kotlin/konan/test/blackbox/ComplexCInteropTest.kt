@@ -496,4 +496,33 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         val compilationResult = compileToExecutableInOneStage(testCase).assertSuccess()
         runExecutableAndVerify(testCase, TestExecutable.fromCompilationResult(testCase, compilationResult))
     }
+
+    @Test
+    @TestMetadata("safepointSignposts")
+    fun safepointSignposts() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        Assumptions.assumeFalse(targets.areDifferentTargets())
+
+        val srcDir = interopObjCDir.resolve("safepointSignposts")
+        compileDylib("cinterop", listOf(srcDir.resolve("cinterop.m")))
+
+        val (testCase, compilationResult) = compileDefAndKtToExecutable(
+            testName = "safepointSignposts",
+            defFile = srcDir.resolve("cinterop.def"),
+            ktFiles = listOf(srcDir.resolve("main.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                compilerArgs = listOf(
+                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                    "-linker-option", "-L${buildDir.absolutePath}",
+                )
+            ),
+            extras = TestCase.NoTestRunnerExtras(),
+        )
+        val process = ProcessBuilder("/usr/bin/log", "stream", "--signpost").start()
+        try {
+            runExecutableAndVerify(testCase, TestExecutable.fromCompilationResult(testCase, compilationResult))
+        } finally {
+            process.destroyForcibly()
+        }
+    }
 }
