@@ -453,7 +453,7 @@ fun main() {
         testGroup("native/litmuskt/repo-tests/test", "native/litmuskt/repo-tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "LitmusKtTestsGenerated",
-                annotations = listOf(litmusktNative(), *standalone(), provider<UseStandardTestCaseGroupProvider>())
+                annotations = listOf(litmusktNative(), *standalone(), provider<UseStandardTestCaseGroupProvider>(), forceHostTarget())
             ) {
                 model("standalone")
             }

@@ -8,7 +8,7 @@ import org.jetbrains.litmuskt.tests.*
 
 fun runTest(test: LitmusTest<*>) {
     val result = runTestWithSampleParams(test)
-    println(result)
+    println(result.generateTable() + "\n")
     assertFalse(result.hasForbidden())
 }
 

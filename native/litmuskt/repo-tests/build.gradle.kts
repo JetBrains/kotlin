@@ -81,7 +81,9 @@ dependencies {
     testRuntimeOnly(project(":compiler:backend-common"))
 
     // use local subprojects as dependencies 
-    litmusktCoreNativeKlib(project(":litmuskt:core")) { isTransitive = false }
+    litmusktCoreNativeKlib(project(":litmuskt:core")) {
+        // isTransitive = false
+    }
     litmusktTestsuiteNativeKlib(project(":litmuskt:testsuite")) { isTransitive = false }
 
 // TODO: should be useful in the future
