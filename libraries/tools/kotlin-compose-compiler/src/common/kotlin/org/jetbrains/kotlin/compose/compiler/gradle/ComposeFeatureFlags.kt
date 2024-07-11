@@ -81,7 +81,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          *
          * This feature is enabled by default. To disable, provide this feature flag in a [disabled] state:
          * ```
-         * composeOptions {
+         * composeCompiler {
          *     featureFlags = setOf(ComposeFeatureFlag.StrongSkipping.disabled())
          * }
          * ```
@@ -98,7 +98,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          *
          * This feature is enabled by default. To disable, provide this feature flag in a [disabled] state:
          * ```
-         * composeOptions {
+         * composeCompiler {
          *     featureFlags = setOf(ComposeFeatureFlag.IntrinsicRemember.disabled())
          * }
          * ```
@@ -117,7 +117,7 @@ sealed interface ComposeFeatureFlag : Named, Serializable {
          *
          * This feature is still considered experimental and is thus disabled by default. To enable,
          * ```
-         * composeOptions {
+         * composeCompiler {
          *     featureFlags = setOf(ComposeFeatureFlag.OptimizeNonSkippingGroups)
          * }
          * ```
