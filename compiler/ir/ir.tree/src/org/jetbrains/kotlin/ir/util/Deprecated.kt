@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 @Deprecated(
     "Use the overload with DumpIrTreeOptions instead.",
@@ -65,22 +63,3 @@ fun DumpIrTreeVisitor(out: Appendable, normalizeNames: Boolean = false, stableOr
 )
 fun RenderIrElementVisitor(normalizeNames: Boolean = false, verboseErrorTypes: Boolean = true) =
     RenderIrElementVisitor(DumpIrTreeOptions(normalizeNames = normalizeNames, verboseErrorTypes = verboseErrorTypes))
-
-// This class is not used meaningfully, but is left for compatibility with compose.
-abstract class SymbolRenamer private constructor() {
-    @Deprecated("Used from Compose.")
-    companion object DEFAULT : SymbolRenamer()
-}
-
-// This member is left for compatibility with compose.
-@Deprecated("Use the other deepCopyWithSymbols instead.")
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-@kotlin.internal.LowPriorityInOverloadResolution // To fix bootstrap with K1 which cannot distinguish between the other deepCopyWithSymbols by lambda type.
-inline fun <reified T : IrElement> T.deepCopyWithSymbols(
-    initialParent: IrDeclarationParent?,
-    createCopier: (SymbolRemapper, TypeRemapper) -> DeepCopyIrTreeWithSymbols,
-): T {
-    val symbolRemapper = DeepCopySymbolRemapper()
-    acceptVoid(symbolRemapper)
-    return transform(createCopier(symbolRemapper, DeepCopyTypeRemapper(symbolRemapper)), null).patchDeclarationParents(initialParent) as T
-}

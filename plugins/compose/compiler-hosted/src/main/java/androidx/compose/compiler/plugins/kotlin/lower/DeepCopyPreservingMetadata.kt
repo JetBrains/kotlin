@@ -25,14 +25,12 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
-import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 
 internal open class DeepCopyPreservingMetadata(
     symbolRemapper: SymbolRemapper,
     typeRemapper: TypeRemapper,
-    symbolRenamer: SymbolRenamer
-) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, symbolRenamer) {
+) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
     override fun visitFile(declaration: IrFile): IrFile =
         super.visitFile(declaration).apply {
             metadata = declaration.metadata

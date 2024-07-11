@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
@@ -225,12 +224,7 @@ internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
         }
     }
 
-    @Suppress("DEPRECATION")
-    val deepCopy = DeepCopyPreservingMetadata(
-        typeParamsAwareSymbolRemapper,
-        typeParamRemapper,
-        SymbolRenamer.DEFAULT
-    )
+    val deepCopy = DeepCopyPreservingMetadata(typeParamsAwareSymbolRemapper, typeParamRemapper)
     typeRemapper.deepCopy = deepCopy
 
     acceptVoid(typeParamsAwareSymbolRemapper)

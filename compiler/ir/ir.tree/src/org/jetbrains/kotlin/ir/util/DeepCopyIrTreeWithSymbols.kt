@@ -42,8 +42,6 @@ internal inline fun <T : IrElement> T.deepCopyImpl(createTypeRemapper: (SymbolRe
 open class DeepCopyIrTreeWithSymbols(
     private val symbolRemapper: SymbolRemapper,
     typeRemapper: TypeRemapper? = null,
-    // This parameter is not used meaningfully, but is left for compatibility with compose.
-    @Suppress("UNUSED_PARAMETER") symbolRenamer: SymbolRenamer? = null,
 ) : IrElementTransformerVoid() {
     private var transformedModule: IrModuleFragment? = null
     private val typeRemapper: TypeRemapper = typeRemapper ?: DeepCopyTypeRemapper(symbolRemapper)

@@ -188,12 +188,7 @@ class CopyDefaultValuesFromExpectLowering(
         val symbolRemapper = SymbolRemapper()
         acceptVoid(symbolRemapper)
 
-        return transform(
-            transformer = DeepCopyIrTreeWithSymbols(
-                symbolRemapper, DeepCopyTypeRemapper(symbolRemapper)
-            ),
-            data = null
-        )
+        return transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null)
     }
 
     private fun remapExpectTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameter {
