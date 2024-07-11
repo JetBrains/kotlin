@@ -5,8 +5,6 @@ public final class Some /* Some*/ {
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getValue();//  getValue()
-
-  public  Some(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
 public final class SomeClass /* SomeClass*/ {

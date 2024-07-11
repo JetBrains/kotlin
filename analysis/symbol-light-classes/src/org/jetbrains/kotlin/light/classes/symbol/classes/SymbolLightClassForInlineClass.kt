@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
@@ -31,7 +34,21 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
         ktModule = ktModule,
         manager = classOrObject.manager,
     ) {
-        require(classOrObject.hasModifier(KtTokens.INLINE_KEYWORD))
+        require(classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) || classOrObject.hasModifier(KtTokens.VALUE_KEYWORD))
+    }
+
+    constructor(
+        ktAnalysisSession: KaSession,
+        ktModule: KaModule,
+        classSymbol: KaNamedClassSymbol,
+        manager: PsiManager,
+    ) : super(
+        ktAnalysisSession = ktAnalysisSession,
+        ktModule = ktModule,
+        classSymbol = classSymbol,
+        manager = manager,
+    ) {
+        require(classSymbol.isInline)
     }
 
     private constructor(
