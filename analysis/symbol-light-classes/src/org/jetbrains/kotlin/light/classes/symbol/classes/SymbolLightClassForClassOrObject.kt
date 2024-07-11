@@ -202,7 +202,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     context(KaSession)
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classSymbol: KaNamedClassSymbol) {
+    protected fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classSymbol: KaNamedClassSymbol) {
         fun createDelegateMethod(functionSymbol: KaNamedFunctionSymbol) {
             val kotlinOrigin = functionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
             val lightMemberOrigin = kotlinOrigin?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.DELEGATION) }

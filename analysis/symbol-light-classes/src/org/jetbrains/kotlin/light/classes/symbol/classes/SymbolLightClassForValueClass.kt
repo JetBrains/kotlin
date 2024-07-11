@@ -83,6 +83,8 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
                 createPropertyAccessors(result, propertySymbol, isTopLevel = false, isMutable = false)
             }
 
+            addDelegatesToInterfaceMethods(result, classSymbol)
+
             result
         }
     }
