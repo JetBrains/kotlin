@@ -233,9 +233,15 @@ internal class SymbolLightSimpleMethod(
                 typeMappingMode,
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
                 suppressWildcards = suppressWildcards(),
+                forceValueClassResolution = canHaveValueClassInSignature(),
             )
         } ?: nonExistentType()
     }
+
+    /**
+     * @see org.jetbrains.kotlin.light.classes.symbol.methods.canHaveValueClassInSignature
+     */
+    fun canHaveValueClassInSignature(): Boolean = isTopLevel || withFunctionSymbol { it.hasJvmNameAnnotation() }
 
     override fun getReturnType(): PsiType = _returnedType
 }

@@ -170,6 +170,7 @@ internal fun KaAnnotatedSymbol.computeThrowsList(
                         allowErrorTypes = true,
                         KaTypeMappingMode.DEFAULT,
                         containingClass.isAnnotationType,
+                        forceValueClassResolution = false,
                     )
                     (psiType as? PsiClassType)?.let {
                         builder.addReference(it)

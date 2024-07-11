@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.light.classes.symbol.methods.canHaveValueClassInSignature
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class SymbolLightParameterCommon(
@@ -83,6 +84,7 @@ internal abstract class SymbolLightParameterCommon(
                     allowErrorTypes = true,
                     getTypeMappingMode(ktType),
                     suppressWildcards = parameterSymbol.suppressWildcardMode(),
+                    forceValueClassResolution = method.canHaveValueClassInSignature(),
                 )
             } ?: nonExistentType()
 

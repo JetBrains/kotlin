@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -82,7 +82,8 @@ internal class SymbolLightClassForEnumEntry(
             symbol.returnType.asPsiType(
                 this@SymbolLightClassForEnumEntry,
                 allowErrorTypes = true,
-                KaTypeMappingMode.SUPER_TYPE
+                KaTypeMappingMode.SUPER_TYPE,
+                forceValueClassResolution = false,
             ) as? PsiClassType
         } ?: return@lazyPub null
 

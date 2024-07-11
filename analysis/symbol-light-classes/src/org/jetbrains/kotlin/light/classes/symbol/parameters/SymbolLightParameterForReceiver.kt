@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAnnotationsMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
+import org.jetbrains.kotlin.light.classes.symbol.methods.canHaveValueClassInSignature
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
 
@@ -94,6 +95,7 @@ internal class SymbolLightParameterForReceiver private constructor(
                 allowErrorTypes = true,
                 getTypeMappingMode(ktType),
                 suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
+                forceValueClassResolution = method.canHaveValueClassInSignature(),
             )
 
             if (method is SymbolLightAnnotationsMethod) {
