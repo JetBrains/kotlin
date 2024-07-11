@@ -141,6 +141,13 @@ class ExtensionConfigurationTest {
     }
 
     @Test
+    fun enablePausableComposition() {
+        testComposeFeatureFlags(listOf("PausableComposition")) { extension ->
+            extension.featureFlags.value(setOf(ComposeFeatureFlag.PausableComposition))
+        }
+    }
+
+    @Test
     fun disableIntrinsicRememberCompatibility() {
         testComposeFeatureFlags(listOf("-IntrinsicRemember")) { extension ->
             @Suppress("DEPRECATION")

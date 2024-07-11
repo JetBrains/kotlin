@@ -76,6 +76,7 @@ enum class ParamState(val bits: Int) {
      * look at it.
      */
     Uncertain(0b000),
+
     /**
      * This indicates that the value is known to be the same since the last time the function was
      * executed. There is no need to store the value in the slot table in this case because the
@@ -83,6 +84,7 @@ enum class ParamState(val bits: Int) {
      * in the previous execution.
      */
     Same(0b001),
+
     /**
      * This indicates that the value is known to be different since the last time the function
      * was executed. There is no need to store the value in the slot table in this case because
@@ -90,6 +92,7 @@ enum class ParamState(val bits: Int) {
      * was in the previous execution.
      */
     Different(0b010),
+
     /**
      * This indicates that the value is known to *never change* for the duration of the running
      * program.
@@ -175,7 +178,7 @@ fun composeSyntheticParamCount(
     thisParams: Int = 0,
 ): Int {
     return 1 + // composer param
-        changedParamCount(realValueParams, thisParams)
+            changedParamCount(realValueParams, thisParams)
 }
 
 @JvmDefaultWithCompatibility
@@ -186,16 +189,19 @@ interface IrChangedBitMaskValue {
     fun irIsolateBitsAtSlot(slot: Int, includeStableBit: Boolean): IrExpression
     fun irSlotAnd(slot: Int, bits: Int): IrExpression
     fun irHasDifferences(usedParams: BooleanArray): IrExpression
+    fun irRestartFlags(): IrExpression
     fun irCopyToTemporary(
         nameHint: String? = null,
         isVar: Boolean = false,
         exactName: Boolean = false
     ): IrChangedBitMaskVariable
+
     fun putAsValueArgumentInWithLowBit(
         fn: IrFunctionAccessExpression,
         startIndex: Int,
         lowBit: Boolean
     )
+
     fun irShiftBits(fromSlot: Int, toSlot: Int): IrExpression
     fun irStableBitAtSlot(slot: Int): IrExpression
 }
@@ -472,6 +478,18 @@ class ComposableFunctionBodyTransformer(
             .first {
                 it.name == ComposeNames.ENDRESTARTGROUP && it.valueParameters.size == 0
             }
+    }
+
+    private val shouldExecuteFunction by guardedLazy {
+        if (FeatureFlag.PausableComposition.enabled)
+            composerIrClass
+                .functions
+                .firstOrNull {
+                    it.name == ComposeNames.SHOULD_EXECUTE && it.valueParameters.size == 2 &&
+                            it.valueParameters.first().type.isBoolean() &&
+                            it.valueParameters.drop(1).first().type.isInt()
+                }
+        else null
     }
 
     private val sourceInformationFunction by guardedLazy {
@@ -987,11 +1005,10 @@ class ComposableFunctionBodyTransformer(
             // 1. if any of the stable parameters have *differences* from last execution.
             // 2. if the composer.skipping call returns false
             // 3. function is inline
-            val shouldExecute = irOrOr(
+            val shouldExecute = irShouldExecute(
                 dirtyForSkipping.irHasDifferences(scope.usedParams),
-                irNot(irIsSkipping())
+                dirtyForSkipping.irRestartFlags(),
             )
-
             val transformedBody = irIfThenElse(
                 condition = shouldExecute,
                 thenPart = irBlock(
@@ -1157,9 +1174,9 @@ class ComposableFunctionBodyTransformer(
 
             // (3) is only necessary to check if we actually have unstable params, so we only
             // generate that check if we need to.
-            var shouldExecute = irOrOr(
+            var shouldExecute = irShouldExecute(
                 dirtyForSkipping.irHasDifferences(scope.usedParams),
-                irNot(irIsSkipping())
+                dirtyForSkipping.irRestartFlags(),
             )
 
             // boolean array mapped to parameters. true indicates that the type is unstable
@@ -1762,6 +1779,22 @@ class ComposableFunctionBodyTransformer(
 
     private fun irIsSkipping() =
         irMethodCall(irCurrentComposer(), isSkippingFunction.getter!!)
+
+    private fun irShouldExecute(parametersChanged: IrExpression, flags: IrExpression): IrExpression {
+        val shouldExecuteFunction = shouldExecuteFunction
+        return if (shouldExecuteFunction != null) {
+            irMethodCall(irCurrentComposer(), shouldExecuteFunction).apply {
+                putValueArgument(0, parametersChanged)
+                putValueArgument(1, flags)
+            }
+        } else {
+            irOrOr(
+                parametersChanged,
+                irNot(irIsSkipping())
+            )
+        }
+    }
+
     private fun irDefaultsInvalid() =
         irMethodCall(irCurrentComposer(), defaultsInvalidFunction.getter!!)
 
@@ -4510,6 +4543,9 @@ class ComposableFunctionBodyTransformer(
                 irBitsForSlot(bits, slot)
             )
         }
+
+        // The restart flag is always in the first parameter flags (or the implied changed parameter for 0 parameters)
+        override fun irRestartFlags(): IrExpression = irAnd(irGet(params[0]), irConst(1))
 
         override fun irHasDifferences(
             usedParams: BooleanArray
