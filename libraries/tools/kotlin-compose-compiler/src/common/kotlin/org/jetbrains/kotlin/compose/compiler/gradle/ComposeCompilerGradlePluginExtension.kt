@@ -129,7 +129,7 @@ abstract class ComposeCompilerGradlePluginExtension @Inject constructor(objectFa
      * For more information, see this link:
      *  - [composition tracing blog post](https://medium.com/androiddevelopers/jetpack-compose-composition-tracing-9ec2b3aea535)
      */
-    val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+    val includeTraceMarkers: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
 
     /**
      * A set of Kotlin platforms to which the Compose plugin will be applied.

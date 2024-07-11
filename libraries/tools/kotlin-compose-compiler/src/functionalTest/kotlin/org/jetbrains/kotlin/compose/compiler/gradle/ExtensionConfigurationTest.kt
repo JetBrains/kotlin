@@ -24,7 +24,7 @@ class ExtensionConfigurationTest {
                 listOf(
                     "generateFunctionKeyMetaClasses" to "false",
                     "sourceInformation" to "false",
-                    "traceMarkersEnabled" to "false",
+                    "traceMarkersEnabled" to "true",
                 ),
                 options
             )

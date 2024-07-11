@@ -59,7 +59,7 @@ class ComposeIT : KGPBaseTest() {
                     ":compileDebugKotlin",
                     "-P plugin:androidx.compose.compiler.plugins.kotlin:generateFunctionKeyMetaClasses=false," +
                             "plugin:androidx.compose.compiler.plugins.kotlin:sourceInformation=false," +
-                            "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=false",
+                            "plugin:androidx.compose.compiler.plugins.kotlin:traceMarkersEnabled=true",
                     LogLevel.INFO
                 )
             }
