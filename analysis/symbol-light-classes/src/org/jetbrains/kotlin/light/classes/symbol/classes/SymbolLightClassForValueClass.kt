@@ -66,10 +66,15 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
         withClassSymbol { classSymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val declaredMemberScope = classSymbol.declaredMemberScope
-            val applicableDeclarations = declaredMemberScope.callables.filter {
-                (it as? KaPropertySymbol)?.isOverride == true || (it as? KaNamedFunctionSymbol)?.isOverride == true
-            }
+            // Value classes have overridden methods
+            val applicableDeclarations = classSymbol.declaredMemberScope
+                .callables
+                .filter {
+                    (it as? KaPropertySymbol)?.isOverride == true || (it as? KaNamedFunctionSymbol)?.isOverride == true
+                }
+                .filterNot {
+                    it.hasTypeForValueClassInSignature()
+                }
 
             createMethods(applicableDeclarations, result, suppressStatic = false)
 
