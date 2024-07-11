@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.FirRegularTowerDataContexts
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
@@ -27,8 +29,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -237,7 +241,22 @@ open class ReturnTypeCalculatorWithJump(
             return tryCalculateReturnType(declaration.getter.delegate)
         }
 
-        val unwrappedDelegate = declaration.delegatedWrapperData?.wrapped
+        val unwrappedDelegate = declaration.delegatedWrapperData?.wrapped ?: declaration.delegatedWrapperData2?.let { attr ->
+            declaration.moduleData.session.symbolProvider.getClassLikeSymbolByClassId(attr.wrappedClassId)?.let { classSymbol ->
+                (classSymbol as? FirClassSymbol<*>)?.unsubstitutedScope(declaration.moduleData.session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)?.let {
+                    val res = mutableListOf<FirCallableDeclaration>()
+                    when (this) {
+                        is FirFunction -> it.processFunctionsByName(attr.wrappedName) { fn ->
+                            res.add(fn.fir as FirCallableDeclaration)
+                        }
+                        is FirProperty -> it.processPropertiesByName(attr.wrappedName) { prop ->
+                            res.add(prop.fir as FirCallableDeclaration)
+                        }
+                    }
+                    res.firstOrNull() // it is suspicious if not found or many found
+                }
+            }
+        }
         if (unwrappedDelegate != null) {
             return tryCalculateReturnType(unwrappedDelegate).also {
                 if (declaration.returnTypeRef is FirImplicitTypeRef) {
