@@ -640,6 +640,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("illegalCharsInPackageWithDots.kt")
+    public void testIllegalCharsInPackageWithDots() {
+      runTest("compiler/testData/diagnostics/tests/illegalCharsInPackageWithDots.kt");
+    }
+
+    @Test
     @TestMetadata("implicitIntersection.kt")
     public void testImplicitIntersection() {
       runTest("compiler/testData/diagnostics/tests/implicitIntersection.kt");
