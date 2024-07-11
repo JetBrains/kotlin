@@ -367,6 +367,30 @@ public class SymbolLightClassesEqualityByFqNameForLibraryTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("valueClassMembers.kt")
+  public void testValueClassMembers() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassMembers.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithInternalParam.kt")
+  public void testValueClassWithInternalParam() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithInternalParam.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithPrivateParam.kt")
+  public void testValueClassWithPrivateParam() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithPrivateParam.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithValueClass.kt")
+  public void testValueClassWithValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("VarArgs.kt")
   public void testVarArgs() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");

@@ -367,6 +367,30 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("valueClassMembers.kt")
+  public void testValueClassMembers() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassMembers.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithInternalParam.kt")
+  public void testValueClassWithInternalParam() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithInternalParam.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithPrivateParam.kt")
+  public void testValueClassWithPrivateParam() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithPrivateParam.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithValueClass.kt")
+  public void testValueClassWithValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("VarArgs.kt")
   public void testVarArgs() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
@@ -559,6 +583,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
     @TestMetadata("unresolvedQuialifierInAnnotation.kt")
     public void testUnresolvedQuialifierInAnnotation() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/unresolvedQuialifierInAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("valueClassInSuperType.kt")
+    public void testValueClassInSuperType() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/valueClassInSuperType.kt");
     }
 
     @Test
