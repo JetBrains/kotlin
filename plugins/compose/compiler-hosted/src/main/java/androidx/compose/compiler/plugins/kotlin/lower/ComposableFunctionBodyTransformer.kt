@@ -3700,6 +3700,8 @@ class ComposableFunctionBodyTransformer(
     override fun visitWhen(expression: IrWhen): IrExpression {
         if (!isInComposableScope) return super.visitWhen(expression)
 
+        val optimizeGroups = FeatureFlag.OptimizeNonSkippingGroups.enabled && !currentFunctionScope.function.hasExplicitGroups
+
         // Composable calls in conditions are more expensive than composable calls in the different
         // result branches of the when clause. This is because if we have N branches of a when
         // clause, we will always execute exactly 1 result branch, but we will execute 0-N of the
@@ -3777,7 +3779,7 @@ class ComposableFunctionBodyTransformer(
         // same number of groups if any of the results have composable functions
         // and it needs to be the same number even if only one branch requires a
         // group.
-        val needsResultGroups = if (FeatureFlag.OptimizeNonSkippingGroups.enabled) {
+        val needsResultGroups = if (optimizeGroups) {
             resultsWithCalls > 0
         } else {
             resultsWithCalls > 1 && !needsWrappingGroup
@@ -3816,7 +3818,7 @@ class ComposableFunctionBodyTransformer(
 
         forEachWith(transformed.branches, condScopes, resultScopes) { it, condScope, resultScope ->
             if (condScope.hasComposableCalls) {
-                if (needsWrappingGroup && !FeatureFlag.OptimizeNonSkippingGroups.enabled) {
+                if (needsWrappingGroup && !optimizeGroups) {
                     // Generate a group around the conditional block when it has a composable call
                     // in it and we are generating a group around when block.
                     it.condition = it.condition.asReplaceGroup(condScope)
@@ -3836,7 +3838,7 @@ class ComposableFunctionBodyTransformer(
                 // the block has composable calls. The check of the feature flag check here is redundant
                 // as needsBranchGroups will be true if any result scope has composable calls but it
                 // is here redundantly so when this flag is removed this code will be updated.
-                !FeatureFlag.OptimizeNonSkippingGroups.enabled && (needsWrappingGroup && resultScope.hasComposableCalls)
+                !optimizeGroups && (needsWrappingGroup && resultScope.hasComposableCalls)
             ) {
                 it.result = it.result.asReplaceGroup(resultScope)
             }
@@ -3849,7 +3851,7 @@ class ComposableFunctionBodyTransformer(
         }
 
         if (
-            FeatureFlag.OptimizeNonSkippingGroups.enabled && needsResultGroups && (
+            optimizeGroups && needsResultGroups && (
                     transformed.origin == IrStatementOrigin.ANDAND || transformed.origin == IrStatementOrigin.OROR
                     )
         ) {
@@ -3860,7 +3862,7 @@ class ComposableFunctionBodyTransformer(
         }
 
         return when {
-            ((!FeatureFlag.OptimizeNonSkippingGroups.enabled && resultsWithCalls == 1) || needsWrappingGroup) ->
+            ((!optimizeGroups && resultsWithCalls == 1) || needsWrappingGroup) ->
                 transformed.asCoalescableGroup(whenScope)
             else -> transformed
         }

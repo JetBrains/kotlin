@@ -1,0 +1,36 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@ExplicitGroupsComposable
+@Composable
+inline fun Test(active: Boolean, content: @Composable () -> Unit) {
+    currentComposer.startReusableGroup(1, null)
+    if (active) {
+        content()
+    } else {
+        currentComposer.deactivateToEndGroup(false)
+    }
+    currentComposer.endReusableGroup()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@ExplicitGroupsComposable
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Test(active: Boolean, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer.startReusableGroup(1, null)
+  %composer.startReplaceGroup(<>)
+  if (active) {
+    content(%composer, 0b1110 and %changed shr 0b0011)
+  } else {
+    %composer.deactivateToEndGroup(false)
+  }
+  %composer.endReplaceGroup()
+  %composer.endReusableGroup()
+}
