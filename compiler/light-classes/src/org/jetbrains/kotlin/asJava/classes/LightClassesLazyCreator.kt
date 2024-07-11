@@ -19,7 +19,7 @@ class LightClassesLazyCreator(private val project: Project) : KotlinClassInnerSt
     override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>) = object : Lazy<T> {
         private val lock = ReentrantLock()
         private val holder = lazyPub {
-            PsiCachedValueImpl(PsiManager.getInstance(project)) {
+            PsiCachedValueImpl.Soft(PsiManager.getInstance(project)) {
                 val v = initializer()
                 CachedValueProvider.Result.create(v, dependencies)
             }
