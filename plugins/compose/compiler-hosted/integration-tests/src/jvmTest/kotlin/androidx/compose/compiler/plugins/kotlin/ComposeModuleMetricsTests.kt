@@ -151,7 +151,8 @@ class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(
               "featureFlags": {
                 "StrongSkipping": false,
                 "IntrinsicRemember": true,
-                "OptimizeNonSkippingGroups": false
+                "OptimizeNonSkippingGroups": false,
+                "PausableComposition": false
               }
             }
         """
