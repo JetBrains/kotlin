@@ -60,6 +60,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     public void testAssociatedObjects1_testGlobalOptimizations2() {
       runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects1_testGlobalOptimizations2.kt");
     }
+
+    @Test
+    @TestMetadata("associatedObjects_multiFile.kt")
+    public void testAssociatedObjects_multiFile() {
+      runTest("native/native.tests/testData/codegen/associatedObjects/associatedObjects_multiFile.kt");
+    }
   }
 
   @Nested
