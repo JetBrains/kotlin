@@ -62,13 +62,13 @@ internal val jvmCodegenPhases = SameTypeNamedCompilerPhase(
     lower = performByIrFile(
         name = "CodegenByIrFileMultifileFacades",
         description = "Code generation by IrFile, multifile facades",
-        copyBeforeLowering = false,
-        lower = createFilePhases(::CodegenMultifileFacades)
+        lower = createFilePhases(::CodegenMultifileFacades),
+        supportParallel = true,
     ) then performByIrFile(
         name = "CodegenByIrFileRegular",
         description = "Code generation by IrFile, regular files",
-        copyBeforeLowering = false,
-        lower = createFilePhases(::CodegenRegular)
+        lower = createFilePhases(::CodegenRegular),
+        supportParallel = true,
     ) then createModulePhases(::GenerateAdditionalClassesPhase).single()
 )
 

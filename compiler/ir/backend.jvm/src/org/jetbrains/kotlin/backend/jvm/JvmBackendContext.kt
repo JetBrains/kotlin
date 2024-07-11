@@ -109,7 +109,7 @@ class JvmBackendContext(
 
     val bridgeLoweringCache = BridgeLoweringCache(this)
 
-    override var inVerbosePhase: Boolean = false // TODO: needs parallelizing
+    override var inVerbosePhase: Boolean = false
 
     override val configuration get() = state.configuration
 
@@ -158,67 +158,6 @@ class JvmBackendContext(
         builder.irBlock {
             +super.throwUninitializedPropertyAccessException(builder, name)
         }
-
-    override fun handleDeepCopy(
-        fileSymbolMap: MutableMap<IrFileSymbol, IrFileSymbol>,
-        classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
-        functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>,
-    ) {
-        val oldClassesWithNameOverride = classNameOverride.keys.toList()
-        for (klass in oldClassesWithNameOverride) {
-            classSymbolMap[klass.symbol]?.let { newSymbol ->
-                classNameOverride[newSymbol.owner] = classNameOverride[klass]!!
-            }
-        }
-        for (multifileFacade in multifileFacadesToAdd) {
-            val oldPartClasses = multifileFacade.value
-            val newPartClasses = oldPartClasses.map { classSymbolMap[it.symbol]?.owner ?: it }
-            multifileFacade.setValue(newPartClasses.toMutableList())
-        }
-
-        for ((staticReplacement, original) in multiFieldValueClassReplacements.originalFunctionForStaticReplacement) {
-            if (staticReplacement !is IrSimpleFunction) continue
-            val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
-            val newStaticReplacement = multiFieldValueClassReplacements.getReplacementFunction(newOriginal) ?: continue
-            functionSymbolMap[staticReplacement.symbol] = newStaticReplacement.symbol
-        }
-
-        for ((methodReplacement, original) in multiFieldValueClassReplacements.originalFunctionForMethodReplacement) {
-            if (methodReplacement !is IrSimpleFunction) continue
-            val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
-            val newMethodReplacement = multiFieldValueClassReplacements.getReplacementFunction(newOriginal) ?: continue
-            functionSymbolMap[methodReplacement.symbol] = newMethodReplacement.symbol
-        }
-
-        for ((staticReplacement, original) in inlineClassReplacements.originalFunctionForStaticReplacement) {
-            if (staticReplacement !is IrSimpleFunction) continue
-            val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
-            val newStaticReplacement = inlineClassReplacements.getReplacementFunction(newOriginal) ?: continue
-            functionSymbolMap[staticReplacement.symbol] = newStaticReplacement.symbol
-        }
-
-        for ((methodReplacement, original) in inlineClassReplacements.originalFunctionForMethodReplacement) {
-            if (methodReplacement !is IrSimpleFunction) continue
-            val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
-            val newMethodReplacement = inlineClassReplacements.getReplacementFunction(newOriginal) ?: continue
-            functionSymbolMap[methodReplacement.symbol] = newMethodReplacement.symbol
-        }
-
-        for ((original, suspendView) in suspendFunctionOriginalToView) {
-            val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
-            val newSuspendView = suspendFunctionOriginalToView[newOriginal] ?: continue
-            functionSymbolMap[suspendView.symbol] = newSuspendView.symbol
-        }
-
-        for ((nonStaticDefaultSymbol, staticDefault) in staticDefaultStubs) {
-            val staticDefaultSymbol = staticDefault.symbol
-            val newNonStaticDefaultSymbol = functionSymbolMap[nonStaticDefaultSymbol] ?: continue
-            val newStaticDefaultSymbol = staticDefaultStubs[newNonStaticDefaultSymbol]?.symbol ?: continue
-            functionSymbolMap[staticDefaultSymbol] = newStaticDefaultSymbol
-        }
-
-        super.handleDeepCopy(fileSymbolMap, classSymbolMap, functionSymbolMap)
-    }
 
     override val preferJavaLikeCounterLoop: Boolean
         get() = true

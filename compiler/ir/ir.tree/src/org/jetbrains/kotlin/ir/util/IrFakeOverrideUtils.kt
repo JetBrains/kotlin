@@ -44,16 +44,13 @@ fun <T : IrOverridableDeclaration<*>> Collection<T>.collectAndFilterRealOverride
     filter: (T) -> Boolean = { false }
 ): Set<T> {
     val visited = mutableSetOf<T>()
-    val realOverrides = mutableMapOf<Any, T>()
-
-    // Due to IR copying in performByIrFile, overrides should only be distinguished up to their signatures.
-    fun T.toKey(): Any = symbol.signature ?: this
+    val realOverrides = mutableSetOf<T>()
 
     fun collectRealOverrides(member: T) {
         if (!visited.add(member) || filter(member)) return
 
         if (member.isReal && !toSkip(member)) {
-            realOverrides[member.toKey()] = member
+            realOverrides += member
         } else {
             @Suppress("UNCHECKED_CAST")
             for (overridden in member.overriddenSymbols) {
@@ -72,17 +69,17 @@ fun <T : IrOverridableDeclaration<*>> Collection<T>.collectAndFilterRealOverride
         for (overridden in member.overriddenSymbols) {
             @Suppress("UNCHECKED_CAST")
             val owner = overridden.owner as T
-            realOverrides.remove(owner.toKey())
+            realOverrides.remove(owner)
             excludeRepeated(owner)
         }
     }
 
     visited.clear()
-    for ((_, realOverride) in realOverrides.toList()) {
+    for (realOverride in realOverrides.toList()) {
         excludeRepeated(realOverride)
     }
 
-    return realOverrides.values.toSet()
+    return realOverrides
 }
 
 @Suppress("UNCHECKED_CAST")

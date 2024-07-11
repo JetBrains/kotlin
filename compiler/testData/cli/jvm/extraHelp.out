@@ -15,7 +15,7 @@ where advanced options include:
                              -Xassertions=jvm:            enable, depend on JVM assertion settings;
                              -Xassertions=legacy:         calculate the condition on each call, the behavior depends on JVM assertion settings in the kotlin package;
                              default: legacy
-  -Xbackend-threads=<N>      When using the IR backend, run lowerings by file in N parallel threads.
+  -Xbackend-threads=<N>      Run codegen phase in N parallel threads.
                              0 means use one thread per processor core.
                              The default value is 1.
   -Xbuild-file=<path>        Path to the .xml build file to compile.

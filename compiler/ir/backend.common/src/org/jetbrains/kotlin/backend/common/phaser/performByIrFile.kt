@@ -7,38 +7,27 @@ package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapperPreservingSignatures
-import org.jetbrains.kotlin.ir.util.deepCopySavingMetadata
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
 fun <Context : CommonBackendContext> performByIrFile(
-    name: String = "PerformByIrFile",
-    description: String = "Perform phases by IrFile",
-    copyBeforeLowering: Boolean = true,
+    name: String,
+    description: String,
     lower: List<CompilerPhase<Context, IrFile, IrFile>>,
+    supportParallel: Boolean,
 ): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
     SameTypeNamedCompilerPhase(
-        name, description, emptySet(), PerformByIrFilePhase(lower, copyBeforeLowering), emptySet(), emptySet(), emptySet(),
+        name, description, emptySet(), PerformByIrFilePhase(lower, supportParallel), emptySet(), emptySet(), emptySet(),
         setOf(getIrDumper()), nlevels = 1,
     )
 
 private class PerformByIrFilePhase<Context : CommonBackendContext>(
     private val lower: List<CompilerPhase<Context, IrFile, IrFile>>,
-    private val copyBeforeLowering: Boolean,
+    private val supportParallel: Boolean,
 ) : SameTypeCompilerPhase<Context, IrModuleFragment> {
     override fun invoke(
         phaseConfig: PhaseConfigurationService,
@@ -47,7 +36,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         input: IrModuleFragment
     ): IrModuleFragment {
         val nThreads = context.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
-        return if (nThreads > 1)
+        return if (supportParallel && nThreads > 1)
             invokeParallel(phaseConfig, phaserState, context, input, nThreads)
         else
             invokeSequential(phaseConfig, phaserState, context, input)
@@ -84,16 +73,9 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         // We can only report one exception through ISE
         val thrownFromThread = AtomicReference<Pair<Throwable, IrFile>?>(null)
 
-        val remappedFiles = mutableMapOf<IrFileSymbol, IrFileSymbol>()
-        val remappedFunctions = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
-        val remappedClasses = mutableMapOf<IrClassSymbol, IrClassSymbol>()
-
         // Each thread needs its own copy of phaserState.alreadyDone
         val filesAndStates = input.files.map {
-            if (copyBeforeLowering)
-                it.copySavingMappings(remappedFiles, remappedFunctions, remappedClasses) to phaserState.copyOf()
-            else
-                it to phaserState.copyOf()
+            it to phaserState.copyOf()
         }
 
         val executor = Executors.newFixedThreadPool(nThreads)
@@ -124,95 +106,10 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         // Presumably each thread has run through the same list of phases.
         phaserState.alreadyDone.addAll(filesAndStates[0].second.alreadyDone)
 
-        // Repair after working on copied files.
-        if (copyBeforeLowering) {
-            input.files.clear()
-            input.files.addAll(filesAndStates.map { (irFile, _) -> irFile }.toMutableList())
-
-            // Some remappers in handleDeepCopy depend on entries in remappedFunctions inserted by adjustDefaultArgumentStubs.
-            adjustDefaultArgumentStubs(context, remappedFunctions)
-            context.handleDeepCopy(remappedFiles, remappedClasses, remappedFunctions)
-            // and some entries in adjustDefaultArgumentStubs depend on those inserted by handleDeepCopy, so we need to repeat the call.
-            adjustDefaultArgumentStubs(context, remappedFunctions)
-
-            input.acceptChildrenVoid(CrossFileCallAdjuster(remappedFunctions))
-        }
-
         // TODO: no guarantee that module identity is preserved by `lower`
         return input
     }
 
     override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> =
         lower.flatMap { it.getNamedSubphases(startDepth) }
-}
-
-// We need to remap inline function calls after lowering files
-
-fun IrFile.copySavingMappings(
-    remappedFiles: MutableMap<IrFileSymbol, IrFileSymbol>,
-    remappedFunctions: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>,
-    remappedClasses: MutableMap<IrClassSymbol, IrClassSymbol>,
-): IrFile {
-    val symbolRemapper = DeepCopySymbolRemapperSavingFunctions()
-
-    val newIrFile = deepCopySavingMetadata(symbolRemapper = symbolRemapper)
-
-    for (function in symbolRemapper.declaredFunctions) {
-        remappedFunctions[function] = symbolRemapper.getReferencedSimpleFunction(function)
-    }
-    for (klass in symbolRemapper.declaredClasses) {
-        remappedClasses[klass] = symbolRemapper.getReferencedClass(klass)
-    }
-
-    remappedFiles[symbol] = newIrFile.symbol
-
-    return newIrFile
-}
-
-private class DeepCopySymbolRemapperSavingFunctions : DeepCopySymbolRemapperPreservingSignatures() {
-    val declaredFunctions = mutableSetOf<IrSimpleFunctionSymbol>()
-    val declaredClasses = mutableSetOf<IrClassSymbol>()
-
-    override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol {
-        declaredFunctions.add(symbol)
-        return super.getDeclaredSimpleFunction(symbol)
-    }
-
-    override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol {
-        declaredClasses.add(symbol)
-        return super.getDeclaredClass(symbol)
-    }
-}
-
-private fun adjustDefaultArgumentStubs(
-    context: CommonBackendContext,
-    remappedFunctions: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>,
-) {
-    for (defaultStub in context.mapping.defaultArgumentsOriginalFunction.keys) {
-        if (defaultStub !is IrSimpleFunction) continue
-        val original = context.mapping.defaultArgumentsOriginalFunction[defaultStub] as? IrSimpleFunction ?: continue
-        val originalNew = remappedFunctions[original.symbol]?.owner ?: continue
-        val defaultStubNew = originalNew.defaultArgumentsDispatchFunction ?: continue
-        remappedFunctions[defaultStub.symbol] = defaultStubNew.symbol as IrSimpleFunctionSymbol
-    }
-}
-
-private class CrossFileCallAdjuster(
-    val remappedFunctions: Map<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
-) : IrElementVisitorVoid {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildren(this, null)
-    }
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        declaration.overriddenSymbols = declaration.overriddenSymbols.map { remappedFunctions[it] ?: it }
-        declaration.acceptChildren(this, null)
-    }
-
-    override fun visitCall(expression: IrCall) {
-        expression.acceptChildren(this, null)
-        remappedFunctions[expression.symbol]?.let {
-            expression.symbol = it
-        }
-    }
 }

@@ -19,9 +19,6 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSupportForLowerings
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -46,13 +43,6 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
     }
 
     val mapping: Mapping
-
-    // Adjust internal structures after a deep copy of some declarations.
-    fun handleDeepCopy(
-        fileSymbolMap: MutableMap<IrFileSymbol, IrFileSymbol>,
-        classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
-        functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
-    ) {}
 
     fun isSideEffectFree(call: IrCall): Boolean {
         return false

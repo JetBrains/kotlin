@@ -189,7 +189,7 @@ to force diagnostics to be reported."""
     @Argument(
         value = "-Xbackend-threads",
         valueDescription = "<N>",
-        description = """When using the IR backend, run lowerings by file in N parallel threads.
+        description = """Run codegen phase in N parallel threads.
 0 means use one thread per processor core.
 The default value is 1."""
     )
