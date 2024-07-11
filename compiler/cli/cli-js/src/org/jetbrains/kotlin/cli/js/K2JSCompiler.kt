@@ -333,7 +333,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             friendLibraries = friendLibraries,
             configurationJs = configurationJs,
             mainCallArguments = mainCallArguments,
-            checkForClassStructuralChanges = arguments.wasm
         )
 
         // Run analysis if main module is sources
@@ -754,7 +753,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         friendLibraries: List<String>,
         configurationJs: CompilerConfiguration,
         mainCallArguments: List<String>?,
-        checkForClassStructuralChanges: Boolean,
     ): IcCachesArtifacts? {
         val cacheDirectory = arguments.cacheDirectory
 

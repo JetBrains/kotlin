@@ -105,6 +105,7 @@ class CacheUpdater(
     private val compilerConfiguration: CompilerConfiguration,
     private val icContext: PlatformDependentICContext,
     checkForClassStructuralChanges: Boolean = false,
+    private val completeLoadForKotlinTest: Boolean = false
 ) {
     private val stopwatch = StopwatchIC()
 
@@ -731,7 +732,7 @@ class CacheUpdater(
             irFactory = icContext.createIrFactory(),
             stubbedSignatures = stubbedSignatures
         )
-        var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
+        var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports, loadKotlinTest = completeLoadForKotlinTest)
 
         var iterations = 0
         var lastDirtyFiles: KotlinSourceFileMap<KotlinSourceFileExports> = dirtyFileExports
