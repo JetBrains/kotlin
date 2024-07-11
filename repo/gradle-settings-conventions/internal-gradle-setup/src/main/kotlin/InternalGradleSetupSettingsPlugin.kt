@@ -25,6 +25,10 @@ private val isInIdea
 
 internal const val CONSENT_DECISION_GRADLE_PROPERTY = "kotlin.build.internal.gradle.setup.consent.give"
 
+private val syntheticPropertiesGenerators = listOf(
+    BuildScanUsernameGenerator()
+)
+
 abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
     private val log = Logging.getLogger(javaClass)
 
@@ -65,7 +69,7 @@ abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
                     return
                 }
             }
-            modifier.applySetup(setupFile)
+            modifier.applySetup(setupFile, syntheticPropertiesGenerators)
             log.info("Automatic local.properties setup has been applied.")
         } catch (e: CannotRequestConsentWithinIdeException) {
             throw e
