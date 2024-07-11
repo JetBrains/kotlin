@@ -43,6 +43,7 @@ ant = "1.10.14"
 kotlin-for-gradle-plugins-compilation = "2.0.20-RC"
 intellij-asm = "9.0"
 diff-utils = "4.12"
+opentelemetry = "1.34.1"
 # Wasm specific
 wasmedge = "0.14.0"
 vavr = "0.10.4"
@@ -105,6 +106,7 @@ android-gradle-plugin-builder-model = { module = "com.android.tools.build:builde
 android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
 
 xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
+opentelemetry = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry" } # in use by the Intellij core
 
 ant = { module = "org.apache.ant:ant", version.ref = "ant" }
 intellij-asm = { module = "org.jetbrains.intellij.deps:asm-all", version.ref = "intellij-asm" }

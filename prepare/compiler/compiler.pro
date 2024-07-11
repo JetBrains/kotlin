@@ -1,11 +1,20 @@
 -dontnote **
 -dontwarn apple.awt.*
+-dontwarn com.google.auto.value.AutoValue
 -dontwarn com.google.common.util.concurrent.*
 -dontwarn com.google.errorprone.**
 -dontwarn com.google.j2objc.**
 -dontwarn com.google.j2objc.annotations.Weak
 # True warning, should be removed later: https://github.com/JetBrains/intellij-community/commit/e84b32f0620126b0e2b3a3f477cda8c1c9b5b4d2
 -dontwarn com.intellij.openapi.vfs.VirtualFileUtil
+-dontwarn com.intellij.platform.diagnostic.telemetry.AggregatedMetricExporter
+-dontwarn com.intellij.platform.diagnostic.telemetry.AsyncSpanExporter
+-dontwarn com.intellij.platform.diagnostic.telemetry.FilteredMetricsExporter*
+-dontwarn com.intellij.platform.diagnostic.telemetry.MetricsExporterEntry
+-dontwarn com.intellij.platform.diagnostic.telemetry.MetricsExtensionsKt
+-dontwarn com.intellij.platform.diagnostic.telemetry.MetricsImporterUtils*
+-dontwarn com.intellij.platform.diagnostic.telemetry.OpenTelemetryUtils*
+-dontwarn com.intellij.platform.diagnostic.telemetry.helpers.TraceKt*
 -dontwarn com.intellij.platform.util.progress.ProgressReporterKt
 -dontwarn com.intellij.platform.util.progress.RawProgressReporter
 -dontwarn com.intellij.psi.util.PsiClassUtil
@@ -34,6 +43,7 @@
 -dontwarn kotlinx.coroutines.future.FutureKt
 -dontwarn kotlinx.serialization.**
 -dontwarn net.sf.cglib.**
+-dontwarn io.opentelemetry.context.**
 -dontwarn org.apache.hadoop.io.compress.*
 -dontwarn org.apache.xerces.dom.**
 -dontwarn org.apache.xerces.util.**
