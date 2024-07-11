@@ -373,6 +373,12 @@ public class SymbolLightClassesEqualityByFqNameForLibraryTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("valueClassWithDelegatedSuperInterface.kt")
+  public void testValueClassWithDelegatedSuperInterface() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithDelegatedSuperInterface.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassWithInternalParam.kt")
   public void testValueClassWithInternalParam() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithInternalParam.kt");
@@ -382,6 +388,12 @@ public class SymbolLightClassesEqualityByFqNameForLibraryTestGenerated extends A
   @TestMetadata("valueClassWithPrivateParam.kt")
   public void testValueClassWithPrivateParam() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithPrivateParam.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithSuperInterface.kt")
+  public void testValueClassWithSuperInterface() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithSuperInterface.kt");
   }
 
   @Test
