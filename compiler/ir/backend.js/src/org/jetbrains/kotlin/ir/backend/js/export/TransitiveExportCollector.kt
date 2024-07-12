@@ -70,7 +70,10 @@ class TransitiveExportCollector(val context: JsIrBackendContext) {
     }
 
     private fun IrSimpleType.calculateTypeSubstitutionMap(typeSubstitutionMap: SubstitutionMap): SubstitutionMap {
-        val classifier = classOrNull ?: error("Unexpected classifier $classifier for collecting transitive hierarchy")
+        val classifier = classOrNull
+            ?: irError("Unexpected classifier for collecting transitive hierarchy") {
+                withIrEntry("classifier.owner", classifier.owner)
+            }
 
         return typeSubstitutionMap + classifier.owner.typeParameters.zip(arguments).associate {
             it.first.symbol to it.second.getSubstitution(typeSubstitutionMap)

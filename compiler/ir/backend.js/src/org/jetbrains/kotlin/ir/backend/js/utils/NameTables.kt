@@ -105,8 +105,14 @@ private fun List<IrType>.joinTypes(context: JsIrBackendContext): String {
 
 private fun IrFunction.findOriginallyContainingModule(): IrModuleFragment? {
     if (JsLoweredDeclarationOrigin.isBridgeDeclarationOrigin(origin)) {
-        val thisSimpleFunction = this as? IrSimpleFunction ?: error("Bridge must be IrSimpleFunction")
-        val bridgeFrom = thisSimpleFunction.overriddenSymbols.firstOrNull() ?: error("Couldn't find the overridden function for the bridge")
+        val thisSimpleFunction = this as? IrSimpleFunction
+            ?: irError("Bridge must be IrSimpleFunction") {
+                withIrEntry("this", this@findOriginallyContainingModule)
+            }
+        val bridgeFrom = thisSimpleFunction.overriddenSymbols.firstOrNull()
+            ?: irError("Couldn't find the overridden function for the bridge") {
+                withIrEntry("thisSimpleFunction", thisSimpleFunction)
+            }
         return bridgeFrom.owner.findOriginallyContainingModule()
     }
     return (getPackageFragment() as? IrFile)?.module
@@ -282,7 +288,9 @@ fun IrDeclarationWithName.nameIfPropertyAccessor(): String? {
                 val prefix = when (this) {
                     property.getter -> "get_"
                     property.setter -> "set_"
-                    else -> error("")
+                    else -> irError("") {
+                        withIrEntry("this", this@nameIfPropertyAccessor)
+                    }
                 }
                 prefix + name
             }

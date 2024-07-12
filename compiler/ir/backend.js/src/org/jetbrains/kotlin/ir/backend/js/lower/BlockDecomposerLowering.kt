@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -575,7 +576,11 @@ class BlockDecomposerTransformer(
                     lastIntrinsicCall.putValueArgument(0, nextCall)
                     lastIntrinsicCall = nextCall
                 }
-                saveToTmp = saveToTmp.getValueArgument(0) ?: error("expect passing 1 argument to boxing intrinsic")
+                saveToTmp = saveToTmp.getValueArgument(0)
+                    ?: irError("expect passing 1 argument to boxing intrinsic") {
+                        withIrEntry("arg", arg)
+                        withIrEntry("saveToTmp", saveToTmp)
+                    }
             }
 
             val irTempVar = makeTempVar(saveToTmp.type, saveToTmp)

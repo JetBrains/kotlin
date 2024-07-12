@@ -291,7 +291,9 @@ class JsIrBackendContext(
             override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 toUIntSymbols.associateBy {
                     it.owner.extensionReceiverParameter?.type?.classifierOrFail
-                        ?: error("Expected extension receiver for ${it.owner.render()}")
+                        ?: irError("Expected extension receiver for") {
+                            withIrEntry("it.owner", it.owner)
+                        }
                 }
             }
 
@@ -300,7 +302,9 @@ class JsIrBackendContext(
             override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 toULongSymbols.associateBy {
                     it.owner.extensionReceiverParameter?.type?.classifierOrFail
-                        ?: error("Expected extension receiver for ${it.owner.render()}")
+                        ?: irError("Expected extension receiver for") {
+                            withIrEntry("it.owner", it.owner)
+                        }
                 }
             }
         }

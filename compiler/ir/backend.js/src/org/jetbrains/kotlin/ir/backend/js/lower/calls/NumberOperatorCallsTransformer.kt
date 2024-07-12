@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -108,8 +109,10 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
     private fun transformRangeUntil(call: IrFunctionAccessExpression): IrExpression {
         if (call.valueArgumentsCount != 1) return call
         with(call.symbol.owner) {
-            val function = intrinsics.rangeUntilFunctions[dispatchReceiverParameter!!.type to valueParameters[0].type] ?:
-                error("No 'until' function found for descriptor: $this")
+            val function = intrinsics.rangeUntilFunctions[dispatchReceiverParameter!!.type to valueParameters[0].type]
+                ?: irError("No 'until' function found for descriptor") {
+                    withIrEntry("call.symbol.owner", call.symbol.owner)
+                }
             return irCall(call, function).apply {
                 extensionReceiver = dispatchReceiver
                 dispatchReceiver = null

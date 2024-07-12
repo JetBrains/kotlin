@@ -207,7 +207,9 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
     private fun IrExpression.unboxParamWithInlinedClass(): Pair<IrExpression, IrClass?> {
         val unboxed = (this as IrFunctionAccessExpression).getValueArgument(0)
-            ?: error("Boxed expression is expected")
+            ?: irError("Boxed expression is expected") {
+                withIrEntry("this", this@unboxParamWithInlinedClass)
+            }
         return Pair(unboxed, icUtils.getInlinedClass(unboxed.type))
     }
 

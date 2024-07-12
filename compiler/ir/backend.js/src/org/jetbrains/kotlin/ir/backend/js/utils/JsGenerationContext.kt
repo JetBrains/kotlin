@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
@@ -65,7 +66,9 @@ class JsGenerationContext(
                 JsName(sanitizeName(declaration.name.asString()), true)
             } else {
                 val name = localNames!!.variableNames.names[declaration]
-                    ?: error("Variable name is not found ${declaration.name}")
+                    ?: irError("Variable name is not found") {
+                        withIrEntry("declaration", declaration)
+                    }
                 JsName(name, true)
             }
         }

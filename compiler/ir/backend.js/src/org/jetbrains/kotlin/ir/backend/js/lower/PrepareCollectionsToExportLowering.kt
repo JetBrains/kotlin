@@ -99,7 +99,9 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
 
     private fun IrClass.addCompanionWithJsFactoryFunction() {
         val (factoryMethodName, factoryMethodForTheCollectionSymbol) =
-            typesToItsFactoryMethods[symbol] ?: error("Unexpected collection: ${fqNameWhenAvailable ?: name}")
+            typesToItsFactoryMethods[symbol] ?: irError("Unexpected collection") {
+                withIrEntry("this", this@addCompanionWithJsFactoryFunction)
+            }
 
         val companionObject = context.irFactory.createClass(
             startOffset = UNDEFINED_OFFSET,

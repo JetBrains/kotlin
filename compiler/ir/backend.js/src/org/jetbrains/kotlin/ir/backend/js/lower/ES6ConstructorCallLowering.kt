@@ -35,7 +35,11 @@ class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLowering
                     return super.visitConstructorCall(expression)
                 }
 
-                val factoryFunction = currentConstructor.constructorFactory ?: error("Replacement for the constructor is not found")
+                val factoryFunction = currentConstructor.constructorFactory
+                    ?: irError("Replacement for the constructor is not found") {
+                        withIrEntry("currentConstructor", currentConstructor)
+                        withIrEntry("expression", expression)
+                    }
 
                 if (expression.isInitCall) {
                     assert(factoryFunction.isInitFunction) { "Expect to have init function replacement" }
