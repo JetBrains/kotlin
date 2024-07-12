@@ -86,7 +86,6 @@ dependencies {
     }
     litmusktTestsuiteNativeKlib(project(":litmuskt:testsuite")) { isTransitive = false }
 
-// TODO: should be useful in the future
 // Implicit dependencies on native artifacts to run native tests on CI
 //    implicitDependencies("org.jetbrains.kotlinx:atomicfu-linuxx64:0.21.0") {
 //        attributes {
@@ -137,7 +136,8 @@ val nativeTest = nativeTest(
     taskName = "nativeTest",
     tag = "litmuskt-native", // Include all tests with the "litmuskt-native" tag.
     requirePlatformLibs = true,
-    customTestDependencies = listOf(litmusktCoreNativeKlib, litmusktTestsuiteNativeKlib)
+    customTestDependencies = listOf(litmusktCoreNativeKlib, litmusktTestsuiteNativeKlib),
+    allowParallelExecution = false,
 )
 
 tasks.named("check") {

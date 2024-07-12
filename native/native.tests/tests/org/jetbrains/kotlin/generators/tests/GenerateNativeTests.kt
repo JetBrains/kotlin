@@ -453,7 +453,17 @@ fun main() {
         testGroup("native/litmuskt/repo-tests/test", "native/litmuskt/repo-tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "LitmusKtTestsGenerated",
-                annotations = listOf(litmusktNative(), *standalone(), provider<UseStandardTestCaseGroupProvider>(), forceHostTarget())
+                annotations = listOf(
+                    litmusktNative(),
+                    *standalone(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    forceHostTarget(),
+                    annotation(
+                        EnforcedProperty::class.java,
+                        "property" to ClassLevelProperty.EXECUTION_TIMEOUT,
+                        "propertyValue" to "5m"
+                    ),
+                )
             ) {
                 model("standalone")
             }
