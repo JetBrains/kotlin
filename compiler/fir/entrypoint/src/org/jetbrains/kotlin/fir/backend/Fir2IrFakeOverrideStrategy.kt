@@ -72,7 +72,6 @@ class Fir2IrFakeOverrideStrategy(
 private data class DelegatedMemberInfo(
     val delegatedMember: IrOverridableDeclaration<*>,
     val delegateTargetFromBaseType: IrOverridableDeclaration<*>,
-    val classSymbolOfDelegateField: IrClassSymbol,
     val delegateField: IrField,
     val parent: IrClass,
 )
@@ -158,10 +157,6 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
         if (!fir2IrExtensions.shouldGenerateDelegatedMember(delegateTargetFromBaseType)) return
 
-        val delegateField = delegateFieldSymbol.owner
-
-        val classOfDelegateField = delegateField.type.unwrapTypeParameterType().classOrFail
-
         when (overridableMember) {
             is IrSimpleFunction -> overridableMember.updateDeclarationHeader()
             is IrProperty -> {
@@ -171,13 +166,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
             }
         }
 
-        delegatedInfos += DelegatedMemberInfo(
-            overridableMember,
-            delegateTargetFromBaseType,
-            classOfDelegateField,
-            delegateField,
-            parent
-        )
+        delegatedInfos += DelegatedMemberInfo(overridableMember, delegateTargetFromBaseType, delegateFieldSymbol.owner, parent)
     }
 
     private fun IrOverridableDeclaration<*>.updateDeclarationHeader() {
@@ -194,7 +183,8 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
     fun generateDelegatedBodies() {
         for (delegatedInfo in delegatedInfos) {
-            val (delegatedMember, delegateTargetFromBaseType, classSymbolOfDelegateField, delegateField, parent) = delegatedInfo
+            val (delegatedMember, delegateTargetFromBaseType, delegateField, parent) = delegatedInfo
+            val classSymbolOfDelegateField = delegateField.type.unwrapTypeParameterType().classOrFail
             when (delegatedMember) {
                 is IrSimpleFunction -> generateDelegatedFunctionBody(
                     delegatedMember,

@@ -292,7 +292,9 @@ private class Fir2IrPipeline(
     ): Pair<Fir2IrFakeOverrideStrategy, Fir2IrDelegatedMembersGenerationStrategy> {
         val (fakeOverrideBuilder, delegatedMembersGenerationStrategy) = createFakeOverrideBuilder(irActualizer)
         buildFakeOverrides(fakeOverrideBuilder)
-        delegatedMembersGenerationStrategy.generateDelegatedBodies()
+        if (!componentsStorage.configuration.skipBodies) {
+            delegatedMembersGenerationStrategy.generateDelegatedBodies()
+        }
         val fakeOverrideStrategy = fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy
         return fakeOverrideStrategy to delegatedMembersGenerationStrategy
     }
