@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -30,7 +29,8 @@ import org.jetbrains.kotlin.util.component2
  * See `/docs/fir/k2_kmp.md`
  *
  * @param useSiteSession Session to be used for classifier lookups, see [toSymbol]
- * @return Type, that is expanded to the concrete class type w.r.t to the [useSiteSession]
+ * @return Type, that is expanded to the concrete class type w.r.t to the [useSiteSession] or the same instance
+ * if top-level constructor is not expandable type alias
  */
 fun ConeClassLikeType.fullyExpandedType(
     useSiteSession: FirSession,
@@ -57,6 +57,7 @@ fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeClassLikeType? {
 
 /**
  * @see fullyExpandedType
+ * @return the expanded type or the same instance if top-level constructor is not expandable type alias
  */
 fun ConeKotlinType.fullyExpandedType(
     useSiteSession: FirSession,
@@ -64,11 +65,12 @@ fun ConeKotlinType.fullyExpandedType(
 ): ConeKotlinType = when (this) {
     is ConeDynamicType -> this
     is ConeFlexibleType -> {
-        val lower = lowerBound.fullyExpandedType(useSiteSession, expandedConeType)
-        val upper = upperBound.fullyExpandedType(useSiteSession, expandedConeType)
+        val expandedLower = lowerBound.fullyExpandedType(useSiteSession, expandedConeType)
+        val expandedUpper = upperBound.fullyExpandedType(useSiteSession, expandedConeType)
         when {
-            this is ConeRawType -> ConeRawType.create(lower, upper)
-            else -> ConeFlexibleType(lower, upper)
+            expandedLower === lowerBound && expandedUpper === upperBound -> this
+            this is ConeRawType -> ConeRawType.create(expandedLower, expandedUpper)
+            else -> ConeFlexibleType(expandedLower, expandedUpper)
         }
     }
     is ConeClassLikeType -> fullyExpandedType(useSiteSession, expandedConeType)
