@@ -75,6 +75,13 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
                 !it.path.contains("robolectric") && it.extension != "xml"
             }.toList()
         }
+
+        val defaultClassLoader by lazy {
+            URLClassLoader(
+                defaultClassPath.map { it.toURI().toURL() }.toTypedArray(),
+                this::class.java.classLoader
+            )
+        }
     }
 
     private val testRootDisposable = Disposer.newDisposable()
@@ -161,12 +168,14 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
         additionalPaths: List<File> = listOf(),
         forcedFirSetting: Boolean? = null
     ): GeneratedClassLoader {
-        val classLoader = URLClassLoader(
-            (additionalPaths + defaultClassPath).map {
-                it.toURI().toURL()
-            }.toTypedArray(),
-            this.javaClass.classLoader
-        )
+        val classLoader = if (additionalPaths.isNotEmpty()) {
+            URLClassLoader(
+                additionalPaths.map { it.toURI().toURL() }.toTypedArray(),
+                defaultClassLoader
+            )
+        } else {
+            defaultClassLoader
+        }
         return GeneratedClassLoader(
             createCompilerFacade(additionalPaths, forcedFirSetting)
                 .compile(platformSourceFiles, commonSourceFiles).factory,
