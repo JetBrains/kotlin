@@ -92,7 +92,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
                 val frameworkParentDirPath = framework.outputDirectory.absolutePath
                 val options = listOf("-O", "-wmo", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
                 compileSwift(project, nativeTarget.konanTarget, benchmark.swiftSources, options,
-                        Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName), false)
+                        Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName))
             }
         }
     }
@@ -106,14 +106,15 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         return try {
             val processBuilder = ProcessBuilder(*this)
                     .directory(workingDir)
+                    .redirectErrorStream(true)
                     .redirectOutput(ProcessBuilder.Redirect.PIPE)
-                    .redirectError(ProcessBuilder.Redirect.PIPE)
             env.forEach { key, value ->
                 processBuilder.environment().set(key, value)
             }
-            processBuilder.start().apply {
-                waitFor(timeoutAmount, timeoutUnit)
-            }.inputStream.bufferedReader().readText()
+            val process = processBuilder.start()
+            val output = process.inputStream.bufferedReader().readText()
+            process.waitFor(timeoutAmount, timeoutUnit)
+            return output
         } catch (e: Exception) {
             println("Couldn't run command ${this.joinToString(" ")}")
             println(e.stackTrace.joinToString("\n"))
@@ -122,7 +123,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     }
     fun compileSwift(
             project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
-            output: Path, fullBitcode: Boolean = false
+            output: Path
     ) {
         val platform = project.platformManager.platform(target)
         assert(platform.configurables is AppleConfigurables)
@@ -132,8 +133,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
         val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
-                options + "-o" + output.toString() + sources +
-                if (fullBitcode) listOf("-embed-bitcode", "-Xlinker", "-bitcode_verify") else listOf("-embed-bitcode-marker")
+                options + "-o" + output.toString() + sources
 
         val out = mutableListOf<String>().apply {
             add(compiler)
