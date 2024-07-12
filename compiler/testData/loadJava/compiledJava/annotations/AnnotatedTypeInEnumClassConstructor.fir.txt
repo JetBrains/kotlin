@@ -1,0 +1,12 @@
+public/*package*/ open class AnnotatedTypeInEnumClassConstructor : R|kotlin/Any| {
+    public/*package*/ constructor(): R|test/AnnotatedTypeInEnumClassConstructor|
+
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.TYPE; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/AnnotatedTypeInEnumClassConstructor.Anno|
+
+    }
+    public/*package*/ open inner class JavaEnum : R|kotlin/Any| {
+        public/*package*/ test/AnnotatedTypeInEnumClassConstructor.constructor(@R|test/AnnotatedTypeInEnumClassConstructor.Anno|(value = String(a)) a: R|@R|test/AnnotatedTypeInEnumClassConstructor.Anno|(value = String(a))  kotlin/String!|, @R|test/AnnotatedTypeInEnumClassConstructor.Anno|(value = String(b)) b: R|@R|test/AnnotatedTypeInEnumClassConstructor.Anno|(value = String(b))  kotlin/String!|): R|test/AnnotatedTypeInEnumClassConstructor.JavaEnum|
+
+    }
+}

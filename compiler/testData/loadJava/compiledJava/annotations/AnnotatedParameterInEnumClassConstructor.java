@@ -1,7 +1,7 @@
 // SKIP_IN_FIR_TEST
 package test;
 
-class AnnotatedParameterInInnerClassConstructor {
+class AnnotatedParameterInEnumClassConstructor {
 
     public @interface Anno {
         String value();

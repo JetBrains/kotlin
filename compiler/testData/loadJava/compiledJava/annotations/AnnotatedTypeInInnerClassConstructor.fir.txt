@@ -1,0 +1,16 @@
+public/*package*/ open class AnnotatedTypeInInnerClassConstructor : R|kotlin/Any| {
+    public/*package*/ constructor(): R|test/AnnotatedTypeInInnerClassConstructor|
+
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.TYPE; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/AnnotatedTypeInInnerClassConstructor.Anno|
+
+    }
+    public/*package*/ open inner class Inner : R|kotlin/Any| {
+        public/*package*/ test/AnnotatedTypeInInnerClassConstructor.constructor(@R|test/AnnotatedTypeInInnerClassConstructor.Anno|(value = String(a)) a: R|@R|test/AnnotatedTypeInInnerClassConstructor.Anno|(value = String(a))  kotlin/String!|, @R|test/AnnotatedTypeInInnerClassConstructor.Anno|(value = String(b)) b: R|@R|test/AnnotatedTypeInInnerClassConstructor.Anno|(value = String(b))  kotlin/String!|): R|test/AnnotatedTypeInInnerClassConstructor.Inner|
+
+    }
+    public/*package*/ open inner class InnerGeneric<T : R|kotlin/Any!|> : R|kotlin/Any| {
+        public/*package*/ test/AnnotatedTypeInInnerClassConstructor.constructor<T : R|kotlin/Any!|>(@R|test/AnnotatedTypeInInnerClassConstructor.Anno|(value = String(a)) a: R|@R|test/AnnotatedTypeInInnerClassConstructor.Anno|(value = String(a))  kotlin/String!|, @R|test/AnnotatedTypeInInnerClassConstructor.Anno|(value = String(b)) b: R|@R|test/AnnotatedTypeInInnerClassConstructor.Anno|(value = String(b))  kotlin/String!|): R|test/AnnotatedTypeInInnerClassConstructor.InnerGeneric<T>|
+
+    }
+}
