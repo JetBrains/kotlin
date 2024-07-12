@@ -496,4 +496,27 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         val compilationResult = compileToExecutableInOneStage(testCase).assertSuccess()
         runExecutableAndVerify(testCase, TestExecutable.fromCompilationResult(testCase, compilationResult))
     }
+
+    @Test
+    @TestMetadata("xcode16SimdHeadersWorkaround.kt")
+    fun testSimdWorkaround() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val (testCase, success) = compileDefAndKtToExecutable(
+            testName = "simd",
+            defFile = interopObjCDir.resolve("xcode16SimdHeadersWorkaround.def"),
+            ktFiles = listOf(interopObjCDir.resolve("xcode16SimdHeadersWorkaround.kt")),
+            freeCompilerArgs = TestCompilerArgs(
+                compilerArgs = emptyList(),
+                cinteropArgs = listOf("-xcode16SimdHeadersWorkaround")
+            ),
+            extras = TestCase.NoTestRunnerExtras("main"),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+        )
+        val testExecutable = TestExecutable(
+            success.resultingArtifact,
+            success.loggedData,
+            listOf(TestName("xcode16SimdHeadersWorkaround"))
+        )
+        runExecutableAndVerify(testCase, testExecutable)
+    }
 }

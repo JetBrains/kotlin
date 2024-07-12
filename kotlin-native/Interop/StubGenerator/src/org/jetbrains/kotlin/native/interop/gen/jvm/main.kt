@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.library.*
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.utils.KotlinNativePaths
@@ -41,8 +39,11 @@ import org.jetbrains.kotlin.native.interop.tool.*
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.suffixIfNot
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import java.nio.file.*
 import java.util.*
+import java.util.zip.ZipInputStream
 import kotlin.io.path.absolutePathString
 
 data class InternalInteropOptions(val generated: String, val natives: String, val manifest: String? = null,
@@ -305,7 +306,24 @@ private fun processCLib(
 
     val imports = parseImports(allLibraryDependencies)
 
-    val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
+    val vfsOverlayHeadersPath = cinteropArguments.vfsOverlayHeaders
+    val vfsOverlayCompilerArgs = if (vfsOverlayHeadersPath != null) {
+        createVfsoverlayArgumentsFromHeaderArchive(
+                sourceZip = FileInputStream(File(vfsOverlayHeadersPath)),
+                temporaryRoot = Files.createTempDirectory("vfsOverlayHeaders").toFile().also { it.deleteOnExit() },
+                sdkRoot = tool.sysRoot,
+        )
+    } else if (cinteropArguments.xcode16SimdHeadersWorkaround == true) {
+        createVfsoverlayArgumentsFromHeaderArchive(
+                sourceZip = ClangArgs::class.java.getResourceAsStream("/simdHeadersWorkaround.zip") ?: error("Simd workaround headers were not found"),
+                temporaryRoot = Files.createTempDirectory("simdVfsOverlayHeaders").toFile().also { it.deleteOnExit() },
+                sdkRoot = tool.sysRoot,
+        )
+    } else {
+        emptyList()
+    }
+
+    val library = buildNativeLibrary(tool, def, cinteropArguments, imports, vfsOverlayCompilerArgs)
 
     val plugin = Plugins.plugin(def.config.pluginName)
 
@@ -511,7 +529,8 @@ internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
         arguments: CInteropArguments,
-        imports: Imports
+        imports: Imports,
+        vfsOverlayArguments: List<String>,
 ): NativeLibrary {
     val additionalHeaders = (arguments.header).toTypedArray()
     val additionalCompilerOpts = (arguments.compilerOpts +
@@ -522,6 +541,7 @@ internal fun buildNativeLibrary(
     val compilerOpts: List<String> = mutableListOf<String>().apply {
         addAll(def.config.compilerOpts)
         addAll(tool.getDefaultCompilerOptsForLanguage(language))
+        addAll(vfsOverlayArguments)
         addAll(additionalCompilerOpts)
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see below)
@@ -596,3 +616,45 @@ fun parseKeyValuePairs(
         null
     }
 }.toMap()
+
+fun createVfsoverlayArgumentsFromHeaderArchive(
+    sourceZip: InputStream,
+    temporaryRoot: File,
+    sdkRoot: String,
+): List<String> {
+    val entries = mutableListOf<String>()
+    ZipInputStream(sourceZip).use { zip ->
+        for (entry in generateSequence { zip.nextEntry }) {
+            val file = temporaryRoot.resolve(entry.name)
+            if (!entry.isDirectory) {
+                file.parentFile.mkdirs()
+                file.writeBytes(zip.readBytes())
+                entries.add(entry.name)
+            }
+        }
+    }
+
+    val contents = entries.map {
+        "{ 'external-contents': \"${temporaryRoot}/${it}\", 'name': \"${it}\", 'type': 'file' }"
+    }.joinToString(",\n")
+
+    val headers = temporaryRoot.resolve("overlay.yaml")
+    headers.writeText(
+        """
+            {
+              'case-sensitive': 'false',
+              'roots': [
+                {
+                  "contents": [
+                    ${contents}
+                  ],
+                  'name': "${sdkRoot}/usr/include",
+                  'type': 'directory'
+                },
+              ],
+              'version': 0,
+            }
+        """.trimIndent()
+    )
+    return listOf("-ivfsoverlay", headers.path)
+}

@@ -109,7 +109,7 @@ kotlin {
             it.compilations.all {
                 cinterops {
                     register("XCTest") {
-                        compilerOpts("-iframework", copyTask.map { it.destinationDir }.get().absolutePath)
+                        compilerOpts("-iframework", copyTask.map { it.destinationDir }.get().absolutePath, "-D_Float16=short")
                         // cinterop task should depend on the framework copy task
                         tasks.named(interopProcessingTaskName).configure {
                             dependsOn(copyTask)

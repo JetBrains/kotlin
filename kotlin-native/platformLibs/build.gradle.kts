@@ -11,10 +11,27 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.utils.capitalized
+import java.io.FileOutputStream
+import java.net.URL
+import java.nio.channels.Channels
 
 plugins {
     id("base")
     id("platform-manager")
+}
+
+abstract class DownloadVfsOverlayHeaders : DefaultTask() {
+    @get:OutputFile
+    abstract val archivePath: RegularFileProperty
+
+    @TaskAction
+    fun run() {
+        FileOutputStream(archivePath.get().asFile).use { stream ->
+            Channels.newChannel(URL("https://packages.jetbrains.team/files/p/mpp/xcode16support/simdHeaders.zip").openStream()).use { channel ->
+                stream.channel.transferFrom(channel, 0, Long.MAX_VALUE)
+            }
+        }
+    }
 }
 
 // region: Util functions.
@@ -35,6 +52,11 @@ if (HostManager.host == KonanTarget.MACOS_ARM64) {
 }
 
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
+
+val downloadVfsOverlayHeadersTaskOutput = layout.buildDirectory.file("downloadVfsOverlayHeaders.zip")
+val downloadVfsOverlayHeadersTask = tasks.register<DownloadVfsOverlayHeaders>("downloadVfsOverlayHeaders") {
+    archivePath = downloadVfsOverlayHeadersTaskOutput
+}
 
 enabledTargets(platformManager).forEach { target ->
     val targetName = target.visibleName
@@ -68,6 +90,15 @@ enabledTargets(platformManager).forEach { target ->
                     "-no-default-libs",
                     "-no-endorsed-libs",
             )
+            if (HostManager.host.family.isAppleFamily) {
+                this.dependsOn(downloadVfsOverlayHeadersTask)
+                this.extraOpts.addAll(
+                    downloadVfsOverlayHeadersTaskOutput.map {
+                        listOf("-vfsOverlayHeaders", it.asFile.path)
+                    }
+                )
+            }
+
             this.compilerOpts.addAll(
                     "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
             )

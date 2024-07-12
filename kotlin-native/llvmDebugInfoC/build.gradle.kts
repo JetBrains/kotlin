@@ -29,7 +29,8 @@ native {
     val cxxflags = mutableListOf(
         "--std=c++${cxxStandard}",
         "-I${llvmIncludeDir}",
-        "-I${projectDir}/src/main/include"
+        "-I${projectDir}/src/main/include",
+        "-D_Float16=short",
     )
     suffixes {
         (".cpp" to ".$obj") {
