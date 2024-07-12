@@ -25,7 +25,7 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     bsm/audit.h \
     os/activity.h os/availability.h os/base.h os/lock.h \
     os/log.h os/object.h os/overflow.h os/signpost.h os/trace.h \
-    simd/simd.h sys/sysctl.h
+    simd/simd.h sys/sysctl.h mach/mach.h
 
 headerFilter = **
 
