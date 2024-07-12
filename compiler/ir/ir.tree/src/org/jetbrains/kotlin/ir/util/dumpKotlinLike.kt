@@ -76,10 +76,11 @@ data class KotlinLikeDumpOptions(
      */
     val printMemberDeclarations: Boolean = true,
 
+    /** When exactly the declaration visibility should be printed? */
+    val visibilityPrintingStrategy: VisibilityPrintingStrategy = VisibilityPrintingStrategy.PRINT_IF_NON_PUBLIC,
+
     /*
     TODO add more options:
-     always print visibility?
-     omit local visibility?
      always print modality
      print special names as is, and other strategies?
      print body for default accessors
@@ -106,6 +107,12 @@ enum class BodyPrintingStrategy {
     NO_BODIES,
     PRINT_ONLY_LOCAL_CLASSES_AND_FUNCTIONS,
     PRINT_BODIES,
+}
+
+enum class VisibilityPrintingStrategy {
+    ALWAYS,
+    PRINT_IF_NON_PUBLIC,
+    // TODO: omit local visibility?
 }
 
 /**
@@ -410,7 +417,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun printVisibility(visibility: DescriptorVisibility) {
         // TODO don't print visibility if it's not changed in override?
-        p(visibility, DescriptorVisibilities.DEFAULT_VISIBILITY) { name }
+        val shouldBePrinted = visibility != DescriptorVisibilities.DEFAULT_VISIBILITY ||
+                options.visibilityPrintingStrategy == VisibilityPrintingStrategy.ALWAYS
+
+        p(condition = shouldBePrinted, visibility.name)
     }
 
     private fun printParameterModifiersWithNoIndent(
