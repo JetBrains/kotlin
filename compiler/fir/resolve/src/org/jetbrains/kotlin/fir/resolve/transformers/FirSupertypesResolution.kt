@@ -853,7 +853,7 @@ open class SupertypeComputationSession {
                 typeRef.coneType -> typeRef
                 else -> {
                     if (session.languageVersionSettings.getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution)) {
-                        expanded.withAbbreviation(AbbreviatedTypeAttribute(typeRef.coneType)).let(typeRef::withReplacedConeType)
+                        expanded.let(typeRef::withReplacedConeType)
                     } else {
                         typeRef
                     }

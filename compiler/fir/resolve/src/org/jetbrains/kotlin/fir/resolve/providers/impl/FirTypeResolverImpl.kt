@@ -460,7 +460,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     aliasedTypeExpansionGloballyDisabled -> resolvedType
                     (expandTypeAliases || isFromLibraryDependency) && resolvedTypeSymbol is FirTypeAliasSymbol -> {
                         resolvedType.fullyExpandedType(resolvedTypeSymbol.moduleData.session)
-                            .withAbbreviation(AbbreviatedTypeAttribute(resolvedType))
                     }
                     else -> resolvedType
                 }
