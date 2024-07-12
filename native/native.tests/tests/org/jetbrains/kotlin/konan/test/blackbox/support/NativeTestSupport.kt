@@ -94,16 +94,26 @@ class SwiftExportTestSupport : BeforeEachCallback {
     }
 }
 
+/**
+ * Used to run tests for IR inlining and synthetic accessors. This test helper effectively does the following:
+ * - Enables IR visibility validation.
+ * - Disables LLVM-related phases, so the compilation effectively ends at the last IR lowering.
+ * - Enables experimental double inlining mode.
+ *
+ * TODO(KT-64570): Migrate these tests to the Core test infrastructure as soon as we move IR inlining to the 1st compilation stage.
+ */
 class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
         val settings = createTestRunSettings(computeKlibSyntheticAccessorTestInstances()) {
             with(RegisteredDirectivesBuilder()) {
                 +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
 
-                // Don't run LLVM, stop after the last IR lowering.
                 TestDirectives.FREE_COMPILER_ARGS with listOf(
+                    // Don't run LLVM, stop after the last IR lowering.
                     "-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker",
-                    "-Xklib-double-inlining"
+
+                    // Enable double-inlining.
+                    "-Xklib-double-inlining",
                 )
 
                 build()
