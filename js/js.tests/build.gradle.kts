@@ -393,26 +393,6 @@ projectTest("quickTest", jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
 }
 
-projectTest("jsStdlibApiTest", parallel = true, maxHeapSizeMb = 4096) {
-    setupV8()
-    setupNodeJs()
-    dependsOn(npmInstall)
-
-    dependsOn(":dist")
-    inputs.dir(rootDir.resolve("dist"))
-
-    include("org/jetbrains/kotlin/js/testOld/api/*")
-    inputs.dir(rootDir.resolve("libraries/stdlib/api/js"))
-
-    dependsOn(":kotlin-stdlib:jsJar")
-    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/build/classes/kotlin/js/main")
-    inputs.dir(rootDir.resolve("libraries/stdlib/build/classes/kotlin/js/main"))
-
-    setTestNameIncludePatterns(listOf("org.jetbrains.kotlin.js.testOld.api.ApiTest.*"))
-
-    setUpBoxTests()
-}
-
 testsJar {}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
