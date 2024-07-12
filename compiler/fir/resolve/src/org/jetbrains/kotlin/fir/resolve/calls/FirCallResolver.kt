@@ -918,7 +918,7 @@ class FirCallResolver(
         return FirNamedReferenceWithCandidate(source, name, candidate)
     }
 
-    private fun needTreatErrorCandidateAsResolved(candidate: Candidate): Boolean {
+    fun needTreatErrorCandidateAsResolved(candidate: Candidate): Boolean {
         return if (candidate.isCodeFragmentVisibilityError) {
             components.resolutionStageRunner.fullyProcessCandidate(candidate, transformer.resolutionContext)
             candidate.diagnostics.all { it.isSuccess || it.applicability == CandidateApplicability.K2_VISIBILITY_ERROR }

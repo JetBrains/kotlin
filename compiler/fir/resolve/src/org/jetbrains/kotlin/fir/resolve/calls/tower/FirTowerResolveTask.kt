@@ -65,7 +65,7 @@ internal abstract class FirBaseTowerResolveTask(
     protected val components: BodyResolveComponents,
     private val manager: TowerResolveManager,
     protected val towerDataElementsForName: TowerDataElementsForName,
-    private val collector: CandidateCollector,
+    protected val collector: CandidateCollector,
     private val candidateFactory: CandidateFactory
 ) {
     protected val session get() = components.session
@@ -74,6 +74,7 @@ internal abstract class FirBaseTowerResolveTask(
 
     open fun interceptTowerGroup(towerGroup: TowerGroup) = towerGroup
     open fun onSuccessfulLevel(towerGroup: TowerGroup) {}
+    open fun onFailHandler(finalGroup: TowerGroup) {}
 
     protected suspend inline fun processLevel(
         towerLevel: TowerScopeLevel,
@@ -212,7 +213,7 @@ internal abstract class FirBaseTowerResolveTask(
             finalGroup,
             towerLevel
         )
-        if (collector.isSuccess) onSuccessfulLevel(finalGroup)
+        if (collector.isSuccess) onSuccessfulLevel(finalGroup) else onFailHandler(finalGroup)
         return result == ProcessResult.SCOPE_EMPTY
     }
 }

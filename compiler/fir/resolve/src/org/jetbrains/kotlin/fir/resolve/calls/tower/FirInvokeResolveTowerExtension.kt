@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.util.CodeFragmentAdjustment
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -389,6 +390,15 @@ private class InvokeReceiverResolveTask(
 
     override fun onSuccessfulLevel(towerGroup: TowerGroup) {
         this.onSuccessfulLevel.invoke(towerGroup)
+    }
+
+    override fun onFailHandler(finalGroup: TowerGroup) {
+        val singleCandidate = collector.bestCandidates().singleOrNull() ?: return
+        if (components.callResolver.needTreatErrorCandidateAsResolved(singleCandidate)) {
+            @OptIn(CodeFragmentAdjustment::class)
+            singleCandidate.resetToResolved()
+            onSuccessfulLevel(finalGroup)
+        }
     }
 }
 
