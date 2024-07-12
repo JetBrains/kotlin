@@ -539,7 +539,7 @@ private class ElementsToShortenCollector(
         val typeElement = resolvedTypeRef.correspondingTypePsi ?: return
         if (typeElement.qualifier == null) return
 
-        val classifierId = resolvedTypeRef.type.abbreviatedTypeOrSelf.lowerBoundIfFlexible().candidateClassId ?: return
+        val classifierId = resolvedTypeRef.coneType.abbreviatedTypeOrSelf.lowerBoundIfFlexible().candidateClassId ?: return
 
         findClassifierQualifierToShorten(classifierId, typeElement)?.let(::addElementToShorten)
     }

@@ -88,7 +88,7 @@ class FirTypeDeserializer(
                 val builder = builders[index]
                 builder.apply {
                     proto.upperBounds(typeTable).mapTo(bounds) {
-                        buildResolvedTypeRef { type = type(it) }
+                        buildResolvedTypeRef { coneType = type(it) }
                     }
                     addDefaultBoundIfNecessary()
                 }.build()
@@ -130,7 +130,7 @@ class FirTypeDeserializer(
     fun typeRef(proto: ProtoBuf.Type): FirResolvedTypeRef {
         return buildResolvedTypeRef {
             annotations += annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-            type = type(proto, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
+            coneType = type(proto, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
         }
     }
 

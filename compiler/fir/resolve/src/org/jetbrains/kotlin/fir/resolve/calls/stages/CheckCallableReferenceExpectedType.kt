@@ -164,7 +164,7 @@ private fun buildResultingTypeAndAdaptation(
                 ) {
                     returnTypeWithoutCoercion
                 } else {
-                    context.session.builtinTypes.unitType.type
+                    context.session.builtinTypes.unitType.coneType
                 }
             }
 
@@ -181,7 +181,7 @@ private fun buildResultingTypeAndAdaptation(
             ) to callableReferenceAdaptation
         }
         is FirVariable -> {
-            val returnType = returnTypeRef.type
+            val returnType = returnTypeRef.coneType
             val isMutable = fir.canBeMutableReference(candidate)
             val propertyType = when {
                 isMutable && returnType.hasCapture() ->

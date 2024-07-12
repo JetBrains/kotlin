@@ -288,7 +288,7 @@ internal class KaFirTypeProvider(
             is FirAnonymousObjectSymbol -> symbol.resolvedSuperTypes
             is FirRegularClassSymbol -> symbol.resolvedSuperTypes
             is FirTypeAliasSymbol -> symbol.fullyExpandedClass(session)?.resolvedSuperTypes ?: return emptySequence()
-            is FirTypeParameterSymbol -> symbol.resolvedBounds.map { it.type }
+            is FirTypeParameterSymbol -> symbol.resolvedBounds.map { it.coneType }
             else -> return emptySequence()
         }
 

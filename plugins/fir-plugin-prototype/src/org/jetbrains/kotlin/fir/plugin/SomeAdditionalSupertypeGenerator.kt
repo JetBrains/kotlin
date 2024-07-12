@@ -47,10 +47,10 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
             ClassKind.ENUM_ENTRY,
             ClassKind.ANNOTATION_CLASS -> return emptyList()
         }
-        if (resolvedSupertypes.any { it.type.classId == myInterfaceClassId }) return emptyList()
+        if (resolvedSupertypes.any { it.coneType.classId == myInterfaceClassId }) return emptyList()
         return listOf(
             buildResolvedTypeRef {
-                type = myInterfaceClassId.constructClassLikeType(emptyArray(), isNullable = false)
+                coneType = myInterfaceClassId.constructClassLikeType(emptyArray(), isNullable = false)
             }
         )
     }

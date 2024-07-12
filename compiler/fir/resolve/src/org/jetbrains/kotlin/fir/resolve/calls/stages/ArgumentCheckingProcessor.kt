@@ -444,7 +444,7 @@ internal object ArgumentCheckingProcessor {
             .fastCorrespondingSupertypes(expectedFunctionType.typeConstructor())
             ?.firstOrNull() as? ConeKotlinType ?: return null
 
-        val typeArguments = functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.type }.ifEmpty { return null }
+        val typeArguments = functionType.typeArguments.map { it.type ?: session.builtinTypes.nullableAnyType.coneType }.ifEmpty { return null }
         return createFunctionType(
             kind = expectedTypeKind,
             parameters = typeArguments.subList(0, typeArguments.lastIndex),

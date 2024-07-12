@@ -71,13 +71,13 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
 
         return when {
             session.predicateBasedProvider.matches(serializerFor, classLikeDeclaration) -> {
-                if (resolvedSupertypes.any { it.type.classId == kSerializerClassId || it.type.classId == generatedSerializerClassId }) return emptyList()
+                if (resolvedSupertypes.any { it.coneType.classId == kSerializerClassId || it.coneType.classId == generatedSerializerClassId }) return emptyList()
                 val getClassArgument = classLikeDeclaration.getSerializerFor(session) ?: return emptyList()
                 val serializerConeType = resolveConeTypeFromArgument(getClassArgument, typeResolver)
 
                 listOf(
                     buildResolvedTypeRef {
-                        type = kSerializerClassId.constructClassLikeType(arrayOf(serializerConeType), isNullable = false)
+                        coneType = kSerializerClassId.constructClassLikeType(arrayOf(serializerConeType), isNullable = false)
                     }
                 )
             }
@@ -86,7 +86,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
                     SerializationPackages.internalPackageFqName,
                     SerialEntityNames.SERIALIZER_FACTORY_INTERFACE_NAME
                 )
-                if (resolvedSupertypes.any { it.type.classId == serializerFactoryClassId }) return emptyList()
+                if (resolvedSupertypes.any { it.coneType.classId == serializerFactoryClassId }) return emptyList()
                 listOf(serializerFactoryClassId.constructClassLikeType(emptyArray(), false).toFirResolvedTypeRef())
             }
             else -> emptyList()
@@ -103,7 +103,7 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
             }
             visitQualifiers(getClassCall.argument)
         }
-        return typeResolver.resolveUserType(typeToResolve).type
+        return typeResolver.resolveUserType(typeToResolve).coneType
     }
 
     private val FirPropertyAccessExpression.qualifierName: Name?

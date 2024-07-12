@@ -83,14 +83,14 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: FirElement) {
             visitElement(resolvedTypeRef, data)
-            checkElementWithConeType(resolvedTypeRef, resolvedTypeRef.type)
+            checkElementWithConeType(resolvedTypeRef, resolvedTypeRef.coneType)
             resolvedTypeRef.delegatedTypeRef?.let { visitElement(it, data) }
         }
 
         override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: FirElement) {
             visitElement(errorTypeRef, data)
             errorTypeRef.delegatedTypeRef?.let { visitElement(it, data) }
-            checkElementWithConeType(errorTypeRef, errorTypeRef.type)
+            checkElementWithConeType(errorTypeRef, errorTypeRef.coneType)
         }
 
         override fun visitLoopJump(loopJump: FirLoopJump, data: FirElement) {

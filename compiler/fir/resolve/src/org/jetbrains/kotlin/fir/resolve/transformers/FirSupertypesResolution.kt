@@ -534,7 +534,7 @@ open class FirSupertypeResolverVisitor(
                 }
             }
             if (someTypesWereGenerated && superTypes.isNotEmpty()) {
-                superTypes.removeIf { it.type.isAny }
+                superTypes.removeIf { it.coneType.isAny }
             }
             nestedClass.replaceSuperTypeRefs(superTypes)
         }
@@ -581,7 +581,7 @@ open class FirSupertypeResolverVisitor(
                     }
                 }
 
-                visitNestedTypeAliases(resolvedTypeRef.type)
+                visitNestedTypeAliases(resolvedTypeRef.coneType)
             }
 
             listOf(resolvedTypeRef)
@@ -781,7 +781,7 @@ open class SupertypeComputationSession {
                         }
                     }
 
-                    checkTypeArgumentsRecursively(supertypeRef.type, mutableSetOf())
+                    checkTypeArgumentsRecursively(supertypeRef.coneType, mutableSetOf())
                 }
 
                 resultSupertypeRefs.add(

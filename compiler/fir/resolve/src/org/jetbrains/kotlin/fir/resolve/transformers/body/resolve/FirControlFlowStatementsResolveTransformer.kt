@@ -69,7 +69,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             context.withWhenSubjectType(subjectType, components) {
                 when {
                     whenExpression.branches.isEmpty() -> {
-                        whenExpression.resultType = session.builtinTypes.unitType.type
+                        whenExpression.resultType = session.builtinTypes.unitType.coneType
                     }
                     whenExpression.isOneBranch() && data.forceFullCompletion && data !is ResolutionMode.WithExpectedType -> {
                         whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)

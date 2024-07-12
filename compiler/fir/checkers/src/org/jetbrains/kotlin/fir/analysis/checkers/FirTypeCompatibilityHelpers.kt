@@ -66,7 +66,7 @@ internal fun ConeKotlinType.isClass(session: FirSession) = toRegularClassSymbol(
 internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     val bounds = collectUpperBounds().map { it.replaceArgumentsWithStarProjections() }
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }?.fullyExpandedType(session)
-        ?: session.builtinTypes.nullableAnyType.type
+        ?: session.builtinTypes.nullableAnyType.coneType
     val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
     val boundsSymbols = bounds.mapNotNull { it.toClassSymbol(session) }
 

@@ -1332,7 +1332,7 @@ class CallAndReferenceGenerator(
                         else -> Variance.INVARIANT
                     }
                     typeRef = (typeProjection as? ConeKotlinType)?.let {
-                        buildResolvedTypeRef { type = it }
+                        buildResolvedTypeRef { coneType = it }
                     } ?: buildErrorTypeRef {
                         diagnostic = ConeSimpleDiagnostic("Expansion contains unexpected type ${typeProjection.javaClass}")
                     }

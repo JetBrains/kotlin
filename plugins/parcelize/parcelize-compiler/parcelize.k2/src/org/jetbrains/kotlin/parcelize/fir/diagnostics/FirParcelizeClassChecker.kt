@@ -134,7 +134,7 @@ inline fun checkParcelizeClassSymbols(
 ): Boolean {
     if (predicate(symbol)) return true
     return symbol.resolvedSuperTypeRefs.any { superTypeRef ->
-        val superTypeSymbol = superTypeRef.type.toRegularClassSymbol(session)
+        val superTypeSymbol = superTypeRef.coneType.toRegularClassSymbol(session)
             ?.takeIf { it.rawStatus.modality == Modality.SEALED }
             ?: return@any false
         predicate(superTypeSymbol)

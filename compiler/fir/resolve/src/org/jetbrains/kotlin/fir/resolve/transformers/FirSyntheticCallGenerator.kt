@@ -216,7 +216,7 @@ class FirSyntheticCallGenerator(
             source = arrayLiteral.source
         }.also {
             if (arrayOfSymbol == null) {
-                it.resultType = components.typeFromCallee(it).type
+                it.resultType = components.typeFromCallee(it).coneType
             }
         }
     }
@@ -446,7 +446,7 @@ class FirSyntheticCallGenerator(
                 }
             }
 
-        val typeParameterTypeRef = buildResolvedTypeRef { type = ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false) }
+        val typeParameterTypeRef = buildResolvedTypeRef { coneType = ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false) }
         return typeParameter to typeParameterTypeRef
     }
 
@@ -458,7 +458,7 @@ class FirSyntheticCallGenerator(
 
         val (typeParameter, returnType) = generateSyntheticSelectTypeParameter(functionSymbol)
 
-        val argumentType = buildResolvedTypeRef { type = returnType.type.createArrayType() }
+        val argumentType = buildResolvedTypeRef { coneType = returnType.coneType.createArrayType() }
         val typeArgument = buildTypeProjectionWithVariance {
             typeRef = returnType
             variance = Variance.INVARIANT
@@ -480,7 +480,7 @@ class FirSyntheticCallGenerator(
             functionSymbol,
             SyntheticCallableId.CHECK_NOT_NULL.callableName,
             returnType = typeParameterTypeRef.withReplacedConeType(
-                typeParameterTypeRef.type.makeConeTypeDefinitelyNotNullOrNotNull(
+                typeParameterTypeRef.coneType.makeConeTypeDefinitelyNotNullOrNotNull(
                     session.typeContext,
                     // No checks are necessary because we're sure that the type parameter has default (nullable) upper bound.
                     // At the same time, not having `avoidComprehensiveCheck = true` might lead to plugin initialization issues.
@@ -491,7 +491,7 @@ class FirSyntheticCallGenerator(
             typeParameters += typeParameter
 
             val valueParameterTypeRef = buildResolvedTypeRef {
-                type = typeParameterTypeRef.type.withNullability(ConeNullability.NULLABLE, session.typeContext)
+                coneType = typeParameterTypeRef.coneType.withNullability(ConeNullability.NULLABLE, session.typeContext)
             }
 
             valueParameters += valueParameterTypeRef.toValueParameter("arg", functionSymbol)
@@ -509,11 +509,11 @@ class FirSyntheticCallGenerator(
         val (typeParameter, rightArgumentType) = generateSyntheticSelectTypeParameter(functionSymbol)
 
         val leftArgumentType = buildResolvedTypeRef {
-            type = rightArgumentType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.typeContext)
+            coneType = rightArgumentType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE, session.typeContext)
         }
 
         val returnType = rightArgumentType.resolvedTypeFromPrototype(
-            rightArgumentType.type.withAttributes(
+            rightArgumentType.coneType.withAttributes(
                 ConeAttributes.create(listOf(CompilerConeAttributes.Exact)),
             )
         )

@@ -34,7 +34,7 @@ class FirIntegerConstantOperatorScope(
         val baseType = when (isUnsigned) {
             true -> session.builtinTypes.uIntType
             false -> session.builtinTypes.intType
-        }.type
+        }.coneType
 
         baseType.scope(
             session,
@@ -79,7 +79,7 @@ class FirIntegerConstantOperatorScope(
             symbol = FirNamedFunctionSymbol(originalSymbol.callableId)
             origin = FirDeclarationOrigin.WrappedIntegerOperator
             returnTypeRef = buildResolvedTypeRef {
-                type = ConeIntegerConstantOperatorTypeImpl(isUnsigned, ConeNullability.NOT_NULL)
+                coneType = ConeIntegerConstantOperatorTypeImpl(isUnsigned, ConeNullability.NOT_NULL)
             }
         }.also {
             it.originalForWrappedIntegerOperator = originalSymbol

@@ -38,19 +38,19 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     val symbolProvider: FirSymbolProvider get() = session.symbolProvider
 
     override fun nullableNothingType(): ConeClassLikeType {
-        return session.builtinTypes.nullableNothingType.type
+        return session.builtinTypes.nullableNothingType.coneType
     }
 
     override fun nullableAnyType(): ConeClassLikeType {
-        return session.builtinTypes.nullableAnyType.type
+        return session.builtinTypes.nullableAnyType.coneType
     }
 
     override fun nothingType(): ConeClassLikeType {
-        return session.builtinTypes.nothingType.type
+        return session.builtinTypes.nothingType.coneType
     }
 
     override fun anyType(): ConeClassLikeType {
-        return session.builtinTypes.anyType.type
+        return session.builtinTypes.anyType.coneType
     }
 
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {

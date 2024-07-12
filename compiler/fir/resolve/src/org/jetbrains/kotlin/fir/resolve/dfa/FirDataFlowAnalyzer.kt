@@ -123,8 +123,8 @@ abstract class FirDataFlowAnalyzer(
     private val graphBuilder get() = context.graphBuilder
     private val variableStorage get() = context.variableStorage
 
-    private val any = components.session.builtinTypes.anyType.type
-    private val nullableNothing = components.session.builtinTypes.nullableNothingType.type
+    private val any = components.session.builtinTypes.anyType.coneType
+    private val nullableNothing = components.session.builtinTypes.nullableNothingType.coneType
 
     // ----------------------------------- Requests -----------------------------------
 

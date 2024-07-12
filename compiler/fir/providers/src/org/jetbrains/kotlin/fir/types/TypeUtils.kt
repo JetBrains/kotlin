@@ -104,8 +104,8 @@ fun ConeDynamicType.Companion.create(
     session: FirSession,
     attributes: ConeAttributes = ConeAttributes.Empty,
 ): ConeDynamicType = ConeDynamicType(
-    session.builtinTypes.nothingType.type.withAttributes(attributes),
-    session.builtinTypes.nullableAnyType.type.withAttributes(attributes),
+    session.builtinTypes.nothingType.coneType.withAttributes(attributes),
+    session.builtinTypes.nullableAnyType.coneType.withAttributes(attributes),
 )
 
 fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
@@ -307,9 +307,9 @@ fun FirTypeRef.withoutEnhancedNullability(): FirResolvedTypeRef {
     if (!hasEnhancedNullability()) return this
     return buildResolvedTypeRef {
         source = this@withoutEnhancedNullability.source
-        type = this@withoutEnhancedNullability.type.withAttributes(
+        coneType = this@withoutEnhancedNullability.coneType.withAttributes(
             ConeAttributes.create(
-                this@withoutEnhancedNullability.type.attributes.filter { it != CompilerConeAttributes.EnhancedNullability }
+                this@withoutEnhancedNullability.coneType.attributes.filter { it != CompilerConeAttributes.EnhancedNullability }
             ),
         )
         annotations += this@withoutEnhancedNullability.annotations
@@ -341,14 +341,14 @@ fun FirTypeRef.withReplacedConeType(
     return if (newType is ConeErrorType) {
         buildErrorTypeRef {
             source = newSource
-            type = newType
+            coneType = newType
             annotations += this@withReplacedConeType.annotations
             diagnostic = newType.diagnostic
         }
     } else {
         buildResolvedTypeRef {
             source = newSource
-            type = newType
+            coneType = newType
             annotations += this@withReplacedConeType.annotations
             delegatedTypeRef = this@withReplacedConeType.delegatedTypeRef
         }
@@ -713,7 +713,7 @@ private fun FirTypeParameter.eraseToUpperBound(
                 // their bounds aren't yet resolved. See KT-56630 and comments inside.
                 // Yet we are replacing these bounds with just 'Any'.
                 // TODO: think how can we replace it with more correct decision.
-                else -> session.builtinTypes.anyType.type
+                else -> session.builtinTypes.anyType.coneType
             }
         }
     }
@@ -822,7 +822,7 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
 private fun FirTypeParameterSymbol.allBoundsAreNullableOrUnresolved(session: FirSession): Boolean {
     for (bound in fir.bounds) {
         if (bound !is FirResolvedTypeRef) return true
-        if (!bound.type.canBeNull(session)) return false
+        if (!bound.coneType.canBeNull(session)) return false
     }
 
     return true

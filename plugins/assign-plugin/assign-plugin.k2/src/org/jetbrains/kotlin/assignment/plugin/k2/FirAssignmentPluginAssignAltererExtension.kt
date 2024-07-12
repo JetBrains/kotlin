@@ -54,7 +54,7 @@ class FirAssignmentPluginAssignAltererExtension(
             source = variableAssignment.source?.fakeElement(KtFakeSourceElementKind.AssignmentPluginAltered)
             explicitReceiver = buildPropertyAccessExpression {
                 source = leftArgument.source
-                coneTypeOrNull = leftResolvedType.type
+                coneTypeOrNull = leftResolvedType.coneType
                 calleeReference = leftArgument
                 (variableAssignment.lValue as? FirQualifiedAccessExpression)?.typeArguments?.let(typeArguments::addAll)
                 annotations += variableAssignment.annotations

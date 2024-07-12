@@ -212,7 +212,7 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
             var worstDeprecationInfo = getOwnDeprecationForCallSite(session, *sites)
             val visited = mutableMapOf<ConeKotlinType, FirDeprecationInfo?>()
 
-            resolvedExpandedTypeRef.type.forEachType {
+            resolvedExpandedTypeRef.coneType.forEachType {
                 val deprecationInfo = visited.getOrPut(it) {
                     val symbol = it.toSymbol(session) ?: return@forEachType
                     symbol.getDeprecationForCallSite(session, *sites)

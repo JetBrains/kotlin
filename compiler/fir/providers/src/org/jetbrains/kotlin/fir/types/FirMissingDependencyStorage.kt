@@ -45,7 +45,7 @@ class FirMissingDependencyStorage(private val session: FirSession) : FirSessionC
         val result = mutableSetOf<TypeWithOrigin>()
         fun collect(symbol: FirClassSymbol<*>, origin: SupertypeOrigin) {
             for (superTypeRef in symbol.resolvedSuperTypeRefs) {
-                val superType = superTypeRef.type
+                val superType = superTypeRef.coneType
                 if (!superType.isAny && result.add(TypeWithOrigin(superType, origin))) {
                     superType.toClassSymbol(session)?.let { collect(it, origin) }
                 }

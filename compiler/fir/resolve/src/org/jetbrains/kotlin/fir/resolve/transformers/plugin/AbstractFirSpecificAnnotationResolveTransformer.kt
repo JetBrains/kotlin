@@ -227,7 +227,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     source = receiver.source
                     packageFqName = symbol.classId.packageFqName
                     relativeClassFqName = symbol.classId.relativeClassName
-                    coneTypeOrNull = session.builtinTypes.unitType.type
+                    coneTypeOrNull = session.builtinTypes.unitType.coneType
                     this.symbol = symbol
                     isFullyQualified = segments.isNotEmpty()
                 }
@@ -333,13 +333,13 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
         val requiredAnnotationsWithArguments = session.annotationPlatformSupport.requiredAnnotationsWithArguments
 
-        if (transformedAnnotationType.type.classLikeLookupTagIfAny?.classId in requiredAnnotationsWithArguments) {
+        if (transformedAnnotationType.coneType.classLikeLookupTagIfAny?.classId in requiredAnnotationsWithArguments) {
             argumentsTransformer.transformAnnotation(annotationCall, ResolutionMode.ContextDependent)
         }
     }
 
     private fun resolveAnnotationsOnAnnotationIfNeeded(annotationTypeRef: FirResolvedTypeRef) {
-        val symbol = annotationTypeRef.type.classLikeLookupTagIfAny?.toRegularClassSymbol(session) ?: return
+        val symbol = annotationTypeRef.coneType.classLikeLookupTagIfAny?.toRegularClassSymbol(session) ?: return
         computationSession.resolveAnnotationsOnAnnotationIfNeeded(symbol, scopeSession)
     }
 
@@ -354,12 +354,12 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun FirResolvedTypeRef.requiredToSave(): Boolean {
-        val classId = type.classId ?: return false
+        val classId = coneType.classId ?: return false
         return when {
             classId in session.annotationPlatformSupport.requiredAnnotations -> true
             classId.asSingleFqName() in annotationsFromPlugins -> true
             metaAnnotationsFromPlugins.isEmpty() -> false
-            else -> type.markedWithMetaAnnotation(session, metaAnnotationsFromPlugins)
+            else -> coneType.markedWithMetaAnnotation(session, metaAnnotationsFromPlugins)
         }
     }
 

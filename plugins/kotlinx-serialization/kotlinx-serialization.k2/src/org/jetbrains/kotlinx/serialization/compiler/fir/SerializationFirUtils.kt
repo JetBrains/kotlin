@@ -295,7 +295,7 @@ fun FirDeclaration.excludeFromJsExport(session: FirSession) {
     val jsExportIgnoreAnnotationCall = buildAnnotationCall {
         argumentList = FirEmptyArgumentList
         annotationTypeRef = buildResolvedTypeRef {
-            type = jsExportIgnoreAnnotation.defaultType()
+            coneType = jsExportIgnoreAnnotation.defaultType()
         }
         calleeReference = buildResolvedNamedReference {
             name = jsExportIgnoreAnnotation.name

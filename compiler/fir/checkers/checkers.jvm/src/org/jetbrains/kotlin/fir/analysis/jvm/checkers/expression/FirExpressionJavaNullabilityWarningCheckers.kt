@@ -142,7 +142,7 @@ object FirWhenConditionJavaNullabilityWarningChecker : FirWhenExpressionChecker(
 
 private fun FirExpression.checkConditionForEnhancedTypeMismatch(context: CheckerContext, reporter: DiagnosticReporter) {
     checkExpressionForEnhancedTypeMismatch(
-        context.session.builtinTypes.booleanType.type,
+        context.session.builtinTypes.booleanType.coneType,
         reporter,
         context,
         FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS

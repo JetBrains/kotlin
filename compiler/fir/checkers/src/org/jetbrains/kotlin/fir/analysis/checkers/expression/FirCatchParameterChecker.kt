@@ -52,7 +52,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                     coneType,
                     context.session.typeContext.isTypeMismatchDueToNullability(
                         coneType,
-                        session.builtinTypes.throwableType.type
+                        session.builtinTypes.throwableType.coneType
                     ),
                     context
                 )

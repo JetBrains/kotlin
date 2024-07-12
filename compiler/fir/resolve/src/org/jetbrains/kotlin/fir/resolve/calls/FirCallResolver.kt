@@ -131,7 +131,7 @@ class FirCallResolver(
         } else {
             functionCall
         }
-        val type = components.typeFromCallee(resultFunctionCall).type
+        val type = components.typeFromCallee(resultFunctionCall).coneType
         if (type is ConeErrorType) {
             resultFunctionCall.resultType = type
         }
@@ -568,7 +568,7 @@ class FirCallResolver(
                 else -> this as ConeKotlinType
             }
             buildTypeProjectionWithVariance {
-                typeRef = buildResolvedTypeRef { this.type = type }
+                typeRef = buildResolvedTypeRef { this.coneType = type }
                 variance = when (kind) {
                     ProjectionKind.IN -> Variance.IN_VARIANCE
                     ProjectionKind.OUT -> Variance.OUT_VARIANCE

@@ -115,7 +115,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
                 originalExpression = originalReceiverExpression
                 smartcastType = buildResolvedTypeRef {
                     source = originalReceiverExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-                    type = this@ImplicitReceiverValue.type
+                    coneType = this@ImplicitReceiverValue.type
                 }
                 typesFromSmartCast = listOf(this@ImplicitReceiverValue.type)
                 smartcastStability = SmartcastStability.STABLE_VALUE

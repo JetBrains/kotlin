@@ -173,7 +173,7 @@ class FirCallCompleter(
         resolutionMode: ResolutionMode,
     ) {
         if (resolutionMode !is ResolutionMode.WithExpectedType) return
-        val expectedType = resolutionMode.expectedTypeRef.type.fullyExpandedType(session)
+        val expectedType = resolutionMode.expectedTypeRef.coneType.fullyExpandedType(session)
 
         val system = candidate.system
         when {
@@ -391,7 +391,7 @@ class FirCallCompleter(
                     contextReceivers.map { contextReceiverType ->
                         buildContextReceiver {
                             typeRef = buildResolvedTypeRef {
-                                type = contextReceiverType
+                                coneType = contextReceiverType
                             }
                         }
                     }

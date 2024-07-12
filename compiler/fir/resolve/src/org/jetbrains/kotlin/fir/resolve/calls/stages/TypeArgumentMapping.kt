@@ -77,7 +77,7 @@ internal object MapTypeArguments : ResolutionStage() {
             buildTypeProjectionWithVariance {
                 typeRef =
                     ConeTypeIntersector.intersectTypes(
-                        context.typeContext, typeParameterRef.symbol.resolvedBounds.map { it.type }
+                        context.typeContext, typeParameterRef.symbol.resolvedBounds.map { it.coneType }
                     ).toFirResolvedTypeRef()
                 variance = Variance.INVARIANT
             }

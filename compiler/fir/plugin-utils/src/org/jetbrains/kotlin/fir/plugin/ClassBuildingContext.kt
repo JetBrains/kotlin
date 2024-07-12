@@ -89,7 +89,7 @@ public class ClassBuildingContext(
                 superTypeRefs += session.builtinTypes.anyType
             } else {
                 superTypeProviders.mapTo(this.superTypeRefs) {
-                    buildResolvedTypeRef { type = it(this@buildRegularClass.typeParameters) }
+                    buildResolvedTypeRef { coneType = it(this@buildRegularClass.typeParameters) }
                 }
             }
         }.apply {

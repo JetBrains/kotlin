@@ -128,7 +128,7 @@ class PostponedArgumentsAnalyzer(
                 }
             }
 
-        val unitType = components.session.builtinTypes.unitType.type
+        val unitType = components.session.builtinTypes.unitType.coneType
         val currentSubstitutor = c.buildCurrentSubstitutor(additionalBindings ?: emptyMap()) as ConeSubstitutor
 
         fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType
@@ -189,7 +189,7 @@ class PostponedArgumentsAnalyzer(
         val returnTypeRef = lambda.anonymousFunction.returnTypeRef.let {
             it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(substituteAlreadyFixedVariables(lambda.returnType))
         }
-        val isUnitLambda = returnTypeRef.type.isUnitOrFlexibleUnit || lambda.anonymousFunction.shouldReturnUnit(returnArguments)
+        val isUnitLambda = returnTypeRef.coneType.isUnitOrFlexibleUnit || lambda.anonymousFunction.shouldReturnUnit(returnArguments)
 
         for (atom in returnAtoms) {
             val expression = atom.expression
@@ -216,7 +216,7 @@ class PostponedArgumentsAnalyzer(
                     // }
                     // See KT-63602 for details.
                     builder.addSubtypeConstraintIfCompatible(
-                        expression.resolvedType, returnTypeRef.type,
+                        expression.resolvedType, returnTypeRef.coneType,
                         ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction)
                     )
                 }
@@ -258,7 +258,7 @@ class PostponedArgumentsAnalyzer(
         if (with(c) { lambdaReturnType.isError() } || builder.hasContradiction) return
 
         val position = ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction)
-        val unitType = components.session.builtinTypes.unitType.type
+        val unitType = components.session.builtinTypes.unitType.coneType
         if (!builder.addSubtypeConstraintIfCompatible(
                 unitType,
                 lambdaReturnType,

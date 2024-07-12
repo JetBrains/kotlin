@@ -866,7 +866,7 @@ class FirElementSerializer private constructor(
         if (typeRef !is FirResolvedTypeRef) {
             return -1 // TODO: serializeErrorType?
         }
-        return typeId(typeRef.type)
+        return typeId(typeRef.coneType)
     }
 
     fun typeId(type: ConeKotlinType): Int = typeTable[typeProto(type)]
@@ -1040,7 +1040,7 @@ class FirElementSerializer private constructor(
     private fun createAnnotationForCompilerDefinedTypeAttribute(attribute: ConeAttribute<*>): FirAnnotation {
         return buildAnnotation {
             annotationTypeRef = buildResolvedTypeRef {
-                this.type = ConeClassLikeTypeImpl(
+                this.coneType = ConeClassLikeTypeImpl(
                     CompilerConeAttributes.classIdByCompilerAttributeKey.getValue(attribute.key).toLookupTag(),
                     emptyArray(),
                     isNullable = false
@@ -1058,7 +1058,7 @@ class FirElementSerializer private constructor(
         return runIf(existingAnnotations?.any { it.annotationTypeRef.coneType.classId == classId } != true) {
             buildAnnotation {
                 annotationTypeRef = buildResolvedTypeRef {
-                    this.type = classId.constructClassLikeType(
+                    this.coneType = classId.constructClassLikeType(
                         emptyArray(), isNullable = false
                     )
                 }

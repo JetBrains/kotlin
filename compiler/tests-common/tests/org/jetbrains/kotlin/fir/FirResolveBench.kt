@@ -324,7 +324,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
 
                     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
                         resolvedTypes++
-                        val type = resolvedTypeRef.type
+                        val type = resolvedTypeRef.coneType
                         if (type is ConeErrorType || type is ConeErrorType) {
                             errorTypes++
                             if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic is ConeUnreportedDuplicateDiagnostic) {

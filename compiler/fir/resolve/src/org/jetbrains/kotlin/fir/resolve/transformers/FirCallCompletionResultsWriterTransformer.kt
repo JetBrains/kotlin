@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSamConversionExpression
@@ -125,7 +124,7 @@ class FirCallCompletionResultsWriterTransformer(
         val type = if (declaration is FirCallableDeclaration) {
             val calculated = typeCalculator.tryCalculateReturnType(declaration)
             if (calculated !is FirErrorTypeRef) {
-                calculated.type
+                calculated.coneType
             } else {
                 ConeErrorType(calculated.diagnostic)
             }
@@ -629,7 +628,7 @@ class FirCallCompletionResultsWriterTransformer(
         calleeReference: FirNamedReferenceWithCandidate,
         typeRef: FirResolvedTypeRef,
     ): D {
-        val resultType = typeRef.type.substituteType(calleeReference.candidate)
+        val resultType = typeRef.coneType.substituteType(calleeReference.candidate)
         replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, source, context.file.source)
         return this
@@ -850,7 +849,7 @@ class FirCallCompletionResultsWriterTransformer(
                         val typeRef = argument.typeRef as FirResolvedTypeRef
                         buildTypeProjectionWithVariance {
                             source = sourceForTypeArgument
-                            this.typeRef = if (typeRef.type.fullyExpandedType(session) is ConeErrorType) typeRef else typeRef.withReplacedConeType(type)
+                            this.typeRef = if (typeRef.coneType.fullyExpandedType(session) is ConeErrorType) typeRef else typeRef.withReplacedConeType(type)
                             variance = argument.variance
                         }
                     }
@@ -1192,7 +1191,7 @@ class FirCallCompletionResultsWriterTransformer(
                     TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
                 )
                     ?: it
-            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.type
+            } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
         arrayLiteral.resultType =
             arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType(session)?.isPrimitiveArray == true)
         return arrayLiteral

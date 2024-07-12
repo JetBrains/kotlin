@@ -73,7 +73,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppChec
         if (referredSymbol !is FirCallableSymbol<*>) return
 
         val returnType = context.returnTypeCalculator.tryCalculateReturnType(referredSymbol)
-        if (returnType.type.hasCapture()) {
+        if (returnType.coneType.hasCapture()) {
             reporter.reportOn(source, FirErrors.MUTABLE_PROPERTY_WITH_CAPTURED_TYPE, context)
         }
     }

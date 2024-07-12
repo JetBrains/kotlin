@@ -1127,7 +1127,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(typeRef)
         parent(typeRefMarkerType)
 
-        +field("type", coneKotlinTypeType)
+        +field("coneType", coneKotlinTypeType)
         +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
     }
 

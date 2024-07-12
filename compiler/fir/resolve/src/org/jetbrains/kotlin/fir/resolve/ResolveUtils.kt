@@ -82,7 +82,7 @@ internal fun FirAnonymousFunction.computeReturnType(
     returnExpressions: Collection<FirAnonymousFunctionReturnExpressionInfo>,
 ): ConeKotlinType {
     val expandedExpectedReturnType = expectedReturnType?.fullyExpandedType(session)
-    val unitType = session.builtinTypes.unitType.type
+    val unitType = session.builtinTypes.unitType.coneType
     if (isLambda) {
         if (expandedExpectedReturnType?.isUnitOrFlexibleUnit == true) {
             // If the expected type is Unit or flexible Unit, always infer the lambda's type to Unit.
@@ -247,12 +247,12 @@ fun FirAnonymousFunction.constructFunctionTypeRef(session: FirSession, kind: Fun
     return if (diagnostic == null) {
         buildResolvedTypeRef {
             this.source = source
-            this.type = type
+            this.coneType = type
         }
     } else {
         buildErrorTypeRef {
             this.source = source
-            this.type = type
+            this.coneType = type
             this.diagnostic = diagnostic
         }
     }
@@ -333,7 +333,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         if (classId.isLocal) {
             resultType = typeForQualifierByDeclaration(regularClass.fir, session, element = this@apply, file)
                 ?.also { replaceCanBeValue(true) }
-                ?: session.builtinTypes.unitType.type
+                ?: session.builtinTypes.unitType.coneType
         } else {
             setTypeOfQualifier(this@buildResolvedQualifierForClass)
         }
@@ -354,7 +354,7 @@ fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
             }
         }
     }
-    this.resultType = components.session.builtinTypes.unitType.type
+    this.resultType = components.session.builtinTypes.unitType.coneType
 }
 
 internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirResolvedReifiedParameterReferenceBuilder): ConeLookupTagBasedType {
@@ -441,7 +441,7 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
             val possibleImplicitReceivers = implicitReceiverStack[labelName]
             buildResolvedTypeRef {
                 source = null
-                type = when {
+                coneType = when {
                     possibleImplicitReceivers.size >= 2 -> ConeErrorType(
                         ConeSimpleDiagnostic("Ambiguous this@$labelName", DiagnosticKind.AmbiguousLabel)
                     )
@@ -468,7 +468,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>): Fir
         is FirClassifierSymbol<*> -> {
             buildResolvedTypeRef {
                 source = null
-                type = symbol.constructType(emptyArray(), isNullable = false)
+                coneType = symbol.constructType(emptyArray(), isNullable = false)
             }
         }
         else -> errorWithAttachment("Failed to extract type from symbol: ${symbol::class.java}") {
@@ -531,7 +531,7 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
     if (intersectedType == originalType && intersectedType !is ConeDynamicType) return null
     val intersectedTypeRef = buildResolvedTypeRef {
         source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-        type = intersectedType
+        coneType = intersectedType
     }
 
     // Example (1): if (x is String) { ... }, where x: dynamic
@@ -548,7 +548,7 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
         val reducedIntersectedType = ConeTypeIntersector.intersectTypes(session.typeContext, reducedTypes)
         val reducedIntersectedTypeRef = buildResolvedTypeRef {
             source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-            type = reducedIntersectedType
+            coneType = reducedIntersectedType
         }
         return buildSmartCastExpression {
             originalExpression = expression
@@ -621,7 +621,7 @@ fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotl
 fun FirResolvedTypeRef.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
     val system = candidate.system
     val resultingSubstitutor = system.buildCurrentSubstitutor()
-    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(type)) as ConeKotlinType
+    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(coneType)) as ConeKotlinType
 }
 
 /**

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueI
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -106,7 +105,7 @@ class FirSpecificTypeResolverTransformer(
         return if (resolvedType != null && resolvedType !is ConeErrorType && diagnostic == null) {
             buildResolvedTypeRef {
                 source = functionTypeRef.source
-                type = resolvedType
+                coneType = resolvedType
                 annotations += functionTypeRef.annotations
                 delegatedTypeRef = functionTypeRef
             }
@@ -114,7 +113,7 @@ class FirSpecificTypeResolverTransformer(
             buildErrorTypeRef {
                 source = functionTypeRef.source
                 if (resolvedType != null) {
-                    type = resolvedType
+                    coneType = resolvedType
                 }
                 annotations += functionTypeRef.annotations
                 this.diagnostic = diagnostic ?: (resolvedType as? ConeErrorType)?.diagnostic
@@ -157,7 +156,7 @@ class FirSpecificTypeResolverTransformer(
             else -> {
                 buildResolvedTypeRef {
                     source = typeRef.source
-                    type = resolvedType
+                    coneType = resolvedType
                     annotations += typeRef.annotations
                     delegatedTypeRef = typeRef
                 }
@@ -186,7 +185,7 @@ class FirSpecificTypeResolverTransformer(
             }?.fakeIfAbbreviated(resolvedType)
 
             delegatedTypeRef = typeRef
-            type = resolvedType
+            coneType = resolvedType
             annotations += typeRef.annotations
 
             val partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
@@ -272,7 +271,7 @@ class FirSpecificTypeResolverTransformer(
             if (resolvedType is ConeErrorType || diagnostic != null) continue
             return buildResolvedTypeRef {
                 source = qualifiersToTry.last().source
-                type = resolvedType
+                coneType = resolvedType
                 delegatedTypeRef = typeRefToTry
             }
         }

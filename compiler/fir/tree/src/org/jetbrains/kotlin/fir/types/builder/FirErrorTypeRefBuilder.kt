@@ -22,7 +22,7 @@ import kotlin.contracts.contract
 class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override var annotations: MutableList<FirAnnotation> = mutableListOf()
-    var type: ConeKotlinType? = null
+    var coneType: ConeKotlinType? = null
     var delegatedTypeRef: FirTypeRef? = null
     var partiallyResolvedTypeRef: FirTypeRef? = null
     lateinit var diagnostic: ConeDiagnostic
@@ -31,7 +31,7 @@ class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
         return FirErrorTypeRefImpl(
             source,
             annotations.toMutableOrEmpty(),
-            this.type,
+            this.coneType,
             delegatedTypeRef,
             diagnostic,
             partiallyResolvedTypeRef = partiallyResolvedTypeRef,
@@ -54,7 +54,7 @@ inline fun buildErrorTypeRefCopy(original: FirErrorTypeRef, init: FirErrorTypeRe
     }
     val copyBuilder = FirErrorTypeRefBuilder()
     copyBuilder.source = original.source
-    copyBuilder.type = original.type
+    copyBuilder.coneType = original.coneType
     copyBuilder.annotations = original.annotations.toMutableList()
     copyBuilder.delegatedTypeRef = original.delegatedTypeRef
     copyBuilder.diagnostic = original.diagnostic

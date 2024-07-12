@@ -41,7 +41,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             val resolvedClassTypeRef = classId.toLookupTag().toDefaultResolvedTypeRef()
             return buildClassReferenceExpression {
                 classTypeRef = resolvedClassTypeRef
-                coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.type), false)
+                coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.coneType), false)
             }
         }
 
@@ -197,7 +197,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
     private fun ConeClassLikeLookupTag.toDefaultResolvedTypeRef(): FirResolvedTypeRef =
         buildResolvedTypeRef {
-            type = constructClassType(emptyArray(), isNullable = false)
+            coneType = constructClassType(emptyArray(), isNullable = false)
         }
 
     private fun createEnumEntryAccess(classId: ClassId, name: Name): FirEnumEntryDeserializedAccessExpression =

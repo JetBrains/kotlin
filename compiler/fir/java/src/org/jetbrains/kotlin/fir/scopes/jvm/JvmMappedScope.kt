@@ -189,7 +189,7 @@ class JvmMappedScope(
             origin = FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.OPEN, EffectiveVisibility.Public)
             returnTypeRef = buildResolvedTypeRef {
-                type = firKotlinClass.typeParameters.firstOrNull()
+                coneType = firKotlinClass.typeParameters.firstOrNull()
                     ?.let { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isNullable = false) }
                     ?: ConeErrorType(ConeSimpleDiagnostic("No type parameter found on '${firKotlinClass.classKind}'"))
             }

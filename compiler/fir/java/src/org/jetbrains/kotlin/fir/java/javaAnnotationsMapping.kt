@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
-import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -180,7 +179,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
             val argumentTypeRef = expectedConeType?.let {
                 coneTypeOrNull = it
                 buildResolvedTypeRef {
-                    this.type = it.lowerBoundIfFlexible().arrayElementType()
+                    this.coneType = it.lowerBoundIfFlexible().arrayElementType()
                         ?: ConeErrorType(ConeSimpleDiagnostic("expected type is not array type"))
                 }
             }
@@ -202,7 +201,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
             val resolvedClassTypeRef = getReferencedType().toFirResolvedTypeRef(session, javaTypeParameterStack, source)
             val resolvedTypeRef = buildResolvedTypeRef {
-                type = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.type), false)
+                coneType = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.coneType), false)
             }
             argumentList = buildUnaryArgumentList(
                 buildClassReferenceExpression {
@@ -332,7 +331,7 @@ private fun buildFirAnnotation(
     }?.toLookupTag()
     val annotationTypeRef = if (lookupTag != null) {
         buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
+            coneType = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
             this.source = source
         }
     } else {

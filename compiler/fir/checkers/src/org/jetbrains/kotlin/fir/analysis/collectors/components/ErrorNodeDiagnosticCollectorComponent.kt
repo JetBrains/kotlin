@@ -64,8 +64,8 @@ class ErrorNodeDiagnosticCollectorComponent(
      * In this case, we don't need to report anything because the error will already be reported on the declaration site.
      */
     private fun FirErrorTypeRef.hasExpandedTypeAliasDeclarationSiteError(): Boolean {
-        if ((type as? ConeErrorType)?.diagnostic != this.diagnostic) return false
-        return type.abbreviatedType != null
+        if ((coneType as? ConeErrorType)?.diagnostic != this.diagnostic) return false
+        return coneType.abbreviatedType != null
     }
 
     private fun FirExpression.hasDiagnostic(diagnostic: ConeDiagnostic): Boolean {
@@ -75,8 +75,8 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: CheckerContext) {
-        assert(resolvedTypeRef.type !is ConeErrorType) {
-            "Instead use FirErrorTypeRef for ${resolvedTypeRef.type.renderForDebugging()}"
+        assert(resolvedTypeRef.coneType !is ConeErrorType) {
+            "Instead use FirErrorTypeRef for ${resolvedTypeRef.coneType.renderForDebugging()}"
         }
     }
 

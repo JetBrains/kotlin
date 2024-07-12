@@ -30,7 +30,7 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
         checkType(symbol.receiverParameter?.typeRef?.coneType, expression, context, reporter)
         if (symbol is FirFunctionSymbol) {
             for (parameter in symbol.valueParameterSymbols) {
-                checkType(parameter.resolvedReturnTypeRef.type, expression, context, reporter)
+                checkType(parameter.resolvedReturnTypeRef.coneType, expression, context, reporter)
             }
         }
 

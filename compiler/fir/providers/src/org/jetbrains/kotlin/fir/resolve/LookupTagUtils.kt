@@ -52,7 +52,7 @@ fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParamet
         annotationTypeRef =
             buildResolvedTypeRef {
                 source = fakeSource
-                type = ConeClassLikeTypeImpl(
+                coneType = ConeClassLikeTypeImpl(
                     StandardNames.FqNames.parameterNameClassId.toLookupTag(),
                     emptyArray(),
                     isNullable = false

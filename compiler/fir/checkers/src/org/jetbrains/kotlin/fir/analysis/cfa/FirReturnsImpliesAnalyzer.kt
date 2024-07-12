@@ -101,7 +101,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
         val resultExpression = if (isReturn) (node.fir as FirReturnExpression).result else node.fir
 
         val expressionType = (resultExpression as? FirExpression)?.resolvedType?.fullyExpandedType(context.session)
-        if (expressionType == builtinTypes.nothingType.type) return false
+        if (expressionType == builtinTypes.nothingType.coneType) return false
 
         if (isReturn && resultExpression is FirWhenExpression) {
             return node.collectBranchExits().any {
@@ -154,7 +154,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
 
     private fun Operation.canBeTrueFor(session: FirSession, type: ConeKotlinType): Boolean = when (this) {
         Operation.EqTrue, Operation.EqFalse ->
-            AbstractTypeChecker.isSubtypeOf(session.typeContext, session.builtinTypes.booleanType.type, type)
+            AbstractTypeChecker.isSubtypeOf(session.typeContext, session.builtinTypes.booleanType.coneType, type)
         Operation.EqNull -> type.canBeNull(session)
         Operation.NotEqNull -> !type.isNullableNothing
     }

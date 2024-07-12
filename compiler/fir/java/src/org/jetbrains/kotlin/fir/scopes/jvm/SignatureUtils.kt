@@ -175,7 +175,7 @@ private fun FirTypeRef.isVoid(): Boolean {
             type is JavaPrimitiveType && type.type == null
         }
         is FirResolvedTypeRef -> {
-            val type = type
+            val type = coneType
             type is ConeClassLikeType && type.lookupTag.classId == unitClassId
         }
         else -> false

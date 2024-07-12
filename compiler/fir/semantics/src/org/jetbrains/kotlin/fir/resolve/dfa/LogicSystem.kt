@@ -14,8 +14,8 @@ import kotlin.math.max
 
 abstract class LogicSystem(private val context: ConeInferenceContext) {
     val session: FirSession get() = context.session
-    private val nullableNothingType = session.builtinTypes.nullableNothingType.type
-    private val anyType = session.builtinTypes.anyType.type
+    private val nullableNothingType = session.builtinTypes.nullableNothingType.coneType
+    private val anyType = session.builtinTypes.anyType.coneType
 
     abstract val variableStorage: VariableStorageImpl
 

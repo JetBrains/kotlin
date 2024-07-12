@@ -46,14 +46,14 @@ fun FirTypeRef.resolvedTypeFromPrototype(
     return if (type is ConeErrorType) {
         buildErrorTypeRef {
             source = this@resolvedTypeFromPrototype.source ?: fallbackSource
-            this.type = type
+            this.coneType = type
             diagnostic = type.diagnostic
             annotations += this@resolvedTypeFromPrototype.annotations
         }
     } else {
         buildResolvedTypeRef {
             source = this@resolvedTypeFromPrototype.source ?: fallbackSource
-            this.type = type
+            this.coneType = type
             delegatedTypeRef = when (val original = this@resolvedTypeFromPrototype) {
                 is FirResolvedTypeRef -> original.delegatedTypeRef
                 is FirUserTypeRef -> original

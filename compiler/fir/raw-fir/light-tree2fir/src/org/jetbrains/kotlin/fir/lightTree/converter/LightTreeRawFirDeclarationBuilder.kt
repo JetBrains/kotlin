@@ -518,9 +518,9 @@ class LightTreeRawFirDeclarationBuilder(
                         when {
                             calculatedModifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) && delegatedConstructorSource == null -> {
                                 delegatedSuperTypeRef = buildResolvedTypeRef {
-                                    type = ConeClassLikeTypeImpl(
-                                        implicitEnumType.type.lookupTag,
-                                        arrayOf(selfType.type),
+                                    coneType = ConeClassLikeTypeImpl(
+                                        implicitEnumType.coneType.lookupTag,
+                                        arrayOf(selfType.coneType),
                                         isNullable = false
                                     )
                                     source =classNode.toFirSourceElement(KtFakeSourceElementKind.EnumSuperTypeRef)
@@ -806,7 +806,7 @@ class LightTreeRawFirDeclarationBuilder(
                                 hasSecondaryConstructor = classBodyNode.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
                                 hasDefaultConstructor = false,
                                 delegatedSelfTypeRef = buildResolvedTypeRef {
-                                    type = ConeClassLikeTypeImpl(
+                                    coneType = ConeClassLikeTypeImpl(
                                         this@buildAnonymousObject.symbol.toLookupTag(),
                                         ConeTypeProjection.EMPTY_ARRAY,
                                         isNullable = false

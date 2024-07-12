@@ -60,7 +60,7 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
     source: KtSourceElement?,
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): ConeKotlinType =
-    (resolveIfJavaType(session, javaTypeParameterStack, source, mode) as? FirResolvedTypeRef)?.type
+    (resolveIfJavaType(session, javaTypeParameterStack, source, mode) as? FirResolvedTypeRef)?.coneType
         ?: ConeErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
@@ -75,9 +75,9 @@ internal fun JavaType?.toFirResolvedTypeRef(
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): FirResolvedTypeRef {
     return buildResolvedTypeRef {
-        type = toConeKotlinType(session, javaTypeParameterStack, mode, source)
+        coneType = toConeKotlinType(session, javaTypeParameterStack, mode, source)
             .let { if (mode == FirJavaTypeConversionMode.SUPERTYPE) it.lowerBoundIfFlexible() else it }
-        annotations += type.customAnnotations
+        annotations += coneType.customAnnotations
         this.source = source
     }
 }

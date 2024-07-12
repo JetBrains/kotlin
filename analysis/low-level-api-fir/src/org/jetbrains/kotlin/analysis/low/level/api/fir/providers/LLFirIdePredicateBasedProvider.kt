@@ -172,7 +172,7 @@ internal class LLFirIdePredicateBasedProvider(
         val firResolvedAnnotations = declaration.annotations
             .asSequence()
             .mapNotNull { it.annotationTypeRef as? FirResolvedTypeRef }
-            .mapNotNull { it.type.classId }
+            .mapNotNull { it.coneType.classId }
             .map { it.asSingleFqName() }
             .toSet()
 

@@ -690,7 +690,7 @@ private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration)
         }
 
         private fun handleTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-            val resolvedType = resolvedTypeRef.type
+            val resolvedType = resolvedTypeRef.coneType
 
             resolvedType.forEachType {
                 if (it is ConeTypeParameterType) {

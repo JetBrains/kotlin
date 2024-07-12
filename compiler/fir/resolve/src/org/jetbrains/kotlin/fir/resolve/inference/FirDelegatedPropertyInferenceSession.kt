@@ -58,7 +58,7 @@ class FirDelegatedPropertyInferenceSession(
 
     val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
 
-    private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.type
+    private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.coneType
 
     private var wasCompletionRun = false
 

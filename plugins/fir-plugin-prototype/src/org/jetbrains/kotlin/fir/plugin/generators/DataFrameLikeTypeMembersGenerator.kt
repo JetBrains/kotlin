@@ -71,7 +71,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             scopeSymbol,
             DataFrameLikeCallsRefinementExtension.Companion.KEY,
             propName,
-            session.builtinTypes.intType.type
+            session.builtinTypes.intType.coneType
         ) {
             visibility = Visibilities.Local
             extensionReceiverType {
@@ -98,7 +98,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             tokenSymbol,
             DataFrameLikeCallsRefinementExtension.Companion.KEY,
             propName,
-            session.builtinTypes.intType.type
+            session.builtinTypes.intType.coneType
         ) {
             visibility = Visibilities.Local
         }

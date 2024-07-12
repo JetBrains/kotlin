@@ -161,7 +161,7 @@ private fun FirElementWithResolveState.collectConeTypes(): Collection<ConeTypeWi
         override fun visitElement(element: FirElement) {
             contextStack.withStack(element) {
                 when (element) {
-                    is FirResolvedTypeRef -> element.type.forEachType {
+                    is FirResolvedTypeRef -> element.coneType.forEachType {
                         if (it.customAnnotations.isNotEmpty()) {
                             types += ConeTypeWithContext(it, contextStack.dumpContext())
                         }

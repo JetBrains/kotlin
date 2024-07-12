@@ -124,7 +124,7 @@ abstract class FirJavaFacade(
             }
             if (bounds.isEmpty()) {
                 bounds += buildResolvedTypeRef {
-                    type = ConeFlexibleType(builtinTypes.anyType.type, builtinTypes.nullableAnyType.type)
+                    coneType = ConeFlexibleType(builtinTypes.anyType.coneType, builtinTypes.nullableAnyType.coneType)
                 }
             }
         }.apply {
@@ -281,7 +281,7 @@ abstract class FirJavaFacade(
             if (superTypeRefs.isEmpty()) {
                 superTypeRefs.add(
                     buildResolvedTypeRef {
-                        type = StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false)
+                        coneType = StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false)
                     }
                 )
             }
@@ -664,7 +664,7 @@ abstract class FirJavaFacade(
             // TODO get rid of dependency on PSI KT-63046
             isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
             returnTypeRef = buildResolvedTypeRef {
-                type = ownerClassBuilder.buildSelfTypeRef()
+                coneType = ownerClassBuilder.buildSelfTypeRef()
             }
             dispatchReceiverType = if (isThisInner) outerClassSymbol?.defaultType() else null
             typeParameters += classTypeParameters.toRefs()
@@ -700,7 +700,7 @@ abstract class FirJavaFacade(
             symbol = FirConstructorSymbol(constructorId)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
             returnTypeRef = buildResolvedTypeRef {
-                type = ownerClassBuilder.buildSelfTypeRef()
+                coneType = ownerClassBuilder.buildSelfTypeRef()
             }
             valueParametersForAnnotationConstructor.forEach { _, firValueParameter -> valueParameters += firValueParameter }
             isInner = false

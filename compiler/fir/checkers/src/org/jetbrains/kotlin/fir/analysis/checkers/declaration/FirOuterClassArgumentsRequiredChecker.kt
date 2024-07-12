@@ -36,7 +36,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker(MppChecker
             return
         }
 
-        val type: ConeKotlinType = typeRef.type.abbreviatedTypeOrSelf
+        val type: ConeKotlinType = typeRef.coneType.abbreviatedTypeOrSelf
         val delegatedTypeRef = typeRef.delegatedTypeRef
 
         if (delegatedTypeRef is FirUserTypeRef && type is ConeClassLikeType) {

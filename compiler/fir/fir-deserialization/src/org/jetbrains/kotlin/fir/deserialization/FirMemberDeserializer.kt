@@ -454,7 +454,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.initializer = when {
                 Flags.HAS_CONSTANT.get(proto.flags) -> {
                     c.constDeserializer.loadConstant(
-                        proto, symbol.callableId, c.nameResolver, returnTypeRef.type.isUnsignedTypeOrNullableUnsignedType
+                        proto, symbol.callableId, c.nameResolver, returnTypeRef.coneType.isUnsignedTypeOrNullableUnsignedType
                     )
                 }
                 // classSymbol?.classKind?.isAnnotationClass throws 'Fir is not initialized for FirRegularClassSymbol kotlin/String'
@@ -488,7 +488,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                  * Annotation value for `One("hello")` contains only annotation type (`One`) and argument values (`"hello"`)
                  */
                 is FirAnnotation -> initializer.replaceAnnotationTypeRef(initializer.annotationTypeRef.withReplacedReturnType(returnTypeRef.coneType))
-                else -> initializer?.replaceConeTypeOrNull(returnTypeRef.type)
+                else -> initializer?.replaceConeTypeOrNull(returnTypeRef.coneType)
             }
             this.versionRequirements = versionRequirements
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
@@ -608,7 +608,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val typeParameters = classBuilder.typeParameters
 
         val delegatedSelfType = buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 classBuilder.symbol.toLookupTag(),
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false

@@ -54,10 +54,10 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
         val owner = context?.owner ?: return emptyList()
         val argumentClassId = serializeMethodNames[callableId.callableName] ?: return emptyList()
 
-        val function = createMemberFunction(owner, Key, callableId.callableName, session.builtinTypes.unitType.type) {
+        val function = createMemberFunction(owner, Key, callableId.callableName, session.builtinTypes.unitType.coneType) {
             valueParameter(X_NAME, argumentClassId.createConeType(session))
         }.apply {
-            replaceBody(buildBlock {}.apply { replaceConeTypeOrNull(session.builtinTypes.unitType.type) })
+            replaceBody(buildBlock {}.apply { replaceConeTypeOrNull(session.builtinTypes.unitType.coneType) })
         }
         return listOf(function.symbol)
     }

@@ -36,7 +36,7 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService
     ): List<FirResolvedTypeRef> {
-        if (resolvedSupertypes.any { it.type.classId == supertypeClassId }) return emptyList()
+        if (resolvedSupertypes.any { it.coneType.classId == supertypeClassId }) return emptyList()
 
         val annotation = classLikeDeclaration.getAnnotationByClassId(annotationClassId, session) ?: return emptyList()
         val getClassArgument = (annotation as? FirAnnotationCall)?.argument as? FirGetClassCall ?: return emptyList()
@@ -50,11 +50,11 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
             visitQualifiers(getClassArgument.argument)
         }
 
-        val resolvedArgument = typeResolver.resolveUserType(typeToResolve).type
+        val resolvedArgument = typeResolver.resolveUserType(typeToResolve).coneType
 
         return listOf(
             buildResolvedTypeRef {
-                type = supertypeClassId.constructClassLikeType(arrayOf(resolvedArgument), isNullable = false)
+                coneType = supertypeClassId.constructClassLikeType(arrayOf(resolvedArgument), isNullable = false)
             }
         )
     }

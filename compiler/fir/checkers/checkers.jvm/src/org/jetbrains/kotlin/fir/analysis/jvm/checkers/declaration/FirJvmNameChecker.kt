@@ -32,7 +32,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val jvmName = declaration.findJvmNameAnnotation() ?: return
         val name = jvmName.findArgumentByName(StandardNames.NAME) ?: return
 
-        if (name.resolvedType != context.session.builtinTypes.stringType.type) {
+        if (name.resolvedType != context.session.builtinTypes.stringType.coneType) {
             return
         }
 

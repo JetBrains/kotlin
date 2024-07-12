@@ -80,7 +80,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     private fun visitClassAndChildren(klass: FirClass, type: ConeClassLikeType) {
         val receiverParameter = buildReceiverParameter {
             typeRef = buildResolvedTypeRef {
-                this.type = type
+                this.coneType = type
             }
         }
 
@@ -233,7 +233,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         // Assuming no errors, the children of FirResolvedTypeRef (currently this can be FirAnnotationCalls) will also be present
         // as children in delegatedTypeRef. We should make sure those children are only visited once, otherwise diagnostics will be
         // collected twice: once through resolvedTypeRef's children and another through resolvedTypeRef.delegatedTypeRef's children.
-        val resolvedTypeRefType = resolvedTypeRef.type
+        val resolvedTypeRefType = resolvedTypeRef.coneType
         if (resolvedTypeRefType is ConeErrorType) {
             visitTypeRef(resolvedTypeRef, data)
         }

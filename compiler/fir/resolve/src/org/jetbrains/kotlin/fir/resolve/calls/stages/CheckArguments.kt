@@ -225,7 +225,7 @@ private fun isSubtypeForSamConversion(
                         stubTypesEqualToAnything = true
                     ),
                     // TODO: can we remove returnTypeCalculatorFrom here
-                    returnTypeCalculator.tryCalculateReturnType(invokeSymbol.fir).type,
+                    returnTypeCalculator.tryCalculateReturnType(invokeSymbol.fir).coneType,
                     expectedReturnType,
                     isFromNullabilityConstraint = false
                 )

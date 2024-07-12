@@ -183,7 +183,7 @@ abstract class AbstractAnnotationDeserializer(
         val classId = nameResolver.getClassId(proto.id)
         return buildAnnotation {
             annotationTypeRef = buildResolvedTypeRef {
-                type = classId.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+                coneType = classId.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
             }
             session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
                 this.argumentMapping = createArgumentMapping(proto, classId, nameResolver)
@@ -270,7 +270,7 @@ abstract class AbstractAnnotationDeserializer(
                 val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {
-                        classTypeRef = buildResolvedTypeRef { type = referencedType }
+                        classTypeRef = buildResolvedTypeRef { coneType = referencedType }
                         coneTypeOrNull = resolvedType
                     }
                 )
@@ -281,7 +281,7 @@ abstract class AbstractAnnotationDeserializer(
                 enumEntryName = nameResolver.getName(value.enumValueId)
             }
             ARRAY -> {
-                val expectedArrayElementType = expectedType()?.arrayElementType() ?: session.builtinTypes.anyType.type
+                val expectedArrayElementType = expectedType()?.arrayElementType() ?: session.builtinTypes.anyType.coneType
                 buildArrayLiteral {
                     argumentList = buildArgumentList {
                         value.arrayElementList.mapTo(arguments) { resolveValue(it, nameResolver) { expectedArrayElementType } }

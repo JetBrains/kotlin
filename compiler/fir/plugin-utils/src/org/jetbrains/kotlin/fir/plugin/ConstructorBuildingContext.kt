@@ -158,7 +158,7 @@ private fun FirConstructor.generateNoArgDelegatingConstructorCall(session: FirSe
     val delegatingConstructorCall = buildDelegatedConstructorCall {
         val superClasses = owner.resolvedSuperTypes.filter { it.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS }
         val singleSupertype = when (superClasses.size) {
-            0 -> session.builtinTypes.anyType.type
+            0 -> session.builtinTypes.anyType.coneType
             1 -> superClasses.first()
             else -> error("Object $owner has more than one class supertypes: $superClasses")
         }

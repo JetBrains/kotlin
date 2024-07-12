@@ -55,7 +55,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 }
                 substitutor = JavaTypeSubstitutor.Empty
                 returnTypeRef = buildResolvedTypeRef {
-                    type = classSymbol.defaultType()
+                    coneType = classSymbol.defaultType()
                 }
                 isInner = classSymbol.isInner
                 isPrimary = false
@@ -96,7 +96,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
 
                 substitutor = JavaTypeSubstitutorByMap(javaTypeSubstitution)
                 returnTypeRef = buildResolvedTypeRef {
-                    type = classSymbol.classId.defaultType(functionTypeParameterToJavaTypeParameter.keys.toList())
+                    coneType = classSymbol.classId.defaultType(functionTypeParameterToJavaTypeParameter.keys.toList())
                 }
 
                 isStatic = true

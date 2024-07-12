@@ -39,7 +39,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         if (context != null) return emptyList()
         val matchedClassSymbol = findMatchedClassForFunction(callableId) ?: return emptyList()
-        val function = createTopLevelFunction(Key, callableId, session.builtinTypes.stringType.type) {
+        val function = createTopLevelFunction(Key, callableId, session.builtinTypes.stringType.coneType) {
             valueParameter(Name.identifier("value"), matchedClassSymbol.constructStarProjectedType())
         }
         return listOf(function.symbol)

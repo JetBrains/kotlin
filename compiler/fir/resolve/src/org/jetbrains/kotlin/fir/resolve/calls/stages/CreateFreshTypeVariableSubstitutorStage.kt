@@ -73,7 +73,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     typeParameter.symbol.resolvedBounds.firstOrNull()?.coneType
-                        ?: context.session.builtinTypes.nullableAnyType.type,
+                        ?: context.session.builtinTypes.nullableAnyType.coneType,
                     SimpleConstraintSystemConstraintPosition
                 )
                 else -> assert(typeArgument is FirPlaceholderProjection) {

@@ -41,7 +41,7 @@ class FirNumberSignAttributeExtension(session: FirSession) : FirTypeAttributeExt
         }
         return buildAnnotation {
             annotationTypeRef = buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
+                coneType = ConeClassLikeTypeImpl(
                     classId.toLookupTag(),
                     ConeTypeProjection.EMPTY_ARRAY,
                     isNullable = false

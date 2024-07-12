@@ -898,7 +898,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(typeRef: FirTypeRef) {
         when (typeRef) {
             is FirErrorTypeRef -> error { +typeRef.diagnostic.reason }
-            is FirResolvedTypeRef -> generate(typeRef.type)
+            is FirResolvedTypeRef -> generate(typeRef.coneType)
             is FirImplicitTypeRef -> unresolved {
                 implicits++
                 keyword("<implicit>")

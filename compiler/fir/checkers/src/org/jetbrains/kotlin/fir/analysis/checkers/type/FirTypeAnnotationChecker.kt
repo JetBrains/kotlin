@@ -36,14 +36,14 @@ object FirTypeAnnotationChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
                 reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "type usage", context)
             }
             if (annotation.toAnnotationClassId(context.session) == StandardClassIds.Annotations.ExtensionFunctionType) {
-                if (!typeRef.type.isSomeFunctionType(context.session)) {
+                if (!typeRef.coneType.isSomeFunctionType(context.session)) {
                     if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidExtensionFunctionTypeOnNonFunctionTypes)) {
                         reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE, context)
                     } else {
                         reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE_WARNING, context)
                     }
 
-                } else if (typeRef.type.typeArguments.size <= 1) {
+                } else if (typeRef.coneType.typeArguments.size <= 1) {
                     reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE, context)
                 }
             }

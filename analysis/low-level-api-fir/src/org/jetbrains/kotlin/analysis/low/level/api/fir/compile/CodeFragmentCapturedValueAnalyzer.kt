@@ -136,7 +136,7 @@ private class CodeFragmentCapturedValueVisitor(
                             if (symbol.classKind != ClassKind.OBJECT) {
                                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
                                 val capturedValue = CodeFragmentCapturedValue.ContainingClass(symbol.classId, isCrossingInlineBounds)
-                                val typeRef = buildResolvedTypeRef { type = symbol.defaultType() }
+                                val typeRef = buildResolvedTypeRef { coneType = symbol.defaultType() }
                                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, typeRef, contextReceiverNumber))
                             }
                         }

@@ -276,7 +276,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
                 is ConeKotlinTypeProjection -> it.type.findVisibilityExposure(context, base, visitedTypes)?.let { return it }
                 is ConeStarProjection -> type.toRegularClassSymbol(context.session)
                     ?.typeParameterSymbols?.getOrNull(index)
-                    ?.resolvedBounds?.firstNotNullOfOrNull { it.type.findVisibilityExposure(context, base, visitedTypes) }
+                    ?.resolvedBounds?.firstNotNullOfOrNull { it.coneType.findVisibilityExposure(context, base, visitedTypes) }
                     ?.let { return it }
             }
         }

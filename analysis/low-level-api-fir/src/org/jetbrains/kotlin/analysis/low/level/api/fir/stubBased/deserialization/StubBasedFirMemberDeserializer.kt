@@ -515,7 +515,7 @@ internal class StubBasedFirMemberDeserializer(
         val typeParameters = classBuilder.typeParameters
 
         val delegatedSelfType = buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 classBuilder.symbol.toLookupTag(),
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
@@ -627,7 +627,7 @@ internal class StubBasedFirMemberDeserializer(
             source = KtRealPsiSourceElement(declaration)
             this.moduleData = c.moduleData
             this.origin = initialOrigin
-            returnTypeRef = buildResolvedTypeRef { type = enumType }
+            returnTypeRef = buildResolvedTypeRef { coneType = enumType }
             name = Name.identifier(enumEntryName)
             this.symbol = FirEnumEntrySymbol(CallableId(classId, name))
             this.status = FirResolvedDeclarationStatusImpl(

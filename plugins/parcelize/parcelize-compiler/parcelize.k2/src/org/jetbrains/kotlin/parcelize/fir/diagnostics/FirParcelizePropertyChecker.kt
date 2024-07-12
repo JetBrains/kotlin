@@ -129,7 +129,7 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
 
         if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
             return upperBound.typeArguments.fold(emptySet()) { acc, arg ->
-                val elementType = arg.type ?: session.builtinTypes.nullableAnyType.type
+                val elementType = arg.type ?: session.builtinTypes.nullableAnyType.coneType
                 acc union checkParcelableType(elementType, customParcelerTypes, context)
             }
         }

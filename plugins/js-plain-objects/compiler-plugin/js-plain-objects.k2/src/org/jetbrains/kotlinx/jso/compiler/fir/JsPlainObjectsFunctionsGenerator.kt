@@ -172,7 +172,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         jsPlainObjectInterface: FirRegularClassSymbol,
     ): FirSimpleFunction {
         return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface) {
-            runIf(resolvedReturnTypeRef.type.isNullable) {
+            runIf(resolvedReturnTypeRef.coneType.isNullable) {
                 buildPropertyAccessExpression {
                     calleeReference = buildResolvedNamedReference {
                         name = StandardIds.VOID_PROPERTY_NAME
@@ -275,7 +275,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                     moduleData = session.moduleData
                     origin = JsPlainObjectsPluginKey.origin
                     returnTypeRef = typeParameterSubstitutor?.let { subst ->
-                        typeRef.withReplacedConeType(subst.substituteOrNull(typeRef.type))
+                        typeRef.withReplacedConeType(subst.substituteOrNull(typeRef.coneType))
                     } ?: typeRef
                     name = it.name
                     symbol = FirValueParameterSymbol(it.name)

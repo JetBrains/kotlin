@@ -60,15 +60,15 @@ class FirParcelizeDeclarationGenerator(
                             it.fullyExpandedType(session).toRegularClassSymbol(session)?.hasDescribeContentsImplementation() ?: false
                         }
                 runIf(!hasDescribeContentImplementation) {
-                    createMemberFunctionForParcelize(owner, callableId.callableName, session.builtinTypes.intType.type)
+                    createMemberFunctionForParcelize(owner, callableId.callableName, session.builtinTypes.intType.coneType)
                 }
             }
             WRITE_TO_PARCEL_NAME -> {
                 val declaredFunctions = owner.declarationSymbols.filterIsInstance<FirNamedFunctionSymbol>()
                 runIf(declaredFunctions.none { it.isWriteToParcel() }) {
-                    createMemberFunctionForParcelize(owner, callableId.callableName, session.builtinTypes.unitType.type) {
+                    createMemberFunctionForParcelize(owner, callableId.callableName, session.builtinTypes.unitType.coneType) {
                         valueParameter(DEST_NAME, PARCEL_ID.createConeType(session))
-                        valueParameter(FLAGS_NAME, session.builtinTypes.intType.type)
+                        valueParameter(FLAGS_NAME, session.builtinTypes.intType.coneType)
                     }
                 }
             }
@@ -92,7 +92,7 @@ class FirParcelizeDeclarationGenerator(
         if (parameterSymbols.size != 2) return false
         val (destSymbol, flagsSymbol) = parameterSymbols
         if (destSymbol.resolvedReturnTypeRef.coneType.classId != PARCEL_ID) return false
-        if (!flagsSymbol.resolvedReturnTypeRef.type.isInt) return false
+        if (!flagsSymbol.resolvedReturnTypeRef.coneType.isInt) return false
         return true
     }
 

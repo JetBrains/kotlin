@@ -30,7 +30,7 @@ fun BodyResolveComponents.findTypesForSuperCandidates(
     superTypeRefs: List<FirTypeRef>,
     containingCall: FirQualifiedAccessExpression,
 ): List<ConeKotlinType> {
-    val supertypes = superTypeRefs.map { (it as FirResolvedTypeRef).type }
+    val supertypes = superTypeRefs.map { (it as FirResolvedTypeRef).coneType }
     val isMethodOfAny = containingCall is FirFunctionCall && isCallingMethodOfAny(containingCall)
     if (supertypes.size <= 1 && !isMethodOfAny) return supertypes
 
@@ -65,7 +65,7 @@ private fun BodyResolveComponents.resolveSupertypesForMethodOfAny(
         getFunctionMembers(it, calleeName)
     }
     return typesWithConcreteOverride.ifEmpty {
-        listOf(session.builtinTypes.anyType.type)
+        listOf(session.builtinTypes.anyType.coneType)
     }
 }
 

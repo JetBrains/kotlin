@@ -377,13 +377,13 @@ fun ConeKotlinType.toFirResolvedTypeRef(
         buildErrorTypeRef {
             this.source = source
             diagnostic = this@toFirResolvedTypeRef.diagnostic
-            type = this@toFirResolvedTypeRef
+            coneType = this@toFirResolvedTypeRef
             this.delegatedTypeRef = delegatedTypeRef
         }
     } else {
         buildResolvedTypeRef {
             this.source = source
-            type = this@toFirResolvedTypeRef
+            coneType = this@toFirResolvedTypeRef
             this.delegatedTypeRef = delegatedTypeRef
         }
     }

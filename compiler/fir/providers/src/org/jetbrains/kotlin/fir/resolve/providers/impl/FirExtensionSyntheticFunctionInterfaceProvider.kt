@@ -244,18 +244,18 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
 
                     fun createSuperType(kind: FunctionTypeKind): FirResolvedTypeRef {
                         return kind.classId(arity).toLookupTag()
-                            .constructClassType(typeArguments.map { it.type }.toTypedArray(), isNullable = false)
+                            .constructClassType(typeArguments.map { it.coneType }.toTypedArray(), isNullable = false)
                             .toFirResolvedTypeRef()
                     }
 
                     if (kind.isReflectType) {
                         superTypeRefs += StandardClassIds.KFunction.toLookupTag()
-                            .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
+                            .constructClassType(arrayOf(typeArguments.last().coneType), isNullable = false)
                             .toFirResolvedTypeRef()
                         superTypeRefs += createSuperType(kind.nonReflectKind())
                     } else {
                         superTypeRefs += StandardClassIds.Function.toLookupTag()
-                            .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
+                            .constructClassType(arrayOf(typeArguments.last().coneType), isNullable = false)
                             .toFirResolvedTypeRef()
                     }
 

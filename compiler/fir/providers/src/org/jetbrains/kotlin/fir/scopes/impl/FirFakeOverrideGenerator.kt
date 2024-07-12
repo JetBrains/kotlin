@@ -772,7 +772,7 @@ object FirFakeOverrideGenerator {
                 newTypeParameter.bounds +=
                     buildResolvedTypeRef {
                         source = boundTypeRef.source
-                        type = additionalSubstitutor.substituteOrSelf(substitutedBound ?: typeForBound)
+                        coneType = additionalSubstitutor.substituteOrSelf(substitutedBound ?: typeForBound)
                     }
             }
         }

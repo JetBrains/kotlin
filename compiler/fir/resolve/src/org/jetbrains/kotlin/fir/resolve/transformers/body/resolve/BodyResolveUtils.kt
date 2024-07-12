@@ -98,7 +98,7 @@ fun FirBlock.writeResultType(session: FirSession) {
 
     // If a lambda contains another lambda as result expression, it won't be resolved at this point
     @OptIn(UnresolvedExpressionTypeAccess::class)
-    resultType = resultExpression?.coneTypeOrNull ?: session.builtinTypes.unitType.type
+    resultType = resultExpression?.coneTypeOrNull ?: session.builtinTypes.unitType.coneType
 }
 
 fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
@@ -108,8 +108,8 @@ fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
         return symbol.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable)
     }
     return when (this) {
-        ConstantValueKind.Null -> session.builtinTypes.nullableNothingType.type
-        ConstantValueKind.Boolean -> session.builtinTypes.booleanType.type
+        ConstantValueKind.Null -> session.builtinTypes.nullableNothingType.coneType
+        ConstantValueKind.Boolean -> session.builtinTypes.booleanType.coneType
         ConstantValueKind.Char -> constructLiteralType(StandardClassIds.Char)
         ConstantValueKind.Byte -> constructLiteralType(StandardClassIds.Byte)
         ConstantValueKind.Short -> constructLiteralType(StandardClassIds.Short)
@@ -132,6 +132,6 @@ fun ConstantValueKind.expectedConeType(session: FirSession): ConeKotlinType {
 
 fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(session: FirSession) {
     if (!isProperlyExhaustive && !usedAsExpression) {
-        resultType = session.builtinTypes.unitType.type
+        resultType = session.builtinTypes.unitType.coneType
     }
 }

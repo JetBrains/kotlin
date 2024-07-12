@@ -42,7 +42,7 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
     private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
         if (!JvmBuiltInsSignatures.isSerializableInJava(classId.asSingleFqName().toUnsafe())) return
         superTypeRefs += buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 JAVA_IO_SERIALIZABLE.toLookupTag(),
                 typeArguments = ConeTypeProjection.EMPTY_ARRAY,
                 isNullable = false

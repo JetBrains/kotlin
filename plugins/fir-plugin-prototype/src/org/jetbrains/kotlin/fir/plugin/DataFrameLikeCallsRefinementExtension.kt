@@ -90,7 +90,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             name = refinedTypeId.shortClassName
             this.symbol = refinedTypeSymbol
             superTypeRefs += buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
+                coneType = ConeClassLikeTypeImpl(
                     ConeClassLookupTagWithFixedSymbol(schemaId, schemaSymbol),
                     emptyArray(),
                     isNullable = false
@@ -99,7 +99,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
         }
 
         val typeRef = buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 lookupTag,
                 arrayOf(
                     ConeClassLikeTypeImpl(
@@ -163,7 +163,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                 deprecationsProvider = EmptyDeprecationsProvider
                 returnTypeRef = buildResolvedTypeRef {
-                    type = returnType
+                    coneType = returnType
                 }
                 val itName = Name.identifier("it")
                 val parameterSymbol = FirValueParameterSymbol(itName)
@@ -171,7 +171,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Plugin(KEY)
                     returnTypeRef = buildResolvedTypeRef {
-                        type = receiverType
+                        coneType = receiverType
                     }
                     name = itName
                     this.symbol = parameterSymbol
@@ -196,7 +196,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                 isLambda = true
                 hasExplicitParameterList = false
                 typeRef = buildResolvedTypeRef {
-                    type = ConeClassLikeTypeImpl(
+                    coneType = ConeClassLikeTypeImpl(
                         ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
                         typeArguments = arrayOf(receiverType, returnType),
                         isNullable = false
@@ -211,14 +211,14 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             this.coneTypeOrNull = returnType
             typeArguments += buildTypeProjectionWithVariance {
                 typeRef = buildResolvedTypeRef {
-                    type = receiverType
+                    coneType = receiverType
                 }
                 variance = Variance.INVARIANT
             }
 
             typeArguments += buildTypeProjectionWithVariance {
                 typeRef = buildResolvedTypeRef {
-                    type = returnType
+                    coneType = returnType
                 }
                 variance = Variance.INVARIANT
             }

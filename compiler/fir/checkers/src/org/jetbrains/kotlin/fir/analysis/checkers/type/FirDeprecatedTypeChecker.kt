@@ -19,7 +19,7 @@ object FirDeprecatedTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = typeRef.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
-        val symbol = typeRef.type.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toSymbol(context.session) ?: return
+        val symbol = typeRef.coneType.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toSymbol(context.session) ?: return
 
         FirDeprecationChecker.reportApiStatusIfNeeded(source, symbol, context, reporter)
     }

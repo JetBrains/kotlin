@@ -177,7 +177,7 @@ fun deserializeClassToSymbol(
                 val property = buildEnumEntry {
                     this.moduleData = moduleData
                     this.origin = FirDeclarationOrigin.Library
-                    returnTypeRef = buildResolvedTypeRef { type = enumType }
+                    returnTypeRef = buildResolvedTypeRef { coneType = enumType }
                     name = enumEntryName
                     this.symbol = FirEnumEntrySymbol(CallableId(classId, enumEntryName))
                     this.status = FirResolvedDeclarationStatusImpl(
@@ -268,7 +268,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
     if (classId.shortClassName !in ARRAY_CLASSES) return
     if (session.getRegularClassSymbolByClassId(StandardClassIds.Cloneable) == null) return
     superTypeRefs += buildResolvedTypeRef {
-        type = ConeClassLikeTypeImpl(
+        coneType = ConeClassLikeTypeImpl(
             StandardClassIds.Cloneable.toLookupTag(),
             typeArguments = ConeTypeProjection.EMPTY_ARRAY,
             isNullable = false
@@ -288,7 +288,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
             } else {
                 emptyArray()
             }
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 classId.toLookupTag(),
                 typeArguments = typeArguments,
                 isNullable = false

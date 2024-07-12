@@ -41,7 +41,7 @@ private class FirTypeArgumentListPointer(typeArgumentList: FirTypeArgumentList, 
                     ConeStarProjection -> buildStarProjection()
                     is ConeKotlinTypeProjection -> {
                         buildTypeProjectionWithVariance {
-                            typeRef = buildResolvedTypeRef { this.type = coneTypeArgument.type }
+                            typeRef = buildResolvedTypeRef { this.coneType = coneTypeArgument.type }
                             variance = coneTypeArgument.kind.toVariance()
                         }
                     }

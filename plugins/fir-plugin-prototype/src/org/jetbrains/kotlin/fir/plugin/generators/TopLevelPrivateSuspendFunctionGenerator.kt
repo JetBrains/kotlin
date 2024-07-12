@@ -44,7 +44,7 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         if (context != null) return emptyList()
         if (callableId.callableName != TEST_FUN_NAME) return emptyList()
-        val function = createTopLevelFunction(Key, callableId, session.builtinTypes.unitType.type) {
+        val function = createTopLevelFunction(Key, callableId, session.builtinTypes.unitType.coneType) {
             visibility = Visibilities.Private
             status { isSuspend = true }
         }

@@ -79,8 +79,8 @@ internal object FirReferenceResolveHelper {
     }
 
     private fun FirResolvedTypeRef.getDeclaredType() =
-        if (this.delegatedTypeRef?.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter) type.arrayElementType()
-        else type
+        if (this.delegatedTypeRef?.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter) coneType.arrayElementType()
+        else coneType
 
     private fun ClassId.toTargetPsi(
         session: FirSession,
@@ -297,7 +297,7 @@ internal object FirReferenceResolveHelper {
             // FirConstructor.originalConstructorIfTypeAlias but that doesn't seem to help here as it
             // is null for the constructors we get.
             val constructedType = fir.constructedTypeRef.coneType.abbreviatedTypeOrSelf
-            val constructorReturnType = fir.calleeReference.toResolvedConstructorSymbol()?.resolvedReturnTypeRef?.type
+            val constructorReturnType = fir.calleeReference.toResolvedConstructorSymbol()?.resolvedReturnTypeRef?.coneType
             if (constructedType.classId != constructorReturnType?.classId) {
                 return getSymbolsForResolvedTypeRef(fir.constructedTypeRef as FirResolvedTypeRef, expression, session, symbolBuilder)
             }
@@ -521,7 +521,7 @@ internal object FirReferenceResolveHelper {
         val ktTypeElementFromFirType = unwrapType(fir.psi)
 
         val classifiersToSkip = expression.parents.takeWhile { it != ktTypeElementFromFirType }.count()
-        var classifier: FirClassLikeSymbol<*>? = fir.type.toRegularClassSymbol(session)
+        var classifier: FirClassLikeSymbol<*>? = fir.coneType.toRegularClassSymbol(session)
         repeat(classifiersToSkip) {
             classifier = classifier?.getContainingClassSymbol()
         }
@@ -741,7 +741,7 @@ internal object FirReferenceResolveHelper {
         } ?: return null
 
         val qualifiersToDrop = countQualifiersToDrop(wholeType, qualifierToResolve)
-        return wholeTypeFir.type.classId?.dropLastNestedClasses(qualifiersToDrop)
+        return wholeTypeFir.coneType.classId?.dropLastNestedClasses(qualifiersToDrop)
     }
 
     /**

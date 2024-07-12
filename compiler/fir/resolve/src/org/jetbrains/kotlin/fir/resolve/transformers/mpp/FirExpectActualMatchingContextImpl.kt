@@ -564,7 +564,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     override fun DeclarationSymbolMarker.getSourceElement(): SourceElementMarker = FirSourceElement(asSymbol().source)
 
-    override fun TypeRefMarker.getClassId(): ClassId? = (this as FirResolvedTypeRef).type.fullyExpandedType(actualSession).classId
+    override fun TypeRefMarker.getClassId(): ClassId? = (this as FirResolvedTypeRef).coneType.fullyExpandedType(actualSession).classId
 
     override fun checkAnnotationsOnTypeRefAndArguments(
         expectContainingSymbol: DeclarationSymbolMarker,

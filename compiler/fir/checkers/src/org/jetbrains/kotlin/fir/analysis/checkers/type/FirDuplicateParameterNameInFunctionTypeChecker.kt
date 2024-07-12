@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.fir.types.type
 
 object FirDuplicateParameterNameInFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (!typeRef.type.isSomeFunctionType(context.session)) return
+        if (!typeRef.coneType.isSomeFunctionType(context.session)) return
 
-        val nameToArgumentProjection = typeRef.type.typeArguments.dropLast(1).groupBy {
+        val nameToArgumentProjection = typeRef.coneType.typeArguments.dropLast(1).groupBy {
             val type = it.type ?: return@groupBy null
             val annotation = type.customAnnotations.getAnnotationByClassId(StandardNames.FqNames.parameterNameClassId, context.session)
             val nameEntry = annotation?.argumentMapping?.mapping?.get(StandardNames.NAME)

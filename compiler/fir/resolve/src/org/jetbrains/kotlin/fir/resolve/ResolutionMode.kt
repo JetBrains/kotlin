@@ -117,7 +117,7 @@ fun withExpectedType(coneType: ConeKotlinType?, mayBeCoercionToUnitApplied: Bool
 
 fun withExpectedType(coneType: ConeKotlinType, mayBeCoercionToUnitApplied: Boolean = false): ResolutionMode {
     val typeRef = buildResolvedTypeRef {
-        type = coneType
+        this.coneType = coneType
     }
     return ResolutionMode.WithExpectedType(typeRef, mayBeCoercionToUnitApplied)
 }

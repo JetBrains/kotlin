@@ -405,7 +405,7 @@ private val FirResolvedTypeRef.resolvedClassId: ClassId?
         if (this !is FirErrorTypeRef) {
             // When you call a method from Java with type arguments, in FIR they are currently represented as flexible types.
             // TODO Consider handling other non-ConeLookupTagBasedType types here (see KT-66418)
-            return type.abbreviatedTypeOrSelf.lowerBoundIfFlexible().classId
+            return coneType.abbreviatedTypeOrSelf.lowerBoundIfFlexible().classId
         }
 
         val candidateSymbols = diagnostic.getCandidateSymbols()

@@ -51,7 +51,7 @@ class FirCloneableSymbolProvider(
         val classSymbol = FirRegularClassSymbol(StandardClassIds.Cloneable)
         symbol = classSymbol
         superTypeRefs += buildResolvedTypeRef {
-            type = session.builtinTypes.anyType.type
+            coneType = session.builtinTypes.anyType.coneType
         }
 
         declarations += buildSimpleFunction {
@@ -59,7 +59,7 @@ class FirCloneableSymbolProvider(
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Library
             returnTypeRef = buildResolvedTypeRef {
-                type = session.builtinTypes.anyType.type
+                coneType = session.builtinTypes.anyType.coneType
             }
 
             status = FirResolvedDeclarationStatusImpl(

@@ -76,7 +76,7 @@ class Fir2IrTypeConverter(
         capturedTypeCache.clear()
         return when (this) {
             !is FirResolvedTypeRef -> createErrorType()
-            !is FirImplicitBuiltinTypeRef -> type.toIrType(typeOrigin, annotations)
+            !is FirImplicitBuiltinTypeRef -> coneType.toIrType(typeOrigin, annotations)
             is FirImplicitNothingTypeRef -> builtins.nothingType
             is FirImplicitUnitTypeRef -> builtins.unitType
             is FirImplicitBooleanTypeRef -> builtins.booleanType
@@ -85,7 +85,7 @@ class Fir2IrTypeConverter(
             is FirImplicitIntTypeRef -> builtins.intType
             is FirImplicitNullableAnyTypeRef -> builtins.anyNType
             is FirImplicitNullableNothingTypeRef -> builtins.nothingNType
-            else -> type.toIrType(typeOrigin, annotations)
+            else -> coneType.toIrType(typeOrigin, annotations)
         }
     }
 
@@ -246,7 +246,7 @@ class Fir2IrTypeConverter(
         }
 
     private fun approximateUpperBounds(resolvedBounds: List<FirResolvedTypeRef>): IrType {
-        val commonSupertype = session.typeContext.commonSuperTypeOrNull(resolvedBounds.map { it.type })!!
+        val commonSupertype = session.typeContext.commonSuperTypeOrNull(resolvedBounds.map { it.coneType })!!
         val resultType = (commonSupertype as? ConeClassLikeType)?.replaceArgumentsWithStarProjections()
             ?: commonSupertype
         val approximatedType = (commonSupertype as? ConeSimpleKotlinType)?.approximateForIrOrSelf(c) ?: resultType

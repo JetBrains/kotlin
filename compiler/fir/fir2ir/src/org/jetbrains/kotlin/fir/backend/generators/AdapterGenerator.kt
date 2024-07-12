@@ -525,7 +525,7 @@ internal class AdapterGenerator(
             }
         }
 
-        return substitutor.substituteOrSelf(resolvedBounds.first().type)
+        return substitutor.substituteOrSelf(resolvedBounds.first().coneType)
     }
 
     private fun IrVararg.applyConversionOnVararg(

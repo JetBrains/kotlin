@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.createArrayType
 
 internal fun FirValueParameter.transformVarargTypeToArrayType(session: FirSession) {
@@ -37,7 +36,7 @@ internal fun FirCallableDeclaration.transformTypeToArrayType(session: FirSession
     replaceReturnTypeRef(
         buildResolvedTypeRef {
             source = returnTypeRef.source
-            type = ConeKotlinTypeProjectionOut(returnType).createArrayType()
+            coneType = ConeKotlinTypeProjectionOut(returnType).createArrayType()
             annotations += returnTypeRef.annotations
             // ? do we really need replacing source of nested delegatedTypeRef ?
             delegatedTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)

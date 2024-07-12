@@ -20,7 +20,7 @@ fun <T> T.approximateDeclarationType(
     stripEnhancedNullability: Boolean = true
 ): T {
     if (this !is FirResolvedTypeRef) return this
-    val baseType = this.type
+    val baseType = this.coneType
     val configuration = when (isLocal) {
         true -> TypeApproximatorConfiguration.LocalDeclaration
         false -> when (shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisibility, isInlineFunction)) {

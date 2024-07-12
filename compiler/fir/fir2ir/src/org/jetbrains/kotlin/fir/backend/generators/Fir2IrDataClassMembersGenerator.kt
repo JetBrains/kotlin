@@ -268,8 +268,8 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
          */
         private fun ConeKotlinType.coerceToAny(): ConeKotlinType {
             return when {
-                this.isNothingOrNullableNothing -> session.builtinTypes.anyType.type
-                this is ConeDynamicType -> session.builtinTypes.anyType.type
+                this.isNothingOrNullableNothing -> session.builtinTypes.anyType.coneType
+                this is ConeDynamicType -> session.builtinTypes.anyType.coneType
                 else -> this
             }
         }
@@ -307,7 +307,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             private fun getHashCodeFunction(klass: FirRegularClass): FirNamedFunctionSymbol {
                 if (klass.classId == StandardClassIds.Nothing) {
                     // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in the scope of kotlin.Any
-                    return getHashCodeFunction(session.builtinTypes.anyType.type.toRegularClassSymbol(session)!!.fir)
+                    return getHashCodeFunction(session.builtinTypes.anyType.coneType.toRegularClassSymbol(session)!!.fir)
                 }
                 val scope = klass.symbol.unsubstitutedScope(c)
                 return scope.getFunctions(HASHCODE_NAME).first { symbol ->

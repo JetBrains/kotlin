@@ -347,7 +347,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         }
         dispatchReceiver = candidate.dispatchReceiverExpression()
 
-        coneTypeOrNull = returnTypeRef.type
+        coneTypeOrNull = returnTypeRef.coneType
 
         if (!invokeBuiltinExtensionMode) {
             extensionReceiver = extensionReceiverExpression

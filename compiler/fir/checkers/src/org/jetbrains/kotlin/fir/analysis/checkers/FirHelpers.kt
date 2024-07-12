@@ -290,7 +290,7 @@ val FirFunctionCall.isIterator: Boolean
     get() = this.calleeReference.name == SpecialNames.ITERATOR
 
 fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession): Boolean =
-    session.builtinTypes.throwableType.type.isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
+    session.builtinTypes.throwableType.coneType.isSupertypeOf(session.typeContext, this.fullyExpandedType(session))
 
 val FirValueParameter.hasValOrVar: Boolean
     get() {
@@ -556,7 +556,7 @@ fun checkTypeMismatch(
 
 internal fun checkCondition(condition: FirExpression, context: CheckerContext, reporter: DiagnosticReporter) {
     val coneType = condition.resolvedType.fullyExpandedType(context.session).lowerBoundIfFlexible()
-    if (coneType !is ConeErrorType && !coneType.isSubtypeOf(context.session.typeContext, context.session.builtinTypes.booleanType.type)) {
+    if (coneType !is ConeErrorType && !coneType.isSubtypeOf(context.session.typeContext, context.session.builtinTypes.booleanType.coneType)) {
         reporter.reportOn(
             condition.source,
             FirErrors.CONDITION_TYPE_MISMATCH,
@@ -841,7 +841,7 @@ fun FirElement.isLhsOfAssignment(context: CheckerContext): Boolean {
 }
 
 fun ConeKotlinType.leastUpperBound(session: FirSession): ConeKotlinType {
-    val upperBounds = collectUpperBounds().takeIf { it.isNotEmpty() } ?: return session.builtinTypes.nullableAnyType.type
+    val upperBounds = collectUpperBounds().takeIf { it.isNotEmpty() } ?: return session.builtinTypes.nullableAnyType.coneType
     return ConeTypeIntersector.intersectTypes(session.typeContext, upperBounds)
 }
 

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -1016,8 +1015,8 @@ open class PsiRawFirBuilder(
                      *   and convert it to right call at backend, because of it doesn't affects frontend work
                      */
                     delegatedSuperTypeRef = buildResolvedTypeRef {
-                        type = ConeClassLikeTypeImpl(
-                            implicitEnumType.type.lookupTag,
+                        coneType = ConeClassLikeTypeImpl(
+                            implicitEnumType.coneType.lookupTag,
                             delegatedSelfTypeRef?.coneType?.let { arrayOf(it) } ?: emptyArray(),
                             isNullable = false,
                         )
@@ -1439,7 +1438,7 @@ open class PsiRawFirBuilder(
                                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
 
                                     val delegatedEntrySelfType = buildResolvedTypeRef {
-                                        type =
+                                        coneType =
                                             ConeClassLikeTypeImpl(
                                                 this@buildAnonymousObject.symbol.toLookupTag(),
                                                 emptyArray(),
@@ -1452,7 +1451,7 @@ open class PsiRawFirBuilder(
                                     val superTypeCallEntry = superTypeListEntries.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
                                     val correctedEnumSelfTypeRef = buildResolvedTypeRef {
                                         source = superTypeCallEntry?.calleeExpression?.typeReference?.toFirSourceElement()
-                                        type = delegatedEnumSelfTypeRef.type
+                                        coneType = delegatedEnumSelfTypeRef.coneType
                                     }
                                     declarations += primaryConstructor.toFirConstructor(
                                         superTypeCallEntry,

@@ -175,7 +175,7 @@ private class LLFirSuperTypeTargetResolver(
         if (status is SupertypeComputationStatus.Computed) {
             supertypeComputationSession.withDeclarationSession(declaration) {
                 for (computedType in status.supertypeRefs) {
-                    crawlSupertype(computedType.type)
+                    crawlSupertype(computedType.coneType)
                 }
             }
         }

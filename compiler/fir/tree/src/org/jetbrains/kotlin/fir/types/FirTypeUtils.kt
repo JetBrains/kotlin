@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeUnsafe(): T = (this as FirResolvedTypeRef).type as T
+inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeUnsafe(): T = (this as FirResolvedTypeRef).coneType as T
 
 @OptIn(ExperimentalContracts::class)
 @SymbolInternals
@@ -25,7 +25,7 @@ inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe(): T? {
     contract {
         returnsNotNull() implies (this@coneTypeSafe is FirResolvedTypeRef)
     }
-    return (this as? FirResolvedTypeRef)?.type as? T
+    return (this as? FirResolvedTypeRef)?.coneType as? T
 }
 
 val FirTypeRef.coneType: ConeKotlinType
@@ -103,8 +103,8 @@ fun FirExpression.isStableSmartcast(): Boolean {
 
 private val FirTypeRef.lookupTagBasedOrNull: ConeLookupTagBasedType?
     get() = when (this) {
-        is FirImplicitBuiltinTypeRef -> type
-        is FirResolvedTypeRef -> type as? ConeLookupTagBasedType
+        is FirImplicitBuiltinTypeRef -> coneType
+        is FirResolvedTypeRef -> coneType as? ConeLookupTagBasedType
         else -> null
     }
 
@@ -124,7 +124,7 @@ val FirFunctionTypeRef.parametersCount: Int
 
 private fun FirAnnotation.isOfType(classId: ClassId): Boolean {
     return (annotationTypeRef as? FirResolvedTypeRef)?.let { typeRef ->
-        (typeRef.type as? ConeClassLikeType)?.let {
+        (typeRef.coneType as? ConeClassLikeType)?.let {
             it.lookupTag.classId == classId
         }
     } == true

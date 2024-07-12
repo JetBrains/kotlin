@@ -130,7 +130,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     }
 
     fun registerSelfType(selfType: FirResolvedTypeRef) {
-        context.dispatchReceiverTypesStack.add(selfType.type as ConeClassLikeType)
+        context.dispatchReceiverTypesStack.add(selfType.coneType as ConeClassLikeType)
     }
 
     protected inline fun <T> withCapturedTypeParameters(
@@ -296,7 +296,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     protected fun T?.toDelegatedSelfType(typeParameters: List<FirTypeParameterRef>, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
         return buildResolvedTypeRef {
             source = this@toDelegatedSelfType?.toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
-            type = ConeClassLikeTypeImpl(
+            coneType = ConeClassLikeTypeImpl(
                 symbol.toLookupTag(),
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false

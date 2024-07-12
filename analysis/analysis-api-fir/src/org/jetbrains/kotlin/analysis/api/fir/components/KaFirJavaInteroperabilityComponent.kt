@@ -210,7 +210,7 @@ internal class KaFirJavaInteroperabilityComponent(
             }
         }
         val firTypeRef = javaTypeRef.resolveIfJavaType(analysisSession.firSession, javaTypeParameterStack, source = null)
-        val coneKotlinType = (firTypeRef as? FirResolvedTypeRef)?.type ?: return null
+        val coneKotlinType = (firTypeRef as? FirResolvedTypeRef)?.coneType ?: return null
         return coneKotlinType.asKtType()
     }
 
@@ -515,8 +515,8 @@ private class AnonymousTypesSubstitutor(
             firClassNode.resolvedSuperTypes.singleOrNull()?.let { return it }
         }
 
-        return if (type.nullability.isNullable) session.builtinTypes.nullableAnyType.type
-        else session.builtinTypes.anyType.type
+        return if (type.nullability.isNullable) session.builtinTypes.nullableAnyType.coneType
+        else session.builtinTypes.anyType.coneType
     }
 
     private fun ConeKotlinType.hasRecursiveTypeArgument(

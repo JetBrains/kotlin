@@ -169,7 +169,7 @@ class FirSamResolver(
             newTypeParameter.bounds += declared.symbol.resolvedBounds.map { typeRef ->
                 buildResolvedTypeRef {
                     source = typeRef.source
-                    type = substitutor.substituteOrSelf(typeRef.coneType)
+                    coneType = substitutor.substituteOrSelf(typeRef.coneType)
                 }
             }
         }
@@ -199,7 +199,7 @@ class FirSamResolver(
 
             returnTypeRef = buildResolvedTypeRef {
                 source = null
-                type = substitutedReturnType
+                coneType = substitutedReturnType
             }
 
             valueParameters += buildValueParameter {
@@ -208,7 +208,7 @@ class FirSamResolver(
                 origin = FirDeclarationOrigin.SamConstructor
                 returnTypeRef = buildResolvedTypeRef {
                     source = firRegularClass.source
-                    type = substitutedFunctionType
+                    coneType = substitutedFunctionType
                 }
                 name = SAM_PARAMETER_NAME
                 this.symbol = FirValueParameterSymbol(SAM_PARAMETER_NAME)
@@ -301,7 +301,7 @@ private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(session: F
                 (projection as? ConeKotlinTypeProjection)?.type
                 // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
                     ?: parameter.symbol.fir.bounds.firstOrNull()?.coneTypeSafe()
-                    ?: session.builtinTypes.nullableAnyType.type
+                    ?: session.builtinTypes.nullableAnyType.coneType
             Pair(parameter.symbol, substitutor.substituteOrSelf(typeArgument))
         }
     }

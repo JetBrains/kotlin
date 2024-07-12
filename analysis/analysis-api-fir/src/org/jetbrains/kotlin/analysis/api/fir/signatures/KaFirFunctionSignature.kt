@@ -78,7 +78,7 @@ internal class KaFirFunctionSubstitutorBasedSignature<out S : KaFunctionSymbol>(
             is FirPropertyAccessor -> fir.propertySymbol.resolvedReceiverTypeRef
             else -> firSymbol.resolvedReceiverTypeRef
         }
-        receiverTypeRef?.let { firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(it.type)) }
+        receiverTypeRef?.let { firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(it.coneType)) }
     }
     override val valueParameters: List<KaVariableSignature<KaValueParameterSymbol>> by cached {
         firSymbol.fir.valueParameters.map { firValueParameter ->

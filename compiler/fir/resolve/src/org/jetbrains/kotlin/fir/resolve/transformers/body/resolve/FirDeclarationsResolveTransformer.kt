@@ -228,7 +228,7 @@ open class FirDeclarationsResolveTransformer(
                         // we still need to resolve types in accessors (as per IMPLICIT_TYPES_BODY_RESOLVE contract).
                         property.getter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
                         property.setter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
-                        property.setter?.transformReturnTypeRef(transformer, withExpectedType(session.builtinTypes.unitType.type))
+                        property.setter?.transformReturnTypeRef(transformer, withExpectedType(session.builtinTypes.unitType.coneType))
                     }
                 }
 
@@ -435,7 +435,7 @@ open class FirDeclarationsResolveTransformer(
             }
 
             completeSessionOrPostponeIfNonRoot { finalSubstitutor ->
-                val typeRef = finalSubstitutor.substituteOrNull(currentPropertyTypeRef.type)?.let { substitutedType ->
+                val typeRef = finalSubstitutor.substituteOrNull(currentPropertyTypeRef.coneType)?.let { substitutedType ->
                     currentPropertyTypeRef.withReplacedConeType(substitutedType)
                 } ?: currentPropertyTypeRef
 
@@ -486,7 +486,7 @@ open class FirDeclarationsResolveTransformer(
             )
 
             val toTypeVariableSubstituted =
-                substitutor.substituteOrSelf(components.typeFromCallee(provideDelegateCall).type)
+                substitutor.substituteOrSelf(components.typeFromCallee(provideDelegateCall).coneType)
 
             provideDelegateCall.replaceConeTypeOrNull(toTypeVariableSubstituted)
             return provideDelegateCall
@@ -541,7 +541,7 @@ open class FirDeclarationsResolveTransformer(
         // We're only interested in the case when `provideDelegate` candidate returns a type variable
         // because in other cases we could look into the member scope of the type.
         val returnTypeBasedOnVariable =
-            components.typeFromCallee(provideDelegate).type
+            components.typeFromCallee(provideDelegate).coneType
                 // Substitut type parameter to type variable
                 .let(candidate.substitutor::substituteOrSelf)
                 .unwrapTopLevelVariableType() ?: return null
@@ -1149,7 +1149,7 @@ open class FirDeclarationsResolveTransformer(
         val anonymousFunction = anonymousFunctionExpression.anonymousFunction
         val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
             extractLambdaInfoFromFunctionType(
-                it.type, anonymousFunctionExpression, anonymousFunction, returnTypeVariable = null, components, candidate = null,
+                it.coneType, anonymousFunctionExpression, anonymousFunction, returnTypeVariable = null, components, candidate = null,
                 allowCoercionToExtensionReceiver = true,
                 sourceForFunctionExpression = null,
             )
@@ -1175,7 +1175,7 @@ open class FirDeclarationsResolveTransformer(
                 ?: resolvedLambdaAtom?.contextReceivers?.map { receiverType ->
                     buildContextReceiver {
                         this.typeRef = buildResolvedTypeRef {
-                            type = receiverType
+                            coneType = receiverType
                         }
                     }
                 }.orEmpty()
@@ -1205,7 +1205,7 @@ open class FirDeclarationsResolveTransformer(
         return returnTypeRef.resolvedTypeFromPrototype(
             computeReturnType(
                 session,
-                expected?.type,
+                expected?.coneType,
                 isPassedAsFunctionArgument = false,
                 dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(this),
             )
@@ -1256,7 +1256,7 @@ open class FirDeclarationsResolveTransformer(
         if (expectedType == null) return lambda.valueParameters
         if (!expectedType.isNonReflectFunctionType(session)) return lambda.valueParameters
         val parameterTypes = expectedType.typeArguments
-            .mapTo(mutableListOf()) { it.type ?: session.builtinTypes.nullableAnyType.type }
+            .mapTo(mutableListOf()) { it.type ?: session.builtinTypes.nullableAnyType.coneType }
             .also { it.removeLastOrNull() }
         if (expectedType.isExtensionFunctionType) {
             parameterTypes.removeFirstOrNull()
@@ -1393,7 +1393,7 @@ open class FirDeclarationsResolveTransformer(
             }
             else -> {
                 buildResolvedTypeRef {
-                    type = this@toExpectedTypeRef.coneType
+                    coneType = this@toExpectedTypeRef.coneType
                     source = this@toExpectedTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                     annotations.addAll(this@toExpectedTypeRef.annotations)
                 }

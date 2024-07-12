@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 
 object RedundantNullableChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
@@ -32,7 +31,7 @@ object RedundantNullableChecker : FirResolvedTypeRefChecker(MppCheckerKind.Commo
         if (symbol is FirTypeAliasSymbol) {
             while (symbol is FirTypeAliasSymbol) {
                 val resolvedExpandedTypeRef = symbol.resolvedExpandedTypeRef
-                if (resolvedExpandedTypeRef.type.isMarkedNullable) {
+                if (resolvedExpandedTypeRef.coneType.isMarkedNullable) {
                     reporter.reportOn(typeRef.source, REDUNDANT_NULLABLE, context)
                     break
                 } else {

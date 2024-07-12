@@ -315,7 +315,7 @@ fun FirRegularClassSymbol.getSuperClassSymbolOrAny(session: FirSession): FirRegu
         val symbol = superType.fullyExpandedType(session).toRegularClassSymbol(session) ?: continue
         if (symbol.classKind == ClassKind.CLASS) return symbol
     }
-    return session.builtinTypes.anyType.type.toRegularClassSymbol(session) ?: error("Symbol for Any not found")
+    return session.builtinTypes.anyType.coneType.toRegularClassSymbol(session) ?: error("Symbol for Any not found")
 }
 
 fun FirClassLikeSymbol<*>.getSuperTypes(
