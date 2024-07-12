@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.js.testOld.klib
 
 import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker
+import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_LIBRARY_VERSION
+import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.utils.TestMessageCollector
 import java.io.File
 import java.util.*
+import java.util.jar.Manifest
 
 class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
 
@@ -185,15 +187,23 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         assertTrue(originalStdlibDir.isDirectory)
         originalStdlibDir.copyRecursively(patchedStdlibDir)
 
-        val properties = manifestFile.inputStream().use { Properties().apply { load(it) } }
-        properties.remove(KLIB_PROPERTY_COMPILER_VERSION)
-        if (rawVersion != null) properties[KLIB_PROPERTY_COMPILER_VERSION] = rawVersion
-
-        if (isWasm) {
-            properties[KLIB_PROPERTY_BUILTINS_PLATFORM] = BuiltInsPlatform.WASM.name
+        if (rawVersion != null) {
+            val jarManifestFile = patchedStdlibDir.resolve(KLIB_JAR_MANIFEST_FILE)
+            jarManifestFile.parentFile.mkdirs()
+            jarManifestFile.outputStream().use { os ->
+                with(Manifest()) {
+                    mainAttributes.putValue(KLIB_JAR_LIBRARY_VERSION, rawVersion)
+                    mainAttributes.putValue("Manifest-Version", "1.0") // some convention stuff to make Jar manifest work
+                    write(os)
+                }
+            }
         }
 
-        manifestFile.outputStream().use { properties.store(it, null) }
+        if (isWasm) {
+            val properties = manifestFile.inputStream().use { Properties().apply { load(it) } }
+            properties[KLIB_PROPERTY_BUILTINS_PLATFORM] = BuiltInsPlatform.WASM.name
+            manifestFile.outputStream().use { properties.store(it, null) }
+        }
 
         return patchedStdlibDir
     }
