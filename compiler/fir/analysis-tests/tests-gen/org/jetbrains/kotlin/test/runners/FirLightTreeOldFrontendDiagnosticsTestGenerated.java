@@ -39037,6 +39037,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("flexibleTypeExpansion.kt")
+      public void testFlexibleTypeExpansion() {
+        runTest("compiler/testData/diagnostics/tests/typealias/flexibleTypeExpansion.kt");
+      }
+
+      @Test
       @TestMetadata("functionTypeInTypeAlias.kt")
       public void testFunctionTypeInTypeAlias() {
         runTest("compiler/testData/diagnostics/tests/typealias/functionTypeInTypeAlias.kt");

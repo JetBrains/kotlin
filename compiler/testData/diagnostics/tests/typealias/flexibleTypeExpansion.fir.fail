@@ -1,0 +1,9 @@
+java.lang.StackOverflowError
+	at org.jetbrains.kotlin.fir.resolve.TypeExpansionUtilsKt.fullyExpandedType(TypeExpansionUtils.kt:87)
+	at org.jetbrains.kotlin.fir.resolve.TypeExpansionUtilsKt.fullyExpandedType(TypeExpansionUtils.kt:68)
+	at org.jetbrains.kotlin.fir.resolve.TypeExpansionUtilsKt.fullyExpandedType$default(TypeExpansionUtils.kt:62)
+	at org.jetbrains.kotlin.fir.types.TypeUtilsKt.makeConeTypeDefinitelyNotNullOrNotNull(TypeUtils.kt:118)
+	at org.jetbrains.kotlin.fir.types.TypeUtilsKt.makeConeTypeDefinitelyNotNullOrNotNull(TypeUtils.kt:120)
+	at org.jetbrains.kotlin.fir.types.TypeUtilsKt.makeConeTypeDefinitelyNotNullOrNotNull(TypeUtils.kt:120)
+	at org.jetbrains.kotlin.fir.types.TypeUtilsKt.makeConeTypeDefinitelyNotNullOrNotNull(TypeUtils.kt:120)
+	at org.jetbrains.kotlin.fir.types.TypeUtilsKt.makeConeTypeDefinitelyNotNullOrNotNull(TypeUtils.kt:120)
