@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -97,17 +97,21 @@ class SwiftExportTestSupport : BeforeEachCallback {
 class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
         val settings = createTestRunSettings(computeKlibSyntheticAccessorTestInstances()) {
-            +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
+            with(RegisteredDirectivesBuilder()) {
+                +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
 
-            // Don't run LLVM, stop after the last IR lowering.
-            TestDirectives.FREE_COMPILER_ARGS with listOf(
-                "-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker",
-                "-Xklib-double-inlining"
-            )
+                // Don't run LLVM, stop after the last IR lowering.
+                TestDirectives.FREE_COMPILER_ARGS with listOf(
+                    "-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker",
+                    "-Xklib-double-inlining"
+                )
+
+                build()
+            }
         }
 
-        Assumptions.assumeTrue(settings.get<CacheMode>() == CacheMode.WithoutCache)
-        Assumptions.assumeTrue(settings.get<ThreadStateChecker>() == ThreadStateChecker.DISABLED)
+        assumeTrue(settings.get<CacheMode>() == CacheMode.WithoutCache)
+        assumeTrue(settings.get<ThreadStateChecker>() == ThreadStateChecker.DISABLED)
 
         // Inject the required properties to test instance.
         with(settings.get<NativeTestInstances<AbstractNativeKlibSyntheticAccessorTest>>().enclosingTestInstance) {
@@ -440,9 +444,7 @@ object NativeTestSupport {
 
     /*************** Test class settings (for black box tests only) ***************/
 
-    private fun ExtensionContext.getOrCreateTestClassSettings(
-        defaultTestDirectives: RegisteredDirectives = RegisteredDirectives.Empty
-    ): TestClassSettings =
+    private fun ExtensionContext.getOrCreateTestClassSettings(): TestClassSettings =
         root.getStore(NAMESPACE).getOrComputeIfAbsent(testClassKeyFor<TestClassSettings>()) {
             val enclosingTestClass = enclosingTestClass
 
@@ -477,8 +479,6 @@ object NativeTestSupport {
                         else -> fail { "Unknown test class setting type: $clazz" }
                     }
                 }
-
-                this += RegisteredDirectives::class to defaultTestDirectives
             }
 
             TestClassSettings(parent = testProcessSettings, settings)
@@ -641,13 +641,16 @@ object NativeTestSupport {
     // Note: TestRunSettings is not cached!
     fun ExtensionContext.createTestRunSettings(
         testInstances: NativeTestInstances<*>,
-        defaultTestDirectiveBuilder: RegisteredDirectivesBuilder.() -> Unit = {},
+        defaultDirectives: ((TestClassSettings) -> RegisteredDirectives) = { RegisteredDirectives.Empty },
     ): TestRunSettings {
+        val testClassSettings = getOrCreateTestClassSettings()
+
         return TestRunSettings(
-            parent = getOrCreateTestClassSettings(RegisteredDirectivesBuilder().apply(defaultTestDirectiveBuilder).build()),
+            parent = testClassSettings,
             listOfNotNull(
                 testInstances,
-                testInstances.externalSourceTransformersProvider?.let { ExternalSourceTransformersProvider::class to it }
+                testInstances.externalSourceTransformersProvider?.let { ExternalSourceTransformersProvider::class to it },
+                RegisteredDirectives::class to defaultDirectives(testClassSettings)
             )
         )
     }
