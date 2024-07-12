@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -106,8 +106,8 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
             )
         }
 
-        Assumptions.assumeTrue(settings.get<CacheMode>() == CacheMode.WithoutCache)
-        Assumptions.assumeTrue(settings.get<ThreadStateChecker>() == ThreadStateChecker.DISABLED)
+        assumeTrue(settings.get<CacheMode>() == CacheMode.WithoutCache)
+        assumeTrue(settings.get<ThreadStateChecker>() == ThreadStateChecker.DISABLED)
 
         // Inject the required properties to test instance.
         with(settings.get<NativeTestInstances<AbstractNativeKlibSyntheticAccessorTest>>().enclosingTestInstance) {
@@ -440,9 +440,7 @@ object NativeTestSupport {
 
     /*************** Test class settings (for black box tests only) ***************/
 
-    private fun ExtensionContext.getOrCreateTestClassSettings(
-        defaultTestDirectives: RegisteredDirectives = RegisteredDirectives.Empty
-    ): TestClassSettings =
+    private fun ExtensionContext.getOrCreateTestClassSettings(): TestClassSettings =
         root.getStore(NAMESPACE).getOrComputeIfAbsent(testClassKeyFor<TestClassSettings>()) {
             val enclosingTestClass = enclosingTestClass
 
@@ -477,8 +475,6 @@ object NativeTestSupport {
                         else -> fail { "Unknown test class setting type: $clazz" }
                     }
                 }
-
-                this += RegisteredDirectives::class to defaultTestDirectives
             }
 
             TestClassSettings(parent = testProcessSettings, settings)
@@ -641,13 +637,20 @@ object NativeTestSupport {
     // Note: TestRunSettings is not cached!
     fun ExtensionContext.createTestRunSettings(
         testInstances: NativeTestInstances<*>,
-        defaultTestDirectiveBuilder: RegisteredDirectivesBuilder.() -> Unit = {},
+        defaultTestDirectiveBuilder: (RegisteredDirectivesBuilder.(TestClassSettings) -> Unit)? = null,
     ): TestRunSettings {
+        val testClassSettings = getOrCreateTestClassSettings()
+
+        val defaultDirectives = defaultTestDirectiveBuilder?.let {
+            RegisteredDirectivesBuilder().apply { defaultTestDirectiveBuilder(testClassSettings) } .build()
+        } ?: RegisteredDirectives.Empty
+
         return TestRunSettings(
-            parent = getOrCreateTestClassSettings(RegisteredDirectivesBuilder().apply(defaultTestDirectiveBuilder).build()),
+            parent = testClassSettings,
             listOfNotNull(
                 testInstances,
-                testInstances.externalSourceTransformersProvider?.let { ExternalSourceTransformersProvider::class to it }
+                testInstances.externalSourceTransformersProvider?.let { ExternalSourceTransformersProvider::class to it },
+                RegisteredDirectives::class to defaultDirectives
             )
         )
     }
