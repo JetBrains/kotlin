@@ -32,7 +32,7 @@ public abstract interface Intf {
      *
      *   // field: BLACK:I
      *   // getter: getBLACK()I
-     *   public final val BLACK: kotlin/Int (* = ... *)
+     *   public final val BLACK: kotlin/Int
      *     public final get
      *
      *   // module name: main

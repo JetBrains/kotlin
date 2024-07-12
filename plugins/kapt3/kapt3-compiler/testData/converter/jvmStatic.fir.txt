@@ -104,7 +104,7 @@ public final class JvmStaticTest {
      *
      *   // getter: getOne()I
      *   // synthetic method for annotations: getOne$annotations()V
-     *   public final val one: kotlin/Int (* = ... *)
+     *   public final val one: kotlin/Int
      *     public final get
      *
      *   public final const val two: kotlin/Int (* = ... *)

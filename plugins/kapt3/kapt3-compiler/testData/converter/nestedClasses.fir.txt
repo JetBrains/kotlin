@@ -245,15 +245,15 @@ public final class Foo {
  *   // signature: <init>()V
  *   public constructor()
  *
- *   // nested class: Nested
- *
  *   // nested class: Inner
  *
- *   // nested class: NestedObject
+ *   // nested class: Nested
+ *
+ *   // nested class: NestedEnum
  *
  *   // nested class: NestedInterface
  *
- *   // nested class: NestedEnum
+ *   // nested class: NestedObject
  *
  *   // module name: main
  * }

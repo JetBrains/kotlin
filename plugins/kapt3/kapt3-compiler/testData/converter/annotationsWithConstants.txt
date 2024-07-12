@@ -316,42 +316,42 @@ package app;
  *   // field: a:I
  *   // getter: getA()I
  *   // synthetic method for annotations: getA$annotations()V
- *   public final val a: kotlin/Int (* = ... *)
+ *   public final val a: kotlin/Int
  *     public final get
  *
  *   // field: b:I
  *   // getter: getB()I
  *   // synthetic method for annotations: getB$annotations()V
- *   public final val b: kotlin/Int (* = ... *)
+ *   public final val b: kotlin/Int
  *     public final get
  *
  *   // field: c:I
  *   // getter: getC()I
  *   // synthetic method for annotations: getC$annotations()V
- *   public final val c: kotlin/Int (* = ... *)
+ *   public final val c: kotlin/Int
  *     public final get
  *
  *   // field: d:I
  *   // getter: getD()I
  *   // synthetic method for annotations: getD$annotations()V
- *   public final val d: kotlin/Int (* = ... *)
+ *   public final val d: kotlin/Int
  *     public final get
  *
  *   // field: e:I
  *   // getter: getE()I
  *   // synthetic method for annotations: getE$annotations()V
- *   public final val e: kotlin/Int (* = ... *)
+ *   public final val e: kotlin/Int
  *     public final get
  *
  *   // field: f:I
  *   // getter: getF()I
  *   // synthetic method for annotations: getF$annotations()V
- *   public final val f: kotlin/Int (* = ... *)
+ *   public final val f: kotlin/Int
  *     public final get
  *
  *   // field: propB:I
  *   // getter: getPropB()I
- *   public final val propB: kotlin/Int (* = ... *)
+ *   public final val propB: kotlin/Int
  *     public final get
  *
  *   // field: propC:I
@@ -371,7 +371,7 @@ package app;
  *     public final get
  *
  *   // field: propD:I
- *   public final val propD: kotlin/Int (* = ... *)
+ *   public final val propD: kotlin/Int
  *     public final get
  *
  *   // field: propE:I

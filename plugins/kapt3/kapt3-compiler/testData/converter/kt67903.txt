@@ -60,7 +60,6 @@ public final class Data {
 /**
  * package {
  *
- *   // requires compiler version 1.4.30 (level=ERROR)
  *   // signature: foo-6iM29E0(I)V
  *   public final fun Data.foo(): kotlin/Unit
  *

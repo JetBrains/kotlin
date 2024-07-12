@@ -56,22 +56,22 @@ public final class Boo {
  *     public final get
  *
  *   // field: aliasedUInt:I
- *   public final val aliasedUInt: kotlin/UInt (* = TUint^ *) (* = ... *)
+ *   public final val aliasedUInt: kotlin/UInt (* = TUint^ *)
  *     public final get
  *
  *   // field: aliasedInt:I
  *   // getter: getAliasedInt()I
- *   public final val aliasedInt: kotlin/Int (* = TInt^ *) (* = ... *)
+ *   public final val aliasedInt: kotlin/Int (* = TInt^ *)
  *     public final get
  *
  *   // field: bInt:I
  *   // getter: getBInt()I
- *   public final val bInt: kotlin/Int (* = ... *)
+ *   public final val bInt: kotlin/Int
  *     public final get
  *
  *   // field: bString:Ljava/lang/String;
  *   // getter: getBString()Ljava/lang/String;
- *   public final val bString: kotlin/String (* = ... *)
+ *   public final val bString: kotlin/String
  *     public final get
  *
  *   // field: cInt:I
@@ -110,12 +110,12 @@ public final class Boo {
  *
  *   // field: h:I
  *   // getter: getH()I
- *   public final val h: kotlin/Int (* = ... *)
+ *   public final val h: kotlin/Int
  *     public final get
  *
  *   // field: i:I
  *   // getter: getI()I
- *   public final val i: kotlin/Int (* = ... *)
+ *   public final val i: kotlin/Int
  *     public final get
  *
  *   // field: j:Ljava/lang/String;
@@ -305,7 +305,7 @@ public final class Foo {
  *
  *   // field: uint:I
  *   // getter: getUint()I
- *   public final val uint: kotlin/UInt (* = ... *)
+ *   public final val uint: kotlin/UInt
  *     public final get
  *
  *   // field: uintArray:[Lkotlin/UInt;

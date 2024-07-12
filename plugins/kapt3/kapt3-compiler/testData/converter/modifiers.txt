@@ -49,7 +49,7 @@ package modifiers;
  *
  *   // field: transientField:Ljava/lang/String;
  *   // getter: getTransientField()Ljava/lang/String;
- *   public final val transientField: kotlin/String (* = ... *)
+ *   public final val transientField: kotlin/String
  *     public final get
  *
  *   // field: volatileField:Ljava/lang/String;

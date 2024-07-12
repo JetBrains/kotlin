@@ -234,7 +234,7 @@ public final class Test3 {
  *   public constructor()
  *
  *   // field: foo:I
- *   private final val foo: kotlin/Int (* = ... *)
+ *   private final val foo: kotlin/Int
  *     private final get
  *
  *   // companion object: Companion

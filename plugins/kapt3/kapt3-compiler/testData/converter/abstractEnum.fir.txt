@@ -10,9 +10,9 @@
  *   // signature: b()V
  *   public final fun b(): kotlin/Unit
  *
- *   // nested class: Obj
- *
  *   // nested class: NestedClass
+ *
+ *   // nested class: Obj
  *
  *   X,
  *

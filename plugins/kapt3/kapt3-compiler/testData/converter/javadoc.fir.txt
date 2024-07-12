@@ -38,22 +38,22 @@ package javadoc;
  *
  *   // field: a:Ljava/lang/String;
  *   // getter: getA()Ljava/lang/String;
- *   public final val a: kotlin/String (* = ... *)
+ *   public final val a: kotlin/String
  *     public final get
  *
  *   // field: b:Ljava/lang/String;
  *   // getter: getB()Ljava/lang/String;
- *   public final val b: kotlin/String (* = ... *)
+ *   public final val b: kotlin/String
  *     public final get
  *
  *   // field: c:Ljava/lang/String;
  *   // getter: getC()Ljava/lang/String;
- *   public final val c: kotlin/String (* = ... *)
+ *   public final val c: kotlin/String
  *     public final get
  *
  *   // field: d:Ljava/lang/String;
  *   // getter: getD()Ljava/lang/String;
- *   public final val d: kotlin/String (* = ... *)
+ *   public final val d: kotlin/String
  *     public final get
  *
  *   // field: e:Ljava/lang/String;

@@ -51,7 +51,7 @@ package modifiers;
  *
  *   // field: transientField:Ljava/lang/String;
  *   // getter: getTransientField()Ljava/lang/String;
- *   public final val transientField: kotlin/String (* = ... *)
+ *   public final val transientField: kotlin/String
  *     public final get
  *
  *   // field: volatileField:Ljava/lang/String;
@@ -206,9 +206,9 @@ package modifiers;
  *   // signature: <init>()V
  *   protected constructor()
  *
- *   // nested class: ProtectedInterface
- *
  *   // nested class: PrivateInterface
+ *
+ *   // nested class: ProtectedInterface
  *
  *   // module name: main
  * }
@@ -266,13 +266,13 @@ package modifiers;
  *   // signature: <init>()V
  *   protected constructor()
  *
- *   // nested class: One
+ *   // nested class: Four
  *
- *   // nested class: Two
+ *   // nested class: One
  *
  *   // nested class: Three
  *
- *   // nested class: Four
+ *   // nested class: Two
  *
  *   // sealed subclass: modifiers/SealedClass.One
  *

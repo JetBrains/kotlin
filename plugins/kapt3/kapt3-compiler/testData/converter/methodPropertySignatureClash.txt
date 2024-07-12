@@ -9,7 +9,7 @@
  *
  *   // field: resources:I
  *   // getter: getResources()I
- *   public final val resources: kotlin/Int (* = ... *)
+ *   public final val resources: kotlin/Int
  *     public final get
  *
  *   // module name: main

@@ -42,7 +42,7 @@ public final class Test {
      *
      *   // field: a:I
      *   // getter: getA()I
-     *   public final val a: kotlin/Int (* = ... *)
+     *   public final val a: kotlin/Int
      *     public final get
      *
      *   // module name: main

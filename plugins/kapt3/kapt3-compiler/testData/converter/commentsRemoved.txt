@@ -95,7 +95,7 @@ public final class Obj {
  *   // field: prop2:Ljava/lang/String;
  *   // getter: getProp2()Ljava/lang/String;
  *   // synthetic method for annotations: getProp2$annotations()V
- *   public final val prop2: kotlin/String (* = ... *)
+ *   public final val prop2: kotlin/String
  *     public final get
  *
  *   // getter: getProp3()Ljava/lang/String;

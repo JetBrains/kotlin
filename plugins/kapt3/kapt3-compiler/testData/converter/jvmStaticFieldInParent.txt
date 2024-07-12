@@ -36,7 +36,7 @@ public final class Test {
      *   // field: test:Ljava/lang/String;
      *   // getter: getTest()Ljava/lang/String;
      *   // synthetic method for annotations: getTest$annotations()V
-     *   public final val test: kotlin/String (* = ... *)
+     *   public final val test: kotlin/String
      *     public final get
      *
      *   // module name: main

@@ -237,7 +237,7 @@ import kotlin.reflect.KClass;
  *
  *   // field: n:Ljava/lang/String;
  *   // getter: getN()Ljava/lang/String;
- *   public final val n: kotlin/String (* = ... *)
+ *   public final val n: kotlin/String
  *     public final get
  *
  *   // field: nested:Lerror/NonExistentClass;
