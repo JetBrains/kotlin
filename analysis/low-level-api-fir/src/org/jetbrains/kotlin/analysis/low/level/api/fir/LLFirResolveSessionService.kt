@@ -113,14 +113,15 @@ private class LLBinaryModuleResolutionStrategyProvider(private val useSiteModule
 private class LLScriptModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
-            useSiteModule, is KaSourceModule -> LLModuleResolutionStrategy.LAZY
+            useSiteModule, is KaSourceModule, is KaLibrarySourceModule -> LLModuleResolutionStrategy.LAZY
             is KaBuiltinsModule, is KaLibraryModule -> LLModuleResolutionStrategy.STATIC
             else -> unexpectedElementError("module", module)
         }
     }
 }
 
-private class LLDanglingFileResolutionStrategyProvider(private val delegate: LLModuleResolutionStrategyProvider) : LLModuleResolutionStrategyProvider {
+private class LLDanglingFileResolutionStrategyProvider(private val delegate: LLModuleResolutionStrategyProvider) :
+    LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         return when (module) {
             is KaDanglingFileModule -> LLModuleResolutionStrategy.LAZY
