@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
@@ -119,6 +120,12 @@ internal class DynamicCompilerDriver(private val performanceManager: CommonCompi
             config: KonanConfig,
             environment: KotlinCoreEnvironment
     ): SerializerOutput? {
+
+        config.configuration.messageCollector.report(
+                CompilerMessageSeverity.INFO,
+                "The compiler uses prototype pipeline with partially separate compilation. Some discrepancies with standard compilation are expected."
+        )
+
         val frontendOutput = performanceManager.trackAnalysis { engine.runFirFrontend(environment) }
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
         require(frontendOutput is FirOutput.Full)

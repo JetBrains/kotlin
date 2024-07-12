@@ -209,6 +209,12 @@ open class IncrementalFirJvmCompilerRunner(
                         configuration
                     )
 
+                    messageCollector.report(
+                        CompilerMessageSeverity.INFO,
+                        "The compiler uses prototype pipeline with partially separate compilation. Some discrepancies with standard compilation are expected."
+                    )
+
+
                     val analysisResults =
                         compileModuleToAnalyzedFir(
                             compilerInput,
