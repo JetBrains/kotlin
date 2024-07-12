@@ -99,10 +99,12 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
         val settings = createTestRunSettings(computeKlibSyntheticAccessorTestInstances()) {
             +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
 
-            // Don't run LLVM, stop after the last IR lowering.
             TestDirectives.FREE_COMPILER_ARGS with listOf(
+                // Don't run LLVM, stop after the last IR lowering.
                 "-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker",
-                "-Xklib-double-inlining"
+
+                // Enable double-inlining.
+                "-Xklib-double-inlining",
             )
         }
 
