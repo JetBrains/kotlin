@@ -1448,7 +1448,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                         && asm.zip(desc.value).all { (eAsm, eDesc) -> checkIfAnnotationValueMatches(eAsm, eDesc) }
             }
 
-            is Type -> desc is KClassValue && typeMapper.mapType(desc.getArgumentType(kaptContext.generationState.module)) == asm
+            is Type -> desc is KClassValue && typeMapper.mapKClassValue(desc) == asm
             is AnnotationNode -> {
                 val annotationDescriptor = (desc as? AnnotationValue)?.value ?: return false
                 if (typeMapper.mapType(annotationDescriptor.type).descriptor != asm.desc) return false
