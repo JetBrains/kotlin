@@ -15,6 +15,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    flavorDimensions("myFlavor")
+    productFlavors {
+        create("flavor1") { dimension = "myFlavor" }
+    }
 }
 kotlin {
     androidTarget {
@@ -60,7 +64,8 @@ fun Project.resolveDependencies(name: String) {
 tasks.register("resolveDependencies") {
     doFirst {
         project.resolveDependencies("jvmCompileClasspath")
-        project.resolveDependencies("androidReleaseCompileClasspath")
+        project.resolveDependencies("androidFlavor1ReleaseCompileClasspath")
+        project.resolveDependencies("androidFlavor1DebugCompileClasspath")
         project.resolveDependencies("linuxX64CompileKlibraries")
         project.resolveDependencies("linuxArm64CompileKlibraries")
     }

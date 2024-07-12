@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
-import org.junit.jupiter.api.extension.ConditionEvaluationResult
-import org.junit.jupiter.api.extension.ExecutionCondition
-import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.api.extension.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
@@ -74,6 +72,18 @@ inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T
                 annotation.annotationClass.annotations.firstOrNull { it is T }
             }
             .first() as T
+}
+
+open class GradleParameterResolver : ParameterResolver {
+    override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
+        return parameterContext.parameter.type == GradleVersion::class.java
+    }
+
+    override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any? {
+        val versionFilter = extensionContext.getConfigurationParameter("gradle.integration.tests.gradle.version.filter")
+            .map { GradleVersion.version(it) }
+        return if (versionFilter.isPresent) versionFilter.get() else null
+    }
 }
 
 open class GradleArgumentsProvider : ArgumentsProvider {

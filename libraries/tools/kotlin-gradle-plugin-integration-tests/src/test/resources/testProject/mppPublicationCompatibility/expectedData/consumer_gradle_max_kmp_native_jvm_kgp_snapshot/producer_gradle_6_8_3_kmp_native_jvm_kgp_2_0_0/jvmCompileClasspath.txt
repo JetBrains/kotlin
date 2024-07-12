@@ -1,0 +1,4 @@
+org.jetbrains:annotations:13.0 => [compile]
+project : => [jvmCompileClasspath]
+sample.gradle_6_8_3:kmp_native_jvm_kgp_2_0_0-jvm:1.0 => [jvmApiElements-published]
+sample.gradle_6_8_3:kmp_native_jvm_kgp_2_0_0:1.0 => [jvmApiElements-published]

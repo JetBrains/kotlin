@@ -6,226 +6,215 @@
 package org.jetbrains.kotlin.gradle.mpp.publication
 
 import org.gradle.api.JavaVersion
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.cartesianProductOf
-import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.x
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.junit.jupiter.api.DisplayName
-import org.junit.runners.model.MultipleFailureException
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.readText
+import kotlin.io.path.relativeTo
+import kotlin.io.path.walk
 
+@ExtendWith(GradleParameterResolver::class)
 class MppPublicationCompatibilityIT : KGPBaseTest() {
-    private val gradleVersions = listOf(
-        TestVersions.Gradle.MIN_SUPPORTED,
-        TestVersions.Gradle.MAX_SUPPORTED,
-    )
-
-    private val agpVersions = listOf(
-        TestVersions.AGP.MIN_SUPPORTED,
-        TestVersions.AGP.MAX_SUPPORTED,
-    )
-
-    private val agpSupportedGradleVersions = agpVersions.associateWith { agpVersion ->
-        val compatibilityEntry = TestVersions.AgpCompatibilityMatrix.entries.single { it.version == agpVersion }
-        compatibilityEntry.minSupportedGradleVersion.version
-    }
-
-    private val kgpSupportedGradleVersions = mapOf(
-        TestVersions.Kotlin.CURRENT to gradleVersions + agpSupportedGradleVersions.values
-    )
-
-    private val kotlinVersions = listOf(
-        TestVersions.Kotlin.CURRENT
-    )
-
-    private val projectVariants = with(ProjectVariant) {
-        listOf(
-            native + jvm,
-            native + android,
-            native + jvm + android,
-            javaOnly,
-            androidOnly,
+    companion object {
+        private val agpVersions = listOf(
+            TestVersions.AGP.MIN_SUPPORTED,
+            TestVersions.AGP.MAX_SUPPORTED,
         )
-    }
 
-    private fun generateScenarios(): Set<Scenario> {
-        val projects = cartesianProductOf(gradleVersions, agpVersions, kotlinVersions, projectVariants).map {
-            ScenarioProject(
-                gradleVersion = it[0] as String,
-                agpVersion = it[1] as String,
-                kotlinVersion = it[2] as String,
-                variant = it[3] as ProjectVariant,
+        private val kotlinVersions = listOf(
+            TestVersions.Kotlin.STABLE_RELEASE,
+            TestVersions.Kotlin.CURRENT
+        )
+
+        private val projectVariants = with(ProjectVariant) {
+            listOf(
+                native + jvm,
+                native + android,
+                native + jvm + android,
+                javaOnly,
+                androidOnly,
             )
         }
-            // Override Gradle version to match AGP version
-            .map { if (it.isWithAndroid) it.copy(gradleVersionString = agpSupportedGradleVersions[it.agpVersionString]!!) else it }
-            // Don't use newer gradle with old KGP (they may not be entirely compatible)
-            .filter { if (it.isKmp) kgpSupportedGradleVersions.get(it.kotlinVersionString)!!.contains(it.gradleVersionString) else true }
-            .toSet()
 
-        val scenarios = (projects x projects)
-            .map { (consumer, producer) -> Scenario(consumer, producer) }
-            // ensure that each scenario we test master KGP i.e. we are not interested in AndroidOnly <-> JavaOnly compatibility
-            .filter { scenario -> scenario.consumer.isMasterKmp || scenario.producer.isMasterKmp }
-            // ensure that JavaOnly can consume KMP project i.e. it should have JVM part
-            .filter { scenario -> if (scenario.consumer.isJavaOnly) scenario.producer.isWithJvm else true }
-            .filter { scenario -> if (scenario.consumer.isWithAndroid) scenario.producer.isWithAndroid else true }
-            .toSet()
-        println("Total scenarios: ${scenarios.size}")
-        println("Total unique publications: ${scenarios.map { it.producer }.toSet().size}")
-        println("Total unique consumer projects: ${scenarios.map { it.consumer }.toSet().size}")
+        private fun generateScenarios(gradleVersions: List<String>): Set<Scenario> {
+            val projects = cartesianProductOf(gradleVersions, agpVersions, kotlinVersions, projectVariants).map {
+                ScenarioProject(
+                    gradleVersion = it[0] as String,
+                    agpVersion = it[1] as String,
+                    kotlinVersion = it[2] as String,
+                    variant = it[3] as ProjectVariant,
+                )
+            }
+                .filter(Scenario.Project::hasValidVersionCombo)
+                .toSet()
 
-        for (scenario in scenarios) {
-            val consumerId = "${scenario.consumer.packageName}:${scenario.consumer.artifactName}"
-            val producerId = "${scenario.producer.packageName}:${scenario.producer.artifactName}"
-            println("$consumerId consumes $producerId")
+            val scenarios = (projects x projects)
+                .map { (consumer, producer) -> Scenario(consumer, producer) }
+                .filter(Scenario::hasMasterKmp) // we are not interested in AndroidOnly <-> JavaOnly compatibility
+                .filter(Scenario::isConsumable)
+                .toSet()
+
+            println("Total scenarios: ${scenarios.size}")
+            println("Total unique publications: ${scenarios.map { it.producer }.toSet().size}")
+            println("Total unique consumer projects: ${scenarios.map { it.consumer }.toSet().size}")
+
+            return scenarios
         }
 
-        return scenarios
+        private val expectedDataPath = Paths.get(
+            "src",
+            "test",
+            "resources",
+            "testProject",
+            "mppPublicationCompatibility",
+            "expectedData",
+        )
+
+        private val Scenario.expectedScenarioDataDir
+            get() = expectedDataPath.resolve("consumer_" + consumer.id).resolve("producer_" + producer.id)
+
+        private fun Scenario.expectedResolvedConfigurationTestReport(configurationName: String): Path = expectedScenarioDataDir
+            .resolve("$configurationName.txt")
+
+        private val ProjectVariant.sampleDirectoryName: String
+            get() = when (this) {
+                ProjectVariant.AndroidOnly -> "androidOnly"
+                ProjectVariant.JavaOnly -> "javaOnly"
+                is ProjectVariant.Kmp -> "kmp"
+            }
+
+        @JvmStatic
+        fun scenarios(specificGradleVersion: GradleVersion?): Iterable<Scenario> {
+            val supportedGradleVersions = listOf(
+                TestVersions.Gradle.MIN_SUPPORTED,
+                TestVersions.Gradle.MAX_SUPPORTED,
+            )
+
+            if (specificGradleVersion != null) {
+                if (specificGradleVersion.version !in supportedGradleVersions) return emptyList()
+                println("Generate scenarios for $specificGradleVersion Gradle version")
+                return generateScenarios(listOf(specificGradleVersion.version))
+            } else {
+                println("Generate scenarios for $supportedGradleVersions Gradle versions")
+                return generateScenarios(supportedGradleVersions)
+            }
+        }
+
+        @JvmStatic
+        fun rerunScenariosForDebugging(specificGradleVersion: GradleVersion?): Iterable<Scenario> {
+            val rerunIndex = 2
+            return listOf(scenarios(specificGradleVersion).toList()[rerunIndex])
+        }
+
+        @JvmStatic
+        @TempDir
+        lateinit var localRepoDir: Path
     }
 
     // Test data could be regenerated by removing subdirectories in "expectedData" directory in the project dir
     @DisplayName("test compatibility between published libraries by kotlin multiplatform, java and android")
-    @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED, maxVersion = TestVersions.Gradle.MAX_SUPPORTED)
     @TestMetadata("mppPublicationCompatibility")
     @MppGradlePluginTests
-    fun testKmpPublication() {
-        val scenarios = generateScenarios()
-        val producers = scenarios.map { it.producer }.toSet()
-        val localRepoDir = workingDir.resolve("mavenRepo")
-        publishAllProjects(producers, localRepoDir)
-        val testReports: Map<Scenario.Project, Map<String, Path>> = consumeAllProjects(scenarios, localRepoDir)
+    @ParameterizedTest
+    @Suppress("JUnitMalformedDeclaration") // FIXME: IDEA-320187
+    @MethodSource("scenarios") /** For debugging use [rerunScenariosForDebugging] */
+    fun testKmpPublication(scenario: Scenario) {
+        scenario.producer.publish(localRepoDir)
+        scenario.testConsumption(localRepoDir)
+    }
 
-        val failures = mutableListOf<Throwable>()
-        scenarios.map { it.consumer }.toSet().forEach { consumer ->
-            val resolvedConfigurationsNames = consumer.resolvedConfigurationsNames
-            for (resolvedConfigurationName in resolvedConfigurationsNames) {
-                val expectedReportFile = consumer.expectedResolvedConfigurationTestReport(resolvedConfigurationName)
-                val actualReport = testReports[consumer]!![resolvedConfigurationName]!!.readText()
+    @TestMetadata("mppPublicationCompatibility")
+    @MppGradlePluginTests
+    @Test
+    fun checkThereIsNoUnusedTestData() {
+        val autoCleanUp = false // set it to true to automatically clean up unused test data
+        if (isTeamCityRun && autoCleanUp) fail { "Auto cleanup can't be used during TeamCity run" }
 
+        val existingDataDirs = expectedDataPath.walk().map { it.parent.relativeTo(expectedDataPath) }.toMutableSet()
+        val expectedDataDirs = scenarios(null).map { it.expectedScenarioDataDir.relativeTo(expectedDataPath) }.toSet()
+
+        val unexpectedDataDirs = existingDataDirs - expectedDataDirs
+        if (unexpectedDataDirs.isEmpty()) return
+
+        if (autoCleanUp) unexpectedDataDirs.forEach { expectedDataPath.resolve(it).deleteRecursively() }
+
+        fail {
+            val unexpectedDataDirsString = unexpectedDataDirs.joinToString("\n") { "   $it" }
+            "Following data files are registered in $expectedDataPath but aren't used by test ${this::class}:\n" +
+                    unexpectedDataDirsString + "\nPlease remove them or update test."
+        }
+    }
+
+    private fun Scenario.Project.publish(repoDir: Path) {
+        // check if already published
+        if (repoDir.resolve(packageName.replace(".", "/")).resolve(artifactName).toFile().exists()) return
+
+        val sampleDirectoryName = variant.sampleDirectoryName
+        val scenarioProject = this
+        project(
+            projectName = "mppPublicationCompatibility/sampleProjects/$sampleDirectoryName",
+            gradleVersion = gradleVersion,
+            localRepoDir = repoDir,
+            buildJdk = File(System.getProperty("jdk${JavaVersion.VERSION_17.majorVersion}Home"))
+        ) {
+            prepareProjectForPublication(scenarioProject)
+            val buildOptions = if (hasAndroid) {
+                val androidVersion = scenarioProject.agpVersionString!!
+                defaultBuildOptions.copy(androidVersion = androidVersion)
+            } else {
+                defaultBuildOptions
+            }
+            build("publish", buildOptions = buildOptions)
+        }
+    }
+
+    private fun Scenario.testConsumption(repoDir: Path) {
+        val consumerDirectory = consumer.variant.sampleDirectoryName
+
+        project(
+            projectName = "mppPublicationCompatibility/sampleProjects/$consumerDirectory",
+            gradleVersion = consumer.gradleVersion,
+            localRepoDir = repoDir,
+            buildJdk = File(System.getProperty("jdk${JavaVersion.VERSION_17.majorVersion}Home"))
+        ) {
+            prepareConsumerProject(consumer, listOf(producer), repoDir)
+            val buildOptions = if (consumer.hasAndroid) {
+                val androidVersion = consumer.agpVersionString!!
+                defaultBuildOptions.copy(androidVersion = androidVersion)
+            } else {
+                defaultBuildOptions
+            }
+
+            build("resolveDependencies", buildOptions = buildOptions)
+
+            fun assertResolvedDependencies(configurationName: String) {
+                val actualReport = projectPath.resolve("resolvedDependenciesReports")
+                    .resolve("${configurationName}.txt")
+                    .readText()
+
+                val expectedReportFile = expectedResolvedConfigurationTestReport(configurationName)
                 val actualReportSanitized = actualReport
                     .lineSequence()
                     .filterNot { it.contains("stdlib") }
                     .map { it.replace(TestVersions.Kotlin.CURRENT, "SNAPSHOT") }
                     .joinToString("\n")
 
-                val result = kotlin.runCatching {
-                    KotlinTestUtils.assertEqualsToFile(expectedReportFile.toFile(), actualReportSanitized)
-                }
-                failures.addIfNotNull(result.exceptionOrNull())
+                KotlinTestUtils.assertEqualsToFile(expectedReportFile, actualReportSanitized)
             }
-        }
-
-        if (failures.isNotEmpty()) {
-            throw MultipleFailureException(failures)
+            assertAll(consumer.resolvedConfigurationsNames.map { configurationName -> { assertResolvedDependencies(configurationName) } })
         }
     }
-
-    private fun publishAllProjects(projects: Collection<Scenario.Project>, localRepoDir: Path) {
-        projects.groupBy { it.gradleVersion }.map { (gradleVersion, projects) ->
-            val allSubprojects = mutableListOf<String>()
-            project(
-                projectName = "mppPublicationCompatibility/sampleProjects/base",
-                gradleVersion = gradleVersion,
-                buildJdk = File(System.getProperty("jdk${JavaVersion.VERSION_17.majorVersion}Home"))
-            ) {
-                for (project in projects) {
-                    val sampleDirectoryName = project.variant.sampleDirectoryName
-                    val projectName = project.artifactName
-                    allSubprojects += projectName
-
-                    includeOtherProjectAsIncludedBuild(
-                        sampleDirectoryName,
-                        "mppPublicationCompatibility/sampleProjects",
-                        projectName
-                    )
-                    subProject(projectName).apply {
-                        prepareProject(project, localRepoDir)
-                        prepareProjectForPublication(project)
-                    }
-                }
-
-                build(*allSubprojects.map { ":$it:publish" }.toTypedArray(), forceOutput = true)
-            }
-        }
-    }
-
-    private fun consumeAllProjects(scenarios: Collection<Scenario>, localRepoDir: Path): Map<Scenario.Project, Map<String, Path>> {
-        val testReports = mutableMapOf<Scenario.Project, Map<String, Path>>()
-        val consumers = scenarios.map { it.consumer }.toSet()
-        val consumerDependencies = scenarios.groupBy(keySelector = { it.consumer }) { it.producer }
-        consumers.groupBy { it.gradleVersion }.map { (gradleVersion, projects) ->
-            val allSubprojects = mutableListOf<String>()
-            project(
-                projectName = "mppPublicationCompatibility/sampleProjects/base",
-                gradleVersion = gradleVersion,
-                buildJdk = File(System.getProperty("jdk${JavaVersion.VERSION_17.majorVersion}Home"))
-            ) {
-                for (project in projects) {
-                    val sampleDirectoryName = project.variant.sampleDirectoryName
-                    val projectName = project.artifactName
-                    allSubprojects += projectName
-
-                    includeOtherProjectAsIncludedBuild(
-                        sampleDirectoryName,
-                        "mppPublicationCompatibility/sampleProjects",
-                        projectName
-                    )
-                    subProject(projectName).apply {
-                        prepareProject(project, localRepoDir)
-                        prepareProjectForConsumption(project, consumerDependencies[project]!!, localRepoDir)
-
-                        testReports[project] = project.resolvedConfigurationsNames.associateWith { configurationName ->
-                            projectPath.resolve("resolvedDependenciesReports").resolve("${configurationName}.txt")
-                        }
-                    }
-                }
-
-                build(*allSubprojects.map { ":$it:resolveDependencies" }.toTypedArray())
-            }
-        }
-
-        return testReports
-    }
-}
-
-private fun Scenario.Project.expectedResolvedConfigurationTestReport(configurationName: String): Path {
-    return Paths.get(
-        "src",
-        "test",
-        "resources",
-        "testProject",
-        "mppPublicationCompatibility",
-        "expectedData",
-        packageName,
-        artifactName,
-        "$configurationName.txt"
-    )
-}
-
-private val ProjectVariant.sampleDirectoryName: String
-    get() = when (this) {
-        ProjectVariant.AndroidOnly -> "androidOnly"
-        ProjectVariant.JavaOnly -> "javaOnly"
-        is ProjectVariant.Kmp -> "kmp"
-    }
-
-private fun GradleProject.prepareProject(scenarioProject: Scenario.Project, localRepoDir: Path) {
-    configureLocalRepository(localRepoDir)
-    projectPath.enableAndroidSdk()
-    settingsGradleKts.replaceText(
-        "val kotlin_version: String by settings",
-        """val kotlin_version = "${scenarioProject.kotlinVersionString}" """
-    )
-    settingsGradleKts.replaceText(
-        "val android_tools_version: String by settings",
-        """val android_tools_version = "${scenarioProject.agpVersionString}" """
-    )
 }
