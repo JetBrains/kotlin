@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -22,7 +25,7 @@ class OldCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         get() = LanguageVersion.KOTLIN_1_9
 
     private fun analyzeFileToPackageView(vararg extraClassPath: File): PackageViewDescriptor {
-        val environment = createEnvironment(extraClassPath.toList())
+        val environment = createEnvironmentForDescriptorAnalysis(extraClassPath.toList())
 
         val ktFile = KotlinTestUtils.loadKtFile(environment.project, getTestDataFileWithExtension("kt"))
         val result = JvmResolveUtil.analyzeAndCheckForErrors(ktFile, environment)
@@ -32,8 +35,19 @@ class OldCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         }
     }
 
-    private fun createEnvironment(extraClassPath: List<File>): KotlinCoreEnvironment {
+    private fun createEnvironmentForDescriptorAnalysis(extraClassPath: List<File>): KotlinCoreEnvironment {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, *extraClassPath.toTypedArray())
+
+        // Descriptors are not supposed to be used with LV >= 2.0, but also it's necessary to continue using old CoreJarFileSystem
+        // as it affects in a subtle way on the presence of empty package in rendered descriptors.
+        // The latter happens because CoreJarFileSystem seems to be ignoring empty directories, while FastJarFS doesn't
+        // which doesn't look really crucial and a part of a contract of Jar FS.
+        // Therefore, the LV is set to `languageVersion` which is 1.9 here.
+        configuration.languageVersionSettings = LanguageVersionSettingsImpl(
+            languageVersion,
+            ApiVersion.createByLanguageVersion(languageVersion)
+        )
+
         return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
