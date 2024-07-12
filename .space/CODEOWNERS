@@ -139,7 +139,7 @@
 /compiler/testData/codegen/defaultArguments/reflection/ "Kotlin JVM"
 /compiler/testData/codegen/helpers/ "Kotlin JVM"
 /compiler/testData/codegen/innerClassInfo/ "Kotlin JVM"
-/compiler/testData/codegen/kapt/ "Kotlin Compiler Core"
+/compiler/testData/codegen/kapt/ "Kotlin JVM"
 /compiler/testData/codegen/notNullAssertions/ "Kotlin JVM"
 /compiler/testData/codegen/outerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/properties/ "Kotlin JVM"
@@ -388,10 +388,7 @@
 /plugins/fir-plugin-prototype/ "Kotlin Compiler Core"
 /plugins/imports-dumper/ "Kotlin Compiler Core"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
-/plugins/kapt3/ "Kotlin Compiler Core"
-/plugins/kapt3/kapt3-compiler/test/ "Kotlin Compiler Core" "Kotlin JVM"
-/plugins/kapt3/kapt3-compiler/testData/ "Kotlin Compiler Core" "Kotlin JVM"
-/plugins/kapt3/kapt3-compiler/tests-gen/ "Kotlin Compiler Core" "Kotlin JVM"
+/plugins/kapt3/ "Kotlin JVM"
 /plugins/kapt4/ "Kotlin JVM"
 /plugins/kotlinx-serialization/ Sergey.Shanshin Leonid.Startsev
 /plugins/js-plain-objects/ Artem.Kobzar
