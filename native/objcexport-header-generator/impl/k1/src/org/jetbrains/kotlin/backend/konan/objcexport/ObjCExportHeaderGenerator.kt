@@ -119,7 +119,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
                 .forEach {
                     val classDescriptor = getClassIfCategory(it)
                     if (classDescriptor == null) {
-                        topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
+                        topLevel.getOrPut(it.findSourceFile() ?: return@forEach, { mutableListOf() }) += it
                     } else {
                         // If a class is hidden from Objective-C API then it is meaningless
                         // to export its extensions.

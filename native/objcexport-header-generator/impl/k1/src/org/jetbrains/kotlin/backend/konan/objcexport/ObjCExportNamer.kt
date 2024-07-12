@@ -947,8 +947,10 @@ private fun ObjCExportMapper.canBeInheritedBySameClass(
     ignoreInterfaceMethodCollisions: Boolean,
 ): Boolean {
     if (isTopLevel(first) || isTopLevel(second)) {
-        return isTopLevel(first) && isTopLevel(second) &&
-            first.propertyIfAccessor.findSourceFile() == second.propertyIfAccessor.findSourceFile()
+        return isTopLevel(first) && isTopLevel(second) && run {
+            val firstSource = first.propertyIfAccessor.findSourceFile()
+            firstSource != null && firstSource == second.propertyIfAccessor.findSourceFile()
+        }
     }
 
     val firstClass = getClassIfCategory(first) ?: first.containingDeclaration as ClassDescriptor

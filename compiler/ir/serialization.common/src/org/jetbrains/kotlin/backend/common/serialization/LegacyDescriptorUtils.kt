@@ -33,7 +33,7 @@ private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): Sou
     return DeserializedSourceFile(fileName, descriptor.module.kotlinLibrary)
 }
 
-fun CallableMemberDescriptor.findSourceFile(): SourceFile {
+fun CallableMemberDescriptor.findSourceFile(): SourceFile? {
     val source = this.source.containingFile
     if (source != SourceFile.NO_SOURCE_FILE)
         return source
@@ -44,7 +44,7 @@ fun CallableMemberDescriptor.findSourceFile(): SourceFile {
         this is DeserializedPropertyDescriptor && proto.hasExtension(KlibMetadataProtoBuf.propertyFile) ->
             sourceByIndex(
                 this, proto.getExtension(KlibMetadataProtoBuf.propertyFile))
-        else -> TODO()
+        else -> null
     }
 }
 
