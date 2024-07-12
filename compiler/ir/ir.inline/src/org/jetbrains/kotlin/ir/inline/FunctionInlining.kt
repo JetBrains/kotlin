@@ -73,7 +73,7 @@ abstract class InlineFunctionResolver {
     }
 
     protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return !needsInlining(symbol.owner) || Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
+        return !needsInlining(symbol.owner) || Symbols.isTypeOfIntrinsic(symbol)
     }
 }
 
