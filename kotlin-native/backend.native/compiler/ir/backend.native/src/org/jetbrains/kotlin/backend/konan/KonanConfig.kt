@@ -242,7 +242,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (it && !target.supportsSignposts) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")
         }
-    } ?: target.supportsSignposts
+    } ?: false // Disabled by default because of KT-68928
 
     val globalDataLazyInit: Boolean by lazy {
         configuration.get(BinaryOptions.globalDataLazyInit) ?: true
