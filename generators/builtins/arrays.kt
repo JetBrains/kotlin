@@ -262,7 +262,6 @@ class GenerateJsArrays(writer: PrintWriter, primitiveArrays: Boolean) : Generate
 class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
     override fun FileBuilder.modifyGeneratedFile() {
         import("kotlin.wasm.internal.*")
-        suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
         suppress("UNUSED_PARAMETER")
     }
 
@@ -300,8 +299,15 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
                 }
                 
                 @WasmPrimitiveConstructor
+                @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
                 internal constructor(storage: $storageArrayType)
             """.trimIndent())
+        }
+
+        override fun SecondaryConstructorBuilder.modifySecondaryConstructor() {
+            annotations.removeAll { it.startsWith("Suppress") }
+            annotations += """Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")"""
+            primaryConstructorCall("size")
         }
 
         override fun MethodBuilder.modifyGetOperator() {
