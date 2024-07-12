@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-internal class DeepCopyIrTreeWithSymbolsForInliner(
+internal class InlineFunctionBodyPreprocessor(
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
     val parent: IrDeclarationParent?,
     defaultNonReifiedTypeParameterRemappingMode: NonReifiedTypeParameterRemappingMode,
 ) {
 
-    fun copy(irElement: IrElement): IrElement {
+    fun preprocess(irElement: IrFunction): IrFunction {
         // Create new symbols.
         irElement.acceptVoid(symbolRemapper)
 
@@ -43,7 +43,7 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
         val result = irElement.transform(copier, data = null)
 
         result.patchDeclarationParents(parent)
-        return result
+        return result as IrFunction
     }
 
     private inner class InlinerTypeRemapper(
