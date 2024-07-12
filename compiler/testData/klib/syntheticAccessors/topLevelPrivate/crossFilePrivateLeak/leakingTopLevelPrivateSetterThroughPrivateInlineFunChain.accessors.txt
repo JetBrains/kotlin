@@ -1,0 +1,14 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=a.kt */
+
+public var privateSetterVar: Int
+    /* TARGET declaration */ private fun <set-privateSetterVar>(<set-?>: Int)
+private inline fun privateSetVar1(value: Int)
+    /* TARGET use-site */ <set-privateSetterVar>(<set-?> = value)
+private inline fun privateSetVar2(value: Int)
+    /* TARGET use-site */ <set-privateSetterVar>(<set-?> = value)
+internal inline fun internalSetVar(value: Int)
+    /* ACCESSOR use-site */ access$<set-privateSetterVar>(<set-?> = value)
+/* ACCESSOR declaration */ public fun access$<set-privateSetterVar>(<set-?>: Int)
+    /* TARGET use-site */ <set-privateSetterVar>(<set-?> = <set-?>)

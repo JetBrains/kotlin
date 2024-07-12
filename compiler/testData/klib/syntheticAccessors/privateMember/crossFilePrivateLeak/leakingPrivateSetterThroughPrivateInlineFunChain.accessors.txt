@@ -1,0 +1,15 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    public var privateVar: Int
+        /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+    private inline fun privateSetVar1(value: Int)
+        /* TARGET use-site */ <this>.<set-privateVar>(<set-?> = value)
+    private inline fun privateSetVar2(value: Int)
+        /* TARGET use-site */ this.<set-privateVar>(<set-?> = value)
+    internal inline fun internalSetVar(value: Int)
+        /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
+    /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: A, <set-?>: Int)
+        /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)

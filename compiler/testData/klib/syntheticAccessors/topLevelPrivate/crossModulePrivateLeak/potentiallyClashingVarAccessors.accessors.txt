@@ -1,0 +1,34 @@
+/* MODULE name=<lib1> */
+
+/* FILE package=org.sample fileName=file1.kt */
+
+private var libName: String
+    /* TARGET declaration */ private fun <get-libName>(): String
+    /* TARGET declaration */ private fun <set-libName>(<set-?>: String)
+internal var libNameInlineVar1: String
+    internal inline fun <get-libNameInlineVar1>(): String
+        /* ACCESSOR use-site */ access$<get-libName>()
+    internal inline fun <set-libNameInlineVar1>(value: String)
+        /* ACCESSOR use-site */ access$<set-libName>(<set-?> = value)
+/* ACCESSOR declaration */ public fun access$<get-libName>(): String
+    /* TARGET use-site */ <get-libName>()
+/* ACCESSOR declaration */ public fun access$<set-libName>(<set-?>: String)
+    /* TARGET use-site */ <set-libName>(<set-?> = <set-?>)
+
+
+/* MODULE name=<lib2> */
+
+/* FILE package=org.sample fileName=file2.kt */
+
+private var libName: String
+    /* TARGET declaration */ private fun <get-libName>(): String
+    /* TARGET declaration */ private fun <set-libName>(<set-?>: String)
+internal var libNameInlineVar2: String
+    internal inline fun <get-libNameInlineVar2>(): String
+        /* ACCESSOR use-site */ access$<get-libName>()
+    internal inline fun <set-libNameInlineVar2>(value: String)
+        /* ACCESSOR use-site */ access$<set-libName>(<set-?> = value)
+/* ACCESSOR declaration */ public fun access$<get-libName>(): String
+    /* TARGET use-site */ <get-libName>()
+/* ACCESSOR declaration */ public fun access$<set-libName>(<set-?>: String)
+    /* TARGET use-site */ <set-libName>(<set-?> = <set-?>)

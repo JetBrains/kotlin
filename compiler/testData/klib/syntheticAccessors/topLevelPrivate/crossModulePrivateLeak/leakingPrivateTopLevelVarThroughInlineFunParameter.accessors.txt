@@ -1,0 +1,18 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=a.kt */
+
+private val privateVal: Int
+    /* TARGET declaration */ private fun <get-privateVal>(): Int
+private val privateValFunctional: Function0<Int>
+    /* TARGET declaration */ private fun <get-privateValFunctional>(): Function0<Int>
+internal inline fun executor(param: Int): Int
+    param: Int
+        /* ACCESSOR use-site */ access$<get-privateVal>()
+internal inline fun executorFunctional(noinline block: Function0<Int>): Int
+    noinline block: Function0<Int>
+        /* ACCESSOR use-site */ access$<get-privateValFunctional>()
+/* ACCESSOR declaration */ public fun access$<get-privateVal>(): Int
+    /* TARGET use-site */ <get-privateVal>()
+/* ACCESSOR declaration */ public fun access$<get-privateValFunctional>(): Function0<Int>
+    /* TARGET use-site */ <get-privateValFunctional>()

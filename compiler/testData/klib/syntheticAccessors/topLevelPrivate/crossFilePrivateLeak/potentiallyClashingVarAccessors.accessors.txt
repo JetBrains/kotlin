@@ -1,0 +1,32 @@
+/* MODULE name=<main> */
+
+/* FILE package=org.sample fileName=file1.kt */
+
+private var fileNameVar: String
+    /* TARGET declaration */ private fun <get-fileNameVar>(): String
+    /* TARGET declaration */ private fun <set-fileNameVar>(<set-?>: String)
+internal var fileNameInlineVar1: String
+    internal inline fun <get-fileNameInlineVar1>(): String
+        /* ACCESSOR use-site */ access$<get-fileNameVar>()
+    internal inline fun <set-fileNameInlineVar1>(value: String)
+        /* ACCESSOR use-site */ access$<set-fileNameVar>(<set-?> = value)
+/* ACCESSOR declaration */ public fun access$<get-fileNameVar>(): String
+    /* TARGET use-site */ <get-fileNameVar>()
+/* ACCESSOR declaration */ public fun access$<set-fileNameVar>(<set-?>: String)
+    /* TARGET use-site */ <set-fileNameVar>(<set-?> = <set-?>)
+
+
+/* FILE package=org.sample fileName=file2.kt */
+
+private var fileNameVar: String
+    /* TARGET declaration */ private fun <get-fileNameVar>(): String
+    /* TARGET declaration */ private fun <set-fileNameVar>(<set-?>: String)
+internal var fileNameInlineVar2: String
+    internal inline fun <get-fileNameInlineVar2>(): String
+        /* ACCESSOR use-site */ access$<get-fileNameVar>()
+    internal inline fun <set-fileNameInlineVar2>(value: String)
+        /* ACCESSOR use-site */ access$<set-fileNameVar>(<set-?> = value)
+/* ACCESSOR declaration */ public fun access$<get-fileNameVar>(): String
+    /* TARGET use-site */ <get-fileNameVar>()
+/* ACCESSOR declaration */ public fun access$<set-fileNameVar>(<set-?>: String)
+    /* TARGET use-site */ <set-fileNameVar>(<set-?> = <set-?>)

@@ -1,0 +1,12 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    /* TARGET declaration */ private fun privateMethod(): String
+    internal val internalInlineVal: Function0<String>
+        internal inline fun <get-internalInlineVal>(): Function0<String>
+            local fun <anonymous>(): String
+                /* ACCESSOR use-site */ access$privateMethod($this = <this>)
+    /* ACCESSOR declaration */ public fun access$privateMethod($this: A): String
+        /* TARGET use-site */ $this.privateMethod()

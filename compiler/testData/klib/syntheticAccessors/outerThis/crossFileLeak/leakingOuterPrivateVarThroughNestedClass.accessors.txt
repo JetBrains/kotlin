@@ -1,0 +1,17 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=Outer.kt */
+
+public class Outer
+    private var privateVar: Int
+        /* TARGET declaration */ private fun <get-privateVar>(): Int
+        /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+    public class Nested
+        internal inline fun customVarGetter(outer: Outer): Int
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = outer)
+        internal inline fun customVarSetter(outer: Outer, value: Int)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = outer, <set-?> = value)
+    /* ACCESSOR declaration */ public fun access$<get-privateVar>($this: Outer): Int
+        /* TARGET use-site */ $this.<get-privateVar>()
+    /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: Outer, <set-?>: Int)
+        /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)

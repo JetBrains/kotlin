@@ -1,0 +1,11 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=Outer.kt */
+
+public class Outer
+    /* TARGET declaration */ private fun privateMethod(): String
+    public class Nested
+        internal inline fun internalInlineMethod(): String
+            /* ACCESSOR use-site */ access$privateMethod($this = Outer())
+    /* ACCESSOR declaration */ public fun access$privateMethod($this: Outer): String
+        /* TARGET use-site */ $this.privateMethod()

@@ -1,0 +1,27 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    internal var inlineVar: Int
+        internal inline fun <get-inlineVar>(): Int
+            /* ACCESSOR use-site */ access$<get-privateVar>($receiver = this)
+        internal inline fun <set-inlineVar>(value: Int)
+            /* ACCESSOR use-site */ access$<set-privateVar>($receiver = this, value = value)
+private var A.privateInlineVar2: Int
+    private inline fun A.<get-privateInlineVar2>(): Int
+        /* TARGET use-site */ this.<get-privateVar>()
+    private inline fun A.<set-privateInlineVar2>(value: Int)
+        /* TARGET use-site */ this.<set-privateVar>(value = value)
+private var A.privateInlineVar1: Int
+    private inline fun A.<get-privateInlineVar1>(): Int
+        /* TARGET use-site */ <this>.<get-privateVar>()
+    private inline fun A.<set-privateInlineVar1>(value: Int)
+        /* TARGET use-site */ <this>.<set-privateVar>(value = value)
+private var A.privateVar: Int
+    /* TARGET declaration */ private fun A.<get-privateVar>(): Int
+    /* TARGET declaration */ private fun A.<set-privateVar>(value: Int)
+/* ACCESSOR declaration */ public fun access$<get-privateVar>($receiver: A): Int
+    /* TARGET use-site */ $receiver.<get-privateVar>()
+/* ACCESSOR declaration */ public fun access$<set-privateVar>($receiver: A, value: Int)
+    /* TARGET use-site */ $receiver.<set-privateVar>(value = value)
