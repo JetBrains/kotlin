@@ -14,6 +14,6 @@ import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
 object FirIncompatibleClassTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        FirIncompatibleClassExpressionChecker.checkType(typeRef.coneTypeOrNull, typeRef, context, reporter)
+        FirIncompatibleClassExpressionChecker.checkType(typeRef.coneType, typeRef, context, reporter)
     }
 }

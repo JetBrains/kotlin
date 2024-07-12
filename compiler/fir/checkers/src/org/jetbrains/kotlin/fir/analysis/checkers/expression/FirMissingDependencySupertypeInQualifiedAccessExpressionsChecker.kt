@@ -41,7 +41,7 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
 
         if (eagerChecksAllowed || !unresolvedLazySupertypesByDefault && !missingSupertype) {
             checkMissingDependencySuperTypes(symbol.getOwnerLookupTag()?.toSymbol(context.session), source, reporter, context)
-            checkMissingDependencySuperTypes(symbol.resolvedReceiverTypeRef?.coneTypeOrNull, source, reporter, context)
+            checkMissingDependencySuperTypes(symbol.resolvedReceiverTypeRef?.coneType, source, reporter, context)
         }
     }
 }

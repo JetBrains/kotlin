@@ -155,9 +155,9 @@ class FirSignatureEnhancement(
                     firElement, firElement.computeDefaultQualifiers(),
                     predefinedEnhancementInfo = null
                 ).let {
-                    val coneTypeOrNull = it.coneTypeOrNull
-                    val lowerBound = coneTypeOrNull?.lowerBoundIfFlexible()
-                    if (lowerBound != null && lowerBound.isString && firElement.isStatic && firElement.hasConstantInitializer) {
+                    val coneTypeOrNull = it.coneType
+                    val lowerBound = coneTypeOrNull.lowerBoundIfFlexible()
+                    if (lowerBound.isString && firElement.isStatic && firElement.hasConstantInitializer) {
                         it.withReplacedConeType(coneTypeOrNull.withNullability(ConeNullability.NOT_NULL, session.typeContext))
                     } else {
                         it

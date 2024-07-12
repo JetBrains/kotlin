@@ -37,6 +37,14 @@ val FirTypeRef.coneType: ConeKotlinType
 val FirTypeRef.coneTypeOrNull: ConeKotlinType?
     get() = coneTypeSafe()
 
+@Deprecated(
+    "This type ref already resolved, use `.coneType` instead",
+    ReplaceWith("this.coneType"),
+    level = DeprecationLevel.ERROR
+)
+val FirResolvedTypeRef.coneTypeOrNull: ConeKotlinType?
+    get() = coneTypeSafe()
+
 @OptIn(UnresolvedExpressionTypeAccess::class)
 val FirExpression.resolvedType: ConeKotlinType
     get() = coneTypeOrNull
