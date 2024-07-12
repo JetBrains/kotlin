@@ -90,7 +90,6 @@
 
 -dontprocesskotlinmetadata
 -keep class kotlin.Metadata
--dontoptimize
 -dontobfuscate
 
 -keepclassmembers class com.intellij.** { *; }
