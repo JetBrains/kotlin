@@ -194,6 +194,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InterfaceWithDefaultMethodAndCompanion.kt");
   }
 
+  @TestMetadata("internalValueClass.kt")
+  public void testInternalValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/internalValueClass.kt");
+  }
+
   @TestMetadata("InvalidJavaIdentifierAsAnnotationArgument.kt")
   public void testInvalidJavaIdentifierAsAnnotationArgument() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
@@ -257,6 +262,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
   @TestMetadata("PrivateObject.kt")
   public void testPrivateObject() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");
+  }
+
+  @TestMetadata("privateValueClass.kt")
+  public void testPrivateValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/privateValueClass.kt");
   }
 
   @TestMetadata("PropertyTypeParameterAnnotation.kt")

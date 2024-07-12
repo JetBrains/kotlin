@@ -223,6 +223,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
   }
 
   @Test
+  @TestMetadata("internalValueClass.kt")
+  public void testInternalValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/internalValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("InvalidJavaIdentifierAsAnnotationArgument.kt")
   public void testInvalidJavaIdentifierAsAnnotationArgument() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
@@ -298,6 +304,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
   @TestMetadata("PrivateObject.kt")
   public void testPrivateObject() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");
+  }
+
+  @Test
+  @TestMetadata("privateValueClass.kt")
+  public void testPrivateValueClass() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/privateValueClass.kt");
   }
 
   @Test
