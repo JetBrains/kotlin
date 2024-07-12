@@ -159,7 +159,8 @@ sealed class ClangArgs(
      */
     val clangXXArgs: Array<String> = clangArgs + when (configurables) {
         is AppleConfigurables -> arrayOf(
-                "-stdlib=libc++"
+                "-stdlib=libc++",
+                "-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS"
         )
         else -> emptyArray()
     }
