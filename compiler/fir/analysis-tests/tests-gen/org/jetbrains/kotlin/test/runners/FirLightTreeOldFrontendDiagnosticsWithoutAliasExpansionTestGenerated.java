@@ -230,27 +230,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/tests/builderInference")
-    @TestDataPath("$PROJECT_ROOT")
-    public class BuilderInference {
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter")
-      @TestDataPath("$PROJECT_ROOT")
-      public class OneParameter {
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable")
-        @TestDataPath("$PROJECT_ROOT")
-        public class OneTypeVariable {
-          @Nested
-          @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
-          @TestDataPath("$PROJECT_ROOT")
-          public class OneTypeInfoOrigin {
-          }
-        }
-      }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     public class CallableReference {
@@ -675,12 +654,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       }
 
       @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference")
-      @TestDataPath("$PROJECT_ROOT")
-      public class BuilderInference {
-      }
-
-      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes")
       @TestDataPath("$PROJECT_ROOT")
       public class CapturedTypes {
@@ -711,6 +684,27 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
         @TestMetadata("definitelyNotNullTypeInReturnPosition.kt")
         public void testDefinitelyNotNullTypeInReturnPosition() {
           runTest("compiler/testData/diagnostics/tests/inference/constraints/definitelyNotNullTypeInReturnPosition.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Pcla {
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        public class OneParameter {
+          @Nested
+          @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable")
+          @TestDataPath("$PROJECT_ROOT")
+          public class OneTypeVariable {
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
+            @TestDataPath("$PROJECT_ROOT")
+            public class OneTypeInfoOrigin {
+            }
+          }
         }
       }
 

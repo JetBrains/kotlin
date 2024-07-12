@@ -4226,718 +4226,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/tests/builderInference")
-    @TestDataPath("$PROJECT_ROOT")
-    public class BuilderInference {
-      @Test
-      public void testAllFilesPresentInBuilderInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-      }
-
-      @Test
-      @TestMetadata("contextReceivers.kt")
-      public void testContextReceivers() {
-        runTest("compiler/testData/diagnostics/tests/builderInference/contextReceivers.kt");
-      }
-
-      @Test
-      @TestMetadata("overloadResolutionByLambdaReturnType.kt")
-      public void testOverloadResolutionByLambdaReturnType() {
-        runTest("compiler/testData/diagnostics/tests/builderInference/overloadResolutionByLambdaReturnType.kt");
-      }
-
-      @Test
-      @TestMetadata("overloadResolutionWithTypeVariables.kt")
-      public void testOverloadResolutionWithTypeVariables() {
-        runTest("compiler/testData/diagnostics/tests/builderInference/overloadResolutionWithTypeVariables.kt");
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/builderInference/additional")
-      @TestDataPath("$PROJECT_ROOT")
-      public class Additional {
-        @Test
-        public void testAllFilesPresentInAdditional() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/additional"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-        }
-
-        @Test
-        @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt")
-        public void testBuildeeSupertypeAsTypeVariableSourceInClassifiers() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/additional/BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt");
-        }
-
-        @Test
-        @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInFunctions.kt")
-        public void testBuildeeSupertypeAsTypeVariableSourceInFunctions() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/additional/BuildeeSupertypeAsTypeVariableSourceInFunctions.kt");
-        }
-
-        @Test
-        @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInProperties.kt")
-        public void testBuildeeSupertypeAsTypeVariableSourceInProperties() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/additional/BuildeeSupertypeAsTypeVariableSourceInProperties.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/builderInference/issues")
-      @TestDataPath("$PROJECT_ROOT")
-      public class Issues {
-        @Test
-        public void testAllFilesPresentInIssues() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/issues"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-        }
-
-        @Test
-        @TestMetadata("kt43710.kt")
-        public void testKt43710() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt43710.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47989a.kt")
-        public void testKt47989a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt47989a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47989b.kt")
-        public void testKt47989b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt47989b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160a.kt")
-        public void testKt49160a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160b.kt")
-        public void testKt49160b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160c.kt")
-        public void testKt49160c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160d.kt")
-        public void testKt49160d() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160d.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49160e.kt")
-        public void testKt49160e() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49160e.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49263.kt")
-        public void testKt49263() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt49263.kt");
-        }
-
-        @Test
-        @TestMetadata("kt50453.kt")
-        public void testKt50453() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt50453.kt");
-        }
-
-        @Test
-        @TestMetadata("kt50827.kt")
-        public void testKt50827() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt50827.kt");
-        }
-
-        @Test
-        @TestMetadata("kt52757.kt")
-        public void testKt52757() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt52757.kt");
-        }
-
-        @Test
-        @TestMetadata("kt52838a.kt")
-        public void testKt52838a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt52838a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt52838b.kt")
-        public void testKt52838b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt52838b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt52838c.kt")
-        public void testKt52838c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt52838c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53109.kt")
-        public void testKt53109() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53109.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53422a.kt")
-        public void testKt53422a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53422a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53422b.kt")
-        public void testKt53422b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53422b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53478.kt")
-        public void testKt53478() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53478.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53553.kt")
-        public void testKt53553() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53553.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53639.kt")
-        public void testKt53639() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53639.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53740a.kt")
-        public void testKt53740a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53740a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53740b.kt")
-        public void testKt53740b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt53740b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54400a.kt")
-        public void testKt54400a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54400a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54400b.kt")
-        public void testKt54400b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54400b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54400c.kt")
-        public void testKt54400c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54400c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54664.kt")
-        public void testKt54664() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54664.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54767a.kt")
-        public void testKt54767a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54767a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt54767b.kt")
-        public void testKt54767b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt54767b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt55056.kt")
-        public void testKt55056() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt55056.kt");
-        }
-
-        @Test
-        @TestMetadata("kt55057.kt")
-        public void testKt55057() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt55057.kt");
-        }
-
-        @Test
-        @TestMetadata("kt55281.kt")
-        public void testKt55281() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt55281.kt");
-        }
-
-        @Test
-        @TestMetadata("kt56949.kt")
-        public void testKt56949() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt56949.kt");
-        }
-
-        @Test
-        @TestMetadata("kt57707.kt")
-        public void testKt57707() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt57707.kt");
-        }
-
-        @Test
-        @TestMetadata("kt57709.kt")
-        public void testKt57709() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt57709.kt");
-        }
-
-        @Test
-        @TestMetadata("kt57834.kt")
-        public void testKt57834() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt57834.kt");
-        }
-
-        @Test
-        @TestMetadata("kt59426.kt")
-        public void testKt59426() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt59426.kt");
-        }
-
-        @Test
-        @TestMetadata("kt59798.kt")
-        public void testKt59798() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt59798.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60291a.kt")
-        public void testKt60291a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60291a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60291b.kt")
-        public void testKt60291b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60291b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60291c.kt")
-        public void testKt60291c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60291c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60447a.kt")
-        public void testKt60447a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60447a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt60447b.kt")
-        public void testKt60447b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt60447b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt61310.kt")
-        public void testKt61310() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt61310.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63648.kt")
-        public void testKt63648() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63648.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63733.kt")
-        public void testKt63733() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63733.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63840a.kt")
-        public void testKt63840a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63840a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63840b.kt")
-        public void testKt63840b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63840b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63840c.kt")
-        public void testKt63840c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63840c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt63841.kt")
-        public void testKt63841() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt63841.kt");
-        }
-
-        @Test
-        @TestMetadata("kt64066.kt")
-        public void testKt64066() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64066.kt");
-        }
-
-        @Test
-        @TestMetadata("kt64066disabled.kt")
-        public void testKt64066disabled() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64066disabled.kt");
-        }
-
-        @Test
-        @TestMetadata("kt64077.kt")
-        public void testKt64077() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64077.kt");
-        }
-
-        @Test
-        @TestMetadata("kt64222.kt")
-        public void testKt64222() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt64222.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300a.kt")
-        public void testKt65300a() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300a.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300b.kt")
-        public void testKt65300b() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300b.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300c.kt")
-        public void testKt65300c() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300c.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300d.kt")
-        public void testKt65300d() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300d.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300e.kt")
-        public void testKt65300e() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300e.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300f.kt")
-        public void testKt65300f() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300f.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300g.kt")
-        public void testKt65300g() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300g.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300h.kt")
-        public void testKt65300h() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300h.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300i.kt")
-        public void testKt65300i() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300i.kt");
-        }
-
-        @Test
-        @TestMetadata("kt65300j.kt")
-        public void testKt65300j() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt65300j.kt");
-        }
-
-        @Test
-        @TestMetadata("kt66229.kt")
-        public void testKt66229() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt66229.kt");
-        }
-
-        @Test
-        @TestMetadata("kt66243.kt")
-        public void testKt66243() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt66243.kt");
-        }
-
-        @Test
-        @TestMetadata("kt66272.kt")
-        public void testKt66272() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt66272.kt");
-        }
-
-        @Test
-        @TestMetadata("kt67875.kt")
-        public void testKt67875() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt67875.kt");
-        }
-
-        @Test
-        @TestMetadata("kt67993.kt")
-        public void testKt67993() {
-          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt67993.kt");
-        }
-      }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter")
-      @TestDataPath("$PROJECT_ROOT")
-      public class OneParameter {
-        @Test
-        public void testAllFilesPresentInOneParameter() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable")
-        @TestDataPath("$PROJECT_ROOT")
-        public class OneTypeVariable {
-          @Test
-          public void testAllFilesPresentInOneTypeVariable() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-          }
-
-          @Nested
-          @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
-          @TestDataPath("$PROJECT_ROOT")
-          public class OneTypeInfoOrigin {
-            @Test
-            public void testAllFilesPresentInOneTypeInfoOrigin() {
-              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-            }
-
-            @Test
-            @TestMetadata("AnonymousFunctionArgumentAndBuildeeReceiver.kt")
-            public void testAnonymousFunctionArgumentAndBuildeeReceiver() {
-              runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeReceiver.kt");
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
-            @TestDataPath("$PROJECT_ROOT")
-            public class SourceSinkFeedContexts {
-              @Test
-              public void testAllFilesPresentInSourceSinkFeedContexts() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-              }
-
-              @Test
-              @TestMetadata("ByAssignmentToALocalVariableMaterializeCase.kt")
-              public void testByAssignmentToALocalVariableMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("ByAssignmentToALocalVariableYieldCase.kt")
-              public void testByAssignmentToALocalVariableYieldCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableYieldCase.kt");
-              }
-
-              @Test
-              @TestMetadata("InsideLocalClass.kt")
-              public void testInsideLocalClass() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideLocalClass.kt");
-              }
-
-              @Test
-              @TestMetadata("InsideNestedBuilderInferenceLambda.kt")
-              public void testInsideNestedBuilderInferenceLambda() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedBuilderInferenceLambda.kt");
-              }
-
-              @Test
-              @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
-              public void testThroughDelegatedLocalVariableMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("ThroughGenericFunctionCall.kt")
-              public void testThroughGenericFunctionCall() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughGenericFunctionCall.kt");
-              }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes")
-            @TestDataPath("$PROJECT_ROOT")
-            public class TargetTypes {
-              @Test
-              public void testAllFilesPresentInTargetTypes() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-              }
-
-              @Test
-              @TestMetadata("FunctionWithParameterToUnitImplicitLiteralsCase.kt")
-              public void testFunctionWithParameterToUnitImplicitLiteralsCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithParameterToUnitImplicitLiteralsCase.kt");
-              }
-
-              @Test
-              @TestMetadata("FunctionWithReceiverToUnitImplicitLiteralsCase.kt")
-              public void testFunctionWithReceiverToUnitImplicitLiteralsCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithReceiverToUnitImplicitLiteralsCase.kt");
-              }
-
-              @Test
-              @TestMetadata("NothingMaterializeCase.kt")
-              public void testNothingMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NothingMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("NullableNothingNullLiteralMaterializeCase.kt")
-              public void testNullableNothingNullLiteralMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableNothingNullLiteralMaterializeCase.kt");
-              }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
-            @TestDataPath("$PROJECT_ROOT")
-            public class TypeInfoSinks {
-              @Test
-              public void testAllFilesPresentInTypeInfoSinks() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-              }
-
-              @Test
-              @TestMetadata("ExtensionFunctions.kt")
-              public void testExtensionFunctions() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ExtensionFunctions.kt");
-              }
-
-              @Test
-              @TestMetadata("ImmutableExtensionProperties.kt")
-              public void testImmutableExtensionProperties() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableExtensionProperties.kt");
-              }
-
-              @Test
-              @TestMetadata("ImmutableProperties.kt")
-              public void testImmutableProperties() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableProperties.kt");
-              }
-
-              @Test
-              @TestMetadata("MutableExtensionPropertiesMaterializeCase.kt")
-              public void testMutableExtensionPropertiesMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("MutableExtensionPropertiesYieldCase.kt")
-              public void testMutableExtensionPropertiesYieldCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesYieldCase.kt");
-              }
-
-              @Test
-              @TestMetadata("MutablePropertiesMaterializeCase.kt")
-              public void testMutablePropertiesMaterializeCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesMaterializeCase.kt");
-              }
-
-              @Test
-              @TestMetadata("MutablePropertiesYieldCase.kt")
-              public void testMutablePropertiesYieldCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesYieldCase.kt");
-              }
-
-              @Test
-              @TestMetadata("ParametersOfBuilderArguments.kt")
-              public void testParametersOfBuilderArguments() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ParametersOfBuilderArguments.kt");
-              }
-
-              @Test
-              @TestMetadata("ReceiversOfBuilderArguments.kt")
-              public void testReceiversOfBuilderArguments() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ReceiversOfBuilderArguments.kt");
-              }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
-            @TestDataPath("$PROJECT_ROOT")
-            public class TypeInfoSources {
-              @Test
-              public void testAllFilesPresentInTypeInfoSources() {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-              }
-
-              @Test
-              @TestMetadata("ExtensionFunctions.kt")
-              public void testExtensionFunctions() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionFunctions.kt");
-              }
-
-              @Test
-              @TestMetadata("ExtensionProperties.kt")
-              public void testExtensionProperties() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionProperties.kt");
-              }
-
-              @Test
-              @TestMetadata("ParametersOfBuilderArguments.kt")
-              public void testParametersOfBuilderArguments() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ParametersOfBuilderArguments.kt");
-              }
-
-              @Test
-              @TestMetadata("ReceiversOfBuilderArguments.kt")
-              public void testReceiversOfBuilderArguments() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReceiversOfBuilderArguments.kt");
-              }
-
-              @Test
-              @TestMetadata("ReturnTypesOfBuilderParameters.kt")
-              public void testReturnTypesOfBuilderParameters() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReturnTypesOfBuilderParameters.kt");
-              }
-
-              @Test
-              @TestMetadata("UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt")
-              public void testUnitReturnTypeOfBuilderParametersExplicitReturnCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt");
-              }
-
-              @Test
-              @TestMetadata("UnitReturnTypeOfBuilderParametersLastStatementReturnCase.kt")
-              public void testUnitReturnTypeOfBuilderParametersLastStatementReturnCase() {
-                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersLastStatementReturnCase.kt");
-              }
-            }
-          }
-        }
-      }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     public class CallableReference {
@@ -17817,674 +17105,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference")
-      @TestDataPath("$PROJECT_ROOT")
-      public class BuilderInference {
-        @Test
-        public void testAllFilesPresentInBuilderInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-        }
-
-        @Test
-        @TestMetadata("assignmentUsingIncompletePCLACall.kt")
-        public void testAssignmentUsingIncompletePCLACall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/assignmentUsingIncompletePCLACall.kt");
-        }
-
-        @Test
-        @TestMetadata("bothOuterAndProperConstraints.kt")
-        public void testBothOuterAndProperConstraints() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/bothOuterAndProperConstraints.kt");
-        }
-
-        @Test
-        @TestMetadata("bothReceiverAndValueParameterNotFixed.kt")
-        public void testBothReceiverAndValueParameterNotFixed() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/bothReceiverAndValueParameterNotFixed.kt");
-        }
-
-        @Test
-        @TestMetadata("builderInferenceAnnotationInLambdaWithTVExpectedType.kt")
-        public void testBuilderInferenceAnnotationInLambdaWithTVExpectedType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderInferenceAnnotationInLambdaWithTVExpectedType.kt");
-        }
-
-        @Test
-        @TestMetadata("builderPassedAsNamedArgument.kt")
-        public void testBuilderPassedAsNamedArgument() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/builderPassedAsNamedArgument.kt");
-        }
-
-        @Test
-        @TestMetadata("callableReferenceAsArgumentForTransaction.kt")
-        public void testCallableReferenceAsArgumentForTransaction() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/callableReferenceAsArgumentForTransaction.kt");
-        }
-
-        @Test
-        @TestMetadata("callableReferenceInsideInvokeCall.kt")
-        public void testCallableReferenceInsideInvokeCall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/callableReferenceInsideInvokeCall.kt");
-        }
-
-        @Test
-        @TestMetadata("changingResolveIfDontUseBuilderInference.kt")
-        public void testChangingResolveIfDontUseBuilderInference() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/changingResolveIfDontUseBuilderInference.kt");
-        }
-
-        @Test
-        @TestMetadata("considerContractsOfIncompleteCalls.kt")
-        public void testConsiderContractsOfIncompleteCalls() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/considerContractsOfIncompleteCalls.kt");
-        }
-
-        @Test
-        @TestMetadata("elvisWithNothingRHS.kt")
-        public void testElvisWithNothingRHS() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/elvisWithNothingRHS.kt");
-        }
-
-        @Test
-        @TestMetadata("elvisWithReturnInLastStatementOfLastLambda.kt")
-        public void testElvisWithReturnInLastStatementOfLastLambda() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/elvisWithReturnInLastStatementOfLastLambda.kt");
-        }
-
-        @Test
-        @TestMetadata("equalityChecksOnIntegerTypes.kt")
-        public void testEqualityChecksOnIntegerTypes() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/equalityChecksOnIntegerTypes.kt");
-        }
-
-        @Test
-        @TestMetadata("equalityChecksOnIntegerTypesProgressive.kt")
-        public void testEqualityChecksOnIntegerTypesProgressive() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/equalityChecksOnIntegerTypesProgressive.kt");
-        }
-
-        @Test
-        @TestMetadata("errorOnStubReceiver.kt")
-        public void testErrorOnStubReceiver() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/errorOnStubReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingDependentVariablesForReceivers.kt")
-        public void testFixingDependentVariablesForReceivers() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingDependentVariablesForReceivers.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingDependentVariablesForReceiversInitial.kt")
-        public void testFixingDependentVariablesForReceiversInitial() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingDependentVariablesForReceiversInitial.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter.kt")
-        public void testFixingTVForLambadaWithShallowDependencyToOuter() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter2.kt")
-        public void testFixingTVForLambadaWithShallowDependencyToOuter2() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter2.kt");
-        }
-
-        @Test
-        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter3.kt")
-        public void testFixingTVForLambadaWithShallowDependencyToOuter3() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/fixingTVForLambadaWithShallowDependencyToOuter3.kt");
-        }
-
-        @Test
-        @TestMetadata("incompleteCallInReturnArgumentsWithProperExpectType.kt")
-        public void testIncompleteCallInReturnArgumentsWithProperExpectType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/incompleteCallInReturnArgumentsWithProperExpectType.kt");
-        }
-
-        @Test
-        @TestMetadata("innerTvFixationFromLowerConstraints.kt")
-        public void testInnerTvFixationFromLowerConstraints() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/innerTvFixationFromLowerConstraints.kt");
-        }
-
-        @Test
-        @TestMetadata("invalidateKeys.kt")
-        public void testInvalidateKeys() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/invalidateKeys.kt");
-        }
-
-        @Test
-        @TestMetadata("invokeExtensionReceiverWithNotFixedVariables.kt")
-        public void testInvokeExtensionReceiverWithNotFixedVariables() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/invokeExtensionReceiverWithNotFixedVariables.kt");
-        }
-
-        @Test
-        @TestMetadata("invokeExtensionReceiverWithNotFixedVariablesInitial.kt")
-        public void testInvokeExtensionReceiverWithNotFixedVariablesInitial() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/invokeExtensionReceiverWithNotFixedVariablesInitial.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47744.kt")
-        public void testKt47744() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47744.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986Default.kt")
-        public void testKt47986Default() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986Default.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986Disabled.kt")
-        public void testKt47986Disabled() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986Disabled.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986Enabled.kt")
-        public void testKt47986Enabled() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986Enabled.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986_2.kt")
-        public void testKt47986_2() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986_2.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986_3.kt")
-        public void testKt47986_3() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986_3.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47986_4.kt")
-        public void testKt47986_4() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47986_4.kt");
-        }
-
-        @Test
-        @TestMetadata("kt48031.kt")
-        public void testKt48031() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt48031.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49285.kt")
-        public void testKt49285() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49285.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49828.kt")
-        public void testKt49828() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49828.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49829.kt")
-        public void testKt49829() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49829.kt");
-        }
-
-        @Test
-        @TestMetadata("kt49829_noCast.kt")
-        public void testKt49829_noCast() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49829_noCast.kt");
-        }
-
-        @Test
-        @TestMetadata("kt50498.kt")
-        public void testKt50498() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt50498.kt");
-        }
-
-        @Test
-        @TestMetadata("kt50989.kt")
-        public void testKt50989() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt50989.kt");
-        }
-
-        @Test
-        @TestMetadata("kt51148.kt")
-        public void testKt51148() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt51148.kt");
-        }
-
-        @Test
-        @TestMetadata("kt51464.kt")
-        public void testKt51464() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt51464.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53422.kt")
-        public void testKt53422() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt53422.kt");
-        }
-
-        @Test
-        @TestMetadata("kt53639.kt")
-        public void testKt53639() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt53639.kt");
-        }
-
-        @Test
-        @TestMetadata("kt68889.kt")
-        public void testKt68889() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt68889.kt");
-        }
-
-        @Test
-        @TestMetadata("labaledCall.kt")
-        public void testLabaledCall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/labaledCall.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForBareType.kt")
-        public void testLambdaParameterForBareType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareType.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForBareTypeAs.kt")
-        public void testLambdaParameterForBareTypeAs() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareTypeAs.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForBareTypeEarlyFixationAffectsBehavior.kt")
-        public void testLambdaParameterForBareTypeEarlyFixationAffectsBehavior() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareTypeEarlyFixationAffectsBehavior.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForBareTypeOnOuterTypeVariable.kt")
-        public void testLambdaParameterForBareTypeOnOuterTypeVariable() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForBareTypeOnOuterTypeVariable.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterForNonBareType.kt")
-        public void testLambdaParameterForNonBareType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterForNonBareType.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaParameterTypeFixation.kt")
-        public void testLambdaParameterTypeFixation() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterTypeFixation.kt");
-        }
-
-        @Test
-        @TestMetadata("lastLambdaStatementWithFixedVariables.kt")
-        public void testLastLambdaStatementWithFixedVariables() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/lastLambdaStatementWithFixedVariables.kt");
-        }
-
-        @Test
-        @TestMetadata("manyArgsDifferentYields.kt")
-        public void testManyArgsDifferentYields() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/manyArgsDifferentYields.kt");
-        }
-
-        @Test
-        @TestMetadata("memberScopeOfCapturedTypeForPostponedCall.kt")
-        public void testMemberScopeOfCapturedTypeForPostponedCall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/memberScopeOfCapturedTypeForPostponedCall.kt");
-        }
-
-        @Test
-        @TestMetadata("multiLambdaRestriction.kt")
-        public void testMultiLambdaRestriction() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestriction.kt");
-        }
-
-        @Test
-        @TestMetadata("multiLambdaRestrictionDisabled.kt")
-        public void testMultiLambdaRestrictionDisabled() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestrictionDisabled.kt");
-        }
-
-        @Test
-        @TestMetadata("nestedLambdaWithLastLambdaContainingCall.kt")
-        public void testNestedLambdaWithLastLambdaContainingCall() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdaWithLastLambdaContainingCall.kt");
-        }
-
-        @Test
-        @TestMetadata("nestedLambdaWithNonLastYieldStatement.kt")
-        public void testNestedLambdaWithNonLastYieldStatement() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdaWithNonLastYieldStatement.kt");
-        }
-
-        @Test
-        @TestMetadata("nestedLambdasWithOverloadResolutionByReturnType.kt")
-        public void testNestedLambdasWithOverloadResolutionByReturnType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdasWithOverloadResolutionByReturnType.kt");
-        }
-
-        @Test
-        @TestMetadata("newTvFromLamdaAreNotCountedAsProper.kt")
-        public void testNewTvFromLamdaAreNotCountedAsProper() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/newTvFromLamdaAreNotCountedAsProper.kt");
-        }
-
-        @Test
-        @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
-        public void testNoBuilderInferenceRestrictionReceiverInconsistency() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/noBuilderInferenceRestrictionReceiverInconsistency.kt");
-        }
-
-        @Test
-        @TestMetadata("overloadResolutionByLambdaReturnTypeInsideBI.kt")
-        public void testOverloadResolutionByLambdaReturnTypeInsideBI() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/overloadResolutionByLambdaReturnTypeInsideBI.kt");
-        }
-
-        @Test
-        @TestMetadata("propertyInvokeInsidePCLALambda.kt")
-        public void testPropertyInvokeInsidePCLALambda() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertyInvokeInsidePCLALambda.kt");
-        }
-
-        @Test
-        @TestMetadata("propertySubstitution.kt")
-        public void testPropertySubstitution() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertySubstitution.kt");
-        }
-
-        @Test
-        @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
-        public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
-        }
-
-        @Test
-        @TestMetadata("singleBranchConditionLastStatementInLambda.kt")
-        public void testSingleBranchConditionLastStatementInLambda() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/singleBranchConditionLastStatementInLambda.kt");
-        }
-
-        @Test
-        @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
-        public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
-        }
-
-        @Test
-        @TestMetadata("smartCastOnBuilderController.kt")
-        public void testSmartCastOnBuilderController() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/smartCastOnBuilderController.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferences.kt")
-        public void testSpecialCallsWithCallableReferences() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferences.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
-        public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
-        public void testSpecialCallsWithCallableReferencesDontRewriteAtSlice() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesErrorType.kt")
-        public void testSpecialCallsWithCallableReferencesErrorType() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesErrorType.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesErrorTypeUnrestricted.kt")
-        public void testSpecialCallsWithCallableReferencesErrorTypeUnrestricted() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesErrorTypeUnrestricted.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt")
-        public void testSpecialCallsWithCallableReferencesNonStrictOnlyInputTypes() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithCallableReferencesUnrestricted.kt")
-        public void testSpecialCallsWithCallableReferencesUnrestricted() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithCallableReferencesUnrestricted.kt");
-        }
-
-        @Test
-        @TestMetadata("specialCallsWithLambdas.kt")
-        public void testSpecialCallsWithLambdas() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/specialCallsWithLambdas.kt");
-        }
-
-        @Test
-        @TestMetadata("substitutedSyntheticPropertyUsage.kt")
-        public void testSubstitutedSyntheticPropertyUsage() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/substitutedSyntheticPropertyUsage.kt");
-        }
-
-        @Test
-        @TestMetadata("theSimplestBuilder.kt")
-        public void testTheSimplestBuilder() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/theSimplestBuilder.kt");
-        }
-
-        @Test
-        @TestMetadata("whenWithPropertyHavingSomePCLACallsWithinInitializer.kt")
-        public void testWhenWithPropertyHavingSomePCLACallsWithinInitializer() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/whenWithPropertyHavingSomePCLACallsWithinInitializer.kt");
-        }
-
-        @Test
-        @TestMetadata("withoutAnnotationDisabledFeature.kt")
-        public void testWithoutAnnotationDisabledFeature() {
-          runTest("compiler/testData/diagnostics/tests/inference/builderInference/withoutAnnotationDisabledFeature.kt");
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/constraints")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Constraints {
-          @Test
-          public void testAllFilesPresentInConstraints() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/constraints"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-          }
-
-          @Test
-          @TestMetadata("violating.kt")
-          public void testViolating() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/constraints/violating.kt");
-          }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/csForks")
-        @TestDataPath("$PROJECT_ROOT")
-        public class CsForks {
-          @Test
-          public void testAllFilesPresentInCsForks() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/csForks"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-          }
-
-          @Test
-          @TestMetadata("postponingForksNecessary.kt")
-          public void testPostponingForksNecessary() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/postponingForksNecessary.kt");
-          }
-
-          @Test
-          @TestMetadata("postponingForksNecessaryWithLambda.kt")
-          public void testPostponingForksNecessaryWithLambda() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/postponingForksNecessaryWithLambda.kt");
-          }
-
-          @Test
-          @TestMetadata("relatedToOuter.kt")
-          public void testRelatedToOuter() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/relatedToOuter.kt");
-          }
-
-          @Test
-          @TestMetadata("relatedToOuterGreen.kt")
-          public void testRelatedToOuterGreen() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/relatedToOuterGreen.kt");
-          }
-
-          @Test
-          @TestMetadata("simple.kt")
-          public void testSimple() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/simple.kt");
-          }
-
-          @Test
-          @TestMetadata("simpleGreen.kt")
-          public void testSimpleGreen() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/csForks/simpleGreen.kt");
-          }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/regresssions")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Regresssions {
-          @Test
-          public void testAllFilesPresentInRegresssions() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/regresssions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-          }
-
-          @Test
-          @TestMetadata("exponentialErrorsInCS.kt")
-          public void testExponentialErrorsInCS() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/regresssions/exponentialErrorsInCS.kt");
-          }
-
-          @Test
-          @TestMetadata("exponentialErrorsInCSInitial.kt")
-          public void testExponentialErrorsInCSInitial() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/regresssions/exponentialErrorsInCSInitial.kt");
-          }
-
-          @Test
-          @TestMetadata("exponentialForksInCS.kt")
-          public void testExponentialForksInCS() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/regresssions/exponentialForksInCS.kt");
-          }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes")
-        @TestDataPath("$PROJECT_ROOT")
-        public class StubTypes {
-          @Test
-          public void testAllFilesPresentInStubTypes() {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-          }
-
-          @Test
-          @TestMetadata("capturedTypes.kt")
-          public void testCapturedTypes() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/capturedTypes.kt");
-          }
-
-          @Test
-          @TestMetadata("capturedTypesId.kt")
-          public void testCapturedTypesId() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/capturedTypesId.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperType.kt")
-          public void testCommonSuperType() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperType.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperTypeContravariant.kt")
-          public void testCommonSuperTypeContravariant() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeContravariant.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperTypeCovariant.kt")
-          public void testCommonSuperTypeCovariant() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeCovariant.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperTypeInvariant.kt")
-          public void testCommonSuperTypeInvariant() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeInvariant.kt");
-          }
-
-          @Test
-          @TestMetadata("commonSuperTypeNullable.kt")
-          public void testCommonSuperTypeNullable() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/commonSuperTypeNullable.kt");
-          }
-
-          @Test
-          @TestMetadata("intersect.kt")
-          public void testIntersect() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/intersect.kt");
-          }
-
-          @Test
-          @TestMetadata("memberScope.kt")
-          public void testMemberScope() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/memberScope.kt");
-          }
-
-          @Test
-          @TestMetadata("nullability.kt")
-          public void testNullability() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/nullability.kt");
-          }
-
-          @Test
-          @TestMetadata("renderingStubTypes.kt")
-          public void testRenderingStubTypes() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/renderingStubTypes.kt");
-          }
-
-          @Test
-          @TestMetadata("simpleIntersection.kt")
-          public void testSimpleIntersection() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/simpleIntersection.kt");
-          }
-
-          @Test
-          @TestMetadata("stubTypeReceiverRestriction.kt")
-          public void testStubTypeReceiverRestriction() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/stubTypeReceiverRestriction.kt");
-          }
-
-          @Test
-          @TestMetadata("stubTypeReceiverRestrictionDisabled.kt")
-          public void testStubTypeReceiverRestrictionDisabled() {
-            runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/stubTypeReceiverRestrictionDisabled.kt");
-          }
-        }
-      }
-
-      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/callableReferences")
       @TestDataPath("$PROJECT_ROOT")
       public class CallableReferences {
@@ -20187,6 +18807,1376 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("specialCallWithMaterializeAndExpectedType.kt")
         public void testSpecialCallWithMaterializeAndExpectedType() {
           runTest("compiler/testData/diagnostics/tests/inference/nothingType/specialCallWithMaterializeAndExpectedType.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Pcla {
+        @Test
+        public void testAllFilesPresentInPcla() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("assignmentUsingIncompletePCLACall.kt")
+        public void testAssignmentUsingIncompletePCLACall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/assignmentUsingIncompletePCLACall.kt");
+        }
+
+        @Test
+        @TestMetadata("bothOuterAndProperConstraints.kt")
+        public void testBothOuterAndProperConstraints() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/bothOuterAndProperConstraints.kt");
+        }
+
+        @Test
+        @TestMetadata("bothReceiverAndValueParameterNotFixed.kt")
+        public void testBothReceiverAndValueParameterNotFixed() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/bothReceiverAndValueParameterNotFixed.kt");
+        }
+
+        @Test
+        @TestMetadata("builderInferenceAnnotationInLambdaWithTVExpectedType.kt")
+        public void testBuilderInferenceAnnotationInLambdaWithTVExpectedType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/builderInferenceAnnotationInLambdaWithTVExpectedType.kt");
+        }
+
+        @Test
+        @TestMetadata("builderPassedAsNamedArgument.kt")
+        public void testBuilderPassedAsNamedArgument() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/builderPassedAsNamedArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceAsArgumentForTransaction.kt")
+        public void testCallableReferenceAsArgumentForTransaction() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/callableReferenceAsArgumentForTransaction.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReferenceInsideInvokeCall.kt")
+        public void testCallableReferenceInsideInvokeCall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/callableReferenceInsideInvokeCall.kt");
+        }
+
+        @Test
+        @TestMetadata("changingResolveIfDontUseBuilderInference.kt")
+        public void testChangingResolveIfDontUseBuilderInference() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/changingResolveIfDontUseBuilderInference.kt");
+        }
+
+        @Test
+        @TestMetadata("considerContractsOfIncompleteCalls.kt")
+        public void testConsiderContractsOfIncompleteCalls() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/considerContractsOfIncompleteCalls.kt");
+        }
+
+        @Test
+        @TestMetadata("contextReceivers.kt")
+        public void testContextReceivers() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/contextReceivers.kt");
+        }
+
+        @Test
+        @TestMetadata("elvisWithNothingRHS.kt")
+        public void testElvisWithNothingRHS() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/elvisWithNothingRHS.kt");
+        }
+
+        @Test
+        @TestMetadata("elvisWithReturnInLastStatementOfLastLambda.kt")
+        public void testElvisWithReturnInLastStatementOfLastLambda() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/elvisWithReturnInLastStatementOfLastLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityChecksOnIntegerTypes.kt")
+        public void testEqualityChecksOnIntegerTypes() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/equalityChecksOnIntegerTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityChecksOnIntegerTypesProgressive.kt")
+        public void testEqualityChecksOnIntegerTypesProgressive() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/equalityChecksOnIntegerTypesProgressive.kt");
+        }
+
+        @Test
+        @TestMetadata("errorOnStubReceiver.kt")
+        public void testErrorOnStubReceiver() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/errorOnStubReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingDependentVariablesForReceivers.kt")
+        public void testFixingDependentVariablesForReceivers() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingDependentVariablesForReceivers.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingDependentVariablesForReceiversInitial.kt")
+        public void testFixingDependentVariablesForReceiversInitial() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingDependentVariablesForReceiversInitial.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter.kt")
+        public void testFixingTVForLambadaWithShallowDependencyToOuter() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingTVForLambadaWithShallowDependencyToOuter.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter2.kt")
+        public void testFixingTVForLambadaWithShallowDependencyToOuter2() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingTVForLambadaWithShallowDependencyToOuter2.kt");
+        }
+
+        @Test
+        @TestMetadata("fixingTVForLambadaWithShallowDependencyToOuter3.kt")
+        public void testFixingTVForLambadaWithShallowDependencyToOuter3() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/fixingTVForLambadaWithShallowDependencyToOuter3.kt");
+        }
+
+        @Test
+        @TestMetadata("incompleteCallInReturnArgumentsWithProperExpectType.kt")
+        public void testIncompleteCallInReturnArgumentsWithProperExpectType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/incompleteCallInReturnArgumentsWithProperExpectType.kt");
+        }
+
+        @Test
+        @TestMetadata("innerTvFixationFromLowerConstraints.kt")
+        public void testInnerTvFixationFromLowerConstraints() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/innerTvFixationFromLowerConstraints.kt");
+        }
+
+        @Test
+        @TestMetadata("invalidateKeys.kt")
+        public void testInvalidateKeys() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/invalidateKeys.kt");
+        }
+
+        @Test
+        @TestMetadata("invokeExtensionReceiverWithNotFixedVariables.kt")
+        public void testInvokeExtensionReceiverWithNotFixedVariables() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/invokeExtensionReceiverWithNotFixedVariables.kt");
+        }
+
+        @Test
+        @TestMetadata("invokeExtensionReceiverWithNotFixedVariablesInitial.kt")
+        public void testInvokeExtensionReceiverWithNotFixedVariablesInitial() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/invokeExtensionReceiverWithNotFixedVariablesInitial.kt");
+        }
+
+        @Test
+        @TestMetadata("labaledCall.kt")
+        public void testLabaledCall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/labaledCall.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForBareType.kt")
+        public void testLambdaParameterForBareType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForBareType.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForBareTypeAs.kt")
+        public void testLambdaParameterForBareTypeAs() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForBareTypeAs.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForBareTypeEarlyFixationAffectsBehavior.kt")
+        public void testLambdaParameterForBareTypeEarlyFixationAffectsBehavior() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForBareTypeEarlyFixationAffectsBehavior.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForBareTypeOnOuterTypeVariable.kt")
+        public void testLambdaParameterForBareTypeOnOuterTypeVariable() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForBareTypeOnOuterTypeVariable.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterForNonBareType.kt")
+        public void testLambdaParameterForNonBareType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForNonBareType.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterTypeFixation.kt")
+        public void testLambdaParameterTypeFixation() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterTypeFixation.kt");
+        }
+
+        @Test
+        @TestMetadata("lastLambdaStatementWithFixedVariables.kt")
+        public void testLastLambdaStatementWithFixedVariables() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lastLambdaStatementWithFixedVariables.kt");
+        }
+
+        @Test
+        @TestMetadata("manyArgsDifferentYields.kt")
+        public void testManyArgsDifferentYields() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/manyArgsDifferentYields.kt");
+        }
+
+        @Test
+        @TestMetadata("memberScopeOfCapturedTypeForPostponedCall.kt")
+        public void testMemberScopeOfCapturedTypeForPostponedCall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/memberScopeOfCapturedTypeForPostponedCall.kt");
+        }
+
+        @Test
+        @TestMetadata("multiLambdaRestriction.kt")
+        public void testMultiLambdaRestriction() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/multiLambdaRestriction.kt");
+        }
+
+        @Test
+        @TestMetadata("multiLambdaRestrictionDisabled.kt")
+        public void testMultiLambdaRestrictionDisabled() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/multiLambdaRestrictionDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedLambdaWithLastLambdaContainingCall.kt")
+        public void testNestedLambdaWithLastLambdaContainingCall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/nestedLambdaWithLastLambdaContainingCall.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedLambdaWithNonLastYieldStatement.kt")
+        public void testNestedLambdaWithNonLastYieldStatement() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/nestedLambdaWithNonLastYieldStatement.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedLambdasWithOverloadResolutionByReturnType.kt")
+        public void testNestedLambdasWithOverloadResolutionByReturnType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/nestedLambdasWithOverloadResolutionByReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("newTvFromLamdaAreNotCountedAsProper.kt")
+        public void testNewTvFromLamdaAreNotCountedAsProper() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/newTvFromLamdaAreNotCountedAsProper.kt");
+        }
+
+        @Test
+        @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
+        public void testNoBuilderInferenceRestrictionReceiverInconsistency() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/noBuilderInferenceRestrictionReceiverInconsistency.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadResolutionByLambdaReturnType.kt")
+        public void testOverloadResolutionByLambdaReturnType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/overloadResolutionByLambdaReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadResolutionByLambdaReturnTypeInsideBI.kt")
+        public void testOverloadResolutionByLambdaReturnTypeInsideBI() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/overloadResolutionByLambdaReturnTypeInsideBI.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadResolutionWithTypeVariables.kt")
+        public void testOverloadResolutionWithTypeVariables() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/overloadResolutionWithTypeVariables.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyInvokeInsidePCLALambda.kt")
+        public void testPropertyInvokeInsidePCLALambda() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/propertyInvokeInsidePCLALambda.kt");
+        }
+
+        @Test
+        @TestMetadata("propertySubstitution.kt")
+        public void testPropertySubstitution() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/propertySubstitution.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
+        public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
+        }
+
+        @Test
+        @TestMetadata("singleBranchConditionLastStatementInLambda.kt")
+        public void testSingleBranchConditionLastStatementInLambda() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/singleBranchConditionLastStatementInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
+        public void testSkipedUnresolvedInBuilderInferenceWithStubReceiverType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt");
+        }
+
+        @Test
+        @TestMetadata("smartCastOnBuilderController.kt")
+        public void testSmartCastOnBuilderController() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/smartCastOnBuilderController.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferences.kt")
+        public void testSpecialCallsWithCallableReferences() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferences.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt")
+        public void testSpecialCallsWithCallableReferencesDontCareTypeInBlockExression() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesDontCareTypeInBlockExression.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesDontRewriteAtSlice.kt")
+        public void testSpecialCallsWithCallableReferencesDontRewriteAtSlice() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesDontRewriteAtSlice.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesErrorType.kt")
+        public void testSpecialCallsWithCallableReferencesErrorType() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesErrorType.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesErrorTypeUnrestricted.kt")
+        public void testSpecialCallsWithCallableReferencesErrorTypeUnrestricted() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesErrorTypeUnrestricted.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt")
+        public void testSpecialCallsWithCallableReferencesNonStrictOnlyInputTypes() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesNonStrictOnlyInputTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithCallableReferencesUnrestricted.kt")
+        public void testSpecialCallsWithCallableReferencesUnrestricted() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithCallableReferencesUnrestricted.kt");
+        }
+
+        @Test
+        @TestMetadata("specialCallsWithLambdas.kt")
+        public void testSpecialCallsWithLambdas() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/specialCallsWithLambdas.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutedSyntheticPropertyUsage.kt")
+        public void testSubstitutedSyntheticPropertyUsage() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/substitutedSyntheticPropertyUsage.kt");
+        }
+
+        @Test
+        @TestMetadata("theSimplestBuilder.kt")
+        public void testTheSimplestBuilder() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/theSimplestBuilder.kt");
+        }
+
+        @Test
+        @TestMetadata("whenWithPropertyHavingSomePCLACallsWithinInitializer.kt")
+        public void testWhenWithPropertyHavingSomePCLACallsWithinInitializer() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/whenWithPropertyHavingSomePCLACallsWithinInitializer.kt");
+        }
+
+        @Test
+        @TestMetadata("withoutAnnotationDisabledFeature.kt")
+        public void testWithoutAnnotationDisabledFeature() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/withoutAnnotationDisabledFeature.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/additional")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Additional {
+          @Test
+          public void testAllFilesPresentInAdditional() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/additional"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          }
+
+          @Test
+          @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt")
+          public void testBuildeeSupertypeAsTypeVariableSourceInClassifiers() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/additional/BuildeeSupertypeAsTypeVariableSourceInClassifiers.kt");
+          }
+
+          @Test
+          @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInFunctions.kt")
+          public void testBuildeeSupertypeAsTypeVariableSourceInFunctions() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/additional/BuildeeSupertypeAsTypeVariableSourceInFunctions.kt");
+          }
+
+          @Test
+          @TestMetadata("BuildeeSupertypeAsTypeVariableSourceInProperties.kt")
+          public void testBuildeeSupertypeAsTypeVariableSourceInProperties() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/additional/BuildeeSupertypeAsTypeVariableSourceInProperties.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/constraints")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Constraints {
+          @Test
+          public void testAllFilesPresentInConstraints() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/constraints"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          }
+
+          @Test
+          @TestMetadata("violating.kt")
+          public void testViolating() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/constraints/violating.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/csForks")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CsForks {
+          @Test
+          public void testAllFilesPresentInCsForks() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/csForks"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          }
+
+          @Test
+          @TestMetadata("postponingForksNecessary.kt")
+          public void testPostponingForksNecessary() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/postponingForksNecessary.kt");
+          }
+
+          @Test
+          @TestMetadata("postponingForksNecessaryWithLambda.kt")
+          public void testPostponingForksNecessaryWithLambda() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/postponingForksNecessaryWithLambda.kt");
+          }
+
+          @Test
+          @TestMetadata("relatedToOuter.kt")
+          public void testRelatedToOuter() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/relatedToOuter.kt");
+          }
+
+          @Test
+          @TestMetadata("relatedToOuterGreen.kt")
+          public void testRelatedToOuterGreen() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/relatedToOuterGreen.kt");
+          }
+
+          @Test
+          @TestMetadata("simple.kt")
+          public void testSimple() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/simple.kt");
+          }
+
+          @Test
+          @TestMetadata("simpleGreen.kt")
+          public void testSimpleGreen() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/simpleGreen.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/issues")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Issues {
+          @Test
+          public void testAllFilesPresentInIssues() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/issues"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          }
+
+          @Test
+          @TestMetadata("kt43710.kt")
+          public void testKt43710() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt43710.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47744.kt")
+          public void testKt47744() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47744.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986Default.kt")
+          public void testKt47986Default() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986Default.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986Disabled.kt")
+          public void testKt47986Disabled() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986Disabled.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986Enabled.kt")
+          public void testKt47986Enabled() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986Enabled.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986_2.kt")
+          public void testKt47986_2() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986_2.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986_3.kt")
+          public void testKt47986_3() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986_3.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47986_4.kt")
+          public void testKt47986_4() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47986_4.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47989a.kt")
+          public void testKt47989a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47989a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt47989b.kt")
+          public void testKt47989b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt47989b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt48031.kt")
+          public void testKt48031() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt48031.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160a.kt")
+          public void testKt49160a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160b.kt")
+          public void testKt49160b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160c.kt")
+          public void testKt49160c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160d.kt")
+          public void testKt49160d() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160d.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49160e.kt")
+          public void testKt49160e() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49160e.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49263.kt")
+          public void testKt49263() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49263.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49285.kt")
+          public void testKt49285() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49285.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49828.kt")
+          public void testKt49828() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49828.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49829.kt")
+          public void testKt49829() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49829.kt");
+          }
+
+          @Test
+          @TestMetadata("kt49829_noCast.kt")
+          public void testKt49829_noCast() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt49829_noCast.kt");
+          }
+
+          @Test
+          @TestMetadata("kt50453.kt")
+          public void testKt50453() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt50453.kt");
+          }
+
+          @Test
+          @TestMetadata("kt50498.kt")
+          public void testKt50498() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt50498.kt");
+          }
+
+          @Test
+          @TestMetadata("kt50827.kt")
+          public void testKt50827() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt50827.kt");
+          }
+
+          @Test
+          @TestMetadata("kt50989.kt")
+          public void testKt50989() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt50989.kt");
+          }
+
+          @Test
+          @TestMetadata("kt51148.kt")
+          public void testKt51148() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt51148.kt");
+          }
+
+          @Test
+          @TestMetadata("kt51464.kt")
+          public void testKt51464() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt51464.kt");
+          }
+
+          @Test
+          @TestMetadata("kt52757.kt")
+          public void testKt52757() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt52757.kt");
+          }
+
+          @Test
+          @TestMetadata("kt52838a.kt")
+          public void testKt52838a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt52838a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt52838b.kt")
+          public void testKt52838b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt52838b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt52838c.kt")
+          public void testKt52838c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt52838c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53109.kt")
+          public void testKt53109() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53109.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53422.kt")
+          public void testKt53422() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53422.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53422a.kt")
+          public void testKt53422a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53422a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53422b.kt")
+          public void testKt53422b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53422b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53478.kt")
+          public void testKt53478() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53478.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53553.kt")
+          public void testKt53553() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53553.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53639.kt")
+          public void testKt53639() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53639.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53639Simple.kt")
+          public void testKt53639Simple() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53639Simple.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53740a.kt")
+          public void testKt53740a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53740a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt53740b.kt")
+          public void testKt53740b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt53740b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54400a.kt")
+          public void testKt54400a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54400a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54400b.kt")
+          public void testKt54400b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54400b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54400c.kt")
+          public void testKt54400c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54400c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54664.kt")
+          public void testKt54664() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54664.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54767a.kt")
+          public void testKt54767a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54767a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt54767b.kt")
+          public void testKt54767b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt54767b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt55056.kt")
+          public void testKt55056() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt55056.kt");
+          }
+
+          @Test
+          @TestMetadata("kt55057.kt")
+          public void testKt55057() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt55057.kt");
+          }
+
+          @Test
+          @TestMetadata("kt55281.kt")
+          public void testKt55281() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt55281.kt");
+          }
+
+          @Test
+          @TestMetadata("kt56949.kt")
+          public void testKt56949() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt56949.kt");
+          }
+
+          @Test
+          @TestMetadata("kt57707.kt")
+          public void testKt57707() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt57707.kt");
+          }
+
+          @Test
+          @TestMetadata("kt57709.kt")
+          public void testKt57709() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt57709.kt");
+          }
+
+          @Test
+          @TestMetadata("kt57834.kt")
+          public void testKt57834() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt57834.kt");
+          }
+
+          @Test
+          @TestMetadata("kt59426.kt")
+          public void testKt59426() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt59426.kt");
+          }
+
+          @Test
+          @TestMetadata("kt59798.kt")
+          public void testKt59798() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt59798.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60291a.kt")
+          public void testKt60291a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60291a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60291b.kt")
+          public void testKt60291b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60291b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60291c.kt")
+          public void testKt60291c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60291c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60447a.kt")
+          public void testKt60447a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60447a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt60447b.kt")
+          public void testKt60447b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt60447b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt61310.kt")
+          public void testKt61310() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt61310.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63648.kt")
+          public void testKt63648() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63648.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63733.kt")
+          public void testKt63733() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63733.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63840a.kt")
+          public void testKt63840a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63840a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63840b.kt")
+          public void testKt63840b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63840b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63840c.kt")
+          public void testKt63840c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63840c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt63841.kt")
+          public void testKt63841() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt63841.kt");
+          }
+
+          @Test
+          @TestMetadata("kt64066.kt")
+          public void testKt64066() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt64066.kt");
+          }
+
+          @Test
+          @TestMetadata("kt64066disabled.kt")
+          public void testKt64066disabled() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt64066disabled.kt");
+          }
+
+          @Test
+          @TestMetadata("kt64077.kt")
+          public void testKt64077() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt64077.kt");
+          }
+
+          @Test
+          @TestMetadata("kt64222.kt")
+          public void testKt64222() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt64222.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300a.kt")
+          public void testKt65300a() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300a.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300b.kt")
+          public void testKt65300b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300b.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300c.kt")
+          public void testKt65300c() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300c.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300d.kt")
+          public void testKt65300d() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300d.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300e.kt")
+          public void testKt65300e() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300e.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300f.kt")
+          public void testKt65300f() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300f.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300g.kt")
+          public void testKt65300g() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300g.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300h.kt")
+          public void testKt65300h() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300h.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300i.kt")
+          public void testKt65300i() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300i.kt");
+          }
+
+          @Test
+          @TestMetadata("kt65300j.kt")
+          public void testKt65300j() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt65300j.kt");
+          }
+
+          @Test
+          @TestMetadata("kt66229.kt")
+          public void testKt66229() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt66229.kt");
+          }
+
+          @Test
+          @TestMetadata("kt66243.kt")
+          public void testKt66243() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt66243.kt");
+          }
+
+          @Test
+          @TestMetadata("kt66272.kt")
+          public void testKt66272() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt66272.kt");
+          }
+
+          @Test
+          @TestMetadata("kt67875.kt")
+          public void testKt67875() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt67875.kt");
+          }
+
+          @Test
+          @TestMetadata("kt67993.kt")
+          public void testKt67993() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt67993.kt");
+          }
+
+          @Test
+          @TestMetadata("kt68889.kt")
+          public void testKt68889() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt68889.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        public class OneParameter {
+          @Test
+          public void testAllFilesPresentInOneParameter() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable")
+          @TestDataPath("$PROJECT_ROOT")
+          public class OneTypeVariable {
+            @Test
+            public void testAllFilesPresentInOneTypeVariable() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
+            @TestDataPath("$PROJECT_ROOT")
+            public class OneTypeInfoOrigin {
+              @Test
+              public void testAllFilesPresentInOneTypeInfoOrigin() {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+              }
+
+              @Test
+              @TestMetadata("AnonymousFunctionArgumentAndBuildeeReceiver.kt")
+              public void testAnonymousFunctionArgumentAndBuildeeReceiver() {
+                runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeReceiver.kt");
+              }
+
+              @Nested
+              @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
+              @TestDataPath("$PROJECT_ROOT")
+              public class SourceSinkFeedContexts {
+                @Test
+                public void testAllFilesPresentInSourceSinkFeedContexts() {
+                  KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("ByAssignmentToALocalVariableMaterializeCase.kt")
+                public void testByAssignmentToALocalVariableMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("ByAssignmentToALocalVariableYieldCase.kt")
+                public void testByAssignmentToALocalVariableYieldCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ByAssignmentToALocalVariableYieldCase.kt");
+                }
+
+                @Test
+                @TestMetadata("InsideLocalClass.kt")
+                public void testInsideLocalClass() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideLocalClass.kt");
+                }
+
+                @Test
+                @TestMetadata("InsideNestedBuilderInferenceLambda.kt")
+                public void testInsideNestedBuilderInferenceLambda() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedBuilderInferenceLambda.kt");
+                }
+
+                @Test
+                @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
+                public void testThroughDelegatedLocalVariableMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("ThroughGenericFunctionCall.kt")
+                public void testThroughGenericFunctionCall() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughGenericFunctionCall.kt");
+                }
+              }
+
+              @Nested
+              @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes")
+              @TestDataPath("$PROJECT_ROOT")
+              public class TargetTypes {
+                @Test
+                public void testAllFilesPresentInTargetTypes() {
+                  KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("FunctionWithParameterToUnitImplicitLiteralsCase.kt")
+                public void testFunctionWithParameterToUnitImplicitLiteralsCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithParameterToUnitImplicitLiteralsCase.kt");
+                }
+
+                @Test
+                @TestMetadata("FunctionWithReceiverToUnitImplicitLiteralsCase.kt")
+                public void testFunctionWithReceiverToUnitImplicitLiteralsCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/FunctionWithReceiverToUnitImplicitLiteralsCase.kt");
+                }
+
+                @Test
+                @TestMetadata("NothingMaterializeCase.kt")
+                public void testNothingMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NothingMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("NullableNothingNullLiteralMaterializeCase.kt")
+                public void testNullableNothingNullLiteralMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/NullableNothingNullLiteralMaterializeCase.kt");
+                }
+              }
+
+              @Nested
+              @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
+              @TestDataPath("$PROJECT_ROOT")
+              public class TypeInfoSinks {
+                @Test
+                public void testAllFilesPresentInTypeInfoSinks() {
+                  KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("ExtensionFunctions.kt")
+                public void testExtensionFunctions() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ExtensionFunctions.kt");
+                }
+
+                @Test
+                @TestMetadata("ImmutableExtensionProperties.kt")
+                public void testImmutableExtensionProperties() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableExtensionProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("ImmutableProperties.kt")
+                public void testImmutableProperties() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("MutableExtensionPropertiesMaterializeCase.kt")
+                public void testMutableExtensionPropertiesMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("MutableExtensionPropertiesYieldCase.kt")
+                public void testMutableExtensionPropertiesYieldCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesYieldCase.kt");
+                }
+
+                @Test
+                @TestMetadata("MutablePropertiesMaterializeCase.kt")
+                public void testMutablePropertiesMaterializeCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesMaterializeCase.kt");
+                }
+
+                @Test
+                @TestMetadata("MutablePropertiesYieldCase.kt")
+                public void testMutablePropertiesYieldCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesYieldCase.kt");
+                }
+
+                @Test
+                @TestMetadata("ParametersOfBuilderArguments.kt")
+                public void testParametersOfBuilderArguments() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ParametersOfBuilderArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("ReceiversOfBuilderArguments.kt")
+                public void testReceiversOfBuilderArguments() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ReceiversOfBuilderArguments.kt");
+                }
+              }
+
+              @Nested
+              @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
+              @TestDataPath("$PROJECT_ROOT")
+              public class TypeInfoSources {
+                @Test
+                public void testAllFilesPresentInTypeInfoSources() {
+                  KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("ExtensionFunctions.kt")
+                public void testExtensionFunctions() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionFunctions.kt");
+                }
+
+                @Test
+                @TestMetadata("ExtensionProperties.kt")
+                public void testExtensionProperties() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("ParametersOfBuilderArguments.kt")
+                public void testParametersOfBuilderArguments() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ParametersOfBuilderArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("ReceiversOfBuilderArguments.kt")
+                public void testReceiversOfBuilderArguments() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReceiversOfBuilderArguments.kt");
+                }
+
+                @Test
+                @TestMetadata("ReturnTypesOfBuilderParameters.kt")
+                public void testReturnTypesOfBuilderParameters() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReturnTypesOfBuilderParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt")
+                public void testUnitReturnTypeOfBuilderParametersExplicitReturnCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt");
+                }
+
+                @Test
+                @TestMetadata("UnitReturnTypeOfBuilderParametersLastStatementReturnCase.kt")
+                public void testUnitReturnTypeOfBuilderParametersLastStatementReturnCase() {
+                  runTest("compiler/testData/diagnostics/tests/inference/pcla/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersLastStatementReturnCase.kt");
+                }
+              }
+            }
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/regresssions")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Regresssions {
+          @Test
+          public void testAllFilesPresentInRegresssions() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/regresssions"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          }
+
+          @Test
+          @TestMetadata("exponentialErrorsInCS.kt")
+          public void testExponentialErrorsInCS() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/regresssions/exponentialErrorsInCS.kt");
+          }
+
+          @Test
+          @TestMetadata("exponentialErrorsInCSInitial.kt")
+          public void testExponentialErrorsInCSInitial() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/regresssions/exponentialErrorsInCSInitial.kt");
+          }
+
+          @Test
+          @TestMetadata("exponentialForksInCS.kt")
+          public void testExponentialForksInCS() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/regresssions/exponentialForksInCS.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/stubTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        public class StubTypes {
+          @Test
+          public void testAllFilesPresentInStubTypes() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/stubTypes"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+          }
+
+          @Test
+          @TestMetadata("capturedTypes.kt")
+          public void testCapturedTypes() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/capturedTypes.kt");
+          }
+
+          @Test
+          @TestMetadata("capturedTypesId.kt")
+          public void testCapturedTypesId() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/capturedTypesId.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperType.kt")
+          public void testCommonSuperType() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperType.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperTypeContravariant.kt")
+          public void testCommonSuperTypeContravariant() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperTypeContravariant.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperTypeCovariant.kt")
+          public void testCommonSuperTypeCovariant() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperTypeCovariant.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperTypeInvariant.kt")
+          public void testCommonSuperTypeInvariant() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperTypeInvariant.kt");
+          }
+
+          @Test
+          @TestMetadata("commonSuperTypeNullable.kt")
+          public void testCommonSuperTypeNullable() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/commonSuperTypeNullable.kt");
+          }
+
+          @Test
+          @TestMetadata("intersect.kt")
+          public void testIntersect() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/intersect.kt");
+          }
+
+          @Test
+          @TestMetadata("memberScope.kt")
+          public void testMemberScope() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/memberScope.kt");
+          }
+
+          @Test
+          @TestMetadata("nullability.kt")
+          public void testNullability() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/nullability.kt");
+          }
+
+          @Test
+          @TestMetadata("renderingStubTypes.kt")
+          public void testRenderingStubTypes() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/renderingStubTypes.kt");
+          }
+
+          @Test
+          @TestMetadata("simpleIntersection.kt")
+          public void testSimpleIntersection() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/simpleIntersection.kt");
+          }
+
+          @Test
+          @TestMetadata("stubTypeReceiverRestriction.kt")
+          public void testStubTypeReceiverRestriction() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/stubTypeReceiverRestriction.kt");
+          }
+
+          @Test
+          @TestMetadata("stubTypeReceiverRestrictionDisabled.kt")
+          public void testStubTypeReceiverRestrictionDisabled() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/stubTypes/stubTypeReceiverRestrictionDisabled.kt");
+          }
         }
       }
 
@@ -45446,166 +45436,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/builderInference")
-    @TestDataPath("$PROJECT_ROOT")
-    public class BuilderInference {
-      @Test
-      public void testAllFilesPresentInBuilderInference() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/builderInference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-      }
-
-      @Test
-      @TestMetadata("buildListRemoveAddInBranches.kt")
-      public void testBuildListRemoveAddInBranches() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListRemoveAddInBranches.kt");
-      }
-
-      @Test
-      @TestMetadata("buildListToUpperBound.kt")
-      public void testBuildListToUpperBound() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBound.kt");
-      }
-
-      @Test
-      @TestMetadata("buildListToUpperBoundForbidden.kt")
-      public void testBuildListToUpperBoundForbidden() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBoundForbidden.kt");
-      }
-
-      @Test
-      @TestMetadata("buildListToUpperBoundInLazy.kt")
-      public void testBuildListToUpperBoundInLazy() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBoundInLazy.kt");
-      }
-
-      @Test
-      @TestMetadata("buildListToUpperBoundInLazyForbidden.kt")
-      public void testBuildListToUpperBoundInLazyForbidden() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBoundInLazyForbidden.kt");
-      }
-
-      @Test
-      @TestMetadata("completeIrrelevantCalls.kt")
-      public void testCompleteIrrelevantCalls() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/completeIrrelevantCalls.kt");
-      }
-
-      @Test
-      @TestMetadata("inconsistentTypeInference.kt")
-      public void testInconsistentTypeInference() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inconsistentTypeInference.kt");
-      }
-
-      @Test
-      @TestMetadata("inconsistentTypeInference2.kt")
-      public void testInconsistentTypeInference2() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inconsistentTypeInference2.kt");
-      }
-
-      @Test
-      @TestMetadata("inconsistentTypeInference_noReporting.kt")
-      public void testInconsistentTypeInference_noReporting() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inconsistentTypeInference_noReporting.kt");
-      }
-
-      @Test
-      @TestMetadata("incorrectCalls.kt")
-      public void testIncorrectCalls() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/incorrectCalls.kt");
-      }
-
-      @Test
-      @TestMetadata("incorrectCallsWithRestrictions.kt")
-      public void testIncorrectCallsWithRestrictions() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/incorrectCallsWithRestrictions.kt");
-      }
-
-      @Test
-      @TestMetadata("inferCoroutineTypeInOldVersion.kt")
-      public void testInferCoroutineTypeInOldVersion() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferCoroutineTypeInOldVersion.kt");
-      }
-
-      @Test
-      @TestMetadata("inferenceFromLambdaReturnStatement.kt")
-      public void testInferenceFromLambdaReturnStatement() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferenceFromLambdaReturnStatement.kt");
-      }
-
-      @Test
-      @TestMetadata("inferenceFromLambdaReturnType.kt")
-      public void testInferenceFromLambdaReturnType() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferenceFromLambdaReturnType.kt");
-      }
-
-      @Test
-      @TestMetadata("k2StubTypeLeak.kt")
-      public void testK2StubTypeLeak() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/k2StubTypeLeak.kt");
-      }
-
-      @Test
-      @TestMetadata("resolveUsualCallWithBuilderInference.kt")
-      public void testResolveUsualCallWithBuilderInference() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInference.kt");
-      }
-
-      @Test
-      @TestMetadata("resolveUsualCallWithBuilderInferenceWithRestrictions.kt")
-      public void testResolveUsualCallWithBuilderInferenceWithRestrictions() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInferenceWithRestrictions.kt");
-      }
-
-      @Test
-      @TestMetadata("typeVariableShouldNotBeFixed.kt")
-      public void testTypeVariableShouldNotBeFixed() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/typeVariableShouldNotBeFixed.kt");
-      }
-
-      @Test
-      @TestMetadata("unsafeAssignment.kt")
-      public void testUnsafeAssignment() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/unsafeAssignment.kt");
-      }
-
-      @Test
-      @TestMetadata("unsafeAssignmentExtra.kt")
-      public void testUnsafeAssignmentExtra() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/unsafeAssignmentExtra.kt");
-      }
-
-      @Test
-      @TestMetadata("unsafeAssignment_noReport.kt")
-      public void testUnsafeAssignment_noReport() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/unsafeAssignment_noReport.kt");
-      }
-
-      @Test
-      @TestMetadata("upperBoundViolation.kt")
-      public void testUpperBoundViolation() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/upperBoundViolation.kt");
-      }
-
-      @Test
-      @TestMetadata("upperBoundViolation_noReporting.kt")
-      public void testUpperBoundViolation_noReporting() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/upperBoundViolation_noReporting.kt");
-      }
-
-      @Test
-      @TestMetadata("useInferenceInformationFromExtension.kt")
-      public void testUseInferenceInformationFromExtension() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/useInferenceInformationFromExtension.kt");
-      }
-
-      @Test
-      @TestMetadata("useInferenceInformationFromExtensionWithRestrictions.kt")
-      public void testUseInferenceInformationFromExtensionWithRestrictions() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/useInferenceInformationFromExtensionWithRestrictions.kt");
-      }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/builtins")
     @TestDataPath("$PROJECT_ROOT")
     public class Builtins {
@@ -48686,6 +48516,166 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("trait.kt")
       public void testTrait() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/native/trait.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/pcla")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Pcla {
+      @Test
+      public void testAllFilesPresentInPcla() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/pcla"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("buildListRemoveAddInBranches.kt")
+      public void testBuildListRemoveAddInBranches() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListRemoveAddInBranches.kt");
+      }
+
+      @Test
+      @TestMetadata("buildListToUpperBound.kt")
+      public void testBuildListToUpperBound() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListToUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("buildListToUpperBoundForbidden.kt")
+      public void testBuildListToUpperBoundForbidden() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListToUpperBoundForbidden.kt");
+      }
+
+      @Test
+      @TestMetadata("buildListToUpperBoundInLazy.kt")
+      public void testBuildListToUpperBoundInLazy() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListToUpperBoundInLazy.kt");
+      }
+
+      @Test
+      @TestMetadata("buildListToUpperBoundInLazyForbidden.kt")
+      public void testBuildListToUpperBoundInLazyForbidden() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/buildListToUpperBoundInLazyForbidden.kt");
+      }
+
+      @Test
+      @TestMetadata("completeIrrelevantCalls.kt")
+      public void testCompleteIrrelevantCalls() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/completeIrrelevantCalls.kt");
+      }
+
+      @Test
+      @TestMetadata("inconsistentTypeInference.kt")
+      public void testInconsistentTypeInference() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inconsistentTypeInference.kt");
+      }
+
+      @Test
+      @TestMetadata("inconsistentTypeInference2.kt")
+      public void testInconsistentTypeInference2() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inconsistentTypeInference2.kt");
+      }
+
+      @Test
+      @TestMetadata("inconsistentTypeInference_noReporting.kt")
+      public void testInconsistentTypeInference_noReporting() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inconsistentTypeInference_noReporting.kt");
+      }
+
+      @Test
+      @TestMetadata("incorrectCalls.kt")
+      public void testIncorrectCalls() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/incorrectCalls.kt");
+      }
+
+      @Test
+      @TestMetadata("incorrectCallsWithRestrictions.kt")
+      public void testIncorrectCallsWithRestrictions() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/incorrectCallsWithRestrictions.kt");
+      }
+
+      @Test
+      @TestMetadata("inferCoroutineTypeInOldVersion.kt")
+      public void testInferCoroutineTypeInOldVersion() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inferCoroutineTypeInOldVersion.kt");
+      }
+
+      @Test
+      @TestMetadata("inferenceFromLambdaReturnStatement.kt")
+      public void testInferenceFromLambdaReturnStatement() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inferenceFromLambdaReturnStatement.kt");
+      }
+
+      @Test
+      @TestMetadata("inferenceFromLambdaReturnType.kt")
+      public void testInferenceFromLambdaReturnType() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/inferenceFromLambdaReturnType.kt");
+      }
+
+      @Test
+      @TestMetadata("k2StubTypeLeak.kt")
+      public void testK2StubTypeLeak() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/k2StubTypeLeak.kt");
+      }
+
+      @Test
+      @TestMetadata("resolveUsualCallWithBuilderInference.kt")
+      public void testResolveUsualCallWithBuilderInference() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/resolveUsualCallWithBuilderInference.kt");
+      }
+
+      @Test
+      @TestMetadata("resolveUsualCallWithBuilderInferenceWithRestrictions.kt")
+      public void testResolveUsualCallWithBuilderInferenceWithRestrictions() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/resolveUsualCallWithBuilderInferenceWithRestrictions.kt");
+      }
+
+      @Test
+      @TestMetadata("typeVariableShouldNotBeFixed.kt")
+      public void testTypeVariableShouldNotBeFixed() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/typeVariableShouldNotBeFixed.kt");
+      }
+
+      @Test
+      @TestMetadata("unsafeAssignment.kt")
+      public void testUnsafeAssignment() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/unsafeAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("unsafeAssignmentExtra.kt")
+      public void testUnsafeAssignmentExtra() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/unsafeAssignmentExtra.kt");
+      }
+
+      @Test
+      @TestMetadata("unsafeAssignment_noReport.kt")
+      public void testUnsafeAssignment_noReport() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/unsafeAssignment_noReport.kt");
+      }
+
+      @Test
+      @TestMetadata("upperBoundViolation.kt")
+      public void testUpperBoundViolation() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/upperBoundViolation.kt");
+      }
+
+      @Test
+      @TestMetadata("upperBoundViolation_noReporting.kt")
+      public void testUpperBoundViolation_noReporting() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/upperBoundViolation_noReporting.kt");
+      }
+
+      @Test
+      @TestMetadata("useInferenceInformationFromExtension.kt")
+      public void testUseInferenceInformationFromExtension() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/useInferenceInformationFromExtension.kt");
+      }
+
+      @Test
+      @TestMetadata("useInferenceInformationFromExtensionWithRestrictions.kt")
+      public void testUseInferenceInformationFromExtensionWithRestrictions() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/pcla/useInferenceInformationFromExtensionWithRestrictions.kt");
       }
     }
 

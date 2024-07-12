@@ -3680,24 +3680,24 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       }
 
       @Nested
-      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/builderInference")
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/pcla")
       @TestDataPath("$PROJECT_ROOT")
-      public class BuilderInference {
+      public class Pcla {
         @Test
-        public void testAllFilesPresentInBuilderInference() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/builderInference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        public void testAllFilesPresentInPcla() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inference/pcla"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
         @TestMetadata("doubleSquareBracketsInBuilderArgument.kt")
         public void testDoubleSquareBracketsInBuilderArgument() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/inference/builderInference/doubleSquareBracketsInBuilderArgument.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/doubleSquareBracketsInBuilderArgument.kt");
         }
 
         @Test
         @TestMetadata("ifInBuildMap.kt")
         public void testIfInBuildMap() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/inference/builderInference/ifInBuildMap.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/pcla/ifInBuildMap.kt");
         }
       }
     }
