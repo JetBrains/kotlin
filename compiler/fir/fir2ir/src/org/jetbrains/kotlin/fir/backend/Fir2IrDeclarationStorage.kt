@@ -922,7 +922,11 @@ class Fir2IrDeclarationStorage(
 
     fun recordSupertypeDelegationInformation(containingFirClass: FirClass, irClass: IrClass, superType: IrType, irFieldSymbol: IrFieldSymbol) {
         val delegateMapForClass = delegatedClassesMap.getOrPut(irClass.symbol) { mutableMapOf() }
-        val delegatedSuperClass = superType.classOrNull ?: error("No symbol for type $superType")
+        val delegatedSuperClass = superType.classOrNull
+        if (delegatedSuperClass == null) {
+            if (c.configuration.skipBodies) return
+            error("No symbol for type $superType")
+        }
         require(delegatedSuperClass !in delegateMapForClass) { "Delegate info for supertype $superType already stored" }
         delegateMapForClass[delegatedSuperClass] = irFieldSymbol
         firClassesWithInheritanceByDelegation += containingFirClass
