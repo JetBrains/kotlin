@@ -1,3 +1,4 @@
+#include <Foundation/Foundation.h>
 #include <stdint.h>
 
 uintptr_t Bar_p_get(uintptr_t self) __attribute((noreturn));

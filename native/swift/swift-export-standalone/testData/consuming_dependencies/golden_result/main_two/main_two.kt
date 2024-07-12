@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("org_main_second_deps_instance_2_get")
 public fun org_main_second_deps_instance_2_get(): kotlin.native.internal.NativePtr {

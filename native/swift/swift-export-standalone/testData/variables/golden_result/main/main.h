@@ -1,3 +1,4 @@
+#include <Foundation/Foundation.h>
 #include <stdint.h>
 
 _Bool __root___BOOLEAN_CONST_get();
@@ -13,6 +14,8 @@ int32_t __root___INT_CONST_get();
 int64_t __root___LONG_CONST_get();
 
 int16_t __root___SHORT_CONST_get();
+
+NSString * __root___STRING_CONST_get();
 
 uint8_t __root___UBYTE_CONST_get();
 

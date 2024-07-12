@@ -55,6 +55,8 @@ public class SirTypeProviderImpl(
                 ktType.isDoubleType -> SirNominalType(SirSwiftModule.double)
                 ktType.isFloatType -> SirNominalType(SirSwiftModule.float)
                 ktType.isNothingType -> SirNominalType(SirSwiftModule.never)
+
+                ktType.isStringType -> SirNominalType(SirSwiftModule.string)
                 else -> null
             }
         }

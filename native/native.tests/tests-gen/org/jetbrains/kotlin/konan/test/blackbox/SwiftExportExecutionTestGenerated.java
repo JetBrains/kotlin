@@ -52,4 +52,10 @@ public class SwiftExportExecutionTestGenerated extends AbstractNativeSwiftExport
   public void testSmokes() {
     runTest("native/native.tests/testData/SwiftExport/smokes/");
   }
+
+  @Test
+  @TestMetadata("specialTypes")
+  public void testSpecialTypes() {
+    runTest("native/native.tests/testData/SwiftExport/specialTypes/");
+  }
 }

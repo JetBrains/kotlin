@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("Foo_Nested_init_allocate")
 public fun Foo_Nested_init_allocate(): kotlin.native.internal.NativePtr {
@@ -23,3 +24,4 @@ public fun __root___Foo_init_initialize(__kt: kotlin.native.internal.NativePtr):
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, Foo())
 }
+

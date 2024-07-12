@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("org_kotlin_foo_Clazz_init_allocate")
 public fun org_kotlin_foo_Clazz_init_allocate(): kotlin.native.internal.NativePtr {

@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("foo__TypesOfArguments__uintptr_t_uintptr_t__")
 public fun foo(p0: kotlin.native.internal.NativePtr, p1: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

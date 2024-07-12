@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.*
+import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
@@ -220,6 +221,7 @@ private fun actualRunSwiftExport(
 
             return when(val declaration = type.type) {
                 KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
+                SirSwiftModule.string -> "kotlin.String"
                 else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
             }
         }

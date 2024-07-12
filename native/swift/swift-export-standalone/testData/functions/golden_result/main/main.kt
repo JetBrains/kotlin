@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("__root___foo")
 public fun __root___foo(): Int {
@@ -66,3 +67,4 @@ public fun overload_foo(arg1: Double): Int {
     val _result = overload.foo(__arg1)
     return _result
 }
+

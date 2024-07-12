@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("a__TypesOfArguments__int8_t_int16_t_int32_t_int64_t__")
 public fun a(p0: Byte, p1: Short, p2: Int, p3: Long): Int {

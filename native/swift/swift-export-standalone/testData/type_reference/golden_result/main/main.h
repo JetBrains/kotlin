@@ -1,3 +1,4 @@
+#include <Foundation/Foundation.h>
 #include <stdint.h>
 
 uintptr_t Class_without_package_INNER_CLASS_init_allocate();

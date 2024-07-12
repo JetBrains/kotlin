@@ -1,3 +1,4 @@
+#include <Foundation/Foundation.h>
 #include <stdint.h>
 
 uint16_t b_bridge();

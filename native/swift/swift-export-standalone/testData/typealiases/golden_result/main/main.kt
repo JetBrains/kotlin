@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("__root___increment__TypesOfArguments__int32_t__")
 public fun __root___increment(integer: Int): Int {

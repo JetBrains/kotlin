@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("CLASS_WITH_SAME_NAME_foo")
 public fun CLASS_WITH_SAME_NAME_foo(self: kotlin.native.internal.NativePtr): Int {

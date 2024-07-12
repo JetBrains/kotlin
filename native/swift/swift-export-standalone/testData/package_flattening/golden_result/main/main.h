@@ -1,3 +1,4 @@
+#include <Foundation/Foundation.h>
 #include <stdint.h>
 
 uintptr_t org_kotlin_foo_Clazz_init_allocate();

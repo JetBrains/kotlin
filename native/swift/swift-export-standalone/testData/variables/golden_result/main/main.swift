@@ -42,9 +42,9 @@ public var SHORT_CONST: Swift.Int16 {
         return __root___SHORT_CONST_get()
     }
 }
-public var STRING_CONST: Swift.Never {
+public var STRING_CONST: Swift.String {
     get {
-        fatalError()
+        return __root___STRING_CONST_get()
     }
 }
 public var UBYTE_CONST: Swift.UInt8 {

@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("Bar_p_get")
 public fun Bar_p_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -24,3 +25,4 @@ public fun __root___variable_get(): kotlin.native.internal.NativePtr {
     val _result = variable
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
+

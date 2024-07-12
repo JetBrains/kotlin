@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.util.*
 
 private const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
+private const val cinterop = "kotlinx.cinterop.*"
 private const val stdintHeader = "stdint.h"
+private const val foundationHeader = "Foundation/Foundation.h"
 
 internal class BridgeGeneratorImpl(val typeNamer: SirTypeNamer) : BridgeGenerator {
     override fun generateFunctionBridges(request: BridgeRequest) = buildList {
@@ -137,7 +139,9 @@ private val BridgeRequest.initializationDescriptor: BridgeFunctionDescriptor
 // 1. there can be limit for declaration names in Clang compiler
 // 1. this name will be UGLY in the debug session
 private fun cDeclarationName(bridgeName: String, parameterBridges: List<BridgeParameter>): String {
-    val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_", transform = { it.bridge.cType.repr })
+    val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
+        it.bridge.cType.repr.replace(" ", "").replace("*", "Ptr")
+    }
     val suffixString = if (parameterBridges.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
     val result = "${bridgeName}${suffixString}"
     return result
@@ -174,8 +178,8 @@ private fun BridgeFunctionDescriptor.cDeclaration() =
 
 private inline fun BridgeFunctionDescriptor.createFunctionBridge(typeNamer: SirTypeNamer, kotlinCall: (name: String, args: List<String>) -> String) =
     FunctionBridge(
-        KotlinFunctionBridge(createKotlinBridge(typeNamer, kotlinCall), listOf(exportAnnotationFqName)),
-        CFunctionBridge(listOf(cDeclaration()), listOf(stdintHeader))
+        KotlinFunctionBridge(createKotlinBridge(typeNamer, kotlinCall), listOf(exportAnnotationFqName, cinterop)),
+        CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
     )
 
 private fun SirCallable.bridgeParameters() = allParameters.mapIndexed { index, value -> bridgeParameter(value, index) }
@@ -200,13 +204,15 @@ private fun bridgeType(type: SirType): Bridge {
         SirSwiftModule.double -> Bridge.AsIs(type, KotlinType.Double, CType.Double)
         SirSwiftModule.float -> Bridge.AsIs(type, KotlinType.Float, CType.Float)
 
-        SirSwiftModule.uint -> Bridge.AsOpaqueObject(type, KotlinType.Object, CType.Object)
-        SirSwiftModule.never -> Bridge.AsOpaqueObject(type, KotlinType.Object, CType.Object)
+        SirSwiftModule.uint -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
+        SirSwiftModule.never -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
+
+        SirSwiftModule.string -> Bridge.AsObjCBridged(type, KotlinType.String, CType.NSString)
 
         is SirTypealias -> bridgeType(subtype.type)
 
         // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
-        else -> Bridge.AsObject(type, KotlinType.Object, CType.Object)
+        else -> Bridge.AsObject(type, KotlinType.KotlinObject, CType.Object)
     }
 }
 
@@ -250,6 +256,8 @@ private enum class CType(public val repr: String) {
     Double("double"),
 
     Object("uintptr_t"),
+
+    NSString("NSString *"),
 }
 
 private enum class KotlinType(val repr: String) {
@@ -270,7 +278,12 @@ private enum class KotlinType(val repr: String) {
     Float("Float"),
     Double("Double"),
 
-    Object(repr = "kotlin.native.internal.NativePtr")
+    KotlinObject("kotlin.native.internal.NativePtr"),
+
+    // id, +0
+    ObjCObjectUnretained("kotlin.native.internal.NativePtr"),
+
+    String("String"),
 }
 
 /**
@@ -321,6 +334,18 @@ private sealed class Bridge(
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = IdentityValueConversion
+    }
+
+    class AsObjCBridged(swiftType: SirType, localKotlinType: KotlinType, cType: CType) : Bridge(swiftType, KotlinType.ObjCObjectUnretained, cType) {
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "interpretObjCPointer<${localKotlinType.repr}>($valueExpression)"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "$valueExpression.objcPtr()"
         }
 
         override val inSwiftSources = IdentityValueConversion

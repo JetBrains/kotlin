@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("__root___Outer_init_allocate")
 public fun __root___Outer_init_allocate(): kotlin.native.internal.NativePtr {
@@ -11,3 +12,4 @@ public fun __root___Outer_init_initialize(__kt: kotlin.native.internal.NativePtr
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, Outer())
 }
+

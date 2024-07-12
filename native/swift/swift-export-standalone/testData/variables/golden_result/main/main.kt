@@ -1,4 +1,5 @@
 import kotlin.native.internal.ExportedBridge
+import kotlinx.cinterop.*
 
 @ExportedBridge("__root___BOOLEAN_CONST_get")
 public fun __root___BOOLEAN_CONST_get(): Boolean {
@@ -40,6 +41,12 @@ public fun __root___LONG_CONST_get(): Long {
 public fun __root___SHORT_CONST_get(): Short {
     val _result = SHORT_CONST
     return _result
+}
+
+@ExportedBridge("__root___STRING_CONST_get")
+public fun __root___STRING_CONST_get(): kotlin.native.internal.NativePtr {
+    val _result = STRING_CONST
+    return _result.objcPtr()
 }
 
 @ExportedBridge("__root___UBYTE_CONST_get")

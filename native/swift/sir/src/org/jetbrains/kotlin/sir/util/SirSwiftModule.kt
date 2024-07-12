@@ -35,10 +35,12 @@ object SirSwiftModule : SirModule() {
 
     val void = struct("Void")
     val never = struct("Never")
+    val string = struct("String")
 
     override var declarations: MutableList<SirDeclaration> = mutableListOf(
         void,
         never,
+        string,
 
         bool,
 

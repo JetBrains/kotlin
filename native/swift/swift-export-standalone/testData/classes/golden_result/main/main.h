@@ -1,3 +1,4 @@
+#include <Foundation/Foundation.h>
 #include <stdint.h>
 
 int32_t CLASS_WITH_SAME_NAME_foo(uintptr_t self);

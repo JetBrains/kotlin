@@ -1,3 +1,4 @@
+#include <Foundation/Foundation.h>
 #include <stdint.h>
 
 int32_t a__TypesOfArguments__int8_t_int16_t_int32_t_int64_t__(int8_t p0, int16_t p1, int32_t p2, int64_t p3);
