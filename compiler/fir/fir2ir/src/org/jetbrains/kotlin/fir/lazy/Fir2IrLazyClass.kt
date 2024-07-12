@@ -203,7 +203,7 @@ class Fir2IrLazyClass(
                     when {
                         !shouldBuildStub(symbol.fir) -> {}
                         symbol is FirFieldSymbol -> {
-                            if (!symbol.isStatic) {
+                            if (shouldBuildIrField(symbol)) {
                                 // Lazy declarations are created together with their symbol, so it's safe to take the owner here
                                 @OptIn(UnsafeDuringIrConstructionAPI::class)
                                 result += declarationStorage.getIrSymbolForField(
@@ -252,6 +252,12 @@ class Fir2IrLazyClass(
             )
             else -> !Visibilities.isPrivate(fir.visibility)
         }
+    }
+
+    private fun shouldBuildIrField(fieldSymbol: FirFieldSymbol): Boolean {
+        if (!fieldSymbol.isStatic) return true
+        // we need to create IR for static fields only if they are not fake-overrides
+        return fir.isJava && !fieldSymbol.fir.isFakeOverride(fir)
     }
 
     override var metadata: MetadataSource?

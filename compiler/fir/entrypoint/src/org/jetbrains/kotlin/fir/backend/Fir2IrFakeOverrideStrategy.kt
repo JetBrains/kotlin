@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.isDelegated
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyPropertyForPureField
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
@@ -46,6 +47,11 @@ class Fir2IrFakeOverrideStrategy(
     delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
 ) : FakeOverrideBuilderStrategy.BindToPrivateSymbols(friendModules, delegatedMemberGenerationStrategy) {
     private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()
+
+    override fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
+        if (member is Fir2IrLazyPropertyForPureField && member.backingField?.isStatic == true) return null
+        return super.fakeOverrideMember(superType, member, clazz)
+    }
 
     override fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean) {
         super.linkPropertyFakeOverride(property, manglerCompatibleMode)
