@@ -102,7 +102,13 @@ fun compileToLoweredIr(
     performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
 
-    lowerPreservingTags(allModules, context, phaseConfig, context.irFactory.stageController as WholeWorldStageController)
+    lowerPreservingTags(
+        allModules,
+        context,
+        phaseConfig,
+        context.irFactory.stageController as WholeWorldStageController,
+        isIncremental = false
+    )
 
     performanceManager?.notifyIRLoweringFinished()
 
@@ -113,21 +119,23 @@ fun lowerPreservingTags(
     modules: Iterable<IrModuleFragment>,
     context: WasmBackendContext,
     phaseConfig: PhaseConfig,
-    controller: WholeWorldStageController
+    controller: WholeWorldStageController,
+    isIncremental: Boolean
 ) {
     // Lower all the things
     controller.currentStage = 0
 
     val phaserState = PhaserState<IrModuleFragment>()
+    val wasmLowerings = getWasmLowerings(isIncremental)
 
-    loweringList.forEachIndexed { i, lowering ->
+    wasmLowerings.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1
         modules.forEach { module ->
             lowering.invoke(phaseConfig, phaserState, context, module)
         }
     }
 
-    controller.currentStage = loweringList.size + 1
+    controller.currentStage = wasmLowerings.size + 1
 }
 
 fun compileWasm(

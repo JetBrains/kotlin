@@ -71,12 +71,18 @@ open class WasmCompilerWithIC(
     }
 
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrProgramFragments> {
+        val wasmPhases = getWasmPhases(true)
         val phaseConfig = PhaseConfigBuilder(wasmPhases).also { lowerings ->
-            val enabled = wasmPhases.toPhaseMap().values.filter { it.name != "PropertyAccessorInlineLowering" }
-            lowerings.enabled.addAll(enabled)
+            lowerings.enabled.addAll(wasmPhases.toPhaseMap().values)
         }.build()
 
-        lowerPreservingTags(allModules, context, phaseConfig, context.irFactory.stageController as WholeWorldStageController)
+        lowerPreservingTags(
+            allModules,
+            context,
+            phaseConfig,
+            context.irFactory.stageController as WholeWorldStageController,
+            isIncremental = true
+        )
 
         return dirtyFiles.map { { compileIrFile(it) } }
     }

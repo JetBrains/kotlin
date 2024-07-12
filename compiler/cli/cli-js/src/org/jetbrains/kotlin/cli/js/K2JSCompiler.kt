@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.backend.wasm.getWasmPhases
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContext
 import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
-import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
@@ -464,7 +464,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 module.mainModule,
                 configuration,
                 performanceManager,
-                phaseConfig = createPhaseConfig(wasmPhases, arguments, messageCollector),
+                phaseConfig = createPhaseConfig(getWasmPhases(isIncremental = false), arguments, messageCollector),
                 exportedDeclarations = setOf(FqName("main")),
                 generateTypeScriptFragment = generateDts,
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,

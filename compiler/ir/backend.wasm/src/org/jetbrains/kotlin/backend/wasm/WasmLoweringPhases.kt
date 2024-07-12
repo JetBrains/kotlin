@@ -603,6 +603,13 @@ private val inlineObjectsWithPureInitializationLoweringPhase = makeIrModulePhase
     prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
 )
 
+private val inlineUnitInstanceGettersLowering = makeIrModulePhase(
+    ::InlineUnitInstanceGettersLowering,
+    name = "InlineUnitInstanceGettersLowering",
+    description = "[Optimization] Inline Unit instance getters whenever it's possible",
+    prerequisite = setOf(purifyObjectInstanceGettersLoweringPhase)
+)
+
 private val whenBranchOptimiserLoweringPhase = makeIrModulePhase(
     ::WhenBranchOptimiserLowering,
     name = "WhenBranchOptimiserLowering",
@@ -622,7 +629,9 @@ val constEvaluationPhase = makeIrModulePhase(
     prerequisite = setOf(functionInliningPhase)
 )
 
-val loweringList = listOf(
+fun getWasmLowerings(
+    isIncremental: Boolean
+): List<SimpleNamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
     validateIrBeforeLowering,
     jsCodeCallsLowering,
     generateTests,
@@ -703,7 +712,11 @@ val loweringList = listOf(
     forLoopsLoweringPhase,
     propertyLazyInitLoweringPhase,
     removeInitializersForLazyProperties,
-    propertyAccessorInlinerLoweringPhase,
+
+    // This doesn't work with IC as of now for accessors within inline functions because
+    //  there is no special case for Wasm in the computation of inline function transitive
+    //  hashes the same way it's being done with the calculation of symbol hashes.
+    propertyAccessorInlinerLoweringPhase.takeIf { !isIncremental },
 
     stringConcatenationLowering,
 
@@ -745,15 +758,26 @@ val loweringList = listOf(
     virtualDispatchReceiverExtractionPhase,
     invokeStaticInitializersPhase,
     staticMembersLoweringPhase,
-    inlineObjectsWithPureInitializationLoweringPhase,
+
+    // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
+    inlineObjectsWithPureInitializationLoweringPhase.takeIf { !isIncremental },
+
+    // This is applied for IC mode. As of now, we can't rely on InlineObjectsWithPureInitializationLowering
+    //  when performing incremental compilation. Objects initialized to null are expected to be initialized
+    //  by their getters in the first access, but when applying InlineObjectsWithPureInitializationLowering,
+    //  it inlines getters that are supposed to initialize global objects, leading to null dereferencing.
+    inlineUnitInstanceGettersLowering.takeIf { isIncremental },
+
     whenBranchOptimiserLoweringPhase,
     validateIrAfterLowering,
 )
 
-val wasmPhases = SameTypeNamedCompilerPhase(
+fun getWasmPhases(
+    isIncremental: Boolean
+): NamedCompilerPhase<WasmBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = loweringList.toCompilerPhase(),
+    lower = getWasmLowerings(isIncremental).toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )
