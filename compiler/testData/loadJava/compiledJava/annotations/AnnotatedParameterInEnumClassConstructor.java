@@ -1,4 +1,3 @@
-// SKIP_IN_FIR_TEST
 package test;
 
 class AnnotatedParameterInEnumClassConstructor {
