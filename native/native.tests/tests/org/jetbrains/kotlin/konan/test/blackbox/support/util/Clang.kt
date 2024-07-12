@@ -94,6 +94,7 @@ internal fun AbstractNativeSimpleTest.compileWithClang(
         }
         if (configurables.target.family.isAppleFamily && clangDistribution == ClangDistribution.Llvm) {
             addAll(listOf("-Xlinker", "-lto_library", "-Xlinker", "KT-69382"))
+            add("-D_Float16=short")
         }
         addAll(additionalClangFlags)
         add("-o")

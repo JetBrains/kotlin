@@ -151,6 +151,14 @@ open class CInteropArguments(argParser: ArgParser =
 
     val disableExperimentalAnnotation by argParser.option(ArgType.Boolean, "Xdisable-experimental-annotation",
             description = "Don't add @ExperimentalForeignApi to generated Kotlin declarations")
+
+    val vfsOverlayHeaders by argParser.option(ArgType.String, "vfsOverlayHeaders",
+            description = "Zip with headers that will be used to create an -ivfsoverlay argument to the compiler"
+    )
+
+    val xcode16SimdHeadersWorkaround by argParser.option(ArgType.Boolean, "xcode16SimdHeadersWorkaround",
+            description = "Workaround for '_Float16 is not supported on this target' on Intel targets issue"
+    )
 }
 
 internal fun warn(msg: String) {

@@ -162,6 +162,10 @@ sealed class ClangArgs(
         if (targetConditionals != null) {
             add(targetConditionals.map { "-D${it.key}=${it.value}" })
         }
+
+        if (target.family.isAppleFamily && target.architecture == Architecture.X64) {
+            add(listOf("-D_Float16=short"))
+        }
     }.flatten()
 
     private val specificClangArgs: List<String> = when (target) {

@@ -37,6 +37,7 @@ val cflags = mutableListOf( "-I${nativeDependencies.llvmPath}/include",
 val ldflags = mutableListOf("${nativeDependencies.llvmPath}/$libclang", "-L${libclangextDir.absolutePath}", "-lclangext")
 if (HostManager.hostIsMac) {
     ldflags.addAll(listOf("-Xlinker", "-lto_library", "-Xlinker", "KT-69382"))
+    cflags.add("-D_Float16=short")
 }
 
 
