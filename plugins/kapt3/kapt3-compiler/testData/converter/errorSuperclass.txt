@@ -32,16 +32,6 @@ package test;
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class ClassWithParent implements java.lang.CharSequence {
 
-    public ClassWithParent() {
-        super();
-    }
-
-    @java.lang.Override()
-    public abstract char get(int index);
-
-    @java.lang.Override()
-    public abstract int getLength();
-
     @java.lang.Override()
     public final char charAt(int index) {
         return '\u0000';
@@ -51,4 +41,14 @@ public final class ClassWithParent implements java.lang.CharSequence {
     public final int length() {
         return 0;
     }
+
+    public ClassWithParent() {
+        super();
+    }
+
+    @java.lang.Override()
+    public abstract char get(int index);
+
+    @java.lang.Override()
+    public abstract int getLength();
 }

@@ -53,15 +53,15 @@ public final class AnnotationsTest {
     java.lang.String $this$topLevelFun) {
     }
 
-    @Anno(value = "top-level-val")
-    @java.lang.Deprecated()
-    public static void getTopLevelVal$annotations(int p0) {
-    }
-
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
     int $this$topLevelVal) {
         return null;
+    }
+
+    @Anno(value = "top-level-val")
+    @java.lang.Deprecated()
+    public static void getTopLevelVal$annotations(int p0) {
     }
 }
 

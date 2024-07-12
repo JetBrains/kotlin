@@ -274,16 +274,6 @@ public final class Experiment {
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String s = null;
 
-        public Group(@org.jetbrains.annotations.NotNull()
-        java.lang.String s) {
-            super();
-        }
-
-        @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getS() {
-            return null;
-        }
-
         @org.jetbrains.annotations.NotNull()
         public final java.lang.String component1() {
             return null;
@@ -309,6 +299,16 @@ public final class Experiment {
         @java.lang.Override()
         @org.jetbrains.annotations.NotNull()
         public java.lang.String toString() {
+            return null;
+        }
+
+        public Group(@org.jetbrains.annotations.NotNull()
+        java.lang.String s) {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getS() {
             return null;
         }
     }

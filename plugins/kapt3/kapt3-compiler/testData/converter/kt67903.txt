@@ -34,10 +34,6 @@ public final class Data {
     }
     private final int value = 0;
 
-    public final int getValue() {
-        return 0;
-    }
-
     @java.lang.Override()
     public boolean equals(java.lang.Object other) {
         return false;
@@ -51,6 +47,10 @@ public final class Data {
     @java.lang.Override()
     public java.lang.String toString() {
         return null;
+    }
+
+    public final int getValue() {
+        return 0;
     }
 }
 
