@@ -6,13 +6,8 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -23,6 +18,7 @@ import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
@@ -247,6 +243,13 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             JSConfigurationKeys.FILE_PATHS_PREFIX_MAP,
             mapOf(File(".").absolutePath.removeSuffix(".") to "")
         )
+
+        if (CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS in registeredDirectives) {
+            configuration.put(
+                KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR,
+                testServices.getOrCreateTempDirectory("synthetic-accessors").absolutePath
+            )
+        }
     }
 }
 

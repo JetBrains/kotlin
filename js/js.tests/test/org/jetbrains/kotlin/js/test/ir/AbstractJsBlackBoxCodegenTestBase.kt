@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.IrMangledNameAndSignatureDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.JsIrInterpreterDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
-import org.jetbrains.kotlin.test.backend.handlers.KlibInterpreterDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
@@ -91,7 +88,10 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         afterBackendFacade?.let { facadeStep(it) }
         facadeStep(recompileFacade)
         jsArtifactsHandlersStep {
-            useHandlers(::JsSourceMapPathRewriter)
+            useHandlers(
+                ::JsSourceMapPathRewriter,
+                ::JsSyntheticAccessorsDumpHandler,
+            )
         }
 
         useAfterAnalysisCheckers(

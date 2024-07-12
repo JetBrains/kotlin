@@ -215,6 +215,7 @@ open class AbstractFirJsKlibSyntheticAccessorTest : AbstractFirJsTest(
         defaultDirectives {
             +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
             +CodegenTestDirectives.ENABLE_EXPERIMENTAL_DOUBLE_INLINING
+            +CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
         }
     }
 }
