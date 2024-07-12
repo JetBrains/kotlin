@@ -25,3 +25,13 @@ fun methodWithValueClass(p: MyValueClass) {}
 
 @JvmName("_methodWithJvmName")
 fun methodWithJvmName(p: MyValueClass) {}
+
+fun functionWithValueClassInReturn(): MyValueClass? = null
+
+@JvmName("_functionWithValueClassInReturnWithJvmName")
+fun functionWithValueClassInReturnWithJvmName(): MyValueClass? = null
+
+fun MyValueClass.functionWithValueClassInReceiver() {}
+
+@JvmName("_functionWithValueClassInReceiverWithJvmName")
+fun MyValueClass.functionWithValueClassInReceiverWithJvmName() {}
