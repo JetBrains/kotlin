@@ -160,7 +160,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val useClasspathSnapshot: Boolean
         get() {
             val propValue = booleanProperty(KOTLIN_INCREMENTAL_USE_CLASSPATH_SNAPSHOT)
-            if (propValue != null) project.reportDiagnosticOncePerBuild(
+            if (propValue == false) project.reportDiagnosticOncePerBuild(
                 KotlinToolingDiagnostics.DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic()
             )
 
