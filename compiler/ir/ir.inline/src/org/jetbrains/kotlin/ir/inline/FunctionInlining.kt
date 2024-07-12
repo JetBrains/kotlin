@@ -173,7 +173,7 @@ open class FunctionInlining(
                 (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }
-            InlineFunctionBodyPreprocessor(typeArguments, parent, NonReifiedTypeParameterRemappingMode.ERASE)
+            InlineFunctionBodyPreprocessor(typeArguments, parent)
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
@@ -761,10 +761,6 @@ open class FunctionInlining(
             }
         }
     }
-}
-
-enum class NonReifiedTypeParameterRemappingMode {
-    LEAVE_AS_IS, SUBSTITUTE, ERASE
 }
 
 /**

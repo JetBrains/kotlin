@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -26,10 +24,14 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
+private enum class NonReifiedTypeParameterRemappingMode {
+    LEAVE_AS_IS, SUBSTITUTE, ERASE
+}
+
+
 internal class InlineFunctionBodyPreprocessor(
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
     val parent: IrDeclarationParent?,
-    defaultNonReifiedTypeParameterRemappingMode: NonReifiedTypeParameterRemappingMode,
 ) {
 
     fun preprocess(irElement: IrFunction): IrFunction {
@@ -49,7 +51,6 @@ internal class InlineFunctionBodyPreprocessor(
     private inner class InlinerTypeRemapper(
         val symbolRemapper: SymbolRemapper,
         val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
-        val defaultNonReifiedTypeParameterRemappingMode: NonReifiedTypeParameterRemappingMode,
     ) : TypeRemapper {
 
         override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
@@ -70,7 +71,7 @@ internal class InlineFunctionBodyPreprocessor(
                     ?: argument
             }
 
-        override fun remapType(type: IrType) = remapType(type, defaultNonReifiedTypeParameterRemappingMode)
+        override fun remapType(type: IrType) = remapType(type, NonReifiedTypeParameterRemappingMode.ERASE)
 
         fun remapType(type: IrType, mode: NonReifiedTypeParameterRemappingMode): IrType {
             val erasedParams = if (mode == NonReifiedTypeParameterRemappingMode.ERASE) mutableSetOf<IrTypeParameterSymbol>() else null
@@ -148,14 +149,12 @@ internal class InlineFunctionBodyPreprocessor(
     }
 
     private val symbolRemapper = SymbolRemapperImpl(NullDescriptorsRemapper)
-    private val typeRemapper = InlinerTypeRemapper(symbolRemapper, typeArguments, defaultNonReifiedTypeParameterRemappingMode)
+    private val typeRemapper = InlinerTypeRemapper(symbolRemapper, typeArguments)
     private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
 
         private fun IrType.leaveNonReifiedAsIs() = typeRemapper.remapType(this, NonReifiedTypeParameterRemappingMode.LEAVE_AS_IS)
 
         private fun IrType.substituteAll() = typeRemapper.remapType(this, NonReifiedTypeParameterRemappingMode.SUBSTITUTE)
-
-        private fun IrType.erase() = typeRemapper.remapType(this, NonReifiedTypeParameterRemappingMode.ERASE)
 
         override fun visitClass(declaration: IrClass): IrClass {
             // Substitute type argument to make Class::genericSuperclass work as expected (see kt52417.kt)
@@ -168,31 +167,13 @@ internal class InlineFunctionBodyPreprocessor(
         }
 
         override fun visitCall(expression: IrCall): IrCall {
-            if (!Symbols.isTypeOfIntrinsic(expression.symbol)) return super.visitCall(expression)
-            // We should neither erase nor substitute non-reified type parameters in the `typeOf` call so that reflection is able
-            // to create a proper KTypeParameter for it. See KT-60175, KT-30279.
-            return IrCallImpl(
-                expression.startOffset, expression.endOffset,
-                expression.type,
-                expression.symbol,
-                expression.typeArgumentsCount,
-                expression.valueArgumentsCount,
-                expression.origin,
-                expression.superQualifierSymbol
-            ).apply {
-                for (i in 0 until typeArgumentsCount) {
-                    putTypeArgument(i, expression.getTypeArgument(i)?.leaveNonReifiedAsIs())
-                }
-            }.copyAttributes(expression)
+            val expressionCopy = super.visitCall(expression)
+            if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
+                // We should neither erase nor substitute non-reified type parameters in the `typeOf` call so that reflection is able
+                // to create a proper KTypeParameter for it. See KT-60175, KT-30279.
+                expressionCopy.putTypeArgument(0, expression.getTypeArgument(0)?.leaveNonReifiedAsIs())
+            }
+            return expressionCopy
         }
-
-        override fun visitTypeOperator(expression: IrTypeOperatorCall) =
-            IrTypeOperatorCallImpl(
-                expression.startOffset, expression.endOffset,
-                expression.type.erase(),
-                expression.operator,
-                expression.typeOperand.erase(),
-                expression.argument.transform()
-            ).copyAttributes(expression)
     }
 }
