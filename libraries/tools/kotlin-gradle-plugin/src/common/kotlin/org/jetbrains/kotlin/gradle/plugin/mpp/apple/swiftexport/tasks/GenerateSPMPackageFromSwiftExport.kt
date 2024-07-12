@@ -10,7 +10,6 @@ import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.gradle.configurationcache.extensions.capitalized
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleS
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 import javax.inject.Inject
 
@@ -59,7 +59,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private val swiftLibrary get() = swiftLibraryName.get()
     private val swiftApiModule get() = swiftApiModuleName.get()
-    private val kotlinRuntimeModule get() = kotlinRuntime.getFile().name.split('_').joinToString(separator = "") { it.capitalized() }
+    private val kotlinRuntimeModule get() = kotlinRuntime.getFile().name.split('_').joinToString(separator = "") { it.capitalizeAsciiOnly() }
 
     @TaskAction
     fun generate() {

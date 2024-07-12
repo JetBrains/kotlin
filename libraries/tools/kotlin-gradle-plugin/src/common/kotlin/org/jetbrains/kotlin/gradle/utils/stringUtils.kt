@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.util.*
 
 internal fun lowerCamelCaseName(vararg nameParts: String?): String {
     val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
