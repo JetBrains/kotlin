@@ -323,7 +323,6 @@ class FirSignatureEnhancement(
         val functionSymbol: FirFunctionSymbol<*>
         var isJavaRecordComponent = false
 
-        val typeParameterSubstitutionMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
         var typeParameterSubstitutor: ConeSubstitutor? = null
         val declarationOrigin =
             if (isIntersectionOverride) FirDeclarationOrigin.IntersectionOverride else FirDeclarationOrigin.Enhancement
@@ -333,7 +332,6 @@ class FirSignatureEnhancement(
                 val symbol = FirConstructorSymbol(methodId).also { functionSymbol = it }
                 val builder: FirAbstractConstructorBuilder = if (firMethod.isPrimary) {
                     FirPrimaryConstructorBuilder().apply {
-                        returnTypeRef = newReturnTypeRef!! // Constructors don't have overriddens, newReturnTypeRef is never null
                         val resolvedStatus = firMethod.status as? FirResolvedDeclarationStatus
                         status = if (resolvedStatus != null) {
                             FirResolvedDeclarationStatusImpl(
@@ -354,7 +352,6 @@ class FirSignatureEnhancement(
                     }
                 } else {
                     FirConstructorBuilder().apply {
-                        returnTypeRef = newReturnTypeRef!! // Constructors don't have overriddens, newReturnTypeRef is never null
                         status = firMethod.status
                         this.symbol = symbol
                         dispatchReceiverType = firMethod.dispatchReceiverType
@@ -366,8 +363,17 @@ class FirSignatureEnhancement(
                     moduleData = this@FirSignatureEnhancement.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     origin = declarationOrigin
-                    // TODO: we should set a new origin / containing declaration to type parameters (KT-60440)
-                    this.typeParameters += firMethod.typeParameters
+                    typeParameterSubstitutor =
+                        this.typeParameters.copyTypeParametersWithNewContainingDeclaration(firMethod, declarationOrigin, functionSymbol)
+                    returnTypeRef = if (typeParameterSubstitutor != null && newReturnTypeRef is FirResolvedTypeRef) {
+                        newReturnTypeRef.withReplacedConeType(
+                            typeParameterSubstitutor.substituteOrNull(newReturnTypeRef.coneType)
+                        )
+                    } else {
+                        newReturnTypeRef!! // Constructors don't have overriddens, newReturnTypeRef is never null
+                    }
+                    typeParameters.replaceTypeParameterBounds(typeParameterSubstitutor)
+                    // Constructors has no extension receiver, and deferredCalc is always null for them
                 }
             }
             is FirSimpleFunction -> {
@@ -388,20 +394,9 @@ class FirSignatureEnhancement(
                         FirNamedFunctionSymbol(methodId)
                     }.also { functionSymbol = it }
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    typeParameters += firMethod.typeParameters.map { typeParameter ->
-                        val newTypeParameter = buildTypeParameterCopy(typeParameter) {
-                            origin = declarationOrigin
-                            symbol = FirTypeParameterSymbol()
-                            containingDeclarationSymbol = functionSymbol
-                        }
-                        typeParameterSubstitutionMap[typeParameter.symbol] = ConeTypeParameterTypeImpl(
-                            newTypeParameter.symbol.toLookupTag(), isNullable = false
-                        )
-                        newTypeParameter
-                    }
-                    if (typeParameterSubstitutionMap.isNotEmpty()) {
-                        typeParameterSubstitutor = ConeSubstitutorByMap.create(typeParameterSubstitutionMap, session)
-                    }
+                    typeParameterSubstitutor =
+                        this.typeParameters.copyTypeParametersWithNewContainingDeclaration(firMethod, declarationOrigin, functionSymbol)
+
                     returnTypeRef = if (typeParameterSubstitutor != null && newReturnTypeRef is FirResolvedTypeRef) {
                         newReturnTypeRef.withReplacedConeType(
                             typeParameterSubstitutor?.substituteOrNull(newReturnTypeRef.coneType)
@@ -419,13 +414,7 @@ class FirSignatureEnhancement(
                             source = receiverType.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
                         }
                     }
-                    typeParameters.forEach { typeParameter ->
-                        typeParameter.replaceBounds(
-                            typeParameter.bounds.map { boundTypeRef ->
-                                boundTypeRef.withReplacedConeType(typeParameterSubstitutor?.substituteOrNull(boundTypeRef.coneType))
-                            }
-                        )
-                    }
+                    typeParameters.replaceTypeParameterBounds(typeParameterSubstitutor)
 
                     dispatchReceiverType = firMethod.dispatchReceiverType
                     attributes = firMethod.attributes.copy().apply {
@@ -480,6 +469,45 @@ class FirSignatureEnhancement(
         }
 
         return function.symbol
+    }
+
+    private fun <T : FirTypeParameterRef> MutableList<T>.copyTypeParametersWithNewContainingDeclaration(
+        firMethod: FirFunction,
+        declarationOrigin: FirDeclarationOrigin,
+        functionSymbol: FirFunctionSymbol<*>,
+    ): ConeSubstitutor? {
+        val typeParameterSubstitutionMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+        this += firMethod.typeParameters.map { typeParameter ->
+            val newTypeParameter = if (typeParameter is FirTypeParameter) buildTypeParameterCopy(typeParameter) {
+                origin = declarationOrigin
+                this.symbol = FirTypeParameterSymbol()
+                containingDeclarationSymbol = functionSymbol
+            } else typeParameter
+            if (typeParameter is FirTypeParameter) {
+                typeParameterSubstitutionMap[typeParameter.symbol] = ConeTypeParameterTypeImpl(
+                    newTypeParameter.symbol.toLookupTag(), isNullable = false
+                )
+            }
+            @Suppress("UNCHECKED_CAST")
+            newTypeParameter as T
+        }
+
+        if (typeParameterSubstitutionMap.isNotEmpty()) {
+            return ConeSubstitutorByMap.create(typeParameterSubstitutionMap, session)
+        }
+        return null
+    }
+
+    private fun List<FirTypeParameterRef>.replaceTypeParameterBounds(typeParameterSubstitutor: ConeSubstitutor?) {
+        forEach { typeParameter ->
+            if (typeParameter is FirTypeParameter) {
+                typeParameter.replaceBounds(
+                    typeParameter.bounds.map { boundTypeRef ->
+                        boundTypeRef.withReplacedConeType(typeParameterSubstitutor?.substituteOrNull(boundTypeRef.coneType))
+                    }
+                )
+            }
+        }
     }
 
     private fun PredefinedFunctionEnhancementInfo.useWarningsIfErrorModeIsNotEnabledYet(): PredefinedFunctionEnhancementInfo {
