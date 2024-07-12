@@ -1,0 +1,13 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=Outer.kt */
+
+public class Outer
+    /* TARGET declaration */ private constructor(s: String) /* primary */
+    public constructor()
+        /* TARGET use-site */ Outer(s = "")
+    public inner class Inner
+        public inline fun copy(s: String): Outer
+            /* ACCESSOR use-site */ Outer(s = s, $constructor_marker = null)
+    /* ACCESSOR declaration */ public constructor(s: String, $constructor_marker: DefaultConstructorMarker?)
+        /* TARGET use-site */ Outer(s = s)

@@ -1,0 +1,9 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=a.kt */
+
+internal inline fun String.internalInlineMethod(): String
+    /* ACCESSOR use-site */ access$privateExtension($receiver = <this>)
+/* TARGET declaration */ private fun String.privateExtension(): String
+/* ACCESSOR declaration */ public fun access$privateExtension($receiver: String): String
+    /* TARGET use-site */ $receiver.privateExtension()

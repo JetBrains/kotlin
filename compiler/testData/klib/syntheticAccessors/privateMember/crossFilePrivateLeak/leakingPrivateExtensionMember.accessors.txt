@@ -1,0 +1,16 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    internal inline fun internalInlineMethodA(): Int
+        /* ACCESSOR use-site */ access$privateExtensionMethod($this = <this>, $receiver = 21)
+    internal inline fun internalInlineMethodB(): Int
+        /* ACCESSOR use-site */ access$<get-privateExtensionVar>($this = <this>, $receiver = 21)
+    /* TARGET declaration */ private fun Int.privateExtensionMethod(): Int
+    private val Int.privateExtensionVar: Int
+        /* TARGET declaration */ private fun Int.<get-privateExtensionVar>(): Int
+    /* ACCESSOR declaration */ public fun access$privateExtensionMethod($this: A, $receiver: Int): Int
+        /* TARGET use-site */ ($this, $receiver).privateExtensionMethod()
+    /* ACCESSOR declaration */ public fun access$<get-privateExtensionVar>($this: A, $receiver: Int): Int
+        /* TARGET use-site */ ($this, $receiver).<get-privateExtensionVar>()

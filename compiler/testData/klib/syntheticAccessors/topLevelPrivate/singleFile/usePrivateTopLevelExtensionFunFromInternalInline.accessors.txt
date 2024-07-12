@@ -1,0 +1,9 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateTopLevelExtensionFunFromInternalInline.kt */
+
+/* TARGET declaration */ private fun String.privateFun(): String
+internal inline fun internalInlineFun(): String
+    /* ACCESSOR use-site */ access$privateFun($receiver = "O")
+/* ACCESSOR declaration */ public fun access$privateFun($receiver: String): String
+    /* TARGET use-site */ $receiver.privateFun()

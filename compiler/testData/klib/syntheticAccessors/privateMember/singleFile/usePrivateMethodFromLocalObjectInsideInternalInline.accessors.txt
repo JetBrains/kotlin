@@ -1,0 +1,11 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateMethodFromLocalObjectInsideInternalInline.kt */
+
+public class A
+    internal inline fun internalInlineMethod(): String
+        /* ACCESSOR use-site */ <no name provided>(this$0 = <this>, $constructor_marker = null)
+    local class <no name provided>
+        /* TARGET declaration */ private constructor(this$0: A) /* primary */
+        /* ACCESSOR declaration */ public constructor(this$0: A, $constructor_marker: DefaultConstructorMarker?)
+            /* TARGET use-site */ <no name provided>(this$0 = this$0)
