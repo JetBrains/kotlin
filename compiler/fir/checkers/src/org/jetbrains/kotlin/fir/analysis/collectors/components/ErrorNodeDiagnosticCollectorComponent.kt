@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 
 class ErrorNodeDiagnosticCollectorComponent(
     session: FirSession,
@@ -38,6 +39,7 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
         if (errorTypeRef.isLambdaReturnTypeRefThatDoesntNeedReporting(data)) return
+        if (errorTypeRef.hasExpandedTypeAliasDeclarationSiteError()) return
 
         reportFirDiagnostic(errorTypeRef.diagnostic, errorTypeRef.source, data)
     }
@@ -54,6 +56,16 @@ class ErrorNodeDiagnosticCollectorComponent(
 
         return containingDeclaration.getReturnedExpressions().any { it.hasDiagnostic(diagnostic) } ||
                 data.callsOrAssignments.any { it is FirExpression && it.hasDiagnostic(diagnostic) }
+    }
+
+    /**
+     * Returns true if this [FirErrorTypeRef] contains an expanded typealias type with an error,
+     * i.e., the error originates from the typealias itself.
+     * In this case, we don't need to report anything because the error will already be reported on the declaration site.
+     */
+    private fun FirErrorTypeRef.hasExpandedTypeAliasDeclarationSiteError(): Boolean {
+        if ((type as? ConeErrorType)?.diagnostic != this.diagnostic) return false
+        return type.abbreviatedType != null
     }
 
     private fun FirExpression.hasDiagnostic(diagnostic: ConeDiagnostic): Boolean {

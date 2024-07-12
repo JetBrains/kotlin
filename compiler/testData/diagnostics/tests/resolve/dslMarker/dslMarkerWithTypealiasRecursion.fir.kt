@@ -1,4 +1,3 @@
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE: KT-69767
 // NI_EXPECTED_FILE
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS)
@@ -17,8 +16,8 @@ fun Foo.zbar(body: ZBar.() -> Unit) = Bar().body()
 
 fun test() {
     Foo().foo {
-        zbar <!RECURSIVE_TYPEALIAS_EXPANSION!>{
+        zbar {
             foo {}
-        }<!>
+        }
     }
 }
