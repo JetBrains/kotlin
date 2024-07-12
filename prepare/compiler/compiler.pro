@@ -91,6 +91,7 @@
 -dontprocesskotlinmetadata
 -keep class kotlin.Metadata
 -dontobfuscate
+-optimizeaggressively
 
 -keepclassmembers class com.intellij.** { *; }
 -keepclassmembers class org.jdom.** { *; }
