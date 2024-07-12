@@ -64,8 +64,8 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         testCurrentAndNextBasicVersions { currentVersion, nextVersion ->
             for ((stdlibVersion, compilerVersion) in listOf(currentVersion to nextVersion, nextVersion to currentVersion)) {
                 compileDummyLibrary(
-                    stdlibVersion = currentVersion,
-                    compilerVersion = nextVersion,
+                    stdlibVersion = stdlibVersion,
+                    compilerVersion = compilerVersion,
                     isWasm = true,
                     expectedWarningStatus = WarningStatus.WASM_WARNING
                 )
