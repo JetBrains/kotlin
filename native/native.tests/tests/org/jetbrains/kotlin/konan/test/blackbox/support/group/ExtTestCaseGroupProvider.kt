@@ -817,7 +817,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
         @OptIn(ObsoleteTestInfrastructure::class)
         private val generatedFiles = TestFiles.createTestFiles(
-            /* testFileName = */ DEFAULT_FILE_NAME,
+            /* testFileName = */ originalTestDataFile.name,
             /* expectedText = */ originalTestDataFile.readText(),
             /* factory = */ testFileFactory,
             /* preserveLocations = */ true
