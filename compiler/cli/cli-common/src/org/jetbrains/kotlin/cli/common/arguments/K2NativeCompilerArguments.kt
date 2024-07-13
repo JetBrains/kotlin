@@ -458,6 +458,16 @@ The default value is 1."""
     )
     var manifestNativeTargets: Array<String>? = null
 
+    @Argument(
+        value = "-Xdump-synthetic-accessors-to",
+        description = "Path to a directory to dump synthetic accessors and their use sites."
+    )
+    var dumpSyntheticAccessorsTo: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
             val optInList = it[AnalysisFlags.optIn] as List<*>
