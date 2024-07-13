@@ -281,7 +281,7 @@ private fun compareMethods(aMethod: MethodNode, bMethod: MethodNode): Boolean {
 
 private fun checkCanHoist(source: MethodNode, targetClass: ClassInfo, hoistableFields: Set<String>): Boolean {
     val instructions = source.instructions
-    //if (instructions.size() > 10) return false
+    if (instructions.size() > 12) return false
 
     for (inst in instructions) {
         when (inst) {

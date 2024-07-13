@@ -369,7 +369,7 @@ val runPostprocessing by tasks.registering(NoDebugJavaExec::class) {
         inputFile.get(),
         proguardLibraries.files.joinToString(";"),
         outputFile.get(),
-        listOf("org.jetbrains.kotlin.ir.*", "org.jetbrains.kotlin.fir.lazy.*").joinToString(";")
+        listOf("org.jetbrains.kotlin.ir.*", "org.jetbrains.kotlin.fir.*").joinToString(";")
     )
 }
 
