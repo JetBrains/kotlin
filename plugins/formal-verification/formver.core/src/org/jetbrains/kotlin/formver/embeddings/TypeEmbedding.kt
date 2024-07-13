@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.formver.embeddings
 import org.jetbrains.kotlin.formver.domains.Injection
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableSignatureData
-import org.jetbrains.kotlin.formver.names.*
+import org.jetbrains.kotlin.formver.names.ClassScope
+import org.jetbrains.kotlin.formver.names.NameMatcher
+import org.jetbrains.kotlin.formver.names.ScopedKotlinName
+import org.jetbrains.kotlin.formver.names.SimpleKotlinName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
@@ -164,20 +167,8 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
     override val isNullable = true
 }
 
-abstract class UnspecifiedFunctionTypeEmbedding : TypeEmbedding {
+data class FunctionTypeEmbedding(val signature: CallableSignatureData) : TypeEmbedding {
     override val runtimeType = RuntimeTypeDomain.functionType()
-}
-
-/**
- * Some of our older code requires specific type annotations for built-ins with function types.
- * However, we don't actually want to distinguish these builtins by type, so we introduce this
- * type embedding as a workaround.
- */
-data object LegacyUnspecifiedFunctionTypeEmbedding : UnspecifiedFunctionTypeEmbedding() {
-    override val name: MangledName = SpecialName("legacy_function_object_type")
-}
-
-data class FunctionTypeEmbedding(val signature: CallableSignatureData) : UnspecifiedFunctionTypeEmbedding() {
     override val name = object : MangledName {
         override val mangled: String =
             "fun_take\$${signature.formalArgTypes.joinToString("$") { it.name.mangled }}\$return\$${signature.returnType.name.mangled}"

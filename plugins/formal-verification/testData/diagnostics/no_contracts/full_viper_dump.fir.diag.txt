@@ -317,9 +317,6 @@ method global$fun_f$fun_take$$return$T_Unit() returns (ret$0: Ref)
   label label$ret$0
 }
 
-method special$invoke_function_object(anonymous$0: Ref)
-
-
 /full_viper_dump.kt:(172,173): info: Generated ExpEmbedding for global$fun_f$fun_take$$return$T_Unit:
 Function(
     name = global$fun_f$fun_take$$return$T_Unit,

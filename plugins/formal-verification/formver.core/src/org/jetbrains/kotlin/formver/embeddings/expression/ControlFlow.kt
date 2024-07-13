@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.formver.embeddings.expression
 import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
-import org.jetbrains.kotlin.formver.embeddings.callables.InvokeFunctionObjectMethod
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.callables.toMethodCall
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.*
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.linearization.addLabel
 import org.jetbrains.kotlin.formver.linearization.pureToViper
-import org.jetbrains.kotlin.formver.viper.ast.*
+import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.Label
+import org.jetbrains.kotlin.formver.viper.ast.PermExp
+import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
 // TODO: make a nice BlockBuilder interface.
 data class Block(val exps: List<ExpEmbedding>) : OptionalResultExpEmbedding {
@@ -207,17 +209,8 @@ data class InvokeFunctionObject(val receiver: ExpEmbedding, val args: List<ExpEm
     OnlyToViperExpEmbedding {
     override fun toViper(ctx: LinearizationContext): Exp {
         val variable = ctx.freshAnonVar(type)
-        ctx.addStatement {
-            val receiverViper = receiver.toViper(ctx)
-            for (arg in args) arg.toViperUnusedResult(ctx)
-            // NOTE: Since it is only relevant to update the number of times that a function object is called,
-            // the function call invocation is intentionally not assigned to the return variable
-            InvokeFunctionObjectMethod.toMethodCall(
-                listOf(receiverViper),
-                listOf(),
-                ctx.source.asPosition
-            )
-        }
+        receiver.toViperUnusedResult(ctx)
+        for (arg in args) arg.toViperUnusedResult(ctx)
         // TODO: figure out which exactly invariants we want here
         return variable.withAccessAndProvenInvariants().toViper(ctx)
     }

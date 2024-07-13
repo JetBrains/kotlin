@@ -13,7 +13,6 @@ method global$fun_dynamicLambdaInvariant$fun_take$fun_take$$return$T_Int$return$
   {
     var anonymous$1: Ref
     var anonymous$2: Ref
-    special$invoke_function_object(local$f)
     anonymous$2 := anonymous$1
     inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
     anonymous$0 := global$fun_returnsBoolean$fun_take$$return$T_Boolean()
@@ -44,7 +43,6 @@ method global$fun_functionAssignment$fun_take$fun_take$$return$T_Int$return$T_Un
   {
     var anonymous$1: Ref
     var anonymous$2: Ref
-    special$invoke_function_object(local0$g)
     anonymous$2 := anonymous$1
     inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
     anonymous$0 := global$fun_returnsBoolean$fun_take$$return$T_Boolean()
@@ -81,7 +79,6 @@ method global$fun_conditionalFunctionAssignment$fun_take$T_Boolean$fun_take$$ret
   {
     var anonymous$1: Ref
     var anonymous$2: Ref
-    special$invoke_function_object(local0$g)
     anonymous$2 := anonymous$1
     inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
     anonymous$0 := global$fun_returnsBoolean$fun_take$$return$T_Boolean()
@@ -93,3 +90,4 @@ method global$fun_conditionalFunctionAssignment$fun_take$T_Boolean$fun_take$$ret
 method global$fun_returnsBoolean$fun_take$$return$T_Boolean()
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
+
