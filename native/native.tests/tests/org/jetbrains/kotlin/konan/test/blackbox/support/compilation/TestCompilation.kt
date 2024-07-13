@@ -132,6 +132,35 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         addFlattenedTwice(sourceModules, { it.files }) { it.location.path }
     }
 
+    // Explicitly set the IR module name when no test grouping is performed.
+    private fun ArgsBuilder.applyModuleName() {
+        if ("-module-name" in this)
+            return // Don't overwrite the specially passed module name.
+
+        val mainSourceModule: TestModule? = when {
+            // Single test module -> single IR module.
+            sourceModules.size == 1 -> sourceModules.first()
+
+            // There can be test modules representing KMP-common modules that do not materialize
+            // into separate IR modules. So, it's necessary to exclude them.
+            else -> buildSet {
+                addAll(sourceModules)
+                removeAll(sourceModules.flatMapToSet { it.allDependsOnDependencies })
+            }.singleOrNull()
+        }
+
+        if (mainSourceModule !is TestModule.Exclusive)
+            return
+
+        val testKind = mainSourceModule.testCase.kind
+        if (testKind == TestKind.STANDALONE ||
+            testKind == TestKind.STANDALONE_NO_TR ||
+            testKind == TestKind.STANDALONE_LLDB
+        ) {
+            add("-module-name", mainSourceModule.name)
+        }
+    }
+
     protected open fun postCompileCheck() = Unit
 
     private fun doCompile(): TestCompilationResult.ImmediateResult<out A> {
@@ -190,6 +219,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         applyDependencies(this)
         applyFreeArgs()
         applyCompilerPlugins()
+        applyModuleName()
         applySources()
     }
 }
