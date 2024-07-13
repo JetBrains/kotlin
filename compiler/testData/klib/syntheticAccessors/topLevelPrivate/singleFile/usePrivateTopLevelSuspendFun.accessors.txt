@@ -1,0 +1,9 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateTopLevelSuspendFun.kt */
+
+/* TARGET declaration */ private suspend fun privateSuspendMethod(): String
+internal suspend inline fun internalInline(): String
+    /* ACCESSOR use-site */ access$privateSuspendMethod()
+/* ACCESSOR declaration */ public suspend fun access$privateSuspendMethod(): String
+    /* TARGET use-site */ privateSuspendMethod()

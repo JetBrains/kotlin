@@ -1,0 +1,9 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=a.kt */
+
+internal suspend inline fun internalInline(): String
+    /* ACCESSOR use-site */ access$privateSuspendMethod()
+/* TARGET declaration */ private suspend fun privateSuspendMethod(): String
+/* ACCESSOR declaration */ public suspend fun access$privateSuspendMethod(): String
+    /* TARGET use-site */ privateSuspendMethod()
