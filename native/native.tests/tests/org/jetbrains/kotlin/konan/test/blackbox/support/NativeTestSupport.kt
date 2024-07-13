@@ -107,6 +107,7 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
         val settings = createTestRunSettings(computeKlibSyntheticAccessorTestInstances()) {
             with(RegisteredDirectivesBuilder()) {
                 +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
+                +CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
 
                 TestDirectives.FREE_COMPILER_ARGS with listOf(
                     // Don't run LLVM, stop after the last IR lowering.
