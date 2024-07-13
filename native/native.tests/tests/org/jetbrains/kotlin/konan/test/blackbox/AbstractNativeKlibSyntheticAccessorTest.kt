@@ -15,8 +15,15 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceT
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.extension.ExtendWith
+import org.opentest4j.AssertionFailedError
 import java.io.File
 
 // TODO(KT-64570): Migrate these tests to the Compiler Core test infrastructure as soon as we move IR inlining
@@ -36,20 +43,44 @@ abstract class AbstractNativeKlibSyntheticAccessorTest : ExternalSourceTransform
         val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
 
         val isMuted = testRunSettings.isIgnoredTarget(absoluteTestFile)
-        try {
-            testRunProvider.getSingleTestRun(testCaseId, testRunSettings)
-        } catch (e: CompilationToolException) {
-            if (isMuted) {
-                println("There was an expected failure: CompilationToolException: ${e.reason}")
-                return
-            } else {
-                fail { e.reason }
+
+        val testRunOrFailure = runCatching { testRunProvider.getSingleTestRun(testCaseId, testRunSettings) }
+        testRunOrFailure.exceptionOrNull()?.let { exception ->
+            when {
+                exception !is CompilationToolException -> throw exception
+                isMuted -> {
+                    println("There was an expected failure: CompilationToolException: ${exception.reason}")
+                    return
+                }
+                else -> fail { exception.reason }
             }
         }
-        if (isMuted) {
-            fail {
-                "Looks like this test can be unmuted."
+
+        val testRun = testRunOrFailure.getOrThrow()
+
+        val syntheticAccessorsDumpDir = testRun.executable.executable.syntheticAccessorsDumpDir
+        assertNotNull(syntheticAccessorsDumpDir) { "No synthetic accessors dump directory" }
+        assertTrue(syntheticAccessorsDumpDir!!.isDirectory) {
+            "The synthetic accessors dump directory does not exist: $syntheticAccessorsDumpDir"
+        }
+
+        runCatching {
+            with(SyntheticAccessorsDumpHandler) {
+                JUnit5Assertions.assertSyntheticAccessorDumpIsCorrect(
+                    dumpDir = syntheticAccessorsDumpDir,
+                    moduleNames = testRun.testCase.modules.mapToSet { Name.identifier(it.name) },
+                    testDataFile = absoluteTestFile
+                )
             }
+        }.exceptionOrNull()?.let { exception ->
+            if (!isMuted || exception !is AssertionFailedError)
+                throw exception
+            println("There was an expected failure on synthetic accessors dump comparison: ${exception.message}")
+            return
+        }
+
+        if (isMuted) {
+            fail { "Looks like this test can be unmuted." }
         }
     }
 
