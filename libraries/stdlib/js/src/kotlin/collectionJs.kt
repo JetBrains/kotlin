@@ -29,8 +29,8 @@ public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArra
 @JsName("copyToArray")
 @PublishedApi
 internal fun <T> copyToArray(collection: Collection<T>): Array<T> {
-    return if (collection.asDynamic().toArray !== undefined)
-        collection.asDynamic().toArray().unsafeCast<Array<T>>()
+    return if (collection is SupportsToArray)
+        collection.toArray().unsafeCast<Array<T>>()
     else
         collectionToArray(collection).unsafeCast<Array<T>>()
 }

@@ -12,7 +12,12 @@ package kotlin.collections
  * and populates the array with the elements of this collection.
  * @sample samples.collections.Collections.Collections.collectionToTypedArray
  */
-public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
+public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> = copyToTypedArray()
+
+@PublishedApi
+internal fun <T> Collection<T>.copyToTypedArray(): Array<T> {
+    @Suppress("UNCHECKED_CAST")
+    if (this is SupportsToArray) return toArray() as Array<T>
     val result = arrayOfNulls<T>(size)
     var index = 0
     for (element in this) result[index++] = element

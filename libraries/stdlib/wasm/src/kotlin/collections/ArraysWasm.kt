@@ -18,8 +18,7 @@ public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArra
 @Suppress("UNCHECKED_CAST")
 @PublishedApi
 internal fun <T> copyToArray(collection: Collection<T>): Array<T> =
-    if (collection is AbstractCollection<T>)
-        //TODO: Find more proper way to call abstract collection's toArray
-        @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") collection.toArray() as Array<T>
+    if (collection is SupportsToArray)
+        collection.toArray() as Array<T>
     else
         collectionToArray(collection) as Array<T>

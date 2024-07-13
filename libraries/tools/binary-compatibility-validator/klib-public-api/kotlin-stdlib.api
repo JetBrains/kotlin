@@ -1065,7 +1065,7 @@ abstract class <#A: kotlin/Enum<#A>> kotlin/Enum : kotlin/Comparable<#A> { // ko
     final object Companion // kotlin/Enum.Companion|null[0]
 }
 
-abstract class <#A: out kotlin/Any?> kotlin.collections/AbstractCollection : kotlin.collections/Collection<#A> { // kotlin.collections/AbstractCollection|null[0]
+abstract class <#A: out kotlin/Any?> kotlin.collections/AbstractCollection : kotlin.collections/Collection<#A>, kotlin.collections/SupportsToArray { // kotlin.collections/AbstractCollection|null[0]
     constructor <init>() // kotlin.collections/AbstractCollection.<init>|<init>(){}[0]
 
     abstract val size // kotlin.collections/AbstractCollection.size|{}size[0]
@@ -12271,6 +12271,9 @@ final fun <#A: kotlin/Any?, #B: kotlin/Any?> kotlinx.cinterop/staticCFunction(ko
 
 // Targets: [native]
 final fun <#A: kotlin/Any?> (#A).kotlin.native.concurrent/freeze(): #A // kotlin.native.concurrent/freeze|freeze@0:0(){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.collections/copyToTypedArray(): kotlin/Array<#A> // kotlin.collections/copyToTypedArray|copyToTypedArray@kotlin.collections.Collection<0:0>(){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
 final fun <#A: kotlin/Any?> (kotlin.collections/Collection<kotlin.native.concurrent/Future<#A>>).kotlin.native.concurrent/waitForMultipleFutures(kotlin/Int): kotlin.collections/Set<kotlin.native.concurrent/Future<#A>> // kotlin.native.concurrent/waitForMultipleFutures|waitForMultipleFutures@kotlin.collections.Collection<kotlin.native.concurrent.Future<0:0>>(kotlin.Int){0§<kotlin.Any?>}[0]

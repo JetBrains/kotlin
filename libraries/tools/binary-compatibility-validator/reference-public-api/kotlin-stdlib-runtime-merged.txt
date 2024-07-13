@@ -583,7 +583,7 @@ public abstract interface annotation class kotlin/annotation/Target : java/lang/
 	public abstract fun allowedTargets ()[Lkotlin/annotation/AnnotationTarget;
 }
 
-public abstract class kotlin/collections/AbstractCollection : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
+public abstract class kotlin/collections/AbstractCollection : java/util/Collection, kotlin/collections/SupportsToArray, kotlin/jvm/internal/markers/KMappedMarker {
 	protected fun <init> ()V
 	public fun add (Ljava/lang/Object;)Z
 	public fun addAll (Ljava/util/Collection;)Z

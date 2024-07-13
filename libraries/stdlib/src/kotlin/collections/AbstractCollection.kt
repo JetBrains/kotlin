@@ -12,7 +12,7 @@ import kotlin.js.JsName
  * @param E the type of elements contained in the collection. The collection is covariant in its element type.
  */
 @SinceKotlin("1.1")
-public abstract class AbstractCollection<out E> protected constructor() : Collection<E> {
+public abstract class AbstractCollection<out E> protected constructor() : Collection<E>, SupportsToArray {
     abstract override val size: Int
     abstract override fun iterator(): Iterator<E>
 
@@ -30,8 +30,9 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
     /**
      * Returns new array of type `Array<Any?>` with the elements of this collection.
      */
-    @JsName("toArray")
-    protected open fun toArray(): Array<Any?> = collectionToArray(this)
+//    @JsName("toArray")
+    @Suppress("CANNOT_WEAKEN_ACCESS_PRIVILEGE")
+    protected override fun toArray(): Array<Any?> = collectionToArray(this)
 
     /**
      * Fills the provided [array] or creates new array of the same type
@@ -45,5 +46,11 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
      *
      * @return An array containing all elements of this collection.
      */
-    protected open fun <T> toArray(array: Array<T>): Array<T> = collectionToArray(this, array)
+    @Suppress("CANNOT_WEAKEN_ACCESS_PRIVILEGE")
+    protected override fun <T> toArray(array: Array<T>): Array<T> = collectionToArray(this, array)
+}
+
+internal interface SupportsToArray {
+    fun toArray(): Array<Any?>
+    fun <T> toArray(array: Array<T>): Array<T>
 }
