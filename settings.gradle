@@ -952,3 +952,5 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':native:cli-native'
     include ':native:native.tests:cli-tests'
 }
+
+include 'prepare:compiler-bytecode-postprocessor'

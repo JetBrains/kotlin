@@ -1,5 +1,7 @@
 @file:Suppress("HasPlatformType")
 
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.internal.jvm.Jvm
 import java.util.regex.Pattern.quote
 
@@ -346,7 +348,48 @@ val proguard by task<CacheableProguardTask> {
     printconfiguration(layout.buildDirectory.file("compiler.pro.dump"))
 }
 
-val pack: TaskProvider<out DefaultTask> = if (kotlinBuildProperties.proguard) proguard else packCompiler
+val postprocessorClasspath by configurations.creating
+dependencies {
+    postprocessorClasspath(project(":prepare:compiler-bytecode-postprocessor"))
+}
+
+val runPostprocessing by tasks.registering(NoDebugJavaExec::class) {
+    dependsOn(proguard)
+
+    val inputFile = proguard.map { it.singleOutputFile(layout) }
+    val outputFile = layout.buildDirectory.file("libs/$compilerBaseName-after-postprocessing.jar")
+
+    inputs.file(inputFile)
+    outputs.file(outputFile)
+
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
+    classpath = postprocessorClasspath
+    mainClass = "org.jetbrains.kotlin.compiler.bytecodePostprocessor.MainKt"
+    args(
+        inputFile.get(),
+        proguardLibraries.files.joinToString(";"),
+        outputFile.get(),
+        listOf("org.jetbrains.kotlin.ir.*", "org.jetbrains.kotlin.fir.lazy.*").joinToString(";")
+    )
+}
+
+val mergePostprocessedJar by task<Jar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+    archiveClassifier.set("postprocessed-merged")
+
+    dependsOn(runPostprocessing)
+    from {
+        runPostprocessing.map { zipTree(it.singleOutputFile(layout)) }
+    }
+
+    dependsOn(proguard)
+    from {
+        proguard.map { zipTree(it.singleOutputFile(layout)) }
+    }
+}
+
+val pack: TaskProvider<out DefaultTask> = if (kotlinBuildProperties.proguard) mergePostprocessedJar else packCompiler
 val distDir: String by rootProject.extra
 
 val jar = runtimeJar {
