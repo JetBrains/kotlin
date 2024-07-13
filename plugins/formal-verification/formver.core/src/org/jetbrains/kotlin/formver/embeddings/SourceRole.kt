@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.viper.ast.Info
 
 sealed interface SourceRole {
-    data class ParamFunctionLeakageCheck(val functionRole: FirSymbolHolder) : SourceRole
-
     data class ListElementAccessCheck(val accessType: AccessCheckType) : SourceRole {
         enum class AccessCheckType {
             LESS_THAN_ZERO,
@@ -20,7 +17,6 @@ sealed interface SourceRole {
         }
     }
 
-    data class CallsInPlaceEffect(val paramSymbol: FirBasedSymbol<*>, val kind: EventOccurrencesRange) : SourceRole
     data class ConditionalEffect(val effect: ReturnsEffect, val condition: Condition) : SourceRole
     data class FirSymbolHolder(val firSymbol: FirBasedSymbol<*>) : SourceRole, Condition
 
