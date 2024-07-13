@@ -37,7 +37,7 @@ value class Density(val kilogramsPerCubicMeter: Double) {
 // FILE: extensions.kt
 val Number.KilogramsPerCubicMeter: Density get() = Density(toDouble())
 
-// MODULE: mass(default,density)
+// MODULE: mass(main,density)
 // FILE: entities.kt
 value class Mass(val kilograms: Double)
 
