@@ -1,0 +1,12 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class ChildCompanion
+    internal companion object Companion : Parent
+        internal inline fun internalInlineMethod(): String
+            /* ACCESSOR use-site */ access$x($this = <this>)
+        /* ACCESSOR declaration */ public fun access$x($this: Companion): String
+            /* TARGET use-site */ super<Parent>.x()
+public open class Parent
+    /* TARGET declaration */ private fun x(): String
