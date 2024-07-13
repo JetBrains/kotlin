@@ -6,11 +6,22 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.ir.inline.DumpSyntheticAccessors
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
+import java.io.File
 
-class JsSyntheticAccessorsDumpHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Js) = Unit
+abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
+    testServices: TestServices,
+    artifactKind: BinaryKind<A>,
+) : BinaryArtifactHandler<A>(
+    testServices,
+    artifactKind,
+    failureDisablesNextSteps = false,
+    doNotRunIfThereWerePreviousFailures = false
+) {
+    final override fun processModule(module: TestModule, info: A) = Unit
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val testModules = testServices.moduleStructure.modules
@@ -22,27 +33,43 @@ class JsSyntheticAccessorsDumpHandler(testServices: TestServices) : JsBinaryArti
             testServices.dependencyProvider.getArtifactSafe(testModule, BackendKinds.IrBackend)?.irModuleFragment?.name
         }.toSet()
 
-        val irModuleDumps = uniqueIrModuleNames.mapNotNull { moduleName ->
-            val moduleDumpFile = DumpSyntheticAccessors.getDumpFileForModule(dumpDir, moduleName)
-            if (!moduleDumpFile.isFile) return@mapNotNull null
+        assertions.assertSyntheticAccessorDumpIsCorrect(
+            dumpDir = dumpDir,
+            moduleNames = uniqueIrModuleNames,
+            testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        )
+    }
 
-            moduleName to moduleDumpFile.readText().trimEnd()
-        }.toMap()
+    companion object {
+        fun Assertions.assertSyntheticAccessorDumpIsCorrect(
+            dumpDir: File,
+            moduleNames: Set<Name>,
+            testDataFile: File,
+        ) {
+            val irModuleDumps = moduleNames.mapNotNull { moduleName ->
+                val moduleDumpFile = DumpSyntheticAccessors.getDumpFileForModule(dumpDir, moduleName)
+                if (!moduleDumpFile.isFile) return@mapNotNull null
 
-        val actualDump = if (irModuleDumps.isEmpty()) {
-            "/* empty dump */\n"
-        } else {
-            buildString {
-                irModuleDumps.entries.sortedBy { it.key }.forEach { (_, moduleDump) ->
-                    if (isNotEmpty()) appendLine().appendLine()
-                    appendLine(moduleDump)
+                moduleName to moduleDumpFile.readText().trimEnd()
+            }.toMap()
+
+            val actualDump = if (irModuleDumps.isEmpty()) {
+                "/* empty dump */\n"
+            } else {
+                buildString {
+                    irModuleDumps.entries.sortedBy { it.key }.forEach { (_, moduleDump) ->
+                        if (isNotEmpty()) appendLine().appendLine()
+                        appendLine(moduleDump)
+                    }
                 }
             }
+
+            val expectedDumpFile = testDataFile.resolveSibling(testDataFile.nameWithoutExtension + ".accessors.txt")
+
+            assertEqualsToFile(expectedDumpFile, actualDump)
         }
-
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val expectedDumpFile = testDataFile.resolveSibling(testDataFile.nameWithoutExtension + ".accessors.txt")
-
-        assertions.assertEqualsToFile(expectedDumpFile, actualDump)
     }
 }
+
+class JsSyntheticAccessorsDumpHandler(testServices: TestServices) :
+    SyntheticAccessorsDumpHandler<BinaryArtifacts.Js>(testServices, ArtifactKinds.Js)
