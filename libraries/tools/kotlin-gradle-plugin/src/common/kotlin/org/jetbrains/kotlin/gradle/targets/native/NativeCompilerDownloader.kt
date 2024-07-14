@@ -15,12 +15,14 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
@@ -286,6 +288,9 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
             nativeProperties.actualNativeHomeDirectory.get(),
             project.kotlinPropertiesProvider,
             project.konanPropertiesBuildService,
+            project.objects.property(GradleBuildMetricsReporter()),
+            ClassLoadersCachingBuildService.registerIfAbsent(project),
+            project.nativeProperties
         ).generatePlatformLibsIfNeeded()
     }
 }

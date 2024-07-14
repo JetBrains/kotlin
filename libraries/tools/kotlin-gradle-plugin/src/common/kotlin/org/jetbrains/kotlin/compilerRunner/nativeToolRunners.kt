@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
-import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
@@ -264,32 +263,4 @@ internal abstract class KotlinNativeCompilerRunner @Inject constructor(
 
         return listOf(toolName, "@${argFile.absolutePath}")
     }
-}
-
-/** Platform libraries generation tool. Runs the cinterop tool under the hood. */
-internal fun ObjectFactory.KotlinNativeLibraryGenerationRunner(
-    settings: KotlinNativeToolRunner.Settings,
-    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
-): KotlinNativeLibraryGenerationRunner = newInstance(settings, metricsReporter)
-
-internal abstract class KotlinNativeLibraryGenerationRunner @Inject constructor(
-    settings: Settings,
-    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
-    objectsFactory: ObjectFactory,
-    execOperations: ExecOperations
-) : AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", settings, metricsReporter, objectsFactory, execOperations) {
-
-    companion object {
-        fun fromProject(project: Project) = project.objects.KotlinNativeLibraryGenerationRunner(
-            settings = Settings.of(
-                project.nativeProperties.actualNativeHomeDirectory.get().absolutePath,
-                project.nativeProperties.konanDataDir.orNull?.absolutePath,
-                project
-            ),
-            metricsReporter = GradleBuildMetricsReporter()
-        )
-    }
-
-    // The library generator works for a long time so enabling C2 can improve performance.
-    override val disableC2: Boolean = false
 }
