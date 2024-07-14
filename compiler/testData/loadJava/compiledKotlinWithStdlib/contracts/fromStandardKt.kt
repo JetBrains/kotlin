@@ -20,6 +20,13 @@ public inline fun <T, R> T.run(block: T.() -> R): R {
     return block()
 }
 
+public inline fun <T, R> via(supplier: T, block: (T) -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block(supplier)
+}
+
 public inline fun <T, R> with(receiver: T, block: T.() -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
