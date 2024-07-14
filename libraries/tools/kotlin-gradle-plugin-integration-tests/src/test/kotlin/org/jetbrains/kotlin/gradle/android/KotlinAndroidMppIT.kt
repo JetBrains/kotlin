@@ -133,6 +133,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         val androidSourcesElementsAttributes = arrayOf(
+            "com.android.build.api.attributes.BuildTypeAttr" to "release",
             "org.gradle.category" to "documentation",
             "org.gradle.dependency.bundling" to "external",
             "org.gradle.docstype" to "sources",
