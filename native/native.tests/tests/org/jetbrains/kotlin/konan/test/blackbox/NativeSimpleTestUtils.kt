@@ -223,7 +223,7 @@ internal fun AbstractNativeSimpleTest.compileToStaticCache(
  *
  * If it's present, then it's name (without .kt-extension, if it's a file) will be used as 'moduleName' for generated module.
  */
-internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
+fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
     sourcesRoot: File?,
     freeCompilerArgs: TestCompilerArgs = TestCompilerArgs.EMPTY,
     extras: TestCase.Extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
