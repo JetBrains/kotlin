@@ -90,6 +90,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     spec.jvmArgs(toolSpec.jvmArgs.get())
                     spec.systemProperties(toolSpec.systemProperties)
                     spec.environment(toolSpec.environment)
+                    toolSpec.environmentBlacklist.forEach { spec.environment.remove(it) }
                     spec.args(toolArgsPair.second)
                 }
             } finally {
@@ -192,7 +193,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val shouldPassArgumentsViaArgFile: Provider<Boolean>,
         val systemProperties: Map<String, String> = emptyMap(),
         val environment: Map<String, String> = emptyMap(),
-        val environmentBlacklist: Map<String, String> = emptyMap(),
+        val environmentBlacklist: Set<String> = emptySet(),
     ) {
         val systemPropertiesBlacklist: Set<String> = setOf(
             "java.endorsed.dirs",       // Fix for KT-25887
