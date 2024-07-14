@@ -132,7 +132,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
 
     private fun generateCExportTestCase(testPathFull: File, sources: List<File>, goldenData: File? = null, regexes: File? = null, exitCode: String? = null): TestCase {
         val moduleName: String = testPathFull.name
-        val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
 
         return TestCase(
