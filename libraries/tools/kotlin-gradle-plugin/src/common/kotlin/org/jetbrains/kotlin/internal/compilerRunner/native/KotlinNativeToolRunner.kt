@@ -65,7 +65,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     "@${argFile.toFile().absolutePath}"
                 )
             } else {
-                null to args.arguments
+                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments
             }
 
             try {
@@ -219,7 +219,9 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         }
 
         fun configureDefaultMaxHeapSize(): ToolSpec {
-            jvmArgs.add("-Xmx3g")
+            if (jvmArgs.get().none { it.startsWith("-Xmx") }) {
+                jvmArgs.add("-Xmx3g")
+            }
 
             return this
         }
