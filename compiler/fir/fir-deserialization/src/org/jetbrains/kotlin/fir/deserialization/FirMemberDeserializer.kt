@@ -472,11 +472,23 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers) { loadContextReceiver(it, local) }
         }.apply {
-            // TODO(KT-69782) the condition shouldn't be necessary,
-            //  but currently a call to a generic annotation as a default value in a deserialized annotation is missing the type arguments,
-            //  which leads to an exception.
-            if (initializer !is FirAnnotation) {
-                initializer?.replaceConeTypeOrNull(returnTypeRef.type)
+            when (val initializer = initializer) {
+                /**
+                 * Deserialized annotation values don't have any information about type arguments for annotation expression, so
+                 *   they should be updated from the expected type
+                 *
+                 * ```
+                 * annotation class One<T>(val s: String)
+                 *
+                 * annotation class Two(
+                 *     val one: One<Int> = One("hello") // <--------
+                 * )
+                 * ```
+                 *
+                 * Annotation value for `One("hello")` contains only annotation type (`One`) and argument values (`"hello"`)
+                 */
+                is FirAnnotation -> initializer.replaceAnnotationTypeRef(initializer.annotationTypeRef.withReplacedReturnType(returnTypeRef.coneType))
+                else -> initializer?.replaceConeTypeOrNull(returnTypeRef.type)
             }
             this.versionRequirements = versionRequirements
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
