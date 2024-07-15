@@ -86,6 +86,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("jsImplicitBoxing.kt")
+  public void testJsImplicitBoxing() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsImplicitBoxing.kt");
+  }
+
+  @Test
   @TestMetadata("jsStatic.kt")
   public void testJsStatic() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsStatic.kt");
