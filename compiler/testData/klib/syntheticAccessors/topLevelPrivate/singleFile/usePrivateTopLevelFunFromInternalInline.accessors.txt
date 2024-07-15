@@ -4,6 +4,6 @@
 
 /* TARGET declaration */ private fun privateFun(): String
 internal inline fun internalInlineFun(): String
-    /* ACCESSOR use-site */ access$privateFun()
-/* ACCESSOR declaration */ public fun access$privateFun(): String
+    /* ACCESSOR use-site */ access$UsePrivateTopLevelFunFromInternalInlineKt$privateFun()
+/* ACCESSOR declaration */ public fun access$UsePrivateTopLevelFunFromInternalInlineKt$privateFun(): String
     /* TARGET use-site */ privateFun()

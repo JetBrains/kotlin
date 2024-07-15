@@ -12,6 +12,6 @@ private inline fun privateInlineFun3(): String
 private inline fun privateInlineFun4(): String
     /* TARGET use-site */ privateFun()
 internal inline fun internalInlineFun(): String
-    /* ACCESSOR use-site */ access$privateFun()
-/* ACCESSOR declaration */ public fun access$privateFun(): String
+    /* ACCESSOR use-site */ access$AKt$privateFun()
+/* ACCESSOR declaration */ public fun access$AKt$privateFun(): String
     /* TARGET use-site */ privateFun()

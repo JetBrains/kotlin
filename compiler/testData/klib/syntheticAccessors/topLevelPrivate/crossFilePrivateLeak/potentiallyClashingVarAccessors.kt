@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-// ^^^ Muted because of conflicting synthetic accessors for top-level callables. To be fixed in KT-69787.
-
 // FILE: file1.kt
 package org.sample
 
