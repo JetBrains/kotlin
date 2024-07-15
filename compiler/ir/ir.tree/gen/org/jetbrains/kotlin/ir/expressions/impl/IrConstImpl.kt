@@ -63,21 +63,6 @@ class IrConstImpl<T> internal constructor(
 
         fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl<Short> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
-
-        fun defaultValueForType(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl<*> {
-            if (type.isMarkedNullable()) return constNull(startOffset, endOffset, type)
-            return when (type.getPrimitiveType()) {
-                PrimitiveType.BOOLEAN -> boolean(startOffset, endOffset, type, false)
-                PrimitiveType.CHAR -> char(startOffset, endOffset, type, 0.toChar())
-                PrimitiveType.BYTE -> byte(startOffset, endOffset, type, 0)
-                PrimitiveType.SHORT -> short(startOffset, endOffset, type, 0)
-                PrimitiveType.INT -> int(startOffset, endOffset, type, 0)
-                PrimitiveType.FLOAT -> float(startOffset, endOffset, type, 0.0F)
-                PrimitiveType.LONG -> long(startOffset, endOffset, type, 0)
-                PrimitiveType.DOUBLE -> double(startOffset, endOffset, type, 0.0)
-                else -> constNull(startOffset, endOffset, type.makeNullable())
-            }
-        }
     }
 }
 
