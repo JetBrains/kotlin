@@ -12,10 +12,16 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersionSettings: LanguageVersionSettings) :
     AbstractTypeApproximator(inferenceContext, languageVersionSettings) {
     fun approximateToSuperType(type: ConeKotlinType, conf: TypeApproximatorConfiguration): ConeKotlinType? {
+        if (type.fastPathSkipApproximation()) return null
         return super.approximateToSuperType(type, conf) as ConeKotlinType?
     }
 
     fun approximateToSubType(type: ConeKotlinType, conf: TypeApproximatorConfiguration): ConeKotlinType? {
+        if (type.fastPathSkipApproximation()) return null
         return super.approximateToSubType(type, conf) as ConeKotlinType?
+    }
+
+    private fun ConeKotlinType.fastPathSkipApproximation(): Boolean {
+        return this is ConeClassLikeType && this.typeArguments.isEmpty() && this.lookupTag.let { !it.isLocalClass() && !it.isAnonymousClass() }
     }
 }

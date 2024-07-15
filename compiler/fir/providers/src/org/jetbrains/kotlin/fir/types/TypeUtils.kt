@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitute
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.*
@@ -844,3 +846,11 @@ val ConeKotlinType.isUnitOrFlexibleUnit: Boolean
         val classId = type.classId ?: return false
         return classId == StandardClassIds.Unit
     }
+
+fun ConeClassLikeLookupTag.isLocalClass(): Boolean {
+    return classId.isLocal
+}
+
+fun ConeClassLikeLookupTag.isAnonymousClass(): Boolean {
+    return name == SpecialNames.ANONYMOUS
+}
