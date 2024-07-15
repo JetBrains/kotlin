@@ -36,6 +36,7 @@ native {
     val ldflags = mutableListOf<String>()
     if (HostManager.hostIsMac) {
         ldflags.addAll(listOf("-Xlinker", "-lto_library", "-Xlinker", "KT-69382"))
+        cflags.add("-D_Float16=short")
     }
 
     target(solib("callbacks"), objSet) {

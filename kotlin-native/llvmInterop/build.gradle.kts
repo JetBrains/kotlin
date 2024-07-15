@@ -12,7 +12,7 @@ kotlinNativeInterop {
         dependsOn(":kotlin-native:llvmDebugInfoC:${lib("debugInfo")}")
         dependsOn(":kotlin-native:libllvmext:${lib("llvmext")}")
         defFile("llvm.def")
-        compilerOpts("-I$llvmDir/include", "-I${rootProject.project(":kotlin-native:llvmDebugInfoC").projectDir}/src/main/include", "-I${rootProject.project(":kotlin-native:libllvmext").projectDir}/src/main/include")
+        compilerOpts("-I$llvmDir/include", "-I${rootProject.project(":kotlin-native:llvmDebugInfoC").projectDir}/src/main/include", "-I${rootProject.project(":kotlin-native:libllvmext").projectDir}/src/main/include", "-D_Float16=short")
         if (PlatformInfo.isMac()) {
             // $llvmDir/lib contains libc++.1.dylib too, and it seems to be preferred by the linker
             // over the sysroot-provided one.

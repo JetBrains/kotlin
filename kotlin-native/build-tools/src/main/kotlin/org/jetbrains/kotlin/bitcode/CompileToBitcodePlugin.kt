@@ -527,7 +527,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             }
         }
 
-        private val modules: NamedDomainObjectContainer<Module> = project.objects.polymorphicDomainObjectContainer(Module::class.java).apply {
+        val modules: NamedDomainObjectContainer<Module> = project.objects.polymorphicDomainObjectContainer(Module::class.java).apply {
             registerFactory(Module::class.java) {
                 project.objects.newInstance<Module>(owner, it, _target).apply {
                     this.srcRoot.convention(project.layout.projectDirectory.dir("src/$name"))
