@@ -1631,6 +1631,9 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
     }
 }
 
+fun <T> IrConst<T>.copyWithOffsets(startOffset: Int, endOffset: Int) =
+    IrConstImpl(startOffset, endOffset, type, kind, value)
+
 fun IrGetValue.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
     IrGetValueImpl(newStartOffset, newEndOffset, type, symbol, origin)
 
