@@ -291,7 +291,16 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     }
 
     val vtableEntries: List<OverriddenFunctionInfo> by lazy {
-        require(!irClass.isInterface)
+        require(!irClass.isInterface) {
+            buildString {
+                appendLine("Expected a class, found interface:")
+                appendLine("  IR: " + irClass.render())
+                appendLine("  FQ name: " + irClass.fqNameForIrSerialization)
+                irClass.fileOrNull?.let { file ->
+                    appendLine("  Location: " + irClass.getCompilerMessageLocation(file))
+                }
+            }
+        }
 
         context.logMultiple {
             +""
