@@ -40,7 +40,7 @@ class ConeSubstitutorByMap private constructor(
         }
     }
 
-    private val hashCode by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val hashCode: Int by lazy(LazyThreadSafetyMode.PUBLICATION) {
         substitution.hashCode()
     }
 

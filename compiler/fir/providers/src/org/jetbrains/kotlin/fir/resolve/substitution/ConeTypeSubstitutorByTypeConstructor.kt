@@ -20,7 +20,7 @@ fun createTypeSubstitutorByTypeConstructor(
     return ConeTypeSubstitutorByTypeConstructor(map, context, approximateIntegerLiterals)
 }
 
-internal class ConeTypeSubstitutorByTypeConstructor(
+private class ConeTypeSubstitutorByTypeConstructor(
     private val map: Map<TypeConstructorMarker, ConeKotlinType>,
     typeContext: ConeTypeContext,
     private val approximateIntegerLiterals: Boolean
@@ -32,6 +32,7 @@ internal class ConeTypeSubstitutorByTypeConstructor(
         val approximatedIntegerLiteralType = if (approximateIntegerLiterals) new.approximateIntegerLiteralType() else new
         return approximatedIntegerLiteralType.updateNullabilityIfNeeded(type).withCombinedAttributesFrom(type)
     }
+
     override fun toString(): String {
         return map.entries.joinToString(prefix = "{", postfix = "}", separator = " | ") { (constructor, type) ->
             "$constructor -> ${type.renderForDebugging()}"

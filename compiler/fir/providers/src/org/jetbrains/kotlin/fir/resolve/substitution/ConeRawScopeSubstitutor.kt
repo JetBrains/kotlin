@@ -19,6 +19,7 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
                     type.lookupTag.symbol.getProjectionForRawType(useSiteSession, makeNullable = type.isMarkedNullable)
                 )
             }
+
             type is ConeClassLikeType && type.typeArguments.isNotEmpty() -> {
                 if (type.lookupTag.classId == StandardClassIds.Array) {
                     val argument = type.typeArguments[0]
@@ -38,6 +39,7 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
                     type.replaceArgumentsWithStarProjections()
                 )
             }
+
             type is ConeFlexibleType -> {
                 val substitutedLowerBound = substituteOrNull(type.lowerBound)
                 val substitutedUpperBound = substituteOrNull(type.upperBound)
@@ -57,7 +59,7 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
         }
     }
 
-    override fun equals(other: Any?): Boolean = other is ConeRawScopeSubstitutor
+    override fun equals(other: Any?): Boolean = other is ConeRawScopeSubstitutor && useSiteSession == other.useSiteSession
 
     override fun hashCode(): Int = 0
 }

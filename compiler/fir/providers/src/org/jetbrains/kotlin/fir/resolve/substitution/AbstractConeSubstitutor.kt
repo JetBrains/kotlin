@@ -158,6 +158,4 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         }
         return null
     }
-
-
 }
