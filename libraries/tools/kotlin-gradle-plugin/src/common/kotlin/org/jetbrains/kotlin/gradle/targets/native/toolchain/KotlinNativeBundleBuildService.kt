@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
-import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.property
@@ -62,6 +62,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
     internal interface Parameters : BuildServiceParameters {
         val kotlinNativeVersion: Property<String>
         val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
+        val konanPropertiesBuildService: Property<KonanPropertiesBuildService>
     }
 
     @get:Inject
@@ -75,6 +76,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
     companion object {
         fun registerIfAbsent(project: Project): Provider<KotlinNativeBundleBuildService> {
             val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
+            val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
             return project.gradle.sharedServices.registerIfAbsent(
                 "kotlinNativeBundleBuildService",
                 KotlinNativeBundleBuildService::class.java
@@ -83,6 +85,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                     .value(project.nativeProperties.kotlinNativeVersion)
                     .disallowChanges()
                 it.parameters.classLoadersCachingService.value(classLoadersCachingService).disallowChanges()
+                it.parameters.konanPropertiesBuildService.value(konanPropertiesBuildService).disallowChanges()
             }.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesKotlinNativeBundleBuildService::class.java.name) {
                     project.tasks.withType<UsesKotlinNativeBundleBuildService>().configureEach { task ->
@@ -229,7 +232,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                     project.objects,
                     konanTarget,
                     project.kotlinPropertiesProvider,
-                    project.konanPropertiesBuildService,
+                    parameters.konanPropertiesBuildService,
                     project.objects.property(GradleBuildMetricsReporter()),
                     parameters.classLoadersCachingService,
                     project.useXcodeMessageStyle,
