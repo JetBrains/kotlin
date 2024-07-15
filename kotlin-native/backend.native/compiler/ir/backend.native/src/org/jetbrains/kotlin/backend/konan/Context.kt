@@ -34,9 +34,6 @@ internal class NativeMapping : Mapping() {
         ATOMIC_GET_ARRAY_ELEMENT, ATOMIC_SET_ARRAY_ELEMENT, COMPARE_AND_EXCHANGE_ARRAY_ELEMENT, COMPARE_AND_SET_ARRAY_ELEMENT, GET_AND_SET_ARRAY_ELEMENT, GET_AND_ADD_ARRAY_ELEMENT;
     }
 
-    val outerThisCacheAccessors: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
-    val lateinitPropertyCacheAccessors: DeclarationMapping<IrProperty, IrSimpleFunction> by AttributeBasedMappingDelegate()
-    val topLevelFieldCacheAccessors: DeclarationMapping<IrField, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val objectInstanceGetter: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val boxFunctions: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val unboxFunctions: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
