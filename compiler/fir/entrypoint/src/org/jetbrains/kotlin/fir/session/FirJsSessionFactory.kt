@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.checkers.FirIdentityLessPlatformDeterminer
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
+import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsIdentityLessPlatformDeterminer
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsModuleKind
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
@@ -120,6 +122,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             FirTypeSpecificityComparatorProvider(JsTypeSpecificityComparatorWithoutDelegate(typeContext))
         )
         register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
+        register(FirIdentityLessPlatformDeterminer::class, FirJsIdentityLessPlatformDeterminer)
 
         if (moduleKind != null) {
             register(FirJsModuleKind::class, FirJsModuleKind(moduleKind))

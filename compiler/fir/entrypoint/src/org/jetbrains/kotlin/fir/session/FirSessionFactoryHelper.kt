@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.FirDefaultOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.fir.analysis.checkers.FirIdentityLessPlatformDeterminer
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -142,5 +143,6 @@ object FirSessionFactoryHelper {
         register(FirDelegatedMembersFilter::class, FirDelegatedMembersFilter.Default)
         register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
         register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(CommonPlatformAnalyzerServices))
+        register(FirIdentityLessPlatformDeterminer::class, FirIdentityLessPlatformDeterminer.Default)
     }
 }
