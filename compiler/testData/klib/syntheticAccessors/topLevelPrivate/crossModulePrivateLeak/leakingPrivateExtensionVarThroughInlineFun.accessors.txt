@@ -3,13 +3,13 @@
 /* FILE package=<root> fileName=a.kt */
 
 internal inline fun customGetVar(): Int
-    /* ACCESSOR use-site */ access$<get-privateVar>($receiver = 0)
+    /* ACCESSOR use-site */ access$AKt$<get-privateVar>($receiver = 0)
 internal inline fun customSetVar(value: Int)
-    /* ACCESSOR use-site */ access$<set-privateVar>($receiver = 0, value = value)
+    /* ACCESSOR use-site */ access$AKt$<set-privateVar>($receiver = 0, value = value)
 private var Int.privateVar: Int
     /* TARGET declaration */ private fun Int.<get-privateVar>(): Int
     /* TARGET declaration */ private fun Int.<set-privateVar>(value: Int)
-/* ACCESSOR declaration */ public fun access$<get-privateVar>($receiver: Int): Int
+/* ACCESSOR declaration */ public fun access$AKt$<get-privateVar>($receiver: Int): Int
     /* TARGET use-site */ $receiver.<get-privateVar>()
-/* ACCESSOR declaration */ public fun access$<set-privateVar>($receiver: Int, value: Int)
+/* ACCESSOR declaration */ public fun access$AKt$<set-privateVar>($receiver: Int, value: Int)
     /* TARGET use-site */ $receiver.<set-privateVar>(value = value)

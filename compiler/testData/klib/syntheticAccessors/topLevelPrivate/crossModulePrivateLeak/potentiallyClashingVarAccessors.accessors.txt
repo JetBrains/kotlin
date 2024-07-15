@@ -7,12 +7,12 @@ private var libName: String
     /* TARGET declaration */ private fun <set-libName>(<set-?>: String)
 internal var libNameInlineVar1: String
     internal inline fun <get-libNameInlineVar1>(): String
-        /* ACCESSOR use-site */ access$<get-libName>()
+        /* ACCESSOR use-site */ access$File1Kt$<get-libName>()
     internal inline fun <set-libNameInlineVar1>(value: String)
-        /* ACCESSOR use-site */ access$<set-libName>(<set-?> = value)
-/* ACCESSOR declaration */ public fun access$<get-libName>(): String
+        /* ACCESSOR use-site */ access$File1Kt$<set-libName>(<set-?> = value)
+/* ACCESSOR declaration */ public fun access$File1Kt$<get-libName>(): String
     /* TARGET use-site */ <get-libName>()
-/* ACCESSOR declaration */ public fun access$<set-libName>(<set-?>: String)
+/* ACCESSOR declaration */ public fun access$File1Kt$<set-libName>(<set-?>: String)
     /* TARGET use-site */ <set-libName>(<set-?> = <set-?>)
 
 
@@ -25,10 +25,10 @@ private var libName: String
     /* TARGET declaration */ private fun <set-libName>(<set-?>: String)
 internal var libNameInlineVar2: String
     internal inline fun <get-libNameInlineVar2>(): String
-        /* ACCESSOR use-site */ access$<get-libName>()
+        /* ACCESSOR use-site */ access$File2Kt$<get-libName>()
     internal inline fun <set-libNameInlineVar2>(value: String)
-        /* ACCESSOR use-site */ access$<set-libName>(<set-?> = value)
-/* ACCESSOR declaration */ public fun access$<get-libName>(): String
+        /* ACCESSOR use-site */ access$File2Kt$<set-libName>(<set-?> = value)
+/* ACCESSOR declaration */ public fun access$File2Kt$<get-libName>(): String
     /* TARGET use-site */ <get-libName>()
-/* ACCESSOR declaration */ public fun access$<set-libName>(<set-?>: String)
+/* ACCESSOR declaration */ public fun access$File2Kt$<set-libName>(<set-?>: String)
     /* TARGET use-site */ <set-libName>(<set-?> = <set-?>)

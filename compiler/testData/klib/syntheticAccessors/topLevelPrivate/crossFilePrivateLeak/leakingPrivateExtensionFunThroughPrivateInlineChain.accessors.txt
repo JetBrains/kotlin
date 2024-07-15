@@ -12,6 +12,6 @@ private inline fun A.privateInlineExtension3(): String
 private inline fun A.privateInlineExtension4(): String
     /* TARGET use-site */ this.privateExtension()
 internal inline fun A.internalInlineExtension(): String
-    /* ACCESSOR use-site */ access$privateExtension($receiver = this)
-/* ACCESSOR declaration */ public fun access$privateExtension($receiver: A): String
+    /* ACCESSOR use-site */ access$BKt$privateExtension($receiver = this)
+/* ACCESSOR declaration */ public fun access$BKt$privateExtension($receiver: A): String
     /* TARGET use-site */ $receiver.privateExtension()

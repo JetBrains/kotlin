@@ -4,6 +4,6 @@
 
 /* TARGET declaration */ private fun String.privateFun(): String
 internal inline fun internalInlineFun(): String
-    /* ACCESSOR use-site */ access$privateFun($receiver = "O")
-/* ACCESSOR declaration */ public fun access$privateFun($receiver: String): String
+    /* ACCESSOR use-site */ access$UsePrivateTopLevelExtensionFunFromInternalInlineKt$privateFun($receiver = "O")
+/* ACCESSOR declaration */ public fun access$UsePrivateTopLevelExtensionFunFromInternalInlineKt$privateFun($receiver: String): String
     /* TARGET use-site */ $receiver.privateFun()

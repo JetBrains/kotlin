@@ -3,7 +3,7 @@
 /* FILE package=<root> fileName=a.kt */
 
 internal suspend inline fun internalInline(): String
-    /* ACCESSOR use-site */ access$privateSuspendMethod()
+    /* ACCESSOR use-site */ access$AKt$privateSuspendMethod()
 /* TARGET declaration */ private suspend fun privateSuspendMethod(): String
-/* ACCESSOR declaration */ public suspend fun access$privateSuspendMethod(): String
+/* ACCESSOR declaration */ public suspend fun access$AKt$privateSuspendMethod(): String
     /* TARGET use-site */ privateSuspendMethod()

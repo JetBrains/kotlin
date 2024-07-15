@@ -3,7 +3,7 @@
 /* FILE package=<root> fileName=a.kt */
 
 internal inline fun internalInlineFun(): String
-    /* ACCESSOR use-site */ access$privateFun()
+    /* ACCESSOR use-site */ access$AKt$privateFun()
 /* TARGET declaration */ private fun privateFun(): String
-/* ACCESSOR declaration */ public fun access$privateFun(): String
+/* ACCESSOR declaration */ public fun access$AKt$privateFun(): String
     /* TARGET use-site */ privateFun()
