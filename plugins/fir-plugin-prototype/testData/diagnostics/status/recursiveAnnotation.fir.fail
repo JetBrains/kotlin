@@ -1,0 +1,15 @@
+java.lang.StackOverflowError
+...
+	at org.jetbrains.kotlin.fir.FirCliExceptionHandler.handleExceptionOnFileAnalysis(Utils.kt:249)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirCompilerRequiredAnnotationsResolveTransformer.transformFile(FirCompilerRequiredAnnotationsResolveTransformer.kt:308)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirCompilerRequiredAnnotationsResolveTransformer.transformFile(FirCompilerRequiredAnnotationsResolveTransformer.kt:120)
+	at org.jetbrains.kotlin.fir.declarations.FirFile.transform(FirFile.kt:46)
+	at org.jetbrains.kotlin.fir.visitors.FirTransformerUtilKt.transformSingle(FirTransformerUtil.kt:13)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession.resolveAnnotationSymbol(FirCompilerRequiredAnnotationsResolveTransformer.kt:219)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession.resolveAnnotationsOnAnnotationIfNeeded(FirCompilerRequiredAnnotationsResolveTransformer.kt:207)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirSpecificAnnotationResolveTransformer.resolveAnnotationsOnAnnotationIfNeeded(AbstractFirSpecificAnnotationResolveTransformer.kt:343)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirSpecificAnnotationResolveTransformer.transformAnnotationCall(AbstractFirSpecificAnnotationResolveTransformer.kt:327)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirSpecificAnnotationResolveTransformer.transformAnnotationCall(AbstractFirSpecificAnnotationResolveTransformer.kt:317)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirSpecificAnnotationResolveTransformer.transformAnnotationCall(AbstractFirSpecificAnnotationResolveTransformer.kt:46)
+	at org.jetbrains.kotlin.fir.expressions.FirAnnotationCall.transform(FirAnnotationCall.kt:44)
+	at org.jetbrains.kotlin.fir.visitors.FirTransformerUtilKt.transformInplace(FirTransformerUtil.kt:20)

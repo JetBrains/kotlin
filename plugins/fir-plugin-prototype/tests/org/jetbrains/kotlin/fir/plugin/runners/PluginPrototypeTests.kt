@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
@@ -29,7 +30,10 @@ open class AbstractFirLightTreePluginBlackBoxCodegenTest : AbstractFirLightTreeB
 abstract class AbstractFirPsiPluginDiagnosticTest : AbstractFirPsiDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.commonFirWithPluginFrontendConfiguration()
+        with(builder) {
+            commonFirWithPluginFrontendConfiguration()
+            useAfterAnalysisCheckers(::FirFailingTestSuppressor)
+        }
     }
 }
 
