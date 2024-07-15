@@ -117,28 +117,6 @@ object KotlinBooleanNotFunctionImplementation : KotlinBooleanSpecialFunction() {
         Not(args[0])
 }
 
-object KotlinRunSpecialFunction : SpecialKotlinFunction {
-    override val packageName: List<String> = listOf("kotlin")
-    override val name: String = "run"
-
-    override val receiverType: TypeEmbedding? = null
-    override val paramTypes: List<TypeEmbedding> =
-        listOf(FunctionTypeEmbedding(CallableSignatureData(null, emptyList(), NullableTypeEmbedding(AnyTypeEmbedding))))
-    override val returnType: TypeEmbedding = NullableTypeEmbedding(AnyTypeEmbedding)
-
-    override fun insertCallImpl(
-        args: List<ExpEmbedding>,
-        ctx: StmtConversionContext,
-    ): ExpEmbedding {
-        val lambda = when (val arg = args[0].ignoringCastsAndMetaNodes()) {
-            is LambdaExp -> arg
-            else -> error("kotlin.run must be called with a lambda argument at the moment")
-        }
-
-        return lambda.insertCallImpl(listOf(), ctx)
-    }
-}
-
 /**
  * Represents the `verify` function defined in `org.jetbrains.kotlin.formver.plugin`.
  */
@@ -164,6 +142,5 @@ object SpecialKotlinFunctions {
         KotlinIntTimesFunctionImplementation,
         KotlinIntDivFunctionImplementation,
         KotlinBooleanNotFunctionImplementation,
-        KotlinRunSpecialFunction,
     ).associateBy { it.embedName() }
 }

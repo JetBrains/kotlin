@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.formver.plugin.runners;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -128,6 +128,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("custom_run_functions.kt")
+    public void testCustom_run_functions() {
+      runTest("plugins/formal-verification/testData/diagnostics/good_contracts/custom_run_functions.kt");
+    }
+
+    @Test
     @TestMetadata("inline_correctness.kt")
     public void testInline_correctness() {
       runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inline_correctness.kt");
@@ -225,12 +231,6 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("function_overloading.kt")
     public void testFunction_overloading() {
       runTest("plugins/formal-verification/testData/diagnostics/no_contracts/function_overloading.kt");
-    }
-
-    @Test
-    @TestMetadata("scope_functions.kt")
-    public void testScope_functions() {
-      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/scope_functions.kt");
     }
 
     @Test

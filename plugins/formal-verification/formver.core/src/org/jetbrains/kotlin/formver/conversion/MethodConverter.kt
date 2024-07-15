@@ -62,6 +62,8 @@ class MethodConverter(
         paramResolver.tryResolveParameter(name) ?: parent?.resolveParameter(name)
         ?: throw IllegalArgumentException("Parameter $name not found in scope.")
 
+    override fun resolveReceiver(): ExpEmbedding? = paramResolver.tryResolveReceiver() ?: parent?.resolveReceiver()
+
     override val defaultResolvedReturnTarget = paramResolver.defaultResolvedReturnTarget
     override fun resolveNamedReturnTarget(sourceName: String): ReturnTarget? {
         return paramResolver.resolveNamedReturnTarget(sourceName) ?: parent?.resolveNamedReturnTarget(sourceName)

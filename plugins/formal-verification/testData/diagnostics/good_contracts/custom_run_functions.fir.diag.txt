@@ -1,0 +1,507 @@
+/custom_run_functions.kt:(1058,1064): info: Generated Viper text for useRun:
+method global$fun_useRun$fun_take$$return$T_Boolean() returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == true
+{
+  var local0$one: Ref
+  var local0$two: Ref
+  var local0$three: Ref
+  var local0$genericResult: Ref
+  var anonymous$9: Ref
+  var ret$1: Ref
+  var anonymous$10: Ref
+  var ret$2: Ref
+  var anonymous$11: Ref
+  var ret$3: Ref
+  var anonymous$12: Ref
+  var ret$4: Ref
+  var anonymous$13: Ref
+  var ret$5: Ref
+  var anonymous$14: Ref
+  var ret$6: Ref
+  var local0$capturedResult: Ref
+  var anonymous$15: Ref
+  var ret$7: Ref
+  var anonymous$16: Ref
+  var ret$8: Ref
+  var anonymous$17: Ref
+  var ret$9: Ref
+  var anonymous$18: Ref
+  var ret$10: Ref
+  var anonymous$19: Ref
+  var ret$11: Ref
+  var anonymous$20: Ref
+  var ret$12: Ref
+  var local0$intResult: Ref
+  var anonymous$21: Ref
+  var ret$13: Ref
+  var ret$14: Ref
+  var anonymous$22: Ref
+  var ret$15: Ref
+  var ret$16: Ref
+  var anonymous$23: Ref
+  var ret$17: Ref
+  var ret$18: Ref
+  var local0$doubleIntRunResult: Ref
+  var anonymous$24: Ref
+  var ret$19: Ref
+  var anonymous$0: Ref
+  var ret$21: Ref
+  var anonymous$1: Ref
+  var ret$20: Ref
+  var local0$genericReceiverResult: Ref
+  var anonymous$25: Ref
+  var ret$22: Ref
+  var anonymous$2: Ref
+  var anonymous$26: Ref
+  var ret$23: Ref
+  var anonymous$27: Ref
+  var anonymous$28: Ref
+  var anonymous$29: Ref
+  var anonymous$30: Ref
+  var anonymous$31: Ref
+  var anonymous$32: Ref
+  var anonymous$33: Ref
+  var anonymous$34: Ref
+  var anonymous$35: Ref
+  var anonymous$36: Ref
+  local0$one := dom$RuntimeType$intToRef(1)
+  local0$two := dom$RuntimeType$intToRef(2)
+  local0$three := dom$RuntimeType$intToRef(3)
+  ret$2 := dom$RuntimeType$intToRef(1)
+  goto label$ret$2
+  label label$ret$2
+  anonymous$10 := ret$2
+  ret$1 := anonymous$10
+  goto label$ret$1
+  label label$ret$1
+  anonymous$9 := ret$1
+  ret$4 := dom$RuntimeType$intToRef(2)
+  goto label$ret$4
+  label label$ret$4
+  anonymous$12 := ret$4
+  ret$3 := anonymous$12
+  goto label$ret$3
+  label label$ret$3
+  anonymous$11 := ret$3
+  ret$6 := dom$RuntimeType$intToRef(3)
+  goto label$ret$6
+  label label$ret$6
+  anonymous$14 := ret$6
+  ret$5 := anonymous$14
+  goto label$ret$5
+  label label$ret$5
+  anonymous$13 := ret$5
+  local0$genericResult := dom$RuntimeType$boolToRef(special$plusInts(anonymous$9,
+    anonymous$11) ==
+    anonymous$13)
+  ret$8 := dom$RuntimeType$intToRef(1)
+  goto label$ret$8
+  label label$ret$8
+  anonymous$16 := ret$8
+  ret$7 := anonymous$16
+  goto label$ret$7
+  label label$ret$7
+  anonymous$15 := ret$7
+  ret$10 := dom$RuntimeType$intToRef(2)
+  goto label$ret$10
+  label label$ret$10
+  anonymous$18 := ret$10
+  ret$9 := anonymous$18
+  goto label$ret$9
+  label label$ret$9
+  anonymous$17 := ret$9
+  ret$12 := dom$RuntimeType$intToRef(3)
+  goto label$ret$12
+  label label$ret$12
+  anonymous$20 := ret$12
+  ret$11 := anonymous$20
+  goto label$ret$11
+  label label$ret$11
+  anonymous$19 := ret$11
+  local0$capturedResult := dom$RuntimeType$boolToRef(special$plusInts(anonymous$15,
+    anonymous$17) ==
+    anonymous$19)
+  ret$14 := dom$RuntimeType$intToRef(1)
+  goto label$ret$14
+  label label$ret$14
+  ret$13 := ret$14
+  goto label$ret$13
+  label label$ret$13
+  anonymous$21 := ret$13
+  ret$16 := dom$RuntimeType$intToRef(2)
+  goto label$ret$16
+  label label$ret$16
+  ret$15 := ret$16
+  goto label$ret$15
+  label label$ret$15
+  anonymous$22 := ret$15
+  ret$18 := dom$RuntimeType$intToRef(3)
+  goto label$ret$18
+  label label$ret$18
+  ret$17 := ret$18
+  goto label$ret$17
+  label label$ret$17
+  anonymous$23 := ret$17
+  local0$intResult := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(anonymous$21) +
+    dom$RuntimeType$intFromRef(anonymous$22) ==
+    dom$RuntimeType$intFromRef(anonymous$23))
+  anonymous$0 := dom$RuntimeType$intToRef(1)
+  ret$20 := special$plusInts(anonymous$0, dom$RuntimeType$intToRef(1))
+  goto label$ret$20
+  label label$ret$20
+  anonymous$1 := ret$20
+  ret$21 := special$plusInts(anonymous$1, dom$RuntimeType$intToRef(1))
+  goto label$ret$21
+  label label$ret$21
+  ret$19 := ret$21
+  goto label$ret$19
+  label label$ret$19
+  anonymous$24 := ret$19
+  local0$doubleIntRunResult := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(anonymous$24) ==
+    3)
+  anonymous$2 := dom$RuntimeType$intToRef(1)
+  ret$23 := special$plusInts(anonymous$2, dom$RuntimeType$intToRef(2))
+  goto label$ret$23
+  label label$ret$23
+  anonymous$26 := ret$23
+  ret$22 := anonymous$26
+  goto label$ret$22
+  label label$ret$22
+  anonymous$25 := ret$22
+  local0$genericReceiverResult := dom$RuntimeType$boolToRef(anonymous$25 ==
+    dom$RuntimeType$intToRef(3))
+  if (dom$RuntimeType$boolFromRef(local0$intResult)) {
+    anonymous$36 := local0$genericResult
+  } else {
+    anonymous$36 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$36)) {
+    anonymous$35 := local0$capturedResult
+  } else {
+    anonymous$35 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$35)) {
+    var ret$24: Ref
+    var local24$result: Ref
+    var ret$25: Ref
+    ret$25 := special$plusInts(dom$RuntimeType$intToRef(1), dom$RuntimeType$intToRef(2))
+    goto label$ret$25
+    label label$ret$25
+    local24$result := ret$25
+    ret$24 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local24$result) ==
+      3)
+    goto label$ret$24
+    label label$ret$24
+    anonymous$34 := ret$24
+  } else {
+    anonymous$34 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$34)) {
+    var anonymous$37: Ref
+    var ret$26: Ref
+    var local26$result: Ref
+    var ret$27: Ref
+    ret$27 := dom$RuntimeType$intToRef(4)
+    goto label$ret$27
+    label label$ret$27
+    local26$result := ret$27
+    ret$26 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local26$result) ==
+      3)
+    goto label$ret$26
+    label label$ret$26
+    anonymous$37 := ret$26
+    anonymous$33 := special$notBool(anonymous$37)
+  } else {
+    anonymous$33 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$33)) {
+    var ret$28: Ref
+    var local28$result: Ref
+    var ret$29: Ref
+    var anonymous$3: Ref
+    anonymous$3 := dom$RuntimeType$intToRef(1)
+    ret$29 := special$plusInts(anonymous$3, dom$RuntimeType$intToRef(2))
+    goto label$ret$29
+    label label$ret$29
+    local28$result := ret$29
+    ret$28 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local28$result) ==
+      3)
+    goto label$ret$28
+    label label$ret$28
+    anonymous$32 := ret$28
+  } else {
+    anonymous$32 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$32)) {
+    var anonymous$38: Ref
+    var ret$30: Ref
+    var local30$result: Ref
+    var ret$31: Ref
+    var anonymous$4: Ref
+    anonymous$4 := dom$RuntimeType$intToRef(1)
+    ret$31 := anonymous$4
+    goto label$ret$31
+    label label$ret$31
+    local30$result := ret$31
+    ret$30 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local30$result) ==
+      3)
+    goto label$ret$30
+    label label$ret$30
+    anonymous$38 := ret$30
+    anonymous$31 := special$notBool(anonymous$38)
+  } else {
+    anonymous$31 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$31)) {
+    var ret$32: Ref
+    var local32$result: Ref
+    var ret$33: Ref
+    var anonymous$5: Ref
+    anonymous$5 := dom$RuntimeType$intToRef(1)
+    ret$33 := special$plusInts(anonymous$5, dom$RuntimeType$intToRef(2))
+    goto label$ret$33
+    label label$ret$33
+    local32$result := ret$33
+    ret$32 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local32$result) ==
+      3)
+    goto label$ret$32
+    label label$ret$32
+    anonymous$30 := ret$32
+  } else {
+    anonymous$30 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$30)) {
+    var ret$34: Ref
+    var local34$result: Ref
+    var ret$35: Ref
+    var anonymous$6: Ref
+    anonymous$6 := dom$RuntimeType$intToRef(1)
+    ret$35 := special$plusInts(anonymous$6, dom$RuntimeType$intToRef(2))
+    goto label$ret$35
+    label label$ret$35
+    local34$result := ret$35
+    ret$34 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local34$result) ==
+      3)
+    goto label$ret$34
+    label label$ret$34
+    anonymous$29 := ret$34
+  } else {
+    anonymous$29 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$29)) {
+    var ret$36: Ref
+    var local36$result: Ref
+    var ret$38: Ref
+    var anonymous$8: Ref
+    var ret$37: Ref
+    var anonymous$7: Ref
+    anonymous$7 := dom$RuntimeType$intToRef(1)
+    ret$37 := special$plusInts(anonymous$7, dom$RuntimeType$intToRef(1))
+    goto label$ret$37
+    label label$ret$37
+    anonymous$8 := ret$37
+    ret$38 := special$plusInts(anonymous$8, dom$RuntimeType$intToRef(1))
+    goto label$ret$38
+    label label$ret$38
+    local36$result := ret$38
+    ret$36 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local36$result) ==
+      3)
+    goto label$ret$36
+    label label$ret$36
+    anonymous$28 := ret$36
+  } else {
+    anonymous$28 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$28)) {
+    anonymous$27 := local0$doubleIntRunResult
+  } else {
+    anonymous$27 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$27)) {
+    ret$0 := local0$genericReceiverResult
+  } else {
+    ret$0 := dom$RuntimeType$boolToRef(false)}
+  goto label$ret$0
+  label label$ret$0
+}
+
+/custom_run_functions.kt:(2226,2241): info: Generated Viper text for complexScenario:
+method global$fun_complexScenario$fun_take$T_Boolean$return$T_Boolean(local$arg: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == true ==>
+    dom$RuntimeType$boolFromRef(local$arg)
+  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==>
+    !dom$RuntimeType$boolFromRef(local$arg)
+{
+  var anonymous$5: Ref
+  var ret$1: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$arg), dom$RuntimeType$boolType())
+  if (dom$RuntimeType$boolFromRef(local$arg)) {
+    var anonymous$6: Ref
+    var ret$2: Ref
+    var anonymous$7: Ref
+    var ret$3: Ref
+    var local5$result: Ref
+    var ret$4: Ref
+    var anonymous$0: Ref
+    var anonymous$8: Ref
+    var ret$5: Ref
+    var anonymous$9: Ref
+    var ret$6: Ref
+    var ret$7: Ref
+    var ret$9: Ref
+    var anonymous$1: Ref
+    var ret$8: Ref
+    anonymous$0 := dom$RuntimeType$intToRef(1)
+    ret$8 := special$plusInts(anonymous$0, dom$RuntimeType$intToRef(1))
+    goto label$ret$8
+    label label$ret$8
+    anonymous$1 := ret$8
+    ret$9 := special$plusInts(anonymous$1, dom$RuntimeType$intToRef(1))
+    goto label$ret$9
+    label label$ret$9
+    ret$7 := ret$9
+    goto label$ret$7
+    label label$ret$7
+    ret$6 := ret$7
+    goto label$ret$6
+    label label$ret$6
+    anonymous$9 := ret$6
+    ret$5 := anonymous$9
+    goto label$ret$5
+    label label$ret$5
+    anonymous$8 := ret$5
+    ret$4 := anonymous$8
+    goto label$ret$4
+    label label$ret$4
+    local5$result := ret$4
+    ret$3 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local5$result) ==
+      3)
+    goto label$ret$3
+    label label$ret$3
+    anonymous$7 := ret$3
+    ret$2 := anonymous$7
+    goto label$ret$2
+    label label$ret$2
+    anonymous$6 := ret$2
+    ret$1 := anonymous$6
+  } else {
+    var anonymous$10: Ref
+    anonymous$10 := dom$RuntimeType$nullValue()
+    ret$1 := anonymous$10
+  }
+  goto label$ret$1
+  label label$ret$1
+  anonymous$5 := ret$1
+  if (anonymous$5 != dom$RuntimeType$nullValue()) {
+    ret$0 := anonymous$5
+  } else {
+    var anonymous$11: Ref
+    var ret$10: Ref
+    var anonymous$12: Ref
+    var ret$11: Ref
+    var ret$12: Ref
+    var local15$result: Ref
+    var ret$13: Ref
+    var anonymous$2: Ref
+    var anonymous$13: Ref
+    var ret$14: Ref
+    var anonymous$14: Ref
+    var ret$15: Ref
+    var anonymous$15: Ref
+    var ret$16: Ref
+    var anonymous$3: Ref
+    var anonymous$16: Ref
+    var ret$17: Ref
+    var anonymous$17: Ref
+    var ret$18: Ref
+    var anonymous$4: Ref
+    var anonymous$18: Ref
+    var ret$19: Ref
+    anonymous$2 := dom$RuntimeType$intToRef(1)
+    anonymous$3 := special$plusInts(anonymous$2, dom$RuntimeType$intToRef(1))
+    anonymous$4 := special$plusInts(anonymous$3, dom$RuntimeType$intToRef(1))
+    ret$19 := special$plusInts(anonymous$4, dom$RuntimeType$intToRef(1))
+    goto label$ret$19
+    label label$ret$19
+    anonymous$18 := ret$19
+    ret$18 := anonymous$18
+    goto label$ret$18
+    label label$ret$18
+    anonymous$17 := ret$18
+    ret$17 := anonymous$17
+    goto label$ret$17
+    label label$ret$17
+    anonymous$16 := ret$17
+    ret$16 := anonymous$16
+    goto label$ret$16
+    label label$ret$16
+    anonymous$15 := ret$16
+    ret$15 := anonymous$15
+    goto label$ret$15
+    label label$ret$15
+    anonymous$14 := ret$15
+    ret$14 := anonymous$14
+    goto label$ret$14
+    label label$ret$14
+    anonymous$13 := ret$14
+    ret$13 := anonymous$13
+    goto label$ret$13
+    label label$ret$13
+    local15$result := ret$13
+    ret$12 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local15$result) ==
+      3)
+    goto label$ret$12
+    label label$ret$12
+    ret$11 := ret$12
+    goto label$ret$11
+    label label$ret$11
+    anonymous$12 := ret$11
+    ret$10 := anonymous$12
+    goto label$ret$10
+    label label$ret$10
+    anonymous$11 := ret$10
+    ret$0 := anonymous$11
+  }
+  goto label$ret$0
+  label label$ret$0
+}
+
+/custom_run_functions.kt:(3305,3320): info: Generated Viper text for testCustomClass:
+field public$backing_field_member: Ref
+
+method class_CustomClass$constructor$fun_take$$return$T_class_global$class_CustomClass()
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_CustomClass())
+  ensures acc(T_class_global$class_CustomClass(ret), wildcard)
+
+
+method global$fun_testCustomClass$fun_take$$return$T_Boolean()
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == true
+{
+  var local0$custom: Ref
+  var anonymous$0: Ref
+  var ret$1: Ref
+  var anonymous$1: Ref
+  var ret$2: Ref
+  var anonymous$2: Ref
+  var ret$3: Ref
+  var anonymous$3: Ref
+  var ret$4: Ref
+  local0$custom := class_CustomClass$constructor$fun_take$$return$T_class_global$class_CustomClass()
+  unfold acc(T_class_global$class_CustomClass(local0$custom), wildcard)
+  ret$2 := local0$custom.public$backing_field_member
+  goto label$ret$2
+  label label$ret$2
+  anonymous$1 := ret$2
+  ret$1 := anonymous$1
+  goto label$ret$1
+  label label$ret$1
+  anonymous$0 := ret$1
+  unfold acc(T_class_global$class_CustomClass(local0$custom), wildcard)
+  ret$4 := local0$custom.public$backing_field_member
+  goto label$ret$4
+  label label$ret$4
+  anonymous$3 := ret$4
+  ret$3 := anonymous$3
+  goto label$ret$3
+  label label$ret$3
+  anonymous$2 := ret$3
+  ret$0 := dom$RuntimeType$boolToRef(anonymous$0 == anonymous$2)
+  goto label$ret$0
+  label label$ret$0
+}

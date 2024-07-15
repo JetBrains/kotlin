@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.evaluateAs
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignat
 import org.jetbrains.kotlin.formver.embeddings.callables.insertCall
 import org.jetbrains.kotlin.formver.embeddings.expression.*
 import org.jetbrains.kotlin.formver.functionCallArguments
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -69,6 +73,13 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
             ConstantValueKind.Null -> NullLit
             else -> handleUnimplementedElement("Constant Expression of type ${constExpression.kind} is not yet implemented.", data)
         }
+
+    override fun visitIntegerLiteralOperatorCall(
+        integerLiteralOperatorCall: FirIntegerLiteralOperatorCall,
+        data: StmtConversionContext
+    ): ExpEmbedding {
+        return visitFunctionCall(integerLiteralOperatorCall, data)
+    }
 
     override fun visitWhenSubjectExpression(
         whenSubjectExpression: FirWhenSubjectExpression,
@@ -271,9 +282,10 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
     override fun visitThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
         data: StmtConversionContext,
-    ): ExpEmbedding =
-        data.signature.receiver
+    ): ExpEmbedding {
+        return data.resolveReceiver()
             ?: throw IllegalArgumentException("Can't resolve the 'this' receiver since the function does not have one.")
+    }
 
     override fun visitTypeOperatorCall(
         typeOperatorCall: FirTypeOperatorCall,

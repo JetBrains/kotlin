@@ -373,7 +373,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 this,
                 signature,
                 RootParameterResolver(this, signature, signature.sourceName, returnTarget),
-                scopeIndexProducer.getFresh(),
+                scopeDepth = scopeIndexProducer.getFresh(),
             )
         val stmtCtx = StmtConverter(methodCtx)
         val body = stmtCtx.convert(firBody)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 import org.jetbrains.kotlin.formver.names.embedParameterName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 /**
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
  */
 interface ParameterResolver {
     fun tryResolveParameter(name: Name): ExpEmbedding?
+    fun tryResolveReceiver(): ExpEmbedding?
 
     val sourceName: String?
     val defaultResolvedReturnTarget: ReturnTarget
@@ -33,7 +35,9 @@ class RootParameterResolver(
     override val defaultResolvedReturnTarget: ReturnTarget,
 ) : ParameterResolver {
     private val parameters = signature.params.associateBy { it.name }
+    private val receiver = signature.receiver
     override fun tryResolveParameter(name: Name): ExpEmbedding? = parameters[name.embedParameterName()]
+    override fun tryResolveReceiver() = receiver
 }
 
 class InlineParameterResolver(
@@ -42,4 +46,5 @@ class InlineParameterResolver(
     override val defaultResolvedReturnTarget: ReturnTarget,
 ) : ParameterResolver {
     override fun tryResolveParameter(name: Name): ExpEmbedding? = substitutions[name]
+    override fun tryResolveReceiver(): ExpEmbedding? = substitutions[SpecialNames.THIS]
 }

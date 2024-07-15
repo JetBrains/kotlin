@@ -130,7 +130,8 @@ fun StmtConversionContext.embedPropertyAccess(accessExpression: FirPropertyAcces
                 else -> embedLocalProperty(calleeSymbol)
             }
         }
-        else -> error("Property access symbol $calleeSymbol has unsupported type.")
+        else ->
+            error("Property access symbol $calleeSymbol has unsupported type.")
     }
 
 fun StmtConversionContext.getInlineFunctionCallArgs(
@@ -165,7 +166,7 @@ fun StmtConversionContext.insertInlineFunctionCall(
     val methodCtxFactory = MethodContextFactory(
         calleeSignature,
         InlineParameterResolver(subs, returnTargetName, returnTarget),
-        parentCtx,
+        parent = parentCtx,
     )
     return withMethodCtx(methodCtxFactory) {
         Block(

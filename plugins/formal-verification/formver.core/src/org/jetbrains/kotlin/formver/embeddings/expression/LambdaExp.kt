@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.formver.embeddings.callables.asData
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.PlaintextLeaf
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.TreeView
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
+import org.jetbrains.kotlin.name.SpecialNames
 
 class LambdaExp(
     val signature: FunctionSignature,
@@ -34,9 +35,17 @@ class LambdaExp(
         args: List<ExpEmbedding>,
         ctx: StmtConversionContext,
     ): ExpEmbedding {
-        val inlineBody = function.body ?: throw IllegalArgumentException("Lambda $function has a null body")
-        val paramNames = function.valueParameters.map { it.name }
-        return ctx.insertInlineFunctionCall(signature, paramNames, args, inlineBody, ctx.signature.sourceName, parentCtx)
+        val inlineBody = function.body ?: throw IllegalArgumentException("Lambda $function has a null body.")
+        val nonReceiverParamNames = function.valueParameters.map { it.name }
+        val receiverParamNames = if (function.receiverParameter != null) listOf(SpecialNames.THIS) else emptyList()
+        return ctx.insertInlineFunctionCall(
+            signature,
+            receiverParamNames + nonReceiverParamNames,
+            args,
+            inlineBody,
+            ctx.signature.sourceName,
+            parentCtx,
+        )
     }
 
     override val debugTreeView: TreeView

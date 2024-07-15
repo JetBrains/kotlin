@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
-import org.jetbrains.kotlin.formver.embeddings.expression.withType
 
 /**
  * Kotlin entity that can be called.
@@ -21,9 +20,4 @@ interface CallableEmbedding : CallableSignature {
 fun CallableEmbedding.insertCall(
     args: List<ExpEmbedding>,
     ctx: StmtConversionContext,
-): ExpEmbedding {
-    return args.zip(formalArgTypes)
-        .map { (arg, type) -> arg.withType(type) }
-        .let { insertCallImpl(it, ctx) }
-        .withType(returnType)
-}
+): ExpEmbedding = insertCallImpl(args, ctx)
