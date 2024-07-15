@@ -466,6 +466,7 @@ method class_CustomClass$constructor$fun_take$$return$T_class_global$class_Custo
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_CustomClass())
   ensures acc(T_class_global$class_CustomClass(ret), wildcard)
+  ensures acc(Unique$T_class_global$class_CustomClass(ret), write)
 
 
 method global$fun_testCustomClass$fun_take$$return$T_Boolean()
