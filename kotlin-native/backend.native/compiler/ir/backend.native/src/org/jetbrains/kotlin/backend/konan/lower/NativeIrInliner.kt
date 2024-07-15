@@ -22,8 +22,6 @@ internal class NativeIrInliner(
         NativeInlineFunctionResolver(context, inlineOnlyPrivateFunctions),
         insertAdditionalImplicitCasts = true,
 ) {
-    private val inlineFunctionsSupport = context.context.inlineFunctionsSupport
-
     override fun lower(irFile: IrFile) {
         // For consistency, it's important to memoize already lowered inline functions exactly in the same state
         // as they were immediately before inlining.
@@ -37,7 +35,7 @@ internal class NativeIrInliner(
 
                 if (declaration.isInline) {
                     if (!inlineOnlyPrivateFunctions || declaration.isConsideredAsPrivateForInlining()) {
-                        inlineFunctionsSupport.saveLoweredInlineFunction(declaration)
+                        declaration.getOrSaveLoweredInlineFunction()
                     }
                 }
             }

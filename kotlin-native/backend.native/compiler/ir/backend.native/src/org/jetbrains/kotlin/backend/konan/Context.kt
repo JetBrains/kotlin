@@ -34,7 +34,6 @@ internal class NativeMapping : Mapping() {
         ATOMIC_GET_ARRAY_ELEMENT, ATOMIC_SET_ARRAY_ELEMENT, COMPARE_AND_EXCHANGE_ARRAY_ELEMENT, COMPARE_AND_SET_ARRAY_ELEMENT, GET_AND_SET_ARRAY_ELEMENT, GET_AND_ADD_ARRAY_ELEMENT;
     }
 
-    val loweredInlineFunctions: DeclarationMapping<IrFunction, IrFunction> by AttributeBasedMappingDelegate()
     val outerThisCacheAccessors: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val lateinitPropertyCacheAccessors: DeclarationMapping<IrProperty, IrSimpleFunction> by AttributeBasedMappingDelegate()
     val topLevelFieldCacheAccessors: DeclarationMapping<IrField, IrSimpleFunction> by AttributeBasedMappingDelegate()
@@ -67,7 +66,6 @@ internal class Context(
 
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
     val bridgesSupport by lazy { BridgesSupport(irBuiltIns, irFactory) }
-    val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
     val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
 

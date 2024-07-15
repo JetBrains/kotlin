@@ -16,23 +16,21 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-internal class InlineFunctionsSupport(mapping: NativeMapping) {
-    /**
-     * This is the cache of the inline functions that have already been lowered.
-     * It is helpful to avoid re-lowering the same function multiple times.
-     */
-    private val loweredInlineFunctions = mapping.loweredInlineFunctions
+/**
+ * This is the cache of the inline functions that have already been lowered.
+ * It is helpful to avoid re-lowering the same function multiple times.
+ */
+private var IrFunction.loweredInlineFunction: IrFunction? by irAttribute(followAttributeOwner = false)
 
-    fun saveLoweredInlineFunction(function: IrFunction): IrFunction = getLoweredInlineFunction(function)
-            ?: function.deepCopyWithSymbols(function.parent).also { loweredInlineFunctions[function] = it }
-
-    fun getLoweredInlineFunction(function: IrFunction): IrFunction? = loweredInlineFunctions[function]
-}
+internal fun IrFunction.getOrSaveLoweredInlineFunction(): IrFunction =
+        this::loweredInlineFunction.getOrSetIfNull { this.deepCopyWithSymbols(this.parent) }
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
 internal class NativeInlineFunctionResolver(
@@ -56,7 +54,7 @@ internal class NativeInlineFunctionResolver(
             function to firstAccess
         } else {
             irFile = packageFragment as IrFile
-            val partiallyLoweredFunction = context.inlineFunctionsSupport.getLoweredInlineFunction(function)
+            val partiallyLoweredFunction = function.loweredInlineFunction
             if (partiallyLoweredFunction == null)
                 function to true
             else {
@@ -70,7 +68,7 @@ internal class NativeInlineFunctionResolver(
             lower(possiblyLoweredFunction, irFile, functionIsCached)
             if (!functionIsCached) {
                 generationState.inlineFunctionOrigins[function] =
-                        InlineFunctionOriginInfo(context.inlineFunctionsSupport.saveLoweredInlineFunction(possiblyLoweredFunction),
+                        InlineFunctionOriginInfo(possiblyLoweredFunction.getOrSaveLoweredInlineFunction(),
                                 irFile, function.startOffset, function.endOffset)
             }
         }
