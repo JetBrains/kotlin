@@ -8,7 +8,17 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 
-data class ChainedSubstitutor(val first: ConeSubstitutor, val second: ConeSubstitutor) : ConeSubstitutor() {
+//@ConsistentCopyVisibility
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING")
+data class ChainedSubstitutor private constructor(val first: ConeSubstitutor, val second: ConeSubstitutor) : ConeSubstitutor() {
+    companion object {
+        operator fun invoke(first: ConeSubstitutor, second: ConeSubstitutor): ConeSubstitutor {
+            if (first == Empty) return second
+            if (second == Empty) return first
+            return ChainedSubstitutor(first, second)
+        }
+    }
+
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
         first.substituteOrNull(type)?.let { return second.substituteOrSelf(it) }
         return second.substituteOrNull(type)
@@ -25,7 +35,5 @@ data class ChainedSubstitutor(val first: ConeSubstitutor, val second: ConeSubsti
 }
 
 fun ConeSubstitutor.chain(other: ConeSubstitutor): ConeSubstitutor {
-    if (this == ConeSubstitutor.Empty) return other
-    if (other == ConeSubstitutor.Empty) return this
     return ChainedSubstitutor(this, other)
 }
