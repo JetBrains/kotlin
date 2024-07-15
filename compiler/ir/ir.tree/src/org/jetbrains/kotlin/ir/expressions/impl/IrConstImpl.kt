@@ -65,7 +65,3 @@ class IrConstImpl<T> internal constructor(
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
     }
 }
-
-fun <T> IrConst<T>.copyWithOffsets(startOffset: Int, endOffset: Int) =
-    IrConstImpl(startOffset, endOffset, type, kind, value)
-
