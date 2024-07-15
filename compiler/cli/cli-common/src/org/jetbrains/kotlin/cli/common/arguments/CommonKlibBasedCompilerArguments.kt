@@ -64,14 +64,4 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
             checkFrozen()
             field = value
         }
-
-    @Argument(
-        value = "-Xdump-synthetic-accessors-to",
-        description = "Path to a directory to dump synthetic accessors and their use sites."
-    )
-    var dumpSyntheticAccessorsTo: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
 }
