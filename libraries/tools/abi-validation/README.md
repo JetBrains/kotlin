@@ -35,7 +35,7 @@ Binary compatibility validator is a Gradle plugin that can be added to your buil
 - in `build.gradle.kts`
 ```kotlin
 plugins {
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.15.1"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.16.0"
 }
 ```
 
@@ -43,7 +43,7 @@ plugins {
 
 ```groovy
 plugins {
-    id 'org.jetbrains.kotlinx.binary-compatibility-validator' version '0.15.1'
+    id 'org.jetbrains.kotlinx.binary-compatibility-validator' version '0.16.0'
 }
 ```
 
