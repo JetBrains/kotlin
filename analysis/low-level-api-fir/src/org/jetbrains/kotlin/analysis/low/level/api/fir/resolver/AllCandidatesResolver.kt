@@ -10,21 +10,25 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
-import org.jetbrains.kotlin.fir.resolve.calls.AllCandidatesCollector
-import org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.calls.OverloadCandidate
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.calls.AllCandidatesCollector
+import org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.OverloadCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.fullyProcessCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -34,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.util.PrivateForInline
 
@@ -83,7 +88,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
                     resolutionContext,
                     resolutionMode,
                 )
-                .apply { postProcessCandidates() }
+                .apply { postProcessCandidates(qualifiedAccess) }
         }
     }
 
@@ -109,7 +114,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
 
             bodyResolveComponents.collector.allCandidates
                 .map { OverloadCandidate(it, isInBestCandidates = it in bodyResolveComponents.collector.bestCandidates()) }
-                .apply { postProcessCandidates() }
+                .apply { postProcessCandidates(delegatedConstructorCall) }
         }
     }
 
@@ -129,8 +134,28 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         bodyResolveComponents.context.file = firFile
     }
 
-    private fun List<OverloadCandidate>.postProcessCandidates() {
-        forEach { it.preserveCalleeInapplicability() }
+    private fun <T> List<OverloadCandidate>.postProcessCandidates(call: T) where T : FirExpression, T : FirResolvable {
+        val callCompleter = bodyResolveComponents.callCompleter
+        val analyzer = callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
+        val components = resolutionContext.bodyResolveComponents
+
+        forEach { overloadCandidate ->
+            val candidate = overloadCandidate.candidate
+
+            // Runs resolution stages. In particular, this action initiates type constraints
+            components.resolutionStageRunner.fullyProcessCandidate(candidate, resolutionContext)
+
+            // Runs completion for the candidate. This step is required to solve the constraint system
+            callCompleter.runCompletionForCall(
+                candidate = candidate,
+                completionMode = ConstraintSystemCompletionMode.FULL,
+                call = call,
+                initialType = components.initialTypeOfCandidate(candidate),
+                analyzer = analyzer,
+            )
+
+            overloadCandidate.preserveCalleeInapplicability()
+        }
     }
 
     /**

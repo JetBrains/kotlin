@@ -459,7 +459,20 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = start
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = start: kotlin.Int
+          callableId = null),
+        10 -> (KaVariableSignature:
+          name = endInclusive
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = endInclusive: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -490,7 +503,7 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
           ]
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'step'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(297,311): 'IntProgression'
@@ -538,7 +551,20 @@ KtNameReferenceExpression(297,311): 'IntProgression'
   
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = start
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = start: kotlin.Int
+          callableId = null),
+        10 -> (KaVariableSignature:
+          name = endInclusive
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = endInclusive: kotlin.Int
+          callableId = null)
+      }
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -569,7 +595,7 @@ KtNameReferenceExpression(297,311): 'IntProgression'
           ]
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(start: Int, endInclusive: Int, step: Int): IntProgression': it is internal in 'kotlin/ranges/IntProgression'.>
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'step'.>
     isInBestCandidates = false
 
 KtValueArgumentList(311,318): '(1, 10)'

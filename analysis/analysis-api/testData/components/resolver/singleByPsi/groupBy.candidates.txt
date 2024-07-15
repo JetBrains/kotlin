@@ -130,5 +130,6 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
       typeArgumentsMapping = {
         K -> (kotlin.collections.IndexedValue<kotlin.Int>)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <K> List<Pair<Int, Int>>.groupBy(keySelector: (Pair<Int, Int>) -> K, valueTransform: (Pair<Int, Int>) -> Int): Map<K, List<Int>>>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun <K> List<Pair<Int, Int>>.groupBy(keySelector: (Pair<Int, Int>) -> K, valueTransform: (Pair<Int, Int>) -> Int): Map<K, List<Int>>>
     isInBestCandidates = false

@@ -30,7 +30,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
           ]
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun compareTo(value: MyClass): Int>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'MyClass' was expected.>
     isInBestCandidates = false
   
   KaApplicableCallCandidateInfo:

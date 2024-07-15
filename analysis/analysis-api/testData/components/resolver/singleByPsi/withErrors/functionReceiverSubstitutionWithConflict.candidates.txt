@@ -10,7 +10,7 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
           isSafeNavigation = false
           type = Foo<kotlin.String>
         signature = KaFunctionSignature:
-          receiverType = Foo<A>
+          receiverType = Foo<kotlin.String>
           returnType = kotlin.Unit
           symbol = /foo(<extension receiver>: Foo<A>, i: kotlin.Int): kotlin.Unit
           valueParameters = [
@@ -22,10 +22,12 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
               callableId = null
           ]
           callableId = /foo
-      typeArgumentsMapping = {}
+      typeArgumentsMapping = {
+        A -> (kotlin.String)
+      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
     isInBestCandidates = true
-
+  
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
@@ -37,7 +39,7 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
           isSafeNavigation = false
           type = Foo<kotlin.String>
         signature = KaFunctionSignature:
-          receiverType = Foo<B>
+          receiverType = Foo<kotlin.String>
           returnType = kotlin.Unit
           symbol = /foo(<extension receiver>: Foo<B>, s: kotlin.String): kotlin.Unit
           valueParameters = [
@@ -49,6 +51,8 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
               callableId = null
           ]
           callableId = /foo
-      typeArgumentsMapping = {}
+      typeArgumentsMapping = {
+        B -> (kotlin.String)
+      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'.>
     isInBestCandidates = true

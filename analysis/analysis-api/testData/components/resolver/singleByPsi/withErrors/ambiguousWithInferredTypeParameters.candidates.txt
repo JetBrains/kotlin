@@ -5,7 +5,7 @@ KtCallExpression(128,139): 'function(1)'
         1 -> (KaVariableSignature:
           name = t
           receiverType = null
-          returnType = T
+          returnType = kotlin.Int
           symbol = t: T
           callableId = null)
       }
@@ -21,7 +21,7 @@ KtCallExpression(128,139): 'function(1)'
             KaVariableSignature:
               name = t
               receiverType = null
-              returnType = T
+              returnType = kotlin.Int
               symbol = t: T
               callableId = null,
             KaVariableSignature:
@@ -32,7 +32,9 @@ KtCallExpression(128,139): 'function(1)'
               callableId = null
           ]
           callableId = /function
-      typeArgumentsMapping = {}
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a'.>
     isInBestCandidates = true
   
@@ -42,7 +44,7 @@ KtCallExpression(128,139): 'function(1)'
         1 -> (KaVariableSignature:
           name = u
           receiverType = null
-          returnType = U
+          returnType = kotlin.Int
           symbol = u: U
           callableId = null)
       }
@@ -58,7 +60,7 @@ KtCallExpression(128,139): 'function(1)'
             KaVariableSignature:
               name = u
               receiverType = null
-              returnType = U
+              returnType = kotlin.Int
               symbol = u: U
               callableId = null,
             KaVariableSignature:
@@ -69,7 +71,9 @@ KtCallExpression(128,139): 'function(1)'
               callableId = null
           ]
           callableId = /function
-      typeArgumentsMapping = {}
+      typeArgumentsMapping = {
+        U -> (kotlin.Int)
+      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
     isInBestCandidates = true
   
@@ -79,7 +83,7 @@ KtCallExpression(128,139): 'function(1)'
         1 -> (KaVariableSignature:
           name = v
           receiverType = null
-          returnType = V
+          returnType = kotlin.Int
           symbol = v: V
           callableId = null)
       }
@@ -95,7 +99,7 @@ KtCallExpression(128,139): 'function(1)'
             KaVariableSignature:
               name = v
               receiverType = null
-              returnType = V
+              returnType = kotlin.Int
               symbol = v: V
               callableId = null,
             KaVariableSignature:
@@ -106,6 +110,8 @@ KtCallExpression(128,139): 'function(1)'
               callableId = null
           ]
           callableId = /function
-      typeArgumentsMapping = {}
+      typeArgumentsMapping = {
+        V -> (kotlin.Int)
+      }
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c'.>
     isInBestCandidates = true

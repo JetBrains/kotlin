@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
@@ -294,6 +295,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
         startingArtifactFactory = { ResultingArtifact.Source() }
         this.testInfo = this@AbstractAnalysisApiBasedTest.testInfo
+
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
     }
 
     protected fun runTest(@TestDataFile path: String) {
