@@ -295,7 +295,7 @@ abstract class AbstractTypeApproximator(
             (conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_COMMON_SUPERTYPE ||
                     conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE)
         ) {
-            return approximateToSuperType(upperBoundForApproximation, conf) ?: upperBoundForApproximation
+            return approximateToSuperType(upperBoundForApproximation, conf, depth) ?: upperBoundForApproximation
         }
 
         var thereIsApproximation = false
