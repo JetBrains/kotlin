@@ -228,13 +228,12 @@ class FirClasspathBuiltinSymbolProvider(
     val findPackagePartData: (FqName) -> InputStream?,
 ) : AbstractFirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider, false) {
 
-    override val builtInsPackageFragments: Map<FqName, BuiltInsPackageFragment>
-        get() = buildMap {
-            StandardClassIds.builtInsPackages.forEach { fqName ->
-                val inputStream = findPackagePartData(fqName) ?: return@forEach
-                put(fqName, BuiltInsPackageFragment(inputStream))
-            }
+    override val builtInsPackageFragments: Map<FqName, BuiltInsPackageFragment> = buildMap {
+        StandardClassIds.builtInsPackages.forEach { fqName ->
+            val inputStream = findPackagePartData(fqName) ?: return@forEach
+            put(fqName, BuiltInsPackageFragment(inputStream))
         }
+    }
 }
 
 private data class BinaryVersionAndPackageFragment(
