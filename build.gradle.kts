@@ -1109,15 +1109,16 @@ val zipCompilerWithSignature by secureZipTask(zipCompiler)
 
 configure<IdeaModel> {
     module {
-        excludeDirs = files(
-            project.layout.buildDirectory,
-            commonLocalDataDir,
-            ".gradle",
-            "dependencies",
-            "dist",
-            "tmp",
-            "intellij"
-        ).toSet()
+        excludeDirs.addAll(
+            files(
+                commonLocalDataDir,
+                ".kotlin",
+                "test.output",
+                "dist",
+                "tmp",
+                "intellij",
+            )
+        )
     }
 }
 
