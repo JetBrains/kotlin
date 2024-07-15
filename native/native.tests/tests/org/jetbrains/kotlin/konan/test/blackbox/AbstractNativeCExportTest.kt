@@ -53,6 +53,11 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
             Assumptions.abort<Nothing>("concurrentTerminate flaks on Mac, see KT-69303")
         }
 
+        // https://youtrack.jetbrains.com/issue/KT-69663
+        if (testDir == "native/native.tests/testData/CExport/InterfaceV1/unhandledExceptionThroughBridge/" && HostManager.hostIsMingw) {
+            Assumptions.abort<Nothing>("unhandledExceptionThroughBridge flaks on Windows, see KT-69663")
+        }
+
         val testPathFull = getAbsoluteFile(testDir)
         val ktSources = testPathFull.list()!!
             .filter { it.endsWith(".kt") }
