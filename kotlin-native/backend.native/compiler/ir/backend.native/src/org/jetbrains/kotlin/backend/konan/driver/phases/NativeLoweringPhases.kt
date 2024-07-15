@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -54,7 +53,7 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerings(lowerings: Lowering
     }
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runIrValidationPhase(
+internal fun PhaseEngine<NativeGenerationState>.runModuleWisePhase(
         lowering: SimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>,
         modules: List<IrModuleFragment>
 ) {

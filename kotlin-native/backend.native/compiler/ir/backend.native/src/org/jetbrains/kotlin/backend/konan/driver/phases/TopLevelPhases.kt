@@ -340,7 +340,7 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
     // stage, because otherwise we may be actually validating a partially lowered IR that may not pass certain checks
     // (like IR visibility checks).
     // This is what we call a 'lowering synchronization point'.
-    runIrValidationPhase(validateIrBeforeLowering, allModulesToLower)
+    runModuleWisePhase(validateIrBeforeLowering, allModulesToLower)
     run {
         // This is a so-called "KLIB Common Lowerings Prefix".
         //
@@ -353,16 +353,16 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
         // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
         runLowerings(getLoweringsUpToAndIncludingSyntheticAccessors(), allModulesToLower)
         if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
-            runIrValidationPhase(validateIrAfterInliningOnlyPrivateFunctions, allModulesToLower)
+            runModuleWisePhase(validateIrAfterInliningOnlyPrivateFunctions, allModulesToLower)
             if (context.config.configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null) {
-                runIrValidationPhase(dumpSyntheticAccessorsPhase, allModulesToLower)
+                runModuleWisePhase(dumpSyntheticAccessorsPhase, allModulesToLower)
             }
         }
         runLowerings(listOf(inlineAllFunctionsPhase), allModulesToLower)
     }
-    runIrValidationPhase(validateIrAfterInliningAllFunctions, allModulesToLower)
+    runModuleWisePhase(validateIrAfterInliningAllFunctions, allModulesToLower)
     runLowerings(getLoweringsAfterInlining(), allModulesToLower)
-    runIrValidationPhase(validateIrAfterLowering, allModulesToLower)
+    runModuleWisePhase(validateIrAfterLowering, allModulesToLower)
 
     mergeDependencies(module, dependenciesToCompile)
 }
