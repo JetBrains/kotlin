@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -21,10 +20,14 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = mapping.objectInstanceGetter.getOrPut(clazz) {
+private var IrClass.objectClassInstanceFunction: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
+
+internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = clazz::objectClassInstanceFunction.getOrSetIfNull {
     when {
         clazz.isUnit() -> ir.symbols.theUnitInstance.owner
         clazz.isCompanion -> {
