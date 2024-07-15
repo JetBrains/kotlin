@@ -55,12 +55,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is ConeClassLikeLookupTag) return false
-        return classId.isLocal
+        return isLocalClass()
     }
 
     override fun TypeConstructorMarker.isAnonymous(): Boolean {
         if (this !is ConeClassLikeLookupTag) return false
-        return name == SpecialNames.ANONYMOUS
+        return isAnonymousClass()
     }
 
     override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
