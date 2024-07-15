@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.gradle.utils.lifecycleWithDuration
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeLibraryGenerationRunner
 import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
+import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -34,13 +37,13 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 internal class PlatformLibrariesGenerator(
-    val project: Project,
     objectFactory: ObjectFactory,
     val konanTarget: KonanTarget,
     private val propertiesProvider: PropertiesProvider,
     private val konanPropertiesService: Provider<KonanPropertiesBuildService>,
     metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
     classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
+    private val platformLibrariesService: Provider<GeneratedPlatformLibrariesService>,
     useXcodeMessageStyle: Provider<Boolean>,
     private val nativeProperties: NativeProperties,
 ) {
@@ -118,12 +121,7 @@ internal class PlatformLibrariesGenerator(
      * during this build to avoid redundant distribution checks.
      */
     private val alreadyProcessed: PlatformLibsInfo
-        get() = project.rootProject.extensions.extraProperties.run {
-            if (!has(GENERATED_LIBS_PROPERTY_NAME)) {
-                set(GENERATED_LIBS_PROPERTY_NAME, PlatformLibsInfo())
-            }
-            get(GENERATED_LIBS_PROPERTY_NAME) as PlatformLibsInfo
-        }
+        get() = platformLibrariesService.get().platformLibsInfo
 
     private fun runGenerationTool() {
         val args = mutableListOf("-target", konanTarget.visibleName)
@@ -223,7 +221,7 @@ internal class PlatformLibrariesGenerator(
         }
     }
 
-    private class PlatformLibsInfo {
+    internal class PlatformLibsInfo {
         private val generated: MutableSet<File> = Collections.newSetFromMap(ConcurrentHashMap<File, Boolean>())
         private val cached: ConcurrentHashMap<NativeCacheKind, MutableSet<File>> = ConcurrentHashMap()
 
@@ -260,7 +258,13 @@ internal class PlatformLibrariesGenerator(
         }
     }
 
+    internal abstract class GeneratedPlatformLibrariesService : BuildService<BuildServiceParameters.None> {
+        val platformLibsInfo = PlatformLibsInfo()
+    }
+
     companion object {
-        private const val GENERATED_LIBS_PROPERTY_NAME = "org.jetbrains.kotlin.native.platform.libs.info"
+        fun registerRequiredServiceIfAbsent(project: Project): Provider<GeneratedPlatformLibrariesService> {
+            return project.gradle.registerClassLoaderScopedBuildService(GeneratedPlatformLibrariesService::class)
+        }
     }
 }

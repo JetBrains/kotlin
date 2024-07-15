@@ -284,13 +284,13 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
     val distributionType = NativeDistributionTypeProvider(project).getDistributionType()
     if (distributionType.mustGeneratePlatformLibs) {
         PlatformLibrariesGenerator(
-            project,
             project.objects,
             konanTarget,
             project.kotlinPropertiesProvider,
             project.konanPropertiesBuildService,
             project.objects.property(GradleBuildMetricsReporter()),
             ClassLoadersCachingBuildService.registerIfAbsent(project),
+            PlatformLibrariesGenerator.registerRequiredServiceIfAbsent(project),
             project.useXcodeMessageStyle,
             project.nativeProperties
         ).generatePlatformLibsIfNeeded()
