@@ -1,14 +1,12 @@
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.register
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
