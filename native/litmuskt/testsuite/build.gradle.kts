@@ -7,6 +7,7 @@ kotlin {
     linuxArm64()
     macosX64()
     macosArm64()
+    mingwX64()
     jvm {
         withJava()
     }
