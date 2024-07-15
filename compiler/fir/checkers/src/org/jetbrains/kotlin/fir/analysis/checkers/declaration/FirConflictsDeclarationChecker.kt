@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERLOADS_DEPRECATION
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -128,13 +130,34 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
             }
 
             val dispatcher = context.session.conflictDeclarationsDiagnosticDispatcher ?: PlatformConflictDeclarationsDiagnosticDispatcher.DEFAULT
-            val factory = dispatcher.getDiagnostic(conflictingDeclaration, symbols, context)
+            val factory = when {
+                shouldReportDeprecation(conflictingDeclaration, symbols, context) -> CONFLICTING_OVERLOADS_DEPRECATION
+                else -> dispatcher.getDiagnostic(conflictingDeclaration, symbols, context)
+            }
 
             if (factory != null) {
                 reporter.reportOn(source, factory, symbols, context)
             }
         }
     }
+
+    private fun shouldReportDeprecation(
+        conflictingDeclaration: FirBasedSymbol<*>,
+        symbols: SmartSet<FirBasedSymbol<*>>,
+        context: CheckerContext
+    ): Boolean {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOverloadingBetweenVarargsAndArrays)) {
+            return false
+        }
+
+        val wouldNotConflictPreviously = symbols.all {
+            haveDifferentPresentations(conflictingDeclaration, it, FirRedeclarationPresenter.OldVarargsCompatibilityPresenter::represent)
+        }
+
+        return wouldNotConflictPreviously
+    }
+
+    private fun <T> haveDifferentPresentations(a: T, b: T, represent: (T) -> String?): Boolean = represent(a) != represent(b)
 
     private val FirBasedSymbol<*>.isPrimaryConstructor: Boolean
         get() = this is FirConstructorSymbol && isPrimary || origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor

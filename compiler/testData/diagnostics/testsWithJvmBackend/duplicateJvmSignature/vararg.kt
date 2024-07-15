@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ProhibitOverloadingBetweenVarargsAndArrays
 
 <!CONFLICTING_JVM_DECLARATIONS!>fun foo(vararg x: Int) {}<!>
 <!CONFLICTING_JVM_DECLARATIONS!>fun foo(x: IntArray) {}<!>

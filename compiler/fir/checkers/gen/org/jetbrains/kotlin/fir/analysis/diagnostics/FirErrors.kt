@@ -582,6 +582,7 @@ object FirErrors {
     // Redeclarations
     val MANY_COMPANION_OBJECTS: KtDiagnosticFactory0 = KtDiagnosticFactory0("MANY_COMPANION_OBJECTS", ERROR, SourceElementPositioningStrategies.COMPANION_OBJECT, KtObjectDeclaration::class)
     val CONFLICTING_OVERLOADS: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("CONFLICTING_OVERLOADS", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, PsiElement::class)
+    val CONFLICTING_OVERLOADS_DEPRECATION: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("CONFLICTING_OVERLOADS_DEPRECATION", WARNING, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, PsiElement::class)
     val REDECLARATION: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("REDECLARATION", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, KtNamedDeclaration::class)
     val CLASSIFIER_REDECLARATION: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("CLASSIFIER_REDECLARATION", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, KtNamedDeclaration::class)
     val PACKAGE_CONFLICTS_WITH_CLASSIFIER: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("PACKAGE_CONFLICTS_WITH_CLASSIFIER", ERROR, SourceElementPositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION, KtPackageDirective::class)

@@ -1,8 +1,9 @@
 // WITH_STDLIB
+// LANGUAGE: -ProhibitOverloadingBetweenVarargsAndArrays
 
 class AllCollection2<T> {
-    fun <K, T> addAll(vararg values: T, values2: Array<K>) = "OK" // 1
-    fun <K, T> addAll(values: Array<K>, vararg values2: T) = 1 // 2
+    <!CONFLICTING_OVERLOADS_DEPRECATION!>fun <K, T> addAll(vararg values: T, values2: Array<K>)<!> = "OK" // 1
+    <!CONFLICTING_OVERLOADS_DEPRECATION!>fun <K, T> addAll(values: Array<K>, vararg values2: T)<!> = 1 // 2
 }
 
 fun main(c: AllCollection2<Any?>) {

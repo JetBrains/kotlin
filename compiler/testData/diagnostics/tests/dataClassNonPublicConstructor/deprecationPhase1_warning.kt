@@ -1,4 +1,4 @@
-// LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
+// LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility, -ProhibitOverloadingBetweenVarargsAndArrays
 data class Data private constructor(val x: Int) {
     fun member() {
         copy()

@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
  *
  * Elements that are potential redeclarations have the same representations, e.g., properties without receivers and classes.
  */
-internal object FirRedeclarationPresenter {
+internal abstract class FirRedeclarationPresenterBase {
     private fun StringBuilder.appendRepresentation(it: ClassId) {
         append(it.packageFqName.asString())
         append('/')
@@ -32,12 +33,6 @@ internal object FirRedeclarationPresenter {
             append('.')
         }
         append(it.callableName)
-    }
-
-    private fun StringBuilder.appendRepresentation(it: FirValueParameterSymbol) {
-        if (it.isVararg) {
-            append("vararg ")
-        }
     }
 
     private fun StringBuilder.appendRepresentationBeforeCallableId(it: FirCallableSymbol<*>) {
@@ -56,20 +51,17 @@ internal object FirRedeclarationPresenter {
         append(']')
     }
 
-    private fun StringBuilder.appendValueParameters(it: FirNamedFunctionSymbol) {
-        append('(')
-        it.valueParameterSymbols.forEach {
-            appendRepresentation(it)
-            append(',')
-        }
-        append(')')
-    }
+    protected abstract fun StringBuilder.appendValueParameters(it: FirFunctionSymbol<*>)
 
     fun represent(declaration: FirBasedSymbol<*>): String? = when (declaration) {
         is FirNamedFunctionSymbol -> represent(declaration)
         is FirRegularClassSymbol -> represent(declaration)
         is FirTypeAliasSymbol -> represent(declaration)
-        is FirPropertySymbol -> represent(declaration)
+        is FirVariableSymbol<*> -> represent(declaration)
+        is FirConstructorSymbol -> {
+            val container = declaration.typeAliasForConstructor?.classId ?: declaration.containingClassLookupTag()?.classId
+            container?.let { represent(declaration, it) }
+        }
         else -> null
     }
 
@@ -100,7 +92,9 @@ internal object FirRedeclarationPresenter {
         appendRepresentation(it.classId)
     }
 
-    fun represent(it: FirConstructorSymbol, owner: FirClassLikeSymbol<*>) = buildString {
+    fun represent(it: FirConstructorSymbol, owner: FirClassLikeSymbol<*>) = represent(it, owner.classId)
+
+    fun represent(it: FirConstructorSymbol, ownerClassId: ClassId) = buildString {
         repeat(it.resolvedContextReceivers.size) {
             append(',')
         }
@@ -111,12 +105,35 @@ internal object FirRedeclarationPresenter {
         append('>')
         append('[')
         append(']')
-        appendRepresentation(owner.classId)
+        appendRepresentation(ownerClassId)
+        appendValueParameters(it)
+    }
+}
+
+internal object FirRedeclarationPresenter : FirRedeclarationPresenterBase() {
+    override fun StringBuilder.appendValueParameters(it: FirFunctionSymbol<*>) {
         append('(')
-        it.valueParameterSymbols.forEach {
-            appendRepresentation(it)
-            append(',')
-        }
+        append(it.valueParameterSymbols.size)
         append(')')
+    }
+
+    /**
+     * Preserved for the deprecation cycle of KT-62746.
+     */
+    object OldVarargsCompatibilityPresenter : FirRedeclarationPresenterBase() {
+        override fun StringBuilder.appendValueParameters(it: FirFunctionSymbol<*>) {
+            append('(')
+            it.valueParameterSymbols.forEach {
+                appendRepresentation(it)
+                append(',')
+            }
+            append(')')
+        }
+
+        private fun StringBuilder.appendRepresentation(it: FirValueParameterSymbol) {
+            if (it.isVararg) {
+                append("vararg ")
+            }
+        }
     }
 }

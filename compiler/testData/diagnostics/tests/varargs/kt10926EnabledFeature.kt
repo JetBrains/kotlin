@@ -1,4 +1,4 @@
-// LANGUAGE: +EliminateAmbiguitiesWithExternalTypeParameters
+// LANGUAGE: +EliminateAmbiguitiesWithExternalTypeParameters, -ProhibitOverloadingBetweenVarargsAndArrays
 // WITH_STDLIB
 
 class AllCollection<T> {

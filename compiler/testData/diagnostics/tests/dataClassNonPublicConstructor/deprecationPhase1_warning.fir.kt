@@ -1,4 +1,4 @@
-// LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
+// LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility, -ProhibitOverloadingBetweenVarargsAndArrays
 data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val x: Int) {
     fun member() {
         copy()
@@ -12,8 +12,8 @@ data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!>
     }
 }
 
-data class VarargData <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val value: IntArray) {
-    fun copy(vararg value: Int): VarargData = null!!
+data class <!CONFLICTING_OVERLOADS_DEPRECATION!>VarargData <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val value: IntArray)<!> {
+    <!CONFLICTING_OVERLOADS_DEPRECATION!>fun copy(vararg value: Int): VarargData<!> = null!!
 }
 
 data object DataObject {

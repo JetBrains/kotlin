@@ -2278,6 +2278,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val conflictingOverloads: List<KaSymbol>
     }
 
+    interface ConflictingOverloadsDeprecation : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ConflictingOverloadsDeprecation::class
+        val conflictingOverloads: List<KaSymbol>
+    }
+
     interface Redeclaration : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = Redeclaration::class
         val conflictingDeclarations: List<KaSymbol>

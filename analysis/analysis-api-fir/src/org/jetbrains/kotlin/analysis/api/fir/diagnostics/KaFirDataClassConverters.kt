@@ -3218,6 +3218,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONFLICTING_OVERLOADS_DEPRECATION) { firDiagnostic ->
+        ConflictingOverloadsDeprecationImpl(
+            firDiagnostic.a.map { firBasedSymbol ->
+                firSymbolBuilder.buildSymbol(firBasedSymbol)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REDECLARATION) { firDiagnostic ->
         RedeclarationImpl(
             firDiagnostic.a.map { firBasedSymbol ->

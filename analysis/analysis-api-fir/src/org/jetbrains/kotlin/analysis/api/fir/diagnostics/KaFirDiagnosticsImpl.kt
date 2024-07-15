@@ -2728,6 +2728,12 @@ internal class ConflictingOverloadsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConflictingOverloads
 
+internal class ConflictingOverloadsDeprecationImpl(
+    override val conflictingOverloads: List<KaSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConflictingOverloadsDeprecation
+
 internal class RedeclarationImpl(
     override val conflictingDeclarations: List<KaSymbol>,
     firDiagnostic: KtPsiDiagnostic,

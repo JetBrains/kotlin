@@ -413,6 +413,7 @@ enum class LanguageFeature(
     WhenGuards(sinceVersion = null, kind = OTHER), // KT-13626
     MultiDollarInterpolation(sinceVersion = null, kind = OTHER), // KT-2425
     ReportExposedTypeForMoreCasesOfTypeParameterBounds(sinceVersion = null, kind = BUG_FIX), // KT-27112
+    ProhibitOverloadingBetweenVarargsAndArrays(sinceVersion = null, kind = BUG_FIX), // KT-69979
     ;
 
     init {

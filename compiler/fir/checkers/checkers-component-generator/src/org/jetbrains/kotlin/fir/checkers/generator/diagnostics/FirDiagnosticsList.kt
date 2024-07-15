@@ -1150,6 +1150,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CONFLICTING_OVERLOADS by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<Collection<Symbol>>("conflictingOverloads")
         }
+        val CONFLICTING_OVERLOADS_DEPRECATION by warning<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<Collection<Symbol>>("conflictingOverloads")
+        }
         val REDECLARATION by error<KtNamedDeclaration>(PositioningStrategy.NAME_IDENTIFIER) {
             parameter<Collection<Symbol>>("conflictingDeclarations")
         }

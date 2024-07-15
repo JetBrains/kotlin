@@ -1,9 +1,9 @@
 // ISSUE: KT-62746
 // LANGUAGE: +ProhibitOverloadingBetweenVarargsAndArrays
 
-fun foo(bar: IntArray) {}
+<!CONFLICTING_OVERLOADS!>fun foo(bar: IntArray)<!> {}
 
-fun foo(vararg bar: Int) {}
+<!CONFLICTING_OVERLOADS!>fun foo(vararg bar: Int)<!> {}
 
 fun main() {
     foo(1, 2)
