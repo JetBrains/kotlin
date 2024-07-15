@@ -209,6 +209,15 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ package fragments ------------------------------------
 
+    fun getDependenciesModuleDescriptor(moduleData: FirModuleData): FirModuleDescriptor {
+        return moduleDescriptorCache.getOrPut(moduleData) {
+            FirModuleDescriptor.createDependencyModuleDescriptor(
+                moduleData,
+                sourceModuleDescriptor.builtIns
+            )
+        }
+    }
+
     fun getIrExternalPackageFragment(
         fqName: FqName,
         moduleData: FirModuleData,
@@ -234,12 +243,7 @@ class Fir2IrDeclarationStorage(
         return when (firOrigin) {
             FirDeclarationOrigin.Precompiled -> fragments.fragmentForPrecompiledBinaries
             else -> {
-                val moduleDescriptor = moduleDescriptorCache.getOrPut(moduleData) {
-                    FirModuleDescriptor.createDependencyModuleDescriptor(
-                        moduleData,
-                        sourceModuleDescriptor.builtIns
-                    )
-                }
+                val moduleDescriptor = getDependenciesModuleDescriptor(moduleData)
                 if (isBuiltIn) {
                     fragments.builtinFragmentsForDependencies.getOrPut(moduleData) {
                         callablesGenerator.createExternalPackageFragment(FirBuiltInsPackageFragment(fqName, moduleDescriptor))

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMemberBodyGenerator
 import org.jetbrains.kotlin.fir.backend.utils.generatedBuiltinsDeclarationsFileName
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -186,11 +185,7 @@ private class Fir2IrPipeline(
         componentsStorage: Fir2IrComponentsStorage,
         syntheticIrBuiltinsSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
     ): Pair<IrBuiltIns, SymbolTable> {
-        val irBuiltIns = IrBuiltInsOverFir(
-            componentsStorage,
-            FirModuleDescriptor.createSourceModuleDescriptor(componentsStorage.session, kotlinBuiltIns),
-            syntheticIrBuiltinsSymbolsContainer,
-        )
+        val irBuiltIns = IrBuiltInsOverFir(componentsStorage, syntheticIrBuiltinsSymbolsContainer)
         val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl, lock = componentsStorage.lock)
 
         fir2IrExtensions.initializeIrBuiltInsAndSymbolTable(irBuiltIns, symbolTable)
