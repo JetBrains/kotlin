@@ -10,27 +10,3 @@ MODULE main
 					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
 				K2
 					[]
-	CLASS TopLevelPropertyWithProvideDelegate$Delegate.class
-		CLASS METADATA
-			FUNCTION getValue(LTopLevelPropertyWithProvideDelegate$Test;Lkotlin/reflect/KProperty;)Ljava/lang/String;
-				Property: class.metadata.function.valueParameters
-					K1
-						(thisRef: TopLevelPropertyWithProvideDelegate.Test, property: kotlin/reflect/KProperty<*>)
-					K2
-						(thisRef: Test, property: kotlin/reflect/KProperty<*>)
-	CLASS TopLevelPropertyWithProvideDelegate$Provider.class
-		CLASS METADATA
-			FUNCTION provideDelegate(LTopLevelPropertyWithProvideDelegate$Test;Lkotlin/reflect/KProperty;)LTopLevelPropertyWithProvideDelegate$Delegate;
-				Property: class.metadata.function.valueParameters
-					K1
-						(thisRef: TopLevelPropertyWithProvideDelegate.Test, property: kotlin/reflect/KProperty<*>)
-					K2
-						(thisRef: Test, property: kotlin/reflect/KProperty<*>)
-	CLASS TopLevelPropertyWithProvideDelegate$Test$Companion.class
-		CLASS METADATA
-			PROPERTY getInstance()LTopLevelPropertyWithProvideDelegate$Test;
-				Property: class.metadata.property.returnType
-					K1
-						TopLevelPropertyWithProvideDelegate.Test
-					K2
-						Test

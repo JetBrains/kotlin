@@ -10,16 +10,3 @@ MODULE main
 					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
 				K2
 					[]
-			PROPERTY getB()LAnonymousObjectCapturesProperty$A;
-				Property: class.metadata.property.returnType
-					K1
-						AnonymousObjectCapturesProperty.A
-					K2
-						A
-	CLASS AnonymousObjectCapturesProperty$B$1.class
-		CLASS METADATA
-			Property: class.metadata.superTypes
-				K1
-					[AnonymousObjectCapturesProperty.A]
-				K2
-					[A]

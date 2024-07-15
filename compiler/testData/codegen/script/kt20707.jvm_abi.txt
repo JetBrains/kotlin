@@ -10,16 +10,3 @@ MODULE main
 					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
 				K2
 					[]
-			FUNCTION applySomething(LKt20707$Build;)Ljava/lang/String;
-				Property: class.metadata.function.valueParameters
-					K1
-						(build: Kt20707.Build)
-					K2
-						(build: Build)
-	CLASS Kt20707$Build.class
-		CLASS METADATA
-			Property: class.metadata.superTypes
-				K1
-					[kotlin/Enum<Kt20707.Build>]
-				K2
-					[kotlin/Enum<Build>]

@@ -10,9 +10,3 @@ MODULE main
 					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
 				K2
 					[]
-			PROPERTY getC()LKt48025$ReducedFraction;
-				Property: class.metadata.property.returnType
-					K1
-						Kt48025.ReducedFraction
-					K2
-						ReducedFraction

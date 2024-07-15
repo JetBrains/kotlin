@@ -3,7 +3,7 @@
 public final class ScriptSimple {
 
   // signature: foo(LScriptSimple$A;)Ljava/lang/String;
-  public final fun A.foo(): kotlin/String
+  public final fun ScriptSimple.A.foo(): kotlin/String
 
   // field: a:I
   // getter: getA()I

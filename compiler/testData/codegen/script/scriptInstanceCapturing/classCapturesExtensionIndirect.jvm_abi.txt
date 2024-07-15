@@ -10,15 +10,3 @@ MODULE main
 					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
 				K2
 					[]
-			FUNCTION ext(LClassCapturesExtensionIndirect$A;)V
-				Property: class.metadata.function.receiverParameterType
-					K1
-						ClassCapturesExtensionIndirect.A
-					K2
-						A
-			PROPERTY getB()LClassCapturesExtensionIndirect$B;
-				Property: class.metadata.property.returnType
-					K1
-						ClassCapturesExtensionIndirect.B
-					K2
-						B

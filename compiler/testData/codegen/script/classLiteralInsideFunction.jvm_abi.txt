@@ -10,23 +10,3 @@ MODULE main
 					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
 				K2
 					[]
-			PROPERTY getRv()Lscript/long/name/inside/packag/ClassLiteralInsideFunction$I;
-				Property: class.metadata.property.returnType
-					K1
-						script/long/name/inside/packag/ClassLiteralInsideFunction.I
-					K2
-						script/long/name/inside/packag/I
-	CLASS script/long/name/inside/packag/ClassLiteralInsideFunction$f$1.class
-		CLASS METADATA
-			Property: class.metadata.superTypes
-				K1
-					[script/long/name/inside/packag/ClassLiteralInsideFunction.I]
-				K2
-					[script/long/name/inside/packag/I]
-	CLASS script/long/name/inside/packag/ClassLiteralInsideFunction$f$1$g$1.class
-		CLASS METADATA
-			Property: class.metadata.superTypes
-				K1
-					[script/long/name/inside/packag/ClassLiteralInsideFunction.I]
-				K2
-					[script/long/name/inside/packag/I]

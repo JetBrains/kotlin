@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -56,6 +57,8 @@ class Context<T> {
 
     val dispatchReceiverTypesStack: MutableList<ConeClassLikeType> = mutableListOf()
     var containerIsExpect: Boolean = false
+
+    var containingScriptSymbol: FirScriptSymbol? = null
 
     fun pushFirTypeParameters(isInnerOrLocal: Boolean, parameters: List<FirTypeParameterRef>) {
         capturedTypeParameters.add(StatusFirTypeParameterSymbolList(isInnerOrLocal, parameters.map { it.symbol }))

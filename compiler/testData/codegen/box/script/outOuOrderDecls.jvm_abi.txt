@@ -10,10 +10,3 @@ MODULE main
 					[kotlin/script/templates/standard/ScriptTemplateWithArgs]
 				K2
 					[]
-	CLASS Script$A.class
-		CLASS METADATA
-			Property: class.metadata.superTypes
-				K1
-					[Script.B, Script.C]
-				K2
-					[B, C]

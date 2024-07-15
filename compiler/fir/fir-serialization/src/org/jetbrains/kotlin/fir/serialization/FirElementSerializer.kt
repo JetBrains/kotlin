@@ -365,12 +365,7 @@ class FirElementSerializer private constructor(
             builder.flags = flags
         }
 
-        val name = script.name.let {
-            if (it.isSpecial) {
-                NameUtils.getScriptNameForFile(it.asStringStripSpecialMarkers().removePrefix("script-"))
-            } else it
-        }
-        val classId = ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, name)
+        val classId = scriptClassId(script)
 
         builder.fqName = getClassifierId(classId)
 
@@ -429,7 +424,6 @@ class FirElementSerializer private constructor(
 
         return builder
     }
-
 
     /*
      * Order of nested classifiers:
@@ -1289,7 +1283,16 @@ class FirElementSerializer private constructor(
     }
 
     private fun getClassifierId(declaration: FirClassLikeDeclaration): Int =
-        stringTable.getFqNameIndex(declaration)
+        when (val containingScriptSymbol = declaration.containingScriptSymbolAttr) {
+            null -> stringTable.getFqNameIndex(declaration)
+            else -> containingScriptSymbol.getScriptClassId(declaration)
+        }
+
+    private fun FirScriptSymbol.getScriptClassId(declaration: FirClassLikeDeclaration): Int {
+        val scriptClassClassId = declaration.symbol.classId.relativeClassName.pathSegments()
+            .fold(scriptClassId(fir)) { acc, n -> acc.createNestedClassId(n) }
+        return stringTable.getQualifiedClassNameIndex(scriptClassClassId)
+    }
 
     private fun getClassifierId(classId: ClassId): Int =
         stringTable.getQualifiedClassNameIndex(classId)
@@ -1435,4 +1438,13 @@ class FirElementSerializer private constructor(
             return versionRequirementTable[requirement]
         }
     }
+}
+
+internal fun scriptClassId(script: FirScript): ClassId {
+    val name = script.name.let {
+        if (it.isSpecial) {
+            NameUtils.getScriptNameForFile(it.asStringStripSpecialMarkers().removePrefix("script-"))
+        } else it
+    }
+    return ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, name)
 }

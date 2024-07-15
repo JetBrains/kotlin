@@ -172,6 +172,21 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
     }
 
+    inline fun <T> withContainerScriptSymbol(
+        symbol: FirScriptSymbol,
+        block: () -> T,
+    ): T {
+        require(context.containingScriptSymbol == null) { "Nested scripts are not supported" }
+        context.containingScriptSymbol = symbol
+        context.pushContainerSymbol(symbol)
+        return try {
+            block()
+        } finally {
+            context.popContainerSymbol(symbol)
+            context.containingScriptSymbol = null
+        }
+    }
+
     protected open fun addCapturedTypeParameters(
         status: Boolean,
         declarationSource: KtSourceElement?,
