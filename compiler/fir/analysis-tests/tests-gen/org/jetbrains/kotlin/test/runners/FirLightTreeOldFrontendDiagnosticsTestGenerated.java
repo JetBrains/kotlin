@@ -1924,6 +1924,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("varargOverloads.kt")
+    public void testVarargOverloads() {
+      runTest("compiler/testData/diagnostics/tests/varargOverloads.kt");
+    }
+
+    @Test
     @TestMetadata("VarargTypes.kt")
     public void testVarargTypes() {
       runTest("compiler/testData/diagnostics/tests/VarargTypes.kt");
