@@ -1044,7 +1044,6 @@ abstract class AbstractComposeLowering(
             returnType = stabilityField.type
             visibility = DescriptorVisibilities.PUBLIC
             origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
-            annotations = listOf(hiddenFromObjCAnnotation)
         }.also { fn ->
             fn.parent = parent
             fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
