@@ -8,13 +8,24 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.whileLoop]
  */
-abstract class IrWhileLoop : IrLoop() {
+abstract class IrWhileLoop(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
+) : IrLoop(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitWhileLoop(this, data)
 

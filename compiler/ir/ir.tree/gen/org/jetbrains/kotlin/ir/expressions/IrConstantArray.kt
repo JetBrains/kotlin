@@ -8,15 +8,25 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.utils.SmartList
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constantArray]
  */
-abstract class IrConstantArray : IrConstantValue() {
-    abstract val elements: MutableList<IrConstantValue>
+abstract class IrConstantArray(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) : IrConstantValue(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    val elements: MutableList<IrConstantValue> = SmartList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstantArray(this, data)

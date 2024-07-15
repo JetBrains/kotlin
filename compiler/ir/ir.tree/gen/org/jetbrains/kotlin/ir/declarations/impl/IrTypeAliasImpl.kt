@@ -24,16 +24,21 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrTypeAliasImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    override val symbol: IrTypeAliasSymbol,
+    symbol: IrTypeAliasSymbol,
     override var isActual: Boolean,
     override var expandedType: IrType,
-) : IrTypeAlias() {
+) : IrTypeAlias(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()

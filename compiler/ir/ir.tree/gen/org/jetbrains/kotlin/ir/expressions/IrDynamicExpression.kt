@@ -8,7 +8,18 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.utils.SmartList
+
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.dynamicExpression]
  */
-abstract class IrDynamicExpression : IrExpression()
+abstract class IrDynamicExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+)

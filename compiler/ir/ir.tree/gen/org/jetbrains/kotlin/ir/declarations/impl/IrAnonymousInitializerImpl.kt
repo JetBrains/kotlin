@@ -16,25 +16,26 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 
 class IrAnonymousInitializerImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val factory: IrFactory,
-    override val symbol: IrAnonymousInitializerSymbol,
-    override var isStatic: Boolean,
-) : IrAnonymousInitializer() {
-    override var annotations: List<IrConstructorCall> = emptyList()
-
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    factory: IrFactory,
+    symbol: IrAnonymousInitializerSymbol,
+    isStatic: Boolean,
+) : IrAnonymousInitializer(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    factory = factory,
+    symbol = symbol,
+    isStatic = isStatic,
+) {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor
         get() = symbol.descriptor
-
-    override lateinit var body: IrBlockBody
 
     init {
         symbol.bind(this)

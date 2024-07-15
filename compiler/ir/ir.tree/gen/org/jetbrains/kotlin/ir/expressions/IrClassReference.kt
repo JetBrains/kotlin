@@ -15,11 +15,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.classReference]
  */
-abstract class IrClassReference : IrDeclarationReference() {
-    abstract override var symbol: IrClassifierSymbol
-
-    abstract var classType: IrType
-
+abstract class IrClassReference(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override var symbol: IrClassifierSymbol,
+    var classType: IrType,
+) : IrDeclarationReference(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClassReference(this, data)
 }

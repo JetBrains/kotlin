@@ -9,19 +9,25 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.suspensionPoint]
  */
-abstract class IrSuspensionPoint : IrExpression() {
-    abstract var suspensionPointIdParameter: IrVariable
-
-    abstract var result: IrExpression
-
-    abstract var resumeResult: IrExpression
-
+abstract class IrSuspensionPoint(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var suspensionPointIdParameter: IrVariable,
+    var result: IrExpression,
+    var resumeResult: IrExpression,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSuspensionPoint(this, data)
 

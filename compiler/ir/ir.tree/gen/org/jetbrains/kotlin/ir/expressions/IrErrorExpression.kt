@@ -8,14 +8,23 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.utils.SmartList
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorExpression]
  */
-abstract class IrErrorExpression : IrExpression() {
-    abstract var description: String
-
+abstract class IrErrorExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var description: String,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitErrorExpression(this, data)
 }

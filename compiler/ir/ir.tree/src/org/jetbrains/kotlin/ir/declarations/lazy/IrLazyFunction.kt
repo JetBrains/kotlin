@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyFunction(
     startOffset: Int,
     endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     override val descriptor: FunctionDescriptor,
     override var name: Name,
@@ -44,11 +43,11 @@ class IrLazyFunction(
     override var isInfix: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : AbstractIrLazyFunction(), IrLazyFunctionBase {
-    override var startOffset: Int = startOffset
-        set(_) = shouldNotBeCalled()
-    override var endOffset: Int = endOffset
-        set(_) = shouldNotBeCalled()
+) : AbstractIrLazyFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), IrLazyFunctionBase {
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 

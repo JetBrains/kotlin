@@ -14,7 +14,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.elseBranch]
  */
-abstract class IrElseBranch : IrBranch() {
+abstract class IrElseBranch(
+    startOffset: Int,
+    endOffset: Int,
+    condition: IrExpression,
+    result: IrExpression,
+) : IrBranch(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    condition = condition,
+    result = result,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitElseBranch(this, data)
 

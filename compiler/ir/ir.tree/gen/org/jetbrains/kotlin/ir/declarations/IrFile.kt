@@ -9,20 +9,28 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.file]
  */
-abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMetadataSourceOwner {
-    abstract override val symbol: IrFileSymbol
+abstract class IrFile(
+    packageFqName: FqName,
+    override val symbol: IrFileSymbol,
+    var fileEntry: IrFileEntry,
+) : IrPackageFragment(
+    packageFqName = packageFqName,
+), IrMutableAnnotationContainer, IrMetadataSourceOwner {
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    override var metadata: MetadataSource? = null
 
     abstract var module: IrModuleFragment
-
-    abstract var fileEntry: IrFileEntry
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)

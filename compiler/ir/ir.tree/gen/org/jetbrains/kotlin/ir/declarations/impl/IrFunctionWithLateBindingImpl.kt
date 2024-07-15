@@ -15,57 +15,49 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrFunctionWithLateBinding
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val factory: IrFactory,
-    override var name: Name,
-    override var isExternal: Boolean,
-    override var visibility: DescriptorVisibility,
-    override var isInline: Boolean,
-    override var isExpect: Boolean,
-    override var modality: Modality,
-    override var isFakeOverride: Boolean,
-    override var isTailrec: Boolean,
-    override var isSuspend: Boolean,
-    override var isOperator: Boolean,
-    override var isInfix: Boolean,
-) : IrFunctionWithLateBinding() {
-    override var annotations: List<IrConstructorCall> = emptyList()
-
-    override var typeParameters: List<IrTypeParameter> = emptyList()
-
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    factory: IrFactory,
+    name: Name,
+    isExternal: Boolean,
+    visibility: DescriptorVisibility,
+    isInline: Boolean,
+    isExpect: Boolean,
+    modality: Modality,
+    isFakeOverride: Boolean,
+    isTailrec: Boolean,
+    isSuspend: Boolean,
+    isOperator: Boolean,
+    isInfix: Boolean,
+) : IrFunctionWithLateBinding(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    factory = factory,
+    name = name,
+    isExternal = isExternal,
+    visibility = visibility,
+    isInline = isInline,
+    isExpect = isExpect,
+    modality = modality,
+    isFakeOverride = isFakeOverride,
+    isTailrec = isTailrec,
+    isSuspend = isSuspend,
+    isOperator = isOperator,
+    isInfix = isInfix,
+) {
     override val containerSource: DeserializedContainerSource?
         get() = null
-
-    override var metadata: MetadataSource? = null
-
-    override lateinit var returnType: IrType
-
-    override var dispatchReceiverParameter: IrValueParameter? = null
-
-    override var extensionReceiverParameter: IrValueParameter? = null
-
-    override var valueParameters: List<IrValueParameter> = emptyList()
-
-    override var contextReceiverParametersCount: Int = 0
-
-    override var body: IrBody? = null
-
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
@@ -73,10 +65,6 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
 
     override val symbol: IrSimpleFunctionSymbol
         get() = _symbol ?: error("$this has not acquired a symbol yet")
-
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
-
-    override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     override val isBound: Boolean
         get() = _symbol != null

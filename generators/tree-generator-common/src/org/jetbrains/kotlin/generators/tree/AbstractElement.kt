@@ -184,7 +184,7 @@ abstract class AbstractElement<Element, Field, Implementation>(
      *
      * Note that classes referenced in field types will be imported automatically.
      */
-    val additionalImports = mutableListOf<Importable>()
+    override val additionalImports = mutableListOf<Importable>()
 
     override fun addImport(importable: Importable) {
         additionalImports.add(importable)

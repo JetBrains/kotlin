@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -26,8 +27,16 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.stringConcatenation]
  */
-abstract class IrStringConcatenation : IrExpression() {
-    abstract val arguments: MutableList<IrExpression>
+abstract class IrStringConcatenation(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    val arguments: MutableList<IrExpression> = ArrayList(2)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitStringConcatenation(this, data)

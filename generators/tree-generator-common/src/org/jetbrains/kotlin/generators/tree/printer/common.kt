@@ -161,10 +161,10 @@ class TreeGenerator(private val generationPath: File, private val treeGeneratorR
             if (enableBaseTransformerTypeDetection) {
                 detectBaseTransformerTypes(model)
             }
+            InterfaceAndAbstractClassConfigurator((model.elements))
+                .configureInterfacesAndAbstractClasses()
             implementationConfigurator.configureImplementations(model)
             val implementations = model.elements.flatMap { it.implementations }
-            InterfaceAndAbstractClassConfigurator((model.elements + implementations))
-                .configureInterfacesAndAbstractClasses()
 
             pureAbstractElement?.let {
                 addPureAbstractElement(model.elements, it)

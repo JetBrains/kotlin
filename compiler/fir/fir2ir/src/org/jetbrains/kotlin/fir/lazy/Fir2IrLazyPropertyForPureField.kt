@@ -24,7 +24,11 @@ class Fir2IrLazyPropertyForPureField(
     private val field: Fir2IrLazyField,
     override val symbol: IrPropertySymbol,
     parent: IrDeclarationParent
-) : IrProperty(), Fir2IrComponents by c {
+) : IrProperty(
+    startOffset = field.startOffset,
+    endOffset = field.endOffset,
+    origin = field.origin,
+), Fir2IrComponents by c {
     init {
         this.parent = parent
         symbol.bind(this)
@@ -42,18 +46,6 @@ class Fir2IrLazyPropertyForPureField(
 
     override var annotations: List<IrConstructorCall>
         get() = emptyList()
-        set(_) = mutationNotSupported()
-
-    override var startOffset: Int
-        get() = this.field.startOffset
-        set(_) = shouldNotBeCalled()
-
-    override var endOffset: Int
-        get() = this.field.endOffset
-        set(_) = shouldNotBeCalled()
-
-    override var origin: IrDeclarationOrigin
-        get() = this.field.origin
         set(_) = mutationNotSupported()
 
     @ObsoleteDescriptorBasedAPI

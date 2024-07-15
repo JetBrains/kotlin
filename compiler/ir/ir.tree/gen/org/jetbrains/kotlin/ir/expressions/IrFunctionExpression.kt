@@ -9,17 +9,24 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionExpression]
  */
-abstract class IrFunctionExpression : IrExpression() {
-    abstract var origin: IrStatementOrigin
-
-    abstract var function: IrSimpleFunction
-
+abstract class IrFunctionExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var origin: IrStatementOrigin,
+    var function: IrSimpleFunction,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionExpression(this, data)
 

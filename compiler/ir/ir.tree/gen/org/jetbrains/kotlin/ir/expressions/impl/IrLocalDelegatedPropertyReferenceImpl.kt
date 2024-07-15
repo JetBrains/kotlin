@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -22,22 +21,25 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrLocalDelegatedPropertyReferenceImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var origin: IrStatementOrigin?,
-    protected override val valueArguments: Array<IrExpression?>,
-    protected override val typeArguments: Array<IrType?>,
-    override var symbol: IrLocalDelegatedPropertySymbol,
-    override var delegate: IrVariableSymbol,
-    override var getter: IrSimpleFunctionSymbol,
-    override var setter: IrSimpleFunctionSymbol?,
-) : IrLocalDelegatedPropertyReference() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
-    override var dispatchReceiver: IrExpression? = null
-
-    override var extensionReceiver: IrExpression? = null
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
+    valueArguments: Array<IrExpression?>,
+    typeArguments: Array<IrType?>,
+    symbol: IrLocalDelegatedPropertySymbol,
+    delegate: IrVariableSymbol,
+    getter: IrSimpleFunctionSymbol,
+    setter: IrSimpleFunctionSymbol?,
+) : IrLocalDelegatedPropertyReference(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+    valueArguments = valueArguments,
+    typeArguments = typeArguments,
+    symbol = symbol,
+    delegate = delegate,
+    getter = getter,
+    setter = setter,
+)

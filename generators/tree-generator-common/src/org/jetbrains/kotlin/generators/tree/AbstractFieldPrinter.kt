@@ -38,30 +38,30 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
         modality: Modality? = null,
     ) {
         printer.run {
-            val defaultValue = if (inImplementation)
-                field.implementationDefaultStrategy as? AbstractField.ImplementationDefaultStrategy.DefaultValue
-            else null
+            val fieldImplementation = field.implementation
             printPropertyDeclaration(
                 name = field.name,
                 type = actualTypeOfField(field),
-                kind = if (forceMutable(field) || field.isFinal && field.isMutable) VariableKind.VAR else VariableKind.VAL,
+                kind = if ((fieldImplementation as? AbstractField.ImplementationStrategy.Property)?.isMutable == true)
+                    VariableKind.VAR else VariableKind.VAL,
                 inConstructor = inConstructor,
                 visibility = field.visibility,
                 modality = modality,
                 override = override,
-                isLateinit = (inImplementation || field.isFinal) && field.implementationDefaultStrategy is AbstractField.ImplementationDefaultStrategy.Lateinit,
-                isVolatile = (inImplementation || field.isFinal) && field.isVolatile,
+                isLateinit = fieldImplementation is AbstractField.ImplementationStrategy.LateinitField,
+                isVolatile = fieldImplementation is AbstractField.ImplementationStrategy.Property && field.isVolatile,
                 optInAnnotation = field.optInAnnotation,
-                printOptInWrapped = wrapOptInAnnotations && defaultValue != null,
+                printOptInWrapped = wrapOptInAnnotations &&
+                        fieldImplementation is AbstractField.ImplementationStrategy.RegularField && fieldImplementation.defaultValue != null,
                 deprecation = field.deprecation,
-                kDoc = field.kDoc.takeIf { !inImplementation },
-                initializer = defaultValue?.takeUnless { it.withGetter }?.defaultValue
+                kDoc = field.kDoc.takeIf { !override && !inImplementation },
+                initializer = (fieldImplementation as? AbstractField.ImplementationStrategy.RegularField)?.defaultValue
             )
             println()
 
-            if (defaultValue != null && defaultValue.withGetter) {
+            if (fieldImplementation is AbstractField.ImplementationStrategy.ComputedProperty) {
                 withIndent {
-                    println("get() = ${defaultValue.defaultValue}")
+                    println("get() = ${fieldImplementation.defaultValue}")
                 }
             }
 

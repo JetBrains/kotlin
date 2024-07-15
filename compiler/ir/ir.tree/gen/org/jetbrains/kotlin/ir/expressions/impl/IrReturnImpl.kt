@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
@@ -19,15 +18,18 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrReturnImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var value: IrExpression,
-    override var returnTargetSymbol: IrReturnTargetSymbol,
-) : IrReturn() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    value: IrExpression,
+    returnTargetSymbol: IrReturnTargetSymbol,
+) : IrReturn(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    value = value,
+    returnTargetSymbol = returnTargetSymbol,
+) {
 
     // A temporary API for compatibility with Flysto user project, see KQA-1254
     constructor(

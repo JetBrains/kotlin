@@ -23,13 +23,18 @@ import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.name.Name
 
 class IrEnumEntryImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
-    override val symbol: IrEnumEntrySymbol,
-) : IrEnumEntry() {
+    symbol: IrEnumEntrySymbol,
+) : IrEnumEntry(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI

@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,13 +17,15 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrClassReferenceImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var symbol: IrClassifierSymbol,
-    override var classType: IrType,
-) : IrClassReference() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrClassifierSymbol,
+    classType: IrType,
+) : IrClassReference(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    classType = classType,
+)

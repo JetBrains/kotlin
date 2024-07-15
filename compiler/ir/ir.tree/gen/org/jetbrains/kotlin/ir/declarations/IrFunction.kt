@@ -8,8 +8,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -20,10 +19,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.function]
  */
-sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget, IrMemberWithContainerSource, IrMetadataSourceOwner {
-    @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: FunctionDescriptor
-
+sealed class IrFunction(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), IrPossiblyExternalDeclaration, IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget, IrMemberWithContainerSource, IrMetadataSourceOwner {
     abstract override val symbol: IrFunctionSymbol
 
     abstract var isInline: Boolean

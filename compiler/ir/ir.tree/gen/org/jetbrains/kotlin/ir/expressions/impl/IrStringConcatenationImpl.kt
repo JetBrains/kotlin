@@ -10,21 +10,17 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrStringConcatenationImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-) : IrStringConcatenation() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
-    override val arguments: MutableList<IrExpression> = ArrayList(2)
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) : IrStringConcatenation(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+)

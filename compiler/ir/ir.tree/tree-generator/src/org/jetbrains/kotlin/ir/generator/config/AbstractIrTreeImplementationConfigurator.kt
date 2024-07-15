@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.Implementation
 
 abstract class AbstractIrTreeImplementationConfigurator : AbstractImplementationConfigurator<Implementation, Element, Field>() {
+    override val doHoistFieldsInBaseClasses: Boolean
+        get() = true
+
     override fun createImplementation(element: Element, name: String?) = Implementation(element, name)
 
     protected fun ImplementationContext.undefinedOffset(): String =

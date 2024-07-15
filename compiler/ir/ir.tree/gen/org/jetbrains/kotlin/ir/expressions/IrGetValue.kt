@@ -8,12 +8,26 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getValue]
  */
-abstract class IrGetValue : IrValueAccessExpression() {
+abstract class IrGetValue(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrValueSymbol,
+    origin: IrStatementOrigin?,
+) : IrValueAccessExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetValue(this, data)
 }

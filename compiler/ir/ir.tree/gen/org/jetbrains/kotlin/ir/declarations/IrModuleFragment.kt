@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.moduleFragment]
  */
-abstract class IrModuleFragment : IrElementBase(), IrElement {
+abstract class IrModuleFragment(
+) : IrElementBase(), IrElement {
     abstract val descriptor: ModuleDescriptor
 
     abstract val name: Name

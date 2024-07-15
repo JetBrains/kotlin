@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -15,8 +17,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.containerExpression]
  */
-abstract class IrContainerExpression : IrExpression(), IrStatementContainer {
-    abstract var origin: IrStatementOrigin?
+abstract class IrContainerExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var origin: IrStatementOrigin?,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+), IrStatementContainer {
+    override val statements: MutableList<IrStatement> = ArrayList(2)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }

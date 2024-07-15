@@ -8,12 +8,23 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.composite]
  */
-abstract class IrComposite : IrContainerExpression() {
+abstract class IrComposite(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
+) : IrContainerExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitComposite(this, data)
 }

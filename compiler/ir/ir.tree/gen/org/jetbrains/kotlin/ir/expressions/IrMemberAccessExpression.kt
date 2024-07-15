@@ -8,8 +8,10 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -17,18 +19,23 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.memberAccessExpression]
  */
-abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference() {
-    abstract var dispatchReceiver: IrExpression?
+abstract class IrMemberAccessExpression<S : IrSymbol>(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var origin: IrStatementOrigin?,
+    protected val valueArguments: Array<IrExpression?>,
+    protected val typeArguments: Array<IrType?>,
+) : IrDeclarationReference(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    var dispatchReceiver: IrExpression? = null
 
-    abstract var extensionReceiver: IrExpression?
+    var extensionReceiver: IrExpression? = null
 
     abstract override val symbol: S
-
-    abstract var origin: IrStatementOrigin?
-
-    protected abstract val valueArguments: Array<IrExpression?>
-
-    protected abstract val typeArguments: Array<IrType?>
 
     val valueArgumentsCount: Int
         get() = valueArguments.size

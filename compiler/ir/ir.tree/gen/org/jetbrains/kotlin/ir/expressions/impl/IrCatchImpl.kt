@@ -12,14 +12,15 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCatch
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrCatchImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var catchParameter: IrVariable,
-) : IrCatch() {
-    override lateinit var result: IrExpression
-}
+    startOffset: Int,
+    endOffset: Int,
+    catchParameter: IrVariable,
+) : IrCatch(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    catchParameter = catchParameter,
+)

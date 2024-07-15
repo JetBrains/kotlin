@@ -23,20 +23,25 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrValueParameterImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
     override var type: IrType,
     override val isAssignable: Boolean,
-    override val symbol: IrValueParameterSymbol,
+    symbol: IrValueParameterSymbol,
     override var index: Int,
     override var varargElementType: IrType?,
     override var isCrossinline: Boolean,
     override var isNoinline: Boolean,
     override var isHidden: Boolean,
-) : IrValueParameter() {
+) : IrValueParameter(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     @ObsoleteDescriptorBasedAPI

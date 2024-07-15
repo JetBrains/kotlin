@@ -123,6 +123,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(script) {
             implementation.putImplementationOptInInConstructor = false
             implementation.constructorParameterOrderOverride = listOf("symbol", "name", "factory", "startOffset", "endOffset")
+            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.declarations.impl", "SCRIPT_ORIGIN"))
             defaultNull(
                 "thisReceiver", "baseClass", "resultProperty", "earlierScriptsParameter",
                 "importedScripts", "earlierScripts", "targetClass", "constructor"
@@ -183,6 +184,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("endOffset", "fileEntry.maxOffset", withGetter = true)
             isMutable("module")
             isLateinit("module")
+            fieldContainer["module"].allowHoistingToBaseClass = false
             implementation.generationCallback = {
                 println()
                 println("internal val isInsideModule: Boolean")
@@ -265,14 +267,15 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.generationCallback = {
                 println()
                 print()
-                println("""
+                println(
+                    """
                     // A temporary API for compatibility with Flysto user project, see KQA-1254
                     constructor(
                         startOffset: Int,
                         endOffset: Int,
                         type: IrType,
                         origin: IrStatementOrigin?,
-                        statements: List<IrStatement>,
+                        statements: List<${statement.render()}>,
                     ) : this(
                         constructorIndicator = null,
                         startOffset = startOffset,
@@ -282,7 +285,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                     ) {
                         this.statements.addAll(statements)
                     }
-                """.replaceIndent(currentIndent))
+                """.replaceIndent(currentIndent)
+                )
             }
         }
 
@@ -290,7 +294,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.generationCallback = {
                 println()
                 print()
-                println("""
+                println(
+                    """
                     // A temporary API for compatibility with Flysto user project, see KQA-1254
                     constructor(
                         startOffset: Int,
@@ -306,14 +311,16 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         returnTargetSymbol = returnTargetSymbol,
                         value = value,
                     )
-                """.replaceIndent(currentIndent))
+                """.replaceIndent(currentIndent)
+                )
             }
         }
 
         impl(const) {
             implementation.generationCallback = {
                 println()
-                printlnMultiLine("""
+                printlnMultiLine(
+                    """
                     companion object {
                         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl<String> =
                             IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
@@ -351,7 +358,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl<Short> =
                             IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
                     }
-                """.trimIndent())
+                """.trimIndent()
+                )
             }
         }
 
@@ -442,7 +450,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
     }
 
-    override fun configureAllImplementations(model: Model) {
+    override fun configureAllImplementations(model: Model) = with(IrTree) {
         configureFieldInAllImplementations(
             fieldName = null,
             fieldPredicate = { it is ListField && it.isChild && it.listType == StandardTypes.mutableList && it.implementationDefaultStrategy?.defaultValue == null }
@@ -454,6 +462,21 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             for (implementation in element.implementations) {
                 if (element.category == Element.Category.Expression) {
                     implementation.isConstructorPublic = false
+                }
+            }
+        }
+
+        for (element in model.elements) {
+            for (implementation in element.implementations) {
+                if (element == `class` || element == enumEntry || element == simpleFunction || element == constructor
+                    || element == property || element == field || element == typeAlias || element == valueParameter || element == typeParameter
+                    || element == moduleFragment
+                ) {
+                    for (field in implementation.allFields) {
+                        if (!field.name.let { it == "startOffset" || it == "endOffset" || it == "origin" || it == "symbol" }) {
+                            field.allowHoistingToBaseClass = false
+                        }
+                    }
                 }
             }
         }

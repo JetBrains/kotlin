@@ -8,15 +8,21 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.name.FqName
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.packageFragment]
  */
-abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSymbolOwner {
-    abstract override val symbol: IrPackageFragmentSymbol
+abstract class IrPackageFragment @OptIn(UnsafeDuringIrConstructionAPI::class) constructor(
+    var packageFqName: FqName,
+) : IrElementBase(), IrDeclarationContainer, IrSymbolOwner {
+    @UnsafeDuringIrConstructionAPI
+    override val declarations: MutableList<IrDeclaration> = ArrayList()
 
-    abstract var packageFqName: FqName
+    abstract override val symbol: IrPackageFragmentSymbol
 }

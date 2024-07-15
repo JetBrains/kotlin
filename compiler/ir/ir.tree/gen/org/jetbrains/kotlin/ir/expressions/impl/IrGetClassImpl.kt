@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,12 +17,13 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrGetClassImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var argument: IrExpression,
-) : IrGetClass() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    argument: IrExpression,
+) : IrGetClass(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    argument = argument,
+)

@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.Name
 
 class IrLazyTypeAlias(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val symbol: IrTypeAliasSymbol,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    symbol: IrTypeAliasSymbol,
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: TypeAliasDescriptor,
     override var name: Name,
@@ -28,7 +28,12 @@ class IrLazyTypeAlias(
     override var isActual: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrTypeAlias(), IrLazyDeclarationBase {
+) : IrTypeAlias(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
+), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }

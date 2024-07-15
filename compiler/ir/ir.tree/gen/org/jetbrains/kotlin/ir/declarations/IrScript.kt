@@ -9,7 +9,10 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_ORIGIN
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -19,39 +22,54 @@ import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.script]
  */
-abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationParent, IrStatementContainer, IrMetadataSourceOwner {
-    abstract override val symbol: IrScriptSymbol
+abstract class IrScript(
+    startOffset: Int,
+    endOffset: Int,
+    override val factory: IrFactory,
+    override var name: Name,
+    override val symbol: IrScriptSymbol,
+) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = SCRIPT_ORIGIN,
+), IrDeclarationWithName, IrDeclarationParent, IrStatementContainer, IrMetadataSourceOwner {
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    override val statements: MutableList<IrStatement> = ArrayList(2)
+
+    override var metadata: MetadataSource? = null
 
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ScriptDescriptor
 
-    abstract var thisReceiver: IrValueParameter?
+    var thisReceiver: IrValueParameter? = null
 
-    abstract var baseClass: IrType?
+    var baseClass: IrType? = null
 
-    abstract var explicitCallParameters: List<IrVariable>
+    lateinit var explicitCallParameters: List<IrVariable>
 
-    abstract var implicitReceiversParameters: List<IrValueParameter>
+    lateinit var implicitReceiversParameters: List<IrValueParameter>
 
-    abstract var providedProperties: List<IrPropertySymbol>
+    lateinit var providedProperties: List<IrPropertySymbol>
 
-    abstract var providedPropertiesParameters: List<IrValueParameter>
+    lateinit var providedPropertiesParameters: List<IrValueParameter>
 
-    abstract var resultProperty: IrPropertySymbol?
+    var resultProperty: IrPropertySymbol? = null
 
-    abstract var earlierScriptsParameter: IrValueParameter?
+    var earlierScriptsParameter: IrValueParameter? = null
 
-    abstract var importedScripts: List<IrScriptSymbol>?
+    var importedScripts: List<IrScriptSymbol>? = null
 
-    abstract var earlierScripts: List<IrScriptSymbol>?
+    var earlierScripts: List<IrScriptSymbol>? = null
 
-    abstract var targetClass: IrClassSymbol?
+    var targetClass: IrClassSymbol? = null
 
-    abstract var constructor: IrConstructor?
+    var constructor: IrConstructor? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitScript(this, data)

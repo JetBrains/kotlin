@@ -167,4 +167,33 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     enum class SymbolFieldRole {
         DECLARED, REFERENCED
     }
+
+    var implementation: ImplementationStrategy? = null
+    var allowHoistingToBaseClass = true
+
+    sealed interface ImplementationStrategy {
+        data object HandledByParent : ImplementationStrategy
+
+        data class ForwardValueToParent(val defaultValue: String?) : ImplementationStrategy
+
+        sealed interface Property : ImplementationStrategy {
+            val isMutable: Boolean
+            val defaultValue: String?
+        }
+
+        data object LateinitField : Property {
+            override val isMutable get() = true
+            override val defaultValue get() = null
+        }
+
+        data class RegularField(override val isMutable: Boolean, override val defaultValue: String?) : Property
+
+        data class ComputedProperty(override val defaultValue: String) : Property {
+            override val isMutable: Boolean get() = false
+        }
+
+        data class Abstract(override val isMutable: Boolean) : Property {
+            override val defaultValue get() = null
+        }
+    }
 }

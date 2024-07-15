@@ -8,17 +8,24 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.suspendableExpression]
  */
-abstract class IrSuspendableExpression : IrExpression() {
-    abstract var suspensionPointId: IrExpression
-
-    abstract var result: IrExpression
-
+abstract class IrSuspendableExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var suspensionPointId: IrExpression,
+    var result: IrExpression,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSuspendableExpression(this, data)
 

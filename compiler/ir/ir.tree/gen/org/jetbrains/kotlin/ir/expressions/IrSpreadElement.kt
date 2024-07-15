@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.spreadElement]
  */
-abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
-    abstract var expression: IrExpression
-
+abstract class IrSpreadElement(
+    override val startOffset: Int,
+    override val endOffset: Int,
+    var expression: IrExpression,
+) : IrElementBase(), IrVarargElement {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSpreadElement(this, data)
 

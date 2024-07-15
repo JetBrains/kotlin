@@ -10,29 +10,42 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedProperty]
  */
-abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWithName, IrSymbolOwner, IrMetadataSourceOwner {
+abstract class IrLocalDelegatedProperty(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val factory: IrFactory,
+    override var name: Name,
+    override val symbol: IrLocalDelegatedPropertySymbol,
+    var type: IrType,
+    var isVar: Boolean,
+) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), IrDeclarationWithName, IrSymbolOwner, IrMetadataSourceOwner {
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    override var metadata: MetadataSource? = null
+
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptorWithAccessors
 
-    abstract override val symbol: IrLocalDelegatedPropertySymbol
+    lateinit var delegate: IrVariable
 
-    abstract var type: IrType
+    lateinit var getter: IrSimpleFunction
 
-    abstract var isVar: Boolean
-
-    abstract var delegate: IrVariable
-
-    abstract var getter: IrSimpleFunction
-
-    abstract var setter: IrSimpleFunction?
+    var setter: IrSimpleFunction? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedProperty(this, data)

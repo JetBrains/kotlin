@@ -8,10 +8,13 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 
 /**
  * This is a root parent element for external declarations (meaning those that come from
@@ -32,9 +35,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.externalPackageFragment]
  */
-abstract class IrExternalPackageFragment : IrPackageFragment() {
-    abstract override val symbol: IrExternalPackageFragmentSymbol
-
+abstract class IrExternalPackageFragment(
+    packageFqName: FqName,
+    override val symbol: IrExternalPackageFragmentSymbol,
+) : IrPackageFragment(
+    packageFqName = packageFqName,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitExternalPackageFragment(this, data)
 

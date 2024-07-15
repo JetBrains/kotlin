@@ -13,9 +13,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.syntheticBody]
  */
-abstract class IrSyntheticBody : IrBody() {
-    abstract var kind: IrSyntheticBodyKind
-
+abstract class IrSyntheticBody(
+    startOffset: Int,
+    endOffset: Int,
+    var kind: IrSyntheticBodyKind,
+) : IrBody(
+    startOffset = startOffset,
+    endOffset = endOffset,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSyntheticBody(this, data)
 }

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.tree
 
+import org.jetbrains.kotlin.generators.tree.imports.Importable
+
 interface FieldContainer<out Field : AbstractField<*>> {
 
     /**
@@ -59,4 +61,14 @@ interface FieldContainer<out Field : AbstractField<*>> {
      */
     val transformableChildren: List<Field>
         get() = walkableChildren.filter { it.isMutable || it is ListField }
+
+    /**
+     * Types/functions that you want to additionally import in the file with the element class.
+     *
+     * This is useful if, for example, default values of fields reference classes or functions from other packages.
+     *
+     * Note that classes referenced in field types will be imported automatically.
+     */
+    val additionalImports: List<Importable>
+        get() = emptyList()
 }

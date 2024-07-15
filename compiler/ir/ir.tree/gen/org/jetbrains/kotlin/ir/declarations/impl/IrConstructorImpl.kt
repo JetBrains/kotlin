@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrConstructorImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
     override var isExternal: Boolean,
@@ -33,9 +33,14 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override val containerSource: DeserializedContainerSource?,
     override var isInline: Boolean,
     override var isExpect: Boolean,
-    override val symbol: IrConstructorSymbol,
+    symbol: IrConstructorSymbol,
     override var isPrimary: Boolean,
-) : IrConstructor() {
+) : IrConstructor(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()

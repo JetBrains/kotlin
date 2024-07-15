@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.types.KotlinType
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyValueParameter(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val symbol: IrValueParameterSymbol,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    symbol: IrValueParameterSymbol,
     override val descriptor: ValueParameterDescriptor,
     override var name: Name,
     override var index: Int,
@@ -36,7 +36,12 @@ class IrLazyValueParameter(
     override val isAssignable: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrValueParameter(), IrLazyDeclarationBase {
+) : IrValueParameter(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
+), IrLazyDeclarationBase {
     override var defaultValue: IrExpressionBody? = null
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

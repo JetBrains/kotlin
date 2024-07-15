@@ -34,17 +34,16 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     protected val c: Fir2IrComponents,
     startOffset: Int,
     endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     parent: IrDeclarationParent,
     override var isFakeOverride: Boolean,
-) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
+) : AbstractIrLazyFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
     Fir2IrComponents by c {
-
-    final override var startOffset: Int = startOffset
-        set(_) = shouldNotBeCalled()
-    final override var endOffset: Int = endOffset
-        set(_) = shouldNotBeCalled()
 
     init {
         this.parent = parent

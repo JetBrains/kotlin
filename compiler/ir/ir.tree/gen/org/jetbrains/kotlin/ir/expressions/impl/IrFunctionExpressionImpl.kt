@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -19,13 +18,15 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrFunctionExpressionImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var origin: IrStatementOrigin,
-    override var function: IrSimpleFunction,
-) : IrFunctionExpression() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin,
+    function: IrSimpleFunction,
+) : IrFunctionExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+    function = function,
+)

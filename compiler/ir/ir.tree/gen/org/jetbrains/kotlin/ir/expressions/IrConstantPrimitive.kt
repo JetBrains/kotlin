@@ -8,15 +8,23 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constantPrimitive]
  */
-abstract class IrConstantPrimitive : IrConstantValue() {
-    abstract var value: IrConst<*>
-
+abstract class IrConstantPrimitive(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var value: IrConst<*>,
+) : IrConstantValue(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstantPrimitive(this, data)
 

@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
@@ -20,9 +21,16 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.rawFunctionReference]
  */
-abstract class IrRawFunctionReference : IrDeclarationReference() {
-    abstract override var symbol: IrFunctionSymbol
-
+abstract class IrRawFunctionReference(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override var symbol: IrFunctionSymbol,
+) : IrDeclarationReference(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitRawFunctionReference(this, data)
 }

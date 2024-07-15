@@ -8,11 +8,30 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionAccessExpression]
  */
-sealed class IrFunctionAccessExpression : IrMemberAccessExpression<IrFunctionSymbol>() {
-    abstract var contextReceiversCount: Int
+sealed class IrFunctionAccessExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
+    valueArguments: Array<IrExpression?>,
+    typeArguments: Array<IrType?>,
+) : IrMemberAccessExpression<IrFunctionSymbol>(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+    valueArguments = valueArguments,
+    typeArguments = typeArguments,
+) {
+    abstract override val symbol: IrFunctionSymbol
+
+    var contextReceiversCount: Int = 0
 }

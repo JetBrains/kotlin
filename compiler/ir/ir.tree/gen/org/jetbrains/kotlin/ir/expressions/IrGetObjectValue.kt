@@ -9,14 +9,22 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getObjectValue]
  */
-abstract class IrGetObjectValue : IrGetSingletonValue() {
-    abstract override var symbol: IrClassSymbol
-
+abstract class IrGetObjectValue(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override var symbol: IrClassSymbol,
+) : IrGetSingletonValue(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetObjectValue(this, data)
 }

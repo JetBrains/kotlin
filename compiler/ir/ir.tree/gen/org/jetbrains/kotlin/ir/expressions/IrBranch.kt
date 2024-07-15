@@ -16,11 +16,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.branch]
  */
-abstract class IrBranch : IrElementBase(), IrElement {
-    abstract var condition: IrExpression
-
-    abstract var result: IrExpression
-
+abstract class IrBranch(
+    override val startOffset: Int,
+    override val endOffset: Int,
+    var condition: IrExpression,
+    var result: IrExpression,
+) : IrElementBase(), IrElement {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBranch(this, data)
 

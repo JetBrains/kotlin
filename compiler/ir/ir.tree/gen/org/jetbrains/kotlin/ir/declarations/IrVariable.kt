@@ -10,27 +10,38 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.variable]
  */
-abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
+abstract class IrVariable(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override var name: Name,
+    override var type: IrType,
+    override val symbol: IrVariableSymbol,
+    var isVar: Boolean,
+    var isConst: Boolean,
+    var isLateinit: Boolean,
+) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), IrValueDeclaration {
+    override var annotations: List<IrConstructorCall> = emptyList()
+
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptor
 
-    abstract override val symbol: IrVariableSymbol
-
-    abstract var isVar: Boolean
-
-    abstract var isConst: Boolean
-
-    abstract var isLateinit: Boolean
-
-    abstract var initializer: IrExpression?
+    var initializer: IrExpression? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)

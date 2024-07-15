@@ -8,14 +8,31 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.setField]
  */
-abstract class IrSetField : IrFieldAccessExpression() {
-    abstract var value: IrExpression
+abstract class IrSetField(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrFieldSymbol,
+    superQualifierSymbol: IrClassSymbol?,
+    origin: IrStatementOrigin?,
+) : IrFieldAccessExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    superQualifierSymbol = superQualifierSymbol,
+    origin = origin,
+) {
+    lateinit var value: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSetField(this, data)

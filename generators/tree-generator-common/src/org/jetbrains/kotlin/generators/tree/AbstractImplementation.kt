@@ -48,7 +48,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
      *
      * Note that classes referenced in field types will be imported automatically.
      */
-    val additionalImports = mutableListOf<Importable>()
+    override val additionalImports = mutableListOf<Importable>()
 
     var kDoc: String? = null
 
@@ -74,7 +74,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
     var constructorParameterOrderOverride: List<String>? = null
 
     private fun withDefault(field: Field) =
-        !field.isFinal && field.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.Required
+        field.implementationDefaultStrategy !is AbstractField.ImplementationDefaultStrategy.Required
 
     val fieldsInConstructor by lazy { allFields.filterNot(::withDefault) }
 
@@ -102,4 +102,8 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
         get() = true
 
     override fun toString(): String = buildString { renderTo(this, ImportCollecting.Empty) }
+
+    init {
+        kind = ImplementationKind.FinalClass
+    }
 }

@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -20,14 +19,17 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrSetValueImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var symbol: IrValueSymbol,
-    override var origin: IrStatementOrigin?,
-    override var value: IrExpression,
-) : IrSetValue() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrValueSymbol,
+    origin: IrStatementOrigin?,
+    value: IrExpression,
+) : IrSetValue(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    value = value,
+)

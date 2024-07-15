@@ -16,11 +16,18 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constructor]
  */
-abstract class IrConstructor : IrFunction() {
+abstract class IrConstructor(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrConstructorSymbol,
+) : IrFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+) {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassConstructorDescriptor
-
-    abstract override val symbol: IrConstructorSymbol
 
     abstract var isPrimary: Boolean
 

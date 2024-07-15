@@ -8,12 +8,66 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionWithLateBinding]
  */
-abstract class IrFunctionWithLateBinding : IrSimpleFunction() {
+abstract class IrFunctionWithLateBinding(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val factory: IrFactory,
+    override var name: Name,
+    override var isExternal: Boolean,
+    override var visibility: DescriptorVisibility,
+    override var isInline: Boolean,
+    override var isExpect: Boolean,
+    override var modality: Modality,
+    override var isFakeOverride: Boolean,
+    override var isTailrec: Boolean,
+    override var isSuspend: Boolean,
+    override var isOperator: Boolean,
+    override var isInfix: Boolean,
+) : IrSimpleFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+) {
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    override var typeParameters: List<IrTypeParameter> = emptyList()
+
+    override var metadata: MetadataSource? = null
+
+    override lateinit var returnType: IrType
+
+    override var dispatchReceiverParameter: IrValueParameter? = null
+
+    override var extensionReceiverParameter: IrValueParameter? = null
+
+    override var valueParameters: List<IrValueParameter> = emptyList()
+
+    override var contextReceiverParametersCount: Int = 0
+
+    override var body: IrBody? = null
+
+    override var attributeOwnerId: IrAttributeContainer = this
+
+    override var originalBeforeInline: IrAttributeContainer? = null
+
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
+
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
+
     abstract val isBound: Boolean
 
     abstract fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrFunctionWithLateBinding

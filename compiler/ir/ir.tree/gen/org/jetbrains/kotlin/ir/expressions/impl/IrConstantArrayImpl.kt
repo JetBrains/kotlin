@@ -10,22 +10,18 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstantArray
-import org.jetbrains.kotlin.ir.expressions.IrConstantValue
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrConstantArrayImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-) : IrConstantArray() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
-    override val elements: MutableList<IrConstantValue> = SmartList()
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) : IrConstantArray(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+)

@@ -8,7 +8,17 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
+
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getSingletonValue]
  */
-abstract class IrGetSingletonValue : IrDeclarationReference()
+abstract class IrGetSingletonValue(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) : IrDeclarationReference(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+)

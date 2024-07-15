@@ -9,12 +9,19 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.valueAccessExpression]
  */
-abstract class IrValueAccessExpression : IrDeclarationReference() {
-    abstract override var symbol: IrValueSymbol
-
-    abstract var origin: IrStatementOrigin?
-}
+abstract class IrValueAccessExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override var symbol: IrValueSymbol,
+    var origin: IrStatementOrigin?,
+) : IrDeclarationReference(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+)

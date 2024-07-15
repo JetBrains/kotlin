@@ -12,24 +12,22 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.name.FqName
 
 class IrExternalPackageFragmentImpl(
-    override val symbol: IrExternalPackageFragmentSymbol,
-    override var packageFqName: FqName,
-) : IrExternalPackageFragment() {
+    symbol: IrExternalPackageFragmentSymbol,
+    packageFqName: FqName,
+) : IrExternalPackageFragment(
+    packageFqName = packageFqName,
+    symbol = symbol,
+) {
     override val startOffset: Int
         get() = UNDEFINED_OFFSET
 
     override val endOffset: Int
         get() = UNDEFINED_OFFSET
-
-    @UnsafeDuringIrConstructionAPI
-    override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     companion object {
         @Deprecated(

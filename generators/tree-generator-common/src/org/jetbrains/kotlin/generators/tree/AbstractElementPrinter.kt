@@ -37,25 +37,91 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
             printKDoc(elementKDoc(element))
             print(kind.title, " ", element.typeName)
             print(element.params.typeParameters())
-            printInheritanceClause(element.parentRefs)
+
+            val fieldPrinter = makeFieldPrinter(this)
+
+            if (kind.typeKind == TypeKind.Class) {
+                val optInsForParameters = filterFields(element)
+                    .filter { it.implementation is AbstractField.ImplementationStrategy.RegularField }
+                    .mapNotNull { it.optInAnnotation }.toSet()
+                if (optInsForParameters.isNotEmpty()) {
+                    print(" @OptIn(${optInsForParameters.joinToString { it.render() + "::class" }}) constructor")
+                }
+
+                println("(")
+                withIndent {
+                    for (field in filterFields(element)) {
+                        val fieldImplementation = field.implementation
+                        if (fieldImplementation is AbstractField.ImplementationStrategy.ForwardValueToParent && fieldImplementation.defaultValue == null) {
+                            printPropertyDeclaration(field.name, field.typeRef, VariableKind.PARAMETER, inConstructor = true)
+                            println()
+                        } else if (fieldImplementation is AbstractField.ImplementationStrategy.RegularField && fieldImplementation.defaultValue == null) {
+                            fieldPrinter.printField(
+                                field,
+                                inImplementation = false,
+                                inConstructor = true,
+                                override = field.isOverride,
+                            )
+                        }
+                    }
+                }
+                print(")")
+            }
+
+            val parentRefs = element.parentRefs
+            if (parentRefs.isNotEmpty()) {
+                print(" : ")
+                parentRefs.sortedBy { it.typeKind }.forEachIndexed { index, parent ->
+                    if (index != 0) print(", ")
+                    print(parent.render())
+
+                    if (parent.typeKind == TypeKind.Class) {
+                        print("(")
+                        withIndent {
+                            var anyField = false
+                            for (field in element.allFields) {
+                                val fieldImplementation = field.implementation
+                                if (fieldImplementation is AbstractField.ImplementationStrategy.ForwardValueToParent) {
+                                    if (!anyField) {
+                                        println()
+                                        anyField = true
+                                    }
+
+                                    print("${field.name} = ")
+                                    if (fieldImplementation.defaultValue != null) {
+                                        print(fieldImplementation.defaultValue)
+                                    } else {
+                                        print(field.name)
+                                    }
+                                    println(",")
+                                }
+                            }
+                        }
+                        print(")")
+                    }
+                }
+            }
             print(element.params.multipleUpperBoundsList())
 
             val printer = SmartPrinter(StringBuilder())
             this@AbstractElementPrinter.printer.withNewPrinter(printer) {
-                val fieldPrinter = makeFieldPrinter(this)
+                val bodyFieldPrinter = makeFieldPrinter(this)
                 withIndent {
+                    var index = 0
                     for (field in filterFields(element)) {
-                        if (field.isParameter) continue
-                        if (field.isFinal && field.isOverride) {
-                            continue
+                        val fieldImplementation = field.implementation
+                        if (fieldImplementation is AbstractField.ImplementationStrategy.LateinitField
+                            || fieldImplementation is AbstractField.ImplementationStrategy.Abstract
+                            || fieldImplementation is AbstractField.ImplementationStrategy.RegularField && fieldImplementation.defaultValue != null
+                        ) {
+                            if (separateFieldsWithBlankLine && index++ > 0) println()
+                            bodyFieldPrinter.printField(
+                                field,
+                                inImplementation = false,
+                                override = field.isOverride,
+                                modality = Modality.ABSTRACT.takeIf { kind.typeKind == TypeKind.Class && fieldImplementation is AbstractField.ImplementationStrategy.Abstract },
+                            )
                         }
-                        if (separateFieldsWithBlankLine) println()
-                        fieldPrinter.printField(
-                            field,
-                            inImplementation = false,
-                            override = field.isOverride,
-                            modality = Modality.ABSTRACT.takeIf { !field.isFinal && !kind.isInterface },
-                        )
                     }
                     printAdditionalMethods(element)
                 }

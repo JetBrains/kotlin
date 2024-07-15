@@ -8,14 +8,28 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorDeclaration]
  */
-abstract class IrErrorDeclaration : IrDeclarationBase() {
-    abstract override val symbol: IrSymbol
+abstract class IrErrorDeclaration(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val factory: IrFactory,
+) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+) {
+    override var annotations: List<IrConstructorCall> = emptyList()
+
+    @ObsoleteDescriptorBasedAPI
+    override lateinit var descriptor: DeclarationDescriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitErrorDeclaration(this, data)

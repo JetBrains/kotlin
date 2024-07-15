@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.catch]
  */
-abstract class IrCatch : IrElementBase(), IrElement {
-    abstract var catchParameter: IrVariable
-
-    abstract var result: IrExpression
+abstract class IrCatch(
+    override val startOffset: Int,
+    override val endOffset: Int,
+    var catchParameter: IrVariable,
+) : IrElementBase(), IrElement {
+    lateinit var result: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitCatch(this, data)

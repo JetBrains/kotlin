@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -15,10 +16,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.when]
  */
-abstract class IrWhen : IrExpression() {
-    abstract var origin: IrStatementOrigin?
-
-    abstract val branches: MutableList<IrBranch>
+abstract class IrWhen(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var origin: IrStatementOrigin?,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    val branches: MutableList<IrBranch> = ArrayList(2)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitWhen(this, data)

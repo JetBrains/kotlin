@@ -10,14 +10,14 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrBlockBodyImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-) : IrBlockBody() {
-    override val statements: MutableList<IrStatement> = ArrayList(2)
-}
+    startOffset: Int,
+    endOffset: Int,
+) : IrBlockBody(
+    startOffset = startOffset,
+    endOffset = endOffset,
+)

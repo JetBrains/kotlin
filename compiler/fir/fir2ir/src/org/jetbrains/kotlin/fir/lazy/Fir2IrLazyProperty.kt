@@ -41,19 +41,18 @@ class Fir2IrLazyProperty(
     private val c: Fir2IrComponents,
     startOffset: Int,
     endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    origin: IrDeclarationOrigin,
     override val fir: FirProperty,
     val containingClass: FirRegularClass?,
     symbols: PropertySymbols,
     parent: IrDeclarationParent,
     override var isFakeOverride: Boolean,
-) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by c {
+) : IrProperty(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by c {
     override val symbol: IrPropertySymbol = symbols.propertySymbol
-
-    override var startOffset: Int = startOffset
-        set(_) = shouldNotBeCalled()
-    override var endOffset: Int = endOffset
-        set(_) = shouldNotBeCalled()
 
     init {
         this.parent = parent

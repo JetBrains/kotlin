@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,15 +17,18 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrConstImpl<T> internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var kind: IrConstKind<T>,
-    override var value: T,
-) : IrConst<T>() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    kind: IrConstKind<T>,
+    value: T,
+) : IrConst<T>(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    kind = kind,
+    value = value,
+) {
 
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl<String> =

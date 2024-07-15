@@ -9,14 +9,22 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getEnumValue]
  */
-abstract class IrGetEnumValue : IrGetSingletonValue() {
-    abstract override var symbol: IrEnumEntrySymbol
-
+abstract class IrGetEnumValue(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override var symbol: IrEnumEntrySymbol,
+) : IrGetSingletonValue(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetEnumValue(this, data)
 }

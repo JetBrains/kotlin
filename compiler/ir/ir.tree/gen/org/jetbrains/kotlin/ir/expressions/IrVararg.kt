@@ -12,14 +12,22 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.utils.SmartList
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.vararg]
  */
-abstract class IrVararg : IrExpression() {
-    abstract var varargElementType: IrType
-
-    abstract val elements: MutableList<IrVarargElement>
+abstract class IrVararg(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var varargElementType: IrType,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    val elements: MutableList<IrVarargElement> = SmartList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitVararg(this, data)

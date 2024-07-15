@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
@@ -19,14 +18,17 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrTypeOperatorCallImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var operator: IrTypeOperator,
-    override var argument: IrExpression,
-    override var typeOperand: IrType,
-) : IrTypeOperatorCall() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    operator: IrTypeOperator,
+    argument: IrExpression,
+    typeOperand: IrType,
+) : IrTypeOperatorCall(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    operator = operator,
+    argument = argument,
+    typeOperand = typeOperand,
+)

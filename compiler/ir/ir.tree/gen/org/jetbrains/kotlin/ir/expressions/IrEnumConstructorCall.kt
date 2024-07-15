@@ -9,14 +9,28 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.enumConstructorCall]
  */
-abstract class IrEnumConstructorCall : IrFunctionAccessExpression() {
-    abstract override var symbol: IrConstructorSymbol
-
+abstract class IrEnumConstructorCall(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    origin: IrStatementOrigin?,
+    valueArguments: Array<IrExpression?>,
+    typeArguments: Array<IrType?>,
+    override var symbol: IrConstructorSymbol,
+) : IrFunctionAccessExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+    valueArguments = valueArguments,
+    typeArguments = typeArguments,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitEnumConstructorCall(this, data)
 }

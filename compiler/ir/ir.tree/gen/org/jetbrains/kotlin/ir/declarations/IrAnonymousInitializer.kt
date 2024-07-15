@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -20,15 +21,24 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.anonymousInitializer]
  */
-abstract class IrAnonymousInitializer : IrDeclarationBase() {
+abstract class IrAnonymousInitializer(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val factory: IrFactory,
+    override val symbol: IrAnonymousInitializerSymbol,
+    var isStatic: Boolean,
+) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+) {
+    override var annotations: List<IrConstructorCall> = emptyList()
+
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
 
-    abstract override val symbol: IrAnonymousInitializerSymbol
-
-    abstract var isStatic: Boolean
-
-    abstract var body: IrBlockBody
+    lateinit var body: IrBlockBody
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitAnonymousInitializer(this, data)

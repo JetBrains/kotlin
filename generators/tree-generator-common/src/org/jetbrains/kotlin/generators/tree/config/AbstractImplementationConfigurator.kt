@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.generators.tree.config
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.Importable
 import org.jetbrains.kotlin.generators.tree.printer.call
+import org.jetbrains.kotlin.utils.addToStdlib.same
+import org.jetbrains.kotlin.utils.topologicalSort
 
 /**
  * Provides a DSL to configure `Impl` classes for tree nodes.
@@ -20,6 +22,9 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
 
     private val elementsWithImpl = mutableSetOf<Element>()
 
+    protected open val doHoistFieldsInBaseClasses: Boolean
+        get() = false
+
     protected abstract fun createImplementation(element: Element, name: String?): Implementation
 
     fun configureImplementations(model: Model<Element>) {
@@ -27,6 +32,10 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
         generateDefaultImplementations(model.elements)
         inheritImplementationFieldSpecifications(model.elements)
         configureAllImplementations(model)
+
+        if (doHoistFieldsInBaseClasses) {
+            hoistFieldsInAbstractClasses(model)
+        }
     }
 
     /**
@@ -115,6 +124,147 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
         }
     }
 
+    protected fun hoistFieldsInAbstractClasses(model: Model<Element>) {
+        for (element in model.elements) {
+            /* when (element.typeKind) {
+                 TypeKind.Class -> {*/
+            for (field in element.allFields) {
+                field.implementation = AbstractField.ImplementationStrategy.Abstract(field.isMutable)
+            }
+            /*}
+            TypeKind.Interface -> {
+                for (field in element.fields) {
+                    field.implementation = AbstractField.ImplementationStrategy.Abstract(field.isMutable)
+                }
+            }
+        }*/
+
+            for (impl in element.implementations) {
+                for (field in impl.allFields) {
+                    field.implementation =
+                        when (val default = field.implementationDefaultStrategy) {
+                            is AbstractField.ImplementationDefaultStrategy.Lateinit ->
+                                AbstractField.ImplementationStrategy.LateinitField
+                            is AbstractField.ImplementationDefaultStrategy.Required ->
+                                AbstractField.ImplementationStrategy.RegularField(field.isMutable, null)
+                            is AbstractField.ImplementationDefaultStrategy.DefaultValue -> if (default.withGetter)
+                                AbstractField.ImplementationStrategy.ComputedProperty(default.defaultValue)
+                            else
+                                AbstractField.ImplementationStrategy.RegularField(field.isMutable, default.defaultValue)
+                            null ->
+                                AbstractField.ImplementationStrategy.RegularField(field.isMutable, null)
+                        }
+                }
+            }
+        }
+
+        val subclassesPerElement = model.elements.associateWith { mutableListOf<FieldContainer<AbstractField<*>>>() }
+        for (element in model.elements) {
+            for (parent in element.elementParents) {
+                subclassesPerElement.getValue(parent.element) += element
+            }
+            subclassesPerElement.getValue(element) += element.implementations
+        }
+
+        val elements = topologicalSort(model.elements.filter { it.canHostFields() }) {
+            this.elementParents.map { it.element }.filter { it.canHostFields() }
+        }
+
+        for (parent in elements) {
+            val subClasses = subclassesPerElement.getValue(parent)
+            /*if (subClasses.size == 1 && subClasses.single() is AbstractImplementation<*, *, *>) {
+                continue
+            }*/
+
+            var anyHoisted = false
+            for (fieldInParent in parent.allFields) {
+                val fieldsOfSubclasses = subClasses.map { it to it[fieldInParent.name] }
+                if (tryHoistField(fieldInParent, fieldsOfSubclasses)) {
+                    anyHoisted = true
+                }
+            }
+
+            if (anyHoisted) {
+                parent.additionalImports += subClasses.flatMap { it.additionalImports }.distinct()
+            }
+        }
+
+        for (parent in model.elements) {
+            val subClasses = subclassesPerElement.getValue(parent)
+            for (subClass in subClasses) {
+                for (fieldInParent in parent.allFields) {
+                    val field = subClass[fieldInParent.name]
+                    if (field.implementation is AbstractField.ImplementationStrategy.Abstract
+                        && field.typeRef == fieldInParent.typeRef
+                        && field.isMutable == fieldInParent.isMutable
+                    ) {
+                        field.implementation = AbstractField.ImplementationStrategy.HandledByParent
+                    }
+                }
+            }
+        }
+    }
+
+    private fun tryHoistField(
+        fieldInParent: ElementField,
+        fieldsOfSubclasses: List<Pair<FieldContainer<AbstractField<*>>, AbstractField<*>>>,
+    ): Boolean {
+        if (fieldsOfSubclasses.any { !it.second.allowHoistingToBaseClass }) {
+            return false
+        }
+
+        // todo: support nullable -> not nullable inheritance
+        if (!fieldsOfSubclasses.same { it.second.typeRef }) {
+            return false
+        }
+
+        if (fieldsOfSubclasses.filter { it.first is AbstractImplementation<*, *, *> }
+                .any { it.second.customSetter != null }) {
+            return false
+        }
+
+        if (
+            fieldsOfSubclasses.all { (clazz, field) ->
+                field.implementation == AbstractField.ImplementationStrategy.LateinitField
+            }
+        ) {
+            fieldInParent.implementation = AbstractField.ImplementationStrategy.LateinitField
+            fieldsOfSubclasses.forEach {
+                it.second.implementation = AbstractField.ImplementationStrategy.HandledByParent
+            }
+            return true
+        }
+
+        if (
+            !fieldsOfSubclasses.all { (clazz, field) ->
+                field.implementation is AbstractField.ImplementationStrategy.RegularField
+            }
+        ) {
+            return false
+        }
+
+        val isMutable = fieldInParent.isMutable || fieldsOfSubclasses.any { it.second.isMutable }
+        val liftedDefaultValue = fieldsOfSubclasses.map { (clazz, field) ->
+            (field.implementation as AbstractField.ImplementationStrategy.RegularField).defaultValue
+        }.distinct().singleOrNull()
+
+        fieldInParent.implementation = AbstractField.ImplementationStrategy.RegularField(isMutable, liftedDefaultValue)
+
+        fieldsOfSubclasses.forEach { (clazz, field) ->
+            field.implementation = if (liftedDefaultValue != null) {
+                AbstractField.ImplementationStrategy.HandledByParent
+            } else {
+                val defaultValue = (field.implementation as? AbstractField.ImplementationStrategy.RegularField)?.defaultValue
+                AbstractField.ImplementationStrategy.ForwardValueToParent(defaultValue)
+            }
+        }
+
+        return true
+    }
+
+    private fun Element.canHostFields() =
+        !kind!!.isInterface
+
 
     /**
      * Allows to batch-apply [config] to certain fields in _all_ the implementations that satisfy the given
@@ -171,7 +321,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
     }
 
     protected abstract class FieldContainerContext<Field>(
-        private val fieldContainer: FieldContainer<Field>,
+        val fieldContainer: FieldContainer<Field>,
     ) where Field : AbstractField<*> {
         /**
          * Makes the specified fields in the implementation class mutable

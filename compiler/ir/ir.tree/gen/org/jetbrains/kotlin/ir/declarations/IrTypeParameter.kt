@@ -19,11 +19,18 @@ import org.jetbrains.kotlin.types.Variance
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeParameter]
  */
-abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
+abstract class IrTypeParameter(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrTypeParameterSymbol,
+) : IrDeclarationBase(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+), IrDeclarationWithName {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: TypeParameterDescriptor
-
-    abstract override val symbol: IrTypeParameterSymbol
 
     abstract var variance: Variance
 

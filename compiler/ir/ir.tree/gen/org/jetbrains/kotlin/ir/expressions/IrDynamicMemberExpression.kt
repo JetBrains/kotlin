@@ -8,17 +8,24 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.dynamicMemberExpression]
  */
-abstract class IrDynamicMemberExpression : IrDynamicExpression() {
-    abstract var memberName: String
-
-    abstract var receiver: IrExpression
-
+abstract class IrDynamicMemberExpression(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var memberName: String,
+    var receiver: IrExpression,
+) : IrDynamicExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitDynamicMemberExpression(this, data)
 

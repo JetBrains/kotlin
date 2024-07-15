@@ -15,13 +15,18 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeOperatorCall]
  */
-abstract class IrTypeOperatorCall : IrExpression() {
-    abstract var operator: IrTypeOperator
-
-    abstract var argument: IrExpression
-
-    abstract var typeOperand: IrType
-
+abstract class IrTypeOperatorCall(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var operator: IrTypeOperator,
+    var argument: IrExpression,
+    var typeOperand: IrType,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeOperator(this, data)
 

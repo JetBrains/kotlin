@@ -25,13 +25,18 @@ import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyTypeAlias(
     c: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val fir: FirTypeAlias,
-    override val symbol: IrTypeAliasSymbol,
+    symbol: IrTypeAliasSymbol,
     parent: IrDeclarationParent,
-) : IrTypeAlias(), AbstractFir2IrLazyDeclaration<FirTypeAlias>, Fir2IrTypeParametersContainer, Fir2IrComponents by c {
+) : IrTypeAlias(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    symbol = symbol,
+), AbstractFir2IrLazyDeclaration<FirTypeAlias>, Fir2IrTypeParametersContainer, Fir2IrComponents by c {
     init {
         this.parent = parent
         symbol.bind(this)

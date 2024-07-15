@@ -8,15 +8,23 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getClass]
  */
-abstract class IrGetClass : IrExpression() {
-    abstract var argument: IrExpression
-
+abstract class IrGetClass(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var argument: IrExpression,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetClass(this, data)
 

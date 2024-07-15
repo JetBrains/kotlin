@@ -48,7 +48,7 @@ fun main(args: Array<String>) {
             }
         )
 
-        generateTree(
+       /* generateTree(
             symbolModel,
             pureAbstractElement = null,
             ::SymbolPrinter.bind(model),
@@ -58,6 +58,6 @@ fun main(args: Array<String>) {
             enableBaseTransformerTypeDetection = false,
             putElementsInSingleFile = Packages.symbols to "IrSymbol",
             putImplementationsInSingleFile = Packages.symbolsImpl to "IrSymbolImpl",
-        )
+        )*/
     }
 }

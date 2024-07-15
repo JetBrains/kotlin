@@ -14,9 +14,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expressionBody]
  */
-abstract class IrExpressionBody : IrBody() {
-    abstract var expression: IrExpression
-
+abstract class IrExpressionBody(
+    startOffset: Int,
+    endOffset: Int,
+    var expression: IrExpression,
+) : IrBody(
+    startOffset = startOffset,
+    endOffset = endOffset,
+) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitExpressionBody(this, data)
 

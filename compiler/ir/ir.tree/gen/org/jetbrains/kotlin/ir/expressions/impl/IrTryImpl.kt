@@ -10,9 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.expressions.IrCatch
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTry
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
@@ -20,17 +17,11 @@ import org.jetbrains.kotlin.utils.SmartList
 
 class IrTryImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-) : IrTry() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-
-    override lateinit var tryResult: IrExpression
-
-    override val catches: MutableList<IrCatch> = SmartList()
-
-    override var finallyExpression: IrExpression? = null
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+) : IrTry(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+)

@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.body]
  */
-abstract class IrBody : IrElementBase(), IrElement {
+abstract class IrBody(
+    override val startOffset: Int,
+    override val endOffset: Int,
+) : IrElementBase(), IrElement {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
         accept(transformer, data) as IrBody
 }

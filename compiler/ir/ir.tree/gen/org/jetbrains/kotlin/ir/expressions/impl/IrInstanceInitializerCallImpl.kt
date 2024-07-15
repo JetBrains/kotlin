@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -18,12 +17,13 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrInstanceInitializerCallImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var type: IrType,
-    override var classSymbol: IrClassSymbol,
-) : IrInstanceInitializerCall() {
-    override var attributeOwnerId: IrAttributeContainer = this
-
-    override var originalBeforeInline: IrAttributeContainer? = null
-}
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    classSymbol: IrClassSymbol,
+) : IrInstanceInitializerCall(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    classSymbol = classSymbol,
+)

@@ -8,11 +8,20 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.types.IrType
+
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.breakContinue]
  */
-abstract class IrBreakContinue : IrExpression() {
-    abstract var loop: IrLoop
-
-    abstract var label: String?
+abstract class IrBreakContinue(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    var loop: IrLoop,
+) : IrExpression(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+) {
+    var label: String? = null
 }

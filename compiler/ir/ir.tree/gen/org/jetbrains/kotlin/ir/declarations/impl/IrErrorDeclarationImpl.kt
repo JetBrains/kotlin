@@ -10,26 +10,23 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrImplementationDetail
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 class IrErrorDeclarationImpl @IrImplementationDetail constructor(
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
-    override val factory: IrFactory,
-) : IrErrorDeclaration() {
-    override var annotations: List<IrConstructorCall> = emptyList()
-
-    @ObsoleteDescriptorBasedAPI
-    override lateinit var descriptor: DeclarationDescriptor
-
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    factory: IrFactory,
+) : IrErrorDeclaration(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    factory = factory,
+) {
     override val symbol: IrSymbol
         get() = error("Should never be called")
 }

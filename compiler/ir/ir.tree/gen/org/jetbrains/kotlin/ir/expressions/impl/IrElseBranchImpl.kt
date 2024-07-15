@@ -16,8 +16,13 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrElseBranchImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var condition: IrExpression,
-    override var result: IrExpression,
-) : IrElseBranch()
+    startOffset: Int,
+    endOffset: Int,
+    condition: IrExpression,
+    result: IrExpression,
+) : IrElseBranch(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    condition = condition,
+    result = result,
+)

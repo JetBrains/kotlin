@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrSyntheticBodyImpl internal constructor(
     @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var kind: IrSyntheticBodyKind,
-) : IrSyntheticBody()
+    startOffset: Int,
+    endOffset: Int,
+    kind: IrSyntheticBodyKind,
+) : IrSyntheticBody(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    kind = kind,
+)

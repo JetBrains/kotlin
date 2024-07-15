@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrFunctionImpl @IrImplementationDetail constructor(
-    override var startOffset: Int,
-    override var endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val factory: IrFactory,
     override var name: Name,
     override var isExternal: Boolean,
@@ -42,7 +42,11 @@ class IrFunctionImpl @IrImplementationDetail constructor(
     override var isSuspend: Boolean,
     override var isOperator: Boolean,
     override var isInfix: Boolean,
-) : IrSimpleFunction() {
+) : IrSimpleFunction(
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+) {
     override var annotations: List<IrConstructorCall> = emptyList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
