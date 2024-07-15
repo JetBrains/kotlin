@@ -228,7 +228,6 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                     project,
                     project.objects,
                     konanTarget,
-                    project.nativeProperties.actualNativeHomeDirectory.get(),
                     project.kotlinPropertiesProvider,
                     project.konanPropertiesBuildService,
                     project.objects.property(GradleBuildMetricsReporter()),

@@ -37,7 +37,6 @@ internal class PlatformLibrariesGenerator(
     val project: Project,
     objectFactory: ObjectFactory,
     val konanTarget: KonanTarget,
-    val konanHome: File,
     private val propertiesProvider: PropertiesProvider,
     private val konanPropertiesService: Provider<KonanPropertiesBuildService>,
     metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
@@ -54,6 +53,9 @@ internal class PlatformLibrariesGenerator(
         useXcodeMessageStyle,
         nativeProperties,
     )
+
+    private val konanHome
+        get() = nativeProperties.actualNativeHomeDirectory.get()
 
     private val distribution = customerDistribution(
         konanHome.absolutePath,

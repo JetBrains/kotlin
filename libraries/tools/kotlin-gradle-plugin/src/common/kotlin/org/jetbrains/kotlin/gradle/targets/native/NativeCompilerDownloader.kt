@@ -287,7 +287,6 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
             project,
             project.objects,
             konanTarget,
-            nativeProperties.actualNativeHomeDirectory.get(),
             project.kotlinPropertiesProvider,
             project.konanPropertiesBuildService,
             project.objects.property(GradleBuildMetricsReporter()),
