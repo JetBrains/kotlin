@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-69871
 
 // FILE: A.kt

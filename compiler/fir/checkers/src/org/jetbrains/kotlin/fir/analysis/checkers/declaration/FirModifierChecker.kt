@@ -28,10 +28,14 @@ import org.jetbrains.kotlin.resolve.*
 
 object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration is FirFile) return
+        val source = when (declaration) {
+            is FirFile -> declaration.packageDirective.source
+            else -> declaration.source
+        }
 
-        val source = declaration.source ?: return
-        if (source.kind is KtFakeSourceElementKind) return
+        if (source == null || source.kind is KtFakeSourceElementKind) {
+            return
+        }
 
         source.getModifierList()?.let { checkModifiers(it, declaration, context, reporter) }
     }
