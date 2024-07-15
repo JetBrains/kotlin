@@ -378,7 +378,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
-        if (this === NoSubstitutor) return type
         require(this is ConeSubstitutor)
         require(type is ConeKotlinType)
         return this.substituteOrSelf(type)
