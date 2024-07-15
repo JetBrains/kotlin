@@ -382,7 +382,19 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
      */
     protected open fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>) = parent
 
-    protected open fun mapFunctionName(function: IrSimpleFunction): String = function.name.asString()
+    protected open fun mapFunctionName(function: IrSimpleFunction): String {
+        val parent = function.parent
+        return if (parent is IrPackageFragment) {
+            // This is a top-level function. Include the sanitized .kt file name to avoid potential clashes.
+            check(parent is IrFile) {
+                "Unexpected type of package fragment for top-level function ${function.render()}: ${parent::class.java}, ${parent.render()}"
+            }
+
+            "${parent.packagePartClassName}\$${function.name.asString()}"
+        } else {
+            function.name.asString()
+        }
+    }
 
     protected open fun functionAccessorSuffix(
         function: IrSimpleFunction,
