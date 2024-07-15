@@ -27,7 +27,7 @@ Tower Data Context:
 FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_safeCall.kt
     public abstract [ResolvedTo(STATUS)] interface DataFrame<[ResolvedTo(STATUS)] out T> : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Refine : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] annotation class Refine : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|Refine| {
             LAZY_super<R|kotlin/Any|>
         }

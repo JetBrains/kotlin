@@ -391,13 +391,15 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     ) {
         withRegularClass(regularClass) {
             if (!shouldTransformDeclaration(regularClass)) return
-            computationSession.recordThatAnnotationsAreResolved(regularClass)
-            transformDeclaration(regularClass, null).also {
-                transformChildren(regularClass) {
-                    transformChildren()
-                }
-                afterChildrenTransform()
+            if (!computationSession.annotationResolutionWasAlreadyStarted(regularClass)) {
+                computationSession.recordThatAnnotationResolutionStarted(regularClass)
+                transformDeclaration(regularClass, null)
+                computationSession.recordThatAnnotationsAreResolved(regularClass)
             }
+            transformChildren(regularClass) {
+                transformChildren()
+            }
+            afterChildrenTransform()
         }
     }
 

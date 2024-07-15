@@ -28,10 +28,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.FqName
-
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 /**
  * Little explanation the logic of this phase
@@ -185,7 +186,12 @@ open class CompilerRequiredAnnotationsComputationSession {
         }
     }
 
-    private val declarationsWithResolvedAnnotations = mutableSetOf<FirAnnotationContainer>()
+    private val declarationsWithAnnotationResolutionInProgress: MutableSet<FirClassLikeDeclaration> = mutableSetOf()
+    private val declarationsWithResolvedAnnotations: MutableSet<FirAnnotationContainer> = mutableSetOf()
+
+    fun annotationResolutionWasAlreadyStarted(klass: FirClassLikeDeclaration): Boolean {
+        return klass in declarationsWithAnnotationResolutionInProgress
+    }
 
     fun annotationsAreResolved(declaration: FirAnnotationContainer, treatNonSourceDeclarationsAsResolved: Boolean): Boolean {
         if (declaration is FirFile) return false
@@ -196,14 +202,22 @@ open class CompilerRequiredAnnotationsComputationSession {
         return declaration in declarationsWithResolvedAnnotations
     }
 
+    fun recordThatAnnotationResolutionStarted(klass: FirClassLikeDeclaration) {
+        val wasNotStartedBefore = declarationsWithAnnotationResolutionInProgress.add(klass)
+        checkWithAttachment(wasNotStartedBefore, { "Annotation resolution was already started" }) {
+            withFirEntry("class", klass)
+        }
+    }
+
     fun recordThatAnnotationsAreResolved(declaration: FirAnnotationContainer) {
+        declarationsWithAnnotationResolutionInProgress.remove(declaration)
         declarationsWithResolvedAnnotations.add(declaration)
     }
 
     fun resolveAnnotationsOnAnnotationIfNeeded(symbol: FirRegularClassSymbol, scopeSession: ScopeSession) {
         val regularClass = symbol.fir
         if (annotationsAreResolved(regularClass, treatNonSourceDeclarationsAsResolved = true)) return
-
+        if (regularClass.annotations.isEmpty()) return
         resolveAnnotationSymbol(symbol, scopeSession)
     }
 
