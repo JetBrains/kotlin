@@ -5,7 +5,7 @@
 
 package kotlinx.validation.api
 
-import kotlinx.metadata.jvm.*
+import kotlin.metadata.jvm.*
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 
