@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -14,10 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.allTypeParameters
-import org.jetbrains.kotlin.ir.util.constructedClassType
-import org.jetbrains.kotlin.ir.util.isAssignable
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 
 fun IrBlockImpl(
     startOffset: Int,
@@ -786,7 +784,6 @@ fun IrWhileLoopImpl(
     origin = origin,
 )
 
-
 @ObsoleteDescriptorBasedAPI
 fun IrCallImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
@@ -800,6 +797,7 @@ fun IrCallImpl.Companion.fromSymbolDescriptor(
 ): IrCallImpl =
     IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 fun IrCallImpl.Companion.fromSymbolOwner(
     startOffset: Int,
     endOffset: Int,
@@ -900,16 +898,6 @@ fun IrConstructorCallImpl.Companion.fromSymbolOwner(
 
 
 @ObsoleteDescriptorBasedAPI
-fun IrEnumConstructorCallImpl.Companion.fromSymbolDescriptor(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrConstructorSymbol,
-    typeArgumentsCount: Int
-) = IrEnumConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size)
-
-
-@ObsoleteDescriptorBasedAPI
 fun IrDelegatingConstructorCallImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
     endOffset: Int,
@@ -930,6 +918,16 @@ fun IrDelegatingConstructorCallImpl.Companion.fromSymbolOwner(
     valueArgumentsCount: Int = symbol.owner.valueParameters.size,
 ): IrDelegatingConstructorCallImpl =
     IrDelegatingConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount)
+
+
+@ObsoleteDescriptorBasedAPI
+fun IrEnumConstructorCallImpl.Companion.fromSymbolDescriptor(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    typeArgumentsCount: Int
+) = IrEnumConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size)
 
 
 @ObsoleteDescriptorBasedAPI
@@ -967,4 +965,153 @@ fun IrFunctionReferenceImpl.Companion.fromSymbolOwner(
     symbol.owner.valueParameters.size,
     reflectionTarget,
     origin
+)
+
+
+fun IrCallImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrSimpleFunctionSymbol,
+    typeArgumentsCount: Int,
+    valueArgumentsCount: Int,
+    origin: IrStatementOrigin? = null,
+    superQualifierSymbol: IrClassSymbol? = null,
+): IrCallImpl = IrCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    typeArguments = initializeTypeArguments(typeArgumentsCount),
+    valueArguments = initializeParameterArguments(valueArgumentsCount),
+    origin = origin,
+    superQualifierSymbol = superQualifierSymbol,
+)
+
+fun IrConstructorCallImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    typeArgumentsCount: Int,
+    constructorTypeArgumentsCount: Int,
+    valueArgumentsCount: Int,
+    origin: IrStatementOrigin? = null,
+    source: SourceElement = SourceElement.NO_SOURCE,
+): IrConstructorCallImpl = IrConstructorCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = origin,
+    typeArguments = initializeTypeArguments(typeArgumentsCount),
+    valueArguments = initializeParameterArguments(valueArgumentsCount),
+    constructorTypeArgumentsCount = constructorTypeArgumentsCount,
+    source = source,
+)
+
+fun IrDelegatingConstructorCallImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    typeArgumentsCount: Int,
+    valueArgumentsCount: Int,
+): IrDelegatingConstructorCallImpl = IrDelegatingConstructorCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = null,
+    typeArguments = initializeTypeArguments(typeArgumentsCount),
+    valueArguments = initializeParameterArguments(valueArgumentsCount),
+)
+
+fun IrEnumConstructorCallImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrConstructorSymbol,
+    typeArgumentsCount: Int,
+    valueArgumentsCount: Int,
+): IrEnumConstructorCallImpl = IrEnumConstructorCallImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    origin = null,
+    typeArguments = initializeTypeArguments(typeArgumentsCount),
+    valueArguments = initializeParameterArguments(valueArgumentsCount),
+)
+
+fun IrFunctionReferenceImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrFunctionSymbol,
+    typeArgumentsCount: Int,
+    valueArgumentsCount: Int,
+    reflectionTarget: IrFunctionSymbol? = symbol,
+    origin: IrStatementOrigin? = null,
+): IrFunctionReferenceImpl = IrFunctionReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    origin = origin,
+    symbol = symbol,
+    reflectionTarget = reflectionTarget,
+    typeArguments = initializeTypeArguments(typeArgumentsCount),
+    valueArguments = initializeParameterArguments(valueArgumentsCount),
+)
+
+fun IrLocalDelegatedPropertyReferenceImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrLocalDelegatedPropertySymbol,
+    delegate: IrVariableSymbol,
+    getter: IrSimpleFunctionSymbol,
+    setter: IrSimpleFunctionSymbol?,
+    origin: IrStatementOrigin? = null,
+): IrLocalDelegatedPropertyReferenceImpl = IrLocalDelegatedPropertyReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    delegate = delegate,
+    getter = getter,
+    setter = setter,
+    origin = origin,
+    typeArguments = initializeTypeArguments(0),
+    valueArguments = initializeParameterArguments(0),
+)
+
+fun IrPropertyReferenceImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    symbol: IrPropertySymbol,
+    typeArgumentsCount: Int,
+    field: IrFieldSymbol?,
+    getter: IrSimpleFunctionSymbol?,
+    setter: IrSimpleFunctionSymbol?,
+    origin: IrStatementOrigin? = null,
+): IrPropertyReferenceImpl = IrPropertyReferenceImpl(
+    constructorIndicator = null,
+    startOffset = startOffset,
+    endOffset = endOffset,
+    type = type,
+    symbol = symbol,
+    field = field,
+    getter = getter,
+    setter = setter,
+    origin = origin,
+    typeArguments = initializeTypeArguments(typeArgumentsCount),
+    valueArguments = initializeParameterArguments(0),
 )
