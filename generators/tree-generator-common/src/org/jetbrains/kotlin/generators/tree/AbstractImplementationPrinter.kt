@@ -60,7 +60,7 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
 
             val kind = implementation.kind ?: error("Expected non-null element kind")
             print("${kind.title} ${implementation.typeName}")
-            print(implementation.element.params.typeParameters(end = " "))
+            print(implementation.element.params.typeParameters())
 
             val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
             val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass

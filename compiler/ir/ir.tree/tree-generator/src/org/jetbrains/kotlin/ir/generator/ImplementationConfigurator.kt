@@ -310,6 +310,51 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             }
         }
 
+        impl(const) {
+            implementation.generationCallback = {
+                println()
+                printlnMultiLine("""
+                    companion object {
+                        fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl<String> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
+                
+                        fun int(startOffset: Int, endOffset: Int, type: IrType, value: Int): IrConstImpl<Int> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, value)
+                
+                        fun constNull(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl<Nothing?> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Null, null)
+                
+                        fun boolean(startOffset: Int, endOffset: Int, type: IrType, value: Boolean): IrConstImpl<Boolean> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Boolean, value)
+                
+                        fun constTrue(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl<Boolean> =
+                            boolean(startOffset, endOffset, type, true)
+                
+                        fun constFalse(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl<Boolean> =
+                            boolean(startOffset, endOffset, type, false)
+                
+                        fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrConstImpl<Long> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, value)
+                
+                        fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrConstImpl<Float> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Float, value)
+                
+                        fun double(startOffset: Int, endOffset: Int, type: IrType, value: Double): IrConstImpl<Double> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Double, value)
+                
+                        fun char(startOffset: Int, endOffset: Int, type: IrType, value: Char): IrConstImpl<Char> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, value)
+                
+                        fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrConstImpl<Byte> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Byte, value)
+                
+                        fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl<Short> =
+                            IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
+                    }
+                """.trimIndent())
+            }
+        }
+
         allImplOf(memberAccessExpression) {
             defaultNull("dispatchReceiver", "extensionReceiver")
         }
@@ -407,11 +452,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         for (element in model.elements) {
             for (implementation in element.implementations) {
-                // Generation of implementation classes of IrMemberAccessExpression are left out for subsequent MR, as a part of KT-65773.
-                if (element == IrTree.const) {
-                    implementation.doPrint = false
-                }
-
                 if (element.category == Element.Category.Expression) {
                     implementation.isConstructorPublic = false
                 }
