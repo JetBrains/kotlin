@@ -34,8 +34,6 @@ internal class NativeMapping : Mapping() {
         ATOMIC_GET_ARRAY_ELEMENT, ATOMIC_SET_ARRAY_ELEMENT, COMPARE_AND_EXCHANGE_ARRAY_ELEMENT, COMPARE_AND_SET_ARRAY_ELEMENT, GET_AND_SET_ARRAY_ELEMENT, GET_AND_ADD_ARRAY_ELEMENT;
     }
 
-    val enumValueGetters: DeclarationMapping<IrClass, IrFunction> by AttributeBasedMappingDelegate()
-    val enumEntriesMaps: DeclarationMapping<IrClass, Map<Name, LoweredEnumEntryDescription>> by AttributeBasedMappingDelegate()
     val bridges: DeclarationMapping<IrSimpleFunction, MutableMap<BridgeDirections, IrSimpleFunction>> by AttributeBasedMappingDelegate()
     val loweredInlineFunctions: DeclarationMapping<IrFunction, IrFunction> by AttributeBasedMappingDelegate()
     val outerThisCacheAccessors: DeclarationMapping<IrClass, IrSimpleFunction> by AttributeBasedMappingDelegate()
@@ -71,7 +69,7 @@ internal class Context(
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
-    val enumsSupport by lazy { EnumsSupport(mapping, irBuiltIns, irFactory) }
+    val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
 
     // TODO: Remove after adding special <userData> property to IrDeclaration.
