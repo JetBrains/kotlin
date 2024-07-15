@@ -5,16 +5,15 @@
 
 package kotlinx.validation.api
 
-import kotlinx.metadata.Flag
-import kotlinx.metadata.KmProperty
-import kotlinx.metadata.internal.metadata.jvm.deserialization.JvmFlags
-import kotlinx.metadata.jvm.*
+import kotlin.metadata.jvm.*
 import kotlinx.validation.*
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.*
 import java.io.*
 import java.util.*
 import java.util.jar.*
+import kotlin.metadata.KmProperty
+import kotlin.metadata.visibility
 
 @ExternalApi
 @Suppress("unused")
@@ -132,10 +131,9 @@ private fun FieldNode.buildFieldSignature(
         }
 
         val property = companionClassCandidate?.kmProperty(name)
-
-        if (property != null && JvmFlag.Property.IS_MOVED_FROM_INTERFACE_COMPANION(property.flags)) {
+        if (property != null) {
             /*
-             * The property was moved from the companion object. Take all the annotations from there
+             * The property was declared in the companion object. Take all the annotations from there
              * to be able to filter out the non-public markers.
              *
              * See https://github.com/Kotlin/binary-compatibility-validator/issues/90
@@ -163,7 +161,7 @@ private fun ClassNode.kmProperty(name: String?): KmProperty? {
         return null
     }
 
-    return metadata.toKmClass().properties.firstOrNull {
+    return metadata.kmClass.properties.firstOrNull {
         it.name == name
     }
 }
@@ -198,7 +196,7 @@ private fun MethodNode.buildMethodSignature(
 private fun List<MethodNode>.annotationsFor(methodSignature: JvmMethodSignature?): List<AnnotationNode> {
     if (methodSignature == null) return emptyList()
 
-    return firstOrNull { it.name == methodSignature.name && it.desc == methodSignature.desc }
+    return firstOrNull { it.name == methodSignature.name && it.desc == methodSignature.descriptor }
         ?.run {
             visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty()
         } ?: emptyList()
@@ -207,7 +205,7 @@ private fun List<MethodNode>.annotationsFor(methodSignature: JvmMethodSignature?
 private fun List<FieldNode>.annotationsFor(fieldSignature: JvmFieldSignature?): List<AnnotationNode> {
     if (fieldSignature == null) return emptyList()
 
-    return firstOrNull { it.name == fieldSignature.name && it.desc == fieldSignature.desc }
+    return firstOrNull { it.name == fieldSignature.name && it.desc == fieldSignature.descriptor }
         ?.run {
             visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty()
         } ?: emptyList()

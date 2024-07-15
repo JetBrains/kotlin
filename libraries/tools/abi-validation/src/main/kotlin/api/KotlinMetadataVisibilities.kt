@@ -5,20 +5,18 @@
 
 package kotlinx.validation.api
 
-import kotlinx.metadata.*
-import kotlinx.metadata.jvm.*
-import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.COMPATIBLE_METADATA_VERSION
+import kotlin.metadata.*
+import kotlin.metadata.jvm.*
 import org.objectweb.asm.tree.*
 
 internal class ClassVisibility(
     val name: String,
-    val flags: Flags?,
+    val visibility: Visibility?,
+    val classKind: ClassKind?,
     val members: Map<JvmMemberSignature, MemberVisibility>,
     val facadeClassName: String? = null
 ) {
-    val visibility get() = flags
-    val isCompanion: Boolean get() = flags != null && Flag.Class.IS_COMPANION_OBJECT(flags)
-
+    val isCompanion: Boolean get() = classKind == ClassKind.COMPANION_OBJECT
     var companionVisibilities: ClassVisibility? = null
     val partVisibilities = mutableListOf<ClassVisibility>()
 }
@@ -29,7 +27,7 @@ internal fun ClassVisibility.findMember(signature: JvmMemberSignature): MemberVi
 
 internal data class MemberVisibility(
     val member: JvmMemberSignature,
-    val visibility: Flags?,
+    val visibility: Visibility?,
     val isReified: Boolean,
     /*
      * This property includes both annotations on the member itself,
@@ -38,24 +36,25 @@ internal data class MemberVisibility(
     val propertyAnnotation: PropertyAnnotationHolders? = null
 )
 
-private fun isPublic(visibility: Flags?, isPublishedApi: Boolean) =
+private fun isPublic(visibility: Visibility?, isPublishedApi: Boolean) =
     visibility == null
-            || Flag.IS_PUBLIC(visibility)
-            || Flag.IS_PROTECTED(visibility)
-            || (isPublishedApi && Flag.IS_INTERNAL(visibility))
+            || visibility == Visibility.PUBLIC
+            || visibility == Visibility.PROTECTED
+            || (isPublishedApi && visibility == Visibility.INTERNAL)
 
 internal fun ClassVisibility.isPublic(isPublishedApi: Boolean) =
     isPublic(visibility, isPublishedApi)
 
 internal fun MemberVisibility.isPublic(isPublishedApi: Boolean) =
-        // Assuming isReified implies inline
-        !isReified && isPublic(visibility, isPublishedApi)
+    // Assuming isReified implies inline
+    !isReified && isPublic(visibility, isPublishedApi)
 
-internal fun MemberVisibility.isInternal(): Boolean = visibility != null && Flag.IS_INTERNAL(visibility)
+internal fun MemberVisibility.isInternal(): Boolean = visibility == Visibility.INTERNAL
 
 internal val ClassNode.kotlinMetadata: KotlinClassMetadata?
     get() {
         val metadata = findAnnotation("kotlin/Metadata", false) ?: return null
+
         @Suppress("UNCHECKED_CAST")
         val header = with(metadata) {
             Metadata(
@@ -68,15 +67,7 @@ internal val ClassNode.kotlinMetadata: KotlinClassMetadata?
                 extraInt = get("xi") as Int?
             )
         }
-        return KotlinClassMetadata.read(header)
-            ?: error(
-                """
-                Incompatible version of Kotlin metadata.
-                Maximal supported Kotlin metadata version: ${COMPATIBLE_METADATA_VERSION.joinToString(".")},
-                $name Kotlin metadata version: ${header.metadataVersion.joinToString(".")}.
-                As a workaround, it is possible to manually update 'kotlinx-metadata-jvm' version in your project.
-            """.trimIndent()
-            )
+        return KotlinClassMetadata.readLenient(header)
     }
 
 
@@ -92,42 +83,47 @@ internal class PropertyAnnotationHolders(
 )
 
 internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility {
-    var flags: Flags? = null
+    var visibility: Visibility? = null
+    var kind: ClassKind? = null
     var _facadeClassName: String? = null
     val members = mutableListOf<MemberVisibility>()
 
     fun addMember(
         signature: JvmMemberSignature?,
-        flags: Flags,
+        visibility: Visibility?,
         isReified: Boolean,
         propertyAnnotation: PropertyAnnotationHolders? = null
     ) {
         if (signature != null) {
-            members.add(MemberVisibility(signature, flags, isReified, propertyAnnotation))
+            members.add(MemberVisibility(signature, visibility, isReified, propertyAnnotation))
         }
     }
 
     val container: KmDeclarationContainer? = when (this) {
         is KotlinClassMetadata.Class ->
-            toKmClass().also { klass ->
-                flags = klass.flags
+            kmClass.also { klass ->
+                visibility = klass.visibility
+                kind = klass.kind
 
                 for (constructor in klass.constructors) {
-                    addMember(constructor.signature, constructor.flags, isReified = false)
+                    addMember(constructor.signature, constructor.visibility, isReified = false)
                 }
             }
+
         is KotlinClassMetadata.FileFacade ->
-            toKmPackage()
+            kmPackage
+
         is KotlinClassMetadata.MultiFileClassPart ->
-            toKmPackage().also { _facadeClassName = this.facadeClassName }
+            kmPackage.also { _facadeClassName = this.facadeClassName }
+
         else -> null
     }
 
     if (container != null) {
-        fun List<KmTypeParameter>.containsReified() = any { Flag.TypeParameter.IS_REIFIED(it.flags) }
+        fun List<KmTypeParameter>.containsReified() = any { it.isReified }
 
         for (function in container.functions) {
-            addMember(function.signature, function.flags, function.typeParameters.containsReified())
+            addMember(function.signature, function.visibility, function.typeParameters.containsReified())
         }
 
         for (property in container.properties) {
@@ -135,19 +131,24 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
             val propertyAnnotations =
                 PropertyAnnotationHolders(property.fieldSignature, property.syntheticMethodForAnnotations)
 
-            addMember(property.getterSignature, property.getterFlags, isReified, propertyAnnotations)
-            addMember(property.setterSignature, property.setterFlags, isReified, propertyAnnotations)
+            addMember(property.getterSignature, property.getter.visibility, isReified, propertyAnnotations)
+            addMember(property.setterSignature, property.setter?.visibility, isReified, propertyAnnotations)
 
             val fieldVisibility = when {
-                Flag.Property.IS_LATEINIT(property.flags) -> property.setterFlags
-                property.getterSignature == null && property.setterSignature == null -> property.flags // JvmField or const case
-                else -> flagsOf(Flag.IS_PRIVATE)
+                property.isLateinit -> property.setter!!.visibility
+                property.getterSignature == null && property.setterSignature == null -> property.visibility // JvmField or const case
+                else -> Visibility.PRIVATE
             }
-            addMember(property.fieldSignature, fieldVisibility, isReified = false, propertyAnnotation = propertyAnnotations)
+            addMember(
+                property.fieldSignature,
+                fieldVisibility,
+                isReified = false,
+                propertyAnnotation = propertyAnnotations
+            )
         }
     }
 
-    return ClassVisibility(classNode.name, flags, members.associateBy { it.member }, _facadeClassName)
+    return ClassVisibility(classNode.name, visibility, kind, members.associateBy { it.member }, _facadeClassName)
 }
 
 internal fun ClassNode.toClassVisibility() = kotlinMetadata?.toClassVisibility(this)

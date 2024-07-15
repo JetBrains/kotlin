@@ -15,7 +15,7 @@ androidGradlePlugin = "7.2.2"
 [libraries]
 
 ## region Application libraries
-kotlinx-metadata = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version = "0.6.2" }
+kotlinx-metadata = { module = "org.jetbrains.kotlin:kotlin-metadata-jvm", version = "2.0.0" }
 
 javaDiffUtils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "javaDiffUtils" }
 
