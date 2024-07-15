@@ -6,7 +6,7 @@ expect class B
 expect fun commonFun(a: A)
 
 // MODULE: intermediate1()()(common)
-<!ACTUAL_TYPE_ALIAS_TO_EXPECT!>actual typealias A = B<!>
+actual typealias A = B
 
 // MODULE: intermediate2()()(intermediate1)
 actual typealias B = <!RECURSIVE_TYPEALIAS_EXPANSION!>A<!>
