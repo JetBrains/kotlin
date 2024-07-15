@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
@@ -284,12 +285,14 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
     if (distributionType.mustGeneratePlatformLibs) {
         PlatformLibrariesGenerator(
             project,
+            project.objects,
             konanTarget,
             nativeProperties.actualNativeHomeDirectory.get(),
             project.kotlinPropertiesProvider,
             project.konanPropertiesBuildService,
             project.objects.property(GradleBuildMetricsReporter()),
             ClassLoadersCachingBuildService.registerIfAbsent(project),
+            project.useXcodeMessageStyle,
             project.nativeProperties
         ).generatePlatformLibsIfNeeded()
     }

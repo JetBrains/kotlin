@@ -21,6 +21,7 @@ import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
@@ -225,12 +226,14 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
             konanTargets.forEach { konanTarget ->
                 PlatformLibrariesGenerator(
                     project,
+                    project.objects,
                     konanTarget,
                     project.nativeProperties.actualNativeHomeDirectory.get(),
                     project.kotlinPropertiesProvider,
                     project.konanPropertiesBuildService,
                     project.objects.property(GradleBuildMetricsReporter()),
                     parameters.classLoadersCachingService,
+                    project.useXcodeMessageStyle,
                     project.nativeProperties
                 ).generatePlatformLibsIfNeeded()
             }

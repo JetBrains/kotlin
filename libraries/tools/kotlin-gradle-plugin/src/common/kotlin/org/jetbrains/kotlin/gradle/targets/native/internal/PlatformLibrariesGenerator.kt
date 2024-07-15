@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.addArg
@@ -35,21 +35,23 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class PlatformLibrariesGenerator(
     val project: Project,
+    objectFactory: ObjectFactory,
     val konanTarget: KonanTarget,
     val konanHome: File,
     private val propertiesProvider: PropertiesProvider,
     private val konanPropertiesService: Provider<KonanPropertiesBuildService>,
     metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
     classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
+    useXcodeMessageStyle: Provider<Boolean>,
     private val nativeProperties: NativeProperties,
 ) {
 
     private val logger = Logging.getLogger(this::class.java)
 
-    private val libraryGenerationRunner = project.objects.KotlinNativeLibraryGenerationRunner(
+    private val libraryGenerationRunner = objectFactory.KotlinNativeLibraryGenerationRunner(
         metricsReporter,
         classLoadersCachingService,
-        project.useXcodeMessageStyle,
+        useXcodeMessageStyle,
         nativeProperties,
     )
 
