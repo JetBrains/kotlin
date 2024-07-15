@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.render
 
 val IrFunctionReference.isWithReflection: Boolean
     get() = reflectionTarget != null
@@ -70,9 +71,11 @@ fun IrExpression.hasNoSideEffects(): Boolean =
 
 internal fun IrMemberAccessExpression<*>.checkArgumentSlotAccess(kind: String, index: Int, total: Int) {
     if (index >= total) {
+        // KT-69558: TODO convert this throw to `irError(...) { withIrEntry(this) }`
         throw AssertionError(
             "No such $kind argument slot in ${this::class.java.simpleName}: $index (total=$total)" +
-                    (symbol.signature?.let { ".\nSymbol: $it" } ?: "")
+                    (symbol.signature?.let { ".\nSymbol: $it" } ?: "") +
+                    "\nExpression: ${render()}"
         )
     }
 }
