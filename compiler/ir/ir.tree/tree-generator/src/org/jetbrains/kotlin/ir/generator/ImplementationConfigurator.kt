@@ -309,6 +309,51 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 """.replaceIndent(currentIndent))
             }
         }
+
+        allImplOf(memberAccessExpression) {
+            defaultNull("dispatchReceiver", "extensionReceiver")
+        }
+
+        allImplOf(functionAccessExpression) {
+            default("contextReceiversCount", "0")
+        }
+
+        impl(call) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(constructorCall) {
+            additionalImports(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "parentAsClass"))
+            undefinedOffset()
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(delegatingConstructorCall) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(enumConstructorCall) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
+
+        impl(functionReference) {
+            implementation.generationCallback = {
+                println()
+                println("companion object")
+            }
+        }
     }
 
     private fun ImplementationContext.configureDeclarationWithLateBindinig(symbolType: Symbol) {
@@ -363,7 +408,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         for (element in model.elements) {
             for (implementation in element.implementations) {
                 // Generation of implementation classes of IrMemberAccessExpression are left out for subsequent MR, as a part of KT-65773.
-                if (element == IrTree.const || element.isSubclassOf(IrTree.memberAccessExpression)) {
+                if (element == IrTree.const) {
                     implementation.doPrint = false
                 }
 
