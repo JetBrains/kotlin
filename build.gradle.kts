@@ -347,6 +347,9 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":native:objcexport-header-generator",
                 ":native:objcexport-header-generator-analysis-api",
                 ":native:objcexport-header-generator-k1",
+            ) +
+            arrayOf(
+                ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
             )
 
 extra["projectsUsedInIntelliJKotlinPlugin"] = projectsUsedInIntelliJKotlinPlugin
