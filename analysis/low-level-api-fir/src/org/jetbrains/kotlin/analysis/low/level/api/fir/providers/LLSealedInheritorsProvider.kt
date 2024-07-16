@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.sealedInheritorsAttr
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClass
 import java.util.concurrent.ConcurrentHashMap
@@ -87,14 +85,7 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
             ktModule.contentScope
         }
 
-        // Currently, it is possible to have kotlin-only sealed hierarchy
-        val kotlinScope = GlobalSearchScope.getScopeRestrictedByFileTypes(
-            scope,
-            KotlinFileType.INSTANCE,
-            JavaClassFileType.INSTANCE,
-        )
-
-        return searchInScope(ktClass, firClass.classId, kotlinScope)
+        return searchInScope(ktClass, firClass.classId, scope)
     }
 
     private fun searchInScope(ktClass: KtClass, classId: ClassId, scope: GlobalSearchScope): List<ClassId> =
