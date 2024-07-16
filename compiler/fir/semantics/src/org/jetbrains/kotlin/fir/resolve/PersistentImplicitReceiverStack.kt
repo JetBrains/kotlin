@@ -19,7 +19,6 @@ class PersistentImplicitReceiverStack private constructor(
     // This multi-map holds indexes of the stack ^
     private val receiversPerLabel: PersistentSetMultimap<Name, ImplicitReceiverValue<*>>,
     private val indexesPerSymbol: PersistentMap<FirBasedSymbol<*>, Int>,
-    private val originalTypes: PersistentList<ConeKotlinType>,
 ) : ImplicitReceiverStack(), Iterable<ImplicitReceiverValue<*>> {
     val size: Int get() = stack.size
 
@@ -27,7 +26,6 @@ class PersistentImplicitReceiverStack private constructor(
         persistentListOf(),
         PersistentSetMultimap(),
         persistentMapOf(),
-        persistentListOf(),
     )
 
     fun addAll(receivers: List<ImplicitReceiverValue<*>>): PersistentImplicitReceiverStack {
@@ -40,7 +38,6 @@ class PersistentImplicitReceiverStack private constructor(
 
     fun add(name: Name?, value: ImplicitReceiverValue<*>, aliasLabel: Name? = null): PersistentImplicitReceiverStack {
         val stack = stack.add(value)
-        val originalTypes = originalTypes.add(value.originalType)
         val index = stack.size - 1
         val receiversPerLabel = receiversPerLabel.putIfNameIsNotNull(name, value).putIfNameIsNotNull(aliasLabel, value)
         val indexesPerSymbol = indexesPerSymbol.put(value.boundSymbol, index)
@@ -49,7 +46,6 @@ class PersistentImplicitReceiverStack private constructor(
             stack,
             receiversPerLabel,
             indexesPerSymbol,
-            originalTypes
         )
     }
 
@@ -67,7 +63,6 @@ class PersistentImplicitReceiverStack private constructor(
             stack,
             receiversPerLabel,
             indexesPerSymbol,
-            originalTypes
         )
     }
 
@@ -90,23 +85,11 @@ class PersistentImplicitReceiverStack private constructor(
         return stack.iterator()
     }
 
-    // These methods are only used at org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer.Companion.createFirDataFlowAnalyzer
-    // No need to be extracted to an interface
-    fun getReceiverIndex(symbol: FirBasedSymbol<*>): Int? = indexesPerSymbol[symbol]
-
-    fun getOriginalType(index: Int): ConeKotlinType {
-        return originalTypes[index]
-    }
-
-    fun getType(index: Int): ConeKotlinType {
-        return stack[index].type
-    }
-
     // This method is only used from DFA and it's in some sense breaks persistence contracts of the data structure
     // But it's ok since DFA handles everything properly yet, but still may be it should be rewritten somehow
     @OptIn(ImplicitReceiverValue.ImplicitReceiverInternals::class)
-    fun replaceReceiverType(index: Int, type: ConeKotlinType) {
-        assert(index >= 0 && index < stack.size)
+    fun replaceReceiverType(symbol: FirBasedSymbol<*>, type: ConeKotlinType) {
+        val index = indexesPerSymbol[symbol] ?: return
         stack[index].updateTypeFromSmartcast(type)
     }
 
@@ -115,7 +98,6 @@ class PersistentImplicitReceiverStack private constructor(
             stack.map { it.createSnapshot(keepMutable) }.toPersistentList(),
             receiversPerLabel,
             indexesPerSymbol,
-            originalTypes
         )
     }
 }

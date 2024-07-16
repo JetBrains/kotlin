@@ -269,10 +269,6 @@ private class ContextCollectorVisitor(
 
         val smartCasts = mutableMapOf<RealVariable, Set<ConeKotlinType>>()
 
-        // Receiver types cannot be updated in an immutable snapshot.
-        // So here we modify the types inside the 'context', then make a snapshot, and restore the types back.
-        val oldReceiverTypes = mutableListOf<Pair<Int, ConeKotlinType>>()
-
         val cfgNode = getClosestControlFlowNode(fir)
 
         if (cfgNode != null) {
@@ -291,22 +287,18 @@ private class ContextCollectorVisitor(
                 // Here we emulate such behavior. Unlike the compiler, though, modified types are only reflected in the created snapshot.
                 // See other usages of 'replaceReceiverType()' for more information.
                 if (realVariable.isReceiver) {
-                    val receiverIndex = implicitReceiverStack.getReceiverIndex(realVariable.symbol)
-                    if (receiverIndex != null) {
-                        oldReceiverTypes.add(receiverIndex to implicitReceiverStack.getType(receiverIndex))
-
-                        val originalType = implicitReceiverStack.getOriginalType(receiverIndex)
-                        val smartCastedType = typeStatement.smartCastedType(bodyHolder.session.typeContext, originalType)
-                        implicitReceiverStack.replaceReceiverType(receiverIndex, smartCastedType)
-                    }
+                    val smartCastedType = typeStatement.smartCastedType(bodyHolder.session.typeContext)
+                    implicitReceiverStack.replaceReceiverType(realVariable.symbol, smartCastedType)
                 }
             }
         }
 
         val towerDataContextSnapshot = context.towerDataContext.createSnapshot(keepMutable = true)
 
-        for ((index, oldType) in oldReceiverTypes) {
-            implicitReceiverStack.replaceReceiverType(index, oldType)
+        for (realVariable in smartCasts.keys) {
+            if (realVariable.isReceiver) {
+                implicitReceiverStack.replaceReceiverType(realVariable.symbol, realVariable.originalType)
+            }
         }
 
         return Context(towerDataContextSnapshot, smartCasts)

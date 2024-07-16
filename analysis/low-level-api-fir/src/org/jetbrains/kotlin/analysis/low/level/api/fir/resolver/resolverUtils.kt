@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.types.SmartcastStability
 
@@ -57,7 +56,7 @@ internal open class StubBodyResolveTransformerComponents(
             override val receiverStack: Iterable<ImplicitReceiverValue<*>>
                 get() = error("Should not be called")
 
-            override fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?) =
+            override fun receiverUpdated(info: TypeStatement) =
                 error("Should not be called")
 
             override fun getTypeUsingSmartcastInfo(expression: FirExpression): Pair<SmartcastStability, Set<ConeKotlinType>>? =

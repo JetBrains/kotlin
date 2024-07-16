@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -80,10 +79,8 @@ abstract class FirDataFlowAnalyzer(
                 private val visibilityChecker = components.session.visibilityChecker
                 private val typeContext = components.session.typeContext
 
-                override fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?) {
-                    val index = receiverStack.getReceiverIndex(symbol) ?: return
-                    val originalType = receiverStack.getOriginalType(index)
-                    receiverStack.replaceReceiverType(index, info.smartCastedType(typeContext, originalType))
+                override fun receiverUpdated(info: TypeStatement) {
+                    receiverStack.replaceReceiverType(info.variable.symbol, info.smartCastedType(typeContext))
                 }
 
                 override val logicSystem: LogicSystem =
@@ -118,7 +115,7 @@ abstract class FirDataFlowAnalyzer(
 
     protected abstract val logicSystem: LogicSystem
     protected abstract val receiverStack: Iterable<ImplicitReceiverValue<*>>
-    protected abstract fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?)
+    protected abstract fun receiverUpdated(info: TypeStatement)
 
     private val graphBuilder get() = context.graphBuilder
     private val variableStorage get() = context.variableStorage
@@ -1515,7 +1512,7 @@ abstract class FirDataFlowAnalyzer(
             val variable = RealVariable.receiver(it.boundSymbol, it.originalType)
             val newStatement = flow?.getTypeStatement(variable)
             if (newStatement != previous?.getTypeStatement(variable)) {
-                receiverUpdated(it.boundSymbol, newStatement)
+                receiverUpdated(newStatement ?: MutableTypeStatement(variable))
             }
         }
         currentSmartCastPosition = flow
@@ -1533,7 +1530,7 @@ abstract class FirDataFlowAnalyzer(
     private fun MutableFlow.addTypeStatement(info: TypeStatement) {
         val newStatement = logicSystem.addTypeStatement(this, info) ?: return
         if (newStatement.variable.isReceiver && this === currentSmartCastPosition) {
-            receiverUpdated(newStatement.variable.symbol, newStatement)
+            receiverUpdated(newStatement)
         }
     }
 

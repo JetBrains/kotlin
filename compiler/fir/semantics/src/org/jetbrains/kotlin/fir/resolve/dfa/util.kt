@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeContext
 
-fun TypeStatement?.smartCastedType(context: ConeTypeContext, originalType: ConeKotlinType): ConeKotlinType =
-    if (this != null && exactType.isNotEmpty()) {
-        context.intersectTypes(exactType.toMutableList().also { it += originalType })
+fun TypeStatement.smartCastedType(context: ConeTypeContext): ConeKotlinType =
+    if (exactType.isNotEmpty()) {
+        context.intersectTypes(exactType.toMutableList().also { it += variable.originalType })
     } else {
-        originalType
+        variable.originalType
     }
 
 @DfaInternals
