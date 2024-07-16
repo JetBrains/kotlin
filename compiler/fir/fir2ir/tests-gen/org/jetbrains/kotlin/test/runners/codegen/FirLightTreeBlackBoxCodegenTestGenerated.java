@@ -38917,6 +38917,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
       }
 
       @Test
+      @TestMetadata("expectNonExpectOverloads.kt")
+      public void testExpectNonExpectOverloads() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/expectNonExpectOverloads.kt");
+      }
+
+      @Test
       @TestMetadata("expectValInInlineClass.kt")
       public void testExpectValInInlineClass() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClass.kt");
