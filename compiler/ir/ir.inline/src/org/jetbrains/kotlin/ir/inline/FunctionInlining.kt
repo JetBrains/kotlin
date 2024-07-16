@@ -360,55 +360,48 @@ open class FunctionInlining(
                         )
                 }.apply {
                     for (parameter in functionParameters) {
-                        val argument =
-                            if (parameter !in unboundArgsSet) {
+                        val argument = when {
+                            parameter !in unboundArgsSet -> {
                                 val arg = boundFunctionParametersMap[parameter]!!
-                                if (arg is IrGetValue && arg in elementsWithLocationToPatch)
+                                if (arg is IrGetValue && arg in elementsWithLocationToPatch) {
                                     arg.copyWithOffsets(irCall.startOffset, irCall.endOffset)
-                                else arg.deepCopyWithSymbols()
-                            } else {
-                                if (unboundIndex == valueParameters.size && parameter.defaultValue != null)
-                                    null
-                                else if (!parameter.isVararg) {
-                                    assert(unboundIndex < valueParameters.size) {
-                                        "Attempt to use unbound parameter outside of the callee's value parameters"
-                                    }
-                                    valueParameters[unboundIndex++].second
                                 } else {
-                                    val elements = mutableListOf<IrVarargElement>()
-                                    while (unboundIndex < valueParameters.size) {
-                                        val (param, value) = valueParameters[unboundIndex++]
-                                        val substitutedParamType = param.type.substitute(superTypeArgumentsMap)
-                                        if (substitutedParamType == parameter.varargElementType!!)
-                                            elements += value
-                                        else
-                                            elements += IrSpreadElementImpl(irCall.startOffset, irCall.endOffset, value)
-                                    }
-                                    IrVarargImpl(
-                                        irCall.startOffset, irCall.endOffset,
-                                        parameter.type,
-                                        parameter.varargElementType!!,
-                                        elements
-                                    )
+                                    arg.deepCopyWithSymbols()
                                 }
                             }
-                        if (argument != null) {
-                            when (parameter) {
-                                function.dispatchReceiverParameter ->
-                                    this.dispatchReceiver =
-                                        argument.doImplicitCastIfNeededTo(inlinedFunction.dispatchReceiverParameter!!.type)
-
-                                function.extensionReceiverParameter ->
-                                    this.extensionReceiver =
-                                        argument.doImplicitCastIfNeededTo(inlinedFunction.extensionReceiverParameter!!.type)
-
-                                else ->
-                                    putValueArgument(
-                                        parameter.index,
-                                        argument.doImplicitCastIfNeededTo(inlinedFunction.valueParameters[parameter.index].type)
-                                    )
+                            unboundIndex == valueParameters.size && parameter.defaultValue != null -> {
+                                continue
+                            }
+                            !parameter.isVararg -> {
+                                assert(unboundIndex < valueParameters.size) {
+                                    "Attempt to use unbound parameter outside of the callee's value parameters"
+                                }
+                                valueParameters[unboundIndex++].second
+                            }
+                            else -> {
+                                val elements = mutableListOf<IrVarargElement>()
+                                while (unboundIndex < valueParameters.size) {
+                                    val (param, value) = valueParameters[unboundIndex++]
+                                    val substitutedParamType = param.type.substitute(superTypeArgumentsMap)
+                                    if (substitutedParamType == parameter.varargElementType!!)
+                                        elements += value
+                                    else
+                                        elements += IrSpreadElementImpl(irCall.startOffset, irCall.endOffset, value)
+                                }
+                                IrVarargImpl(
+                                    irCall.startOffset, irCall.endOffset,
+                                    parameter.type,
+                                    parameter.varargElementType!!,
+                                    elements
+                                )
                             }
                         }
+                        val parameterToSet = when (parameter) {
+                            function.dispatchReceiverParameter -> inlinedFunction.dispatchReceiverParameter!!
+                            function.extensionReceiverParameter -> inlinedFunction.extensionReceiverParameter!!
+                            else -> inlinedFunction.valueParameters[parameter.index]
+                        }
+                        putArgument(parameterToSet, argument.doImplicitCastIfNeededTo(parameterToSet.type))
                     }
                     assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
                     for (index in 0 until irFunctionReference.typeArgumentsCount)
