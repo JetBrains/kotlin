@@ -103,9 +103,6 @@ abstract class KotlinCompile @Inject constructor(
     @get:Input
     abstract override val moduleName: Property<String>
 
-    @get:Input
-    abstract val useKotlinAbiSnapshot: Property<Boolean>
-
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
 
@@ -472,7 +469,7 @@ abstract class KotlinCompile @Inject constructor(
     // override incremental compilation features, while withAbiSnapshot is JVM-only
     override fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return super.makeIncrementalCompilationFeatures().copy(
-            withAbiSnapshot = useKotlinAbiSnapshot.get(),
+            withAbiSnapshot = false,
         )
     }
 

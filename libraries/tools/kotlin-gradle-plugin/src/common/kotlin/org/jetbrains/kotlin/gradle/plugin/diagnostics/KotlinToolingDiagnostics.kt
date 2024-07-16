@@ -951,15 +951,6 @@ object KotlinToolingDiagnostics {
             )
     }
 
-    object DeprecatedKotlinAbiSnapshotDiagnostic : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(): ToolingDiagnostic =
-            build(
-                "'${PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT}' property is deprecated and will be removed soon.\n" +
-                        "By default this type of incremental compilation will not be supported.\n" +
-                        "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT}' usages from 'gradle.properties' file.\n"
-            )
-    }
-
     object DeprecatedJvmHistoryBasedIncrementalCompilationDiagnostic : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(): ToolingDiagnostic =
             build(
