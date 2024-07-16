@@ -3941,6 +3941,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
       }
 
       @Test
+      @TestMetadata("gtAndGenericAmbiguity.kt")
+      public void testGtAndGenericAmbiguity() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/compareTo/gtAndGenericAmbiguity.kt");
+      }
+
+      @Test
       @TestMetadata("gtEq.kt")
       public void testGtEq() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/compareTo/gtEq.kt");

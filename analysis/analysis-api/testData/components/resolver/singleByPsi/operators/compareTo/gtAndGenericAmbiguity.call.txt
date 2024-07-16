@@ -1,0 +1,67 @@
+KtOperationReferenceExpression(97,98): '>'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = number
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = number: kotlin.Int
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = m
+            isSafeNavigation = false
+            type = MyClass
+          signature = KaFunctionSignature:
+            receiverType = R
+            returnType = kotlin.Int
+            symbol = /compareTo(<extension receiver>: R, number: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KaVariableSignature:
+                name = number
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = number: kotlin.Int
+                callableId = null
+            ]
+            callableId = /compareTo
+        typeArgumentsMapping = {},
+      KaSimpleFunctionCall:
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = int
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = int: kotlin.Int
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = m
+            isSafeNavigation = false
+            type = MyClass
+          signature = KaFunctionSignature:
+            receiverType = T
+            returnType = kotlin.Int
+            symbol = /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KaVariableSignature:
+                name = int
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = int: kotlin.Int
+                callableId = null
+            ]
+            callableId = /compareTo
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun <T> T.compareTo(int: Int): Int
+    fun <R> R.compareTo(number: Int): Int>
