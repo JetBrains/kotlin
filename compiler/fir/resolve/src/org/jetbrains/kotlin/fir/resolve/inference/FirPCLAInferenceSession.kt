@@ -326,7 +326,8 @@ class FirTypeVariablesAfterPCLATransformer(private val substitutor: ConeSubstitu
         // Since FirExpressions don't have typeRefs, they need to be updated separately.
         // FirAnonymousFunctionExpression doesn't support replacing the type
         // since it delegates the getter to the underlying FirAnonymousFunction.
-        if (element is FirExpression && element !is FirAnonymousFunctionExpression) {
+        // WrappedArgumentExpression delegates the type to the inner expression and doesn't need to be updated.
+        if (element is FirExpression && element !is FirAnonymousFunctionExpression && element !is FirWrappedArgumentExpression) {
             element.resolvedType
                 .let(substitutor::substituteOrNull)
                 ?.let { element.replaceConeTypeOrNull(it) }
