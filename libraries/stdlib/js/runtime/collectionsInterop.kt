@@ -200,7 +200,7 @@ private fun <K, V> createJsMapViewWith(
     forEach: (dynamic, dynamic) -> Unit,
 ): dynamic {
     val mapView = objectCreate<JsMapView<K, V>>().also {
-        js("it[Symbol.iterator] = entriesIterator")
+        js("it[typeof Symbol !== \"undefined\" ? Symbol.iterator : null] = entriesIterator")
         defineProp(it, "size", mapSize, VOID)
     }
 
@@ -211,7 +211,7 @@ private fun <K, V> createJsMapViewWith(
             'delete': mapRemove,
             clear: mapClear,
             has: mapContains,
-            keys: valuesIterator,
+            keys: keysIterator,
             values: valuesIterator,
             entries: entriesIterator,
             forEach: function (cb, thisArg) { forEach(cb, thisArg || mapView) }
@@ -223,13 +223,17 @@ private fun <K, V> createJsMapViewWith(
 private fun <T> createJsIteratorFrom(iterator: Iterator<T>, transform: (T) -> dynamic = { it }): dynamic {
     val iteratorNext = { iterator.next() }
     val iteratorHasNext = { iterator.hasNext() }
-    return js("""{
+    val jsIterator =  js("""{
         next: function() {
             var result = { done: !iteratorHasNext() };
             if (!result.done) result.value = transform(iteratorNext());
             return result;
-        }
+        },
     }""")
+
+    js("jsIterator[typeof Symbol !== \"undefined\" ? Symbol.iterator : null] = function() { return jsIterator }")
+
+    return jsIterator
 }
 
 private fun forEach(cb: (dynamic, dynamic, dynamic) -> Unit, thisArg: dynamic) {

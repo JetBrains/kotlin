@@ -25,8 +25,8 @@ function assert(condition: boolean, message: string) {
 
 function assertThrow(fn: () => void, message: string) {
     try {
-       fn();
-       throw message;
+        fn();
+        throw message;
     } catch (e) {}
 }
 
@@ -173,6 +173,8 @@ function testImmutableMap() {
     assert(mapReadonlyView.has("a"), "Problem with accessing element in map readonly view")
     assert(mapReadonlyView.get("a") == 1, "Problem with accessing element in map readonly view")
     assert(joinSetOrMap(mapReadonlyView) == "[a:1][b:2][c:3]", "Problem with map readonly view iterator")
+    assert(joinMapKeys(mapReadonlyView) == "[a][b][c]", "Problem with map readonly view keys function")
+    assert(joinMapValues(mapReadonlyView) == "[1][2][3]", "Problem with map readonly view values function")
     assert(consumeMap(map), "Problem with consumption of a Kotlin map")
     assertThrow(() => { (mapReadonlyView as Map<string, number>).set("d", 4) }, "Map readonly view have ability to mutate the map by 'set'")
     assertThrow(() => { (mapReadonlyView as Map<string, number>).delete("a") }, "Map readonly view have ability to mutate the map by 'delete'")
@@ -188,9 +190,13 @@ function testMutableMap() {
     assert(mutableMapReadonlyView.has("d"), "Problem with accessing element in mutable map readonly view")
     assert(mutableMapReadonlyView.get("d") == 4, "Problem with accessing element in mutable map readonly view")
     assert(joinSetOrMap(mutableMapReadonlyView) == "[d:4][e:5][f:6]", "Problem with mutable map readonly view")
+    assert(joinMapKeys(mutableMapReadonlyView) == "[d][e][f]", "Problem with mutable map readonly view keys function")
+    assert(joinMapValues(mutableMapReadonlyView) == "[4][5][6]", "Problem with mutable map readonly view values function")
     assert(!consumeMap(mutableMap), "Problem with consumption of a Kotlin mutable map as a map")
     assert(consumeMutableMap(mutableMap), "Problem with consumption of a Kotlin mutable map as a mutable map")
     assert(joinSetOrMap(mutableMapReadonlyView) == "[d:4][e:5][f:6][g:7]", "Problem with mutable map readonly view after original map is mutated")
+    assert(joinMapKeys(mutableMapReadonlyView) == "[d][e][f][g]", "Problem with mutable map readonly view keys function after original map is mutated")
+    assert(joinMapValues(mutableMapReadonlyView) == "[4][5][6][7]", "Problem with mutable map readonly view values function after original map is mutated")
     assertThrow(() => { (mutableMapReadonlyView as Map<string, number>).set("d", 4) }, "Mutable map readonly view have ability to mutate the map by 'set'")
     assertThrow(() => { (mutableMapReadonlyView as Map<string, number>).delete("a") }, "Mutable map readonly view have ability to mutate the map by 'delete'")
     assertThrow(() => { (mutableMapReadonlyView as Map<string, number>).clear() }, "Mutable map readonly view have ability to mutate the map by 'clear'")
@@ -202,16 +208,24 @@ function testMutableMap() {
     assert(mutableMapView.has("d"), "Problem with accessing element in mutable map view")
     assert(mutableMapView.get("d") == 4, "Problem with accessing element in mutable map view")
     assert(joinSetOrMap(mutableMapView) == "[d:4][e:5][f:6]", "Problem with mutable map view")
+    assert(joinMapKeys(mutableMapView) == "[d][e][f]", "Problem with mutable map view keys function")
+    assert(joinMapValues(mutableMapView) == "[4][5][6]", "Problem with mutable map view values function")
     assert(consumeMutableMap(mutableMap), "Problem with consumption of a Kotlin mutable map as a mutable map")
     assert(joinSetOrMap(mutableMapView) == "[d:4][e:5][f:6][g:7]", "Problem with mutable map view after original map is mutated")
+    assert(joinMapKeys(mutableMapView) == "[d][e][f][g]", "Problem with mutable map view keys function after original map is mutated")
+    assert(joinMapValues(mutableMapView) == "[4][5][6][7]", "Problem with mutable map view values function after original map is mutated")
 
     mutableMapView.set("h", 8)
 
     assert(joinSetOrMap(mutableMapView) == "[d:4][e:5][f:6][g:7][h:8]", "Problem with mutable map view after the view is mutated")
+    assert(joinMapKeys(mutableMapView) == "[d][e][f][g][h]", "Problem with mutable map view keys function after the view is mutated")
+    assert(joinMapValues(mutableMapView) == "[4][5][6][7][8]", "Problem with mutable map view values function after the view is mutated")
 
     mutableMapView.clear()
 
     assert(joinSetOrMap(mutableMapView) == "", "Problem with mutable map view after the view is mutated")
+    assert(joinMapKeys(mutableMapView) == "", "Problem with mutable map view keys function after the view is mutated")
+    assert(joinMapValues(mutableMapView) == "", "Problem with mutable map view values function after the view is mutated")
 
     assert(consumeMap(KtMutableMap.fromJsMap(new Map([["a", 1], ["b", 2], ["c", 3]]))), "Problem with map to map conversion for Kotlin mutable map")
     assert(consumeMutableMap(KtMutableMap.fromJsMap(new Map([["d", 4], ["e", 5], ["f", 6]]))), "Problem with map to mutable map conversion for Kotlin mutable map")
@@ -228,6 +242,26 @@ function joinSetOrMap(setOrMap: ReadonlySet<number> | ReadonlyMap<string, number
         setOrMap.forEach((key: any, value: any) => {
             result += `[${key}:${value}]`
         });
+    }
+
+    return result
+}
+
+function joinMapKeys(map: ReadonlyMap<string, number>): string {
+    let result = ""
+
+    for (const key of map.keys()) {
+        result += `[${key}]`
+    }
+
+    return result
+}
+
+function joinMapValues(map: ReadonlyMap<string, number>): string {
+    let result = ""
+
+    for (const value of map.values()) {
+        result += `[${value}]`
     }
 
     return result
