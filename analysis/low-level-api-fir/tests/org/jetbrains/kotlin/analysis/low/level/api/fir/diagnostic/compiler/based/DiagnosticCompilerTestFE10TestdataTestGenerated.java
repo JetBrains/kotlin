@@ -19823,6 +19823,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
           public void testKt68889() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt68889.kt");
           }
+
+          @Test
+          @TestMetadata("namedArgumentTypeSubstitution.kt")
+          public void testNamedArgumentTypeSubstitution() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/namedArgumentTypeSubstitution.kt");
+          }
         }
 
         @Nested

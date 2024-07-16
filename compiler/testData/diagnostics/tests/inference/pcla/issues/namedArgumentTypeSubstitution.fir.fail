@@ -1,0 +1,1 @@
+org.jetbrains.kotlin.util.FileAnalysisException: While analysing /namedArgumentTypeSubstitution.kt:24:5: java.lang.IllegalArgumentException: FirNamedArgumentExpressionImpl.replaceConeTypeOrNull() called with invalid type 'kotlin/collections/List<WeightedBatchSourceOverProvider<SortableItem, kotlin/String>>'. Current type is 'kotlin/collections/List<TypeVariable(R)>'
