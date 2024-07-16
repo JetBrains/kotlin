@@ -153,19 +153,28 @@ class FirCallResolver(
     ): List<OverloadCandidate> {
         val collector = AllCandidatesCollector(components, components.resolutionStageRunner)
         val origin = (qualifiedAccess as? FirFunctionCall)?.origin ?: FirFunctionCallOrigin.Regular
-        val result =
-            collectCandidates(
-                qualifiedAccess,
-                name,
-                forceCallKind = null,
-                isUsedAsGetClassReceiver = false,
-                origin,
-                containingDeclarations,
-                resolutionContext,
-                collector,
-                resolutionMode = resolutionMode
-            )
-        return collector.allCandidates.map { OverloadCandidate(it, isInBestCandidates = it in result.candidates) }
+        fun collectCandidates(forceCallKind: CallKind?): ResolutionResult = collectCandidates(
+            qualifiedAccess = qualifiedAccess,
+            name = name,
+            origin = origin,
+            containingDeclarations = containingDeclarations,
+            resolutionContext = resolutionContext,
+            collector = collector,
+            resolutionMode = resolutionMode,
+            forceCallKind = forceCallKind,
+        )
+
+        var result = collectCandidates(forceCallKind = null)
+        if (result.candidates.isEmpty() && qualifiedAccess !is FirFunctionCall) {
+            val newResult = collectCandidates(forceCallKind = CallKind.Function)
+            if (newResult.candidates.isNotEmpty()) {
+                result = newResult
+            }
+        }
+
+        return collector.allCandidates.map { candidate ->
+            OverloadCandidate(candidate, isInBestCandidates = candidate in result.candidates)
+        }
     }
 
     private fun collectCandidates(

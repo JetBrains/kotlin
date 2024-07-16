@@ -1,3 +1,3 @@
-KtNameReferenceExpression(68,69): 's'
+KtNameReferenceExpression(53,54): 's'
   KtSimpleNameReference:
     s: kotlin.String

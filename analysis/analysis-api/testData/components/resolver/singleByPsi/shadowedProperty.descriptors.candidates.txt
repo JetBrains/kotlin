@@ -15,18 +15,3 @@ KtNameReferenceExpression(107,115): 'property'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
-  
-  KaApplicableCallCandidateInfo:
-    candidate = KaSimpleVariableAccessCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = property
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val property: kotlin.Int
-          callableId = pack/property
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-    isInBestCandidates = false

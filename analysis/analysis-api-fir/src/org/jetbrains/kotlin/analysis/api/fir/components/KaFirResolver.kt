@@ -1150,7 +1150,7 @@ internal class KaFirResolver(
         }
 
         return when (this) {
-            is FirFunctionCall -> collectCallCandidates(psi, resolveFragmentOfCall)
+            is FirFunctionCall, is FirPropertyAccessExpression -> collectCallCandidates(psi, resolveFragmentOfCall)
             is FirSafeCallExpression -> selector.collectCallCandidates(
                 psi = psi,
                 resolveCalleeExpressionOfFunctionCall = resolveCalleeExpressionOfFunctionCall,
@@ -1207,7 +1207,7 @@ internal class KaFirResolver(
         }
     }
 
-    private fun FirFunctionCall.collectCallCandidates(
+    private fun FirQualifiedAccessExpression.collectCallCandidates(
         psi: KtElement,
         resolveFragmentOfCall: Boolean,
     ): List<KaCallCandidateInfo> {
@@ -1305,8 +1305,7 @@ internal class KaFirResolver(
         resolveFragmentOfCall: Boolean,
         isUnwrappedImplicitInvokeCall: Boolean,
     ): KaCallCandidateInfo? {
-        val call = createKtCall(element, resolvable, candidate, resolveFragmentOfCall)
-            ?: error("expect `createKtCall` to succeed for candidate")
+        val call = createKtCall(element, resolvable, candidate, resolveFragmentOfCall) ?: return null
 
         if (candidate.isSuccessful) {
             return KaBaseApplicableCallCandidateInfo(

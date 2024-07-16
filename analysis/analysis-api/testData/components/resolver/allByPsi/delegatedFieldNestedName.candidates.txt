@@ -3376,6 +3376,21 @@ KtNameReferenceExpression(410,415): 'inner'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = inner
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val inner: kotlin.String
+          callableId = second/inner
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
 
 KtUserType(417,466): 'Base<@Anno(7 + inner) Base<@Anno(8 + inner) Int>>'
   NO_CANDIDATES
@@ -3898,6 +3913,21 @@ KtNameReferenceExpression(432,437): 'inner'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = inner
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val inner: kotlin.String
+          callableId = second/inner
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
 
 KtUserType(439,465): 'Base<@Anno(8 + inner) Int>'
   NO_CANDIDATES
@@ -4420,6 +4450,21 @@ KtNameReferenceExpression(454,459): 'inner'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = inner
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val inner: kotlin.String
+          callableId = second/inner
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
 
 KtUserType(461,464): 'Int'
   NO_CANDIDATES
@@ -4966,6 +5011,21 @@ KtNameReferenceExpression(569,574): 'inner'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = inner
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val inner: kotlin.String
+          callableId = second/inner
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
 
 KtUserType(576,608): 'Second<@Anno(10 + inner) String>'
   NO_CANDIDATES
@@ -5488,6 +5548,21 @@ KtNameReferenceExpression(594,599): 'inner'
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = inner
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val inner: kotlin.String
+          callableId = second/inner
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = false
 
 KtUserType(601,607): 'String'
   NO_CANDIDATES

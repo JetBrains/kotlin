@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
@@ -74,7 +76,16 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
-        checkSuppressedExceptions(mainModule.testModule.directives, testServices)
+
+        val directives = ComposedRegisteredDirectives(
+            // Use the last file to avoid offsets changes
+            mainModule.testModule.files.last().directives,
+
+            // Use module directives as well to support the case with implicit structure
+            mainModule.testModule.directives,
+        )
+
+        checkSuppressedExceptions(directives, testServices)
     }
 
     protected fun <K, V> PrettyPrinter.printMap(
@@ -120,14 +131,17 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
     private object Directives : SimpleDirectivesContainer() {
         val IGNORE_STABILITY by stringDirective(
             description = "Symbol restoring for some symbols in current test is not supported yet",
+            applicability = DirectiveApplicability.Any,
         )
 
         val IGNORE_STABILITY_K1 by stringDirective(
             description = "Symbol restoring for some symbols in current test is not supported yet in K1",
+            applicability = DirectiveApplicability.Any,
         )
 
         val IGNORE_STABILITY_K2 by stringDirective(
             description = "Symbol restoring for some symbols in current test is not supported yet in K2",
+            applicability = DirectiveApplicability.Any,
         )
     }
 

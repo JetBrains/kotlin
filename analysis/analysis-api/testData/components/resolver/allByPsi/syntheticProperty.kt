@@ -18,3 +18,6 @@ public class JavaClass {
     public int getSomething() { return 1; }
     public void setSomething(int value) {}
 }
+
+// IGNORE_STABILITY_K2: candidates
+// ^KT-69962

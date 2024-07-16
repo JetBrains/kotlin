@@ -1,4 +1,4 @@
-KtNameReferenceExpression(88,89): 'T'
+KtNameReferenceExpression(35,36): 'T'
   KaErrorCallInfo:
     candidateCalls = []
     diagnostic = ERROR<OTHER_ERROR: Type parameter T in qualified access>

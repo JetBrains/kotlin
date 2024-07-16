@@ -1,5 +1,5 @@
 KtDotQualifiedExpression(118,123): 'f.foo'
-  KaInapplicableCallCandidateInfo:
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -9,18 +9,17 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           type = Foo<kotlin.String>
         signature = KaVariableSignature:
           name = foo
-          receiverType = Foo<A>
+          receiverType = Foo<kotlin.String>
           returnType = kotlin.Int
           symbol = val foo: kotlin.Int
           callableId = /foo
       simpleAccess = Read
-      typeArgumentsMapping = {}
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    val <A> Foo<A>.foo: Int
-    val <B> Foo<B>.foo: String>
+      typeArgumentsMapping = {
+        A -> (kotlin.String)
+      }
     isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
+  
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
@@ -30,13 +29,12 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           type = Foo<kotlin.String>
         signature = KaVariableSignature:
           name = foo
-          receiverType = Foo<B>
+          receiverType = Foo<kotlin.String>
           returnType = kotlin.String
           symbol = val foo: kotlin.String
           callableId = /foo
       simpleAccess = Read
-      typeArgumentsMapping = {}
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    val <A> Foo<A>.foo: Int
-    val <B> Foo<B>.foo: String>
+      typeArgumentsMapping = {
+        B -> (kotlin.String)
+      }
     isInBestCandidates = true

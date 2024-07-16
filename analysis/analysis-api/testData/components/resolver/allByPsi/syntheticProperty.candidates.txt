@@ -685,6 +685,44 @@ KtNameReferenceExpression(84,93): 'javaClass'
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+            visibility: PUBLIC
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
         extensionReceiver = null
         signature = KaVariableSignature:
           name = javaClass
@@ -756,6 +794,44 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
     isInBestCandidates = true
 
 KtNameReferenceExpression(109,118): 'javaClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+            visibility: PUBLIC
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -873,6 +949,44 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
     isInBestCandidates = true
 
 KtNameReferenceExpression(137,146): 'javaClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+            visibility: PUBLIC
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1001,6 +1115,44 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
     isInBestCandidates = true
 
 KtNameReferenceExpression(166,175): 'javaClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+            visibility: PUBLIC
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1151,6 +1303,44 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
     isInBestCandidates = true
 
 KtNameReferenceExpression(194,203): 'javaClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+            visibility: PUBLIC
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1627,6 +1817,44 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
     isInBestCandidates = true
 
 KtNameReferenceExpression(274,283): 'javaClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+            visibility: PUBLIC
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+  
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
