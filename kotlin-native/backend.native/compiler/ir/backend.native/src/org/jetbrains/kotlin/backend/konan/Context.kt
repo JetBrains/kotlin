@@ -28,15 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.util.concurrent.ConcurrentHashMap
 
-internal class NativeMapping : Mapping() {
-    enum class AtomicFunctionType {
-        COMPARE_AND_EXCHANGE, COMPARE_AND_SET, GET_AND_SET, GET_AND_ADD,
-        ATOMIC_GET_ARRAY_ELEMENT, ATOMIC_SET_ARRAY_ELEMENT, COMPARE_AND_EXCHANGE_ARRAY_ELEMENT, COMPARE_AND_SET_ARRAY_ELEMENT, GET_AND_SET_ARRAY_ELEMENT, GET_AND_ADD_ARRAY_ELEMENT;
-    }
-
-    val volatileFieldToAtomicFunctions: DeclarationMapping<IrField, MutableMap<AtomicFunctionType, IrSimpleFunction>> by AttributeBasedMappingDelegate()
-    val functionToVolatileField: DeclarationMapping<IrSimpleFunction, IrField> by AttributeBasedMappingDelegate()
-}
+internal class NativeMapping : Mapping()
 
 // TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(

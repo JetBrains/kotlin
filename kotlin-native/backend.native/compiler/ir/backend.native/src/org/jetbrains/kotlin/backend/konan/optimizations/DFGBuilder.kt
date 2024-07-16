@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.volatileField
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 
 internal val STATEMENT_ORIGIN_PRODUCER_INVOCATION = IrStatementOriginImpl("PRODUCER_INVOCATION")
@@ -267,7 +268,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 if (intrinsicType == IntrinsicType.COMPARE_AND_SET || intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE) {
                     expressions += IrSetFieldImpl(
                             expression.startOffset, expression.endOffset,
-                            context.mapping.functionToVolatileField[expression.symbol.owner]!!.symbol,
+                            expression.symbol.owner.volatileField!!.symbol,
                             expression.dispatchReceiver,
                             expression.getValueArgument(1)!!,
                             context.irBuiltIns.unitType
@@ -276,7 +277,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 if (intrinsicType == IntrinsicType.GET_AND_SET) {
                     expressions += IrSetFieldImpl(
                             expression.startOffset, expression.endOffset,
-                            context.mapping.functionToVolatileField[expression.symbol.owner]!!.symbol,
+                            expression.symbol.owner.volatileField!!.symbol,
                             expression.dispatchReceiver,
                             expression.getValueArgument(0)!!,
                             context.irBuiltIns.unitType
