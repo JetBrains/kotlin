@@ -1148,19 +1148,21 @@ internal class KaFirResolver(
                 resolveFragmentOfCall = resolveFragmentOfCall
             ) ?: emptyList()
         }
+
         return when (this) {
             is FirFunctionCall -> collectCallCandidates(psi, resolveFragmentOfCall)
             is FirSafeCallExpression -> selector.collectCallCandidates(
-                psi,
-                resolveCalleeExpressionOfFunctionCall,
-                resolveFragmentOfCall
+                psi = psi,
+                resolveCalleeExpressionOfFunctionCall = resolveCalleeExpressionOfFunctionCall,
+                resolveFragmentOfCall = resolveFragmentOfCall,
             )
-            is FirArrayLiteral, is FirEqualityOperatorCall, is FirCallableReferenceAccess -> {
-                toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
-            }
-            is FirComparisonExpression -> {
-                compareToCall.toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
-            }
+
+            is FirComparisonExpression -> compareToCall.toKtCallInfo(
+                psi = psi,
+                resolveCalleeExpressionOfFunctionCall = resolveCalleeExpressionOfFunctionCall,
+                resolveFragmentOfCall = resolveFragmentOfCall,
+            ).toKtCallCandidateInfos()
+
             is FirResolvedQualifier -> toKtCallCandidateInfos()
             is FirDelegatedConstructorCall -> collectCallCandidatesForDelegatedConstructorCall(psi, resolveFragmentOfCall)
             else -> toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
