@@ -17,6 +17,7 @@ private const val BIG_JAR_ENTRY_CHUNK_SIZE = 1024 * 1024
 private const val BIG_JAR_ENTRY_NUMBER_OF_CHUNKS = (Int.MAX_VALUE.toLong() + 1) / BIG_JAR_ENTRY_CHUNK_SIZE
 
 // separate test cases to allow parallel run
+// NOTE: excluded from regular tests in compiler/build.gradle.kts
 class FastJarFSLongTest2M : AbstractFastJarFSTest() {
 
     // tests the zip file larger than Int.MAX_VALUE, so it doesn't fit into MappedByteBuffer, but smaller than UInt.MAX__VALUE,
@@ -46,6 +47,7 @@ class FastJarFSLongTest2M : AbstractFastJarFSTest() {
 
 
 // separate test cases to allow parallel run
+// NOTE: excluded from regular tests in compiler/build.gradle.kts
 class FastJarFSLongTestZip64 : AbstractFastJarFSTest() {
 
     // tests the zip file larger than UInt.MAX_VALUE, so ZIP64 fields are used in the directory

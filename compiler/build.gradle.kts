@@ -56,6 +56,10 @@ projectTest(
     dependsOn(":dist")
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
+    filter {
+        excludeTestsMatching("org.jetbrains.kotlin.jvm.compiler.io.FastJarFSLongTest*")
+    }
+
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     val antLauncherJarPathProvider = project.provider {
@@ -65,6 +69,15 @@ projectTest(
         systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
+}
+
+if (kotlinBuildProperties.isTeamcityBuild) {
+    projectTest("fastJarFSLongTests") {
+        include("**/FastJarFSLongTest*")
+    }
+} else {
+    // avoiding IntelliJ test configuration selection menu (see comments in compiler/fir/fir2ir/build.gradle.kts for details)
+    tasks.create("fastJarFSLongTests")
 }
 
 val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")

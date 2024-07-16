@@ -841,6 +841,7 @@ tasks {
 
     register("nightlyFirCompilerTest") {
         dependsOn(":compiler:fir:fir2ir:nightlyTests")
+        dependsOn(":compiler:fastJarFSLongTests")
     }
 
     register("scriptingJvmTest") {
