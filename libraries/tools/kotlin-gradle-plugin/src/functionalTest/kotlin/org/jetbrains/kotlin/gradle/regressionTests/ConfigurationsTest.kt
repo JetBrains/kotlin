@@ -636,4 +636,12 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         assertEquals("bar", iosArm64HostSpecificMetadataDependencies.attributes.getAttribute(attribute))
         assertEquals("bar", iosArm64MetadataElements.attributes.getAttribute(attribute))
     }
+
+    @Test
+    fun compileClasspathConfigurationHasCorrectNameForJvmWithJavaLibraryProject() {
+        val project = buildProjectWithJvm {
+            project.plugins.apply("java-library")
+        }
+        assertEquals("Compile classpath for 'main'.", project.configurations.getByName("compileClasspath").description)
+    }
 }

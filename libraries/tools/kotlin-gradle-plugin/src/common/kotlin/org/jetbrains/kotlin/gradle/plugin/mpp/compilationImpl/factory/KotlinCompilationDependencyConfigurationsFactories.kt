@@ -114,7 +114,8 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     ),
     resourcesPathConfigurationName: String = naming.name(RESOURCES_PATH),
 ): KotlinCompilationConfigurationsContainer {
-    val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
+    val compilationCoordinates =
+        target.disambiguationClassifier?.let { "${it}/$compilationName" } ?: compilationName
 
     /* Support deprecated configurations */
     val deprecatedCompileConfiguration = target.project.configurations.findDependencyScope(
@@ -141,7 +142,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         deprecatedCompileConfiguration?.let { extendsFrom(it) }
 
         isVisible = false
-        description = "API dependencies for $compilationCoordinates"
+        description = "API dependencies for '$compilationCoordinates'."
     }
 
     val implementationConfiguration = target.project.configurations
@@ -149,7 +150,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             extendsFrom(apiConfiguration)
             deprecatedCompileConfiguration?.let { extendsFrom(it) }
             isVisible = false
-            description = "Implementation only dependencies for $compilationCoordinates."
+            description = "Implementation only dependencies for '$compilationCoordinates'."
         }
 
     val compileOnlyConfiguration = target.project.configurations
@@ -157,12 +158,12 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             setupAsLocalTargetSpecificConfigurationIfSupported(target)
             attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             isVisible = false
-            description = "Compile only dependencies for $compilationCoordinates."
+            description = "Compile only dependencies for '$compilationCoordinates'."
         }
 
     val runtimeOnlyConfiguration = target.project.configurations.maybeCreateDependencyScope(runtimeOnlyConfigurationName).apply {
         isVisible = false
-        description = "Runtime only dependencies for $compilationCoordinates."
+        description = "Runtime only dependencies for '$compilationCoordinates'."
     }
 
     val compileDependencyConfiguration = target.project.configurations
@@ -174,7 +175,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             if (target.platformType != KotlinPlatformType.androidJvm) {
                 attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
-            description = "Compile classpath for $compilationCoordinates."
+            description = "Compile classpath for '$compilationCoordinates'."
         }
 
     val runtimeDependencyConfiguration =
@@ -187,13 +188,13 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             if (target.platformType != KotlinPlatformType.androidJvm) {
                 attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
-            description = "Runtime classpath of $compilationCoordinates."
+            description = "Runtime classpath of '$compilationCoordinates'."
         } else null
 
     val hostSpecificMetadataConfiguration =
         if (withHostSpecificMetadata) target.project.configurations.maybeCreateResolvable(hostSpecificMetadataConfigurationName).apply {
             isVisible = false
-            description = "Host-specific Metadata dependencies for $compilationCoordinates"
+            description = "Host-specific Metadata dependencies for '$compilationCoordinates'."
             extendsFrom(compileDependencyConfiguration)
             compileDependencyConfiguration.copyAttributesTo(
                 target.project,
