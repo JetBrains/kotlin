@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.ir.*
@@ -27,8 +26,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import java.util.concurrent.ConcurrentHashMap
-
-internal class NativeMapping : Mapping()
 
 // TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(
