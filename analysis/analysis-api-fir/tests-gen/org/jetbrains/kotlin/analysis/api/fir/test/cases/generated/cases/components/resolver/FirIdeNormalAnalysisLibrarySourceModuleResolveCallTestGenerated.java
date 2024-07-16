@@ -1145,6 +1145,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("shadowedProperty.kt")
+  public void testShadowedProperty() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/shadowedProperty.kt");
+  }
+
+  @Test
   @TestMetadata("smartCastExplicitDispatchReceiver.kt")
   public void testSmartCastExplicitDispatchReceiver() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/smartCastExplicitDispatchReceiver.kt");
