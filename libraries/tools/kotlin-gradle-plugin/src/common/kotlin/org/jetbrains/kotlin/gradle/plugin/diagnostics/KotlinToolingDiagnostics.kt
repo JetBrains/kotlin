@@ -207,22 +207,6 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object IncompatibleAgpVersionTooHighWarning : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(androidGradlePluginVersionString: String, minSupported: String, maxTested: String) = build(
-            """
-                Kotlin Multiplatform <-> Android Gradle Plugin compatibility issue:
-                The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is higher 
-                than the maximum known to the Kotlin Gradle Plugin.
-                Tooling stability in such configuration isn't tested, please report encountered issues to https://kotl.in/issue
-                
-                Minimum supported Android Gradle Plugin version: $minSupported
-                Maximum tested Android Gradle Plugin version: $maxTested
-                
-                To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN}=true' to your gradle.properties
-            """.trimIndent()
-        )
-    }
-
     object IncompatibleAgpVersionTooLowWarning : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(androidGradlePluginVersionString: String, minSupported: String, maxTested: String) = build(
             """

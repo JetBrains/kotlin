@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.FailedToGetAgpVersionWarning
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.IncompatibleAgpVersionTooHighWarning
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.IncompatibleAgpVersionTooLowWarning
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
@@ -107,17 +106,6 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
             collector.reportOncePerGradleBuild(
                 project,
                 IncompatibleAgpVersionTooLowWarning(
-                    androidGradlePluginVersion.toString(),
-                    minSupportedRendered,
-                    maxTestedRendered
-                )
-            )
-        }
-
-        if (compatibleAndroidGradlePluginVersionRange.isTooHigh(androidGradlePluginVersion)) {
-            collector.reportOncePerGradleBuild(
-                project,
-                IncompatibleAgpVersionTooHighWarning(
                     androidGradlePluginVersion.toString(),
                     minSupportedRendered,
                     maxTestedRendered

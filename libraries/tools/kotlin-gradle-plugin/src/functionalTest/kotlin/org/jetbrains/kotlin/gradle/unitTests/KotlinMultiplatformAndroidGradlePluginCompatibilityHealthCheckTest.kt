@@ -86,31 +86,6 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     }
 
     @Test
-    fun `test - version too high - major`() {
-        val androidGradlePluginVersion = AndroidGradlePluginVersion(
-            major = AGP_COMPATIBILITY_RANGE_FOR_TESTS.maxSupportedVersion.major + 1,
-            minor = AGP_COMPATIBILITY_RANGE_FOR_TESTS.maxSupportedVersion.minor
-        )
-
-        runAgpCompatiblityCheck(androidGradlePluginVersion)
-
-        project.checkDiagnostics("agpCompatibility/versionTooHighMajor")
-    }
-
-    @Test
-    fun `test - version too high - minor`() {
-        val androidGradlePluginVersion = AndroidGradlePluginVersion(
-            major = AGP_COMPATIBILITY_RANGE_FOR_TESTS.maxSupportedVersion.major,
-            minor = AGP_COMPATIBILITY_RANGE_FOR_TESTS.maxSupportedVersion.minor + 1
-        )
-
-        runAgpCompatiblityCheck(androidGradlePluginVersion)
-
-        project.checkDiagnostics("agpCompatibility/versionTooHighMinor")
-    }
-
-
-    @Test
     fun `test - missing Android Gradle Plugin version string`() {
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(
             FixedAndroidGradlePluginVersionProvider(null)
