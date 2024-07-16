@@ -110,8 +110,12 @@ sealed class NativeBinary(
         objects.directoryProperty().convention(layout.buildDirectory.dir("bin/$targetSubDirectory${this@NativeBinary.name}"))
     }
 
+    private val outputFileProvider: Provider<File> by lazy {
+        linkTaskProvider.flatMap { it.outputFile }
+    }
+
     val outputFile: File
-        get() = linkTaskProvider.get().outputFile.get()
+        get() = outputFileProvider.get()
 
     // Named implementation.
     override fun getName(): String = name

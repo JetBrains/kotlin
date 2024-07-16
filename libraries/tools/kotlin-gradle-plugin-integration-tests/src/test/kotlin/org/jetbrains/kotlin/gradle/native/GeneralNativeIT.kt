@@ -13,6 +13,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -410,7 +411,18 @@ class GeneralNativeIT : KGPBaseTest() {
     @DisplayName("Checking native executables")
     @GradleTest
     fun testNativeExecutables(gradleVersion: GradleVersion) {
-        nativeProject("native-binaries/executables", gradleVersion) {
+        nativeProject(
+            "native-binaries/executables",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                /**
+                 * Enable CC since 8.0 for KT-69918:
+                 * - Before 8.0 Gradle doesn't deserialize CC during the first execution and the issue is not visible
+                 * - Before 7.4.2 there is a CC serialization failure because Gradle can't serialize ComponentResult
+                 */
+                configurationCache = gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_0)
+            )
+        ) {
             val binaries = mutableListOf(
                 "debugExecutable" to "native-binary",
                 "releaseExecutable" to "native-binary",
