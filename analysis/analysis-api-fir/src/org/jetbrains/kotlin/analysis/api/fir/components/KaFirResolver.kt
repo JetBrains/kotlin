@@ -1157,11 +1157,11 @@ internal class KaFirResolver(
                 resolveFragmentOfCall = resolveFragmentOfCall,
             )
 
-            is FirComparisonExpression -> compareToCall.toKtCallInfo(
+            is FirComparisonExpression -> compareToCall.collectCallCandidates(
                 psi = psi,
                 resolveCalleeExpressionOfFunctionCall = resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall = resolveFragmentOfCall,
-            ).toKtCallCandidateInfos()
+            )
 
             is FirResolvedQualifier -> toKtCallCandidateInfos()
             is FirDelegatedConstructorCall -> collectCallCandidatesForDelegatedConstructorCall(psi, resolveFragmentOfCall)

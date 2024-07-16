@@ -3,6 +3,40 @@ KtOperationReferenceExpression(97,98): '>'
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
+          name = m
+          receiverType = null
+          returnType = MyClass
+          symbol = m: MyClass
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, m: MyClass): kotlin.Int
+          valueParameters = [
+            KaVariableSignature:
+              name = m
+              receiverType = null
+              returnType = MyClass
+              symbol = m: MyClass
+              callableId = null
+          ]
+          callableId = /MyClass.compareTo
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'MyClass' was expected.>
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
           name = number
           receiverType = null
           returnType = kotlin.Int
@@ -17,7 +51,7 @@ KtOperationReferenceExpression(97,98): '>'
           isSafeNavigation = false
           type = MyClass
         signature = KaFunctionSignature:
-          receiverType = R
+          receiverType = MyClass
           returnType = kotlin.Int
           symbol = /compareTo(<extension receiver>: R, number: kotlin.Int): kotlin.Int
           valueParameters = [
@@ -29,13 +63,12 @@ KtOperationReferenceExpression(97,98): '>'
               callableId = null
           ]
           callableId = /compareTo
-      typeArgumentsMapping = {}
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    fun <T> T.compareTo(int: Int): Int
-    fun <R> R.compareTo(number: Int): Int>
+      typeArgumentsMapping = {
+        R -> (MyClass)
+      }
     isInBestCandidates = true
-
-  KaInapplicableCallCandidateInfo:
+  
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
@@ -53,7 +86,7 @@ KtOperationReferenceExpression(97,98): '>'
           isSafeNavigation = false
           type = MyClass
         signature = KaFunctionSignature:
-          receiverType = T
+          receiverType = MyClass
           returnType = kotlin.Int
           symbol = /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
           valueParameters = [
@@ -65,8 +98,7 @@ KtOperationReferenceExpression(97,98): '>'
               callableId = null
           ]
           callableId = /compareTo
-      typeArgumentsMapping = {}
-    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-    fun <T> T.compareTo(int: Int): Int
-    fun <R> R.compareTo(number: Int): Int>
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
     isInBestCandidates = true
