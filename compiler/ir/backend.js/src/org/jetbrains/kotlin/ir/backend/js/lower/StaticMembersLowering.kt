@@ -15,11 +15,16 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 
 // Move static member declarations from classes to top level
 class StaticMembersLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
+    // There is no need to extract external fun, except for one special case of outlined function
+    private fun IrDeclaration.isNotExternalOrIsSpecialOutlinedFun(): Boolean {
+        return !this.isEffectivelyExternal() || this.origin == JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN
+    }
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         (declaration.parent as? IrClass)?.let { irClass ->
             val isStatic = when (declaration) {
                 is IrClass -> !declaration.isEffectivelyExternal()
-                is IrSimpleFunction -> declaration.isStaticMethodOfClass && !declaration.isEffectivelyExternal()
+                is IrSimpleFunction -> declaration.isStaticMethodOfClass && declaration.isNotExternalOrIsSpecialOutlinedFun()
                 is IrField -> declaration.isStatic
                 else -> false
             }
