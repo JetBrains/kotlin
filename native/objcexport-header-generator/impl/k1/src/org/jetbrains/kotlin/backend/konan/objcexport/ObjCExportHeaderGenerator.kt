@@ -39,8 +39,8 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     @InternalKotlinNativeApi
     fun buildHeader(): ObjCHeader = ObjCHeader(
         stubs = stubs,
-        classForwardDeclarations = classForwardDeclarations,
-        protocolForwardDeclarations = protocolForwardDeclarations,
+        classForwardDeclarations = classForwardDeclarations.sortedBy { it.className }.toSet(),
+        protocolForwardDeclarations = protocolForwardDeclarations.sortedBy { it }.toSet(),
         additionalImports = getAdditionalImports(),
     )
 
@@ -53,7 +53,11 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     }
 
     fun getExportStubs(): ObjCExportedStubs =
-        ObjCExportedStubs(classForwardDeclarations, protocolForwardDeclarations, stubs)
+        ObjCExportedStubs(
+            classForwardDeclarations.sortedBy { it.className }.toSet(),
+            protocolForwardDeclarations.sortedBy { it }.toSet(),
+            stubs
+        )
 
     protected open fun getAdditionalImports(): List<String> = emptyList()
 

@@ -235,8 +235,8 @@ private class KtObjCExportHeaderGenerator(
 
         return ObjCHeader(
             stubs = stubs,
-            classForwardDeclarations = classForwardDeclarations,
-            protocolForwardDeclarations = protocolForwardDeclarations,
+            classForwardDeclarations = classForwardDeclarations.sortedBy { it.className }.toSet(),
+            protocolForwardDeclarations = protocolForwardDeclarations.sortedBy { it }.toSet(),
             additionalImports = emptyList()
         )
     }

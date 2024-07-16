@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class Kotlinx_coroutines_coreCompletionHandlerException, KotlinThrowable, KotlinArray<T>, KotlinException, KotlinRuntimeException;
+@class KotlinArray<T>, KotlinException, KotlinRuntimeException, KotlinThrowable, Kotlinx_coroutines_coreCompletionHandlerException;
 
 @protocol KotlinIterator;
 

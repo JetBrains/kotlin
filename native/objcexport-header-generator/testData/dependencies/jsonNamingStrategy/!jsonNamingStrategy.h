@@ -8,7 +8,7 @@
 
 @class Kotlinx_serialization_coreSerialKind;
 
-@protocol Kotlinx_serialization_jsonJsonNamingStrategy, Kotlinx_serialization_coreSerialDescriptor, KotlinAnnotation;
+@protocol KotlinAnnotation, Kotlinx_serialization_coreSerialDescriptor, Kotlinx_serialization_jsonJsonNamingStrategy;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push

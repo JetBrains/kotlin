@@ -6,9 +6,9 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class KotlinEnumCompanion, KotlinEnum<E>, ClassDiscriminatorMode, KotlinArray<T>, DecodeSequenceMode, StringFormat, JsonDefault, DeserializationStrategy<T0>, JsonElement, SerializationStrategy<T0>, JsonConfiguration, SerializersModule, Json, KSerializer<T0>, Decoder, Encoder, SerialDescriptor, JsonElementCompanion, JsonNamingStrategyBuiltins, JsonPrimitiveCompanion, JsonPrimitive, JsonNull, KotlinCharArray, JsonArrayBuilder, KotlinNothing, JsonObjectBuilder, JsonBuilder, KotlinCharIterator;
+@class ClassDiscriminatorMode, DecodeSequenceMode, Decoder, DeserializationStrategy<T0>, Encoder, Json, JsonArrayBuilder, JsonBuilder, JsonConfiguration, JsonDefault, JsonElement, JsonElementCompanion, JsonNamingStrategyBuiltins, JsonNull, JsonObjectBuilder, JsonPrimitive, JsonPrimitiveCompanion, KSerializer<T0>, KotlinArray<T>, KotlinCharArray, KotlinCharIterator, KotlinEnum<E>, KotlinEnumCompanion, KotlinNothing, SerialDescriptor, SerializationStrategy<T0>, SerializersModule, StringFormat;
 
-@protocol KotlinComparable, JsonNamingStrategy, KotlinKClass, InternalJsonReader, KotlinSequence, InternalJsonWriter, KotlinIterator, KotlinKDeclarationContainer, KotlinKAnnotatedElement, KotlinKClassifier;
+@protocol InternalJsonReader, InternalJsonWriter, JsonNamingStrategy, KotlinComparable, KotlinIterator, KotlinKAnnotatedElement, KotlinKClass, KotlinKClassifier, KotlinKDeclarationContainer, KotlinSequence;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push

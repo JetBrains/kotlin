@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class KotlinEnumCompanion, KotlinEnum<E>, Foo, KotlinArray<T>;
+@class Foo, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion;
 
 @protocol KotlinComparable, KotlinIterator;
 
