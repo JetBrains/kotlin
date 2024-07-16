@@ -347,9 +347,6 @@ class ConeOverloadConflictResolver(
         call1: FlatSignature<Candidate>,
         call2: FlatSignature<Candidate>
     ): Boolean {
-        // !false && false
-        if (!call1.isExpect && call2.isExpect) return true
-        if (call1.isExpect && !call2.isExpect) return false
         val hasVarargs1 = call1.hasVarargs
         val hasVarargs2 = call2.hasVarargs
         if (hasVarargs1 && !hasVarargs2) return false

@@ -41,11 +41,21 @@ class ConeEquivalentCallConflictResolver(
         outerLoop@ for (myCandidate in fromSourceFirst) {
             val me = myCandidate.symbol.fir
             if (me is FirCallableDeclaration && me.symbol.containingClassLookupTag() == null) {
-                for (otherCandidate in result) {
+                val resultIterator = result.iterator()
+                while (resultIterator.hasNext()) {
+                    val otherCandidate = resultIterator.next()
                     val other = otherCandidate.symbol.fir
                     if (other is FirCallableDeclaration && other.symbol.containingClassLookupTag() == null) {
                         if (areEquivalentTopLevelCallables(me, myCandidate, other, otherCandidate)) {
-                            continue@outerLoop
+                            /**
+                             * If we have an expect function in the result set and encounter a non-expect function among non-processed
+                             * candidates, then we need to prefer this new function to the original expect one
+                             */
+                            if (other.isExpect && !me.isExpect) {
+                                resultIterator.remove()
+                            } else {
+                                continue@outerLoop
+                            }
                         }
                     }
                 }
@@ -69,7 +79,6 @@ class ConeEquivalentCallConflictResolver(
         // We can't rely on the fact that library declarations will have different moduleData, e.g. in Native metadata compilation,
         // multiple stdlib declarations with the same moduleData can be present, see KT-61461.
         if (first.moduleData == second.moduleData && first.moduleData.session.kind == FirSession.Kind.Source) return false
-        if (first.isExpect != second.isExpect) return false
         if (first is FirVariable != second is FirVariable) {
             return false
         }
