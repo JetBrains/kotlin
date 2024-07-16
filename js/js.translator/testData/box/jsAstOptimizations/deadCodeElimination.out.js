@@ -4,7 +4,6 @@ function test$lambda($x) {
     var tmp;
     if (tmp0_elvis_lhs == null) {
       // Inline function 'kotlin.run' call
-      // Inline function 'kotlin.contracts.contract' call
       return 'OK';
     } else {
       tmp = tmp0_elvis_lhs;
