@@ -14,17 +14,18 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 public interface KotlinDirectInheritorsProvider : KotlinPlatformComponent {
     /**
-     * Returns all direct inheritors of [ktClass] that can be found in the given [scope]. If [includeLocalInheritors] is `false`, only
-     * non-local inheritors will be returned.
+     * Returns all direct *Kotlin* inheritors of [ktClass] that can be found in the given [scope].
      *
      * The implementor of [getDirectKotlinInheritors] is allowed to lazy-resolve symbols up to the `SUPER_TYPES` phase. This is required to
      * check subtyping for potential inheritors. Hence, if [getDirectKotlinInheritors] is invoked during lazy resolution, it requires a
      * phase of `SEALED_CLASS_INHERITORS` or later.
+     *
+     * @param includeLocalInheritors If `false`, only non-local inheritors will be searched and returned.
      */
     public fun getDirectKotlinInheritors(
         ktClass: KtClass,
         scope: GlobalSearchScope,
-        includeLocalInheritors: Boolean
+        includeLocalInheritors: Boolean = true,
     ): Iterable<KtClassOrObject>
 
     public companion object {
