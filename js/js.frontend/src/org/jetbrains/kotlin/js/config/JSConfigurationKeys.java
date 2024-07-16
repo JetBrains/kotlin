@@ -26,6 +26,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> SOURCE_MAP =
             CompilerConfigurationKey.create("generate source map");
 
+    public static final CompilerConfigurationKey<Boolean> USE_DEBUGGER_CUSTOM_FORMATTERS =
+            CompilerConfigurationKey.create("add import of debugger custom formatters");
+
     public static final CompilerConfigurationKey<File> OUTPUT_DIR =
             CompilerConfigurationKey.create("output directory");
 

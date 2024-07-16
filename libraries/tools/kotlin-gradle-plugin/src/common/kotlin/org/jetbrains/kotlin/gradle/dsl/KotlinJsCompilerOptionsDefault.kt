@@ -9,6 +9,9 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
     objectFactory: org.gradle.api.model.ObjectFactory
 ) : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault(objectFactory), org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions {
 
+    override val debuggerCustomFormatters: org.gradle.api.provider.Property<kotlin.Boolean> =
+        objectFactory.property(kotlin.Boolean::class.java).convention(false)
+
     override val friendModulesDisabled: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)
 

@@ -69,7 +69,7 @@ class WasmBoxRunner(
             val dir = File(outputDirBase, mode)
             dir.mkdirs()
 
-            writeCompilationResult(res, dir, baseFileName)
+            writeCompilationResult(res, dir, baseFileName, false)
 
             File(dir, "test.mjs").writeText(testJs)
 

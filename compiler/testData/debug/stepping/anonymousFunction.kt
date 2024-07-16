@@ -1,11 +1,16 @@
-
+// WITH_STDLIB
 // FILE: test.kt
+
+data class MyCustomClass(
+    val value: String
+)
 
 fun <T> eval(f: () -> T) = f()
 
 fun box() {
+    val ok = listOf(MyCustomClass("OK"), MyCustomClass("OK"))
     eval {
-        "OK"
+        ok[0].value
     }
 }
 

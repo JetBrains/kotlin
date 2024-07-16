@@ -12,6 +12,7 @@ internal object KotlinJsCompilerOptionsHelper {
         args: org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments,
     ) {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.fillCompilerArguments(from, args)
+        args.debuggerCustomFormatters = from.debuggerCustomFormatters.get()
         args.friendModulesDisabled = from.friendModulesDisabled.get()
         args.main = from.main.get().mode
         args.metaInfo = from.metaInfo.get()
@@ -32,6 +33,7 @@ internal object KotlinJsCompilerOptionsHelper {
         into: org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions,
     ) {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(from, into)
+        into.debuggerCustomFormatters.convention(from.debuggerCustomFormatters)
         into.friendModulesDisabled.convention(from.friendModulesDisabled)
         into.main.convention(from.main)
         into.metaInfo.convention(from.metaInfo)

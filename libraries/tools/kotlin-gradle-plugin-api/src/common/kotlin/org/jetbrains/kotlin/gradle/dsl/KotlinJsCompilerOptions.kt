@@ -11,6 +11,14 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions {
 
     /**
+     * Add custom formatters to devtools
+     *
+     * Default value: false
+     */
+    @get:org.gradle.api.tasks.Input
+    val debuggerCustomFormatters: org.gradle.api.provider.Property<kotlin.Boolean>
+
+    /**
      * Disable internal declaration export.
      *
      * Default value: false

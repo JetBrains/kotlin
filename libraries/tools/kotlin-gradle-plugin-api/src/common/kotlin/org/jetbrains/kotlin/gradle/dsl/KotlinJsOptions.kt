@@ -18,6 +18,15 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
     override val options: org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 
     /**
+     * Add custom formatters to devtools
+     *
+     * Default value: false
+     */
+    var debuggerCustomFormatters: kotlin.Boolean
+        get() = options.debuggerCustomFormatters.get()
+        set(value) = options.debuggerCustomFormatters.set(value)
+
+    /**
      * Disable internal declaration export.
      *
      * Default value: false

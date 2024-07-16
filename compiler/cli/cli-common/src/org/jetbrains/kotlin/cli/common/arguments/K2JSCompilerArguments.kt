@@ -84,6 +84,18 @@ class K2JSCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
+    )
+    @Argument(value = "-debugger-custom-formatters", description = "Add custom formatters to devtools")
+    var debuggerCustomFormatters = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,
         shouldGenerateDeprecatedKotlinOptions = true,
