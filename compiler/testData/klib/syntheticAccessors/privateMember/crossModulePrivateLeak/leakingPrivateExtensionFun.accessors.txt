@@ -4,7 +4,7 @@
 
 public class A
     internal inline fun internalInlineMethod(): String
-        /* ACCESSOR use-site */ access$privateExtension($receiver = <this>)
+        /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = <this>)
 /* TARGET declaration */ private fun A.privateExtension(): String
-/* ACCESSOR declaration */ public fun access$privateExtension($receiver: A): String
+/* ACCESSOR declaration */ public fun access$privateExtension$tAKt($receiver: A): String
     /* TARGET use-site */ $receiver.privateExtension()

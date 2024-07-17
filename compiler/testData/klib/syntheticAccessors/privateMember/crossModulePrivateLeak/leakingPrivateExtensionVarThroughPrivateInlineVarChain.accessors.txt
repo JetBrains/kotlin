@@ -5,9 +5,9 @@
 public class A
     internal var inlineVar: Int
         internal inline fun <get-inlineVar>(): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($receiver = this)
+            /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
         internal inline fun <set-inlineVar>(value: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($receiver = this, value = value)
+            /* ACCESSOR use-site */ access$<set-privateVar>$tAKt($receiver = this, value = value)
 private var A.privateInlineVar2: Int
     private inline fun A.<get-privateInlineVar2>(): Int
         /* TARGET use-site */ this.<get-privateVar>()
@@ -21,7 +21,7 @@ private var A.privateInlineVar1: Int
 private var A.privateVar: Int
     /* TARGET declaration */ private fun A.<get-privateVar>(): Int
     /* TARGET declaration */ private fun A.<set-privateVar>(value: Int)
-/* ACCESSOR declaration */ public fun access$<get-privateVar>($receiver: A): Int
+/* ACCESSOR declaration */ public fun access$<get-privateVar>$tAKt($receiver: A): Int
     /* TARGET use-site */ $receiver.<get-privateVar>()
-/* ACCESSOR declaration */ public fun access$<set-privateVar>($receiver: A, value: Int)
+/* ACCESSOR declaration */ public fun access$<set-privateVar>$tAKt($receiver: A, value: Int)
     /* TARGET use-site */ $receiver.<set-privateVar>(value = value)

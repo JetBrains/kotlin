@@ -4,6 +4,6 @@
 
 /* TARGET declaration */ private fun A.privateExtension(): String
 internal inline fun A.internalInlineMethod(): String
-    /* ACCESSOR use-site */ access$privateExtension($receiver = <this>)
-/* ACCESSOR declaration */ public fun access$privateExtension($receiver: A): String
+    /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = <this>)
+/* ACCESSOR declaration */ public fun access$privateExtension$tBKt($receiver: A): String
     /* TARGET use-site */ $receiver.privateExtension()

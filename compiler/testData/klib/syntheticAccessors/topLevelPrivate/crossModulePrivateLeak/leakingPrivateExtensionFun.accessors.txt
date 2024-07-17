@@ -3,7 +3,7 @@
 /* FILE package=<root> fileName=a.kt */
 
 internal inline fun String.internalInlineMethod(): String
-    /* ACCESSOR use-site */ access$privateExtension($receiver = <this>)
+    /* ACCESSOR use-site */ access$privateExtension$tAKt($receiver = <this>)
 /* TARGET declaration */ private fun String.privateExtension(): String
-/* ACCESSOR declaration */ public fun access$privateExtension($receiver: String): String
+/* ACCESSOR declaration */ public fun access$privateExtension$tAKt($receiver: String): String
     /* TARGET use-site */ $receiver.privateExtension()
