@@ -88,6 +88,30 @@ public class FirIdeDependentAnalysisSourceModuleIsImplicitCompanionReferenceTest
   }
 
   @Test
+  @TestMetadata("nestedClassWithCompanion.kt")
+  public void testNestedClassWithCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/nestedClassWithCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassWithCompanionInCompanion.kt")
+  public void testNestedClassWithCompanionInCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/nestedClassWithCompanionInCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassWithCompanionInCompanion_companionQualifier.kt")
+  public void testNestedClassWithCompanionInCompanion_companionQualifier() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/nestedClassWithCompanionInCompanion_companionQualifier.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassWithCompanion_qualifier.kt")
+  public void testNestedClassWithCompanion_qualifier() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/nestedClassWithCompanion_qualifier.kt");
+  }
+
+  @Test
   @TestMetadata("qualifierReferenceToClassWithCompanion.kt")
   public void testQualifierReferenceToClassWithCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/qualifierReferenceToClassWithCompanion.kt");

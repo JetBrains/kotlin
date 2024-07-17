@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -88,6 +87,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.types.Variance
@@ -104,12 +104,37 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 internal class KaFirResolver(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaAbstractResolver<KaFirSession>(), KaFirSessionComponent {
+    /**
+     * Notes on the implementation:
+     *
+     * For expressions like `Foo.Bar`, if `Bar` implicitly points to the companion object,
+     * there is actually no [FirResolvedQualifier] for the `Foo` alone -
+     * only for the whole `Foo.Bar`.
+     *
+     * So, when you want to check if `Foo` points to the companion object
+     * and call [getOrBuildFir] on it, you receive the qualifier for the
+     * whole `Foo.Bar`.
+     *
+     * Fortunately, you cannot have two references implicitly pointing to the
+     * companion object in a single dot-qualified expression - only the
+     * last reference in the chain can do that.
+     *
+     * So, if the PSI element of the [KtReference] and the whole [FirResolvedQualifier]
+     * are different, we can certainly say that the [KtReference] does not
+     * point to the companion object.
+     */
     override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withValidityAssertion {
         if (this !is KtSimpleNameReference) {
             return false
         }
-        val qualifier = element.getOrBuildFirSafe<FirResolvedQualifier>(analysisSession.firResolveSession) ?: return false
-        return qualifier.resolvedToCompanionObject
+
+        val wholeQualifier = element.getOrBuildFir(analysisSession.firResolveSession)
+        if (wholeQualifier !is FirResolvedQualifier) return false
+
+        val wholeQualifierNameExpression = (wholeQualifier.psi as? KtElement)?.getQualifiedElementSelector() as? KtSimpleNameExpression
+        if (wholeQualifierNameExpression != element) return false
+
+        return wholeQualifier.resolvedToCompanionObject
     }
 
     override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
