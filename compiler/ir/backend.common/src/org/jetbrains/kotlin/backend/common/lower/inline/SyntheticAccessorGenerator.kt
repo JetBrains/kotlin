@@ -403,42 +403,24 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext>(
         scopes: List<ScopeWithIr>,
     ): IrDeclarationParent
 
-    protected abstract fun AccessorNameBuilder.contributeFunctionName(function: IrSimpleFunction)
-
-    protected abstract fun AccessorNameBuilder.contributeFunctionSuffix(
+    protected abstract fun AccessorNameBuilder.buildFunctionName(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
         scopes: List<ScopeWithIr>,
     )
 
-    private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): Name {
-        val nameBuilder = AccessorNameBuilder()
-        nameBuilder.contributeFunctionName(this)
-        nameBuilder.contributeFunctionSuffix(this, superQualifier, scopes)
-        return nameBuilder.build()
-    }
+    private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): Name =
+        AccessorNameBuilder().apply { buildFunctionName(this@accessorName, superQualifier, scopes) }.build()
 
-    protected abstract fun AccessorNameBuilder.contributeFieldGetterName(field: IrField)
-    protected abstract fun AccessorNameBuilder.contributeFieldSetterName(field: IrField)
+    protected abstract fun AccessorNameBuilder.buildFieldGetterName(field: IrField, superQualifierSymbol: IrClassSymbol?)
+    protected abstract fun AccessorNameBuilder.buildFieldSetterName(field: IrField, superQualifierSymbol: IrClassSymbol?)
 
-    /**
-     * For both _reading_ and _writing_ field accessors, the suffix that includes some of [field]'s important properties.
-     */
-    protected abstract fun AccessorNameBuilder.contributeFieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?)
 
-    private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name {
-        val nameBuilder = AccessorNameBuilder()
-        nameBuilder.contributeFieldGetterName(this)
-        nameBuilder.contributeFieldAccessorSuffix(this, superQualifierSymbol)
-        return nameBuilder.build()
-    }
+    private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name =
+        AccessorNameBuilder().apply { buildFieldGetterName(this@accessorNameForGetter, superQualifierSymbol) }.build()
 
-    private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name {
-        val nameBuilder = AccessorNameBuilder()
-        nameBuilder.contributeFieldSetterName(this)
-        nameBuilder.contributeFieldAccessorSuffix(this, superQualifierSymbol)
-        return nameBuilder.build()
-    }
+    private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name =
+        AccessorNameBuilder().apply { buildFieldSetterName(this@accessorNameForSetter, superQualifierSymbol) }.build()
 
     /**
      * Produces a call to the synthetic accessor [accessorSymbol] to replace the call expression [oldExpression].

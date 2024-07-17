@@ -42,10 +42,16 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
             parent
         }
 
-    override fun AccessorNameBuilder.contributeFunctionName(function: IrSimpleFunction) =
+    override fun AccessorNameBuilder.buildFunctionName(
+        function: IrSimpleFunction,
+        superQualifier: IrClassSymbol?,
+        scopes: List<ScopeWithIr>
+    ) {
         contribute(context.defaultMethodSignatureMapper.mapFunctionName(function))
+        contributeFunctionSuffix(function, superQualifier, scopes)
+    }
 
-    override fun AccessorNameBuilder.contributeFunctionSuffix(
+    private fun AccessorNameBuilder.contributeFunctionSuffix(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
         scopes: List<ScopeWithIr>
@@ -78,10 +84,20 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
         }
     }
 
-    override fun AccessorNameBuilder.contributeFieldGetterName(field: IrField) = contribute(JvmAbi.getterName(field.name.asString()))
-    override fun AccessorNameBuilder.contributeFieldSetterName(field: IrField) = contribute(JvmAbi.setterName(field.name.asString()))
+    override fun AccessorNameBuilder.buildFieldGetterName(field: IrField, superQualifierSymbol: IrClassSymbol?) {
+        contribute(JvmAbi.getterName(field.name.asString()))
+        contributeFieldAccessorSuffix(field, superQualifierSymbol)
+    }
 
-    override fun AccessorNameBuilder.contributeFieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?) {
+    override fun AccessorNameBuilder.buildFieldSetterName(field: IrField, superQualifierSymbol: IrClassSymbol?) {
+        contribute(JvmAbi.setterName(field.name.asString()))
+        contributeFieldAccessorSuffix(field, superQualifierSymbol)
+    }
+
+    /**
+     * For both _reading_ and _writing_ field accessors, the suffix that includes some of [field]'s important properties.
+     */
+    private fun AccessorNameBuilder.contributeFieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?) {
         if (field.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD && !field.parentAsClass.isCompanion) {
             contribute(COMPANION_PROPERTY_MARKER)
         } else {

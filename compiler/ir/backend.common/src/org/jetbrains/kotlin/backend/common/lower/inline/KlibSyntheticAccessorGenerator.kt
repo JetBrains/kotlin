@@ -20,16 +20,19 @@ class KlibSyntheticAccessorGenerator(
     override fun accessorModality(parent: IrDeclarationParent) = Modality.FINAL
     override fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>) = parent
 
-    override fun AccessorNameBuilder.contributeFunctionName(function: IrSimpleFunction) = contribute(function.name.asString())
-    override fun AccessorNameBuilder.contributeFunctionSuffix(
+    override fun AccessorNameBuilder.buildFunctionName(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
         scopes: List<ScopeWithIr>,
-    ) = Unit
+    ) = contribute(function.name.asString())
 
-    override fun AccessorNameBuilder.contributeFieldGetterName(field: IrField) = contribute("<get-${field.name}>")
-    override fun AccessorNameBuilder.contributeFieldSetterName(field: IrField) = contribute("<set-${field.name}>")
-
-    override fun AccessorNameBuilder.contributeFieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?) =
+    override fun AccessorNameBuilder.buildFieldGetterName(field: IrField, superQualifierSymbol: IrClassSymbol?) {
+        contribute("<get-${field.name}>")
         contribute(PROPERTY_MARKER)
+    }
+
+    override fun AccessorNameBuilder.buildFieldSetterName(field: IrField, superQualifierSymbol: IrClassSymbol?) {
+        contribute("<set-${field.name}>")
+        contribute(PROPERTY_MARKER)
+    }
 }
