@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.fus.Metric
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely

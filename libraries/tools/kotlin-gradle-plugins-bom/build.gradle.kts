@@ -13,6 +13,7 @@ dependencies {
         api(project(":kotlin-gradle-plugin-model"))
         api(project(":native:kotlin-native-utils"))
         api(project(":kotlin-tooling-core"))
+        api(project(":libraries:tools:gradle:fus-statistics-gradle-plugin"))
 
         // plugins
         api(project(":kotlin-gradle-plugin"))

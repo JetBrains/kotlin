@@ -6,32 +6,34 @@ package org.jetbrains.kotlin.gradle.fus
 
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 
 
 /**
  * A service interface for build FUS statistics reporting.
  */
-interface GradleBuildFusStatisticsService {
+interface GradleBuildFusStatisticsService<T : BuildServiceParameters> : BuildService<T>, AutoCloseable {
 
     /**
-     * Reports a metric by its name and optionally subproject.
+     * Reports an execution time metric by its name and optionally subproject.
      *
      * @param name the metric name
      * @param value  the metric value.
-     * @param subprojectName the subproject name for which the metric is being reported.
+     * @param uniqueId identification for a place where the metric is reported.
      */
-    fun reportMetric(name: String, value: String, subprojectName: String? = null)
+    fun reportMetric(name: String, value: String, uniqueId: UniqueId = UniqueId.DEFAULT)
 
     /**
      * @see org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService.reportMetric(java.lang.String, java.lang.String, java.lang.String)
      */
-    fun reportMetric(name: String, value: Number, subprojectName: String? = null)
+    fun reportMetric(name: String, value: Number, uniqueId: UniqueId = UniqueId.DEFAULT)
 
     /**
      * @see org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService.reportMetric(java.lang.String, java.lang.String, java.lang.String)
      */
-    fun reportMetric(name: String, value: Boolean, subprojectName: String? = null)
+    fun reportMetric(name: String, value: Boolean, uniqueId: UniqueId = UniqueId.DEFAULT)
 
 }
 
@@ -42,5 +44,5 @@ interface GradleBuildFusStatisticsService {
  */
 interface UsesGradleBuildFusStatisticsService : Task {
     @get:Internal
-    val fusStatisticsBuildService: Property<GradleBuildFusStatisticsService>
+    val fusStatisticsBuildService: Property<GradleBuildFusStatisticsService<out BuildServiceParameters>>
 }

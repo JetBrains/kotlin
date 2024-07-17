@@ -68,8 +68,9 @@ class BuildSessionLogger(
             statisticsFolder.mkdirs()
             val file = File(statisticsFolder, buildId + PROFILE_FILE_NAME_SUFFIX)
 
-            FileOutputStream(file, true).bufferedWriter().use {
-                metricsContainer.flush(it)
+            FileOutputStream(file, true).bufferedWriter().use { writer ->
+                writer.appendLine("Build: $buildId")
+                metricsContainer.flush(writer)
             }
         } catch (_: IOException) {
             //ignore io exception

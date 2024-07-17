@@ -21,19 +21,14 @@ import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
-import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
-import org.jetbrains.kotlin.gradle.logging.SL4JKotlinLogger
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.FailedCompilationException
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.incremental.ClasspathChanges
-import org.slf4j.LoggerFactory
 import java.io.File
-import java.rmi.RemoteException
 import javax.inject.Inject
 
 private const val LOGGER_PREFIX = "[KOTLIN] "
