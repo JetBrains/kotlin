@@ -38,6 +38,7 @@ compose-stable = "1.7.0-alpha08"
 compose-snapshot-id = "12141312"
 compose-snapshot-version = "1.8.0-SNAPSHOT"
 ant = "1.10.14"
+kotlin-for-gradle-plugins-compilation = "2.0.20-RC"
 # Wasm specific
 wasmedge = "0.14.0"
 
