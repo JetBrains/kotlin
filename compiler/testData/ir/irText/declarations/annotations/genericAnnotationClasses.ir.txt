@@ -83,6 +83,10 @@ FILE fqName:ann fileName:/genericAnnotationClasses.kt
               receiver: GET_VAR '<this>: ann.Test3<T1 of ann.Test3, T2 of ann.Test3> declared in ann.Test3.<get-x>' type=ann.Test3<T1 of ann.Test3, T2 of ann.Test3> origin=null
     CONSTRUCTOR visibility:public <> (x:ann.Test1<ann.I<T2 of ann.Test3>>) returnType:ann.Test3<T1 of ann.Test3, T2 of ann.Test3> [primary]
       VALUE_PARAMETER name:x index:0 type:ann.Test1<ann.I<T2 of ann.Test3>>
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in ann.Test1' type=ann.Test1<ann.I<T2 of ann.Test3>> origin=null
+            <class: T>: ann.I<T2 of ann.Test3>
+            x: CONST Int type=kotlin.Int value=1
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Test3 modality:OPEN visibility:public superTypes:[kotlin.Annotation]'

@@ -31,7 +31,7 @@ open annotation class Test3<T1 : Any?, T2 : I<T1>> : Annotation {
     field = x
     get
 
-  constructor(x: Test1<I<T2>>) /* primary */ {
+  constructor(x: Test1<I<T2>> = Test1<I<T2>>(x = 1)) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
