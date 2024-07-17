@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.psi.KtContractEffect
 import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtContractEffectElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtUserTypeElementType.deserializeType
-import org.jetbrains.kotlin.psi.stubs.elements.KtUserTypeElementType.serializeType
+import org.jetbrains.kotlin.psi.stubs.elements.deserializeTypeBean
+import org.jetbrains.kotlin.psi.stubs.elements.serializeTypeBean
 
 class KotlinContractEffectStubImpl(
     parent: StubElement<out PsiElement>?,
@@ -56,7 +56,7 @@ enum class KotlinContractEffectType {
         override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
             return KtIsInstancePredicate(
                 PARAMETER_REFERENCE.deserialize(dataStream) as KtValueParameterReference,
-                deserializeType(dataStream)!!,
+                deserializeTypeBean(dataStream)!!,
                 dataStream.readBoolean()
             )
         }
@@ -144,7 +144,7 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
     override fun visitIsInstancePredicate(isInstancePredicate: KtIsInstancePredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
         dataStream.writeInt(KotlinContractEffectType.IS_INSTANCE.ordinal)
         dataStream.writeInt(isInstancePredicate.arg.parameterIndex)
-        serializeType(dataStream, isInstancePredicate.type)
+        serializeTypeBean(dataStream, isInstancePredicate.type)
         dataStream.writeBoolean(isInstancePredicate.isNegated)
     }
 

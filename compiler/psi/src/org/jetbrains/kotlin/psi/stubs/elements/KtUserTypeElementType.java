@@ -21,18 +21,13 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.psi.KtProjectionKind;
 import org.jetbrains.kotlin.psi.KtUserType;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
-import org.jetbrains.kotlin.psi.stubs.StubUtils;
-import org.jetbrains.kotlin.psi.stubs.impl.*;
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinUserTypeStubImpl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+
+import static org.jetbrains.kotlin.psi.stubs.elements.TypeBeanSerializationKt.*;
 
 public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub, KtUserType> {
     public KtUserTypeElementType(@NotNull @NonNls String debugName) {
@@ -48,98 +43,15 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
     @Override
     public void serialize(@NotNull KotlinUserTypeStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         KotlinUserTypeStubImpl stubImpl = (KotlinUserTypeStubImpl) stub;
-        serializeType(dataStream, stubImpl.getUpperBound());
-        serializeType(dataStream, stubImpl.getAbbreviatedType());
-    }
-
-    private enum KotlinTypeBeanKind {
-        CLASS, TYPE_PARAMETER, FLEXIBLE, NONE;
-
-        static KotlinTypeBeanKind fromBean(@Nullable KotlinTypeBean typeBean) {
-            if (typeBean == null) return NONE;
-            if (typeBean instanceof KotlinTypeParameterTypeBean) return TYPE_PARAMETER;
-            if (typeBean instanceof KotlinClassTypeBean) return CLASS;
-            return FLEXIBLE;
-        }
-    }
-
-    public static void serializeType(@NotNull StubOutputStream dataStream, @Nullable KotlinTypeBean type) throws IOException {
-        dataStream.writeInt(KotlinTypeBeanKind.fromBean(type).ordinal());
-        if (type instanceof KotlinClassTypeBean) {
-            StubUtils.serializeClassId(dataStream, ((KotlinClassTypeBean) type).getClassId());
-            dataStream.writeBoolean(type.getNullable());
-            List<KotlinTypeArgumentBean> arguments = ((KotlinClassTypeBean) type).getArguments();
-            dataStream.writeInt(arguments.size());
-            for (KotlinTypeArgumentBean argument : arguments) {
-                KtProjectionKind kind = argument.getProjectionKind();
-                dataStream.writeInt(kind.ordinal());
-                if (kind != KtProjectionKind.STAR) {
-                    serializeType(dataStream, argument.getType());
-                }
-            }
-            serializeType(dataStream, ((KotlinClassTypeBean) type).getAbbreviatedType());
-        }
-        else if (type instanceof KotlinTypeParameterTypeBean) {
-            dataStream.writeName(((KotlinTypeParameterTypeBean) type).getTypeParameterName());
-            dataStream.writeBoolean(type.getNullable());
-            dataStream.writeBoolean(((KotlinTypeParameterTypeBean) type).getDefinitelyNotNull());
-        }
-        else if (type instanceof KotlinFlexibleTypeBean) {
-            serializeType(dataStream, ((KotlinFlexibleTypeBean) type).getLowerBound());
-            serializeType(dataStream, ((KotlinFlexibleTypeBean) type).getUpperBound());
-        }
+        serializeTypeBean(dataStream, stubImpl.getUpperBound());
+        serializeTypeBean(dataStream, stubImpl.getAbbreviatedType());
     }
 
     @NotNull
     @Override
     public KotlinUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub, deserializeType(dataStream), deserializeClassType(dataStream));
-    }
-
-    @Nullable
-    private static KotlinClassTypeBean deserializeClassType(@NotNull StubInputStream dataStream) throws IOException {
-        KotlinTypeBean type = deserializeType(dataStream);
-
-        // Ignore non-class types defensively to avoid throwing an exception from stub deserialization.
-        return type instanceof KotlinClassTypeBean ? (KotlinClassTypeBean) type : null;
-    }
-
-    @Nullable
-    public static KotlinTypeBean deserializeType(@NotNull StubInputStream dataStream) throws IOException {
-        KotlinTypeBeanKind typeKind = KotlinTypeBeanKind.values()[dataStream.readInt()];
-        switch (typeKind) {
-            case CLASS: {
-                ClassId classId = Objects.requireNonNull(StubUtils.deserializeClassId(dataStream));
-                boolean isNullable = dataStream.readBoolean();
-                int count = dataStream.readInt();
-                List<KotlinTypeArgumentBean> arguments = new ArrayList<>();
-                for (int i = 0; i < count; i++) {
-                    int kind = dataStream.readInt();
-                    KotlinTypeArgumentBean argument;
-                    if (kind != KtProjectionKind.STAR.ordinal()) {
-                        argument = new KotlinTypeArgumentBean(KtProjectionKind.values()[kind], deserializeType(dataStream));
-                    }
-                    else {
-                        argument = new KotlinTypeArgumentBean(KtProjectionKind.STAR, null);
-                    }
-                    arguments.add(argument);
-                }
-                KotlinClassTypeBean abbreviatedType = deserializeClassType(dataStream);
-                return new KotlinClassTypeBean(classId, arguments, isNullable, abbreviatedType);
-            }
-            case TYPE_PARAMETER: {
-                String typeParameterName = Objects.requireNonNull(dataStream.readNameString());
-                boolean nullable = dataStream.readBoolean();
-                boolean definitelyNotNull = dataStream.readBoolean();
-                return new KotlinTypeParameterTypeBean(typeParameterName, nullable, definitelyNotNull);
-            }
-            case FLEXIBLE: {
-                return new KotlinFlexibleTypeBean(Objects.requireNonNull(deserializeType(dataStream)),
-                                                  Objects.requireNonNull(deserializeType(dataStream)));
-            }
-            case NONE:
-                return null;
-        }
-        return null;
+        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub,
+                                          deserializeTypeBean(dataStream),
+                                          deserializeClassTypeBean(dataStream));
     }
 }
