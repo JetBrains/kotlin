@@ -4409,6 +4409,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
       }
 
       @Test
+      @TestMetadata("FunctionListAliasUnresolvedFunctionAlias.kt")
+      public void testFunctionListAliasUnresolvedFunctionAlias() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/missingDependency/FunctionListAliasUnresolvedFunctionAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("FunctionListAliasUnresolvedListAlias.kt")
+      public void testFunctionListAliasUnresolvedListAlias() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/missingDependency/FunctionListAliasUnresolvedListAlias.kt");
+      }
+
+      @Test
       @TestMetadata("ListAliasUnresolvedListAlias.kt")
       public void testListAliasUnresolvedListAlias() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typeAlias/missingDependency/ListAliasUnresolvedListAlias.kt");
