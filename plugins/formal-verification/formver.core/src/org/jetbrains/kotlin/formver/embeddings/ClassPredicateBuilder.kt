@@ -14,12 +14,15 @@ import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Predicate
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal class ClassPredicateBuilder private constructor(private val type: ClassTypeEmbedding) {
-    private val subject = PlaceholderVariableEmbedding(ClassPredicateSubjectName, type)
+internal class ClassPredicateBuilder private constructor(private val details: ClassEmbeddingDetails) {
+    private val subject = PlaceholderVariableEmbedding(ClassPredicateSubjectName, details.type)
     private val body = mutableListOf<ExpEmbedding>()
 
     companion object {
-        fun build(classType: ClassTypeEmbedding, predicateName: MangledName, action: ClassPredicateBuilder.() -> Unit): Predicate {
+        fun build(
+            classType: ClassEmbeddingDetails, predicateName: MangledName,
+            action: ClassPredicateBuilder.() -> Unit,
+        ): Predicate {
             val builder = ClassPredicateBuilder(classType)
             builder.action()
             return Predicate(
@@ -29,7 +32,7 @@ internal class ClassPredicateBuilder private constructor(private val type: Class
     }
 
     fun forEachField(action: FieldAssertionsBuilder.() -> Unit) =
-        type.fields.values
+        details.fields.values
             .filterIsInstance<UserFieldEmbedding>()
             .forEach { field ->
                 val builder = FieldAssertionsBuilder(subject, field)
@@ -38,7 +41,7 @@ internal class ClassPredicateBuilder private constructor(private val type: Class
             }
 
     fun forEachSuperType(action: TypeInvariantsBuilder.() -> Unit) =
-        type.superTypes.forEach { type ->
+        details.superTypes.forEach { type ->
             val builder = TypeInvariantsBuilder(type)
             builder.action()
             body.addAll(builder.toInvariantsList().fillHoles(subject))

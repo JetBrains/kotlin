@@ -410,7 +410,7 @@ class RuntimeTypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(RUNTI
             it.apply { injectionAxioms() }
         }
         classTypes.forEach { (typeEmbedding, typeFunction) ->
-            typeEmbedding.superTypes.forEach {
+            typeEmbedding.details.superTypes.forEach {
                 classTypes[it]?.let { supertypeFunction ->
                     axiom {
                         typeFunction() subtype supertypeFunction()

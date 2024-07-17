@@ -67,7 +67,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     fields.values.distinctBy { it.name.mangled }.map { it.toViper() },
             functions = SpecialFunctions.all,
             methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.distinctBy { it.name.mangled },
-            predicates = classes.values.flatMap { listOf(it.sharedPredicate, it.uniquePredicate) }
+            predicates = classes.values.flatMap { listOf(it.details.sharedPredicate, it.details.uniquePredicate) }
         )
 
     fun registerForVerification(declaration: FirSimpleFunction) {
@@ -113,38 +113,38 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             UserFunctionEmbedding(callable)
         }
 
+    /**
+     * Returns an embedding of the class type, with details set.
+     */
     private fun embedClass(symbol: FirRegularClassSymbol): ClassTypeEmbedding {
         val className = symbol.classId.embedName()
-        return when (val existingEmbedding = classes[className]) {
-            null -> {
-                // The full class embedding is necessary to process the signatures of the properties of the class, since
-                // these take the class as a parameter. We thus do this in three phases:
-                // 1. Provide a class embedding in the `classes` map (necessary for embedType to not call this recursively).
-                // 2. Initialise the supertypes (including running this whole four-step process on each)
-                // 3. Initialise the fields
-                // 4. Process the properties of the class.
-                //
-                // With respect to the embedding, each phase is pure by itself, and only updates the class embedding at the end.
-                // This ensures the code never sees half-built supertype or field data. The phases can, however, modify the
-                // `ProgramConverter`.
+        val embedding = classes.getOrPut(className) { ClassTypeEmbedding(className) }
+        if (embedding.hasDetails) return embedding
 
-                // Phase 1
-                val newEmbedding = ClassTypeEmbedding(className, symbol.classKind == ClassKind.INTERFACE)
-                classes[className] = newEmbedding
+        val newDetails = ClassEmbeddingDetails(embedding, symbol.classKind == ClassKind.INTERFACE)
+        embedding.initDetails(newDetails)
 
-                // Phase 2
-                newEmbedding.initSuperTypes(symbol.resolvedSuperTypes.map(::embedType))
+        // The full class embedding is necessary to process the signatures of the properties of the class, since
+        // these take the class as a parameter. We thus do this in three phases:
+        // 1. Initialise the supertypes (including running this whole four-step process on each)
+        // 2. Initialise the fields
+        // 3. Process the properties of the class.
+        //
+        // With respect to the embedding, each phase is pure by itself, and only updates the class embedding at the end.
+        // This ensures the code never sees half-built supertype or field data. The phases can, however, modify the
+        // `ProgramConverter`.
 
-                // Phase 3
-                val properties = symbol.propertySymbols
-                newEmbedding.initFields(properties.mapNotNull { processBackingField(it, symbol) }.toMap())
+        // Phase 1
+        newDetails.initSuperTypes(symbol.resolvedSuperTypes.map(::embedType))
 
-                // Phase 4
-                properties.forEach { processProperty(it, newEmbedding) }
-                newEmbedding
-            }
-            else -> existingEmbedding
-        }
+        // Phase 2
+        val properties = symbol.propertySymbols
+        newDetails.initFields(properties.mapNotNull { processBackingField(it, symbol) }.toMap())
+
+        // Phase 3
+        properties.forEach { processProperty(it, newDetails) }
+
+        return embedding
     }
 
     override fun embedType(type: ConeKotlinType): TypeEmbedding = when {
@@ -203,7 +203,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
         return constructedClassSymbol.propertySymbols.mapNotNull { propertySymbol ->
             propertySymbol.withConstructorParam { paramSymbol ->
-                constructedClass.findField(callableId.embedUnscopedPropertyName())?.let { paramSymbol to it }
+                constructedClass.details.findField(callableId.embedUnscopedPropertyName())?.let { paramSymbol to it }
             }
         }.toMap()
     }
@@ -325,7 +325,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
      * Note that the property either has associated Viper field (and then it is used to access the value) or not (in this case methods are used).
      * The field is only used for final properties with default getter and default setter (if any).
      */
-    private fun processProperty(symbol: FirPropertySymbol, embedding: ClassTypeEmbedding) {
+    private fun processProperty(symbol: FirPropertySymbol, embedding: ClassEmbeddingDetails) {
         val unscopedName = symbol.callableId.embedUnscopedPropertyName()
         val backingField = embedding.findField(unscopedName)
         backingField?.let { fields.put(it.name, it) }

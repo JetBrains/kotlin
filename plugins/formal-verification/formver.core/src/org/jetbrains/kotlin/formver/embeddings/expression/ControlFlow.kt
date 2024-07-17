@@ -158,7 +158,7 @@ data class UnfoldingClassPredicateEmbedding(val predicated: VariableEmbedding, o
         }
         return Exp.Unfolding(
             Exp.PredicateAccess(
-                predicatedType.sharedPredicate.name,
+                predicatedType.details.sharedPredicate.name,
                 listOf(predicated.pureToViper(false)),
                 PermExp.WildcardPerm(),
                 pos = ctx.source.asPosition,

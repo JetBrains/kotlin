@@ -8,15 +8,11 @@ package org.jetbrains.kotlin.formver.embeddings
 import org.jetbrains.kotlin.formver.domains.Injection
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableSignatureData
-import org.jetbrains.kotlin.formver.names.ClassScope
 import org.jetbrains.kotlin.formver.names.NameMatcher
 import org.jetbrains.kotlin.formver.names.ScopedKotlinName
 import org.jetbrains.kotlin.formver.names.SimpleKotlinName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
-import org.jetbrains.kotlin.formver.viper.ast.PermExp
-import org.jetbrains.kotlin.formver.viper.ast.Predicate
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 /**
  * Represents our representation of a Kotlin type.
@@ -25,7 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
  *
  * All type embeddings must be `data` classes or objects!
  */
-interface TypeEmbedding {
+interface TypeEmbedding : TypeInvariantHolder {
     /**
      * A Viper expression with the runtime representation of the type.
      *
@@ -42,37 +38,12 @@ interface TypeEmbedding {
     val name: MangledName
 
     /**
-     * Find an embedding of a backing field by this name amongst the ancestors of this type.
-     *
-     * While in Kotlin only classes can have backing fields, and so searching interface supertypes is not strictly necessary,
-     * due to the way we handle list size we need to search all types.
-     *
-     * Non-class types have no fields and so almost no types will implement this function.
-     */
-    fun findField(name: SimpleKotlinName): FieldEmbedding? = null
-
-    /**
      * Perform an action on every field and collect the results.
      *
      * Note that for fake fields that are taken from interfaces, this may visit some fields twice.
      * Use `flatMapUniqueFields` if you want to avoid that.
      */
     fun <R> flatMapFields(action: (SimpleKotlinName, FieldEmbedding) -> List<R>): List<R> = listOf()
-
-    /**
-     * Invariants that provide access to a resource and thus behave linearly.
-     */
-    fun accessInvariants(): List<TypeInvariantEmbedding> = emptyList()
-
-    // Note: these functions will replace accessInvariants when nested unfold will be implemented
-    fun sharedPredicateAccessInvariant(): TypeInvariantEmbedding? = null
-    fun uniquePredicateAccessInvariant(): TypeInvariantEmbedding? = null
-
-    /**
-     * Invariants that do not depend on the heap, and so do not need to be repeated
-     * once they have been established once.
-     */
-    fun pureInvariants(): List<TypeInvariantEmbedding> = emptyList()
 
     /**
      * Get a nullable version of this type embedding.
@@ -89,20 +60,6 @@ interface TypeEmbedding {
     val isNullable: Boolean
         get() = false
 }
-
-fun <R> TypeEmbedding.flatMapUniqueFields(action: (SimpleKotlinName, FieldEmbedding) -> List<R>): List<R> {
-    val seenFields = mutableSetOf<SimpleKotlinName>()
-    return flatMapFields { name, field ->
-        seenFields.add(name).ifTrue {
-            action(name, field)
-        } ?: listOf()
-    }
-}
-
-fun <R> TypeEmbedding.mapNotNullUniqueFields(action: (SimpleKotlinName, FieldEmbedding) -> R?): List<R> =
-    flatMapUniqueFields { name, field ->
-        action(name, field)?.let { listOf(it) } ?: emptyList()
-    }
 
 data object UnitTypeEmbedding : TypeEmbedding {
     override val runtimeType = RuntimeTypeDomain.unitType()
@@ -135,7 +92,6 @@ data object IntTypeEmbedding : TypeEmbedding {
         override val mangled: String = "T_Int"
     }
 }
-
 
 data object BooleanTypeEmbedding : TypeEmbedding {
     override val runtimeType = RuntimeTypeDomain.boolType()
@@ -175,114 +131,33 @@ data class FunctionTypeEmbedding(val signature: CallableSignatureData) : TypeEmb
     }
 }
 
-data class ClassTypeEmbedding(val className: ScopedKotlinName, val isInterface: Boolean) : TypeEmbedding {
-    private var _superTypes: List<TypeEmbedding>? = null
-    val superTypes: List<TypeEmbedding>
-        get() = _superTypes ?: error("Super types of $className have not been initialised yet.")
+data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
+    private var _details: ClassEmbeddingDetails? = null
+    val details: ClassEmbeddingDetails
+        get() = _details ?: error("Details of $className have not been initialised yet.")
 
-    private val classSuperTypes: List<ClassTypeEmbedding>
-        get() = superTypes.filterIsInstance<ClassTypeEmbedding>()
-
-    fun initSuperTypes(newSuperTypes: List<TypeEmbedding>) {
-        check(_superTypes == null) { "Super types of $className are already initialised." }
-        _superTypes = newSuperTypes
+    fun initDetails(details: ClassEmbeddingDetails) {
+        require(_details == null) { "Class details already initialized" }
+        _details = details
     }
 
-    private var _fields: Map<SimpleKotlinName, FieldEmbedding>? = null
-    private var _sharedPredicate: Predicate? = null
-    private var _uniquePredicate: Predicate? = null
-    val fields: Map<SimpleKotlinName, FieldEmbedding>
-        get() = _fields ?: error("Fields of $className have not been initialised yet.")
-    val sharedPredicate: Predicate
-        get() = _sharedPredicate ?: error("Predicate of $className has not been initialised yet.")
-    val uniquePredicate: Predicate
-        get() = _uniquePredicate ?: error("Unique Predicate of $className has not been initialised yet.")
-
-    fun initFields(newFields: Map<SimpleKotlinName, FieldEmbedding>) {
-        check(_fields == null) { "Fields of $className are already initialised." }
-        _fields = newFields
-        _sharedPredicate = ClassPredicateBuilder.build(this, name) {
-            forEachField {
-                if (isAlwaysReadable) {
-                    addAccessPermissions(PermExp.WildcardPerm())
-                    forType {
-                        addAccessToSharedPredicate()
-                        includeSubTypeInvariants()
-                    }
-                }
-            }
-            forEachSuperType {
-                addAccessToSharedPredicate()
-            }
-        }
-        _uniquePredicate = ClassPredicateBuilder.build(this, uniquePredicateName) {
-            forEachField {
-                if (isAlwaysReadable) {
-                    addAccessPermissions(PermExp.WildcardPerm())
-                } else {
-                    addAccessPermissions(PermExp.FullPerm())
-                }
-                forType {
-                    addAccessToSharedPredicate()
-                    if (isUnique) {
-                        addAccessToUniquePredicate()
-                    }
-                    includeSubTypeInvariants()
-                }
-            }
-            forEachSuperType {
-                addAccessToUniquePredicate()
-            }
-        }
-    }
+    val hasDetails: Boolean
+        get() = _details != null
 
     // TODO: incorporate generic parameters.
     override val name = object : MangledName {
         override val mangled: String = "T_class_${className.mangled}"
     }
 
-    private val uniquePredicateName = object : MangledName {
-        override val mangled: String = "Unique\$T_class_${className.mangled}"
-    }
-
     val runtimeTypeFunc = RuntimeTypeDomain.classTypeFunc(name)
     override val runtimeType: Exp = runtimeTypeFunc()
 
-    override fun findField(name: SimpleKotlinName): FieldEmbedding? = fields[name]
-
-    override fun <R> flatMapFields(action: (SimpleKotlinName, FieldEmbedding) -> List<R>): List<R> =
-        superTypes.flatMap { it.flatMapFields(action) } + fields.flatMap { (name, field) -> action(name, field) }
-
-    // We can't easily implement this by recursion on the supertype structure since some supertypes may be seen multiple times.
-    // TODO: figure out a nicer way to handle this.
-    override fun accessInvariants(): List<TypeInvariantEmbedding> =
-        flatMapUniqueFields { _, field -> field.accessInvariantsForParameter() }
+    override fun accessInvariants(): List<TypeInvariantEmbedding> = details.accessInvariants()
 
     // Note: this function will replace accessInvariants when nested unfold will be implemented
-    override fun sharedPredicateAccessInvariant() =
-        PredicateAccessTypeInvariantEmbedding(name, PermExp.WildcardPerm())
+    override fun sharedPredicateAccessInvariant() = details.sharedPredicateAccessInvariant()
 
-    override fun uniquePredicateAccessInvariant() =
-        PredicateAccessTypeInvariantEmbedding(uniquePredicateName, PermExp.FullPerm())
-
-    // Returns the sequence of classes in a hierarchy that need to be unfolded in order to access the given field
-    fun hierarchyUnfoldPath(fieldName: MangledName): Sequence<ClassTypeEmbedding> = sequence {
-        if (fieldName is ScopedKotlinName && fieldName.scope is ClassScope) {
-            if (fieldName.scope.className == className.name) {
-                yield(this@ClassTypeEmbedding)
-            } else {
-                val sup = superTypes.firstOrNull { it is ClassTypeEmbedding && !it.isInterface }
-                if (sup is ClassTypeEmbedding) {
-                    yield(this@ClassTypeEmbedding)
-                    yieldAll(sup.hierarchyUnfoldPath(fieldName))
-                } else {
-                    throw IllegalArgumentException("Reached top of the hierarchy without finding the field")
-                }
-            }
-        } else {
-            throw IllegalArgumentException("Cannot find hierarchy unfold path of a field with no class scope")
-        }
-    }
+    override fun uniquePredicateAccessInvariant() = details.uniquePredicateAccessInvariant()
 }
 
 
@@ -304,7 +179,7 @@ private fun TypeEmbedding.isCollectionTypeNamed(name: String): Boolean =
     }
 
 fun TypeEmbedding.isInheritorOfCollectionTypeNamed(name: String): Boolean =
-    if (this !is ClassTypeEmbedding) false else isCollectionTypeNamed(name) || superTypes.any {
+    if (this !is ClassTypeEmbedding) false else isCollectionTypeNamed(name) || details.superTypes.any {
         it.isInheritorOfCollectionTypeNamed(name)
     }
 
