@@ -65,6 +65,7 @@ fun compileToLoweredIr(
     generateTypeScriptFragment: Boolean,
     propertyLazyInitialization: Boolean,
 ): LoweredIrWithExtraArtifacts {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 5, destructured variable amount without '_': 5, classId: org/jetbrains/kotlin/ir/backend/js/IrModuleInfo, actual properties name: module, allDependencies, bultins, symbolTable, deserializer, moduleFragmentToUniqueName  */
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = irModuleInfo
 
     val allModules = when (mainModule) {

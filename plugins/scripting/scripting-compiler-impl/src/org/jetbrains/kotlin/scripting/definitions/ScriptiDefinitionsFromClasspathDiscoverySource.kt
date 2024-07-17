@@ -90,6 +90,7 @@ private fun scriptTemplatesDiscoverySequence(
                                         SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
                                     )
                                 }.toList()
+                                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/scripting/definitions/DefinitionsLoadPartitionResult, actual properties name: loaded, notFound  */
                                 val (loadedDefinitions, notFoundClasses) =
                                     definitionNames.partitionLoadJarDefinitions(
                                         jar,
@@ -113,6 +114,7 @@ private fun scriptTemplatesDiscoverySequence(
                         defferedDirDependencies.add(dep) // there is no way to know that the dependency is fully "used" so we add it to the list anyway
                         val discoveryMarkers = File(dep, SCRIPT_DEFINITION_MARKERS_PATH).listFiles()
                         if (discoveryMarkers?.isEmpty() == false) {
+                            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/scripting/definitions/DefinitionsLoadPartitionResult, actual properties name: loaded, notFound  */
                             val (foundDefinitionClasses, notFoundDefinitions) = discoveryMarkers.map {
                                 it.name.removeSuffix(
                                     SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
@@ -139,6 +141,7 @@ private fun scriptTemplatesDiscoverySequence(
         for (dep in defferedDirDependencies) {
             if (remainingDefinitionCandidates.isEmpty()) break
             try {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/scripting/definitions/DefinitionsLoadPartitionResult, actual properties name: loaded, notFound  */
                 val (foundDefinitionClasses, notFoundDefinitions) =
                     remainingDefinitionCandidates.partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
                 foundDefinitionClasses.forEach {
@@ -191,6 +194,7 @@ fun loadScriptTemplatesFromClasspath(
             if (remainingTemplates.isEmpty()) break
 
             try {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/scripting/definitions/DefinitionsLoadPartitionResult, actual properties name: loaded, notFound  */
                 val (loadedDefinitions, notFoundTemplates) = when {
                     dep.isFile && dep.extension == "jar" -> { // checking for extension is the compiler current behaviour, so the same logic is implemented here
                         JarFile(dep).use { jar ->

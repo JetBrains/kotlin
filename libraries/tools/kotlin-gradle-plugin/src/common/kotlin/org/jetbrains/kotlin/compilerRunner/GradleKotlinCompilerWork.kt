@@ -213,6 +213,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 )
             } ?: throw RuntimeException(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE) // TODO: Add root cause
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/daemon/client/CompileServiceSession, actual properties name: compileService, sessionId  */
         val (daemon, sessionId) = connection
 
         if (log.isDebugEnabled) {

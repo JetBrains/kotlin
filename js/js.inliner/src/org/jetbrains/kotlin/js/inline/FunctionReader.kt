@@ -255,6 +255,7 @@ class FunctionReader(
         val jsScope = JsRootScope(JsProgram())
         val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, jsScope) ?: return null
         functionExpr.fixForwardNameReferences()
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/inline/util/FunctionWithWrapper, actual properties name: function, wrapperBody  */
         val (function, wrapper) = if (isWrapped) {
             InlineMetadata.decomposeWrapper(functionExpr) ?: return null
         } else {

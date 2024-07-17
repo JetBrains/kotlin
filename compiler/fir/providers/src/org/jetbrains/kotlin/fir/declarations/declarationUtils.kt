@@ -201,7 +201,8 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursi
  */
 fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
-    for ((member, scope) in this) {
+    for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope, actual properties name: member, baseScope  */
+    (member, scope) in this) {
         val unwrapped = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
         val addIfDifferent = { it: FirCallableSymbol<*> ->
             val symbol = it.unwrapSubstitutionOverrides()

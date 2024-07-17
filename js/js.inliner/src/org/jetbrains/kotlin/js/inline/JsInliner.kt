@@ -45,6 +45,7 @@ class JsInliner(
         if (definitionFragment !in translationResult.newFragments) return
 
         cycleReporter.processInlineFunction(inlineFn.fn, call) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/inline/util/FunctionWithWrapper, actual properties name: function, wrapperBody  */
             val (fn, wrapperBody) = inlineFn.fn
 
             if (wrapperBody != null) {

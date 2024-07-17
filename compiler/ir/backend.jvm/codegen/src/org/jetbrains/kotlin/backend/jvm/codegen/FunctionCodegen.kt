@@ -112,6 +112,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
             SMAP(listOf())
         } else if (notForInline != null) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/codegen/inline/SMAPAndMethodNode, actual properties name: node, classSMAP  */
             val (originalNode, smap) = classCodegen.generateMethodNode(notForInline)
             originalNode.accept(MethodBodyVisitor(methodVisitor))
             smap

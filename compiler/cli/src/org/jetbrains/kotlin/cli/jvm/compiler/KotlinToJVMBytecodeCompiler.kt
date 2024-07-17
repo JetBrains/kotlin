@@ -77,6 +77,7 @@ object KotlinToJVMBytecodeCompiler {
 
         val useFrontendIR = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)
         val messageCollector = environment.messageCollector
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 7, destructured variable amount without '_': 7, classId: org/jetbrains/kotlin/cli/jvm/compiler/KotlinToJVMBytecodeCompiler.BackendInputForMultiModuleChunk, actual properties name: codegenFactory, backendInput, moduleDescriptor, bindingContext, firJvmBackendClassResolver, firJvmBackendExtension, mainClassFqName  */
         val (codegenFactory, wholeBackendInput, moduleDescriptor, bindingContext, firJvmBackendResolver, firJvmBackendExtension, mainClassFqName) = if (useFrontendIR) {
             // K2/PSI: base checks
             val projectEnvironment =

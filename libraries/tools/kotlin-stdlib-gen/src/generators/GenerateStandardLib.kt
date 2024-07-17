@@ -54,7 +54,8 @@ fun main(args: Array<String>) {
         }
     }
 
-    templateGroups.groupByFileAndWrite(targetsToGenerate = targetBaseDirs.keys) { (target, source) ->
+    templateGroups.groupByFileAndWrite(targetsToGenerate = targetBaseDirs.keys) { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: templates/TargetedSourceFile, actual properties name: target, sourceFile  */
+                                                                                  (target, source) ->
         val targetDir = targetBaseDirs[target] ?: error("Target $target directory is not configured")
         val platformSuffix = when (val platform = target.platform) {
             Platform.Common -> ""

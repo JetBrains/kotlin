@@ -199,7 +199,8 @@ fun collectNamedFunctionsAndMetadata(scope: JsNode): Map<JsName, Pair<FunctionWi
                 if (left is JsNameRef) {
                     val name = left.name
                     if (name != null) {
-                        extractFunction(right)?.let { (function, wrapper) ->
+                        extractFunction(right)?.let { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/inline/util/FunctionWithWrapper, actual properties name: function, wrapperBody  */
+                                                      (function, wrapper) ->
                             namedFunctions[name] = Pair(FunctionWithWrapper(function, wrapper), right)
                         }
                     }

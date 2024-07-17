@@ -44,7 +44,8 @@ class JvmPackagePartProvider(
     override val loadedModules: MutableList<ModuleMappingInfo<VirtualFile>> = SmartList()
 
     fun addRoots(roots: List<JavaRoot>, messageCollector: MessageCollector) {
-        for ((root, type) in roots) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/jvm/index/JavaRoot, actual properties name: file, type, prefixFqName  */
+        (root, type) in roots) {
             if (type != JavaRoot.RootType.BINARY) continue
             if (root !in scope) continue
 

@@ -231,6 +231,7 @@ private fun cityMurmur(seed: Hash128Bits, s: ByteArray, pos: Int = 0, len: Int =
     var pos = pos
     var len = len
 
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/serialization/Hash128Bits, actual properties name: lowBytes, highBytes  */
     var (a, b) = seed
     var c: ULong
     var d: ULong
@@ -271,6 +272,7 @@ fun cityHash128WithSeed(seed: Hash128Bits, s: ByteArray, pos: Int = 0, len: Int 
     var v = ULongArray(2)
     var w = ULongArray(2)
 
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/serialization/Hash128Bits, actual properties name: lowBytes, highBytes  */
     var (x, y) = seed
 
     var z = len.toULong() * k1

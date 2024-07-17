@@ -205,6 +205,7 @@ open class NameSuggestion {
 
         parts.reverse()
         val unmangledName = parts.joinToString("$")
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/naming/NameSuggestion.Companion.NameAndStability, actual properties name: name, stable  */
         val (id, stable) = mangleNameIfNecessary(unmangledName, fixedDescriptor, bindingContext)
         return SuggestedName(listOf(id), stable, fixedDescriptor, current)
     }

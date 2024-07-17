@@ -327,6 +327,7 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     messageCollector: ScriptDiagnosticsMessageCollector
 ): Pair<List<KtFile>, List<ScriptsCompilationDependencies.SourceDependencies>> {
     val sourceFiles = arrayListOf(mainKtFile)
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/scripting/compiler/plugin/dependencies/ScriptsCompilationDependencies, actual properties name: classpath, sources, sourceDependencies  */
     val (classpath, newSources, sourceDependencies) =
         collectScriptsCompilationDependencies(
             context.environment.configuration,

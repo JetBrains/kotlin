@@ -293,7 +293,8 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             with(codegen) {
                 val endLabel = Label()
 
-                for ((thenExpression, label) in expressionToLabels) {
+                for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/jvm/codegen/SwitchGenerator.ExpressionToLabel, actual properties name: expression, label  */
+                (thenExpression, label) in expressionToLabels) {
                     mv.visitLabel(label)
                     thenExpression.accept(this, data).also {
                         if (elseExpression != null) {
@@ -463,9 +464,11 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
                 // Multiple strings can be hashed into the same bucket.
                 // Generate an if cascade to resolve that for each bucket.
-                for ((hash, switchLabel) in hashAndSwitchLabels) {
+                for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/jvm/codegen/SwitchGenerator.ValueToLabel, actual properties name: value, label  */
+                (hash, switchLabel) in hashAndSwitchLabels) {
                     mv.visitLabel(switchLabel)
-                    for ((string, label) in hashToStringAndExprLabels[hash]!!) {
+                    for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/jvm/codegen/SwitchGenerator.ValueToLabel, actual properties name: value, label  */
+                    (string, label) in hashToStringAndExprLabels[hash]!!) {
                         noLineNumberScope {
                             subject.accept(this, data).materialize()
                         }

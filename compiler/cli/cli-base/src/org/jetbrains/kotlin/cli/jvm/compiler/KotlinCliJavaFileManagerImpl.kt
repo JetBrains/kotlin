@@ -102,6 +102,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope) = findClass(JavaClassFinder.Request(classId), searchScope)
 
     override fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass? {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/load/java/JavaClassFinder.Request, actual properties name: classId, previouslyFoundClassFileContent, outerClass  */
         val (classId, classFileContentFromRequest, outerClassFromRequest) = request
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
 

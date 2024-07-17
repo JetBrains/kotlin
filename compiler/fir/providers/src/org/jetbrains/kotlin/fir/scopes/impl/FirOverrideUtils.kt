@@ -48,6 +48,7 @@ fun <D : FirCallableSymbol<*>> overrides(
     gMember: D,
     processAllOverridden: ProcessAllOverridden<D>,
 ): Boolean {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope, actual properties name: member, baseScope  */
     val (fMember, fScope) = f
 
     var result = false

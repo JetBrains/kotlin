@@ -406,6 +406,7 @@ class CallCompleter(
         context: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<*>? {
         val cachedData = getResolutionResultsCachedData(expression, context) ?: return null
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/resolve/calls/context/ResolutionResultsCache.CachedData, actual properties name: resolutionResults, deferredComputation, tracing, resolutionTrace  */
         val (cachedResolutionResults, cachedContext, tracing) = cachedData
 
         val contextForArgument = cachedContext.replaceBindingTrace(context.trace)

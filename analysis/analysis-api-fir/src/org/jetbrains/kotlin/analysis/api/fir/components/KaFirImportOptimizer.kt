@@ -60,6 +60,7 @@ internal class KaFirImportOptimizer(
         val existingImports = file.importDirectives
         if (existingImports.isEmpty()) return KaImportOptimizerResult()
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/analysis/api/fir/components/KaFirImportOptimizer.ReferencedEntitiesResult, actual properties name: usedImports, unresolvedNames  */
         val (usedDeclarations, unresolvedNames) = collectReferencedEntities(file)
 
         return KaImportOptimizerResult(usedDeclarations, unresolvedNames)

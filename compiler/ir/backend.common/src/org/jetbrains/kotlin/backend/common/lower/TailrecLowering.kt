@@ -74,6 +74,7 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
 }
 
 private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/TailCalls, actual properties name: ir, fromManyFunctions  */
     val (tailRecursionCalls, someCallsAreFromOtherFunctions) = collectTailRecursionCalls(irFunction, ::followFunctionReference)
     if (tailRecursionCalls.isEmpty()) {
         return

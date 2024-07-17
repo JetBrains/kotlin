@@ -408,6 +408,7 @@ class ClassCodegen private constructor(
         }
 
         // Only allow generation of one inline method at a time, to avoid deadlocks when files call inline methods of each other.
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/codegen/inline/SMAPAndMethodNode, actual properties name: node, classSMAP  */
         val (node, smap) =
             generatedInlineMethods[method] ?: synchronized(context.inlineMethodGenerationLock) {
                 generatedInlineMethods.getOrPut(method) { FunctionCodegen(method, this).generate() }
@@ -421,6 +422,7 @@ class ClassCodegen private constructor(
             return
         }
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/codegen/inline/SMAPAndMethodNode, actual properties name: node, classSMAP  */
         val (node, smap) = generateMethodNode(method)
         node.preprocessSuspendMarkers(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),

@@ -513,6 +513,7 @@ class ConstraintInjector(
             type: KotlinTypeMarker,
             constraintContext: ConstraintContext
         ) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/resolve/calls/inference/components/ConstraintContext, actual properties name: kind, derivedFrom, inputTypePositionBeforeIncorporation, isNullabilityConstraint  */
             val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint) = constraintContext
 
             var targetType = type

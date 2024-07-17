@@ -128,6 +128,7 @@ class FirClassSubstitutionScope(
 
         val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, newOwnerClassId)
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 6, destructured variable amount without '_': 6, classId: org/jetbrains/kotlin/fir/scopes/impl/FirClassSubstitutionScope.SubstitutedData, actual properties name: typeParameters, dispatchReceiverType, receiverType, returnType, substitutor, deferredReturnTypeOfSubstitution  */
         val (newTypeParameters, newDispatchReceiverType, newReceiverType, newReturnType, newSubstitutor, callableCopySubstitution) =
             createSubstitutedData(member, symbolForOverride)
         val newParameterTypes = member.valueParameters.map {
@@ -187,6 +188,7 @@ class FirClassSubstitutionScope(
         val constructor = original.fir
 
         val symbolForOverride = FirConstructorSymbol(original.callableId)
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 6, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/fir/scopes/impl/FirClassSubstitutionScope.SubstitutedData, actual properties name: typeParameters, dispatchReceiverType, receiverType, returnType, substitutor, deferredReturnTypeOfSubstitution  */
         val (newTypeParameters, _, _, newReturnType, newSubstitutor, callableCopySubstitution) =
             createSubstitutedData(constructor, symbolForOverride)
 
@@ -236,6 +238,7 @@ class FirClassSubstitutionScope(
 
         val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, newOwnerClassId)
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 6, destructured variable amount without '_': 5, classId: org/jetbrains/kotlin/fir/scopes/impl/FirClassSubstitutionScope.SubstitutedData, actual properties name: typeParameters, dispatchReceiverType, receiverType, returnType, substitutor, deferredReturnTypeOfSubstitution  */
         val (newTypeParameters, newDispatchReceiverType, newReceiverType, newReturnType, _, callableCopySubstitutionForTypeUpdater) =
             createSubstitutedData(member, symbolForOverride)
 

@@ -67,6 +67,7 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
             expression.transformChildren(this, data)
             if (expression.symbol !in throwableConstructors) return expression
 
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/backend/js/lower/ThrowableLowering.ThrowableArguments, actual properties name: message, cause  */
             val (messageArg, causeArg) = expression.extractThrowableArguments()
 
             return expression.run {
@@ -85,6 +86,7 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
             expression.transformChildren(this, data)
             if (expression.symbol !in throwableConstructors) return expression
 
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/backend/js/lower/ThrowableLowering.ThrowableArguments, actual properties name: message, cause  */
             val (messageArg, causeArg) = expression.extractThrowableArguments()
 
             val klass = data as IrClass

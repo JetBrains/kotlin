@@ -43,6 +43,7 @@ object IrInlineDefaultCodegen : IrInlineCallGenerator {
         isInsideIfCondition: Boolean
     ) {
         val function = expression.symbol.owner
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/codegen/inline/SMAPAndMethodNode, actual properties name: node, classSMAP  */
         val (node, smap) = codegen.classCodegen.generateMethodNode(function)
         val argsSize = argumentsSize(callableMethod.asmMethod.descriptor, function.isStatic)
         val mv = object : MethodBodyVisitor(codegen.visitor) {

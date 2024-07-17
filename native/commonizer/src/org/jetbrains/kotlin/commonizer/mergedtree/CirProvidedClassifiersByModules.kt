@@ -175,6 +175,7 @@ private fun readClass(
     typeParameterIndexOffset: Int,
     consumer: (CirEntityId, CirProvided.Classifier) -> Unit
 ) {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/commonizer/mergedtree/ClassProtosToRead.ClassEntry, actual properties name: classId, proto, strings  */
     val (classId, classProto) = classEntry
 
     val typeParameterNameToIndex = HashMap<Int, Int>()

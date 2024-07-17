@@ -83,6 +83,7 @@ abstract class ExpectSymbolTransformer : IrElementVisitorVoid {
         super.visitPropertyReference(expression)
         if (!isTargetDeclaration(expression.symbol.owner)) return
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/backend/common/ir/ExpectSymbolTransformer.ActualPropertyResult, actual properties name: propertySymbol, getterSymbol, setterSymbol  */
         val (newSymbol, newGetter, newSetter) = getActualProperty(expression.symbol.descriptor) ?: return
         expression.symbol = newSymbol
         expression.getter = newGetter

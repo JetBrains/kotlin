@@ -189,6 +189,7 @@ class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
         when (value) {
             is Value.LocalClass -> return value.type
             is Value.NormalClass -> {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/constants/ClassLiteralValue, actual properties name: classId, arrayNestedness  */
                 val (classId, arrayDimensions) = value.value
                 val descriptor = module.findClassAcrossModuleDependencies(classId)
                     ?: return ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_KCLASS_CONSTANT_VALUE, classId.toString(), arrayDimensions.toString())

@@ -206,6 +206,7 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
 
     override fun visitBreak(x: JsBreak) {
         val targetStatement = breakContinueTargetStatements[x]!!
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/coroutine/CoroutineBodyTransformer.JumpTarget, actual properties name: block, tryDepth  */
         val (targetBlock, targetTryDepth) = breakTargets[targetStatement]!!
         referencedBlocks += targetBlock
         jumpWithFinally(targetTryDepth + 1, targetBlock, x)
@@ -214,6 +215,7 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
 
     override fun visitContinue(x: JsContinue) {
         val targetStatement = breakContinueTargetStatements[x]!!
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/coroutine/CoroutineBodyTransformer.JumpTarget, actual properties name: block, tryDepth  */
         val (targetBlock, targetTryDepth) = continueTargets[targetStatement]!!
         referencedBlocks += targetBlock
         jumpWithFinally(targetTryDepth + 1, targetBlock, x)

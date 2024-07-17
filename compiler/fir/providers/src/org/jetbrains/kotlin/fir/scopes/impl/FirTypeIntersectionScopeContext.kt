@@ -187,12 +187,14 @@ class FirTypeIntersectionScopeContext(
                     },
                 )
             } else {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope, actual properties name: member, baseScope  */
                 val (member, containingScope) = mostSpecific.first()
                 result += ResultOfIntersection.SingleMember(member, group, containingScope)
             }
         }
 
         if (allMembersWithScope.isNotEmpty()) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope, actual properties name: member, baseScope  */
             val (single, containingScope) = allMembersWithScope.single()
             result += ResultOfIntersection.SingleMember(single, allMembersWithScope.toList(), containingScope)
         }

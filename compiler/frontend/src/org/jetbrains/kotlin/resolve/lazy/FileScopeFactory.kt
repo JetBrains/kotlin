@@ -193,6 +193,7 @@ class FileScopeFactory(
         }
 
         fun createImportingScope(): LazyImportScope {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/resolve/lazy/FileScopeFactory.DefaultImportResolvers, actual properties name: explicit, allUnder, lowPriority  */
             val (defaultExplicitImportResolver, defaultAllUnderImportResolver, defaultLowPriorityImportResolver) =
                     createDefaultImportResolversForFile()
 

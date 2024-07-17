@@ -39,6 +39,7 @@ private fun FirScope.processConstructorsByName(
     constructorFilter: ConstructorFilter,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/calls/SymbolWithSubstitutor, actual properties name: symbol, substitutor  */
     val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, constructorFilter, session, bodyResolveComponents) ?: return
     val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
 

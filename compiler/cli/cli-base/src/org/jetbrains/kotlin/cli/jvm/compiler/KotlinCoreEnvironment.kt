@@ -267,6 +267,7 @@ class KotlinCoreEnvironment private constructor(
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/jvm/compiler/ClasspathRootsResolver.RootsAndModules, actual properties name: roots, modules  */
         val (initialRoots, javaModules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
         this.initialRoots.addAll(initialRoots)
 

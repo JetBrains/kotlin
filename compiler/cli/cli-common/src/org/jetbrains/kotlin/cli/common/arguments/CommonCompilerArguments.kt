@@ -921,7 +921,8 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
         var standaloneSamConversionFeaturePassedExplicitly = false
         var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
-        for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/common/arguments/ManualLanguageFeatureSetting, actual properties name: languageFeature, state, stringRepresentation  */
+        (feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature

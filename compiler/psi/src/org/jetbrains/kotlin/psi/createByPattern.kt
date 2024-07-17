@@ -142,6 +142,7 @@ fun <TElement : KtElement> createByPattern(
             arg
     }
 
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/psi/PatternData, actual properties name: processedText, placeholders  */
     val (processedText, allPlaceholders) = processPattern(pattern, args)
 
     var resultElement: KtElement = factory(processedText.trim())

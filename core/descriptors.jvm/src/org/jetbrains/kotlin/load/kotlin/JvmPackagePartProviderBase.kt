@@ -48,7 +48,8 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartP
 
     private fun getPackageParts(packageFqName: String): Collection<PackageParts> {
         val result = mutableMapOf<MappingsKey, PackageParts>()
-        for ((root, mapping) in loadedModules) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/load/kotlin/JvmPackagePartProviderBase.ModuleMappingInfo, actual properties name: key, mapping, name  */
+        (root, mapping) in loadedModules) {
             val newParts = mapping.findPackageParts(packageFqName) ?: continue
             result[root]?.let { parts -> parts += newParts } ?: result.put(root, newParts)
         }

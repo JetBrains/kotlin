@@ -248,6 +248,7 @@ class IncrementalJsCompilerRunner(
             val changesCollector = ChangesCollector()
             // todo: split compare and update (or cache comparing)
             caches.platformCache.compare(translatedFiles, changesCollector)
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/incremental/DirtyData, actual properties name: dirtyLookupSymbols, dirtyClassesFqNames, dirtyClassesFqNamesForceRecompile  */
             val (dirtyLookupSymbols, dirtyClassFqNames) =
                 changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
             // todo unify with main cycle

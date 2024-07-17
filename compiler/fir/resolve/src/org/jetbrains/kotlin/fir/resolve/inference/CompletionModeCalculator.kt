@@ -136,6 +136,7 @@ private class CalculatorForNestedCall(
     }
 
     private fun updateDirection(directionForVariable: FixationDirectionForVariable) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/inference/CalculatorForNestedCall.FixationDirectionForVariable, actual properties name: variable, direction  */
         val (variable, newDirection) = directionForVariable
         fixationDirectionsForVariables[variable]?.let { oldDirection ->
             if (oldDirection != FixationDirection.EQUALITY && oldDirection != newDirection)

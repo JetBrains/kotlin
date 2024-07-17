@@ -158,6 +158,7 @@ object JavaToKotlinClassMap {
     }
 
     private fun addMapping(platformMutabilityMapping: PlatformMutabilityMapping) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/builtins/jvm/JavaToKotlinClassMap.PlatformMutabilityMapping, actual properties name: javaClass, kotlinReadOnly, kotlinMutable  */
         val (javaClassId, readOnlyClassId, mutableClassId) = platformMutabilityMapping
         add(javaClassId, readOnlyClassId)
         addKotlinToJava(mutableClassId.asSingleFqName(), javaClassId)

@@ -38,6 +38,7 @@ class InlineCodegenForDefaultBody(
 
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
         assert(!callDefault) { "inlining default stub into another default stub" }
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/codegen/inline/SMAPAndMethodNode, actual properties name: node, classSMAP  */
         val (node, smap) = sourceCompilerForInline.compileInlineFunction(jvmSignature)
 
         val argsSize = argumentsSize(jvmSignature.asmMethod.descriptor, callableMethod.isStaticCall())

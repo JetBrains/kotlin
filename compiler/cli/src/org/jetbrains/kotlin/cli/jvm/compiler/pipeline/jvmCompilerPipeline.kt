@@ -165,6 +165,7 @@ fun convertAnalyzedFirToIr(
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 6, destructured variable amount without '_': 5, classId: org/jetbrains/kotlin/fir/pipeline/Fir2IrActualizedResult, actual properties name: irModuleFragment, components, pluginContext, irActualizedResult, irBuiltIns, symbolTable  */
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         analysisResults.convertToIrAndActualizeForJvm(
             extensions, input.configuration, environment.diagnosticsReporter, irGenerationExtensions,
@@ -314,7 +315,8 @@ fun compileModuleToAnalyzedFir(
 
     val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
 
-    val outputs = sessionWithSources.map { (session, sources) ->
+    val outputs = sessionWithSources.map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/common/SessionWithSources, actual properties name: session, files  */
+                                           (session, sources) ->
         buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, countFilesAndLines)
     }
     outputs.runPlatformCheckers(diagnosticsReporter)
@@ -425,6 +427,7 @@ fun createProjectEnvironment(
         hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
     )
 
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/jvm/compiler/ClasspathRootsResolver.RootsAndModules, actual properties name: roots, modules  */
     val (initialRoots, javaModules) =
         classpathRootsResolver.convertClasspathRoots(contentRoots)
 

@@ -187,6 +187,7 @@ private class RangeLoopTransformer(
 
         val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/lower/loops/LoopReplacement, actual properties name: newLoop, replacementExpression  */
         val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
             ?: return super.visitBlock(expression)  // Cannot lower the loop.
 

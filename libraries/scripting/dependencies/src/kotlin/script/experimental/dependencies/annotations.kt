@@ -37,7 +37,8 @@ suspend fun ExternalDependenciesResolver.resolveFromScriptSourceAnnotations(
     annotations: Iterable<ScriptSourceAnnotation<*>>
 ): ResultWithDiagnostics<List<File>> {
     val reports = mutableListOf<ScriptDiagnostic>()
-    annotations.forEach { (annotation, locationWithId) ->
+    annotations.forEach { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/script/experimental/api/ScriptSourceAnnotation, actual properties name: annotation, location  */
+                          (annotation, locationWithId) ->
         when (annotation) {
             is Repository -> {
                 val options = SimpleExternalDependenciesResolverOptionsParser(*annotation.options, locationWithId = locationWithId)
@@ -61,7 +62,8 @@ suspend fun ExternalDependenciesResolver.resolveFromScriptSourceAnnotations(
     }
 
     return reports + annotations.filterByAnnotationType<DependsOn>()
-        .flatMapSuccess { (annotation, locationWithId) ->
+        .flatMapSuccess { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/script/experimental/api/ScriptSourceAnnotation, actual properties name: annotation, location  */
+                          (annotation, locationWithId) ->
             SimpleExternalDependenciesResolverOptionsParser(
                 *annotation.options,
                 locationWithId = locationWithId

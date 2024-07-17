@@ -222,7 +222,8 @@ internal abstract class CInteropCommonizerTask
 
     private fun getCInteropCommonizerGroupDependencies(group: CInteropCommonizerGroup): Set<CommonizerDependency> {
         val dependencies = groupedCommonizerDependencies.getOrThrow()[group]
-            ?.flatMap { (target, dependencies) ->
+            ?.flatMap { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/gradle/targets/native/internal/CInteropCommonizerTask.CInteropCommonizerDependencies, actual properties name: commonizerTarget, dependencies  */
+                        (target, dependencies) ->
                 dependencies.files
                     .filter { file -> file.exists() && (file.isDirectory || file.extension == "klib") }
                     .map { file -> TargetedCommonizerDependency(target, file) }

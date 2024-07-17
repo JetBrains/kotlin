@@ -43,6 +43,7 @@ fun findLongestExistingPackage(symbolProvider: FirSymbolProvider, fqName: FqName
 data class PackageAndClass(val packageFqName: FqName, val relativeClassFqName: FqName?)
 
 fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageResolutionResult {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/transformers/PackageAndClass, actual properties name: packageFqName, relativeClassFqName  */
     val (currentPackage, relativeClassFqName) = findLongestExistingPackage(symbolProvider, fqName)
     if (relativeClassFqName == null) return PackageResolutionResult.PackageOrClass(currentPackage, null, null)
 

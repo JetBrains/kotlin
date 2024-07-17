@@ -162,6 +162,7 @@ object ConeTypeCompatibilityChecker {
         var result = Compatibility.COMPATIBLE
         val typeArgsCompatibility = typeArgumentMapping.asSequence()
             .map { (paramRef, boundTypeArguments) ->
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/fir/analysis/checkers/ConeTypeCompatibilityChecker.BoundTypeArguments, actual properties name: upper, lower, compatibilityUpperBound  */
                 val (upper, lower, compatibility) = boundTypeArguments
                 if (paramRef in checkedTypeParameters) {
                     // if we are already checking this type parameter, simply bail out to prevent infinite recursion.

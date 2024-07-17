@@ -248,6 +248,7 @@ class ControlFlowInformationProviderImpl private constructor(
 
         if (!function.hasBody()) return
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cfg/ControlFlowInformationProviderImpl.ReturnedExpressionsInfo, actual properties name: returnedExpressions, hasReturnsInInlinedLambda  */
         val (returnedExpressions, hasReturnsInInlinedLambdas) = collectReturnExpressions()
 
         val blockBody = function.hasBlockBody()

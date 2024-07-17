@@ -99,7 +99,8 @@ class OptInUsageChecker : CallChecker {
             // KT-47708 special case (warning only)
             val methodDescriptor = resultingDescriptor.getSingleAbstractMethod()
             val samOptIns = methodDescriptor.loadOptIns(bindingContext, languageVersionSettings)
-                .map { (fqName, _, message) ->
+                .map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 3, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/checkers/OptInDescription, actual properties name: annotationFqName, severity, message, subclassesOnly  */
+                       (fqName, _, message) ->
                     OptInDescription(fqName, OptInDescription.Severity.WARNING, message, subclassesOnly = false)
                 }
             reportNotAllowedOptIns(samOptIns, reportOn, context)

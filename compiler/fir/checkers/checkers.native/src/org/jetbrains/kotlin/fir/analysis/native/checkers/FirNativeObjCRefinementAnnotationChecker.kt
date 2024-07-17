@@ -29,6 +29,7 @@ object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker(MppChec
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
         val session = context.session
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/analysis/native/checkers/ObjCExportMetaAnnotations, actual properties name: hidesFromObjCAnnotation, refinesInSwiftAnnotation  */
         val (objCAnnotation, swiftAnnotation) = declaration.annotations.findMetaAnnotations(session)
         if (objCAnnotation == null && swiftAnnotation == null) return
         if (objCAnnotation != null && swiftAnnotation != null) {

@@ -132,7 +132,8 @@ fun hasNoWritersInClosures(
     writers: Set<AssignedVariablesSearcher.Writer>,
     bindingContext: BindingContext
 ): Boolean {
-    return writers.none { (_, writerDeclaration) ->
+    return writers.none { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/types/expressions/AssignedVariablesSearcher.Writer, actual properties name: assignment, declaration  */
+                          (_, writerDeclaration) ->
         writerDeclaration != null &&
                 variableContainingDeclaration != writerDeclaration.getDeclarationDescriptorIncludingConstructors(bindingContext)
     }
