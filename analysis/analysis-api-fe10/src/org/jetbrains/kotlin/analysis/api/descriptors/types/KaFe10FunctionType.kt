@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.getAbbreviation
 
 internal class KaFe10FunctionType(
     override val fe10Type: SimpleType,
@@ -36,7 +37,7 @@ internal class KaFe10FunctionType(
         get() = withValidityAssertion { fe10Type.ktNullability }
 
     override val abbreviation: KaUsualClassType?
-        get() = withValidityAssertion { null }
+        get() = withValidityAssertion { fe10Type.getAbbreviation()?.toKtType(analysisContext) as? KaUsualClassType }
 
     override val qualifiers: List<KaResolvedClassTypeQualifier>
         get() = withValidityAssertion {

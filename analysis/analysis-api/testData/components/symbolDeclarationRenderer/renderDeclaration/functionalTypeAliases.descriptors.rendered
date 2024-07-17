@@ -4,21 +4,21 @@ class B
 
 typealias WithGeneric<T> = (T) -> String
 
-fun withGeneric(f: WithGeneric<Double>)
+fun withGeneric(f: (Double) -> String)
 
 typealias WithReceiver = String.() -> Unit
 
-fun withReceiver(f: WithReceiver)
+fun withReceiver(f: String.() -> Unit)
 
 typealias WithContextReceiver = context(String) () -> Unit
 
-fun withContextReceiver(f: WithContextReceiver)
+fun withContextReceiver(f: context(String) () -> Unit)
 
 typealias WithSuspend = suspend (String) -> Int
 
-fun withContextReceiver(f: WithSuspend)
+fun withContextReceiver(f: suspend (String) -> Int)
 
 typealias WithEverything<T> = suspend context(T, B) String.(Int, T) -> String
 
-fun withEverything(f: WithEverything<A>)
+fun withEverything(f: suspend context(A, B) String.(Int, A) -> String)
 
