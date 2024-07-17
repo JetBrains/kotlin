@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -59,8 +58,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
         protected const val SETTER_VALUE_PARAMETER_NAME = "<set-?>"
         protected const val CONSTRUCTOR_MARKER_PARAMETER_NAME = "constructor_marker"
 
-        protected const val SUPER_QUALIFIER_SUFFIX_MARKER = "s"
-        protected const val PROPERTY_MARKER = "p"
+        const val PROPERTY_MARKER = "p"
 
         private var IrFunction.syntheticAccessors: MutableMap<AccessorKey, IrFunction>? by irAttribute(followAttributeOwner = false)
         private var IrField.getterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
@@ -411,26 +409,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
         scopes: List<ScopeWithIr>,
-    ) {
-        when {
-            // Accessors for top level functions never need a suffix.
-            function.isTopLevel -> Unit
-
-            // Accessor for _s_uper-qualified call
-            superQualifier != null -> {
-                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifier.owner.syntheticAccessorToSuperSuffix())
-            }
-
-            // Access to protected members that need an accessor must be because they are inherited,
-            // hence accessed on a _s_upertype. If what is accessed is static, we can point to different
-            // parts of the inheritance hierarchy and need to distinguish with a suffix.
-            function.isStatic && function.visibility.isProtected -> {
-                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + function.parentAsClass.syntheticAccessorToSuperSuffix())
-            }
-
-            else -> Unit
-        }
-    }
+    ) = Unit
 
     private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): Name {
         val nameBuilder = AccessorNameBuilder()
@@ -456,23 +435,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
         superQualifierSymbol: IrClassSymbol?,
     ) {
         nameBuilder.contribute(PROPERTY_MARKER)
-
-        if (superQualifierSymbol != null) {
-            nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifierSymbol.owner.syntheticAccessorToSuperSuffix())
-        } else if (field.isStatic && field.visibility.isProtected) {
-            // Accesses to static protected fields that need an accessor must be due to being inherited, hence accessed on a
-            // _s_upertype. If the field is static, the super class the access is on can be different, and therefore
-            // we generate a suffix to distinguish access to field with different receiver types in the super hierarchy.
-            nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + field.parentAsClass.syntheticAccessorToSuperSuffix())
-        }
     }
-
-    private fun IrClass.syntheticAccessorToSuperSuffix(): String =
-        // TODO: change this to `fqNameUnsafe.asString().replace(".", "_")` as soon as we're ready to break compatibility with pre-KT-21178 code
-        name.asString().hashCode().toString()
-
-    protected open val DescriptorVisibility.isProtected
-        get() = this == DescriptorVisibilities.PROTECTED
 
     private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name {
         val nameBuilder = AccessorNameBuilder()

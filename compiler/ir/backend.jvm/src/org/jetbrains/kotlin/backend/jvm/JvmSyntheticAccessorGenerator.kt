@@ -22,6 +22,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAccessorGenerator<JvmBackendContext>(context) {
 
     companion object {
+        const val SUPER_QUALIFIER_SUFFIX_MARKER = "s"
         const val JVM_DEFAULT_MARKER = "jd"
         const val COMPANION_PROPERTY_MARKER = "cp"
     }
@@ -52,16 +53,30 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
         scopes: List<ScopeWithIr>
     ) {
         val currentClass = scopes.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }?.irElement as? IrClass
-        if (currentClass != null &&
-            currentClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS &&
-            currentClass.parentAsClass == function.parentAsClass
-        ) {
-            // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
-            // The two cannot clash.
-            if (!DescriptorVisibilities.isPrivate(function.visibility))
-                nameBuilder.contribute(JVM_DEFAULT_MARKER)
-        } else {
-            super.contributeFunctionSuffix(nameBuilder, function, superQualifier, scopes)
+        when {
+            currentClass != null &&
+                    currentClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS &&
+                    currentClass.parentAsClass == function.parentAsClass -> {
+                // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
+                // The two cannot clash.
+                if (!DescriptorVisibilities.isPrivate(function.visibility))
+                    nameBuilder.contribute(JVM_DEFAULT_MARKER)
+            }
+
+            // Accessors for top level functions never need a suffix.
+            function.isTopLevel -> Unit
+
+            // Accessor for _s_uper-qualified call
+            superQualifier != null -> {
+                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifier.owner.syntheticAccessorToSuperSuffix())
+            }
+
+            // Access to protected members that need an accessor must be because they are inherited,
+            // hence accessed on a _s_upertype. If what is accessed is static, we can point to different
+            // parts of the inheritance hierarchy and need to distinguish with a suffix.
+            function.isStatic && function.visibility.isProtected -> {
+                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + function.parentAsClass.syntheticAccessorToSuperSuffix())
+            }
         }
     }
 
@@ -77,11 +92,24 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
         if (field.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD && !field.parentAsClass.isCompanion) {
             nameBuilder.contribute(COMPANION_PROPERTY_MARKER)
         } else {
-            super.contributeFieldAccessorSuffix(nameBuilder, field, superQualifierSymbol)
+            nameBuilder.contribute(PROPERTY_MARKER)
+
+            if (superQualifierSymbol != null) {
+                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifierSymbol.owner.syntheticAccessorToSuperSuffix())
+            } else if (field.isStatic && field.visibility.isProtected) {
+                // Accesses to static protected fields that need an accessor must be due to being inherited, hence accessed on a
+                // _s_upertype. If the field is static, the super class the access is on can be different, and therefore
+                // we generate a suffix to distinguish access to field with different receiver types in the super hierarchy.
+                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + field.parentAsClass.syntheticAccessorToSuperSuffix())
+            }
         }
     }
 
-    override val DescriptorVisibility.isProtected: Boolean
+    private fun IrClass.syntheticAccessorToSuperSuffix(): String =
+        // TODO: change this to `fqNameUnsafe.asString().replace(".", "_")` as soon as we're ready to break compatibility with pre-KT-21178 code
+        name.asString().hashCode().toString()
+
+    private val DescriptorVisibility.isProtected: Boolean
         get() = AsmUtil.getVisibilityAccessFlag(delegate) == Opcodes.ACC_PROTECTED
 
     private fun createSyntheticConstructorAccessor(declaration: IrConstructor): IrConstructor =
