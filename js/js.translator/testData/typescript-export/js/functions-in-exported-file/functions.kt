@@ -68,10 +68,10 @@ inline fun inlineFun(x: Int, callback: (Int) -> Unit) {
 }
 
 
-fun formatList(value: List<*>): String = value.joinToString(", ") { it.toString() }
+fun formatList(value: MutableList<*>): String = value.joinToString(", ") { it.toString() }
 
 
-fun createList(): List<*> = listOf(1, 2, 3)
+fun createList(): MutableList<*> = mutableListOf(1, 2, 3)
 
 // KT-53180
 

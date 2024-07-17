@@ -104,6 +104,12 @@ private val prepareCollectionsToExportLowering = makeIrModulePhase(
     description = "Add @JsImplicitExport to exportable collections all the declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`",
 )
 
+private val removeImplicitExportsFromCollections = makeIrModulePhase(
+    ::RemoveImplicitExportsFromCollections,
+    name = "RemoveImplicitExportsFromCollections",
+    description = "Remove @JsImplicitExport from unused collections if there is no strict-mode for TypeScript",
+)
+
 private val preventExportOfSyntheticDeclarationsLowering = makeIrModulePhase(
     ::ExcludeSyntheticDeclarationsFromExportLowering,
     name = "ExcludeSyntheticDeclarationsFromExportLowering",
@@ -980,6 +986,7 @@ fun getJsLowerings(
     callsLoweringPhase,
     escapedIdentifiersLowering,
     implicitlyExportedDeclarationsMarkingLowering,
+    removeImplicitExportsFromCollections,
     mainFunctionCallWrapperLowering,
     cleanupLoweringPhase,
     validateIrAfterLowering,
