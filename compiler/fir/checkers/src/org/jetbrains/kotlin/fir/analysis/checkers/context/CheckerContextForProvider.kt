@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.name.Name
  * It contains all context-modification-related methods unlike CheckerContext that is assumed to be read-only
  */
 abstract class CheckerContextForProvider(
-    sessionHolder: SessionHolder,
-    returnTypeCalculator: ReturnTypeCalculator,
-    allInfosSuppressed: Boolean,
-    allWarningsSuppressed: Boolean,
-    allErrorsSuppressed: Boolean
-) : AbstractCheckerContext(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
+    override val sessionHolder: SessionHolder,
+    override val returnTypeCalculator: ReturnTypeCalculator,
+    override val allInfosSuppressed: Boolean,
+    override val allWarningsSuppressed: Boolean,
+    override val allErrorsSuppressed: Boolean
+) : CheckerContext() {
 
     abstract fun addSuppressedDiagnostics(
         diagnosticNames: Collection<String>,
