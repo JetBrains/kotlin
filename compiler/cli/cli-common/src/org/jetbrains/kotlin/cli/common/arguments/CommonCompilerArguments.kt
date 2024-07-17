@@ -803,6 +803,17 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
+    @Argument(
+        value = "-Xsuppress-warning",
+        valueDescription = "<WARNING_NAME>",
+        description = "Suppress specified warning module-wide."
+    )
+    var suppressedDiagnostics: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -832,6 +843,7 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
+            put(AnalysisFlags.globallySuppressedDiagnostics, suppressedDiagnostics?.toList().orEmpty())
         }
     }
 

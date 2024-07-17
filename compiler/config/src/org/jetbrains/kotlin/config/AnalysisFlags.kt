@@ -89,6 +89,8 @@ object AnalysisFlags {
      */
     @JvmStatic
     val expandTypeAliasesInTypeResolution by AnalysisFlag.Delegates.Boolean(defaultValue = true)
+
+    val globallySuppressedDiagnostics by AnalysisFlag.Delegates.ListOfStrings
 }
 
 @Deprecated(
