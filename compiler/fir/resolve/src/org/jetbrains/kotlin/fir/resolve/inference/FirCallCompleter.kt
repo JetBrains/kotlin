@@ -172,7 +172,7 @@ class FirCallCompleter(
         initialType: ConeKotlinType,
         resolutionMode: ResolutionMode,
     ) {
-        if (resolutionMode !is ResolutionMode.WithExpectedType) return
+        if (resolutionMode !is ResolutionMode.WithExpectedType || resolutionMode.fromAnnotationCallArgument) return
         val expectedType = resolutionMode.expectedTypeRef.coneType.fullyExpandedType(session)
 
         val system = candidate.system

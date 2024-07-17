@@ -1,7 +1,7 @@
 FILE: doubleSquareBracketsInBuilderArgument.kt
     public final fun test(): R|kotlin/Unit| {
         R|/build<CS errors: /build>#|<<ERROR TYPE REF: Cannot infer argument for type parameter PTV>>(<L> = build@fun R|Buildee<ERROR CLASS: Cannot infer argument for type parameter PTV>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            ERROR_EXPR(CS errors: kotlin/arrayOf)
+            <implicitArrayOf>(<implicitArrayOf>())
         }
         )
     }

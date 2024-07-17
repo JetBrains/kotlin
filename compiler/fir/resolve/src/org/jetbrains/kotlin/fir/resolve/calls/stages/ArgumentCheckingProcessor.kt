@@ -157,9 +157,6 @@ internal object ArgumentCheckingProcessor {
         if (expectedType == null) return
         val expression = atom.expression
 
-        // TODO: this check should be eliminated, KT-65085
-        if (expression is FirArrayLiteral && !expression.isResolved) return
-
         val argumentType = expression.resolvedType
         resolvePlainArgumentType(atom, argumentType, useNullableArgumentType)
     }

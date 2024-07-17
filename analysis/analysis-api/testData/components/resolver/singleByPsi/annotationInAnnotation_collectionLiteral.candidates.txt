@@ -1,5 +1,5 @@
-KtCallExpression(131,155): 'Annotation(["v1", "v2"])'
-  KaInapplicableCallCandidateInfo:
+KtCallExpression(131,156): 'Annotation(*["v1", "v2"])'
+  KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {
         ["v1", "v2"] -> (KaVariableSignature:
@@ -27,5 +27,4 @@ KtCallExpression(131,155): 'Annotation(["v1", "v2"])'
           ]
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Array<kotlin.String>', but 'kotlin.String' was expected.>
     isInBestCandidates = true

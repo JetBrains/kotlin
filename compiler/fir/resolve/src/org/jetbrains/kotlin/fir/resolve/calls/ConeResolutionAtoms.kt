@@ -118,7 +118,6 @@ class ConeSimpleLeafResolutionAtom(override val expression: FirExpression, allow
             checkWithAttachment(
                 allowUnresolvedExpression ||
                         expression.unwrapArgument() is FirFakeArgumentForCallableReference ||
-                        expression is FirArrayLiteral || // TODO: this check should be eliminated, KT-65085
                         expression.isResolved,
                 { "ConeResolvedAtom should be created only for resolved expressions" }
             ) {

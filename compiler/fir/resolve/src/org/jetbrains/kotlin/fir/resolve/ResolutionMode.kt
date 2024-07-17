@@ -28,24 +28,41 @@ sealed class ResolutionMode(
         val mayBeCoercionToUnitApplied: Boolean = false,
         val expectedTypeMismatchIsReportedInChecker: Boolean = false,
         val fromCast: Boolean = false,
-        // It might be ok if the types turn out to be incompatible
-        // Consider the following examples with properties and their backing fields:
-        //
-        // val items: List field = mutableListOf()
-        // val s: String field = 10 get() = ...
-        // In these examples we should try using the property type information while resolving the initializer,
-        // but it's ok if it's not applicable
+        /**
+         * Expected type for an annotation call argument is used for inferring array literal types.
+         * It does not produce a constraint during completion because it can contain type parameter types which aren't substituted
+         * to type variable types.
+         */
+        val fromAnnotationCallArgument: Boolean = false,
+        /**
+         * It might be ok if the types turn out to be incompatible.
+         * Consider the following examples with properties and their backing fields:
+         *
+         * ```
+         * val items: List field = mutableListOf()
+         * val s: String field = 10 get() = ...
+         * ```
+         *
+         * In these examples we should try using the property type information while resolving the initializer,
+         * but it's ok if it's not applicable
+         */
         val shouldBeStrictlyEnforced: Boolean = true,
-        // Currently the only case for expected type when we don't force completion are when's branches
+        /** Currently the only case for expected type when we don't force completion are when's branches */
         forceFullCompletion: Boolean = true,
     ) : ResolutionMode(forceFullCompletion) {
 
         fun copy(
+            expectedTypeRef: FirResolvedTypeRef = this.expectedTypeRef,
             mayBeCoercionToUnitApplied: Boolean = this.mayBeCoercionToUnitApplied,
-            forceFullCompletion: Boolean = this.forceFullCompletion
+            forceFullCompletion: Boolean = this.forceFullCompletion,
         ): WithExpectedType = WithExpectedType(
-            expectedTypeRef, mayBeCoercionToUnitApplied, expectedTypeMismatchIsReportedInChecker, fromCast, shouldBeStrictlyEnforced,
-            forceFullCompletion
+            expectedTypeRef = expectedTypeRef,
+            mayBeCoercionToUnitApplied = mayBeCoercionToUnitApplied,
+            expectedTypeMismatchIsReportedInChecker = expectedTypeMismatchIsReportedInChecker,
+            fromCast = fromCast,
+            fromAnnotationCallArgument = fromAnnotationCallArgument,
+            shouldBeStrictlyEnforced = shouldBeStrictlyEnforced,
+            forceFullCompletion = forceFullCompletion
         )
 
         override fun toString(): String {
@@ -53,6 +70,7 @@ sealed class ResolutionMode(
                     "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
                     "expectedTypeMismatchIsReportedInChecker=${expectedTypeMismatchIsReportedInChecker}, " +
                     "fromCast=${fromCast}, " +
+                    "fromAnnotationCallArgument=${fromAnnotationCallArgument}, " +
                     "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, " +
                     "forceFullCompletion=${forceFullCompletion}, "
         }

@@ -77,6 +77,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceTestGenerate
   }
 
   @Test
+  @TestMetadata("annotationInAnnotation_collectionLiteral_badSpread.kt")
+  public void testAnnotationInAnnotation_collectionLiteral_badSpread() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/annotationInAnnotation_collectionLiteral_badSpread.kt");
+  }
+
+  @Test
   @TestMetadata("annotationInAnnotation_multipleAnnotations_arrayOf.kt")
   public void testAnnotationInAnnotation_multipleAnnotations_arrayOf() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/annotationInAnnotation_multipleAnnotations_arrayOf.kt");

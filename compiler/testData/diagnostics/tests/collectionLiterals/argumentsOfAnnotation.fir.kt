@@ -34,7 +34,7 @@ annotation class Test1<T>(val x: Int)
 annotation class Test2<T1, T2 : I<T1>>(val x: Test1<I<T2>>)
 @Repeatable annotation class Test3(val x: Array<Test2<Int, C<Int>>>)
 
-@Test3(<!ARGUMENT_TYPE_MISMATCH!>[Test2<String, C<String>>(Test1(40))]<!>)
+@Test3(<!ARGUMENT_TYPE_MISMATCH!>[<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>Test2<String, C<String>>(Test1(40))<!>]<!>)
 @Test3([Test2<Int, C<Int>>(Test1(40))])
 @Test3([Test2(Test1(40))])
 fun test9() {}
