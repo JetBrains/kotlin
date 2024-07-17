@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // Outlines `kotlin.js.js(code: String)` calls where JS code references Kotlin locals.
 // Makes locals usages explicit.
@@ -185,8 +184,8 @@ private class JsCodeOutlineTransformer(
 
     private fun createOutlinedFunction(kotlinLocalsUsedInJs: Map<JsName, IrValueDeclaration>): IrSimpleFunction {
         val outlinedFunction = backendContext.irFactory.buildFun {
-            name = Name.identifier(container.safeAs<IrDeclarationWithName>()?.name?.asString()?.let { "$it\$outlinedJsCode\$" }
-                                       ?: "outlinedJsCode\$")
+            val containerName = (container as? IrDeclarationWithName)?.name?.asString()
+            name = Name.identifier(containerName?.let { "$it\$outlinedJsCode\$" } ?: "outlinedJsCode\$")
             returnType = backendContext.dynamicType
             isExternal = true
             origin = JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN
