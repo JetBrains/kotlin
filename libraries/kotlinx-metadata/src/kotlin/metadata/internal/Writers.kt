@@ -58,6 +58,7 @@ private fun WriteContext.writeTypeProjection(argument: KmTypeProjection): ProtoB
     if (argument == KmTypeProjection.STAR) {
         t.projection = ProtoBuf.Type.Argument.Projection.STAR
     } else {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/metadata/KmTypeProjection,  */
         val (variance, argType) = argument
         if (variance == null || argType == null)
             throw InconsistentKotlinMetadataException("Variance and type must be set for non-star type projection")
@@ -231,6 +232,7 @@ private fun WriteContext.writeVersionRequirement(kmVersionRequirement: KmVersion
             this.message = this@writeVersionRequirement[message]
         }
     }
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: kotlin/metadata/KmVersion,  */
     val (major, minor, patch) = kmVersionRequirement.version
 
     VersionRequirement.Version(major, minor, patch).encode(

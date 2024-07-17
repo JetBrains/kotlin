@@ -266,7 +266,8 @@ class MemberScopeTowerLevel(
             ?: candidatesWithSmartcast?.values?.map { it.memberWithBaseScope }
             ?: error("candidatesWithoutSmartcast or candidatesWithSmartcast should be not null")
 
-        for ((candidate, scope) in candidates) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+        (candidate, scope) in candidates) {
             if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
                 val dispatchReceiverToUse = candidatesWithSmartcast?.getValue(candidate)?.dispatchReceiverToUse
                 val isFromOriginalTypeInPresenceOfSmartCast = dispatchReceiverToUse?.unwrapSmartcast == true

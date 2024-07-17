@@ -58,6 +58,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
             tasks += Task(startingChunks, kotlinFile)
 
             while (!tasks.isEmpty()) {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: <local>/Task,  */
                 val (chunks, element) = tasks.removeFirst()
                 assert(chunks.isNotEmpty())
 

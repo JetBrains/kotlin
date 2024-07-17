@@ -75,6 +75,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 updateResolutionFilterWithHistory(configuration)
 
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/scripting/compiler/plugin/impl/KJvmReplCompilerBase.AnalyzePreparationResult,  */
                 val (context, errorHolder, snippetKtFile) = prepareForAnalyze(
                     snippet,
                     messageCollector,

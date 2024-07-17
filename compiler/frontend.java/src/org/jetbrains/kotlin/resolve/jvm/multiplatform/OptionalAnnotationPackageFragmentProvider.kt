@@ -97,7 +97,8 @@ class OptionalAnnotationPackageFragmentProvider(
 }
 
 private class OptionalAnnotationClassDataFinder(classes: List<ClassData>) : ClassDataFinder {
-    val classIdToData = classes.associateBy { (nameResolver, klass) -> nameResolver.getClassId(klass.fqName) }
+    val classIdToData = classes.associateBy { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/serialization/deserialization/ClassData,  */
+                                              (nameResolver, klass) -> nameResolver.getClassId(klass.fqName) }
 
     override fun findClassData(classId: ClassId): ClassData? = classIdToData[classId]
 }

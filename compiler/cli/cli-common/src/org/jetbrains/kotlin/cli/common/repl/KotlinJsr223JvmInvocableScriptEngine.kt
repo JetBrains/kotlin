@@ -60,7 +60,8 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     private fun invokeImpl(prioritizedCallOrder: List<EvalClassWithInstanceAndLoader>, name: String, args: Array<out Any?>): Any? {
         // TODO: cache the method lookups?
 
-        val (fn, mapping, invokeWrapper) = prioritizedCallOrder.asSequence().map { (klass, instance, _, invokeWrapper) ->
+        val (fn, mapping, invokeWrapper) = prioritizedCallOrder.asSequence().map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 4, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/cli/common/repl/EvalClassWithInstanceAndLoader,  */
+                                                                                   (klass, instance, _, invokeWrapper) ->
             val candidates = klass.functions.filter { it.name == name }
             candidates.findMapping(listOf(instance) + args)?.let {
                 Triple(it.first, it.second, invokeWrapper)

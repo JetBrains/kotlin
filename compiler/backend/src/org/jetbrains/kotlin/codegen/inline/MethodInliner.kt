@@ -1338,6 +1338,7 @@ private fun incrementScopeNumbersOfVariables(node: MethodNode, label: Label): In
 }
 
 private fun incrementScopeNumbers(name: String): String {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/codegen/inline/InlineScopeInfo,  */
     val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
     return buildString {
         append(name.dropInlineScopeInfo())

@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 
 fun JavaModule.getJavaModuleRoots(): List<JavaRoot> =
-    moduleRoots.map { (root, isBinary, isBinarySignature) ->
+    moduleRoots.map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/resolve/jvm/modules/JavaModule.Root,  */
+                      (root, isBinary, isBinarySignature) ->
         val type = when {
             isBinarySignature -> JavaRoot.RootType.BINARY_SIG
             isBinary -> JavaRoot.RootType.BINARY

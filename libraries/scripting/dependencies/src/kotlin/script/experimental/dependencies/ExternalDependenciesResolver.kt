@@ -38,7 +38,8 @@ interface ExternalDependenciesResolver {
         artifactsWithLocations: List<ArtifactWithLocation>,
         options: Options = Options.Empty,
     ): ResultWithDiagnostics<List<File>> =
-        artifactsWithLocations.map { (artifact, location) -> resolve(artifact, options, location) }.asSuccessIfAny()
+        artifactsWithLocations.map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/script/experimental/dependencies/ArtifactWithLocation,  */
+                                     (artifact, location) -> resolve(artifact, options, location) }.asSuccessIfAny()
 
     fun addRepository(
         repositoryCoordinates: RepositoryCoordinates,

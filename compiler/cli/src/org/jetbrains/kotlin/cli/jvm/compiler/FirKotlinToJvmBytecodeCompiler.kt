@@ -205,7 +205,8 @@ object FirKotlinToJvmBytecodeCompiler {
             createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
         )
 
-        val outputs = sessionsWithSources.map { (session, sources) ->
+        val outputs = sessionsWithSources.map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/common/SessionWithSources,  */
+                                                (session, sources) ->
             buildResolveAndCheckFirFromKtFiles(session, sources, diagnosticsReporter)
         }
         outputs.runPlatformCheckers(diagnosticsReporter)
@@ -234,6 +235,7 @@ object FirKotlinToJvmBytecodeCompiler {
         fir2IrActualizedResult: Fir2IrActualizedResult,
         diagnosticsReporter: BaseDiagnosticsCollector,
     ): GenerationState {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 6, destructured variable amount without '_': 5, classId: org/jetbrains/kotlin/fir/pipeline/Fir2IrActualizedResult,  */
         val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = fir2IrActualizedResult
         val irInput = ModuleCompilerIrBackendInput(
             TargetId(module),

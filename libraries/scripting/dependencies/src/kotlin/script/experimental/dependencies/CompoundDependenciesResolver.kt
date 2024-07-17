@@ -69,6 +69,7 @@ class CompoundDependenciesResolver(private val resolvers: List<ExternalDependenc
             val resolverGroups = mutableMapOf<Int, MutableList<ArtifactWithLocation>>()
 
             for ((artifactWithLocation, resolverIndex) in artifactToResolverIndex) {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/script/experimental/dependencies/ArtifactWithLocation,  */
                 val (artifact, sourceCodeLocation) = artifactWithLocation
 
                 var currentIndex = resolverIndex + 1

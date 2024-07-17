@@ -326,6 +326,7 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 8, destructured variable amount without '_': 8, classId: org/jetbrains/kotlin/backend/jvm/JvmIrCodegenFactory.JvmIrBackendInput,  */
         val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, irPluginContext, notifyCodegenStart) =
             input as JvmIrBackendInput
         val irSerializer = if (
@@ -361,6 +362,7 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/backend/jvm/JvmIrCodegenFactory.JvmIrCodegenInput,  */
         val (state, context, module, notifyCodegenStart) = input as JvmIrCodegenInput
 
         fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true

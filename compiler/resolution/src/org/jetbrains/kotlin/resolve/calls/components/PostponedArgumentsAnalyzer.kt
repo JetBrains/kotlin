@@ -152,6 +152,7 @@ class PostponedArgumentsAnalyzer(
         diagnosticHolder: KotlinDiagnosticsHolder,
         substitute: (KotlinType) -> UnwrappedType = c.createSubstituteFunctorForLambdaAnalysis().substitute
     ) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/resolve/calls/components/ReturnArgumentsAnalysisResult,  */
         val (returnArgumentsInfo, inferenceSession, hasInapplicableCallForBuilderInference) =
             returnArgumentsAnalysisResult
 

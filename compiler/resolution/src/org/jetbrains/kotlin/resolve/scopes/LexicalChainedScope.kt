@@ -50,6 +50,7 @@ class LexicalChainedScope private constructor(
         getFirstClassifierDiscriminateHeaders(memberScopes) { it.getContributedClassifier(name, location) }
 
     override fun getContributedClassifierIncludeDeprecated(name: Name, location: LookupLocation): DescriptorWithDeprecation<ClassifierDescriptor>? {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/descriptors/DescriptorWithDeprecation,  */
         val (firstClassifier, isFirstDeprecated) = memberScopes.firstNotNullOfOrNull {
             it.getContributedClassifierIncludeDeprecated(name, location)
         } ?: return null
@@ -58,6 +59,7 @@ class LexicalChainedScope private constructor(
 
         // Slow-path: try to find the same classifier, but without deprecation
         for (scope in memberScopes) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/descriptors/DescriptorWithDeprecation,  */
             val (descriptor, isDeprecated) = scope.getContributedClassifierIncludeDeprecated(name, location) ?: continue
             if (descriptor == firstClassifier && !isDeprecated) return DescriptorWithDeprecation.createNonDeprecated(descriptor)
         }

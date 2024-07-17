@@ -625,7 +625,8 @@ object CheckerTestUtil {
             }
         }
 
-        for ((diagnostic, start, end) in uncheckedDiagnostics) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/checkers/diagnostics/PositionalTextDiagnostic,  */
+        (diagnostic, start, end) in uncheckedDiagnostics) {
             val range = TextRange(start, end)
             diagnosticsGroupedByRanges.put(range, diagnostic)
         }

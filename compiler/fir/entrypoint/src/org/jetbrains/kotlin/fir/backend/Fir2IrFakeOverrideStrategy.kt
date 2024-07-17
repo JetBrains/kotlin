@@ -202,6 +202,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
     fun generateDelegatedBodies() {
         for (delegatedInfo in delegatedInfos) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 5, destructured variable amount without '_': 5, classId: org/jetbrains/kotlin/fir/backend/DelegatedMemberInfo,  */
             val (delegatedMember, delegateTargetFromBaseType, classSymbolOfDelegateField, delegateField, parent) = delegatedInfo
             when (delegatedMember) {
                 is IrSimpleFunction -> generateDelegatedFunctionBody(
@@ -338,6 +339,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         parent: IrClass,
         kind: Kind
     ) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/fir/backend/Fir2IrDelegatedMembersGenerationStrategy.DelegatedFunctionBodyInfo,  */
         val (delegateTargetFunction, substitutor, delegatingToMethodOfSupertype) = extractDelegatedFunctionBodyInfo(
             classSymbolOfDelegateField,
             delegateTargetFromBaseType,

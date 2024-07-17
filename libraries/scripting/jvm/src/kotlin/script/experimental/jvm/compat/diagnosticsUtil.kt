@@ -50,13 +50,15 @@ fun mapLegacyScriptPosition(pos: ScriptReport.Position?): SourceCode.Location? =
 fun mapToLegacyScriptReportPosition(pos: SourceCode.Location?): ScriptReport.Position? =
     pos?.let { ScriptReport.Position(pos.start.line, pos.start.col, pos.end?.line, pos.end?.col) }
 
-fun Iterable<ScriptReport>.mapToDiagnostics(): List<ScriptDiagnostic> = map { (message, severity, position) ->
+fun Iterable<ScriptReport>.mapToDiagnostics(): List<ScriptDiagnostic> = map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: kotlin/script/experimental/dependencies/ScriptReport,  */
+                                                                              (message, severity, position) ->
     ScriptDiagnostic(
         ScriptDiagnostic.unspecifiedError, message, mapLegacyDiagnosticSeverity(severity), null, mapLegacyScriptPosition(position)
     )
 }
 
-fun Iterable<ScriptDiagnostic>.mapToLegacyReports(): List<ScriptReport> = map { (_, message, severity, _, location, exception) ->
+fun Iterable<ScriptDiagnostic>.mapToLegacyReports(): List<ScriptReport> = map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 6, destructured variable amount without '_': 4, classId: kotlin/script/experimental/api/ScriptDiagnostic,  */
+                                                                                (_, message, severity, _, location, exception) ->
     val reportMessage = if (exception == null) message else "$message ($exception)"
     ScriptReport(reportMessage, mapToLegacyScriptReportSeverity(severity), mapToLegacyScriptReportPosition(location))
 }

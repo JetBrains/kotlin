@@ -187,6 +187,7 @@ private class RangeLoopTransformer(
 
         val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/lower/loops/LoopReplacement,  */
         val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
             ?: return super.visitBlock(expression)  // Cannot lower the loop.
 
@@ -220,6 +221,7 @@ private class RangeLoopTransformer(
 
     private fun lowerWhileLoop(loop: IrWhileLoop, loopHeader: ForLoopHeader): LoopReplacement? {
         val loopBodyStatements = (loop.body as? IrContainerExpression)?.statements ?: return null
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/backend/common/lower/loops/RangeLoopTransformer.LoopVariableInfo,  */
         val (mainLoopVariable, mainLoopVariableIndex, loopVariableComponents, loopVariableComponentIndices) =
             gatherLoopVariableInfo(loopBodyStatements)
 

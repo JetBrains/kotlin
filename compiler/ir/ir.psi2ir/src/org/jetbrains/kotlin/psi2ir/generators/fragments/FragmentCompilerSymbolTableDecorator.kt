@@ -40,10 +40,12 @@ class FragmentCompilerSymbolTableDecorator(
             if (declaration !is ReceiverParameterDescriptor) return super.referenceValueParameter(declaration)
 
             val finderPredicate = when (val receiverValue = declaration.value) {
-                is ExtensionReceiver, is ContextReceiver -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
+                is ExtensionReceiver, is ContextReceiver -> { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/psi2ir/generators/fragments/EvaluatorFragmentParameterInfo,  */
+                                                              (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
                     receiverValue == (targetDescriptor as? ReceiverParameterDescriptor)?.value
                 }
-                is ThisClassReceiver -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
+                is ThisClassReceiver -> { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/psi2ir/generators/fragments/EvaluatorFragmentParameterInfo,  */
+                                          (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
                     receiverValue.classDescriptor == targetDescriptor.original
                 }
                 else -> TODO("Unimplemented")
@@ -61,10 +63,12 @@ class FragmentCompilerSymbolTableDecorator(
             val fi = fragmentInfo ?: return super.referenceValue(value)
 
             val finderPredicate = when (value) {
-                is AbstractReceiverParameterDescriptor -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
+                is AbstractReceiverParameterDescriptor -> { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/psi2ir/generators/fragments/EvaluatorFragmentParameterInfo,  */
+                                                            (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
                     value.containingDeclaration == targetDescriptor
                 }
-                else -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
+                else -> { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/psi2ir/generators/fragments/EvaluatorFragmentParameterInfo,  */
+                          (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
                     targetDescriptor == value
                 }
             }

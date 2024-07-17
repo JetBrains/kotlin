@@ -639,6 +639,7 @@ inline fun IrElement.getSourceLocation(fileEntry: IrFileEntry, offsetSelector: I
     if (startOffset == UNDEFINED_OFFSET || endOffset == UNDEFINED_OFFSET) return null
     val path = fileEntry.name
     val offset = offsetSelector()
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/LineAndColumn,  */
     val (startLine, startColumn) = fileEntry.getLineAndColumnNumbers(offset)
     return JsLocation(path, startLine, startColumn)
 }

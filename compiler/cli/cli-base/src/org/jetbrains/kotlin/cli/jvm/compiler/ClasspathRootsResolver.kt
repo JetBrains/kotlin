@@ -100,7 +100,8 @@ class ClasspathRootsResolver(
 
         val hasOutputDirectoryInClasspath = outputDirectory in jvmClasspathRoots || outputDirectory in jvmModulePathRoots
 
-        for ((root, packagePrefix) in javaSourceRoots) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/jvm/compiler/ClasspathRootsResolver.RootWithPrefix,  */
+        (root, packagePrefix) in javaSourceRoots) {
             val modularRoot = modularSourceRoot(root, hasOutputDirectoryInClasspath)
             if (modularRoot != null) {
                 modules += modularRoot

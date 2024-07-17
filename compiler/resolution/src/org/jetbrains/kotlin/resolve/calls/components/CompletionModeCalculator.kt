@@ -120,6 +120,7 @@ class CompletionModeCalculator {
         }
 
         private fun updateDirection(directionForVariable: FixationDirectionForVariable) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/calls/components/CompletionModeCalculator.CalculatorForNestedCall.FixationDirectionForVariable,  */
             val (variable, newDirection) = directionForVariable
             fixationDirectionsForVariables[variable]?.let { oldDirection ->
                 if (oldDirection != FixationDirection.EQUALITY && oldDirection != newDirection)

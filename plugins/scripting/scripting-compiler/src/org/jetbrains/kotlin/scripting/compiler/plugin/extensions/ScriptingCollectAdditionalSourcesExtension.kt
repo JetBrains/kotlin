@@ -19,6 +19,7 @@ class ScriptingCollectAdditionalSourcesExtension(val project: MockProject) : Col
         configuration: CompilerConfiguration,
         project: Project
     ): Collection<KtFile> {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/scripting/compiler/plugin/dependencies/ScriptsCompilationDependencies,  */
         val (newSourcesClasspath, newSources, _) = collectScriptsCompilationDependencies(
             configuration,
             project,

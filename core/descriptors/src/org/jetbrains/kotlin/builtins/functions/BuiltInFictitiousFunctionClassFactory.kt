@@ -49,6 +49,7 @@ class BuiltInFictitiousFunctionClassFactory(
         if ("Function" !in className) return null // An optimization
 
         val packageFqName = classId.packageFqName
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/builtins/functions/FunctionTypeKindExtractor.KindWithArity,  */
         val (kind, arity) = FunctionTypeKindExtractor.Default.getFunctionalClassKindWithArity(packageFqName, className) ?: return null
 
 

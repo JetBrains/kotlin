@@ -280,6 +280,7 @@ internal class KaFe10TypeProvider(
             queue.addLast(mappingForType)
 
             while (queue.isNotEmpty()) {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/analysis/api/descriptors/components/KaFe10TypeProvider.TypeArgumentMapping,  */
                 val (typeParameterOwner, mapping) = queue.removeFirst()
                 for (superType in typeParameterOwner.typeConstructor.supertypes) {
                     val mappingForSupertype = superType.toTypeArgumentMapping(mapping) ?: continue

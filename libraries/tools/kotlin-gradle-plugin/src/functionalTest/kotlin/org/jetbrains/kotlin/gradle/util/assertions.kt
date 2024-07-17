@@ -39,6 +39,7 @@ fun Task.assertNoCircularTaskDependencies() {
     val queue = ArrayDeque(taskDependencies.getDependencies(this).map { TaskAndDependants(it, listOf(this)) })
 
     while (queue.isNotEmpty()) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: <local>/TaskAndDependants,  */
         val (task, dependants) = queue.removeFirst()
         if (task in visited) {
             val dependencyChain = dependants.joinToString(" -> ") { it.name }

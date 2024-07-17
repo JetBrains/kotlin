@@ -89,6 +89,7 @@ class FirSpecificTypeResolverTransformer(
         withBareTypes(allowed = false) {
             typeRef.transformChildren(this, data)
         }
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/FirTypeResolutionResult,  */
         val (resolvedType, diagnostic) = resolveType(typeRef, data, expandTypeAliases)
         return transformType(typeRef, resolvedType, diagnostic, data)
     }
@@ -267,6 +268,7 @@ class FirSpecificTypeResolverTransformer(
                 isMarkedNullable = false
                 source = typeRef.source
             }
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/FirTypeResolutionResult,  */
             val (resolvedType, diagnostic) = resolveType(typeRefToTry, data)
             if (resolvedType is ConeErrorType || diagnostic != null) continue
             return buildResolvedTypeRef {

@@ -45,6 +45,7 @@ private fun KType.computeJavaType(forceWrapper: Boolean = false): Type {
             if (jClass.isArray) {
                 if (jClass.componentType.isPrimitive) return jClass
 
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/reflect/KTypeProjection,  */
                 val (variance, elementType) = arguments.singleOrNull()
                     ?: throw IllegalArgumentException("kotlin.Array must have exactly one type argument: $this")
                 return when (variance) {

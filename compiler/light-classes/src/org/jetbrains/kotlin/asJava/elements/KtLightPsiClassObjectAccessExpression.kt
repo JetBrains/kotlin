@@ -22,6 +22,7 @@ class KtLightPsiClassObjectAccessExpression(override val kotlinOrigin: KtClassLi
     KtLightPsiLiteral(kotlinOrigin, lightParent), PsiClassObjectAccessExpression {
     override fun getType(): PsiType {
         val bindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(kotlinOrigin)
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/constants/ClassLiteralValue,  */
         val (classId, arrayDimensions) = bindingContext[BindingContext.COMPILE_TIME_VALUE, kotlinOrigin]
             ?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.safeAs<KClassValue>()?.value
             ?.safeAs<KClassValue.Value.NormalClass>()?.value ?: return PsiTypes.voidType()

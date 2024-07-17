@@ -354,6 +354,7 @@ class DoubleColonExpressionResolver(
             }
         }
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/types/expressions/DoubleColonExpressionResolver.ReservedDoubleColonLHSResolutionResult,  */
         val (isReservedExpressionSyntax, doubleColonLHS, traceAndCacheFromReservedDoubleColonLHS) =
             resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression, c)
 

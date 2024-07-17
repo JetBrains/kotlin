@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.js.inline.util.extractImportTag
 fun JsProgramFragment.normalizeImportTags() {
 
     nameBindings.replaceAll { binding ->
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/backend/ast/JsNameBinding,  */
         val (tag, name) = binding
 
         imports[tag]?.let { import ->

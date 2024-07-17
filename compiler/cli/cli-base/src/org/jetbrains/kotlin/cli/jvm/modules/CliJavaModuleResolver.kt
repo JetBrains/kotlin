@@ -65,7 +65,8 @@ class CliJavaModuleResolver(
     }
 
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
-        moduleRoots.any { (root, isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
+        moduleRoots.any { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/jvm/modules/JavaModule.Root,  */
+                          (root, isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
 
     override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?

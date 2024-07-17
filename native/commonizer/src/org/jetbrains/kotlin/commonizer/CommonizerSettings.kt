@@ -14,7 +14,8 @@ internal object DefaultCommonizerSettings : CommonizerSettings {
 internal class MapBasedCommonizerSettings private constructor(
     private val settings: Map<CommonizerSettings.Key<*>, Any>
 ) : CommonizerSettings {
-    constructor(vararg settings: Setting<*>) : this(settings.associate { (k, v) -> k to v })
+    constructor(vararg settings: Setting<*>) : this(settings.associate { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/commonizer/MapBasedCommonizerSettings.Setting,  */
+                                                                         (k, v) -> k to v })
 
     override fun <T : Any> getSetting(key: CommonizerSettings.Key<T>): T {
         @Suppress("UNCHECKED_CAST")

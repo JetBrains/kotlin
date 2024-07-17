@@ -267,11 +267,13 @@ class KotlinCoreEnvironment private constructor(
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/jvm/compiler/ClasspathRootsResolver.RootsAndModules,  */
         val (initialRoots, javaModules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
         this.initialRoots.addAll(initialRoots)
 
         val (roots, singleJavaFileRoots) =
-            initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+            initialRoots.partition { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/cli/jvm/index/JavaRoot,  */
+                                     (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
         // REPL and kapt2 update classpath dynamically
         rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {
@@ -403,7 +405,8 @@ class KotlinCoreEnvironment private constructor(
 
         return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
             updateClasspathFromRootsIndex(newIndex)
-            newIndex.indexedRoots.mapNotNull { (file) ->
+            newIndex.indexedRoots.mapNotNull { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/cli/jvm/index/JavaRoot,  */
+                                               (file) ->
                 VfsUtilCore.virtualToIoFile(VfsUtilCore.getVirtualFileForJar(file) ?: file)
             }.toList()
         }.orEmpty()

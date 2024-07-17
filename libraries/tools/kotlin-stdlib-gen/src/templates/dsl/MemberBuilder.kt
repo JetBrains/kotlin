@@ -318,7 +318,8 @@ class MemberBuilder(
             }
             if (throwsExceptions.any()) {
                 builder.append(" * \n")
-                throwsExceptions.forEach { (type, reason) -> builder.append(" * @throws $type $reason\n") }
+                throwsExceptions.forEach { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: templates/ThrowsException,  */
+                                           (type, reason) -> builder.append(" * @throws $type $reason\n") }
             }
             if (samples.any()) {
                 builder.append(" * \n")

@@ -108,6 +108,7 @@ open class IncrementalJsCache(
 
         for ((srcFile, data) in translatedFiles) {
             dirtySources.remove(srcFile)
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/incremental/js/TranslationResultValue,  */
             val (binaryMetadata, binaryAst, inlineData) = data
 
             val oldProtoMap = translationResults[srcFile]?.metadata?.let { protoData(srcFile, it) } ?: emptyMap()
@@ -137,6 +138,7 @@ open class IncrementalJsCache(
         }
 
         for ((srcFile, irData) in incrementalResults.irFileData) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 9, destructured variable amount without '_': 9, classId: org/jetbrains/kotlin/incremental/js/IrTranslationResultValue,  */
             val (fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos) = irData
             irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos)
         }

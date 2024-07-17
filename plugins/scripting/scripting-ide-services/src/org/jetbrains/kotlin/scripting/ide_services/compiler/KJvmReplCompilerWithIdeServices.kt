@@ -119,6 +119,7 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
 
         updateResolutionFilterWithHistory(configuration)
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/scripting/compiler/plugin/impl/KJvmReplCompilerBase.AnalyzePreparationResult,  */
         val (_, errorHolder, snippetKtFile) = prepareForAnalyze(
             newSnippet,
             messageCollector,
@@ -131,6 +132,7 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
             analyzerEngine.statelessAnalyzeWithImportedScripts(snippetKtFile, emptyList(), state.getNextLineNo() + 1)
         AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder, renderDiagnosticName = false)
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 5, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/scripting/ide_services/compiler/impl/IdeLikeReplCodeAnalyzer.ReplLineAnalysisResultWithStateless.Stateless,  */
         val (_, bindingContext, resolutionFacade, moduleDescriptor, resultProperty) = when (analysisResult) {
             is IdeLikeReplCodeAnalyzer.ReplLineAnalysisResultWithStateless.Stateless -> {
                 analysisResult

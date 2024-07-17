@@ -85,7 +85,8 @@ class FunctionReader(
     private val moduleNameToInfo by lazy {
         val result = HashMultimap.create<String, ModuleInfo>()
 
-        JsLibraryUtils.traverseJsLibraries(config.libraries.map(::File)) { (content, path, sourceMapContent, file) ->
+        JsLibraryUtils.traverseJsLibraries(config.libraries.map(::File)) { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/utils/JsLibrary,  */
+                                                                           (content, path, sourceMapContent, file) ->
             var current = 0
 
             while (true) {
@@ -255,6 +256,7 @@ class FunctionReader(
         val jsScope = JsRootScope(JsProgram())
         val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, jsScope) ?: return null
         functionExpr.fixForwardNameReferences()
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/inline/util/FunctionWithWrapper,  */
         val (function, wrapper) = if (isWrapped) {
             InlineMetadata.decomposeWrapper(functionExpr) ?: return null
         } else {

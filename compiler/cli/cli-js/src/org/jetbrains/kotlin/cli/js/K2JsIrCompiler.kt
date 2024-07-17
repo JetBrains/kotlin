@@ -359,6 +359,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 relativeRequirePath = true
             )
 
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/backend/js/ic/JsExecutableProducer.BuildResult,  */
             val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.granularity, outJsProgram = false)
             outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
 
@@ -411,6 +412,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 loadFunctionInterfacesIntoStdlib = true,
             )
 
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/backend/wasm/LoweredIrWithExtraArtifacts,  */
             val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
                 irModuleInfo,
                 module.mainModule,

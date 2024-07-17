@@ -202,7 +202,8 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
 
         addSourceSetAsVariant("main")
 
-        getVariantComponentNames(variantData)?.let { (variantName, flavorName, buildTypeName) ->
+        getVariantComponentNames(variantData)?.let { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/gradle/internal/AndroidSubplugin.VariantComponentNames,  */
+                                                     (variantName, flavorName, buildTypeName) ->
             addSourceSetAsVariant(buildTypeName)
 
             if (flavorName.isNotEmpty()) {

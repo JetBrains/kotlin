@@ -217,7 +217,8 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
     private fun injectProperties(instance: Any, context: ValueResolveContext) {
         val classInfo = instance::class.java.getInfo()
 
-        classInfo.setterInfos.forEach { (method) ->
+        classInfo.setterInfos.forEach { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/container/SetterInfo,  */
+                                        (method) ->
             val methodBinding = method.bindToMethod(containerId, context)
             methodBinding.invoke(instance)
         }

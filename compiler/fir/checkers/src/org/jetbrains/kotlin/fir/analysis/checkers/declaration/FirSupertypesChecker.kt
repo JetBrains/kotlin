@@ -144,6 +144,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
         var result = false
         for ((index, typeArgument) in coneType.typeArguments.withIndex()) {
             if (typeArgument.isConflictingOrNotInvariant) {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/fir/analysis/checkers/FirTypeRefSource,  */
                 val (_, argSource) = typeRefAndSourcesForArguments.getOrNull(index) ?: continue
                 reporter.reportOn(
                     argSource ?: superTypeRef.source,

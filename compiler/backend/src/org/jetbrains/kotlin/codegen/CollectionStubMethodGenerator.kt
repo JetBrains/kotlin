@@ -79,7 +79,8 @@ class CollectionStubMethodGenerator(
         val syntheticStubsToGenerate = LinkedHashSet<JvmMethodGenericSignature>()
         val bridgesToGenerate = LinkedHashSet<FunctionDescriptor>()
 
-        for ((readOnlyClass, mutableClass) in superCollectionClasses) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/codegen/CollectionStubMethodGenerator.CollectionClassPair,  */
+        (readOnlyClass, mutableClass) in superCollectionClasses) {
             // To determine which method stubs we need to generate, we create a synthetic class (named 'child' here) which inherits from
             // our class ('descriptor') and the corresponding MutableCollection class (for example; the process is the same for every
             // built-in read-only/mutable class pair). We then construct and bind fake overrides in this synthetic class with the usual
@@ -174,6 +175,7 @@ class CollectionStubMethodGenerator(
     }
 
     fun generate(functionCodegen: FunctionCodegen, v: ClassBuilder) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/codegen/CollectionStubMethodGenerator.TasksToGenerate,  */
         val (methodStubsToGenerate, syntheticStubsToGenerate, bridgesToGenerate) = computeTasksToGenerate()
 
         for (signature in methodStubsToGenerate) {
@@ -220,16 +222,19 @@ class CollectionStubMethodGenerator(
 
         val allSuperClasses = TypeUtils.getAllSupertypes(descriptor.defaultType).mapTo(HashSet(), KotlinType::constructor)
 
-        val ourSuperCollectionClasses = collectionClasses.filter { (readOnlyClass, mutableClass) ->
+        val ourSuperCollectionClasses = collectionClasses.filter { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/codegen/CollectionStubMethodGenerator.CollectionClassPair,  */
+                                                                   (readOnlyClass, mutableClass) ->
             readOnlyClass in allSuperClasses && mutableClass !in allSuperClasses
         }
         if (ourSuperCollectionClasses.isEmpty()) return emptySet()
 
         // Filter out built-in classes which are overridden by other built-in classes in the list, to avoid duplicating methods.
-        val redundantClasses = ourSuperCollectionClasses.flatMapTo(HashSet()) { (readOnlyClass) ->
+        val redundantClasses = ourSuperCollectionClasses.flatMapTo(HashSet()) { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/codegen/CollectionStubMethodGenerator.CollectionClassPair,  */
+                                                                                (readOnlyClass) ->
             readOnlyClass.supertypes.map(KotlinType::constructor)
         }
-        return ourSuperCollectionClasses.filter { (readOnlyClass) -> readOnlyClass !in redundantClasses }
+        return ourSuperCollectionClasses.filter { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/codegen/CollectionStubMethodGenerator.CollectionClassPair,  */
+                                                  (readOnlyClass) -> readOnlyClass !in redundantClasses }
     }
 
     private fun findFakeOverridesForMethodsFromMutableCollection(

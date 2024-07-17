@@ -56,7 +56,9 @@ abstract class AbstractIrFileEntry : IrFileEntry {
     }
 
     override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/LineAndColumn,  */
         val (startLineNumber, startColumnNumber) = getLineAndColumnNumbers(beginOffset)
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/LineAndColumn,  */
         val (endLineNumber, endColumnNumber) = getLineAndColumnNumbers(endOffset)
         return SourceRangeInfo(
             filePath = name,

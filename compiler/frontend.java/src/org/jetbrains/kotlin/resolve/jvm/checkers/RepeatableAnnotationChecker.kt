@@ -120,7 +120,8 @@ class RepeatableAnnotationChecker(
     private fun checkRepeatedEntries(annotations: List<ResolvedAnnotation>, trace: BindingTrace) {
         val entryTypesWithAnnotations = hashMapOf<FqName, MutableList<AnnotationUseSiteTarget?>>()
 
-        for ((entry, descriptor, useSiteTarget) in annotations) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/resolve/jvm/checkers/RepeatableAnnotationChecker.ResolvedAnnotation,  */
+        (entry, descriptor, useSiteTarget) in annotations) {
             val fqName = descriptor.fqName ?: continue
             val classDescriptor = descriptor.annotationClass ?: continue
 

@@ -45,6 +45,7 @@ class JsInliner(
         if (definitionFragment !in translationResult.newFragments) return
 
         cycleReporter.processInlineFunction(inlineFn.fn, call) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/inline/util/FunctionWithWrapper,  */
             val (fn, wrapperBody) = inlineFn.fn
 
             if (wrapperBody != null) {
@@ -65,6 +66,7 @@ class JsInliner(
 
         val inliningContext = InliningContext(currentStatement)
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/inline/InlineableResult,  */
         val (inlineableBody, resultExpression) = FunctionInlineMutator.getInlineableCallReplacement(call, function, inliningContext)
 
         // body of inline function can contain call to lambdas that need to be inlined

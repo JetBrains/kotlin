@@ -35,6 +35,7 @@ class JsPerModuleCache(
         val crossModuleReferencesHash = ICHash.fromProtoStream(this)
         val reexportedInModuleWithName = ifTrue { readString() }
         val importedWithEffectInModuleWithName = ifTrue { readString() }
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/ir/backend/js/ic/JsMultiArtifactCache.JsIrModuleHeaderNames,  */
         val (definitions, nameBindings, optionalCrossModuleImports) = fetchJsIrModuleHeaderNames()
 
         CachedModuleInfo(

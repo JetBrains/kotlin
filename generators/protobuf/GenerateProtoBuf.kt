@@ -92,6 +92,7 @@ private fun execAndGetOutput(vararg args: String): ProcessOutput {
 }
 
 private fun checkVersion() {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/generators/protobuf/ProcessOutput,  */
     val (stdout, stderr) = execAndGetOutput(PROTOC_EXE, "--version")
 
     val version = stdout.trim()
@@ -108,6 +109,7 @@ private fun execProtoc(protoPath: String, outPath: String) {
         listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") +
                 PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }
     println("running ${commandLine.joinToString(" ")}")
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/generators/protobuf/ProcessOutput,  */
     val (stdout, stderr) = execAndGetOutput(*commandLine.toTypedArray())
     print(stdout)
     if (stderr.isNotEmpty()) {

@@ -293,7 +293,8 @@ object FirOptInUsageBaseChecker {
         reporter: DiagnosticReporter,
         source: KtSourceElement? = element.source,
     ) {
-        for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 5, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/fir/analysis/checkers/expression/FirOptInUsageBaseChecker.Experimentality,  */
+        (annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype)) {
                 val (diagnostic, verb) = when (severity) {
                     Experimentality.Severity.WARNING -> FirErrors.OPT_IN_USAGE to "should"
@@ -317,7 +318,8 @@ object FirOptInUsageBaseChecker {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        for ((annotationClassId, severity, markerMessage, supertypeName) in experimentalities) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/fir/analysis/checkers/expression/FirOptInUsageBaseChecker.Experimentality,  */
+        (annotationClassId, severity, markerMessage, supertypeName) in experimentalities) {
             if (!symbol.fir.isExperimentalityAcceptable(context.session, annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype = false)
             ) {

@@ -132,7 +132,8 @@ fun hasNoWritersInClosures(
     writers: Set<AssignedVariablesSearcher.Writer>,
     bindingContext: BindingContext
 ): Boolean {
-    return writers.none { (_, writerDeclaration) ->
+    return writers.none { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/types/expressions/AssignedVariablesSearcher.Writer,  */
+                          (_, writerDeclaration) ->
         writerDeclaration != null &&
                 variableContainingDeclaration != writerDeclaration.getDeclarationDescriptorIncludingConstructors(bindingContext)
     }
@@ -143,7 +144,8 @@ private fun isAccessedInsideClosureAfterAllWriters(
     accessElement: KtElement
 ): Boolean {
     val parent = accessElement.getElementParentDeclaration() ?: return false
-    return writers.none { (assignment) -> !assignment.before(parent) }
+    return writers.none { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/types/expressions/AssignedVariablesSearcher.Writer,  */
+                          (assignment) -> !assignment.before(parent) }
 }
 
 private fun isAccessedBeforeAllClosureWriters(

@@ -132,6 +132,7 @@ class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompiler
                     capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc), isSuspend = false)
                 }?.toList() ?: emptyList()
         isBoundCallableReference = isReference && capturedVars.isNotEmpty()
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/codegen/inline/SMAPAndMethodNode,  */
         val (originNode, classSmap) = loadDefaultLambdaBody(classBytes, lambdaClassType, isPropertyReference)
         node = SMAPAndMethodNode(createNodeWithFakeVariables(originNode), classSmap)
     }

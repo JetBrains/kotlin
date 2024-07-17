@@ -202,6 +202,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             continue
         }
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/cli/common/arguments/ArgumentField,  */
         val (getter, setter, argument) = argumentField
 
         // Tests for -shortName=value, which isn't currently allowed.

@@ -187,12 +187,14 @@ class FirTypeIntersectionScopeContext(
                     },
                 )
             } else {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
                 val (member, containingScope) = mostSpecific.first()
                 result += ResultOfIntersection.SingleMember(member, group, containingScope)
             }
         }
 
         if (allMembersWithScope.isNotEmpty()) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
             val (single, containingScope) = allMembersWithScope.single()
             result += ResultOfIntersection.SingleMember(single, allMembersWithScope.toList(), containingScope)
         }
@@ -270,7 +272,8 @@ class FirTypeIntersectionScopeContext(
         var hasOpen = false
         var hasAbstract = false
 
-        for ((member) in extractedOverridden) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+        (member) in extractedOverridden) {
             when ((member.fir as FirMemberDeclaration).modality) {
                 Modality.FINAL -> return Modality.FINAL
                 Modality.SEALED -> {

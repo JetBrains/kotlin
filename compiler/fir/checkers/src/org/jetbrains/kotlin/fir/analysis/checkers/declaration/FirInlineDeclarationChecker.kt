@@ -307,6 +307,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             ) {
                 return
             }
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirInlineDeclarationChecker.InlineFunctionBodyContext.AccessedDeclarationVisibilityData,  */
             val (isInlineFunPublicOrPublishedApi, isCalledFunPublicOrPublishedApi, calledFunEffectiveVisibility) = checkAccessedDeclaration(
                 source,
                 accessExpression,

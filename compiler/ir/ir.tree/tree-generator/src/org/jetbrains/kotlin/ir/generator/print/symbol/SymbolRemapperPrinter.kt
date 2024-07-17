@@ -107,7 +107,8 @@ internal abstract class AbstractSymbolRemapperPrinter(
                         if (symbolRemapperSuperTypes.isEmpty()) {
                             val kDoc = buildString {
                                 append("Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):")
-                                for ((_, fieldName, _, element) in fields) {
+                                for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 4, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/generator/model/symbol/FieldWithSymbol,  */
+                                (_, fieldName, _, element) in fields) {
                                     appendLine()
                                     append("- [${element.render()}.$fieldName]")
                                 }

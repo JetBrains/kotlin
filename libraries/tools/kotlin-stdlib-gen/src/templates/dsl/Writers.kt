@@ -74,6 +74,7 @@ fun Sequence<MemberBuilder>.groupByFileAndWrite(
 }
 
 fun List<MemberBuilder>.writeTo(file: File, targetedSource: TargetedSourceFile) {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: templates/TargetedSourceFile,  */
     val (target, sourceFile) = targetedSource
     println("Generating file: $file")
     file.parentFile.mkdirs()

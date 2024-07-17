@@ -22,6 +22,7 @@ class AnnotationsWhitelistDescriptorRenderer(
     private val toParameterRenderer: DescriptorRenderer.() -> DiagnosticParameterRenderer<DeclarationDescriptor>
 ) : DiagnosticParameterRenderer<DeclarationWithDiagnosticComponents> {
     override fun render(obj: DeclarationWithDiagnosticComponents, renderingContext: RenderingContext): String {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/diagnostics/rendering/DeclarationWithDiagnosticComponents,  */
         val (descriptor, diagnosticComponents) = obj
         return baseRenderer.withOptions {
             annotationFilter = { annotation ->

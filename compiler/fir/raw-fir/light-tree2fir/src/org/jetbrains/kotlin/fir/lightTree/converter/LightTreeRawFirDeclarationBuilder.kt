@@ -992,7 +992,8 @@ class LightTreeRawFirDeclarationBuilder(
                     )
                 } else {
                     buildMultiDelegatedConstructorCall {
-                        classWrapper.delegatedSuperCalls.mapTo(delegatedConstructorCalls) { (delegatedSuperTypeRef, arguments, source) ->
+                        classWrapper.delegatedSuperCalls.mapTo(delegatedConstructorCalls) { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/fir/lightTree/fir/DelegatedConstructorWrapper,  */
+                                                                                            (delegatedSuperTypeRef, arguments, source) ->
                             createDelegatedConstructorCall(source, delegatedSuperTypeRef, arguments)
                         }
                     }

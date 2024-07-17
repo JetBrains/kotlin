@@ -208,6 +208,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     // Do not adapt references against KCallable type as it's impossible to map defaults/vararg to absent parameters of KCallable
     if (expectedType.isKCallableType()) return null
 
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/calls/InputOutputTypes,  */
     val (inputTypes, returnExpectedType) = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session) ?: return null
     val expectedArgumentsCount = inputTypes.size - unboundReceiverCount
     if (expectedArgumentsCount < 0) return null

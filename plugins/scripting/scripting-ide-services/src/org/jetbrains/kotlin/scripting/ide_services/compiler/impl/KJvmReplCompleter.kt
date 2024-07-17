@@ -275,6 +275,7 @@ private class KJvmReplCompleter(
                     }
                     .forEach { resultTriple ->
                         val descriptor = resultTriple.first
+                        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/scripting/ide_services/compiler/impl/KJvmReplCompleter.Companion.DescriptorPresentation,  */
                         val (rawName, presentableText, tailText, completionText) = resultTriple.second
                         if (options.nameFilter(rawName, prefix)) {
                             val fullName: String =

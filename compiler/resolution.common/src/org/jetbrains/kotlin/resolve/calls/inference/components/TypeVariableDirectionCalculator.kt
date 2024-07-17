@@ -69,7 +69,8 @@ class TypeVariableDirectionCalculator(
 
         directions[variable] = direction
 
-        for ((otherVariable, otherDirection) in getConstraintDependencies(variable, direction)) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/calls/inference/components/TypeVariableDirectionCalculator.NodeWithDirection,  */
+        (otherVariable, otherDirection) in getConstraintDependencies(variable, direction)) {
             enterToNode(otherVariable, otherDirection)
         }
     }

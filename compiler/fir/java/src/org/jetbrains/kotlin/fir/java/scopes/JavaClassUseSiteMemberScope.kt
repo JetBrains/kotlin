@@ -187,7 +187,8 @@ class JavaClassUseSiteMemberScope(
     }
 
     internal fun syntheticPropertyFromOverride(overriddenProperty: ResultOfIntersection<FirPropertySymbol>): FirSyntheticPropertySymbol? {
-        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull superMember@{ (symbol, baseScope) ->
+        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull superMember@{ /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+                                                                                                      (symbol, baseScope) ->
             // We may call this function at the STATUS phase, which means that using resolved status may lead to cycle
             // So we need to use raw status here
             if (!symbol.isVisibleInClass(klass.symbol, symbol.rawStatus)) return@superMember null
@@ -388,9 +389,11 @@ class JavaClassUseSiteMemberScope(
         if (!name.sameAsBuiltinMethodWithErasedValueParameters) return false
         val candidatesToOverride = supertypeScopeContext.collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
             .flatMap { it.overriddenMembers }
-            .filterNot { (member, _) ->
+            .filterNot { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+                         (member, _) ->
                 member.valueParameterSymbols.all { it.resolvedReturnType.lowerBoundIfFlexible().isAny }
-            }.mapNotNull { (member, scope) ->
+            }.mapNotNull { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+                           (member, scope) ->
                 BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(member, scope)
             }
 
@@ -555,7 +558,8 @@ class JavaClassUseSiteMemberScope(
         explicitlyDeclaredFunction: FirNamedFunctionSymbol?
     ): Boolean {
         // E.g. contains(String) or contains(T)
-        val relevantFunctionFromSupertypes = resultOfIntersection.overriddenMembers.firstOrNull { (member, scope) ->
+        val relevantFunctionFromSupertypes = resultOfIntersection.overriddenMembers.firstOrNull { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+                                                                                                  (member, scope) ->
             BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(member, scope) != null
         }?.member ?: return false
 
@@ -631,7 +635,8 @@ class JavaClassUseSiteMemberScope(
         }
         destination += symbolToBeCollected
         directOverriddenFunctions[symbolToBeCollected] = listOf(resultOfIntersection)
-        for ((member, _) in resultOfIntersection.overriddenMembers) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+        (member, _) in resultOfIntersection.overriddenMembers) {
             overrideByBase[member] = symbolToBeCollected
         }
         return true

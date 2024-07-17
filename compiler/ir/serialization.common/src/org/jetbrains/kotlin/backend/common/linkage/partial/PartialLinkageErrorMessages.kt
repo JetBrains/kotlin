@@ -491,6 +491,7 @@ private fun StringBuilder.expressionWithUnusableClassifier(
 }
 
 private fun StringBuilder.expression(expression: IrExpression, continuation: (ExpressionKind) -> Appendable): Appendable {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/linkage/partial/Expression,  */
     val (expressionKind, referencedDeclarationKind) = expression.expression
 
     // Prefix may be null. But when it's not null, it is always capitalized.

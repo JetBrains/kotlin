@@ -61,7 +61,8 @@ open class LocalClassPopupLowering(
             }
         }, null)
 
-        for ((local, newContainer, extractedUnder) in extractedLocalClasses) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/backend/common/lower/LocalClassPopupLowering.ExtractedLocalClass,  */
+        (local, newContainer, extractedUnder) in extractedLocalClasses) {
             when (newContainer) {
                 is IrStatementContainer -> {
                     val insertIndex = extractedUnder?.let { newContainer.statements.indexOf(it) } ?: -1

@@ -251,6 +251,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/serialization/deserialization/ClassData,  */
         val (nameResolver, classProto, _, sourceElement) =
             c.components.classDataFinder.findClassData(nestedClassId)
                 ?: c.components.virtualFileForDebug.let { rootFile ->

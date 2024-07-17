@@ -63,6 +63,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         val function = (element as? IrSimpleFunction) ?: return null
         if (!function.isSuspend || function.modality == Modality.ABSTRACT) return null
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/TailSuspendCalls,  */
         val (tailSuspendCalls, hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
         return if (hasNotTailSuspendCalls) {
             listOf<IrDeclaration>(buildCoroutine(function).clazz, function)

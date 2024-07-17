@@ -95,7 +95,8 @@ class FirTypeIntersectionScope private constructor(
         processor: (D, FirTypeScope) -> ProcessorAction,
         processDirectOverriddenInBaseScope: FirTypeScope.(D, ((D, FirTypeScope) -> ProcessorAction)) -> ProcessorAction
     ): ProcessorAction {
-        for ((overridden, baseScope) in getDirectOverriddenSymbols(callableSymbol)) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+        (overridden, baseScope) in getDirectOverriddenSymbols(callableSymbol)) {
             if (overridden === callableSymbol) {
                 if (!baseScope.processDirectOverriddenInBaseScope(callableSymbol, processor)) return ProcessorAction.STOP
             } else {

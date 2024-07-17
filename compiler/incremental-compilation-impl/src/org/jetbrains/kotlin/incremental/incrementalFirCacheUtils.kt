@@ -133,6 +133,7 @@ internal fun collectNewDirtySources(
         visitFirFiles(output)
     }
 
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/incremental/DirtyData,  */
     val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) =
         changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
 

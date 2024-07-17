@@ -43,6 +43,7 @@ private fun translateJsCodeIntoStatementList(
     sourceInfo: JsLocation?
 ): List<JsStatement>? {
     // TODO: support proper symbol linkage and label clash resolution
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/js/backend/ast/JsLocation,  */
     val (fileName, startLine, offset) = sourceInfo ?: JsLocation("<js-code>", 0, 0)
     val jsCode = foldString(code, context) ?: return null
 

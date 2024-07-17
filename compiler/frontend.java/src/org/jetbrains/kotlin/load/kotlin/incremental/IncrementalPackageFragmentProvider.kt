@@ -90,7 +90,8 @@ class IncrementalPackageFragmentProvider(
             ChainedMemberScope.create(
                 "Member scope for incremental compilation: union of multifile class parts data for $facadeName",
                 partsInternalNames.mapNotNull { internalName ->
-                    incrementalCache.getPackagePartData(internalName)?.let { (data, strings) ->
+                    incrementalCache.getPackagePartData(internalName)?.let { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/load/kotlin/incremental/components/JvmPackagePartProto,  */
+                                                                             (data, strings) ->
                         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
 
                         val partName = JvmClassName.byInternalName(internalName)

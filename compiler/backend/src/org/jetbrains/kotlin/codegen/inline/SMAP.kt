@@ -28,8 +28,10 @@ object SMAPBuilder {
 
         val debugMappings = linkedMapOf<Pair<String, String>, FileMapping>()
         for (fileMapping in fileMappings) {
-            for ((_, dest, range, callSite) in fileMapping.lineMappings) {
-                callSite?.let { (line, file, path) ->
+            for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 4, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/codegen/inline/RangeMapping,  */
+            (_, dest, range, callSite) in fileMapping.lineMappings) {
+                callSite?.let { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/codegen/inline/SourcePosition,  */
+                                (line, file, path) ->
                     debugMappings.getOrPut(file to path) { FileMapping(file, path) }.mapNewInterval(line, dest, range)
                 }
             }

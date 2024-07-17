@@ -68,6 +68,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         reportOn: KtExpression?,
         trace: BindingTrace
     ): ClassifierDescriptor? {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/descriptors/DescriptorWithDeprecation,  */
         val (classifier, isDeprecated) = findFirstClassifierWithDeprecationStatus(name, lookupLocation) ?: return null
 
         if (isDeprecated && reportOn != null) {

@@ -43,6 +43,7 @@ internal fun buildSwiftModule(
     config: SwiftExportConfig,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
 ): SwiftModuleBuildResults {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/swiftexport/standalone/builders/ModuleWithScopeProvider,  */
     val (useSiteModule, mainModule, scopeProvider) =
         createModuleWithScopeProviderFromBinary(config.distribution, input, dependencies)
     val moduleProvider = when (config.multipleModulesHandlingStrategy) {

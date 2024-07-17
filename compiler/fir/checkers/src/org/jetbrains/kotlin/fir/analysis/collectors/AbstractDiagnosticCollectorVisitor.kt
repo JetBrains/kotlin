@@ -429,6 +429,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         type: ConeKotlinType?,
         block: () -> R
     ): R {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/declarations/ImplicitReceivers,  */
         val (implicitReceiverValue, implicitCompanionValues) = context.sessionHolder.collectImplicitReceivers(type, owner)
         val existingContext = context
         implicitCompanionValues.forEach { value ->

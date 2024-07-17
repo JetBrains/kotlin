@@ -53,7 +53,8 @@ fun List<KotlinSourceRoot>.forAllFiles(
         }
     }
 
-    for ((sourceRootPath, isCommon, hmppModuleName) in this) {
+    for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/cli/common/config/KotlinSourceRoot,  */
+    (sourceRootPath, isCommon, hmppModuleName) in this) {
         val sourceRoot = File(sourceRootPath)
         val vFile = localFileSystem.findFileByPath(sourceRoot.normalize().path)
         if (vFile == null) {

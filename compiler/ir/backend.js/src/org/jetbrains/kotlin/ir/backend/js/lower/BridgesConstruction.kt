@@ -86,7 +86,8 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
 
         val result = mutableListOf<IrDeclaration>()
 
-        for ((from, to) in bridgesToGenerate) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/bridges/Bridge,  */
+        (from, to) in bridgesToGenerate) {
             if (!from.function.parentAsClass.isInterface &&
                 from.function.isReal &&
                 from.function.modality != Modality.ABSTRACT &&

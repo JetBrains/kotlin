@@ -98,6 +98,7 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
     )
 
     private fun IrClass.addCompanionWithJsFactoryFunction() {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/backend/js/lower/PrepareCollectionsToExportLowering.FactoryMethod,  */
         val (factoryMethodName, factoryMethodForTheCollectionSymbol) =
             typesToItsFactoryMethods[symbol] ?: irError("Unexpected collection") {
                 withIrEntry("this", this@addCompanionWithJsFactoryFunction)

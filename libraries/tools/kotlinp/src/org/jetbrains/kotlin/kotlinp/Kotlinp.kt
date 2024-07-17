@@ -403,6 +403,7 @@ abstract class Kotlinp(protected val settings: Settings) {
                 if (argument == KmTypeProjection.STAR) {
                     append("*")
                 } else {
+                    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/metadata/KmTypeProjection,  */
                     val (variance, argumentType) = argument
                     if (variance == null || argumentType == null)
                         throw IllegalArgumentException("Variance and type must be set for non-star type projection")

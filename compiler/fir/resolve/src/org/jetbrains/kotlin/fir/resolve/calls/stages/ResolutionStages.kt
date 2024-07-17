@@ -100,6 +100,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         sink: CheckerSink,
         context: ResolutionContext
     ) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/calls/stages/ReceiverDescription,  */
         val (atom, type) = receivers.single()
         ArgumentCheckingProcessor.resolvePlainArgumentType(
             candidate,

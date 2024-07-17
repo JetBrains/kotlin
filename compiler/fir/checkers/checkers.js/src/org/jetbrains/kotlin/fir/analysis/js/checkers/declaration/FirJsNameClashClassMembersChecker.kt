@@ -61,6 +61,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             val symbolsToProcess = mutableListOf(startMemberWithScope)
             val leaves = mutableSetOf<FirCallableSymbol<*>>()
             while (symbolsToProcess.isNotEmpty()) {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
                 val (processingSymbol, scope) = symbolsToProcess.popLast()
                 val overriddenMembers = scope.getDirectOverriddenMembersWithBaseScope(processingSymbol)
                 for (overriddenMemberWithScope in overriddenMembers) {
@@ -206,7 +207,8 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             val fakeOverrideStableNames = stableNames.filterFakeOverrideNames(declaration, context)
 
             val nonFakeOverrideClashes = stableNames.collectNonFakeOverrideClashes { it in fakeOverrideStableNames }
-            for ((symbol, clashedWith) in nonFakeOverrideClashes) {
+            for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/analysis/js/checkers/declaration/FirJsNameClashClassMembersChecker.ClashedSymbol,  */
+            (symbol, clashedWith) in nonFakeOverrideClashes) {
                 val source = when (symbol) {
                     is FirCallableSymbol<*> -> symbol.unwrapFakeOverridesOrDelegated().source
                     else -> symbol.source
@@ -214,7 +216,8 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
                 reporter.reportOn(source, FirJsErrors.JS_NAME_CLASH, name, clashedWith, context)
             }
 
-            fakeOverrideStableNames.findFirstFakeOverrideClash(stableNameCollector)?.let { (fakeOverrideSymbol, clashedWith) ->
+            fakeOverrideStableNames.findFirstFakeOverrideClash(stableNameCollector)?.let { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/analysis/js/checkers/declaration/FirJsNameClashClassMembersChecker.ClashedSymbol,  */
+                                                                                           (fakeOverrideSymbol, clashedWith) ->
                 reporter.reportOn(declaration.source, FirJsErrors.JS_FAKE_NAME_CLASH, name, fakeOverrideSymbol, clashedWith, context)
             }
         }

@@ -55,7 +55,8 @@ interface PerFileGenerator<Module, File, Artifact> {
                         hasModuleLevelEffect = true
                     }
 
-                    generatedArtifact.takeTestEnvironmentOwnership()?.let { (testFunction, suiteFunction) ->
+                    generatedArtifact.takeTestEnvironmentOwnership()?.let { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/backend/js/transformers/irToJs/JsIrProgramTestEnvironment,  */
+                                                                            (testFunction, suiteFunction) ->
                         testFunctions.putToMultiMap(generatedArtifact.packageFqn, testFunction)
                         suiteFunctionTag = suiteFunction
                     }

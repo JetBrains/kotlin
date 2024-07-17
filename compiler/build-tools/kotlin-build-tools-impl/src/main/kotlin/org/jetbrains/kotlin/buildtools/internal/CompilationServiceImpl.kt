@@ -209,6 +209,7 @@ internal object CompilationServiceImpl : CompilationService {
             }
         }
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/daemon/client/CompileServiceSession,  */
         val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
             compilerId,
             clientIsAliveFile,

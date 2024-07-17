@@ -107,7 +107,8 @@ internal class FirMetadataSerializer(
                     )
                 }
             )
-            sessionsWithSources.map { (session, files) ->
+            sessionsWithSources.map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/common/SessionWithSources,  */
+                                      (session, files) ->
                 val firFiles = session.buildFirViaLightTree(files, diagnosticsReporter, performanceManager::addSourcesStats)
                 resolveAndCheckFir(session, firFiles, diagnosticsReporter)
             }
@@ -137,7 +138,8 @@ internal class FirMetadataSerializer(
                 createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
             )
 
-            sessionsWithSources.map { (session, files) ->
+            sessionsWithSources.map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/common/SessionWithSources,  */
+                                      (session, files) ->
                 val firFiles = session.buildFirFromKtFiles(files)
                 resolveAndCheckFir(session, firFiles, diagnosticsReporter)
             }
@@ -161,6 +163,7 @@ internal class FirMetadataSerializer(
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
         for (output in analysisResult) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/fir/pipeline/ModuleCompilerAnalyzedOutput,  */
             val (session, scopeSession, fir) = output
 
             val languageVersionSettings = environment.configuration.languageVersionSettings

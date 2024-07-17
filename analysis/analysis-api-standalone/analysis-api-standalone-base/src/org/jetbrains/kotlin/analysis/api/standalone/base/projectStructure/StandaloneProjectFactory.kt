@@ -240,7 +240,8 @@ object StandaloneProjectFactory {
         }
 
         val (roots, singleJavaFileRoots) =
-            rootsWithSingleJavaFileRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+            rootsWithSingleJavaFileRoots.partition { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/cli/jvm/index/JavaRoot,  */
+                                                     (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
         val corePackageIndex = project.getService(PackageIndex::class.java) as CorePackageIndex
         val rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {

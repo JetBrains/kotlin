@@ -139,7 +139,8 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
 
         fun ObjectOutputStream.writeLookups(lookupSymbols: Collection<LookupSymbol>) {
             writeInt(lookupSymbols.size)
-            for ((name, scope) in lookupSymbols) {
+            for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/incremental/LookupSymbol,  */
+            (name, scope) in lookupSymbols) {
                 writeUTF(name)
                 writeUTF(scope)
             }

@@ -143,6 +143,7 @@ fun convertIntellijDependencyNotFollowingTransitive(dep: JpsDependencyDescriptor
                 }
                 in intellijModulesToIgnore -> emptyList()
                 else -> {
+                    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/generators/imltogradle/MavenArtifact,  */
                     val (groupId, artifactId) = MavenArtifactsBuilder.generateMavenCoordinates(moduleName)
                     listOf(
                         JpsLikeJarDependency(

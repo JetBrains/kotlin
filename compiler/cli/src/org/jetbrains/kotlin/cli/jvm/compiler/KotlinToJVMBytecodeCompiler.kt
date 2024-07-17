@@ -77,6 +77,7 @@ object KotlinToJVMBytecodeCompiler {
 
         val useFrontendIR = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)
         val messageCollector = environment.messageCollector
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 7, destructured variable amount without '_': 7, classId: org/jetbrains/kotlin/cli/jvm/compiler/KotlinToJVMBytecodeCompiler.BackendInputForMultiModuleChunk,  */
         val (codegenFactory, wholeBackendInput, moduleDescriptor, bindingContext, firJvmBackendResolver, firJvmBackendExtension, mainClassFqName) = if (useFrontendIR) {
             // K2/PSI: base checks
             val projectEnvironment =
@@ -508,13 +509,15 @@ fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: F
     }
 
     for (module in chunk) {
-        for ((path, packagePrefix) in module.getJavaSourceRoots()) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/modules/JavaRootPath,  */
+        (path, packagePrefix) in module.getJavaSourceRoots()) {
             addJavaSourceRoot(File(path), packagePrefix)
         }
     }
 
     val isJava9Module = chunk.any { module ->
-        module.getJavaSourceRoots().any { (path, packagePrefix) ->
+        module.getJavaSourceRoots().any { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/modules/JavaRootPath,  */
+                                          (path, packagePrefix) ->
             val file = File(path)
             packagePrefix == null &&
                     (file.name == PsiJavaModule.MODULE_INFO_FILE ||

@@ -302,7 +302,8 @@ fun ScriptCompilationConfiguration.refineOnAnnotations(
 
     val thisResult: ResultWithDiagnostics<ScriptCompilationConfiguration> = this.asSuccess()
     return this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
-        ?.fold(thisResult) { config, (annotations, handler) ->
+        ?.fold(thisResult) { config,/** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/script/experimental/api/RefineConfigurationOnAnnotationsData,  */
+        (annotations, handler) ->
             config.onSuccess {
                 // checking that the collected data contains expected annotations
                 if (annotations.none { foundAnnotationNames.contains(it.typeName) }) it.asSuccess()

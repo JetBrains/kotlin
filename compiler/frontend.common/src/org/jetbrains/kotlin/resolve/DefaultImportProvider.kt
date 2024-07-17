@@ -16,7 +16,8 @@ abstract class DefaultImportProvider {
     private data class DefaultImportsKey(val includeKotlinComparisons: Boolean, val includeLowPriorityImports: Boolean)
 
     private val defaultImports = LockBasedStorageManager("TargetPlatform").let { storageManager ->
-        storageManager.createMemoizedFunction<DefaultImportsKey, List<ImportPath>> { (includeKotlinComparisons, includeLowPriorityImports) ->
+        storageManager.createMemoizedFunction<DefaultImportsKey, List<ImportPath>> { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/DefaultImportProvider.DefaultImportsKey,  */
+                                                                                     (includeKotlinComparisons, includeLowPriorityImports) ->
             ArrayList<ImportPath>().apply {
                 listOf(
                     "kotlin.*",

@@ -69,6 +69,7 @@ class InlineAstVisitor(
 
     override fun endVisit(call: JsInvocation, ctx: JsContext<JsNode>) {
         if (hasToBeInlined(call)) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/inline/InlineableResult,  */
             val (inlineableBody, resultExpression) = jsInliner.inline(scope, call, lastStatementLevelContext.currentNode)
 
             lastStatementLevelContext.addPrevious(JsAstUtils.flattenStatement(inlineableBody))

@@ -150,6 +150,7 @@ fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> 
             lowerBoundArguments.add(typeArgument)
             upperBoundArguments.add(typeArgument)
         } else {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/types/typesApproximation/ApproximationBounds,  */
             val (lower, upper) = approximateProjection(typeArgument)
             lowerBoundArguments.add(lower)
             upperBoundArguments.add(upper)
@@ -168,7 +169,9 @@ private fun KotlinType.replaceTypeArguments(newTypeArguments: List<TypeArgument>
 }
 
 private fun approximateProjection(typeArgument: TypeArgument): ApproximationBounds<TypeArgument> {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/types/typesApproximation/ApproximationBounds,  */
     val (inLower, inUpper) = approximateCapturedTypes(typeArgument.inProjection)
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/types/typesApproximation/ApproximationBounds,  */
     val (outLower, outUpper) = approximateCapturedTypes(typeArgument.outProjection)
     return ApproximationBounds(
         lower = TypeArgument(typeArgument.typeParameter, inUpper, outLower),

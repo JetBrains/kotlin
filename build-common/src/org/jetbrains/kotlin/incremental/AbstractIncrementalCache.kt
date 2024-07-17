@@ -127,6 +127,7 @@ abstract class AbstractIncrementalCache<ClassName>(
      * The `srcFile` argument may be `null` (e.g., if we are processing .class files in jars where source files are not available).
      */
     protected fun addToClassStorage(classProtoData: ClassProtoData, srcFile: File?, useCompilerMapsOnly: Boolean = false) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/incremental/ClassProtoData,  */
         val (proto, nameResolver) = classProtoData
 
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))

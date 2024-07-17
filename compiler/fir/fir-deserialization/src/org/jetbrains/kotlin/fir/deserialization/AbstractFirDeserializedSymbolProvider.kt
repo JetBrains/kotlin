@@ -228,6 +228,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
         return when (val result = extractClassMetadata(classId, parentContext)) {
             is ClassMetadataFindResult.NoMetadata -> FirRegularClassSymbol(classId) to result.classPostProcessor
             is ClassMetadataFindResult.Metadata -> {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 6, destructured variable amount without '_': 6, classId: org/jetbrains/kotlin/fir/deserialization/AbstractFirDeserializedSymbolProvider.ClassMetadataFindResult.Metadata,  */
                 val (nameResolver, classProto, annotationDeserializer, moduleData, sourceElement, postProcessor) = result
                 moduleData ?: return null to null
                 val symbol = FirRegularClassSymbol(classId)

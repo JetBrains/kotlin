@@ -209,6 +209,7 @@ class CacheUpdater(
             val removedFilesMetadata = hashMapOf<KotlinLibraryFile, Map<KotlinSourceFile, KotlinSourceFileMetadata>>()
 
             fun collectDirtyFiles(lib: KotlinLibraryFile, cache: IncrementalCache): MutableMap<KotlinSourceFile, KotlinSourceFileMetadata> {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/ir/backend/js/ic/IncrementalCache.ModifiedFiles,  */
                 val (addedFiles, removedFiles, modifiedFiles, nonModifiedFiles) = cache.collectModifiedFiles()
 
                 val fileStats by lazy(LazyThreadSafetyMode.NONE) { dirtyFileStats.getOrPutFiles(lib) }
@@ -766,6 +767,7 @@ class CacheUpdater(
     )
 
     private fun loadIrAndMakeIrFragmentGenerators(): FragmentGenerators {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/ir/backend/js/ic/CacheUpdater.IrForDirtyFilesAndCompiler,  */
         val (incrementalCachesArtifacts, loadedIr, dirtyFiles, irCompiler) = loadIrForDirtyFilesAndInitCompiler()
 
         val moduleNames = loadedIr.loadedFragments.entries.associate { it.key to it.value.name.asString() }
@@ -802,6 +804,7 @@ class CacheUpdater(
         stopwatch.clear()
         dirtyFileStats.clear()
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/ir/backend/js/ic/CacheUpdater.FragmentGenerators,  */
         val (incrementalCachesArtifacts, moduleNames, generators) = loadIrAndMakeIrFragmentGenerators()
 
         val rebuiltFragments = generateIrFragments(generators)

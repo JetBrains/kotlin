@@ -278,6 +278,7 @@ class Fir2IrClassifierStorage(
     // ------------------------------------ local classes ------------------------------------
 
     private fun createAndCacheLocalIrClassOnTheFly(klass: FirClass): IrClass {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/fir/backend/generators/Fir2IrClassifiersGenerator.LocalIrClassInfo,  */
         val (irClass, firClassOrLocalParent, irClassOrLocalParent) = classifiersGenerator.createLocalIrClassOnTheFly(
             klass,
             processMembersOfClassesOnTheFlyImmediately

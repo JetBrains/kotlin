@@ -67,6 +67,7 @@ object PartialLinkageUtils {
             override val module = Module.Real(file.module.name)
 
             override fun computeLocationForOffset(offset: Int): PartialLinkageLogger.Location {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/LineAndColumn,  */
                 val (line, column) = file.fileEntry.getLineAndColumnNumbers(offset)
                 return PartialLinkageLogger.Location(
                     moduleName = module.name,

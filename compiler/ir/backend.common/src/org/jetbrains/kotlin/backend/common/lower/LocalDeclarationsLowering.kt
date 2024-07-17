@@ -720,6 +720,7 @@ open class LocalDeclarationsLowering(
             val newName = generateNameForLiftedDeclaration(oldDeclaration, ownerParent)
 
             // TODO: consider using fields to access the closure of enclosing class.
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/lower/Closure,  */
             val (capturedValues, capturedTypeParameters) = localFunctionContext.closure
 
             val newDeclaration = context.irFactory.buildFun {

@@ -225,6 +225,7 @@ internal class KaFirExpressionTypeProvider(
     }
 
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KaType? {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/analysis/api/fir/components/KtCallWithArgument,  */
         val (ktCallElement, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
         val firCall = ktCallElement.getOrBuildFir(firResolveSession)?.unwrapSafeCall() as? FirCall ?: return null
 
@@ -237,6 +238,7 @@ internal class KaFirExpressionTypeProvider(
         }
 
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/analysis/api/fir/components/KaFirExpressionTypeProvider.SubstitutedValueParameter,  */
         val (firParameterForExpression, substitutedType) =
             argumentsToParameters.entries.firstOrNull { (arg, _) ->
                 when (arg) {

@@ -163,12 +163,14 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
     )
 
     private val callableStorageByClass: FirCache<FirClassSymbol<*>, CallableStorage, StorageContext<MemberGenerationContext>> =
-        cachesFactory.createCache { _, (context, extensionsMap) ->
+        cachesFactory.createCache { _,/** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/impl/FirGeneratedMemberDeclarationsStorage.StorageContext,  */
+        (context, extensionsMap) ->
             CallableStorage(cachesFactory, context, extensionsMap)
         }
 
     private val classifierStorageByClass: FirCache<FirClassSymbol<*>, ClassifierStorage, StorageContext<NestedClassGenerationContext>> =
-        cachesFactory.createCache { classSymbol, (context, extensionsMap) ->
+        cachesFactory.createCache { classSymbol,/** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/impl/FirGeneratedMemberDeclarationsStorage.StorageContext,  */
+        (context, extensionsMap) ->
             ClassifierStorage(cachesFactory, classSymbol, context, extensionsMap)
         }
 

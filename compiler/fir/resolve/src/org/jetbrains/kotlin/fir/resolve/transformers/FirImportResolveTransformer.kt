@@ -68,6 +68,7 @@ open class FirImportResolveTransformer protected constructor(
         get() = true
 
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): FirImport {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/transformers/PackageAndClass,  */
         val (packageFqName, relativeClassFqName) = findLongestExistingPackage(symbolProvider, fqName)
 
         return buildResolvedImport {

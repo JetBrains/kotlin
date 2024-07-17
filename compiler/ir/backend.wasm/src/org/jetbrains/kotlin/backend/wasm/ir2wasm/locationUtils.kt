@@ -42,6 +42,7 @@ fun IrElement.getSourceLocation(file: IrFile?, type: LocationType = LocationType
     if (hasSyntheticOrUndefinedLocation) return SourceLocation.NoLocation("Synthetic declaration")
 
     val path = fileEntry.name
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/LineAndColumn,  */
     val (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
 
     if (line < 0 || column < 0) return SourceLocation.NoLocation("startLine or startColumn < 0")

@@ -260,6 +260,7 @@ open class IncrementalFirJvmCompilerRunner(
 
             val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
             val irGenerationExtensions = projectEnvironment.project.let { IrGenerationExtension.getInstances(it) }
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 6, destructured variable amount without '_': 5, classId: org/jetbrains/kotlin/fir/pipeline/Fir2IrActualizedResult,  */
             val (irModuleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = cycleResult.convertToIrAndActualizeForJvm(
                 extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
             )

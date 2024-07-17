@@ -46,6 +46,7 @@ object NativeObjCRefinementAnnotationChecker : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || descriptor.kind != ClassKind.ANNOTATION_CLASS) return
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/konan/diagnostics/ObjCExportMetaAnnotations,  */
         val (objCAnnotation, swiftAnnotation) = descriptor.findObjCExportMetaAnnotations() ?: return
         if (objCAnnotation == null && swiftAnnotation == null) return
         if (objCAnnotation != null && swiftAnnotation != null) {

@@ -165,6 +165,7 @@ fun convertAnalyzedFirToIr(
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 6, destructured variable amount without '_': 5, classId: org/jetbrains/kotlin/fir/pipeline/Fir2IrActualizedResult,  */
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         analysisResults.convertToIrAndActualizeForJvm(
             extensions, input.configuration, environment.diagnosticsReporter, irGenerationExtensions,
@@ -314,7 +315,8 @@ fun compileModuleToAnalyzedFir(
 
     val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
 
-    val outputs = sessionWithSources.map { (session, sources) ->
+    val outputs = sessionWithSources.map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/common/SessionWithSources,  */
+                                           (session, sources) ->
         buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, countFilesAndLines)
     }
     outputs.runPlatformCheckers(diagnosticsReporter)
@@ -425,11 +427,13 @@ fun createProjectEnvironment(
         hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
     )
 
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/jvm/compiler/ClasspathRootsResolver.RootsAndModules,  */
     val (initialRoots, javaModules) =
         classpathRootsResolver.convertClasspathRoots(contentRoots)
 
     val (roots, singleJavaFileRoots) =
-        initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+        initialRoots.partition { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/cli/jvm/index/JavaRoot,  */
+                                 (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
     // REPL and kapt2 update classpath dynamically
     val rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {

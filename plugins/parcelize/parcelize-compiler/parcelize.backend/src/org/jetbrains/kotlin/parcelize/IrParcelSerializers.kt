@@ -500,6 +500,7 @@ class IrListParcelSerializer(
 
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
         return irBlock {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/parcelize/IrListParcelSerializer.ListSymbols,  */
             val (constructorSymbol, addSymbol) = listSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
             val list = irTemporary(irCall(constructorSymbol).apply {
@@ -610,6 +611,7 @@ class IrMapParcelSerializer(
 
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
         return irBlock {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/parcelize/IrMapParcelSerializer.MapSymbols,  */
             val (constructorSymbol, putSymbol) = mapSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
             val map = irTemporary(irCall(constructorSymbol).apply {

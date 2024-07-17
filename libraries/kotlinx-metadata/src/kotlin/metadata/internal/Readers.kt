@@ -327,6 +327,7 @@ private fun readVersionRequirement(id: Int, c: ReadContext): KmVersionRequiremen
     v.errorCode = message?.errorCode
     v.message = message?.message
 
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/metadata/deserialization/VersionRequirement.Version,  */
     val (major, minor, patch) = message?.version ?: VersionRequirement.Version.INFINITY
     v.version = KmVersion(major, minor, patch)
     return v

@@ -142,6 +142,7 @@ fun <TElement : KtElement> createByPattern(
             arg
     }
 
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/psi/PatternData,  */
     val (processedText, allPlaceholders) = processPattern(pattern, args)
 
     var resultElement: KtElement = factory(processedText.trim())
@@ -159,7 +160,8 @@ fun <TElement : KtElement> createByPattern(
         if (arg is String) continue // already in the text
         val expectedElementType = (argumentTypes[n] as PsiElementPlaceholderArgumentType<*, *>).placeholderClass
 
-        for ((range, _) in placeholders) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/psi/Placeholder,  */
+        (range, _) in placeholders) {
             val token = resultElement.findElementAt(range.startOffset)!!
             for (element in token.parentsWithSelf) {
                 val elementRange = element.textRange.shiftRight(-start)

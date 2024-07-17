@@ -174,6 +174,7 @@ class PostponedArgumentsAnalyzer(
         results: ReturnArgumentsAnalysisResult,
         substituteAlreadyFixedVariables: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis(),
     ) {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/inference/ReturnArgumentsAnalysisResult,  */
         val (returnAtoms, additionalConstraintStorage) = results
         val returnArguments = returnAtoms.map { it.expression }
 

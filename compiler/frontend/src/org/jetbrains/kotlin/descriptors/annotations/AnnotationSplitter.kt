@@ -66,7 +66,8 @@ class AnnotationSplitter(
             other.add(annotation)
         }
 
-        for ((annotation, target) in @Suppress("DEPRECATION") allAnnotations.getUseSiteTargetedAnnotations()) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/descriptors/annotations/AnnotationWithTarget,  */
+        (annotation, target) in @Suppress("DEPRECATION") allAnnotations.getUseSiteTargetedAnnotations()) {
             if (target in applicableTargets) {
                 map.getOrPut(target) { arrayListOf() }.add(annotation)
             }

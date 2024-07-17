@@ -115,7 +115,8 @@ fun updateIncrementalCache(
         }
     }
 
-    javaChangesTracker?.javaClassesUpdates?.forEach { (source, serializedJavaClass) ->
+    javaChangesTracker?.javaClassesUpdates?.forEach { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/incremental/SerializedJavaClassWithSource,  */
+                                                      (source, serializedJavaClass) ->
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 

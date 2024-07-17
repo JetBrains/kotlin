@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.name.Name
 
 class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
     init {
-        for ((file) in roots) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 1, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/cli/jvm/index/JavaRoot,  */
+        (file) in roots) {
             assert(!file.isDirectory) { "Should not be a directory: $file" }
         }
     }

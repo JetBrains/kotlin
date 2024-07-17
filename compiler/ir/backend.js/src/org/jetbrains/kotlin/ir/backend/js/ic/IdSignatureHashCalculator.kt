@@ -118,6 +118,7 @@ internal class IdSignatureHashCalculator(private val icHasher: ICHasher) {
         val newDependsStack = transitiveDepends.toMutableList()
 
         while (newDependsStack.isNotEmpty()) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/backend/js/ic/IdSignatureHashCalculator.InlineFunctionDependencies,  */
             val (usedInlineFunctions, usedConstants) = newDependsStack.removeLast().inlineDepends
             for (inlineFunction in usedInlineFunctions) {
                 if (transitiveDepends.add(inlineFunction)) {

@@ -244,7 +244,8 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
         val type = descriptor.type
         if (!type.isError) {
             val customParcelerTypes =
-                (getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)).map { (mappedType, _) ->
+                (getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)).map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/parcelize/serializers/TypeParcelerMapping,  */
+                                                                                                                (mappedType, _) ->
                     mappedType
                 }.toSet()
 

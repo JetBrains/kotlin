@@ -344,6 +344,7 @@ fun updateCallSiteLineNumber(name: String, newLineNumber: Int): String =
     updateCallSiteLineNumber(name) { newLineNumber }
 
 fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/codegen/inline/InlineScopeInfo,  */
     val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
     if (callSiteLineNumber == null) {
         return name

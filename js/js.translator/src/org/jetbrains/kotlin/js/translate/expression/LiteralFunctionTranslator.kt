@@ -157,6 +157,7 @@ fun JsFunction.withCapturedParameters(
             val localFunAlias = aliasRef?.getStaticRef() as? JsExpression
 
             if (localFunAlias != null) {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/translate/expression/CapturedArgsParams,  */
                 val (args, params) = moveCapturedLocalInside(this, name, localFunAlias)
                 additionalArgs = args
                 additionalParams = params

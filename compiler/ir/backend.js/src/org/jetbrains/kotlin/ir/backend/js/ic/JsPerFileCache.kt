@@ -230,6 +230,7 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
 
 
         val importWithEffectIn = ifTrue { readString() }
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/ir/backend/js/ic/JsMultiArtifactCache.JsIrModuleHeaderNames,  */
         val (definitions, nameBindings, optionalCrossModuleImports) = fetchJsIrModuleHeaderNames()
 
         it.jsIrHeader = JsIrModuleHeader(
@@ -384,13 +385,15 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
         }
 
     override fun fetchCompiledJsCode(cacheInfo: CachedFileInfo) =
-        cacheInfo.cachedFiles?.let { (jsCodeFile, sourceMapFile, tsDeclarationsFile) ->
+        cacheInfo.cachedFiles?.let { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/ir/backend/js/ic/JsPerFileCache.CachedFileArtifacts,  */
+                                     (jsCodeFile, sourceMapFile, tsDeclarationsFile) ->
             jsCodeFile.ifExists { this }
                 ?.let { CompilationOutputsCached(it, sourceMapFile?.ifExists { this }, tsDeclarationsFile?.ifExists { this }) }
         }
 
     override fun commitCompiledJsCode(cacheInfo: CachedFileInfo, compilationOutputs: CompilationOutputsBuilt) =
-        cacheInfo.cachedFiles?.let { (jsCodeFile, jsMapFile, tsDeclarationsFile) ->
+        cacheInfo.cachedFiles?.let { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/ir/backend/js/ic/JsPerFileCache.CachedFileArtifacts,  */
+                                     (jsCodeFile, jsMapFile, tsDeclarationsFile) ->
             tsDeclarationsFile?.writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
             compilationOutputs.writeJsCodeIntoModuleCache(jsCodeFile, jsMapFile)
         } ?: compilationOutputs

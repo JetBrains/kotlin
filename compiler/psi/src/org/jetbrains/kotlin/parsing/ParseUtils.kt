@@ -66,6 +66,7 @@ private fun parseLong(text: String): Long? {
             }
         }
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/utils/NumberWithRadix,  */
         val (number, radix) = extractRadix(numberWithoutSuffix)
 
         if (isUnsigned) {

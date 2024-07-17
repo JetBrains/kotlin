@@ -25,6 +25,7 @@ private fun KmTypeProjection.typeArgumentId(): TypeArgumentId =
     if (this == KmTypeProjection.STAR) {
         TypeArgumentId.Star
     } else {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/metadata/KmTypeProjection,  */
         val (variance, type) = this
         check(variance != null && type != null) { "Variance and type should not be null" }
         TypeArgumentId.Regular(type.typeId(), variance.varianceId())

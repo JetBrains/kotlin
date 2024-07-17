@@ -365,6 +365,7 @@ private class Fir2IrPipeline(
                 } catch (e: Throwable) {
                     CodegenUtil.reportBackendException(e, "IR fake override builder", file.fileEntry.name) { offset ->
                         file.fileEntry.takeIf { it.supportsDebugInfo }?.let {
+                            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/ir/LineAndColumn,  */
                             val (line, column) = it.getLineAndColumnNumbers(offset)
                             line to column
                         }

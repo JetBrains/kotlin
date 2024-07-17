@@ -25,6 +25,7 @@ fun FirRegularClassSymbol.getRetention(session: FirSession): AnnotationRetention
 }
 
 fun FirAnnotation.getRetention(): AnnotationRetention? {
+    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/declarations/EnumValueArgumentInfo,  */
     val (enumId, entryName) = findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue)
         ?.extractEnumValueArgumentInfo()
         ?: return null

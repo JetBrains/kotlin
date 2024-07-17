@@ -675,6 +675,7 @@ class LightTreeRawFirExpressionBuilder(
 
         val source = callSuffix.toFirSourceElement()
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/fir/builder/CalleeAndReceiver,  */
         val (calleeReference, explicitReceiver, isImplicitInvoke) = when {
             name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
@@ -860,11 +861,13 @@ class LightTreeRawFirExpressionBuilder(
             when (it.tokenType) {
                 WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, whenRefWithSubject.takeIf { hasSubject })
                 WHEN_CONDITION_IN_RANGE -> {
+                    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/lightTree/converter/LightTreeRawFirExpressionBuilder.WhenConditionConvertedResults,  */
                     val (condition, shouldBind) = convertWhenConditionInRange(it, whenRefWithSubject, hasSubject)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
                 WHEN_CONDITION_IS_PATTERN -> {
+                    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/lightTree/converter/LightTreeRawFirExpressionBuilder.WhenConditionConvertedResults,  */
                     val (condition, shouldBind) = convertWhenConditionIsPattern(it, whenRefWithSubject, hasSubject)
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind

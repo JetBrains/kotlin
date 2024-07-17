@@ -322,7 +322,8 @@ class ControlFlowGraphBuilder {
         val currentLevelExits = postponedLambdaExits.pop().exits
         if (currentLevelExits.isEmpty()) return
 
-        for ((lambdas, exits) in postponedLambdaExits.all()) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/dfa/cfg/ControlFlowGraphBuilder.PostponedLambdas,  */
+        (lambdas, exits) in postponedLambdaExits.all()) {
             if (symbol in lambdas) {
                 exits.addAll(currentLevelExits)
                 break

@@ -33,7 +33,8 @@ class FirMissingDependencyStorage(private val session: FirSession) : FirSessionC
 
     private fun findMissingSuperTypes(declaration: FirClassSymbol<*>): Set<TypeWithOrigin> {
         return declaration.collectSuperTypes(session)
-            .filterTo(mutableSetOf()) { (type, _) ->
+            .filterTo(mutableSetOf()) { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/fir/types/FirMissingDependencyStorage.TypeWithOrigin,  */
+                                        (type, _) ->
                 // Ignore types which are already errors.
                 type !is ConeErrorType && type !is ConeDynamicType && type.lowerBoundIfFlexible().let {
                     it is ConeLookupTagBasedType && it.toSymbol(session) == null

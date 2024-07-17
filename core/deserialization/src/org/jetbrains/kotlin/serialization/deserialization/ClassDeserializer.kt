@@ -40,6 +40,7 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         }
         if (classId in BLACK_LIST) return null
 
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/serialization/deserialization/ClassData,  */
         val (nameResolver, classProto, metadataVersion, sourceElement) = key.classData
             ?: components.classDataFinder.findClassData(classId)
             ?: return null

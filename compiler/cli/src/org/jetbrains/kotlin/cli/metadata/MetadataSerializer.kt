@@ -50,6 +50,7 @@ open class MetadataSerializer(
         val languageVersionSettings = environment.configuration.languageVersionSettings
         val files = environment.getSourceFiles()
         val project = environment.project
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/cli/metadata/CommonAnalysisResult,  */
         val (module, bindingContext) = analysisResult
 
         val packageTable = hashMapOf<FqName, PackageParts>()

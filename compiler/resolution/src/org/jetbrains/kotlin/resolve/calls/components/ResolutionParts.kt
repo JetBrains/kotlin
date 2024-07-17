@@ -900,6 +900,7 @@ internal object CheckContextReceiversResolutionPart : ResolutionPart() {
                 getReceiverArgumentWithConstraintIfCompatible(argument, candidateContextReceiverParameter)
             }.toList()
             if (applicableArguments.size == 1) {
+                /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/resolve/calls/components/ApplicableContextReceiverArgumentWithConstraint,  */
                 val (argument, argumentType, expectedType, position) = applicableArguments.single()
                 csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
                 return argument

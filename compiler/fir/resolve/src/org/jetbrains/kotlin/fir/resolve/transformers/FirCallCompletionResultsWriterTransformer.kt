@@ -364,6 +364,7 @@ class FirCallCompletionResultsWriterTransformer(
             substitutor = subCandidate.prepareCustomReturnTypeSubstitutorForFunctionCall() ?: finalSubstitutor
         )
         val allArgs = calleeReference.computeAllArguments(originalArgumentList)
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/transformers/FirCallCompletionResultsWriterTransformer.ResultingArgumentsMapping,  */
         val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
         if (calleeReference.isError) {
             result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
@@ -567,6 +568,7 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
         val allArgs = calleeReference.computeAllArguments(annotationCall.argumentList, argumentMappingWithArrayOfCalls)
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/transformers/FirCallCompletionResultsWriterTransformer.ResultingArgumentsMapping,  */
         val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(
             allArgs,
             precomputedArgumentMapping = argumentMappingWithArrayOfCalls
@@ -815,6 +817,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         val originalArgumentList = delegatedConstructorCall.argumentList
         val allArgs = calleeReference.computeAllArguments(originalArgumentList)
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/transformers/FirCallCompletionResultsWriterTransformer.ResultingArgumentsMapping,  */
         val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
         if (calleeReference.isError) {
             delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
@@ -972,7 +975,8 @@ class FirCallCompletionResultsWriterTransformer(
 
         val newData = expectedReturnType?.toExpectedType()
         val result = transformElement(anonymousFunction, newData)
-        for ((expression, _) in returnExpressions) {
+        for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/fir/resolve/dfa/cfg/FirAnonymousFunctionReturnExpressionInfo,  */
+        (expression, _) in returnExpressions) {
             expression.transformSingle(this, newData)
         }
 

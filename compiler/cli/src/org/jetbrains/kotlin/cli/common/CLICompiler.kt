@@ -183,7 +183,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         if (!arguments.disableDefaultScriptingPlugin) {
             scriptingPluginOptions.addPlatformOptions(arguments)
             val explicitScriptingPlugin =
-                extractPluginClasspathAndOptions(pluginConfigurations).any { (_, classpath, _) ->
+                extractPluginClasspathAndOptions(pluginConfigurations).any { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 3, destructured variable amount without '_': 1, classId: org/jetbrains/kotlin/cli/plugins/PluginClasspathAndOptions,  */
+                                                                             (_, classpath, _) ->
                     classpath.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) }
                 } || pluginClasspaths.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) }
             val explicitOrLoadedScriptingPlugin = explicitScriptingPlugin ||

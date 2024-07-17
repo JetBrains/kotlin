@@ -234,7 +234,8 @@ class PSICallResolver(
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         if (result is AllCandidatesResolutionResult) {
-            val resolvedCalls = result.allCandidates.map { (candidate, diagnostics) ->
+            val resolvedCalls = result.allCandidates.map { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/calls/model/CandidateWithDiagnostics,  */
+                                                           (candidate, diagnostics) ->
                 val system = candidate.getSystem()
                 val resultingSubstitutor =
                     system.asReadOnlyStorage().buildResultingSubstitutor(system as TypeSystemInferenceExtensionContext)

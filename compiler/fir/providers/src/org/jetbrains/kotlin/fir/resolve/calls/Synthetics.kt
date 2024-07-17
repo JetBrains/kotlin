@@ -117,6 +117,7 @@ class FirSyntheticPropertiesScope private constructor(
         if (getter.isStatic) return
 
         // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/resolve/calls/FirSyntheticPropertiesScope.GetterCompatibilityResult,  */
         val (getterCompatibility, deprecatedOverrideOfHidden) = getterSymbol.computeGetterCompatibility()
         if (getterCompatibility == Incompatible) return
 

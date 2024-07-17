@@ -152,7 +152,8 @@ class ImportIntoFragmentInliningScope private constructor(
     private val additionalDeclarations = mutableListOf<JsStatement>()
 
     override fun hasImport(name: JsName, tag: String): JsName? {
-        return name.localAlias?.let { (name, tag) ->
+        return name.localAlias?.let { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/js/backend/ast/metadata/LocalAlias,  */
+                                      (name, tag) ->
             if (tag != null) {
                 if (tag !in existingBindings) {
                     addNameBinding(name, tag)

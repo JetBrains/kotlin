@@ -58,6 +58,7 @@ abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
                 val map = arrayMap as ArrayMapImpl<T>
                 map.remove(id)
                 if (map.size == 1) {
+                    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/util/ArrayMapImpl.Entry,  */
                     val (index, value) = map.entries().first()
                     arrayMap = OneElementArrayMap(value, index)
                 }

@@ -93,13 +93,15 @@ interface JavaModule {
             get() = moduleInfoFile.extension == JavaFileType.DEFAULT_EXTENSION || moduleInfoFile.fileType == JavaFileType.INSTANCE
 
         override fun exports(packageFqName: FqName): Boolean {
-            return moduleInfo.exports.any { (fqName, toModules) ->
+            return moduleInfo.exports.any { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/jvm/modules/JavaModuleInfo.Exports,  */
+                                            (fqName, toModules) ->
                 fqName == packageFqName && toModules.isEmpty()
             }
         }
 
         override fun exportsTo(packageFqName: FqName, moduleName: String): Boolean {
-            return moduleInfo.exports.any { (fqName, toModules) ->
+            return moduleInfo.exports.any { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/resolve/jvm/modules/JavaModuleInfo.Exports,  */
+                                            (fqName, toModules) ->
                 fqName == packageFqName && (toModules.isEmpty() || moduleName in toModules)
             }
         }

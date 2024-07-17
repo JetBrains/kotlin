@@ -242,14 +242,16 @@ abstract class AbstractFirUseSiteMemberScope(
                 val resultOfIntersection = callablesFromSupertypes[callableSymbol.name]
                     ?.firstOrNull { it.chosenSymbol == callableSymbol }
                     ?: return ProcessorAction.NONE
-                for ((overridden, baseScope) in resultOfIntersection.overriddenMembers) {
+                for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+                (overridden, baseScope) in resultOfIntersection.overriddenMembers) {
                     if (!processor(overridden, baseScope)) return ProcessorAction.STOP
                 }
                 return ProcessorAction.NONE
             }
             else -> {
                 for (resultOfIntersection in directOverridden) {
-                    for ((overridden, baseScope) in resultOfIntersection.overriddenMembers) {
+                    for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+                    (overridden, baseScope) in resultOfIntersection.overriddenMembers) {
                         if (!processor(overridden, baseScope)) return ProcessorAction.STOP
                     }
                 }

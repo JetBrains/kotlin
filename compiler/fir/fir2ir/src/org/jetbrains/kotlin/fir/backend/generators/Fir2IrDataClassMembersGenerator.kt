@@ -224,6 +224,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
         symbolTable: SymbolTable,
     ) {
         for ((irClass, info) in members) {
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/fir/backend/Fir2IrCommonMemberStorage.DataValueClassGeneratedMembersInfo,  */
             val (c, firClass, origin, functions) = info
             MyDataClassMethodsGenerator(c, irClass, firClass, origin, symbolTable).generateBodies(functions)
         }

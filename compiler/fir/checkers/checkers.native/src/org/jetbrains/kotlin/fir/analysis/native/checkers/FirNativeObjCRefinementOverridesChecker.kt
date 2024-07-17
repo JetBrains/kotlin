@@ -74,7 +74,8 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             var isRefinedInSwift = swiftAnnotations.isNotEmpty()
             val supersNotHiddenFromObjC = mutableListOf<FirCallableSymbol<*>>()
             val supersNotRefinedInSwift = mutableListOf<FirCallableSymbol<*>>()
-            for ((symbol, scope) in overriddenMemberSymbols) {
+            for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
+            (symbol, scope) in overriddenMemberSymbols) {
                 val (superIsHiddenFromObjC, superIsRefinedInSwift) = symbol.inheritsRefinedAnnotations(context.session, scope)
                 if (superIsHiddenFromObjC) isHiddenFromObjC = true else supersNotHiddenFromObjC.add(symbol)
                 if (superIsRefinedInSwift) isRefinedInSwift = true else supersNotRefinedInSwift.add(symbol)
@@ -91,6 +92,7 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             val (hasObjC, hasSwift) = hasRefinedAnnotations(session)
             if (hasObjC && hasSwift) return true to true
             // Note: `checkMember` requires all overridden symbols to be either refined or not refined.
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/scopes/MemberWithBaseScope,  */
             val (overriddenMemberSymbol, scope) = baseScope.getDirectOverriddenMembersWithBaseScope(this).firstOrNull()
                 ?: return hasObjC to hasSwift
             val (inheritsObjC, inheritsSwift) = overriddenMemberSymbol.inheritsRefinedAnnotations(session, scope)

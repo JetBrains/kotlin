@@ -45,6 +45,7 @@ class SourceMapBuilderConsumer(
                 // This branch is only taken on the legacy backend
                 if (sourceInfo.isFakePsiElement) return
                 try {
+                    /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 3, destructured variable amount without '_': 3, classId: org/jetbrains/kotlin/js/backend/ast/JsLocation,  */
                     val (sourceFilePath, startLine, startChar) = PsiUtils.extractLocationFromPsi(sourceInfo, pathResolver)
                     val psiFile = sourceInfo.containingFile
                     val file = File(psiFile.viewProvider.virtualFile.path)

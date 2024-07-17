@@ -32,7 +32,8 @@ fun checkMissingDependencySuperTypes(
     if (declaration !is FirClassSymbol<*>) return false
 
     val missingSuperTypes = context.session.missingDependencyStorage.getMissingSuperTypes(declaration)
-    for ((superType, origin) in missingSuperTypes) {
+    for (/** STATISTICS ON DESTRUCTURING - type: For, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/fir/types/FirMissingDependencyStorage.TypeWithOrigin,  */
+    (superType, origin) in missingSuperTypes) {
         val diagnostic =
             if (origin == FirMissingDependencyStorage.SupertypeOrigin.TYPE_ARGUMENT && !context.languageVersionSettings.supportsFeature(
                     LanguageFeature.ForbidUsingSupertypesWithInaccessibleContentInTypeArguments

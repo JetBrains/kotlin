@@ -170,6 +170,7 @@ class HostExecutor : Executor {
             environment().putAll(request.environment)
         }.scoped { process ->
             val streams = ProcessStreams(this, process, request.stdin, request.stdout, request.stderr)
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: kotlin/time/TimedValue,  */
             val (isTimeout, duration) = measureTimedValue {
                 !process.waitFor(request.timeout)
             }

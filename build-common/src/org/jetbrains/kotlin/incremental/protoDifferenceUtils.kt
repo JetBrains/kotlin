@@ -184,7 +184,9 @@ class DifferenceCalculatorForClass(
     )
 
     override fun difference(): Difference {
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/incremental/ClassProtoData,  */
         val (oldProto, oldNameResolver) = oldData
+        /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/incremental/ClassProtoData,  */
         val (newProto, newNameResolver) = newData
 
         val diff = compareObject.difference(oldProto, newProto)

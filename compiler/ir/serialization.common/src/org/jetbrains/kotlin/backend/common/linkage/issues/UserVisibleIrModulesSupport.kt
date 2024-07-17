@@ -190,6 +190,7 @@ open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDepen
 
     private fun Map<ResolvedDependencyId, ModuleWithUninitializedDependencies>.stampDependenciesWithRequestedVersionEqualToSelectedVersion(): Map<ResolvedDependencyId, ResolvedDependency> {
         return mapValues { (moduleId, moduleWithUninitializedDependencies) ->
+            /** STATISTICS ON DESTRUCTURING - type: Common, destructured variable total amount: 2, destructured variable amount without '_': 2, classId: org/jetbrains/kotlin/backend/common/linkage/issues/UserVisibleIrModulesSupport.ModuleWithUninitializedDependencies,  */
             val (module, outgoingDependencyIds) = moduleWithUninitializedDependencies
             outgoingDependencyIds.forEach { outgoingDependencyId ->
                 val dependencyModule = getValue(outgoingDependencyId).module

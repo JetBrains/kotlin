@@ -161,7 +161,8 @@ internal class ConstraintSystemImpl(
         }
         fun KotlinType.substitute(): KotlinType? = substitutor.substitute(this, Variance.INVARIANT)
 
-        return initialConstraints.all { (kind, subtype, superType, position) ->
+        return initialConstraints.all { /** STATISTICS ON DESTRUCTURING - type: Lambdas, destructured variable total amount: 4, destructured variable amount without '_': 4, classId: org/jetbrains/kotlin/resolve/calls/inference/ConstraintSystemBuilderImpl.Constraint,  */
+                                        (kind, subtype, superType, position) ->
             val resultSubType = subtype.substitute()?.let {
                 // the call might be done via safe access, so we check for notNullable receiver type;
                 // 'unsafe call' error is reported otherwise later
