@@ -26,6 +26,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
@@ -74,6 +75,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
 
+        BuildUidService.registerIfAbsent(project)
         if (project.kotlinPropertiesProvider.enableFusMetricsCollection) {
             BuildFusService.registerIfAbsent(project, pluginVersion)
         }

@@ -84,6 +84,7 @@ dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
     commonApi(project(":kotlin-gradle-plugin-model"))
+    commonApi(project(":libraries:tools:gradle:fus-statistics-gradle-plugin"))
 
     // Following two dependencies is a workaround for IDEA import to pick-up them correctly
     commonCompileOnly(project(":kotlin-gradle-plugin-api")) {

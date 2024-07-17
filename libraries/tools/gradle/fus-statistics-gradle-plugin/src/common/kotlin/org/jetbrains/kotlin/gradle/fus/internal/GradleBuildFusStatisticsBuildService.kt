@@ -6,19 +6,22 @@
 package org.jetbrains.kotlin.gradle.fus.internal
 
 import org.gradle.api.Project
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
 import org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService
-import java.util.*
 
 abstract class GradleBuildFusStatisticsBuildService : GradleBuildFusStatisticsService,
     BuildService<GradleBuildFusStatisticsBuildService.Parameters>, AutoCloseable {
     interface Parameters : BuildServiceParameters {
         val fusStatisticsRootDirPath: Property<String>
-        val buildId: Property<String>
+        val configurationMetrics: ListProperty<Map<String, Any>>
+        val fusStatisticIsEnabled: Property<Boolean>
+        val useBuildFinishFlowAction: Property<Boolean>
     }
 
     companion object {
@@ -26,7 +29,7 @@ abstract class GradleBuildFusStatisticsBuildService : GradleBuildFusStatisticsSe
         private const val FUS_STATISTICS_PATH = "kotlin.fus.statistics.path"
         private val serviceClass = GradleBuildFusStatisticsBuildService::class.java
         private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
-        fun registerIfAbsent(project: Project): Provider<out GradleBuildFusStatisticsService>? {
+        fun registerIfAbsent(project: Project): Provider<out GradleBuildFusStatisticsService> {
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
                 return it.service as Provider<GradleBuildFusStatisticsService>
@@ -40,10 +43,15 @@ abstract class GradleBuildFusStatisticsBuildService : GradleBuildFusStatisticsSe
                         project.gradle.gradleUserHomeDir.path
                     }
                     it.parameters.fusStatisticsRootDirPath.set(customPath)
-                    it.parameters.buildId.set(UUID.randomUUID().toString())
+                    it.parameters.fusStatisticIsEnabled.set(statisticsIsEnabled)
+                    it.parameters.configurationMetrics.add(emptyMap())
+                    it.parameters.useBuildFinishFlowAction.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
                 }
             } else {
-                project.gradle.sharedServices.registerIfAbsent(serviceName, DummyGradleBuildFusStatisticsService::class.java) {}
+                project.gradle.sharedServices.registerIfAbsent(serviceName, DummyGradleBuildFusStatisticsService::class.java) {
+                    it.parameters.fusStatisticIsEnabled.set(statisticsIsEnabled)
+                    it.parameters.useBuildFinishFlowAction.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
+                }
             }).also { configureTasks(project, it) }
         }
 
@@ -51,6 +59,21 @@ abstract class GradleBuildFusStatisticsBuildService : GradleBuildFusStatisticsSe
             project.tasks.withType(UsesGradleBuildFusStatisticsService::class.java).configureEach { task ->
                 task.fusStatisticsBuildService.value(serviceProvider).disallowChanges()
                 task.usesService(serviceProvider)
+            }
+        }
+
+        /**
+         * Invokes [GradleBuildFusStatisticsBuildService] if the reporting service is initialized and add configuration time metrics.
+         *
+         * New value will be present in configuration cache if GradleBuildFusStatisticsBuildService.Parameters are not calculated yet
+         * [GradleBuildFusStatisticsBuildService.reportMetric] should be called for execution time metrics
+         */
+        internal fun Project.addConfigurationMetric(reportAction: () -> Map<String, Any>) {
+            project.gradle.sharedServices.registrations.findByName(serviceName)?.also {
+                val parameters = it.parameters as Parameters
+                parameters.configurationMetrics.add(project.provider {
+                    reportAction()
+                })
             }
         }
     }

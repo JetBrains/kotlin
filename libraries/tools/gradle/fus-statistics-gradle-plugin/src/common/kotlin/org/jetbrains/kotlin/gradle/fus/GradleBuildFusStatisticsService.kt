@@ -15,7 +15,7 @@ import org.gradle.api.tasks.Internal
 interface GradleBuildFusStatisticsService {
 
     /**
-     * Reports a metric by its name and optionally subproject.
+     * Reports an execution time metric by its name and optionally subproject.
      *
      * @param name the metric name
      * @param value  the metric value.

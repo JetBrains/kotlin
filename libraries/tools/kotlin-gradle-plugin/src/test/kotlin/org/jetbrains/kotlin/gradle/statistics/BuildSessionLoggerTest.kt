@@ -50,11 +50,11 @@ class BuildSessionLoggerTest {
 
         assertEquals(true, logger1.isBuildSessionStarted())
 
-        logger1.finishBuildSession()
+        logger1.finishBuildSession(emptyList())
         // created single folder with kotlin statistics
         assertEquals(1, statFilesCount())
 
-        logger2.finishBuildSession()
+        logger2.finishBuildSession(listOf(mapOf(Pair("metric", 20))))
         assertEquals(2, statFilesCount())
 
         rootFolder.listFiles()?.first()?.listFiles()?.forEach { file ->
@@ -70,7 +70,7 @@ class BuildSessionLoggerTest {
         val maxFiles = 100
         val logger = BuildSessionLogger(rootFolder, maxFiles)
         logger.startBuildSession("buildId_1")
-        logger.finishBuildSession()
+        logger.finishBuildSession(emptyList())
         assertEquals(1, statFilesCount())
 
         val statsFolder = rootFolder.listFiles()?.single() ?: fail("${rootFolder.absolutePath} was not created")
@@ -82,7 +82,7 @@ class BuildSessionLoggerTest {
         }
 
         logger.startBuildSession("buildId_1")
-        logger.finishBuildSession()
+        logger.finishBuildSession(emptyList())
 
         assertTrue(
             statsFolder.listFiles()?.count { it.name == singleStatFile.name } == 1,
@@ -116,14 +116,14 @@ class BuildSessionLoggerTest {
         reportFile.createNewFile()
         reportFile.appendText("${StringMetrics.USE_FIR.name}=true\n")
 
-        logger.finishBuildSession()
+        logger.finishBuildSession(listOf(mapOf(Pair("metric", 10))))
         assertEquals(1, statFilesCount())
 
         val statFile = rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")
         statFile.appendBytes("break format of the file".toByteArray()) //this line should be filtered by MetricsContainer.readFromFile
 
         logger.startBuildSession(buildId)
-        logger.finishBuildSession()
+        logger.finishBuildSession(listOf(mapOf(Pair("metric", 20))))
 
         val metrics = ArrayList<MetricsContainer>()
         MetricsContainer.readFromFile(statFile) {
@@ -161,7 +161,32 @@ class BuildSessionLoggerTest {
         for (metric in NumericalMetrics.values()) {
             logger.report(metric, System.currentTimeMillis())
         }
-        logger.finishBuildSession()
+        logger.finishBuildSession(emptyList())
+
+        MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
+            for (metric in StringMetrics.values()) {
+                assertNotNull(it.getMetric(metric), "Could not find metric ${metric.name}")
+            }
+            for (metric in BooleanMetrics.values()) {
+                assertTrue(it.getMetric(metric)?.getValue() != null, "Could not find metric ${metric.name}")
+            }
+            for (metric in NumericalMetrics.values()) {
+                assertNotNull(it.getMetric(metric), "Could not find metric ${metric.name}")
+            }
+        }
+    }
+
+    @Test
+    fun testCustomMetrics() {
+        val logger = BuildSessionLogger(rootFolder)
+        logger.startBuildSession("test")
+
+        val customMetrics = ArrayList<Map<String, Any>>()
+        customMetrics.add(StringMetrics.values().associateBy(StringMetrics::name) { "value" })
+        customMetrics.add(BooleanMetrics.values().associateBy(BooleanMetrics::name) { true })
+        customMetrics.add(NumericalMetrics.values().associateBy(NumericalMetrics::name) { 1 })
+
+        logger.finishBuildSession(customMetrics)
 
         MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
             for (metric in StringMetrics.values()) {

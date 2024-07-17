@@ -10,6 +10,7 @@ import org.gradle.api.logging.Logging
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFusStatisticsBuildService() {
@@ -17,7 +18,15 @@ internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFus
     private val metrics = ConcurrentHashMap<Metric, Any>()
     private val log = Logging.getLogger(this.javaClass)
 
+    //It is not possible to rely on BuildUidService in close() method
+    private val buildId = UUID.randomUUID().toString()
+
+    //since Gradle
     override fun close() {
+        //since Gradle 8.1 flow action [BuildFinishFlowAction] is used to collect all metrics and write them down in a single file
+        if (parameters.useBuildFinishFlowAction.get()) {
+            return
+        }
         val reportDir = File(parameters.fusStatisticsRootDirPath.get(), STATISTICS_FOLDER_NAME)
         try {
             Files.createDirectories(reportDir.toPath())
@@ -25,7 +34,7 @@ internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFus
             log.warn("Failed to create directory '$reportDir' for FUS report. FUS report won't be created", e)
             return
         }
-        val reportFile = reportDir.resolve(parameters.buildId.get())
+        val reportFile = reportDir.resolve(buildId)
         reportFile.createNewFile()
         FileOutputStream(reportFile, true).bufferedWriter().use {
             for ((key, value) in metrics) {
@@ -34,6 +43,7 @@ internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFus
             it.appendLine(BUILD_SESSION_SEPARATOR)
         }
     }
+
 
     override fun reportMetric(name: String, value: Boolean, subprojectName: String?) {
         internalReportMetric(name, value, subprojectName)

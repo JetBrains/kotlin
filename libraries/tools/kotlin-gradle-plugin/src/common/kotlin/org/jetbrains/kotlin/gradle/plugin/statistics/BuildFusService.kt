@@ -165,20 +165,20 @@ abstract class BuildFusService : BuildService<BuildFusService.Parameters>, AutoC
 
     override fun close() {
         if (!parameters.useBuildFinishFlowAction.get()) {
-            recordBuildFinished(buildFailed)
+            recordBuildFinished(buildFailed, buildId)
         }
         KotlinBuildStatsBeanService.closeServices()
         log.kotlinDebug("Close ${this.javaClass.simpleName}")
     }
 
-    internal fun recordBuildFinished(buildFailed: Boolean) {
+    internal fun recordBuildFinished(buildFailed: Boolean, buildId: String, customMetrics: List<Map<String, Any>> = emptyList()) {
         BuildFinishMetrics.collectMetrics(log, buildFailed, buildStartTime, projectEvaluatedTime, fusMetricsConsumer)
         parameters.configurationMetrics.orElse(emptyList()).get().forEach { it.addToConsumer(fusMetricsConsumer) }
         parameters.generalConfigurationMetrics.orNull?.addToConsumer(fusMetricsConsumer)
         parameters.buildStatisticsConfiguration.orNull?.also {
             val loggerService = KotlinBuildStatsLoggerService(it)
             loggerService.initSessionLogger(buildId)
-            loggerService.reportBuildFinished(fusMetricsConsumer)
+            loggerService.reportBuildFinished(fusMetricsConsumer, customMetrics)
         }
     }
 }

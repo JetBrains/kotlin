@@ -15,10 +15,9 @@ import javax.inject.Inject
  * FusStatisticsPlugin is a Gradle plugin that registers a BuildService to collect and report
  * feature usage statistics during the build process.
  */
-class FusStatisticsPlugin @Inject constructor(
-    private val providerFactory: ProviderFactory
-) : Plugin<Project> {
+class FusStatisticsPlugin @Inject constructor() : Plugin<Project> {
     override fun apply(project: Project) {
+        BuildUidService.registerIfAbsent(project)
         GradleBuildFusStatisticsBuildService.registerIfAbsent(project)
     }
 }

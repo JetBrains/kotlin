@@ -18,6 +18,7 @@
          <trust file="kotlin-native-prebuilt-.*-2\.1\.0(-.+)?" regex="true"/>
          <trust group="gradle" name="gradle" file="gradle-.*-src[.]zip" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="builtins" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="fus-statistics-gradle-plugin" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-android-extensions" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-embeddable" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-gradle" version="2\.0\.20(-.+)?|2\.1\.0(-.+)?" regex="true"/>

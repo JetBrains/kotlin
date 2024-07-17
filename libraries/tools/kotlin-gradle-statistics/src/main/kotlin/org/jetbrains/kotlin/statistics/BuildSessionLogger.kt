@@ -63,13 +63,16 @@ class BuildSessionLogger(
      * - any other process can add metrics to the file during build
      * - files with age (current time - last modified) more than maxFileAge should be deleted (if we trust lastModified returned by FS)
      */
-    private fun storeMetricsIntoFile(buildId: String) {
+    private fun storeMetricsIntoFile(buildId: String, customMetrics: List<Map<String, Any>>) {
         try {
             statisticsFolder.mkdirs()
             val file = File(statisticsFolder, buildId + PROFILE_FILE_NAME_SUFFIX)
 
-            FileOutputStream(file, true).bufferedWriter().use {
-                metricsContainer.flush(it)
+            FileOutputStream(file, true).bufferedWriter().use { writer ->
+                customMetrics.forEach { list ->
+                    list.forEach { (metric, value) -> writer.appendLine("$metric=${value}")}
+                }
+                metricsContainer.flush(writer)
             }
         } catch (_: IOException) {
             //ignore io exception
@@ -95,9 +98,9 @@ class BuildSessionLogger(
 
 
     @Synchronized
-    fun finishBuildSession() {
+    fun finishBuildSession(customMetrics: List<Map<String, Any>> = emptyList()) {
         buildSession?.also {
-            storeMetricsIntoFile(it.buildUid)
+            storeMetricsIntoFile(it.buildUid, customMetrics)
         }
         buildSession = null
         clearOldFiles()
