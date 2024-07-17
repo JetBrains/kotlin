@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
-import org.jetbrains.kotlin.fir.analysis.collectors.SimpleDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.CliDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
 import org.jetbrains.kotlin.fir.analysis.collectors.components.LossDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ReportCommitterDiagnosticComponent
@@ -49,7 +49,7 @@ fun FirSession.collectLostDiagnosticsOnFile(
     file: FirFile,
     reporter: BaseDiagnosticsCollector,
 ): List<KtDiagnostic> {
-    val collector = SimpleDiagnosticsCollector(this, scopeSession) { reporter ->
+    val collector = CliDiagnosticsCollector(this, scopeSession) { reporter ->
         DiagnosticCollectorComponents(
             listOf(LossDiagnosticCollectorComponent(this, reporter)),
             ReportCommitterDiagnosticComponent(this, reporter)

@@ -11,17 +11,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.MutableCheckerContext
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 
-class SimpleDiagnosticsCollector(
+class CliDiagnosticsCollector(
     session: FirSession,
     scopeSession: ScopeSession,
     createComponents: (DiagnosticReporter) -> DiagnosticCollectorComponents,
 ) : AbstractDiagnosticCollector(session, scopeSession, createComponents) {
     override fun createVisitor(components: DiagnosticCollectorComponents): CheckerRunningDiagnosticCollectorVisitor {
         return CheckerRunningDiagnosticCollectorVisitor(
-            MutableCheckerContext(
-                this,
-                ReturnTypeCalculatorForFullBodyResolve.Default
-            ),
+            MutableCheckerContext(this, ReturnTypeCalculatorForFullBodyResolve.Default),
             components
         )
     }
