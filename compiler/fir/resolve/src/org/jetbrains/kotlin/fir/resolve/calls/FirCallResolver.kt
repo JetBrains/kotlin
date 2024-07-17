@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirOverloadByLambdaReturnTypeResolver
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.callConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
-import org.jetbrains.kotlin.fir.resolve.calls.stages.mapArguments
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
@@ -40,7 +38,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.doesResolutionResultOverrideOtherToPreserveCompatibility
-import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -50,7 +47,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -592,66 +588,10 @@ class FirCallResolver(
         val reference = annotation.calleeReference as? FirSimpleNamedReference ?: return null
         val annotationClassSymbol = annotation.getCorrespondingClassSymbolOrNull(session)
         val resolvedReference = if (annotationClassSymbol != null && annotationClassSymbol.fir.classKind == ClassKind.ANNOTATION_CLASS) {
-            val immediateSymbol = annotation.annotationTypeRef.coneType.abbreviatedTypeOrSelf.toSymbol(session) as? FirClassLikeSymbol<*>
-                ?: annotationClassSymbol // Shouldn't be the case for green code
-            val constructorSymbol = getConstructorSymbol(immediateSymbol)
-            constructorSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
+            val annotationConeType = annotation.annotationTypeRef.coneType
+            val constructorSymbol = getAnnotationConstructorSymbol(annotationConeType, annotationClassSymbol)
 
-            if (constructorSymbol != null && annotation.arguments.isNotEmpty()) {
-                // We want to "desugar" array literal arguments to arrayOf, intArrayOf, floatArrayOf and other *arrayOf* calls
-                // so that we can properly complete them eventually.
-                // In order to find out what the expected type is, we need to run argument mapping.
-                // Array literals can be nested despite the fact they are not supported in annotation arguments.
-                // But we should traverse them all recursively to report type mismatches.
-                // For nested array literal, we need a new expected type obtained from the previous expected type (extract type of array element).
-                // We don't want to force full completion before the whole call is completed so that type variables are preserved.
-                // But we need to pass expectType to figure out the correct *arrayOf* function (because Array<T> and primitive arrays can't be matched).
-                val mapping = transformer.resolutionContext.bodyResolveComponents.mapArguments(
-                    annotation.arguments.map {
-                        @OptIn(UnsafeExpressionUtility::class)
-                        ConeResolutionAtom.createRawAtomForPotentiallyUnresolvedExpression(it)
-                    },
-                    constructorSymbol.fir,
-                    originScope = null,
-                    callSiteIsOperatorCall = false,
-                )
-                val argumentsToParameters = mapping.toArgumentToParameterMapping().unwrapAtoms()
-
-                fun FirCall.transformArgumentList(getExpectedType: (FirExpression) -> FirTypeRef?) {
-                    replaceArgumentList(
-                        buildArgumentList {
-                            source = argumentList.source
-                            argumentList.arguments.mapTo(arguments) { arg ->
-                                val unwrappedArgument = arg.unwrapArgument()
-                                val expectedType = getExpectedType(arg)
-                                val resolutionMode = if (unwrappedArgument is FirArrayLiteral && expectedType is FirResolvedTypeRef) {
-                                    unwrappedArgument.transformArgumentList {
-                                        // Trying to extract expected type for the next nested array literal
-                                        expectedType.coneType.arrayElementType()?.toFirResolvedTypeRef()
-                                    }
-
-                                    // Enabling expectedTypeMismatchIsReportedInChecker clarifies error messages:
-                                    // It will be reported single ARGUMENT_TYPE_MISMATCH on the array literal in checkApplicabilityForArgumentType
-                                    // instead of several TYPE_MISMATCH for every mismatched argument.
-                                    ResolutionMode.WithExpectedType(
-                                        expectedType,
-                                        forceFullCompletion = false,
-                                        expectedTypeMismatchIsReportedInChecker = true
-                                    )
-                                } else {
-                                    ResolutionMode.ContextDependent
-                                }
-
-                                return@mapTo arg.transformSingle(transformer, resolutionMode)
-                            }
-                        }
-                    )
-                }
-
-                annotation.transformArgumentList { argumentsToParameters[it]?.returnTypeRef }
-            } else {
-                annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent))
-            }
+            transformer.transformAnnotationCallArguments(annotation, constructorSymbol)
 
             val callInfo = toCallInfo(annotation, reference)
 
@@ -688,6 +628,17 @@ class FirCallResolver(
         }
     }
 
+    fun getAnnotationConstructorSymbol(
+        annotationConeType: ConeKotlinType,
+        annotationClassSymbol: FirRegularClassSymbol?,
+    ): FirConstructorSymbol? {
+        val immediateSymbol = annotationConeType.abbreviatedTypeOrSelf.toSymbol(session) as? FirClassLikeSymbol<*>
+            ?: annotationClassSymbol // Shouldn't be the case for green code
+        val constructorSymbol = immediateSymbol?.getPrimaryConstructorSymbol(session, components.scopeSession)
+        constructorSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
+        return constructorSymbol
+    }
+
     private fun toCallInfo(annotation: FirAnnotationCall, reference: FirSimpleNamedReference): CallInfo = CallInfo(
         annotation,
         CallKind.Function,
@@ -702,23 +653,6 @@ class FirCallResolver(
         components.containingDeclarations,
         resolutionMode = ResolutionMode.ContextIndependent,
     )
-
-    private fun getConstructorSymbol(annotationClassSymbol: FirClassLikeSymbol<*>): FirConstructorSymbol? {
-        var constructorSymbol: FirConstructorSymbol? = null
-        val (_, constructorsScope) = annotationClassSymbol.expandedClassWithConstructorsScope(
-            session, components.scopeSession,
-            memberRequiredPhaseForRegularClasses = null,
-        ) ?: return null
-
-        constructorsScope.processDeclaredConstructors {
-            // Typealias constructors & SO override constructors of primary constructors are not marked as primary
-            val unwrappedConstructor = it.fir.originalConstructorIfTypeAlias?.unwrapSubstitutionOverrides() ?: it.fir
-            if (unwrappedConstructor.isPrimary && constructorSymbol == null) {
-                constructorSymbol = it
-            }
-        }
-        return constructorSymbol
-    }
 
     private fun runResolutionForGivenSymbol(callInfo: CallInfo, symbol: FirBasedSymbol<*>): ResolutionResult {
         val candidateFactory = CandidateFactory(transformer.resolutionContext, callInfo)
