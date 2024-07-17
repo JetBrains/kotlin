@@ -178,25 +178,6 @@ private val sharedVariablesPhase = createFileLoweringPhase(
         prerequisite = setOf(lateinitPhase)
 )
 
-private val lowerOuterThisInInlineFunctionsPhase = createFileLoweringPhase(
-        { context, irFile ->
-            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitFunction(declaration: IrFunction) {
-                    declaration.acceptChildrenVoid(this)
-
-                    if (declaration.isInline)
-                        OuterThisLowering(context).lower(declaration)
-                }
-            })
-        },
-        name = "LowerOuterThisInInlineFunctions",
-        description = "Lower outer this in inline functions"
-)
-
 private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
         { context, irFile ->
             LocalClassesInInlineLambdasLowering(context).lower(irFile)
@@ -606,7 +587,6 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSynt
         lowerBeforeInlinePhase,
         lateinitPhase,
         sharedVariablesPhase,
-        lowerOuterThisInInlineFunctionsPhase,
         extractLocalClassesFromInlineBodies,
         inlineCallableReferenceToLambdaPhase,
         arrayConstructorPhase,
