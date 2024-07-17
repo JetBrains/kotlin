@@ -583,8 +583,16 @@ fun Project.configureKotlinCompileTasksGradleCompatibility() {
                     // such lambdas are not serializable so are not compatible with Gradle configuration cache.
                     // It doesn't lead to a significant difference in binaries sizes, and previously (before LV 1.5) the `class` value was set by default.
                     "-Xsam-conversions=class",
+                    "-version",
                 )
             )
+        }
+    }
+    afterEvaluate {
+        val fixatedBuildToolsApiClasspath by rootProject.buildscript.configurations
+        configurations.findByName("kotlinBuildToolsApiClasspath")?.let {
+            it.dependencies.clear()
+            dependencies.add(it.name, files(fixatedBuildToolsApiClasspath))
         }
     }
 }

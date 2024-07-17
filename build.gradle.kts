@@ -10,10 +10,12 @@ buildscript {
     // see also configureCompilerClasspath@
     val bootstrapCompilerClasspath by configurations.creating
     val bootstrapBuildToolsApiClasspath by configurations.creating
+    val fixatedBuildToolsApiClasspath by configurations.creating
 
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
         bootstrapBuildToolsApiClasspath(kotlin("build-tools-impl", bootstrapKotlinVersion))
+        fixatedBuildToolsApiClasspath(kotlin("build-tools-impl", "2.0.20-Beta2"))
 
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     }
