@@ -161,8 +161,8 @@ object FirKotlinToJvmBytecodeCompiler {
     }
 
     fun createPendingReporter(messageCollector: MessageCollector): PendingDiagnosticsCollectorWithSuppress =
-        DiagnosticReporterFactory.createPendingReporter { isError, message ->
-            messageCollector.report(if (isError) CompilerMessageSeverity.ERROR else CompilerMessageSeverity.WARNING, message)
+        DiagnosticReporterFactory.createPendingReporter { message, severity ->
+            messageCollector.report(severity, message)
         }
 
     fun FrontendContext.runFrontend(
