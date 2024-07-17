@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.toSourceLinesMapping
 import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         if (files.any { "FIR_IGNORE" in it.directives }) return

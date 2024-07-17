@@ -1,24 +1,16 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.FirDefaultOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
-import org.jetbrains.kotlin.fir.analysis.checkers.FirIdentityLessPlatformDeterminer
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.scopes.FirDefaultImportProviderHolder
-import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
-import org.jetbrains.kotlin.fir.scopes.impl.FirDelegatedMembersFilter
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -28,6 +20,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
+@ObsoleteTestInfrastructure
 object FirSessionFactoryHelper {
     inline fun createSessionWithDependencies(
         moduleName: Name,
@@ -90,7 +83,6 @@ object FirSessionFactoryHelper {
     }
 
     @OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)
-    @TestOnly
     fun createEmptySession(): FirSession {
         return object : FirSession(null, Kind.Source) {}.apply {
             val moduleData = FirModuleDataImpl(
@@ -128,21 +120,5 @@ object FirSessionFactoryHelper {
 
             register(FirExtensionService::class, FirExtensionService(this))
         }
-    }
-
-    /**
-     * Registers default components for [FirSession]
-     * They could be overridden by calling a function that registers specific platform components
-     */
-    @OptIn(SessionConfiguration::class)
-    fun FirSession.registerDefaultComponents() {
-        register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
-        register(ConeCallConflictResolverFactory::class, DefaultCallConflictResolverFactory)
-        register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirOverridesBackwardCompatibilityHelper::class, FirDefaultOverridesBackwardCompatibilityHelper)
-        register(FirDelegatedMembersFilter::class, FirDelegatedMembersFilter.Default)
-        register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
-        register(FirDefaultImportProviderHolder::class, FirDefaultImportProviderHolder(CommonPlatformAnalyzerServices))
-        register(FirIdentityLessPlatformDeterminer::class, FirIdentityLessPlatformDeterminer.Default)
     }
 }

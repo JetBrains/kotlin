@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -31,6 +32,7 @@ import kotlin.system.measureNanoTime
 
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
+@ObsoleteTestInfrastructure
 class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
     fun testTotalKotlinWithExpressionTrees() {
