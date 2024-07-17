@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.common
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.OptInLanguageVersionSettingsCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.CliOnlyLanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -420,7 +420,7 @@ private inline fun <F> createSingleSession(
 
     val session = createFirSession(files, platformModuleData, sessionProvider) {
         sessionConfigurator()
-        useCheckers(OptInLanguageVersionSettingsCheckers)
+        useCheckers(CliOnlyLanguageVersionSettingsCheckers)
     }
     return SessionWithSources(session, files)
 }
@@ -464,7 +464,7 @@ private inline fun <F> createSessionsForLegacyMppProject(
         sessionConfigurator()
         // The CLI session might contain an opt-in for an annotation that's defined in the platform module.
         // Therefore, only run the opt-in LV checker on the platform module.
-        useCheckers(OptInLanguageVersionSettingsCheckers)
+        useCheckers(CliOnlyLanguageVersionSettingsCheckers)
     }
 
     return listOf(
@@ -509,7 +509,7 @@ private inline fun <F> createSessionsForHmppProject(
             // The CLI session might contain an opt-in for an annotation that's defined in one of the modules.
             // The only module that's guaranteed to have a dependency on this module is the last one.
             if (i == hmppModuleStructure.modules.lastIndex) {
-                useCheckers(OptInLanguageVersionSettingsCheckers)
+                useCheckers(CliOnlyLanguageVersionSettingsCheckers)
             }
         }
         SessionWithSources(session, sources)
