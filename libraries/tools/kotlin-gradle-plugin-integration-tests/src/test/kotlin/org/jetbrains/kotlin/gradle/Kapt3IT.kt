@@ -22,7 +22,6 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidExternalIT
 import org.jetbrains.kotlin.gradle.android.Kapt4AndroidIT
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.project as testBaseProject
@@ -745,10 +744,7 @@ open class Kapt3IT : Kapt3BaseIT() {
             buildAndFail("build") {
                 val actual = getErrorMessages()
                 assertEquals(
-                    expected = genJavaErrorString(
-                        7,
-                        if (buildOptions.languageVersion?.startsWith("2") ?: (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0)) 18 else 19
-                    ),
+                    expected = genJavaErrorString(7, 19),
                     actual = actual
                 )
             }
