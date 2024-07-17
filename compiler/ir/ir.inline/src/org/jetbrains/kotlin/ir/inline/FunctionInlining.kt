@@ -36,7 +36,29 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+interface CallInlinerStrategy {
+    /**
+     * TypeOf function requires some custom backend-specific processing. This is a customization point for that.
+     *
+     * @param expression is a copy of original IrCall with types substituted by normal rules
+     * @param nonSubstitutedTypeArgument is typeArgument of call with only reified type parameters substituted
+     *
+     * @return new node to insert instead of typeOf call.
+     */
+    fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrCall
+
+    object DEFAULT : CallInlinerStrategy {
+        override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrCall {
+            return expression.apply {
+                putTypeArgument(0, nonSubstitutedTypeArgument)
+            }
+        }
+    }
+}
+
 abstract class InlineFunctionResolver {
+    open val callInlinerStrategy: CallInlinerStrategy
+        get() = CallInlinerStrategy.DEFAULT
     open val allowExternalInlining: Boolean
         get() = false
 
@@ -177,7 +199,7 @@ open class FunctionInlining(
                 (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }
-            InlineFunctionBodyPreprocessor(typeArguments, parent)
+            InlineFunctionBodyPreprocessor(typeArguments, parent, inlineFunctionResolver.callInlinerStrategy)
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()

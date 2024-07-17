@@ -32,6 +32,7 @@ private enum class NonReifiedTypeParameterRemappingMode {
 internal class InlineFunctionBodyPreprocessor(
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
     val parent: IrDeclarationParent?,
+    val strategy: CallInlinerStrategy,
 ) {
 
     fun preprocess(irElement: IrFunction): IrFunction {
@@ -171,7 +172,7 @@ internal class InlineFunctionBodyPreprocessor(
             if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
                 // We should neither erase nor substitute non-reified type parameters in the `typeOf` call so that reflection is able
                 // to create a proper KTypeParameter for it. See KT-60175, KT-30279.
-                expressionCopy.putTypeArgument(0, expression.getTypeArgument(0)?.leaveNonReifiedAsIs())
+                return strategy.postProcessTypeOf(expression, expression.getTypeArgument(0)!!.leaveNonReifiedAsIs())
             }
             return expressionCopy
         }
