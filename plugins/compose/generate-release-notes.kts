@@ -60,7 +60,7 @@ fun issueToBuganizerUrl(issue: String): String = "https://issuetracker.google.co
 
 fun Commit.asReleaseNote(): String {
     val commitLink = "[${commit.substring(0, 7)}](${commitToGitHubUrl(commit)})"
-    val issueLinks = issues.map { issue -> "[b/$issue](${issueToBuganizerUrl(issue)})" }.joinToString(", ")
+    val issueLinks = issues.map { issue -> "[`b/$issue`](${issueToBuganizerUrl(issue)})" }.joinToString(", ")
     return "- $issueLinks ${relnote ?: title}"
 }
 
