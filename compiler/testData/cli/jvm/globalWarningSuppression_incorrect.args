@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/globalWarningSuppression.kt
+-d
+$TEMP_DIR$
+-Xrender-internal-diagnostic-names
+-Xsuppress-warning=CONFLICTING_PROJECTION
+-Xsuppress-warning=NON_EXISTING_DIAGNOSTIC

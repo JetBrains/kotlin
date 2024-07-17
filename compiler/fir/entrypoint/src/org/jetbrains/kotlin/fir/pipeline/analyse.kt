@@ -32,12 +32,12 @@ fun FirSession.runCheckers(
     mppCheckerKind: MppCheckerKind
 ): Map<FirFile, List<KtDiagnostic>> {
     val collector = DiagnosticComponentsFactory.create(this, scopeSession, mppCheckerKind)
-    collector.collectDiagnosticsInSettings(reporter)
     for (file in firFiles) {
         withFileAnalysisExceptionWrapping(file) {
             collector.collectDiagnostics(file, reporter)
         }
     }
+    collector.collectDiagnosticsInSettings(reporter)
     return firFiles.associateWith {
         val path = it.sourceFile?.path ?: return@associateWith emptyList()
         reporter.diagnosticsByFilePath[path] ?: emptyList()

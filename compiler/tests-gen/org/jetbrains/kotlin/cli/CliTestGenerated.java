@@ -743,6 +743,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/functionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference.args");
     }
 
+    @TestMetadata("globalWarningSuppression_correct.args")
+    public void testGlobalWarningSuppression_correct() {
+      runTest("compiler/testData/cli/jvm/globalWarningSuppression_correct.args");
+    }
+
+    @TestMetadata("globalWarningSuppression_incorrect.args")
+    public void testGlobalWarningSuppression_incorrect() {
+      runTest("compiler/testData/cli/jvm/globalWarningSuppression_incorrect.args");
+    }
+
     @TestMetadata("help.args")
     public void testHelp() {
       runTest("compiler/testData/cli/jvm/help.args");
