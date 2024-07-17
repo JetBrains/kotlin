@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -70,7 +71,7 @@ private fun IrElement.containsCallsTo(symbol: IrFunctionSymbol): Boolean {
 private class JsCodeOutlineTransformer(
     val backendContext: JsIrBackendContext,
     val container: IrDeclaration,
-) : IrElementTransformerVoidWithContext() {
+) : IrElementTransformerVoid() {
     val localScopes: MutableList<HashMap<String, IrValueDeclaration>> =
         mutableListOf(hashMapOf())
 
@@ -118,8 +119,8 @@ private class JsCodeOutlineTransformer(
         return withLocalScope { super.visitDeclaration(declaration) }
     }
 
-    override fun visitValueParameterNew(declaration: IrValueParameter): IrStatement {
-        return super.visitValueParameterNew(declaration).also { registerValueDeclaration(declaration) }
+    override fun visitValueParameter(declaration: IrValueParameter): IrStatement {
+        return super.visitValueParameter(declaration).also { registerValueDeclaration(declaration) }
     }
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
