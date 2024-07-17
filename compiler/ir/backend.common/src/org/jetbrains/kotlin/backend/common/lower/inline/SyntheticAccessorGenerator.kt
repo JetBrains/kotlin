@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * @param addAccessorToParent Whether a newly generated accessor should be immediately added to its parent as a child.
  */
-open class SyntheticAccessorGenerator<Context : BackendContext>(
+abstract class SyntheticAccessorGenerator<Context : BackendContext>(
     protected val context: Context,
     private val addAccessorToParent: Boolean = false,
 ) {
@@ -190,7 +190,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
             copyAllParamsToArgs(it, accessor)
         }
 
-    protected open fun accessorModality(parent: IrDeclarationParent): Modality = Modality.FINAL
+    protected abstract fun accessorModality(parent: IrDeclarationParent): Modality
 
     private fun IrSimpleFunction.makeSimpleFunctionAccessor(
         superQualifierSymbol: IrClassSymbol?, dispatchReceiverType: IrType?, parent: IrDeclarationParent, scopes: List<ScopeWithIr>
@@ -398,15 +398,18 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
      * In case of Java `protected static`, access could be done from a public inline function in the same package,
      * or a subclass of the Java class. Both cases require an accessor, which we cannot add to a Java class.
      */
-    protected open fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>) = parent
+    protected abstract fun IrDeclarationWithVisibility.accessorParent(
+        parent: IrDeclarationParent,
+        scopes: List<ScopeWithIr>,
+    ): IrDeclarationParent
 
-    protected open fun AccessorNameBuilder.contributeFunctionName(function: IrSimpleFunction) = contribute(function.name.asString())
+    protected abstract fun AccessorNameBuilder.contributeFunctionName(function: IrSimpleFunction)
 
-    protected open fun AccessorNameBuilder.contributeFunctionSuffix(
+    protected abstract fun AccessorNameBuilder.contributeFunctionSuffix(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
         scopes: List<ScopeWithIr>,
-    ) = Unit
+    )
 
     private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): Name {
         val nameBuilder = AccessorNameBuilder()
@@ -415,15 +418,13 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
         return nameBuilder.build()
     }
 
-    protected open fun AccessorNameBuilder.contributeFieldGetterName(field: IrField) = contribute("<get-${field.name}>")
-    protected open fun AccessorNameBuilder.contributeFieldSetterName(field: IrField) = contribute("<set-${field.name}>")
+    protected abstract fun AccessorNameBuilder.contributeFieldGetterName(field: IrField)
+    protected abstract fun AccessorNameBuilder.contributeFieldSetterName(field: IrField)
 
     /**
      * For both _reading_ and _writing_ field accessors, the suffix that includes some of [field]'s important properties.
      */
-    protected open fun AccessorNameBuilder.contributeFieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?) {
-        contribute(PROPERTY_MARKER)
-    }
+    protected abstract fun AccessorNameBuilder.contributeFieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?)
 
     private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name {
         val nameBuilder = AccessorNameBuilder()

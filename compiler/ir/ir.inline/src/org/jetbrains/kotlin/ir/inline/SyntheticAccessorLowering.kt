@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.common.lower.inline.SyntheticAccessorGenerator
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 class SyntheticAccessorLowering(
     context: CommonBackendContext,
 ) : BodyLoweringPass {
-    private val accessorGenerator = SyntheticAccessorGenerator(context, addAccessorToParent = true)
+    private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val inlineFunction = container.parentDeclarationsWithSelf.firstOrNull { it is IrFunction && it.isInline } as? IrFunction
             ?: return
