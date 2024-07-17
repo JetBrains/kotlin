@@ -921,7 +921,9 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
         var standaloneSamConversionFeaturePassedExplicitly = false
         var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
-        for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
+        for (initializer in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
+            val feature = initializer.languageFeature
+            val state = initializer.state
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature

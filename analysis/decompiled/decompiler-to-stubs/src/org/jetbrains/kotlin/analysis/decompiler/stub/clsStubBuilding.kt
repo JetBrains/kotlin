@@ -215,7 +215,8 @@ fun createTargetedAnnotationStubs(
     if (annotations.isEmpty()) return
 
     annotations.forEach { annotation ->
-        val (annotationWithArgs, target) = annotation
+        val annotationWithArgs = annotation.annotationWithArgs
+        val target = annotation.target
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             parent,
             shortName = annotationWithArgs.classId.shortClassName.ref(),

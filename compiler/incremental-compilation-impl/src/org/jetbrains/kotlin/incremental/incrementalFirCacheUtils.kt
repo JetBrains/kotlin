@@ -133,8 +133,10 @@ internal fun collectNewDirtySources(
         visitFirFiles(output)
     }
 
-    val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) =
-        changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
+    val initializer = changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
+    val dirtyLookupSymbols = initializer.dirtyLookupSymbols
+    val dirtyClassFqNames = initializer.dirtyClassesFqNames
+    val forceRecompile = initializer.dirtyClassesFqNamesForceRecompile
 
     val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
 

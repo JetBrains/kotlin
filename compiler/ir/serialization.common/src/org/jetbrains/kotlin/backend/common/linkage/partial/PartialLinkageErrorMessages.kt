@@ -491,7 +491,9 @@ private fun StringBuilder.expressionWithUnusableClassifier(
 }
 
 private fun StringBuilder.expression(expression: IrExpression, continuation: (ExpressionKind) -> Appendable): Appendable {
-    val (expressionKind, referencedDeclarationKind) = expression.expression
+    val initializer = expression.expression
+    val expressionKind = initializer.kind
+    val referencedDeclarationKind = initializer.referencedDeclarationKind
 
     // Prefix may be null. But when it's not null, it is always capitalized.
     val hasPrefix = expressionKind.prefix != null

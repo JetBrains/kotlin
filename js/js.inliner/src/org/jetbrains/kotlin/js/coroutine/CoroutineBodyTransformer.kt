@@ -206,7 +206,9 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
 
     override fun visitBreak(x: JsBreak) {
         val targetStatement = breakContinueTargetStatements[x]!!
-        val (targetBlock, targetTryDepth) = breakTargets[targetStatement]!!
+        val initializer = breakTargets[targetStatement]!!
+        val targetBlock = initializer.block
+        val targetTryDepth = initializer.tryDepth
         referencedBlocks += targetBlock
         jumpWithFinally(targetTryDepth + 1, targetBlock, x)
         currentStatements += jump()
@@ -214,7 +216,9 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
 
     override fun visitContinue(x: JsContinue) {
         val targetStatement = breakContinueTargetStatements[x]!!
-        val (targetBlock, targetTryDepth) = continueTargets[targetStatement]!!
+        val initializer = continueTargets[targetStatement]!!
+        val targetBlock = initializer.block
+        val targetTryDepth = initializer.tryDepth
         referencedBlocks += targetBlock
         jumpWithFinally(targetTryDepth + 1, targetBlock, x)
         currentStatements += jump()

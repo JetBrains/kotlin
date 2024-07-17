@@ -157,7 +157,9 @@ fun JsFunction.withCapturedParameters(
             val localFunAlias = aliasRef?.getStaticRef() as? JsExpression
 
             if (localFunAlias != null) {
-                val (args, params) = moveCapturedLocalInside(this, name, localFunAlias)
+                val initializer = moveCapturedLocalInside(this, name, localFunAlias)
+                val args = initializer.arguments
+                val params = initializer.parameters
                 additionalArgs = args
                 additionalParams = params
             }

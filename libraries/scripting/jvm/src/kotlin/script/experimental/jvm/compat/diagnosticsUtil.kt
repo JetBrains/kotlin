@@ -50,13 +50,20 @@ fun mapLegacyScriptPosition(pos: ScriptReport.Position?): SourceCode.Location? =
 fun mapToLegacyScriptReportPosition(pos: SourceCode.Location?): ScriptReport.Position? =
     pos?.let { ScriptReport.Position(pos.start.line, pos.start.col, pos.end?.line, pos.end?.col) }
 
-fun Iterable<ScriptReport>.mapToDiagnostics(): List<ScriptDiagnostic> = map { (message, severity, position) ->
+fun Iterable<ScriptReport>.mapToDiagnostics(): List<ScriptDiagnostic> = map { initializer ->
+    val message = initializer.message
+    val severity = initializer.severity
+    val position = initializer.position
     ScriptDiagnostic(
         ScriptDiagnostic.unspecifiedError, message, mapLegacyDiagnosticSeverity(severity), null, mapLegacyScriptPosition(position)
     )
 }
 
-fun Iterable<ScriptDiagnostic>.mapToLegacyReports(): List<ScriptReport> = map { (_, message, severity, _, location, exception) ->
+fun Iterable<ScriptDiagnostic>.mapToLegacyReports(): List<ScriptReport> = map { initializer ->
+    val message = initializer.message
+    val severity = initializer.severity
+    val location = initializer.location
+    val exception = initializer.exception
     val reportMessage = if (exception == null) message else "$message ($exception)"
     ScriptReport(reportMessage, mapToLegacyScriptReportSeverity(severity), mapToLegacyScriptReportPosition(location))
 }

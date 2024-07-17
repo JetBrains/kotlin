@@ -128,8 +128,13 @@ class FirClassSubstitutionScope(
 
         val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, newOwnerClassId)
 
-        val (newTypeParameters, newDispatchReceiverType, newReceiverType, newReturnType, newSubstitutor, callableCopySubstitution) =
-            createSubstitutedData(member, symbolForOverride)
+        val initializer = createSubstitutedData(member, symbolForOverride)
+        val newTypeParameters = initializer.typeParameters
+        val newDispatchReceiverType = initializer.dispatchReceiverType
+        val newReceiverType = initializer.receiverType
+        val newReturnType = initializer.returnType
+        val newSubstitutor = initializer.substitutor
+        val callableCopySubstitution = initializer.deferredReturnTypeOfSubstitution
         val newParameterTypes = member.valueParameters.map {
             it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
@@ -187,8 +192,11 @@ class FirClassSubstitutionScope(
         val constructor = original.fir
 
         val symbolForOverride = FirConstructorSymbol(original.callableId)
-        val (newTypeParameters, _, _, newReturnType, newSubstitutor, callableCopySubstitution) =
-            createSubstitutedData(constructor, symbolForOverride)
+        val initializer = createSubstitutedData(constructor, symbolForOverride)
+        val newTypeParameters = initializer.typeParameters
+        val newReturnType = initializer.returnType
+        val newSubstitutor = initializer.substitutor
+        val callableCopySubstitution = initializer.deferredReturnTypeOfSubstitution
 
         // If constructor has a dispatch receiver, it should be an inner class' constructor.
         // It means that we need to substitute its dispatcher as every other type,
@@ -236,8 +244,12 @@ class FirClassSubstitutionScope(
 
         val symbolForOverride = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(original, newOwnerClassId)
 
-        val (newTypeParameters, newDispatchReceiverType, newReceiverType, newReturnType, _, callableCopySubstitutionForTypeUpdater) =
-            createSubstitutedData(member, symbolForOverride)
+        val initializer = createSubstitutedData(member, symbolForOverride)
+        val newTypeParameters = initializer.typeParameters
+        val newDispatchReceiverType = initializer.dispatchReceiverType
+        val newReceiverType = initializer.receiverType
+        val newReturnType = initializer.returnType
+        val callableCopySubstitutionForTypeUpdater = initializer.deferredReturnTypeOfSubstitution
 
         val newContextReceiverTypes = member.contextReceivers.map {
             it.typeRef.coneType.substitute(substitutor)

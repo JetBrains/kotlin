@@ -33,8 +33,10 @@ class FirMissingDependencyStorage(private val session: FirSession) : FirSessionC
 
     private fun findMissingSuperTypes(declaration: FirClassSymbol<*>): Set<TypeWithOrigin> {
         return declaration.collectSuperTypes(session)
-            .filterTo(mutableSetOf()) { (type, _) ->
-                // Ignore types which are already errors.
+            .filterTo(mutableSetOf()) { initializer ->
+                val type = initializer.type
+
+// Ignore types which are already errors.
                 type !is ConeErrorType && type !is ConeDynamicType && type.lowerBoundIfFlexible().let {
                     it is ConeLookupTagBasedType && it.toSymbol(session) == null
                 }

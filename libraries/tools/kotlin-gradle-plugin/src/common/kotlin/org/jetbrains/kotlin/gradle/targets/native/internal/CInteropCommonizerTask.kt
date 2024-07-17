@@ -222,7 +222,9 @@ internal abstract class CInteropCommonizerTask
 
     private fun getCInteropCommonizerGroupDependencies(group: CInteropCommonizerGroup): Set<CommonizerDependency> {
         val dependencies = groupedCommonizerDependencies.getOrThrow()[group]
-            ?.flatMap { (target, dependencies) ->
+            ?.flatMap { initializer ->
+                val target = initializer.commonizerTarget
+                val dependencies = initializer.dependencies
                 dependencies.files
                     .filter { file -> file.exists() && (file.isDirectory || file.extension == "klib") }
                     .map { file -> TargetedCommonizerDependency(target, file) }

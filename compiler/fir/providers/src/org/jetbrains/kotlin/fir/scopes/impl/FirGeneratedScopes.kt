@@ -159,16 +159,20 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
 
     private data class StorageContext<C>(
         val generationContext: C,
-        val extensionsByName: Map<Name, List<FirDeclarationGenerationExtension>>
+        val extensionsByName: Map<Name, List<FirDeclarationGenerationExtension>>,
     )
 
     private val callableStorageByClass: FirCache<FirClassSymbol<*>, CallableStorage, StorageContext<MemberGenerationContext>> =
-        cachesFactory.createCache { _, (context, extensionsMap) ->
+        cachesFactory.createCache { _, initializer ->
+            val context = initializer.generationContext
+            val extensionsMap = initializer.extensionsByName
             CallableStorage(cachesFactory, context, extensionsMap)
         }
 
     private val classifierStorageByClass: FirCache<FirClassSymbol<*>, ClassifierStorage, StorageContext<NestedClassGenerationContext>> =
-        cachesFactory.createCache { classSymbol, (context, extensionsMap) ->
+        cachesFactory.createCache { classSymbol, initializer ->
+            val context = initializer.generationContext
+            val extensionsMap = initializer.extensionsByName
             ClassifierStorage(cachesFactory, classSymbol, context, extensionsMap)
         }
 

@@ -213,7 +213,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 )
             } ?: throw RuntimeException(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE) // TODO: Add root cause
 
-        val (daemon, sessionId) = connection
+        val daemon = connection.compileService
+        val sessionId = connection.sessionId
 
         if (log.isDebugEnabled) {
             daemon.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->

@@ -327,7 +327,10 @@ private fun readVersionRequirement(id: Int, c: ReadContext): KmVersionRequiremen
     v.errorCode = message?.errorCode
     v.message = message?.message
 
-    val (major, minor, patch) = message?.version ?: VersionRequirement.Version.INFINITY
+    val initializer = message?.version ?: VersionRequirement.Version.INFINITY
+    val major = initializer.major
+    val minor = initializer.minor
+    val patch = initializer.patch
     v.version = KmVersion(major, minor, patch)
     return v
 }

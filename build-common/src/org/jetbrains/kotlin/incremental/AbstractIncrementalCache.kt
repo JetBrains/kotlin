@@ -127,7 +127,9 @@ abstract class AbstractIncrementalCache<ClassName>(
      * The `srcFile` argument may be `null` (e.g., if we are processing .class files in jars where source files are not available).
      */
     protected fun addToClassStorage(classProtoData: ClassProtoData, srcFile: File?, useCompilerMapsOnly: Boolean = false) {
-        val (proto, nameResolver) = classProtoData
+        val initializer = classProtoData
+        val proto = initializer.proto
+        val nameResolver = initializer.nameResolver
 
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
         val parents = supertypes.map { nameResolver.getClassId(it.className).asSingleFqName() }

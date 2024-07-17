@@ -112,7 +112,9 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
             SMAP(listOf())
         } else if (notForInline != null) {
-            val (originalNode, smap) = classCodegen.generateMethodNode(notForInline)
+            val initializer = classCodegen.generateMethodNode(notForInline)
+            val originalNode = initializer.node
+            val smap = initializer.classSMAP
             originalNode.accept(MethodBodyVisitor(methodVisitor))
             smap
         } else {

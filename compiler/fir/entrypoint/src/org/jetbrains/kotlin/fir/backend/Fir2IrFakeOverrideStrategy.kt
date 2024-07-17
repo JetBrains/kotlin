@@ -202,7 +202,11 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
     fun generateDelegatedBodies() {
         for (delegatedInfo in delegatedInfos) {
-            val (delegatedMember, delegateTargetFromBaseType, classSymbolOfDelegateField, delegateField, parent) = delegatedInfo
+            val delegatedMember = delegatedInfo.delegatedMember
+            val delegateTargetFromBaseType = delegatedInfo.delegateTargetFromBaseType
+            val classSymbolOfDelegateField = delegatedInfo.classSymbolOfDelegateField
+            val delegateField = delegatedInfo.delegateField
+            val parent = delegatedInfo.parent
             when (delegatedMember) {
                 is IrSimpleFunction -> generateDelegatedFunctionBody(
                     delegatedMember,
@@ -338,7 +342,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         parent: IrClass,
         kind: Kind
     ) {
-        val (delegateTargetFunction, substitutor, delegatingToMethodOfSupertype) = extractDelegatedFunctionBodyInfo(
+        val initializer = extractDelegatedFunctionBodyInfo(
             classSymbolOfDelegateField,
             delegateTargetFromBaseType,
             parent,
@@ -346,6 +350,9 @@ class Fir2IrDelegatedMembersGenerationStrategy(
             delegatedFunction,
             delegateField
         )
+        val delegateTargetFunction = initializer.delegateTargetFunction
+        val substitutor = initializer.substitutor
+        val delegatingToMethodOfSupertype = initializer.delegatingToMethodOfSupertype
 
         val offset = SYNTHETIC_OFFSET
 

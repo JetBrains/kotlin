@@ -19,11 +19,13 @@ class ScriptingCollectAdditionalSourcesExtension(val project: MockProject) : Col
         configuration: CompilerConfiguration,
         project: Project
     ): Collection<KtFile> {
-        val (newSourcesClasspath, newSources, _) = collectScriptsCompilationDependencies(
+        val initializer = collectScriptsCompilationDependencies(
             configuration,
             project,
             knownSources
         )
+        val newSourcesClasspath = initializer.classpath
+        val newSources = initializer.sources
         configuration.addJvmClasspathRoots(newSourcesClasspath)
         return newSources
     }

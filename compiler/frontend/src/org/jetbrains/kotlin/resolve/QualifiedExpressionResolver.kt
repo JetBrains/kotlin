@@ -68,7 +68,9 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         reportOn: KtExpression?,
         trace: BindingTrace
     ): ClassifierDescriptor? {
-        val (classifier, isDeprecated) = findFirstClassifierWithDeprecationStatus(name, lookupLocation) ?: return null
+        val initializer = findFirstClassifierWithDeprecationStatus(name, lookupLocation) ?: return null
+        val classifier = initializer.descriptor
+        val isDeprecated = initializer.isDeprecated
 
         if (isDeprecated && reportOn != null) {
             trace.record(BindingContext.DEPRECATED_SHORT_NAME_ACCESS, reportOn) // For IDE

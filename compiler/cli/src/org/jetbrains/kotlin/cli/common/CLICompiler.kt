@@ -183,7 +183,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
         if (!arguments.disableDefaultScriptingPlugin) {
             scriptingPluginOptions.addPlatformOptions(arguments)
             val explicitScriptingPlugin =
-                extractPluginClasspathAndOptions(pluginConfigurations).any { (_, classpath, _) ->
+                extractPluginClasspathAndOptions(pluginConfigurations).any { initializer ->
+                    val classpath = initializer.classpath
                     classpath.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) }
                 } || pluginClasspaths.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) }
             val explicitOrLoadedScriptingPlugin = explicitScriptingPlugin ||

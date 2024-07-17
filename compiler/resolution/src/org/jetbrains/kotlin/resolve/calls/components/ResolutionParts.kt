@@ -900,7 +900,11 @@ internal object CheckContextReceiversResolutionPart : ResolutionPart() {
                 getReceiverArgumentWithConstraintIfCompatible(argument, candidateContextReceiverParameter)
             }.toList()
             if (applicableArguments.size == 1) {
-                val (argument, argumentType, expectedType, position) = applicableArguments.single()
+                val initializer = applicableArguments.single()
+                val argument = initializer.argument
+                val argumentType = initializer.argumentType
+                val expectedType = initializer.expectedType
+                val position = initializer.position
                 csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
                 return argument
             }

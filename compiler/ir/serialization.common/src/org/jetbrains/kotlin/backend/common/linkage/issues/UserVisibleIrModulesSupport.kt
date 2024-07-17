@@ -190,7 +190,8 @@ open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDepen
 
     private fun Map<ResolvedDependencyId, ModuleWithUninitializedDependencies>.stampDependenciesWithRequestedVersionEqualToSelectedVersion(): Map<ResolvedDependencyId, ResolvedDependency> {
         return mapValues { (moduleId, moduleWithUninitializedDependencies) ->
-            val (module, outgoingDependencyIds) = moduleWithUninitializedDependencies
+            val module = moduleWithUninitializedDependencies.module
+            val outgoingDependencyIds = moduleWithUninitializedDependencies.outgoingDependencyIds
             outgoingDependencyIds.forEach { outgoingDependencyId ->
                 val dependencyModule = getValue(outgoingDependencyId).module
                 dependencyModule.requestedVersionsByIncomingDependencies[moduleId] = dependencyModule.selectedVersion

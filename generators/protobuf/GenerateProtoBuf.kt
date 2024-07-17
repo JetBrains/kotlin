@@ -92,7 +92,9 @@ private fun execAndGetOutput(vararg args: String): ProcessOutput {
 }
 
 private fun checkVersion() {
-    val (stdout, stderr) = execAndGetOutput(PROTOC_EXE, "--version")
+    val initializer = execAndGetOutput(PROTOC_EXE, "--version")
+    val stdout = initializer.stdout
+    val stderr = initializer.stderr
 
     val version = stdout.trim()
     if (version.isEmpty()) {
@@ -108,7 +110,9 @@ private fun execProtoc(protoPath: String, outPath: String) {
         listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") +
                 PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }
     println("running ${commandLine.joinToString(" ")}")
-    val (stdout, stderr) = execAndGetOutput(*commandLine.toTypedArray())
+    val initializer = execAndGetOutput(*commandLine.toTypedArray())
+    val stdout = initializer.stdout
+    val stderr = initializer.stderr
     print(stdout)
     if (stderr.isNotEmpty()) {
         throw AssertionError(stderr)

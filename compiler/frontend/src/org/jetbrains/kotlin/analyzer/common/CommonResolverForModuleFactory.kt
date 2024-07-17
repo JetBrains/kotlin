@@ -95,7 +95,9 @@ class CommonResolverForModuleFactory(
         resolveOptimizingOptions: OptimizingOptions?,
         absentDescriptorHandlerClass: Class<out AbsentDescriptorHandler>?
     ): ResolverForModule {
-        val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
+        val moduleInfo = moduleContent.moduleInfo
+        val syntheticFiles = moduleContent.syntheticFiles
+        val moduleContentScope = moduleContent.moduleContentScope
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project, moduleContext.storageManager, syntheticFiles,

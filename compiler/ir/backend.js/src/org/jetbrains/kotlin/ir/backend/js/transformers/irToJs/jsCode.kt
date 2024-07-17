@@ -43,7 +43,10 @@ private fun translateJsCodeIntoStatementList(
     sourceInfo: JsLocation?
 ): List<JsStatement>? {
     // TODO: support proper symbol linkage and label clash resolution
-    val (fileName, startLine, offset) = sourceInfo ?: JsLocation("<js-code>", 0, 0)
+    val initializer = sourceInfo ?: JsLocation("<js-code>", 0, 0)
+    val fileName = initializer.file
+    val startLine = initializer.startLine
+    val offset = initializer.startChar
     val jsCode = foldString(code, context) ?: return null
 
     // Parser can change local or global scope.

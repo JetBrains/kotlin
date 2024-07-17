@@ -40,9 +40,13 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         }
         if (classId in BLACK_LIST) return null
 
-        val (nameResolver, classProto, metadataVersion, sourceElement) = key.classData
+        val initializer = key.classData
             ?: components.classDataFinder.findClassData(classId)
             ?: return null
+        val nameResolver = initializer.nameResolver
+        val classProto = initializer.classProto
+        val metadataVersion = initializer.metadataVersion
+        val sourceElement = initializer.sourceElement
 
         val outerClassId = classId.outerClassId
         val outerContext = if (outerClassId != null) {

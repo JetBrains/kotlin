@@ -150,7 +150,9 @@ fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> 
             lowerBoundArguments.add(typeArgument)
             upperBoundArguments.add(typeArgument)
         } else {
-            val (lower, upper) = approximateProjection(typeArgument)
+            val initializer = approximateProjection(typeArgument)
+            val lower = initializer.lower
+            val upper = initializer.upper
             lowerBoundArguments.add(lower)
             upperBoundArguments.add(upper)
         }
@@ -168,8 +170,12 @@ private fun KotlinType.replaceTypeArguments(newTypeArguments: List<TypeArgument>
 }
 
 private fun approximateProjection(typeArgument: TypeArgument): ApproximationBounds<TypeArgument> {
-    val (inLower, inUpper) = approximateCapturedTypes(typeArgument.inProjection)
-    val (outLower, outUpper) = approximateCapturedTypes(typeArgument.outProjection)
+    val initializer = approximateCapturedTypes(typeArgument.inProjection)
+    val inLower = initializer.lower
+    val inUpper = initializer.upper
+    val initializer2 = approximateCapturedTypes(typeArgument.outProjection)
+    val outLower = initializer2.lower
+    val outUpper = initializer2.upper
     return ApproximationBounds(
         lower = TypeArgument(typeArgument.typeParameter, inUpper, outLower),
         upper = TypeArgument(typeArgument.typeParameter, inLower, outUpper)

@@ -25,7 +25,8 @@ private fun KmTypeProjection.typeArgumentId(): TypeArgumentId =
     if (this == KmTypeProjection.STAR) {
         TypeArgumentId.Star
     } else {
-        val (variance, type) = this
+        val variance = this.variance
+        val type = this.type
         check(variance != null && type != null) { "Variance and type should not be null" }
         TypeArgumentId.Regular(type.typeId(), variance.varianceId())
     }

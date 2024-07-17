@@ -74,7 +74,9 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
 }
 
 private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
-    val (tailRecursionCalls, someCallsAreFromOtherFunctions) = collectTailRecursionCalls(irFunction, ::followFunctionReference)
+    val initializer = collectTailRecursionCalls(irFunction, ::followFunctionReference)
+    val tailRecursionCalls = initializer.ir
+    val someCallsAreFromOtherFunctions = initializer.fromManyFunctions
     if (tailRecursionCalls.isEmpty()) {
         return
     }

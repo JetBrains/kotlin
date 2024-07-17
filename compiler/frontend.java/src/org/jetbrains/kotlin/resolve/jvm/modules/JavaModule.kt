@@ -93,13 +93,17 @@ interface JavaModule {
             get() = moduleInfoFile.extension == JavaFileType.DEFAULT_EXTENSION || moduleInfoFile.fileType == JavaFileType.INSTANCE
 
         override fun exports(packageFqName: FqName): Boolean {
-            return moduleInfo.exports.any { (fqName, toModules) ->
+            return moduleInfo.exports.any { initializer ->
+                val fqName = initializer.packageFqName
+                val toModules = initializer.toModules
                 fqName == packageFqName && toModules.isEmpty()
             }
         }
 
         override fun exportsTo(packageFqName: FqName, moduleName: String): Boolean {
-            return moduleInfo.exports.any { (fqName, toModules) ->
+            return moduleInfo.exports.any { initializer ->
+                val fqName = initializer.packageFqName
+                val toModules = initializer.toModules
                 fqName == packageFqName && (toModules.isEmpty() || moduleName in toModules)
             }
         }

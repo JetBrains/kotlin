@@ -45,7 +45,10 @@ class SourceMapBuilderConsumer(
                 // This branch is only taken on the legacy backend
                 if (sourceInfo.isFakePsiElement) return
                 try {
-                    val (sourceFilePath, startLine, startChar) = PsiUtils.extractLocationFromPsi(sourceInfo, pathResolver)
+                    val initializer = PsiUtils.extractLocationFromPsi(sourceInfo, pathResolver)
+                    val sourceFilePath = initializer.file
+                    val startLine = initializer.startLine
+                    val startChar = initializer.startChar
                     val psiFile = sourceInfo.containingFile
                     val file = File(psiFile.viewProvider.virtualFile.path)
                     val contentSupplier = if (provideCurrentModuleContent) {

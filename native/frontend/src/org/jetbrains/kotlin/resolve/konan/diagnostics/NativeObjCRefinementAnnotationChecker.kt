@@ -46,7 +46,9 @@ object NativeObjCRefinementAnnotationChecker : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || descriptor.kind != ClassKind.ANNOTATION_CLASS) return
-        val (objCAnnotation, swiftAnnotation) = descriptor.findObjCExportMetaAnnotations() ?: return
+        val initializer = descriptor.findObjCExportMetaAnnotations() ?: return
+        val objCAnnotation = initializer.hidesFromObjCAnnotation
+        val swiftAnnotation = initializer.refinesInSwiftAnnotation
         if (objCAnnotation == null && swiftAnnotation == null) return
         if (objCAnnotation != null && swiftAnnotation != null) {
             val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(swiftAnnotation) ?: declaration

@@ -205,7 +205,9 @@ object FirKotlinToJvmBytecodeCompiler {
             createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
         )
 
-        val outputs = sessionsWithSources.map { (session, sources) ->
+        val outputs = sessionsWithSources.map { initializer ->
+            val session = initializer.session
+            val sources = initializer.files
             buildResolveAndCheckFirFromKtFiles(session, sources, diagnosticsReporter)
         }
         outputs.runPlatformCheckers(diagnosticsReporter)
@@ -234,7 +236,11 @@ object FirKotlinToJvmBytecodeCompiler {
         fir2IrActualizedResult: Fir2IrActualizedResult,
         diagnosticsReporter: BaseDiagnosticsCollector,
     ): GenerationState {
-        val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = fir2IrActualizedResult
+        val moduleFragment = fir2IrActualizedResult.irModuleFragment
+        val components = fir2IrActualizedResult.components
+        val pluginContext = fir2IrActualizedResult.pluginContext
+        val irActualizedResult = fir2IrActualizedResult.irActualizedResult
+        val symbolTable = fir2IrActualizedResult.symbolTable
         val irInput = ModuleCompilerIrBackendInput(
             TargetId(module),
             configuration,

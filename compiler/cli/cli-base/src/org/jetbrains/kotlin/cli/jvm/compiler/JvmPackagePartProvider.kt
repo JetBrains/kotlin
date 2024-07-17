@@ -44,7 +44,9 @@ class JvmPackagePartProvider(
     override val loadedModules: MutableList<ModuleMappingInfo<VirtualFile>> = SmartList()
 
     fun addRoots(roots: List<JavaRoot>, messageCollector: MessageCollector) {
-        for ((root, type) in roots) {
+        for (initializer in roots) {
+            val root = initializer.file
+            val type = initializer.type
             if (type != JavaRoot.RootType.BINARY) continue
             if (root !in scope) continue
 

@@ -100,7 +100,9 @@ object CheckExtensionReceiver : ResolutionStage() {
         sink: CheckerSink,
         context: ResolutionContext
     ) {
-        val (atom, type) = receivers.single()
+        val initializer = receivers.single()
+        val atom = initializer.atom
+        val type = initializer.type
         ArgumentCheckingProcessor.resolvePlainArgumentType(
             candidate,
             atom,

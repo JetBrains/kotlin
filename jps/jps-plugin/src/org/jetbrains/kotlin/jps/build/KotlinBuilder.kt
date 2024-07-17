@@ -826,7 +826,10 @@ private fun ChangesCollector.getDirtyFiles(
     lookupStorageManager: JpsLookupStorageManager
 ): FilesToRecompile {
     val reporter = JpsICReporter()
-    val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = getChangedAndImpactedSymbols(caches, reporter)
+    val initializer = getChangedAndImpactedSymbols(caches, reporter)
+    val dirtyLookupSymbols = initializer.dirtyLookupSymbols
+    val dirtyClassFqNames = initializer.dirtyClassesFqNames
+    val forceRecompile = initializer.dirtyClassesFqNamesForceRecompile
     val dirtyFilesFromLookups = lookupStorageManager.withLookupStorage {
         mapLookupSymbolsToFiles(it, dirtyLookupSymbols, reporter)
     }

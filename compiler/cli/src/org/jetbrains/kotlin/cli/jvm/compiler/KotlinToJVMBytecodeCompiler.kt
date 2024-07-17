@@ -77,7 +77,7 @@ object KotlinToJVMBytecodeCompiler {
 
         val useFrontendIR = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)
         val messageCollector = environment.messageCollector
-        val (codegenFactory, wholeBackendInput, moduleDescriptor, bindingContext, firJvmBackendResolver, firJvmBackendExtension, mainClassFqName) = if (useFrontendIR) {
+        val initializer = if (useFrontendIR) {
             // K2/PSI: base checks
             val projectEnvironment =
                 VfsBasedProjectEnvironment(
@@ -105,6 +105,13 @@ object KotlinToJVMBytecodeCompiler {
         } else {
             runFrontendAndGenerateIrUsingClassicFrontend(environment, compilerConfiguration, chunk)
         } ?: return true
+        val codegenFactory = initializer.codegenFactory
+        val wholeBackendInput = initializer.backendInput
+        val moduleDescriptor = initializer.moduleDescriptor
+        val bindingContext = initializer.bindingContext
+        val firJvmBackendResolver = initializer.firJvmBackendClassResolver
+        val firJvmBackendExtension = initializer.firJvmBackendExtension
+        val mainClassFqName = initializer.mainClassFqName
         // K1/K2 common multi-chunk part
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
@@ -508,13 +515,18 @@ fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: F
     }
 
     for (module in chunk) {
-        for ((path, packagePrefix) in module.getJavaSourceRoots()) {
+        for (initializer in module.getJavaSourceRoots()) {
+            val path = initializer.path
+            val packagePrefix = initializer.packagePrefix
             addJavaSourceRoot(File(path), packagePrefix)
         }
     }
 
     val isJava9Module = chunk.any { module ->
-        module.getJavaSourceRoots().any { (path, packagePrefix) ->
+        module.getJavaSourceRoots().any { initializer ->
+
+            val path = initializer.path
+            val packagePrefix = initializer.packagePrefix
             val file = File(path)
             packagePrefix == null &&
                     (file.name == PsiJavaModule.MODULE_INFO_FILE ||

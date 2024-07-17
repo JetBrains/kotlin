@@ -61,7 +61,10 @@ open class LocalClassPopupLowering(
             }
         }, null)
 
-        for ((local, newContainer, extractedUnder) in extractedLocalClasses) {
+        for (initializer in extractedLocalClasses) {
+            val local = initializer.local
+            val newContainer = initializer.newContainer
+            val extractedUnder = initializer.extractedUnder
             when (newContainer) {
                 is IrStatementContainer -> {
                     val insertIndex = extractedUnder?.let { newContainer.statements.indexOf(it) } ?: -1

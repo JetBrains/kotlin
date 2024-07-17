@@ -22,9 +22,11 @@ class KtLightPsiClassObjectAccessExpression(override val kotlinOrigin: KtClassLi
     KtLightPsiLiteral(kotlinOrigin, lightParent), PsiClassObjectAccessExpression {
     override fun getType(): PsiType {
         val bindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(kotlinOrigin)
-        val (classId, arrayDimensions) = bindingContext[BindingContext.COMPILE_TIME_VALUE, kotlinOrigin]
+        val initializer = bindingContext[BindingContext.COMPILE_TIME_VALUE, kotlinOrigin]
             ?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.safeAs<KClassValue>()?.value
             ?.safeAs<KClassValue.Value.NormalClass>()?.value ?: return PsiTypes.voidType()
+        val classId = initializer.classId
+        val arrayDimensions = initializer.arrayNestedness
         var type = psiType(classId.asSingleFqName().asString(), kotlinOrigin, boxPrimitiveType = arrayDimensions > 0)
         repeat(arrayDimensions) {
             type = type.createArrayType()

@@ -720,7 +720,9 @@ open class LocalDeclarationsLowering(
             val newName = generateNameForLiftedDeclaration(oldDeclaration, ownerParent)
 
             // TODO: consider using fields to access the closure of enclosing class.
-            val (capturedValues, capturedTypeParameters) = localFunctionContext.closure
+            val initializer = localFunctionContext.closure
+            val capturedValues = initializer.capturedValues
+            val capturedTypeParameters = initializer.capturedTypeParameters
 
             val newDeclaration = context.irFactory.buildFun {
                 updateFrom(oldDeclaration)

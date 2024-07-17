@@ -293,7 +293,11 @@ object FirOptInUsageBaseChecker {
         reporter: DiagnosticReporter,
         source: KtSourceElement? = element.source,
     ) {
-        for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
+        for (initializer in experimentalities) {
+            val annotationClassId = initializer.annotationClassId
+            val severity = initializer.severity
+            val message = initializer.message
+            val fromSupertype = initializer.fromSupertype
             if (!isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype)) {
                 val (diagnostic, verb) = when (severity) {
                     Experimentality.Severity.WARNING -> FirErrors.OPT_IN_USAGE to "should"
@@ -317,7 +321,11 @@ object FirOptInUsageBaseChecker {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        for ((annotationClassId, severity, markerMessage, supertypeName) in experimentalities) {
+        for (initializer in experimentalities) {
+            val annotationClassId = initializer.annotationClassId
+            val severity = initializer.severity
+            val markerMessage = initializer.message
+            val supertypeName = initializer.supertypeName
             if (!symbol.fir.isExperimentalityAcceptable(context.session, annotationClassId, fromSupertype = false) &&
                 !isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype = false)
             ) {

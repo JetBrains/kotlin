@@ -49,8 +49,13 @@ fun compile(
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ): LoweredIr {
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
-        loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
+    val initializer = loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
+    val moduleFragment: IrModuleFragment = initializer.module
+    val dependencyModules = initializer.allDependencies
+    val irBuiltIns = initializer.bultins
+    val symbolTable = initializer.symbolTable
+    val deserializer = initializer.deserializer
+    val moduleToName = initializer.moduleFragmentToUniqueName
 
     return compileIr(
         moduleFragment,

@@ -40,10 +40,12 @@ class FragmentCompilerSymbolTableDecorator(
             if (declaration !is ReceiverParameterDescriptor) return super.referenceValueParameter(declaration)
 
             val finderPredicate = when (val receiverValue = declaration.value) {
-                is ExtensionReceiver, is ContextReceiver -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
+                is ExtensionReceiver, is ContextReceiver -> { el: EvaluatorFragmentParameterInfo ->
+                    val targetDescriptor = el.descriptor
                     receiverValue == (targetDescriptor as? ReceiverParameterDescriptor)?.value
                 }
-                is ThisClassReceiver -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
+                is ThisClassReceiver -> { el: EvaluatorFragmentParameterInfo ->
+                    val targetDescriptor = el.descriptor
                     receiverValue.classDescriptor == targetDescriptor.original
                 }
                 else -> TODO("Unimplemented")
@@ -61,10 +63,12 @@ class FragmentCompilerSymbolTableDecorator(
             val fi = fragmentInfo ?: return super.referenceValue(value)
 
             val finderPredicate = when (value) {
-                is AbstractReceiverParameterDescriptor -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
+                is AbstractReceiverParameterDescriptor -> { el: EvaluatorFragmentParameterInfo ->
+                    val targetDescriptor = el.descriptor
                     value.containingDeclaration == targetDescriptor
                 }
-                else -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
+                else -> { el: EvaluatorFragmentParameterInfo ->
+                    val targetDescriptor = el.descriptor
                     targetDescriptor == value
                 }
             }

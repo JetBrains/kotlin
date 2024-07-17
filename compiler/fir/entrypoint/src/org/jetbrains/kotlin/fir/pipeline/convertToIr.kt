@@ -365,7 +365,9 @@ private class Fir2IrPipeline(
                 } catch (e: Throwable) {
                     CodegenUtil.reportBackendException(e, "IR fake override builder", file.fileEntry.name) { offset ->
                         file.fileEntry.takeIf { it.supportsDebugInfo }?.let {
-                            val (line, column) = it.getLineAndColumnNumbers(offset)
+                            val initializer = it.getLineAndColumnNumbers(offset)
+                            val line = initializer.line
+                            val column = initializer.column
                             line to column
                         }
                     }

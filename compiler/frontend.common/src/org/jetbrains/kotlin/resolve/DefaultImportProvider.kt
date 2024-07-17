@@ -16,7 +16,9 @@ abstract class DefaultImportProvider {
     private data class DefaultImportsKey(val includeKotlinComparisons: Boolean, val includeLowPriorityImports: Boolean)
 
     private val defaultImports = LockBasedStorageManager("TargetPlatform").let { storageManager ->
-        storageManager.createMemoizedFunction<DefaultImportsKey, List<ImportPath>> { (includeKotlinComparisons, includeLowPriorityImports) ->
+        storageManager.createMemoizedFunction<DefaultImportsKey, List<ImportPath>> { initializer ->
+            val includeKotlinComparisons = initializer.includeKotlinComparisons
+            val includeLowPriorityImports = initializer.includeLowPriorityImports
             ArrayList<ImportPath>().apply {
                 listOf(
                     "kotlin.*",

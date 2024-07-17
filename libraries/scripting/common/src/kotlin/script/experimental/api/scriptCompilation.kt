@@ -302,7 +302,9 @@ fun ScriptCompilationConfiguration.refineOnAnnotations(
 
     val thisResult: ResultWithDiagnostics<ScriptCompilationConfiguration> = this.asSuccess()
     return this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
-        ?.fold(thisResult) { config, (annotations, handler) ->
+        ?.fold(thisResult) { config, initializer ->
+            val annotations = initializer.annotations
+            val handler = initializer.handler
             config.onSuccess {
                 // checking that the collected data contains expected annotations
                 if (annotations.none { foundAnnotationNames.contains(it.typeName) }) it.asSuccess()

@@ -187,8 +187,10 @@ private class RangeLoopTransformer(
 
         val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
 
-        val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
-            ?: return super.visitBlock(expression)  // Cannot lower the loop.
+        val initializer = lowerWhileLoop(oldLoop, loopHeader)
+            ?: return super.visitBlock(expression)
+        val newLoop = initializer.newLoop
+        val loopReplacementExpression = initializer.replacementExpression
 
         // We can lower both the header and while loop.
         // Update mapping from old to new loop so we can later update references in break/continue.
@@ -220,8 +222,11 @@ private class RangeLoopTransformer(
 
     private fun lowerWhileLoop(loop: IrWhileLoop, loopHeader: ForLoopHeader): LoopReplacement? {
         val loopBodyStatements = (loop.body as? IrContainerExpression)?.statements ?: return null
-        val (mainLoopVariable, mainLoopVariableIndex, loopVariableComponents, loopVariableComponentIndices) =
-            gatherLoopVariableInfo(loopBodyStatements)
+        val initializer2 = gatherLoopVariableInfo(loopBodyStatements)
+        val mainLoopVariable = initializer2.mainLoopVariable
+        val mainLoopVariableIndex = initializer2.mainLoopVariableIndex
+        val loopVariableComponents = initializer2.loopVariableComponents
+        val loopVariableComponentIndices = initializer2.loopVariableComponentIndices
 
         if (loopHeader.consumesLoopVariableComponents && mainLoopVariable.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) {
             // We determine if there is a destructuring declaration by checking if the main loop variable is temporary.

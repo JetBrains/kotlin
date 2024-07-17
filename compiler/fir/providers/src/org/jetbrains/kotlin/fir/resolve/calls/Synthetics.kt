@@ -117,7 +117,9 @@ class FirSyntheticPropertiesScope private constructor(
         if (getter.isStatic) return
 
         // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
-        val (getterCompatibility, deprecatedOverrideOfHidden) = getterSymbol.computeGetterCompatibility()
+        val initializer = getterSymbol.computeGetterCompatibility()
+        val getterCompatibility = initializer.compatibility
+        val deprecatedOverrideOfHidden = initializer.deprecatedOverrideOfHidden
         if (getterCompatibility == Incompatible) return
 
         var getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.coneType

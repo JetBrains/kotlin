@@ -86,7 +86,9 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
 
         val result = mutableListOf<IrDeclaration>()
 
-        for ((from, to) in bridgesToGenerate) {
+        for (initializer in bridgesToGenerate) {
+            val from = initializer.from
+            val to = initializer.to
             if (!from.function.parentAsClass.isInterface &&
                 from.function.isReal &&
                 from.function.modality != Modality.ABSTRACT &&

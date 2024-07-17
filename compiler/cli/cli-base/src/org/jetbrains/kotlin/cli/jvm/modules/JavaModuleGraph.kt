@@ -33,7 +33,9 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
         fun dfs(moduleName: String): Boolean {
             // Automatic modules have no transitive exports, so we only consider explicit modules here
             val moduleInfo = (module(moduleName) as? JavaModule.Explicit)?.moduleInfo ?: return false
-            for ((dependencyModuleName, isTransitive) in moduleInfo.requires) {
+            for (initializer in moduleInfo.requires) {
+                val dependencyModuleName = initializer.moduleName
+                val isTransitive = initializer.isTransitive
                 if (isTransitive && visited.add(dependencyModuleName)) {
                     dfs(dependencyModuleName)
                 }
@@ -48,7 +50,9 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
                     // Do nothing; all automatic modules should be added to compilation roots at call site as per java.lang.module javadoc
                 }
                 is JavaModule.Explicit -> {
-                    for ((dependencyModuleName, isTransitive) in module.moduleInfo.requires) {
+                    for (initializer in module.moduleInfo.requires) {
+                        val dependencyModuleName = initializer.moduleName
+                        val isTransitive = initializer.isTransitive
                         if (visited.add(dependencyModuleName)) {
                             val moduleExists = dfs(dependencyModuleName)
                             //ct.sym can miss some internal modules from non-transitive dependencies
@@ -75,7 +79,9 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
             when (module) {
                 is JavaModule.Automatic -> return true
                 is JavaModule.Explicit -> {
-                    for ((dependencyModuleName, isTransitive) in module.moduleInfo.requires) {
+                    for (initializer in module.moduleInfo.requires) {
+                        val dependencyModuleName = initializer.moduleName
+                        val isTransitive = initializer.isTransitive
                         if (dependencyModuleName == dependencyName) return true
                         if (isTransitive && dfs(dependencyModuleName)) return true
 
@@ -92,7 +98,8 @@ class JavaModuleGraph(finder: JavaModuleFinder) {
         when (module) {
             is JavaModule.Automatic -> return true
             is JavaModule.Explicit -> {
-                for ((dependencyModuleName) in module.moduleInfo.requires) {
+                for (initializer in module.moduleInfo.requires) {
+                    val dependencyModuleName = initializer.moduleName
                     if (dfs(dependencyModuleName)) return true
                 }
             }

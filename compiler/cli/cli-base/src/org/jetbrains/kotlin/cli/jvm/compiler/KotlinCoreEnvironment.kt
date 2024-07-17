@@ -267,11 +267,16 @@ class KotlinCoreEnvironment private constructor(
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
 
-        val (initialRoots, javaModules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
+        val initializer = classpathRootsResolver.convertClasspathRoots(contentRoots)
+        val initialRoots = initializer.roots
+        val javaModules = initializer.modules
         this.initialRoots.addAll(initialRoots)
 
         val (roots, singleJavaFileRoots) =
-            initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+            initialRoots.partition { initializer ->
+                val file = initializer.file
+                file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION
+            }
 
         // REPL and kapt2 update classpath dynamically
         rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {
@@ -403,7 +408,8 @@ class KotlinCoreEnvironment private constructor(
 
         return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
             updateClasspathFromRootsIndex(newIndex)
-            newIndex.indexedRoots.mapNotNull { (file) ->
+            newIndex.indexedRoots.mapNotNull { initializer ->
+                val file = initializer.file
                 VfsUtilCore.virtualToIoFile(VfsUtilCore.getVirtualFileForJar(file) ?: file)
             }.toList()
         }.orEmpty()

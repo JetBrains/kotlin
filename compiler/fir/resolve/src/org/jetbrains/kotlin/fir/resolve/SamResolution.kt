@@ -109,7 +109,8 @@ class FirSamResolver(
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
         val firRegularClass = type.lookupTag.toRegularClassSymbol(session)?.fir ?: return null
 
-        val (_, unsubstitutedFunctionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
+        val initializer = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
+        val unsubstitutedFunctionType = initializer.type
 
         val functionType = firRegularClass.buildSubstitutorWithUpperBounds(session, type)?.substituteOrNull(unsubstitutedFunctionType)
             ?: unsubstitutedFunctionType
@@ -133,7 +134,9 @@ class FirSamResolver(
 
     fun buildSamConstructorForRegularClass(classSymbol: FirRegularClassSymbol): FirNamedFunctionSymbol? {
         val firRegularClass = classSymbol.fir
-        val (functionSymbol, functionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
+        val initializer = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
+        val functionSymbol = initializer.symbol
+        val functionType = initializer.type
 
         val syntheticFunctionSymbol = classSymbol.createSyntheticConstructorSymbol()
 

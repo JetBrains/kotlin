@@ -69,7 +69,9 @@ class TypeVariableDirectionCalculator(
 
         directions[variable] = direction
 
-        for ((otherVariable, otherDirection) in getConstraintDependencies(variable, direction)) {
+        for (initializer in getConstraintDependencies(variable, direction)) {
+            val otherVariable = initializer.variableWithConstraints
+            val otherDirection = initializer.direction
             enterToNode(otherVariable, otherDirection)
         }
     }

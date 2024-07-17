@@ -35,7 +35,10 @@ class JsPerModuleCache(
         val crossModuleReferencesHash = ICHash.fromProtoStream(this)
         val reexportedInModuleWithName = ifTrue { readString() }
         val importedWithEffectInModuleWithName = ifTrue { readString() }
-        val (definitions, nameBindings, optionalCrossModuleImports) = fetchJsIrModuleHeaderNames()
+        val initializer = fetchJsIrModuleHeaderNames()
+        val definitions = initializer.definitions
+        val nameBindings = initializer.nameBindings
+        val optionalCrossModuleImports = initializer.optionalCrossModuleImports
 
         CachedModuleInfo(
             artifact = this@fetchModuleInfo,

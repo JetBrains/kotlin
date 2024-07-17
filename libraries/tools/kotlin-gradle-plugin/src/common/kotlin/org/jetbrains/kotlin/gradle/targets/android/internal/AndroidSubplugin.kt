@@ -202,7 +202,10 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
 
         addSourceSetAsVariant("main")
 
-        getVariantComponentNames(variantData)?.let { (variantName, flavorName, buildTypeName) ->
+        getVariantComponentNames(variantData)?.let { initializer ->
+            val variantName = initializer.variantName
+            val flavorName = initializer.flavorName
+            val buildTypeName = initializer.buildTypeName
             addSourceSetAsVariant(buildTypeName)
 
             if (flavorName.isNotEmpty()) {

@@ -88,7 +88,9 @@ class FunctionDefinitionLoader(
             collectNamedFunctionsAndWrappers(listOf(this)),
             collectAccessors(listOf(this)),
             collectLocalFunctions(listOf(this))
-        ).also { (functions, accessors) ->
+        ).also { initializer ->
+            val functions = initializer.functions
+            val accessors = initializer.accessors
             (functions.values.asSequence() + accessors.values.asSequence()).forEach { f ->
                 functionsByFunctionNodes[f.function] = f
             }

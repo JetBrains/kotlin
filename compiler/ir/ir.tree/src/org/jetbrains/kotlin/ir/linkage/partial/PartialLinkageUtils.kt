@@ -67,7 +67,9 @@ object PartialLinkageUtils {
             override val module = Module.Real(file.module.name)
 
             override fun computeLocationForOffset(offset: Int): PartialLinkageLogger.Location {
-                val (line, column) = file.fileEntry.getLineAndColumnNumbers(offset)
+                val initializer = file.fileEntry.getLineAndColumnNumbers(offset)
+                val line = initializer.line
+                val column = initializer.column
                 return PartialLinkageLogger.Location(
                     moduleName = module.name,
                     filePath = file.fileEntry.name,

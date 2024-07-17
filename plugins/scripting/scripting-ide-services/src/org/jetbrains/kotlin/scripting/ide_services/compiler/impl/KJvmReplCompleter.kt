@@ -275,7 +275,11 @@ private class KJvmReplCompleter(
                     }
                     .forEach { resultTriple ->
                         val descriptor = resultTriple.first
-                        val (rawName, presentableText, tailText, completionText) = resultTriple.second
+                        val initializer = resultTriple.second
+                        val rawName = initializer.rawName
+                        val presentableText = initializer.presentableText
+                        val tailText = initializer.tailText
+                        val completionText = initializer.completionText
                         if (options.nameFilter(rawName, prefix)) {
                             val fullName: String =
                                 formatName(

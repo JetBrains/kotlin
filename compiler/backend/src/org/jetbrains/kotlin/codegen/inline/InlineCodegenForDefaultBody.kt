@@ -38,7 +38,9 @@ class InlineCodegenForDefaultBody(
 
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
         assert(!callDefault) { "inlining default stub into another default stub" }
-        val (node, smap) = sourceCompilerForInline.compileInlineFunction(jvmSignature)
+        val initializer = sourceCompilerForInline.compileInlineFunction(jvmSignature)
+        val node = initializer.node
+        val smap = initializer.classSMAP
 
         val argsSize = argumentsSize(jvmSignature.asmMethod.descriptor, callableMethod.isStaticCall())
         val mv = object : MethodBodyVisitor(codegen.visitor) {

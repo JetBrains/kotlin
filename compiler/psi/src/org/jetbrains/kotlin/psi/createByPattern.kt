@@ -142,7 +142,9 @@ fun <TElement : KtElement> createByPattern(
             arg
     }
 
-    val (processedText, allPlaceholders) = processPattern(pattern, args)
+    val initializer = processPattern(pattern, args)
+    val processedText = initializer.processedText
+    val allPlaceholders = initializer.placeholders
 
     var resultElement: KtElement = factory(processedText.trim())
     val project = resultElement.project
@@ -159,7 +161,8 @@ fun <TElement : KtElement> createByPattern(
         if (arg is String) continue // already in the text
         val expectedElementType = (argumentTypes[n] as PsiElementPlaceholderArgumentType<*, *>).placeholderClass
 
-        for ((range, _) in placeholders) {
+        for (initializer in placeholders) {
+            val range = initializer.range
             val token = resultElement.findElementAt(range.startOffset)!!
             for (element in token.parentsWithSelf) {
                 val elementRange = element.textRange.shiftRight(-start)

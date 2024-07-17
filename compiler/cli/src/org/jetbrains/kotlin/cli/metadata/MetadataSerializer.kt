@@ -50,7 +50,9 @@ open class MetadataSerializer(
         val languageVersionSettings = environment.configuration.languageVersionSettings
         val files = environment.getSourceFiles()
         val project = environment.project
-        val (module, bindingContext) = analysisResult
+        val initializer = analysisResult
+        val module = initializer.moduleDescriptor
+        val bindingContext = initializer.bindingContext
 
         val packageTable = hashMapOf<FqName, PackageParts>()
 

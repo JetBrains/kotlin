@@ -230,7 +230,10 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
 
 
         val importWithEffectIn = ifTrue { readString() }
-        val (definitions, nameBindings, optionalCrossModuleImports) = fetchJsIrModuleHeaderNames()
+        val initializer = fetchJsIrModuleHeaderNames()
+        val definitions = initializer.definitions
+        val nameBindings = initializer.nameBindings
+        val optionalCrossModuleImports = initializer.optionalCrossModuleImports
 
         it.jsIrHeader = JsIrModuleHeader(
             moduleName = moduleName,
@@ -384,13 +387,19 @@ class JsPerFileCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMult
         }
 
     override fun fetchCompiledJsCode(cacheInfo: CachedFileInfo) =
-        cacheInfo.cachedFiles?.let { (jsCodeFile, sourceMapFile, tsDeclarationsFile) ->
+        cacheInfo.cachedFiles?.let { initializer ->
+            val jsCodeFile = initializer.jsCodeFile
+            val sourceMapFile = initializer.sourceMapFile
+            val tsDeclarationsFile = initializer.tsDeclarationsFile
             jsCodeFile.ifExists { this }
                 ?.let { CompilationOutputsCached(it, sourceMapFile?.ifExists { this }, tsDeclarationsFile?.ifExists { this }) }
         }
 
     override fun commitCompiledJsCode(cacheInfo: CachedFileInfo, compilationOutputs: CompilationOutputsBuilt) =
-        cacheInfo.cachedFiles?.let { (jsCodeFile, jsMapFile, tsDeclarationsFile) ->
+        cacheInfo.cachedFiles?.let { initializer ->
+            val jsCodeFile = initializer.jsCodeFile
+            val jsMapFile = initializer.sourceMapFile
+            val tsDeclarationsFile = initializer.tsDeclarationsFile
             tsDeclarationsFile?.writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
             compilationOutputs.writeJsCodeIntoModuleCache(jsCodeFile, jsMapFile)
         } ?: compilationOutputs

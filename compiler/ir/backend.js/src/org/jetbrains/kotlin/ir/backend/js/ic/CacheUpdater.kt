@@ -209,7 +209,11 @@ class CacheUpdater(
             val removedFilesMetadata = hashMapOf<KotlinLibraryFile, Map<KotlinSourceFile, KotlinSourceFileMetadata>>()
 
             fun collectDirtyFiles(lib: KotlinLibraryFile, cache: IncrementalCache): MutableMap<KotlinSourceFile, KotlinSourceFileMetadata> {
-                val (addedFiles, removedFiles, modifiedFiles, nonModifiedFiles) = cache.collectModifiedFiles()
+                val initializer = cache.collectModifiedFiles()
+                val addedFiles = initializer.addedFiles
+                val removedFiles = initializer.removedFiles
+                val modifiedFiles = initializer.modifiedFiles
+                val nonModifiedFiles = initializer.nonModifiedFiles
 
                 val fileStats by lazy(LazyThreadSafetyMode.NONE) { dirtyFileStats.getOrPutFiles(lib) }
                 addedFiles.forEach { fileStats.addDirtFileStat(it, DirtyFileState.ADDED_FILE) }
@@ -766,7 +770,11 @@ class CacheUpdater(
     )
 
     private fun loadIrAndMakeIrFragmentGenerators(): FragmentGenerators {
-        val (incrementalCachesArtifacts, loadedIr, dirtyFiles, irCompiler) = loadIrForDirtyFilesAndInitCompiler()
+        val initializer = loadIrForDirtyFilesAndInitCompiler()
+        val incrementalCachesArtifacts = initializer.incrementalCacheArtifacts
+        val loadedIr = initializer.loadedIr
+        val dirtyFiles = initializer.dirtyFiles
+        val irCompiler = initializer.irCompiler
 
         val moduleNames = loadedIr.loadedFragments.entries.associate { it.key to it.value.name.asString() }
 
@@ -802,7 +810,10 @@ class CacheUpdater(
         stopwatch.clear()
         dirtyFileStats.clear()
 
-        val (incrementalCachesArtifacts, moduleNames, generators) = loadIrAndMakeIrFragmentGenerators()
+        val initializer = loadIrAndMakeIrFragmentGenerators()
+        val incrementalCachesArtifacts = initializer.incrementalCacheArtifacts
+        val moduleNames = initializer.moduleNames
+        val generators = initializer.generators
 
         val rebuiltFragments = generateIrFragments(generators)
 

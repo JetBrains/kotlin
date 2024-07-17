@@ -202,7 +202,10 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             continue
         }
 
-        val (getter, setter, argument) = argumentField
+        val initializer = argumentField
+        val getter = initializer.getter
+        val setter = initializer.setter
+        val argument = initializer.argument
 
         // Tests for -shortName=value, which isn't currently allowed.
         if (key != arg && key == argument.shortName) {

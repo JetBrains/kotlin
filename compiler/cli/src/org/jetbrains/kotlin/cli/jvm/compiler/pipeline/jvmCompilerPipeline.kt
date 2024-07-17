@@ -165,10 +165,14 @@ fun convertAnalyzedFirToIr(
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
-    val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
-        analysisResults.convertToIrAndActualizeForJvm(
-            extensions, input.configuration, environment.diagnosticsReporter, irGenerationExtensions,
-        )
+    val initializer = analysisResults.convertToIrAndActualizeForJvm(
+        extensions, input.configuration, environment.diagnosticsReporter, irGenerationExtensions,
+    )
+    val moduleFragment = initializer.irModuleFragment
+    val components = initializer.components
+    val pluginContext = initializer.pluginContext
+    val irActualizedResult = initializer.irActualizedResult
+    val symbolTable = initializer.symbolTable
 
     return ModuleCompilerIrBackendInput(
         input.targetId,
@@ -314,7 +318,9 @@ fun compileModuleToAnalyzedFir(
 
     val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
 
-    val outputs = sessionWithSources.map { (session, sources) ->
+    val outputs = sessionWithSources.map { initializer ->
+        val session = initializer.session
+        val sources = initializer.files
         buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, countFilesAndLines)
     }
     outputs.runPlatformCheckers(diagnosticsReporter)
@@ -425,11 +431,15 @@ fun createProjectEnvironment(
         hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
     )
 
-    val (initialRoots, javaModules) =
-        classpathRootsResolver.convertClasspathRoots(contentRoots)
+    val initializer = classpathRootsResolver.convertClasspathRoots(contentRoots)
+    val initialRoots = initializer.roots
+    val javaModules = initializer.modules
 
     val (roots, singleJavaFileRoots) =
-        initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+        initialRoots.partition { initializer ->
+            val file = initializer.file
+            file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION
+        }
 
     // REPL and kapt2 update classpath dynamically
     val rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {

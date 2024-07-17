@@ -175,7 +175,9 @@ private fun readClass(
     typeParameterIndexOffset: Int,
     consumer: (CirEntityId, CirProvided.Classifier) -> Unit
 ) {
-    val (classId, classProto) = classEntry
+    val initializer = classEntry
+    val classId = initializer.classId
+    val classProto = initializer.proto
 
     val typeParameterNameToIndex = HashMap<Int, Int>()
 

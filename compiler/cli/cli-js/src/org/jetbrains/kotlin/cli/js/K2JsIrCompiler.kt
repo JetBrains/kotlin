@@ -359,7 +359,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 relativeRequirePath = true
             )
 
-            val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.granularity, outJsProgram = false)
+            val initializer = jsExecutableProducer.buildExecutable(arguments.granularity, outJsProgram = false)
+            val outputs = initializer.compilationOut
+            val rebuiltModules = initializer.buildModules
             outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
 
             icCaches.cacheGuard.release()
@@ -411,7 +413,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 loadFunctionInterfacesIntoStdlib = true,
             )
 
-            val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
+            val initializer = compileToLoweredIr(
                 irModuleInfo,
                 module.mainModule,
                 configuration,
@@ -421,6 +423,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 generateTypeScriptFragment = generateDts,
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,
             )
+            val allModules = initializer.loweredIr
+            val backendContext = initializer.backendContext
+            val typeScriptFragment = initializer.typeScriptFragment
 
             performanceManager?.notifyIRGenerationStarted()
             val dceDumpNameCache = DceDumpNameCache()

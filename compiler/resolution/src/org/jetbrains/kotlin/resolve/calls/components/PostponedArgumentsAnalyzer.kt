@@ -152,8 +152,9 @@ class PostponedArgumentsAnalyzer(
         diagnosticHolder: KotlinDiagnosticsHolder,
         substitute: (KotlinType) -> UnwrappedType = c.createSubstituteFunctorForLambdaAnalysis().substitute
     ) {
-        val (returnArgumentsInfo, inferenceSession, hasInapplicableCallForBuilderInference) =
-            returnArgumentsAnalysisResult
+        val returnArgumentsInfo = returnArgumentsAnalysisResult.returnArgumentsInfo
+        val inferenceSession = returnArgumentsAnalysisResult.inferenceSession
+        val hasInapplicableCallForBuilderInference = returnArgumentsAnalysisResult.hasInapplicableCallForBuilderInference
 
         if (hasInapplicableCallForBuilderInference) {
             inferenceSession?.initializeLambda(lambda)

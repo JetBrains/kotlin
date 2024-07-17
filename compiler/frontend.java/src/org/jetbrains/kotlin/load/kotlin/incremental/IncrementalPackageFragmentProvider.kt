@@ -90,7 +90,9 @@ class IncrementalPackageFragmentProvider(
             ChainedMemberScope.create(
                 "Member scope for incremental compilation: union of multifile class parts data for $facadeName",
                 partsInternalNames.mapNotNull { internalName ->
-                    incrementalCache.getPackagePartData(internalName)?.let { (data, strings) ->
+                    incrementalCache.getPackagePartData(internalName)?.let { initializer ->
+                        val data = initializer.data
+                        val strings = initializer.strings
                         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
 
                         val partName = JvmClassName.byInternalName(internalName)

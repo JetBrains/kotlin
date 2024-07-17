@@ -67,7 +67,10 @@ class JvmResolverForModuleFactory(
         resolveOptimizingOptions: OptimizingOptions?,
         absentDescriptorHandlerClass: Class<out AbsentDescriptorHandler>?
     ): ResolverForModule {
-        val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
+        val initializer = moduleContent
+        val moduleInfo = initializer.moduleInfo
+        val syntheticFiles = initializer.syntheticFiles
+        val moduleContentScope = initializer.moduleContentScope
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project, moduleContext.storageManager, syntheticFiles,

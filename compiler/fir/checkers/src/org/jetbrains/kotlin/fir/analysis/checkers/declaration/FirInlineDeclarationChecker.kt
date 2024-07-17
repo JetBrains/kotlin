@@ -307,7 +307,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             ) {
                 return
             }
-            val (isInlineFunPublicOrPublishedApi, isCalledFunPublicOrPublishedApi, calledFunEffectiveVisibility) = checkAccessedDeclaration(
+            val initializer = checkAccessedDeclaration(
                 source,
                 accessExpression,
                 calledDeclaration,
@@ -315,6 +315,9 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 context,
                 reporter,
             )
+            val isInlineFunPublicOrPublishedApi = initializer.isInlineFunPublicOrPublishedApi
+            val isCalledFunPublicOrPublishedApi = initializer.isCalledFunPublicOrPublishedApi
+            val calledFunEffectiveVisibility = initializer.calledFunEffectiveVisibility
 
             if (isInlineFunPublicOrPublishedApi && isCalledFunPublicOrPublishedApi) {
                 checkSuperCalls(calledDeclaration, accessExpression, context, reporter)

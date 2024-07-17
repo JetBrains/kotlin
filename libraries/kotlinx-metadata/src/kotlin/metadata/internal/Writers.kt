@@ -58,7 +58,8 @@ private fun WriteContext.writeTypeProjection(argument: KmTypeProjection): ProtoB
     if (argument == KmTypeProjection.STAR) {
         t.projection = ProtoBuf.Type.Argument.Projection.STAR
     } else {
-        val (variance, argType) = argument
+        val variance = argument.variance
+        val argType = argument.type
         if (variance == null || argType == null)
             throw InconsistentKotlinMetadataException("Variance and type must be set for non-star type projection")
         if (variance == KmVariance.IN) {
@@ -231,7 +232,10 @@ private fun WriteContext.writeVersionRequirement(kmVersionRequirement: KmVersion
             this.message = this@writeVersionRequirement[message]
         }
     }
-    val (major, minor, patch) = kmVersionRequirement.version
+    val initializer = kmVersionRequirement.version
+    val major = initializer.major
+    val minor = initializer.minor
+    val patch = initializer.patch
 
     VersionRequirement.Version(major, minor, patch).encode(
         writeVersion = { t!!.version = it },

@@ -43,7 +43,9 @@ object IrInlineDefaultCodegen : IrInlineCallGenerator {
         isInsideIfCondition: Boolean
     ) {
         val function = expression.symbol.owner
-        val (node, smap) = codegen.classCodegen.generateMethodNode(function)
+        val initializer = codegen.classCodegen.generateMethodNode(function)
+        val node = initializer.node
+        val smap = initializer.classSMAP
         val argsSize = argumentsSize(callableMethod.asmMethod.descriptor, function.isStatic)
         val mv = object : MethodBodyVisitor(codegen.visitor) {
             override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {

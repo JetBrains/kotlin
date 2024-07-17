@@ -1338,7 +1338,10 @@ private fun incrementScopeNumbersOfVariables(node: MethodNode, label: Label): In
 }
 
 private fun incrementScopeNumbers(name: String): String {
-    val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
+    val initializer = name.getInlineScopeInfo() ?: return name
+    val scopeNumber = initializer.scopeNumber
+    val callSiteLineNumber = initializer.callSiteLineNumber
+    val surroundingScopeNumber = initializer.surroundingScopeNumber
     return buildString {
         append(name.dropInlineScopeInfo())
         append(INLINE_SCOPE_NUMBER_SEPARATOR)

@@ -184,8 +184,12 @@ class DifferenceCalculatorForClass(
     )
 
     override fun difference(): Difference {
-        val (oldProto, oldNameResolver) = oldData
-        val (newProto, newNameResolver) = newData
+        val initializer = oldData
+        val oldProto = initializer.proto
+        val oldNameResolver = initializer.nameResolver
+        val initializer2 = newData
+        val newProto = initializer2.proto
+        val newNameResolver = initializer2.nameResolver
 
         val diff = compareObject.difference(oldProto, newProto)
 

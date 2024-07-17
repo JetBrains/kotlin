@@ -344,7 +344,10 @@ fun updateCallSiteLineNumber(name: String, newLineNumber: Int): String =
     updateCallSiteLineNumber(name) { newLineNumber }
 
 fun updateCallSiteLineNumber(name: String, calculate: (Int) -> Int): String {
-    val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
+    val initializer = name.getInlineScopeInfo() ?: return name
+    val scopeNumber = initializer.scopeNumber
+    val callSiteLineNumber = initializer.callSiteLineNumber
+    val surroundingScopeNumber = initializer.surroundingScopeNumber
     if (callSiteLineNumber == null) {
         return name
     }

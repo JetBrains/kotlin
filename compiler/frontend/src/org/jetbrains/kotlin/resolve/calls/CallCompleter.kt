@@ -406,7 +406,10 @@ class CallCompleter(
         context: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<*>? {
         val cachedData = getResolutionResultsCachedData(expression, context) ?: return null
-        val (cachedResolutionResults, cachedContext, tracing) = cachedData
+        val initializer = cachedData
+        val cachedResolutionResults = initializer.resolutionResults
+        val cachedContext = initializer.deferredComputation
+        val tracing = initializer.tracing
 
         val contextForArgument = cachedContext.replaceBindingTrace(context.trace)
             .replaceExpectedType(context.expectedType).replaceCollectAllCandidates(false).replaceCallPosition(context.callPosition)

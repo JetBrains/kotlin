@@ -992,7 +992,9 @@ class CompileServiceImpl(
                 ) {
                     // all others are smaller that me, take overs' clients and shut them down
                     log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                    aliveWithOpts.forEach { (daemon, runFile, _) ->
+                    aliveWithOpts.forEach { initializer ->
+                        val daemon = initializer.daemon
+                        val runFile = initializer.runFile
                         try {
                             daemon.getClients().takeIf { it.isGood }?.let {
                                 it.get().forEach { clientAliveFile -> registerClient(clientAliveFile) }

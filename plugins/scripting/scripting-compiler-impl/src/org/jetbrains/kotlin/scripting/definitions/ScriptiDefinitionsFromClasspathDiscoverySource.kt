@@ -90,13 +90,14 @@ private fun scriptTemplatesDiscoverySequence(
                                         SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
                                     )
                                 }.toList()
-                                val (loadedDefinitions, notFoundClasses) =
-                                    definitionNames.partitionLoadJarDefinitions(
-                                        jar,
-                                        classpathWithLoader,
-                                        hostConfiguration,
-                                        messageReporter
-                                    )
+                                val initializer = definitionNames.partitionLoadJarDefinitions(
+                                    jar,
+                                    classpathWithLoader,
+                                    hostConfiguration,
+                                    messageReporter
+                                )
+                                val loadedDefinitions = initializer.loaded
+                                val notFoundClasses = initializer.notFound
                                 if (notFoundClasses.isNotEmpty()) {
                                     messageReporter(
                                         ScriptDiagnostic.Severity.WARNING,
@@ -113,11 +114,13 @@ private fun scriptTemplatesDiscoverySequence(
                         defferedDirDependencies.add(dep) // there is no way to know that the dependency is fully "used" so we add it to the list anyway
                         val discoveryMarkers = File(dep, SCRIPT_DEFINITION_MARKERS_PATH).listFiles()
                         if (discoveryMarkers?.isEmpty() == false) {
-                            val (foundDefinitionClasses, notFoundDefinitions) = discoveryMarkers.map {
+                            val initializer = discoveryMarkers.map {
                                 it.name.removeSuffix(
                                     SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
                                 )
                             }.partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
+                            val foundDefinitionClasses = initializer.loaded
+                            val notFoundDefinitions = initializer.notFound
                             foundDefinitionClasses.forEach {
                                 yield(it)
                             }
@@ -139,8 +142,10 @@ private fun scriptTemplatesDiscoverySequence(
         for (dep in defferedDirDependencies) {
             if (remainingDefinitionCandidates.isEmpty()) break
             try {
-                val (foundDefinitionClasses, notFoundDefinitions) =
+                val initializer =
                     remainingDefinitionCandidates.partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
+                val foundDefinitionClasses = initializer.loaded
+                val notFoundDefinitions = initializer.notFound
                 foundDefinitionClasses.forEach {
                     yield(it)
                 }
@@ -191,7 +196,7 @@ fun loadScriptTemplatesFromClasspath(
             if (remainingTemplates.isEmpty()) break
 
             try {
-                val (loadedDefinitions, notFoundTemplates) = when {
+                val initializer = when {
                     dep.isFile && dep.extension == "jar" -> { // checking for extension is the compiler current behaviour, so the same logic is implemented here
                         JarFile(dep).use { jar ->
                             remainingTemplates.partitionLoadJarDefinitions(jar, classpathWithLoader, hostConfiguration, messageReporter)
@@ -209,6 +214,8 @@ fun loadScriptTemplatesFromClasspath(
                         )
                     }
                 }
+                val loadedDefinitions = initializer.loaded
+                val notFoundTemplates = initializer.notFound
                 if (loadedDefinitions.isNotEmpty()) {
                     loadedDefinitions.forEach {
                         yield(it)

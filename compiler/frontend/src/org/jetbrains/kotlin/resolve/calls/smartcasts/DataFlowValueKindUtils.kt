@@ -130,9 +130,10 @@ internal fun VariableDescriptor.variableKind(
 fun hasNoWritersInClosures(
     variableContainingDeclaration: DeclarationDescriptor,
     writers: Set<AssignedVariablesSearcher.Writer>,
-    bindingContext: BindingContext
+    bindingContext: BindingContext,
 ): Boolean {
-    return writers.none { (_, writerDeclaration) ->
+    return writers.none { initializer ->
+        val writerDeclaration = initializer.declaration
         writerDeclaration != null &&
                 variableContainingDeclaration != writerDeclaration.getDeclarationDescriptorIncludingConstructors(bindingContext)
     }
@@ -143,7 +144,10 @@ private fun isAccessedInsideClosureAfterAllWriters(
     accessElement: KtElement
 ): Boolean {
     val parent = accessElement.getElementParentDeclaration() ?: return false
-    return writers.none { (assignment) -> !assignment.before(parent) }
+    return writers.none { initializer ->
+        val assignment = initializer.assignment
+        !assignment.before(parent)
+    }
 }
 
 private fun isAccessedBeforeAllClosureWriters(

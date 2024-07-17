@@ -139,7 +139,9 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
 
         fun ObjectOutputStream.writeLookups(lookupSymbols: Collection<LookupSymbol>) {
             writeInt(lookupSymbols.size)
-            for ((name, scope) in lookupSymbols) {
+            for (initializer in lookupSymbols) {
+                val name = initializer.name
+                val scope = initializer.scope
                 writeUTF(name)
                 writeUTF(scope)
             }

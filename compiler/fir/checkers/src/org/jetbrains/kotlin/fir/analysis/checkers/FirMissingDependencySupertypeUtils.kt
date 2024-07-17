@@ -32,7 +32,9 @@ fun checkMissingDependencySuperTypes(
     if (declaration !is FirClassSymbol<*>) return false
 
     val missingSuperTypes = context.session.missingDependencyStorage.getMissingSuperTypes(declaration)
-    for ((superType, origin) in missingSuperTypes) {
+    for (initializer in missingSuperTypes) {
+        val superType = initializer.type
+        val origin = initializer.origin
         val diagnostic =
             if (origin == FirMissingDependencyStorage.SupertypeOrigin.TYPE_ARGUMENT && !context.languageVersionSettings.supportsFeature(
                     LanguageFeature.ForbidUsingSupertypesWithInaccessibleContentInTypeArguments

@@ -48,7 +48,8 @@ fun <D : FirCallableSymbol<*>> overrides(
     gMember: D,
     processAllOverridden: ProcessAllOverridden<D>,
 ): Boolean {
-    val (fMember, fScope) = f
+    val fMember = f.member
+    val fScope = f.baseScope
 
     var result = false
 

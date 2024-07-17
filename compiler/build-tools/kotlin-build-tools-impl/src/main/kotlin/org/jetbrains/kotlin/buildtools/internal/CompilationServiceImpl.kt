@@ -209,7 +209,7 @@ internal object CompilationServiceImpl : CompilationService {
             }
         }
 
-        val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
+        val initializer = KotlinCompilerRunnerUtils.newDaemonConnection(
             compilerId,
             clientIsAliveFile,
             sessionIsAliveFlagFile,
@@ -217,6 +217,8 @@ internal object CompilationServiceImpl : CompilationService {
             false,
             daemonJVMOptions = jvmOptions
         ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
+        val daemon = initializer.compileService
+        val sessionId = initializer.sessionId
         val daemonCompileOptions = compilationConfiguration.asDaemonCompilationOptions
         val exitCode = daemon.compile(
             sessionId,

@@ -234,7 +234,9 @@ class PSICallResolver(
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         if (result is AllCandidatesResolutionResult) {
-            val resolvedCalls = result.allCandidates.map { (candidate, diagnostics) ->
+            val resolvedCalls = result.allCandidates.map { initializer ->
+                val candidate = initializer.candidate
+                val diagnostics = initializer.diagnostics
                 val system = candidate.getSystem()
                 val resultingSubstitutor =
                     system.asReadOnlyStorage().buildResultingSubstitutor(system as TypeSystemInferenceExtensionContext)

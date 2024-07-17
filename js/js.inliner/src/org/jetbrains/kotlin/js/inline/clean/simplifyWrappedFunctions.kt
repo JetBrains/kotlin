@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.js.inline.util.extractFunction
 fun simplifyWrappedFunctions(root: JsNode) {
     val visitor = object : JsVisitorWithContextImpl() {
         override fun endVisit(x: JsInvocation, ctx: JsContext<in JsNode>) {
-            extractFunction(x)?.let { (function, wrapper) ->
+            extractFunction(x)?.let { initializer ->
+                val function = initializer.function
+                val wrapper = initializer.wrapperBody
                 if (wrapper != null && wrapper.statements.size == 1) {
                     ctx.replaceMe(function)
                 }

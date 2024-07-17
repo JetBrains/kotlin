@@ -992,7 +992,10 @@ class LightTreeRawFirDeclarationBuilder(
                     )
                 } else {
                     buildMultiDelegatedConstructorCall {
-                        classWrapper.delegatedSuperCalls.mapTo(delegatedConstructorCalls) { (delegatedSuperTypeRef, arguments, source) ->
+                        classWrapper.delegatedSuperCalls.mapTo(delegatedConstructorCalls) { initializer ->
+                            val delegatedSuperTypeRef = initializer.delegatedSuperTypeRef
+                            val arguments = initializer.arguments
+                            val source = initializer.source
                             createDelegatedConstructorCall(source, delegatedSuperTypeRef, arguments)
                         }
                     }

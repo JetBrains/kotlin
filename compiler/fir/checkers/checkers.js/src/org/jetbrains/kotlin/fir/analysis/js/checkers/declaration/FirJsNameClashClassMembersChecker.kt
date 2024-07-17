@@ -61,7 +61,9 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             val symbolsToProcess = mutableListOf(startMemberWithScope)
             val leaves = mutableSetOf<FirCallableSymbol<*>>()
             while (symbolsToProcess.isNotEmpty()) {
-                val (processingSymbol, scope) = symbolsToProcess.popLast()
+                val initializer = symbolsToProcess.popLast()
+                val processingSymbol = initializer.member
+                val scope = initializer.baseScope
                 val overriddenMembers = scope.getDirectOverriddenMembersWithBaseScope(processingSymbol)
                 for (overriddenMemberWithScope in overriddenMembers) {
                     if (visitedSymbols.add(overriddenMemberWithScope)) {
@@ -206,7 +208,9 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
             val fakeOverrideStableNames = stableNames.filterFakeOverrideNames(declaration, context)
 
             val nonFakeOverrideClashes = stableNames.collectNonFakeOverrideClashes { it in fakeOverrideStableNames }
-            for ((symbol, clashedWith) in nonFakeOverrideClashes) {
+            for (initializer in nonFakeOverrideClashes) {
+                val symbol = initializer.symbol
+                val clashedWith = initializer.clashedWith
                 val source = when (symbol) {
                     is FirCallableSymbol<*> -> symbol.unwrapFakeOverridesOrDelegated().source
                     else -> symbol.source
@@ -214,7 +218,9 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
                 reporter.reportOn(source, FirJsErrors.JS_NAME_CLASH, name, clashedWith, context)
             }
 
-            fakeOverrideStableNames.findFirstFakeOverrideClash(stableNameCollector)?.let { (fakeOverrideSymbol, clashedWith) ->
+            fakeOverrideStableNames.findFirstFakeOverrideClash(stableNameCollector)?.let { initializer ->
+                val fakeOverrideSymbol = initializer.symbol
+                val clashedWith = initializer.clashedWith
                 reporter.reportOn(declaration.source, FirJsErrors.JS_FAKE_NAME_CLASH, name, fakeOverrideSymbol, clashedWith, context)
             }
         }

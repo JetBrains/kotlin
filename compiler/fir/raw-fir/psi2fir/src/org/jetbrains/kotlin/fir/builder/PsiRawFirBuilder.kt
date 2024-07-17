@@ -3037,7 +3037,10 @@ open class PsiRawFirBuilder(
 
         override fun visitCallExpression(expression: KtCallExpression, data: FirElement?): FirElement {
             val source = expression.toFirSourceElement()
-            val (calleeReference, explicitReceiver, isImplicitInvoke) = splitToCalleeAndReceiver(expression.calleeExpression, source)
+            val initializer = splitToCalleeAndReceiver(expression.calleeExpression, source)
+            val calleeReference = initializer.reference
+            val explicitReceiver = initializer.receiverExpression
+            val isImplicitInvoke = initializer.isImplicitInvoke
 
             val result: FirQualifiedAccessExpressionBuilder =
                 if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {

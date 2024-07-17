@@ -60,7 +60,9 @@ internal class KaFirImportOptimizer(
         val existingImports = file.importDirectives
         if (existingImports.isEmpty()) return KaImportOptimizerResult()
 
-        val (usedDeclarations, unresolvedNames) = collectReferencedEntities(file)
+        val initializer = collectReferencedEntities(file)
+        val usedDeclarations = initializer.usedImports
+        val unresolvedNames = initializer.unresolvedNames
 
         return KaImportOptimizerResult(usedDeclarations, unresolvedNames)
     }

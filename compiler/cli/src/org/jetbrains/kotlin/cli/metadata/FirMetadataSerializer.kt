@@ -107,7 +107,9 @@ internal class FirMetadataSerializer(
                     )
                 }
             )
-            sessionsWithSources.map { (session, files) ->
+            sessionsWithSources.map { initializer ->
+                val session = initializer.session
+                val files = initializer.files
                 val firFiles = session.buildFirViaLightTree(files, diagnosticsReporter, performanceManager::addSourcesStats)
                 resolveAndCheckFir(session, firFiles, diagnosticsReporter)
             }
@@ -137,7 +139,9 @@ internal class FirMetadataSerializer(
                 createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
             )
 
-            sessionsWithSources.map { (session, files) ->
+            sessionsWithSources.map { initializer ->
+                val session = initializer.session
+                val files = initializer.files
                 val firFiles = session.buildFirFromKtFiles(files)
                 resolveAndCheckFir(session, firFiles, diagnosticsReporter)
             }
@@ -161,7 +165,9 @@ internal class FirMetadataSerializer(
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
         for (output in analysisResult) {
-            val (session, scopeSession, fir) = output
+            val session = output.session
+            val scopeSession = output.scopeSession
+            val fir = output.fir
 
             val languageVersionSettings = environment.configuration.languageVersionSettings
             for (firFile in fir) {

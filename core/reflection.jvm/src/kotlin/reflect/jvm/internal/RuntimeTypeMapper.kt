@@ -109,9 +109,10 @@ internal sealed class JvmPropertySignature {
         private val string: String = if (signature.hasGetter()) {
             nameResolver.getString(signature.getter.name) + nameResolver.getString(signature.getter.desc)
         } else {
-            val (name, desc) =
-                JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable)
-                    ?: throw KotlinReflectionInternalError("No field signature for property: $descriptor")
+            val initializer = JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable)
+                ?: throw KotlinReflectionInternalError("No field signature for property: $descriptor")
+            val name = initializer.name
+            val desc = initializer.desc
             JvmAbi.getterName(name) + getManglingSuffix() + "()" + desc
         }
 

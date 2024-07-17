@@ -89,7 +89,9 @@ class FirSpecificTypeResolverTransformer(
         withBareTypes(allowed = false) {
             typeRef.transformChildren(this, data)
         }
-        val (resolvedType, diagnostic) = resolveType(typeRef, data, expandTypeAliases)
+        val initializer = resolveType(typeRef, data, expandTypeAliases)
+        val resolvedType = initializer.type
+        val diagnostic = initializer.diagnostic
         return transformType(typeRef, resolvedType, diagnostic, data)
     }
 
@@ -267,7 +269,9 @@ class FirSpecificTypeResolverTransformer(
                 isMarkedNullable = false
                 source = typeRef.source
             }
-            val (resolvedType, diagnostic) = resolveType(typeRefToTry, data)
+            val initializer = resolveType(typeRefToTry, data)
+            val resolvedType = initializer.type
+            val diagnostic = initializer.diagnostic
             if (resolvedType is ConeErrorType || diagnostic != null) continue
             return buildResolvedTypeRef {
                 source = qualifiersToTry.last().source

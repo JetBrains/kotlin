@@ -75,12 +75,15 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 updateResolutionFilterWithHistory(configuration)
 
-                val (context, errorHolder, snippetKtFile) = prepareForAnalyze(
+                val initializer = prepareForAnalyze(
                     snippet,
                     messageCollector,
                     compilationState,
                     failOnSyntaxErrors = true
                 ).valueOr { return@withMessageCollector it }
+                val context = initializer.context
+                val errorHolder = initializer.errorHolder
+                val snippetKtFile = initializer.snippetKtFile
 
                 val (sourceFiles, sourceDependencies) = collectRefinedSourcesAndUpdateEnvironment(
                     context,

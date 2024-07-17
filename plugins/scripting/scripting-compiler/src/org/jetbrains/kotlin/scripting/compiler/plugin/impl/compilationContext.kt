@@ -327,13 +327,15 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     messageCollector: ScriptDiagnosticsMessageCollector
 ): Pair<List<KtFile>, List<ScriptsCompilationDependencies.SourceDependencies>> {
     val sourceFiles = arrayListOf(mainKtFile)
-    val (classpath, newSources, sourceDependencies) =
-        collectScriptsCompilationDependencies(
-            context.environment.configuration,
-            context.environment.project,
-            sourceFiles,
-            initialConfiguration
-        )
+    val initializer = collectScriptsCompilationDependencies(
+        context.environment.configuration,
+        context.environment.project,
+        sourceFiles,
+        initialConfiguration
+    )
+    val classpath = initializer.classpath
+    val newSources = initializer.sources
+    val sourceDependencies = initializer.sourceDependencies
 
     context.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
 

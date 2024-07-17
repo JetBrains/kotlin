@@ -65,7 +65,11 @@ fun compileToLoweredIr(
     generateTypeScriptFragment: Boolean,
     propertyLazyInitialization: Boolean,
 ): LoweredIrWithExtraArtifacts {
-    val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = irModuleInfo
+    val moduleFragment = irModuleInfo.module
+    val dependencyModules = irModuleInfo.allDependencies
+    val irBuiltIns = irModuleInfo.bultins
+    val symbolTable = irModuleInfo.symbolTable
+    val irLinker = irModuleInfo.deserializer
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)

@@ -552,10 +552,13 @@ abstract class IncrementalCompilerRunner<
                 break
             }
 
-            val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getChangedAndImpactedSymbols(
+            val initializer = changesCollector.getChangedAndImpactedSymbols(
                 listOf(caches.platformCache),
                 reporter
             )
+            val dirtyLookupSymbols = initializer.dirtyLookupSymbols
+            val dirtyClassFqNames = initializer.dirtyClassesFqNames
+            val forceRecompile = initializer.dirtyClassesFqNamesForceRecompile
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
             val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)

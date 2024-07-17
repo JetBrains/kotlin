@@ -30,7 +30,9 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         EmptyPackageFragmentDescriptor(module, fqName)
     }
 
-    private val classes = storageManager.createMemoizedFunction<ClassRequest, ClassDescriptor> { (classId, typeParametersCount) ->
+    private val classes = storageManager.createMemoizedFunction<ClassRequest, ClassDescriptor> { initializer ->
+        val classId = initializer.classId
+        val typeParametersCount = initializer.typeParametersCount
         if (classId.isLocal) {
             throw UnsupportedOperationException("Unresolved local class: $classId")
         }

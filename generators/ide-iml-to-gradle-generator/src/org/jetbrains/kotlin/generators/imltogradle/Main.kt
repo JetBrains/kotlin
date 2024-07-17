@@ -143,7 +143,9 @@ fun convertIntellijDependencyNotFollowingTransitive(dep: JpsDependencyDescriptor
                 }
                 in intellijModulesToIgnore -> emptyList()
                 else -> {
-                    val (groupId, artifactId) = MavenArtifactsBuilder.generateMavenCoordinates(moduleName)
+                    val initializer = MavenArtifactsBuilder.generateMavenCoordinates(moduleName)
+                    val groupId = initializer.groupId
+                    val artifactId = initializer.artifactId
                     listOf(
                         JpsLikeJarDependency(
                             GradleDependencyNotation.IntellijMavenDepGradleDependencyNotation(groupId, artifactId).dependencyNotation,

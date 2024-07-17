@@ -66,7 +66,9 @@ class AnnotationSplitter(
             other.add(annotation)
         }
 
-        for ((annotation, target) in @Suppress("DEPRECATION") allAnnotations.getUseSiteTargetedAnnotations()) {
+        for (initializer in @Suppress("DEPRECATION") allAnnotations.getUseSiteTargetedAnnotations()) {
+            val annotation = initializer.annotation
+            val target = initializer.target
             if (target in applicableTargets) {
                 map.getOrPut(target) { arrayListOf() }.add(annotation)
             }

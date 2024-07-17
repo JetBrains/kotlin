@@ -248,8 +248,9 @@ class IncrementalJsCompilerRunner(
             val changesCollector = ChangesCollector()
             // todo: split compare and update (or cache comparing)
             caches.platformCache.compare(translatedFiles, changesCollector)
-            val (dirtyLookupSymbols, dirtyClassFqNames) =
-                changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
+            val initializer = changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
+            val dirtyLookupSymbols = initializer.dirtyLookupSymbols
+            val dirtyClassFqNames = initializer.dirtyClassesFqNames
             // todo unify with main cycle
             newDirtySources.addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = sourcesToCompile))
             newDirtySources.addAll(

@@ -57,13 +57,16 @@ object DslScopeViolationCallChecker : CallChecker {
 
         if (receiversUntilOneFromTheCall.isEmpty()) return
 
-        val (callDslMarkers, additionalCallDslMarkers) = extractDslMarkerFqNames(callImplicitReceiver)
+        val initializer = extractDslMarkerFqNames(callImplicitReceiver)
+        val callDslMarkers = initializer.common
+        val additionalCallDslMarkers = initializer.fromContainingFunctionType
         if (callDslMarkers.isEmpty() && additionalCallDslMarkers.isEmpty()) return
 
         val dslMarkersFromOuterReceivers = receiversUntilOneFromTheCall.map(::extractDslMarkerFqNames)
 
         val closestAnotherReceiverWithSameDslMarker =
-            dslMarkersFromOuterReceivers.firstOrNull { (dslMarkersFromReceiver, _) ->
+            dslMarkersFromOuterReceivers.firstOrNull { initializer ->
+                val dslMarkersFromReceiver = initializer.common
                 dslMarkersFromReceiver.any(callDslMarkers::contains)
             }
 
@@ -76,7 +79,9 @@ object DslScopeViolationCallChecker : CallChecker {
         val allDslMarkersFromCall = callDslMarkers + additionalCallDslMarkers
 
         val closestAnotherReceiverWithSameDslMarkerWithDeprecation =
-            dslMarkersFromOuterReceivers.firstOrNull { (dslMarkersFromReceiver, additionalDslMarkersFromReceiver) ->
+            dslMarkersFromOuterReceivers.firstOrNull { initializer ->
+                val dslMarkersFromReceiver = initializer.common
+                val additionalDslMarkersFromReceiver = initializer.fromContainingFunctionType
                 val allMarkersFromReceiver = dslMarkersFromReceiver + additionalDslMarkersFromReceiver
                 allDslMarkersFromCall.any(allMarkersFromReceiver::contains)
             }

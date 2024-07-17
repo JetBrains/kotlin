@@ -48,7 +48,9 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartP
 
     private fun getPackageParts(packageFqName: String): Collection<PackageParts> {
         val result = mutableMapOf<MappingsKey, PackageParts>()
-        for ((root, mapping) in loadedModules) {
+        for (initializer in loadedModules) {
+            val root = initializer.key
+            val mapping = initializer.mapping
             val newParts = mapping.findPackageParts(packageFqName) ?: continue
             result[root]?.let { parts -> parts += newParts } ?: result.put(root, newParts)
         }
@@ -56,7 +58,9 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartP
     }
 
     override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
-        return loadedModules.mapNotNull { (_, mapping, name) ->
+        return loadedModules.mapNotNull { initializer ->
+            val mapping = initializer.mapping
+            val name = initializer.name
             if (name == moduleName) mapping.moduleData.annotations.map(ClassId::fromString) else null
         }.flatten()
     }

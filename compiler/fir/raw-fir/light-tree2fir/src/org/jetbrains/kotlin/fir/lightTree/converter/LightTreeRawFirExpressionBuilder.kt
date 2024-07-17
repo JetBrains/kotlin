@@ -675,7 +675,7 @@ class LightTreeRawFirExpressionBuilder(
 
         val source = callSuffix.toFirSourceElement()
 
-        val (calleeReference, explicitReceiver, isImplicitInvoke) = when {
+        val initializer = when {
             name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
                     this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
@@ -710,6 +710,9 @@ class LightTreeRawFirExpressionBuilder(
                 }
             )
         }
+        val calleeReference = initializer.reference
+        val explicitReceiver = initializer.receiverExpression
+        val isImplicitInvoke = initializer.isImplicitInvoke
 
         val builder: FirQualifiedAccessExpressionBuilder = if (hasArguments) {
             val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
@@ -860,12 +863,16 @@ class LightTreeRawFirExpressionBuilder(
             when (it.tokenType) {
                 WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it, whenRefWithSubject.takeIf { hasSubject })
                 WHEN_CONDITION_IN_RANGE -> {
-                    val (condition, shouldBind) = convertWhenConditionInRange(it, whenRefWithSubject, hasSubject)
+                    val initializer = convertWhenConditionInRange(it, whenRefWithSubject, hasSubject)
+                    val condition = initializer.expression
+                    val shouldBind = initializer.shouldBindSubject
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
                 WHEN_CONDITION_IS_PATTERN -> {
-                    val (condition, shouldBind) = convertWhenConditionIsPattern(it, whenRefWithSubject, hasSubject)
+                    val initializer = convertWhenConditionIsPattern(it, whenRefWithSubject, hasSubject)
+                    val condition = initializer.expression
+                    val shouldBind = initializer.shouldBindSubject
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }

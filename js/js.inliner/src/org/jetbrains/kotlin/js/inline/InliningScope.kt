@@ -152,7 +152,9 @@ class ImportIntoFragmentInliningScope private constructor(
     private val additionalDeclarations = mutableListOf<JsStatement>()
 
     override fun hasImport(name: JsName, tag: String): JsName? {
-        return name.localAlias?.let { (name, tag) ->
+        return name.localAlias?.let { initializer ->
+            val name = initializer.name
+            val tag = initializer.tag
             if (tag != null) {
                 if (tag !in existingBindings) {
                     addNameBinding(name, tag)

@@ -67,7 +67,9 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
             expression.transformChildren(this, data)
             if (expression.symbol !in throwableConstructors) return expression
 
-            val (messageArg, causeArg) = expression.extractThrowableArguments()
+            val initializer = expression.extractThrowableArguments()
+            val messageArg = initializer.message
+            val causeArg = initializer.cause
 
             return expression.run {
                 IrCallImpl(
@@ -85,7 +87,9 @@ class ThrowableLowering(val context: JsIrBackendContext, val extendThrowableFunc
             expression.transformChildren(this, data)
             if (expression.symbol !in throwableConstructors) return expression
 
-            val (messageArg, causeArg) = expression.extractThrowableArguments()
+            val initializer = expression.extractThrowableArguments()
+            val messageArg = initializer.message
+            val causeArg = initializer.cause
 
             val klass = data as IrClass
             val thisReceiver = IrGetValueImpl(expression.startOffset, expression.endOffset, klass.thisReceiver!!.symbol)

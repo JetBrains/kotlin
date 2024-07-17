@@ -225,7 +225,9 @@ internal class KaFirExpressionTypeProvider(
     }
 
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KaType? {
-        val (ktCallElement, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
+        val initializer = expression.getFunctionCallAsWithThisAsParameter() ?: return null
+        val ktCallElement = initializer.call
+        val argumentExpression = initializer.argument
         val firCall = ktCallElement.getOrBuildFir(firResolveSession)?.unwrapSafeCall() as? FirCall ?: return null
 
         val callee = (firCall.toReference(firResolveSession.useSiteFirSession) as? FirResolvedNamedReference)?.resolvedSymbol
@@ -237,16 +239,15 @@ internal class KaFirExpressionTypeProvider(
         }
 
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null
-        val (firParameterForExpression, substitutedType) =
-            argumentsToParameters.entries.firstOrNull { (arg, _) ->
-                when (arg) {
-                    // TODO: better to utilize. See `createArgumentMapping` in [KtFirCallResolver]
-                    is FirNamedArgumentExpression, is FirSpreadArgumentExpression ->
-                        arg.psi == argumentExpression.parent
-                    else ->
-                        arg.psi == argumentExpression.unwrap()
-                }
-            }?.value ?: return null
+        val initializer2 = argumentsToParameters.entries.firstOrNull { (arg, _) ->
+            when (arg) {
+                // TODO: better to utilize. See `createArgumentMapping` in [KtFirCallResolver]
+                is FirNamedArgumentExpression, is FirSpreadArgumentExpression -> arg.psi == argumentExpression.parent
+                else -> arg.psi == argumentExpression.unwrap()
+            }
+        }?.value ?: return null
+        val firParameterForExpression = initializer2.parameter
+        val substitutedType = initializer2.substitutedType
         return if (firParameterForExpression.isVararg)
             substitutedType.varargElementType().asKtType()
         else

@@ -74,7 +74,8 @@ fun Sequence<MemberBuilder>.groupByFileAndWrite(
 }
 
 fun List<MemberBuilder>.writeTo(file: File, targetedSource: TargetedSourceFile) {
-    val (target, sourceFile) = targetedSource
+    val target = targetedSource.target
+    val sourceFile = targetedSource.sourceFile
     println("Generating file: $file")
     file.parentFile.mkdirs()
     FileWriter(file).use { writer ->

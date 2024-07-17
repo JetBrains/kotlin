@@ -120,7 +120,10 @@ class RepeatableAnnotationChecker(
     private fun checkRepeatedEntries(annotations: List<ResolvedAnnotation>, trace: BindingTrace) {
         val entryTypesWithAnnotations = hashMapOf<FqName, MutableList<AnnotationUseSiteTarget?>>()
 
-        for ((entry, descriptor, useSiteTarget) in annotations) {
+        for (initializer in annotations) {
+            val entry = initializer.entry
+            val descriptor = initializer.descriptor
+            val useSiteTarget = initializer.useSiteTarget
             val fqName = descriptor.fqName ?: continue
             val classDescriptor = descriptor.annotationClass ?: continue
 

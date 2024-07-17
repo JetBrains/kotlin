@@ -145,7 +145,10 @@ val testDataPathList = listOfNotNull(
 val generateMT = kotlinBuildProperties.generateModularizedConfigurations
 val generateFP = kotlinBuildProperties.generateFullPipelineConfigurations
 
-for ((path, projectName, additionalParameters) in testDataPathList) {
+for (initializer in testDataPathList) {
+    val path = initializer.path
+    val projectName = initializer.name
+    val additionalParameters = initializer.additionalParameters
     rootProject.afterEvaluate {
         val configurations = mutableListOf<Pair<String, String?>>(
             "Full $projectName" to null

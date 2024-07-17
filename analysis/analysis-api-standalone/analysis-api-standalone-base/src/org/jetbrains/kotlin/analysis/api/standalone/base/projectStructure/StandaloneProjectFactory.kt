@@ -240,7 +240,10 @@ object StandaloneProjectFactory {
         }
 
         val (roots, singleJavaFileRoots) =
-            rootsWithSingleJavaFileRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+            rootsWithSingleJavaFileRoots.partition { initializer ->
+                val file = initializer.file
+                file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION
+            }
 
         val corePackageIndex = project.getService(PackageIndex::class.java) as CorePackageIndex
         val rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {

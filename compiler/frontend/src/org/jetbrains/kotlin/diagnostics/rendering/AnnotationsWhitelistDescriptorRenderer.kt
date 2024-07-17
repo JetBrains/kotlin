@@ -22,7 +22,8 @@ class AnnotationsWhitelistDescriptorRenderer(
     private val toParameterRenderer: DescriptorRenderer.() -> DiagnosticParameterRenderer<DeclarationDescriptor>
 ) : DiagnosticParameterRenderer<DeclarationWithDiagnosticComponents> {
     override fun render(obj: DeclarationWithDiagnosticComponents, renderingContext: RenderingContext): String {
-        val (descriptor, diagnosticComponents) = obj
+        val descriptor = obj.declaration
+        val diagnosticComponents = obj.diagnosticComponents
         return baseRenderer.withOptions {
             annotationFilter = { annotation ->
                 diagnosticComponents.isNullabilityAnnotation(annotation, descriptor)

@@ -266,7 +266,9 @@ class MemberScopeTowerLevel(
             ?: candidatesWithSmartcast?.values?.map { it.memberWithBaseScope }
             ?: error("candidatesWithoutSmartcast or candidatesWithSmartcast should be not null")
 
-        for ((candidate, scope) in candidates) {
+        for (initializer in candidates) {
+            val candidate = initializer.member
+            val scope = initializer.baseScope
             if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
                 val dispatchReceiverToUse = candidatesWithSmartcast?.getValue(candidate)?.dispatchReceiverToUse
                 val isFromOriginalTypeInPresenceOfSmartCast = dispatchReceiverToUse?.unwrapSmartcast == true

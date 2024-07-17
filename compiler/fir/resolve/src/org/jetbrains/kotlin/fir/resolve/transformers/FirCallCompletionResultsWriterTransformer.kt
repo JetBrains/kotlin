@@ -364,7 +364,9 @@ class FirCallCompletionResultsWriterTransformer(
             substitutor = subCandidate.prepareCustomReturnTypeSubstitutorForFunctionCall() ?: finalSubstitutor
         )
         val allArgs = calleeReference.computeAllArguments(originalArgumentList)
-        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
+        val initializer = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
+        val regularMapping = initializer.regularMapping
+        val allArgsMapping = initializer.allArgsMapping
         if (calleeReference.isError) {
             result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
         } else {
@@ -567,10 +569,12 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
         val allArgs = calleeReference.computeAllArguments(annotationCall.argumentList, argumentMappingWithArrayOfCalls)
-        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(
+        val initializer = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(
             allArgs,
             precomputedArgumentMapping = argumentMappingWithArrayOfCalls
         )
+        val regularMapping = initializer.regularMapping
+        val allArgsMapping = initializer.allArgsMapping
         if (calleeReference.isError) {
             annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, allArgsMapping))
         } else {
@@ -815,7 +819,9 @@ class FirCallCompletionResultsWriterTransformer(
 
         val originalArgumentList = delegatedConstructorCall.argumentList
         val allArgs = calleeReference.computeAllArguments(originalArgumentList)
-        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
+        val initializer = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
+        val regularMapping = initializer.regularMapping
+        val allArgsMapping = initializer.allArgsMapping
         if (calleeReference.isError) {
             delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
         } else {
@@ -972,7 +978,8 @@ class FirCallCompletionResultsWriterTransformer(
 
         val newData = expectedReturnType?.toExpectedType()
         val result = transformElement(anonymousFunction, newData)
-        for ((expression, _) in returnExpressions) {
+        for (initializer in returnExpressions) {
+            val expression = initializer.expression
             expression.transformSingle(this, newData)
         }
 

@@ -217,7 +217,8 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
     private fun injectProperties(instance: Any, context: ValueResolveContext) {
         val classInfo = instance::class.java.getInfo()
 
-        classInfo.setterInfos.forEach { (method) ->
+        classInfo.setterInfos.forEach { initializer ->
+            val method = initializer.method
             val methodBinding = method.bindToMethod(containerId, context)
             methodBinding.invoke(instance)
         }

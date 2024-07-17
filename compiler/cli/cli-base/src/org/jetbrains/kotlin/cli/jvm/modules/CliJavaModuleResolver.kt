@@ -65,7 +65,11 @@ class CliJavaModuleResolver(
     }
 
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
-        moduleRoots.any { (root, isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
+        moduleRoots.any { initializer ->
+            val root = initializer.file
+            val isBinary = initializer.isBinary
+            isBinary && VfsUtilCore.isAncestor(root, file, false)
+        }
 
     override fun checkAccessibility(
         fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?

@@ -69,7 +69,9 @@ class InlineAstVisitor(
 
     override fun endVisit(call: JsInvocation, ctx: JsContext<JsNode>) {
         if (hasToBeInlined(call)) {
-            val (inlineableBody, resultExpression) = jsInliner.inline(scope, call, lastStatementLevelContext.currentNode)
+            val initializer = jsInliner.inline(scope, call, lastStatementLevelContext.currentNode)
+            val inlineableBody = initializer.inlineableBody
+            val resultExpression = initializer.resultExpression
 
             lastStatementLevelContext.addPrevious(JsAstUtils.flattenStatement(inlineableBody))
 

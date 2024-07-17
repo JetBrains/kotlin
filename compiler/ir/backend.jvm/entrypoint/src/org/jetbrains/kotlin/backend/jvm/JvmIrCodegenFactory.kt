@@ -326,8 +326,15 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
-        val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, irPluginContext, notifyCodegenStart) =
-            input as JvmIrBackendInput
+        val initializer = input as JvmIrBackendInput
+        val irModuleFragment = initializer.irModuleFragment
+        val symbolTable = initializer.symbolTable
+        val customPhaseConfig = initializer.phaseConfig
+        val irProviders = initializer.irProviders
+        val extensions = initializer.extensions
+        val backendExtension = initializer.backendExtension
+        val irPluginContext = initializer.pluginContext
+        val notifyCodegenStart = initializer.notifyCodegenStart
         val irSerializer = if (
             state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
         )
@@ -361,7 +368,11 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
-        val (state, context, module, notifyCodegenStart) = input as JvmIrCodegenInput
+        val initializer = input as JvmIrCodegenInput
+        val state = initializer.state
+        val context = initializer.context
+        val module = initializer.module
+        val notifyCodegenStart = initializer.notifyCodegenStart
 
         fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
 

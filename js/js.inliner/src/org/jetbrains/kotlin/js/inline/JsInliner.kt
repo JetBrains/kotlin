@@ -45,7 +45,9 @@ class JsInliner(
         if (definitionFragment !in translationResult.newFragments) return
 
         cycleReporter.processInlineFunction(inlineFn.fn, call) {
-            val (fn, wrapperBody) = inlineFn.fn
+            val initializer = inlineFn.fn
+            val fn = initializer.function
+            val wrapperBody = initializer.wrapperBody
 
             if (wrapperBody != null) {
                 ImportIntoWrapperInliningScope.process(wrapperBody, definitionFragment) { scope ->
@@ -65,7 +67,9 @@ class JsInliner(
 
         val inliningContext = InliningContext(currentStatement)
 
-        val (inlineableBody, resultExpression) = FunctionInlineMutator.getInlineableCallReplacement(call, function, inliningContext)
+        val initializer = FunctionInlineMutator.getInlineableCallReplacement(call, function, inliningContext)
+        val inlineableBody = initializer.inlineableBody
+        val resultExpression = initializer.resultExpression
 
         // body of inline function can contain call to lambdas that need to be inlined
         InlineAstVisitor(this, scope).accept<JsNode?>(inlineableBody)

@@ -29,7 +29,9 @@ object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker(MppChec
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
         val session = context.session
-        val (objCAnnotation, swiftAnnotation) = declaration.annotations.findMetaAnnotations(session)
+        val initializer = declaration.annotations.findMetaAnnotations(session)
+        val objCAnnotation = initializer.hidesFromObjCAnnotation
+        val swiftAnnotation = initializer.refinesInSwiftAnnotation
         if (objCAnnotation == null && swiftAnnotation == null) return
         if (objCAnnotation != null && swiftAnnotation != null) {
             reporter.reportOn(

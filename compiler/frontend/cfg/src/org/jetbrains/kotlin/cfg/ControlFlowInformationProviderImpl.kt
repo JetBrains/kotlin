@@ -248,7 +248,9 @@ class ControlFlowInformationProviderImpl private constructor(
 
         if (!function.hasBody()) return
 
-        val (returnedExpressions, hasReturnsInInlinedLambdas) = collectReturnExpressions()
+        val initializer = collectReturnExpressions()
+        val returnedExpressions = initializer.returnedExpressions
+        val hasReturnsInInlinedLambdas = initializer.hasReturnsInInlinedLambda
 
         val blockBody = function.hasBlockBody()
 

@@ -119,28 +119,32 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
 
         updateResolutionFilterWithHistory(configuration)
 
-        val (_, errorHolder, snippetKtFile) = prepareForAnalyze(
+        val initializer = prepareForAnalyze(
             newSnippet,
             messageCollector,
             compilationState,
             failOnSyntaxErrors = false
         ).valueOr { return it }
+        val errorHolder = initializer.errorHolder
+        val snippetKtFile = initializer.snippetKtFile
 
         val analyzerEngine = compilationState.analyzerEngine as IdeLikeReplCodeAnalyzer
         val analysisResult =
             analyzerEngine.statelessAnalyzeWithImportedScripts(snippetKtFile, emptyList(), state.getNextLineNo() + 1)
         AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder, renderDiagnosticName = false)
 
-        val (_, bindingContext, resolutionFacade, moduleDescriptor, resultProperty) = when (analysisResult) {
+        val initializer2 = when (analysisResult) {
             is IdeLikeReplCodeAnalyzer.ReplLineAnalysisResultWithStateless.Stateless -> {
                 analysisResult
             }
             else -> return failure(
-                newSnippet,
-                messageCollector,
-                "Unexpected result ${analysisResult::class.java}"
+                newSnippet, messageCollector, "Unexpected result ${analysisResult::class.java}"
             )
         }
+        val bindingContext = initializer2.bindingContext
+        val resolutionFacade = initializer2.resolutionFacade
+        val moduleDescriptor = initializer2.moduleDescriptor
+        val resultProperty = initializer2.resultProperty
 
         return AnalyzeWithCursorResult(
             snippetKtFile, bindingContext, resolutionFacade, moduleDescriptor, cursorAbs, resultProperty

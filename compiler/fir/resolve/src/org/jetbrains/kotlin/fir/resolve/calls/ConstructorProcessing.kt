@@ -39,7 +39,9 @@ private fun FirScope.processConstructorsByName(
     constructorFilter: ConstructorFilter,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
-    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, constructorFilter, session, bodyResolveComponents) ?: return
+    val initializer = getFirstClassifierOrNull(callInfo, constructorFilter, session, bodyResolveComponents) ?: return
+    val matchedClassifierSymbol = initializer.symbol
+    val substitutor = initializer.substitutor
     val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
 
     processConstructors(

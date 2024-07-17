@@ -43,8 +43,10 @@ internal fun buildSwiftModule(
     config: SwiftExportConfig,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
 ): SwiftModuleBuildResults {
-    val (useSiteModule, mainModule, scopeProvider) =
-        createModuleWithScopeProviderFromBinary(config.distribution, input, dependencies)
+    val initializer = createModuleWithScopeProviderFromBinary(config.distribution, input, dependencies)
+    val useSiteModule = initializer.useSiteModule
+    val mainModule = initializer.mainModule
+    val scopeProvider = initializer.scopeProvider
     val moduleProvider = when (config.multipleModulesHandlingStrategy) {
         MultipleModulesHandlingStrategy.OneToOneModuleMapping -> SirOneToOneModuleProvider()
         MultipleModulesHandlingStrategy.IntoSingleModule -> SirSingleModuleProvider(swiftModuleName = input.name)

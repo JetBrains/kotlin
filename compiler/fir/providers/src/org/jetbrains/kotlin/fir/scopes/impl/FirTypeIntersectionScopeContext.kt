@@ -187,13 +187,17 @@ class FirTypeIntersectionScopeContext(
                     },
                 )
             } else {
-                val (member, containingScope) = mostSpecific.first()
+                val initializer = mostSpecific.first()
+                val member = initializer.member
+                val containingScope = initializer.baseScope
                 result += ResultOfIntersection.SingleMember(member, group, containingScope)
             }
         }
 
         if (allMembersWithScope.isNotEmpty()) {
-            val (single, containingScope) = allMembersWithScope.single()
+            val initializer = allMembersWithScope.single()
+            val single = initializer.member
+            val containingScope = initializer.baseScope
             result += ResultOfIntersection.SingleMember(single, allMembersWithScope.toList(), containingScope)
         }
 
@@ -270,7 +274,8 @@ class FirTypeIntersectionScopeContext(
         var hasOpen = false
         var hasAbstract = false
 
-        for ((member) in extractedOverridden) {
+        for (initializer in extractedOverridden) {
+            val member = initializer.member
             when ((member.fir as FirMemberDeclaration).modality) {
                 Modality.FINAL -> return Modality.FINAL
                 Modality.SEALED -> {

@@ -322,7 +322,9 @@ class ControlFlowGraphBuilder {
         val currentLevelExits = postponedLambdaExits.pop().exits
         if (currentLevelExits.isEmpty()) return
 
-        for ((lambdas, exits) in postponedLambdaExits.all()) {
+        for (initializer in postponedLambdaExits.all()) {
+            val lambdas = initializer.lambdas
+            val exits = initializer.exits
             if (symbol in lambdas) {
                 exits.addAll(currentLevelExits)
                 break

@@ -39,7 +39,9 @@ fun Task.assertNoCircularTaskDependencies() {
     val queue = ArrayDeque(taskDependencies.getDependencies(this).map { TaskAndDependants(it, listOf(this)) })
 
     while (queue.isNotEmpty()) {
-        val (task, dependants) = queue.removeFirst()
+        val initializer = queue.removeFirst()
+        val task = initializer.task
+        val dependants = initializer.dependants
         if (task in visited) {
             val dependencyChain = dependants.joinToString(" -> ") { it.name }
             fail("Task $name has circular dependency: $dependencyChain")

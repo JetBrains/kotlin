@@ -95,7 +95,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
     val moduleDataProvider: ModuleDataProvider,
     val kotlinScopeProvider: FirKotlinScopeProvider,
     val defaultDeserializationOrigin: FirDeclarationOrigin,
-    private val serializerExtensionProtocol: SerializerExtensionProtocol
+    private val serializerExtensionProtocol: SerializerExtensionProtocol,
 ) : FirSymbolProvider(session) {
     // ------------------------ Caches ------------------------
 
@@ -184,7 +184,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
     protected abstract fun extractClassMetadata(
         classId: ClassId,
-        parentContext: FirDeserializationContext? = null
+        parentContext: FirDeserializationContext? = null,
     ): ClassMetadataFindResult?
 
     protected abstract fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean
@@ -193,7 +193,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
     sealed class ClassMetadataFindResult {
         data class NoMetadata(
-            val classPostProcessor: DeserializedClassPostProcessor
+            val classPostProcessor: DeserializedClassPostProcessor,
         ) : ClassMetadataFindResult()
 
         data class Metadata(
@@ -223,12 +223,18 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
     private fun findAndDeserializeClass(
         classId: ClassId,
-        parentContext: FirDeserializationContext? = null
+        parentContext: FirDeserializationContext? = null,
     ): Pair<FirRegularClassSymbol?, DeserializedClassPostProcessor?> {
         return when (val result = extractClassMetadata(classId, parentContext)) {
             is ClassMetadataFindResult.NoMetadata -> FirRegularClassSymbol(classId) to result.classPostProcessor
             is ClassMetadataFindResult.Metadata -> {
-                val (nameResolver, classProto, annotationDeserializer, moduleData, sourceElement, postProcessor) = result
+                val initializer = result
+                val nameResolver = initializer.nameResolver
+                val classProto = initializer.classProto
+                val annotationDeserializer = initializer.annotationDeserializer
+                val moduleData = initializer.moduleData
+                val sourceElement = initializer.sourceElement
+                val postProcessor = initializer.classPostProcessor
                 moduleData ?: return null to null
                 val symbol = FirRegularClassSymbol(classId)
                 deserializeClassToSymbol(

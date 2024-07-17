@@ -83,7 +83,10 @@ abstract class ExpectSymbolTransformer : IrElementVisitorVoid {
         super.visitPropertyReference(expression)
         if (!isTargetDeclaration(expression.symbol.owner)) return
 
-        val (newSymbol, newGetter, newSetter) = getActualProperty(expression.symbol.descriptor) ?: return
+        val initializer = getActualProperty(expression.symbol.descriptor) ?: return
+        val newSymbol = initializer.propertySymbol
+        val newGetter = initializer.getterSymbol
+        val newSetter = initializer.setterSymbol
         expression.symbol = newSymbol
         expression.getter = newGetter
         expression.setter = newSetter

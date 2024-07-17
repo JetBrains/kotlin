@@ -208,7 +208,9 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     // Do not adapt references against KCallable type as it's impossible to map defaults/vararg to absent parameters of KCallable
     if (expectedType.isKCallableType()) return null
 
-    val (inputTypes, returnExpectedType) = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session) ?: return null
+    val initializer = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session) ?: return null
+    val inputTypes = initializer.inputTypes
+    val returnExpectedType = initializer.outputType
     val expectedArgumentsCount = inputTypes.size - unboundReceiverCount
     if (expectedArgumentsCount < 0) return null
 

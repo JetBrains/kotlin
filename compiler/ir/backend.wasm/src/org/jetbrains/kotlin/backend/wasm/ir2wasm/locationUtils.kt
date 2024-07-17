@@ -42,7 +42,9 @@ fun IrElement.getSourceLocation(file: IrFile?, type: LocationType = LocationType
     if (hasSyntheticOrUndefinedLocation) return SourceLocation.NoLocation("Synthetic declaration")
 
     val path = fileEntry.name
-    val (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
+    val initializer = type.getLineAndColumnNumberFor(this, fileEntry)
+    val line = initializer.line
+    val column = initializer.column
 
     if (line < 0 || column < 0) return SourceLocation.NoLocation("startLine or startColumn < 0")
 

@@ -408,10 +408,11 @@ class ClassCodegen private constructor(
         }
 
         // Only allow generation of one inline method at a time, to avoid deadlocks when files call inline methods of each other.
-        val (node, smap) =
-            generatedInlineMethods[method] ?: synchronized(context.inlineMethodGenerationLock) {
-                generatedInlineMethods.getOrPut(method) { FunctionCodegen(method, this).generate() }
-            }
+        val initializer = generatedInlineMethods[method] ?: synchronized(context.inlineMethodGenerationLock) {
+            generatedInlineMethods.getOrPut(method) { FunctionCodegen(method, this).generate() }
+        }
+        val node = initializer.node
+        val smap = initializer.classSMAP
         return SMAPAndMethodNode(cloneMethodNode(node), smap)
     }
 
@@ -421,7 +422,9 @@ class ClassCodegen private constructor(
             return
         }
 
-        val (node, smap) = generateMethodNode(method)
+        val initializer = generateMethodNode(method)
+        val node = initializer.node
+        val smap = initializer.classSMAP
         node.preprocessSuspendMarkers(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE

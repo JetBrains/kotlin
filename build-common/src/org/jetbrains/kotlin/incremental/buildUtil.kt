@@ -115,7 +115,9 @@ fun updateIncrementalCache(
         }
     }
 
-    javaChangesTracker?.javaClassesUpdates?.forEach { (source, serializedJavaClass) ->
+    javaChangesTracker?.javaClassesUpdates?.forEach { initializer ->
+        val source = initializer.source
+        val serializedJavaClass = initializer.proto
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 

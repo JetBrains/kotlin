@@ -403,7 +403,8 @@ abstract class Kotlinp(protected val settings: Settings) {
                 if (argument == KmTypeProjection.STAR) {
                     append("*")
                 } else {
-                    val (variance, argumentType) = argument
+                    val variance = argument.variance
+                    val argumentType = argument.type
                     if (variance == null || argumentType == null)
                         throw IllegalArgumentException("Variance and type must be set for non-star type projection")
 

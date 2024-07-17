@@ -85,7 +85,11 @@ class FunctionReader(
     private val moduleNameToInfo by lazy {
         val result = HashMultimap.create<String, ModuleInfo>()
 
-        JsLibraryUtils.traverseJsLibraries(config.libraries.map(::File)) { (content, path, sourceMapContent, file) ->
+        JsLibraryUtils.traverseJsLibraries(config.libraries.map(::File)) { initializer ->
+            val content = initializer.content
+            val path = initializer.path
+            val sourceMapContent = initializer.sourceMapContent
+            val file = initializer.file
             var current = 0
 
             while (true) {
@@ -255,11 +259,13 @@ class FunctionReader(
         val jsScope = JsRootScope(JsProgram())
         val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, jsScope) ?: return null
         functionExpr.fixForwardNameReferences()
-        val (function, wrapper) = if (isWrapped) {
+        val initializer = if (isWrapped) {
             InlineMetadata.decomposeWrapper(functionExpr) ?: return null
         } else {
             FunctionWithWrapper(functionExpr, null)
         }
+        val function = initializer.function
+        val wrapper = initializer.wrapperBody
         val wrapperStatements = wrapper?.statements?.filter { it !is JsReturn }
 
         val sourceMap = info.sourceMap

@@ -244,7 +244,8 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
         val type = descriptor.type
         if (!type.isError) {
             val customParcelerTypes =
-                (getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)).map { (mappedType, _) ->
+                (getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)).map { initializer ->
+                    val mappedType = initializer.mappedType
                     mappedType
                 }.toSet()
 

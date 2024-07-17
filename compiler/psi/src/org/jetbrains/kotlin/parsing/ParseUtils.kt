@@ -66,7 +66,9 @@ private fun parseLong(text: String): Long? {
             }
         }
 
-        val (number, radix) = extractRadix(numberWithoutSuffix)
+        val initializer = extractRadix(numberWithoutSuffix)
+        val number = initializer.number
+        val radix = initializer.radix
 
         if (isUnsigned) {
             java.lang.Long.parseUnsignedLong(number, radix)

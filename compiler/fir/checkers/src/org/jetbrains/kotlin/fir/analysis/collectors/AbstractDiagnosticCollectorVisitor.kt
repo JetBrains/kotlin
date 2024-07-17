@@ -429,7 +429,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         type: ConeKotlinType?,
         block: () -> R
     ): R {
-        val (implicitReceiverValue, implicitCompanionValues) = context.sessionHolder.collectImplicitReceivers(type, owner)
+        val initializer = context.sessionHolder.collectImplicitReceivers(type, owner)
+        val implicitReceiverValue = initializer.implicitReceiverValue
+        val implicitCompanionValues = initializer.implicitCompanionValues
         val existingContext = context
         implicitCompanionValues.forEach { value ->
             context = context.addImplicitReceiver(null, value)

@@ -293,7 +293,9 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             with(codegen) {
                 val endLabel = Label()
 
-                for ((thenExpression, label) in expressionToLabels) {
+                for (initializer in expressionToLabels) {
+                    val thenExpression = initializer.expression
+                    val label = initializer.label
                     mv.visitLabel(label)
                     thenExpression.accept(this, data).also {
                         if (elseExpression != null) {
@@ -463,9 +465,13 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
                 // Multiple strings can be hashed into the same bucket.
                 // Generate an if cascade to resolve that for each bucket.
-                for ((hash, switchLabel) in hashAndSwitchLabels) {
+                for (initializer in hashAndSwitchLabels) {
+                    val hash = initializer.value
+                    val switchLabel = initializer.label
                     mv.visitLabel(switchLabel)
-                    for ((string, label) in hashToStringAndExprLabels[hash]!!) {
+                    for (initializer in hashToStringAndExprLabels[hash]!!) {
+                        val string = initializer.value
+                        val label = initializer.label
                         noLineNumberScope {
                             subject.accept(this, data).materialize()
                         }
