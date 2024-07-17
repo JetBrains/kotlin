@@ -474,6 +474,8 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
 private fun FirNamedFunctionSymbol.representsMainFunctionAllowingConflictingOverloads(session: FirSession): Boolean {
     if (name != StandardNames.MAIN || !callableId.isTopLevel || !hasMainFunctionStatus) return false
     if (receiverParameter != null || typeParameterSymbols.isNotEmpty()) return false
+    val returnType = resolvedReturnType.fullyExpandedType(session)
+    if (!returnType.isUnit) return false
     if (valueParameterSymbols.isEmpty()) return true
     val paramType = valueParameterSymbols.singleOrNull()?.resolvedReturnTypeRef?.coneType?.fullyExpandedType(session) ?: return false
     if (!paramType.isNonPrimitiveArray) return false
