@@ -107,6 +107,17 @@ internal class KaFirResolver(
     /**
      * Notes on the implementation:
      *
+     * ## Invoke calls
+     *
+     * For expressions like `Bar()`, if `Bar` implicitly points to the companion object,
+     * and `()` is an implicit `invoke` operator call, we cannot use [getOrBuildFir]
+     * on `Bar` reference to get the corresponding [FirResolvedQualifier].
+     *
+     * Instead, we have to find the whole [FirImplicitInvokeCall] for the `Bar()` call,
+     * and use explicit receiver from there as the correct qualifier.
+     *
+     * ## Qualified expressions
+     *
      * For expressions like `Foo.Bar`, if `Bar` implicitly points to the companion object,
      * there is actually no [FirResolvedQualifier] for the `Foo` alone -
      * only for the whole `Foo.Bar`.
@@ -128,7 +139,14 @@ internal class KaFirResolver(
             return false
         }
 
-        val wholeQualifier = element.getOrBuildFir(analysisSession.firResolveSession)
+        val implicitInvokeCall = run {
+            val parentCallExpression = element.parent as? KtCallExpression
+            parentCallExpression?.getOrBuildFir(analysisSession.firResolveSession) as? FirImplicitInvokeCall
+        }
+
+        val wholeQualifier = implicitInvokeCall?.explicitReceiver
+            ?: element.getOrBuildFir(analysisSession.firResolveSession)
+
         if (wholeQualifier !is FirResolvedQualifier) return false
 
         val wholeQualifierNameExpression = (wholeQualifier.psi as? KtElement)?.getQualifiedElementSelector() as? KtSimpleNameExpression

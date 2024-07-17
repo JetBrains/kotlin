@@ -88,6 +88,18 @@ public class Fe10IdeNormalAnalysisSourceModuleIsImplicitCompanionReferenceTestGe
   }
 
   @Test
+  @TestMetadata("invokeInCompanion.kt")
+  public void testInvokeInCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/invokeInCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("invokeInCompanion_explicitCompanion.kt")
+  public void testInvokeInCompanion_explicitCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/invokeInCompanion_explicitCompanion.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClassWithCompanion.kt")
   public void testNestedClassWithCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/nestedClassWithCompanion.kt");
@@ -109,6 +121,18 @@ public class Fe10IdeNormalAnalysisSourceModuleIsImplicitCompanionReferenceTestGe
   @TestMetadata("nestedClassWithCompanion_qualifier.kt")
   public void testNestedClassWithCompanion_qualifier() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/nestedClassWithCompanion_qualifier.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassWithCompanion_withInvoke.kt")
+  public void testNestedClassWithCompanion_withInvoke() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/nestedClassWithCompanion_withInvoke.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassWithCompanion_withInvoke_qualifier.kt")
+  public void testNestedClassWithCompanion_withInvoke_qualifier() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/nestedClassWithCompanion_withInvoke_qualifier.kt");
   }
 
   @Test
