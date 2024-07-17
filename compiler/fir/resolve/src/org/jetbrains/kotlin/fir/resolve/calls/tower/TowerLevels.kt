@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.stages.isSuperCall
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.scopes.impl.FirActualizingMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirActualizingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -387,7 +387,7 @@ internal class ScopeTowerLevel(
     private val session: FirSession get() = bodyResolveComponents.session
 
     private val scope = if (session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-        FirActualizingMemberScope(givenScope)
+        FirActualizingScope(givenScope)
     } else {
         givenScope
     }

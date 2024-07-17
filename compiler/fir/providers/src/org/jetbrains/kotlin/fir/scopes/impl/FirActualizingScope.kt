@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -17,7 +18,12 @@ import org.jetbrains.kotlin.name.Name
 /**
  * A scope that filters out `expect` callables that have matched `actual` callables.
  */
-class FirActualizingMemberScope(private val delegate: FirScope) : FirScope() {
+class FirActualizingScope(private val delegate: FirScope) : FirScope() {
+    init {
+        // Cases with `FirTypeScope` should be handled by `MemberScopeTowerLevel`
+        require(delegate !is FirTypeScope)
+    }
+
     override fun mayContainName(name: Name): Boolean = delegate.mayContainName(name)
     override val scopeOwnerLookupNames: List<String> = delegate.scopeOwnerLookupNames
 
