@@ -348,8 +348,8 @@ internal class KaFirExpressionTypeProvider(
 
         val functionLiteral = blockExpression.parent as? KtFunctionLiteral
         return if (functionLiteral != null) {
-            val functionalType = functionLiteral.expectedType as? KaFunctionType
-            functionalType?.returnType
+            val functionType = functionLiteral.expectedType as? KaFunctionType
+            functionType?.returnType
         } else {
             blockExpression.expectedType
         }

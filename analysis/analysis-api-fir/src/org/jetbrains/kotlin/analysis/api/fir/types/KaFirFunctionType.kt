@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
-internal class KaFirFunctionalType(
+internal class KaFirFunctionType(
     override val coneType: ConeClassLikeTypeImpl,
     private val builder: KaSymbolByFirBuilder,
 ) : KaFunctionType(), KaFirType {
@@ -113,6 +113,6 @@ private class KaFirFunctionalClassTypePointer(
             return null
         }
 
-        return KaFirFunctionalType(coneType, session.firSymbolBuilder)
+        return KaFirFunctionType(coneType, session.firSymbolBuilder)
     }
 }

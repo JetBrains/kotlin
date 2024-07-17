@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.SimpleType
 
-internal class KaFe10FunctionalType(
+internal class KaFe10FunctionType(
     override val fe10Type: SimpleType,
     private val descriptor: FunctionClassDescriptor,
     override val analysisContext: Fe10AnalysisContext

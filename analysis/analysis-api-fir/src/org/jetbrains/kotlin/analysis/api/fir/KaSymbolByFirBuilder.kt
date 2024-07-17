@@ -456,7 +456,7 @@ internal class KaSymbolByFirBuilder(
                                 builder = this@KaSymbolByFirBuilder
                             )
                         }
-                        hasFunctionalClassId(coneType) -> KaFirFunctionalType(coneType, this@KaSymbolByFirBuilder)
+                        hasFunctionalClassId(coneType) -> KaFirFunctionType(coneType, this@KaSymbolByFirBuilder)
                         else -> KaFirUsualClassType(coneType, this@KaSymbolByFirBuilder)
                     }
                 }
