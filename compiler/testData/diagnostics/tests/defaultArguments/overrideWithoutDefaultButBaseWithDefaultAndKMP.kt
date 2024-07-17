@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-69870
 // LANGUAGE: +MultiPlatformProjects
 

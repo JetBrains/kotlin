@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirActualizingScope
 
 class FirDefaultParametersResolver : FirSessionComponent {
     fun declaresDefaultValue(
@@ -25,7 +26,9 @@ class FirDefaultParametersResolver : FirSessionComponent {
         val symbol = function.symbol
         val typeScope = when (originScope) {
             is FirTypeScope -> originScope
-            // imported from object case
+            // Handle other scopes, including importing from an object
+            // TODO: probably it makes sense to refactor it (KT-70016)
+            is FirActualizingScope,
             is FirAbstractImportingScope -> {
                 val containingClass = function.getContainingClass() ?: return false
                 containingClass.scopeForClass(
