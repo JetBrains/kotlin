@@ -400,12 +400,9 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
      */
     protected open fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>) = parent
 
-    protected open fun contributeFunctionName(nameBuilder: AccessorNameBuilder, function: IrSimpleFunction) {
-        nameBuilder.contribute(function.name.asString())
-    }
+    protected open fun AccessorNameBuilder.contributeFunctionName(function: IrSimpleFunction) = contribute(function.name.asString())
 
-    protected open fun contributeFunctionSuffix(
-        nameBuilder: AccessorNameBuilder,
+    protected open fun AccessorNameBuilder.contributeFunctionSuffix(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
         scopes: List<ScopeWithIr>,
@@ -413,41 +410,32 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
 
     private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): Name {
         val nameBuilder = AccessorNameBuilder()
-        contributeFunctionName(nameBuilder, this)
-        contributeFunctionSuffix(nameBuilder, this, superQualifier, scopes)
+        nameBuilder.contributeFunctionName(this)
+        nameBuilder.contributeFunctionSuffix(this, superQualifier, scopes)
         return nameBuilder.build()
     }
 
-    protected open fun contributeFieldGetterName(nameBuilder: AccessorNameBuilder, field: IrField) {
-        nameBuilder.contribute("<get-${field.name}>")
-    }
-
-    protected open fun contributeFieldSetterName(nameBuilder: AccessorNameBuilder, field: IrField) {
-        nameBuilder.contribute("<set-${field.name}>")
-    }
+    protected open fun AccessorNameBuilder.contributeFieldGetterName(field: IrField) = contribute("<get-${field.name}>")
+    protected open fun AccessorNameBuilder.contributeFieldSetterName(field: IrField) = contribute("<set-${field.name}>")
 
     /**
      * For both _reading_ and _writing_ field accessors, the suffix that includes some of [field]'s important properties.
      */
-    protected open fun contributeFieldAccessorSuffix(
-        nameBuilder: AccessorNameBuilder,
-        field: IrField,
-        superQualifierSymbol: IrClassSymbol?,
-    ) {
-        nameBuilder.contribute(PROPERTY_MARKER)
+    protected open fun AccessorNameBuilder.contributeFieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?) {
+        contribute(PROPERTY_MARKER)
     }
 
     private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name {
         val nameBuilder = AccessorNameBuilder()
-        contributeFieldGetterName(nameBuilder, this)
-        contributeFieldAccessorSuffix(nameBuilder, this, superQualifierSymbol)
+        nameBuilder.contributeFieldGetterName(this)
+        nameBuilder.contributeFieldAccessorSuffix(this, superQualifierSymbol)
         return nameBuilder.build()
     }
 
     private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name {
         val nameBuilder = AccessorNameBuilder()
-        contributeFieldSetterName(nameBuilder, this)
-        contributeFieldAccessorSuffix(nameBuilder, this, superQualifierSymbol)
+        nameBuilder.contributeFieldSetterName(this)
+        nameBuilder.contributeFieldAccessorSuffix(this, superQualifierSymbol)
         return nameBuilder.build()
     }
 

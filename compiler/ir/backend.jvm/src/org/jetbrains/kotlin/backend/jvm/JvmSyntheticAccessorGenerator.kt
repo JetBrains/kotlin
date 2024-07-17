@@ -42,12 +42,10 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
             parent
         }
 
-    override fun contributeFunctionName(nameBuilder: AccessorNameBuilder, function: IrSimpleFunction) {
-        nameBuilder.contribute(context.defaultMethodSignatureMapper.mapFunctionName(function))
-    }
+    override fun AccessorNameBuilder.contributeFunctionName(function: IrSimpleFunction) =
+        contribute(context.defaultMethodSignatureMapper.mapFunctionName(function))
 
-    override fun contributeFunctionSuffix(
-        nameBuilder: AccessorNameBuilder,
+    override fun AccessorNameBuilder.contributeFunctionSuffix(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
         scopes: List<ScopeWithIr>
@@ -60,7 +58,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
                 // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
                 // The two cannot clash.
                 if (!DescriptorVisibilities.isPrivate(function.visibility))
-                    nameBuilder.contribute(JVM_DEFAULT_MARKER)
+                    contribute(JVM_DEFAULT_MARKER)
             }
 
             // Accessors for top level functions never need a suffix.
@@ -68,39 +66,34 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
 
             // Accessor for _s_uper-qualified call
             superQualifier != null -> {
-                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifier.owner.syntheticAccessorToSuperSuffix())
+                contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifier.owner.syntheticAccessorToSuperSuffix())
             }
 
             // Access to protected members that need an accessor must be because they are inherited,
             // hence accessed on a _s_upertype. If what is accessed is static, we can point to different
             // parts of the inheritance hierarchy and need to distinguish with a suffix.
             function.isStatic && function.visibility.isProtected -> {
-                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + function.parentAsClass.syntheticAccessorToSuperSuffix())
+                contribute(SUPER_QUALIFIER_SUFFIX_MARKER + function.parentAsClass.syntheticAccessorToSuperSuffix())
             }
         }
     }
 
-    override fun contributeFieldGetterName(nameBuilder: AccessorNameBuilder, field: IrField) {
-        nameBuilder.contribute(JvmAbi.getterName(field.name.asString()))
-    }
+    override fun AccessorNameBuilder.contributeFieldGetterName(field: IrField) = contribute(JvmAbi.getterName(field.name.asString()))
+    override fun AccessorNameBuilder.contributeFieldSetterName(field: IrField) = contribute(JvmAbi.setterName(field.name.asString()))
 
-    override fun contributeFieldSetterName(nameBuilder: AccessorNameBuilder, field: IrField) {
-        nameBuilder.contribute(JvmAbi.setterName(field.name.asString()))
-    }
-
-    override fun contributeFieldAccessorSuffix(nameBuilder: AccessorNameBuilder, field: IrField, superQualifierSymbol: IrClassSymbol?) {
+    override fun AccessorNameBuilder.contributeFieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?) {
         if (field.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD && !field.parentAsClass.isCompanion) {
-            nameBuilder.contribute(COMPANION_PROPERTY_MARKER)
+            contribute(COMPANION_PROPERTY_MARKER)
         } else {
-            nameBuilder.contribute(PROPERTY_MARKER)
+            contribute(PROPERTY_MARKER)
 
             if (superQualifierSymbol != null) {
-                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifierSymbol.owner.syntheticAccessorToSuperSuffix())
+                contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifierSymbol.owner.syntheticAccessorToSuperSuffix())
             } else if (field.isStatic && field.visibility.isProtected) {
                 // Accesses to static protected fields that need an accessor must be due to being inherited, hence accessed on a
                 // _s_upertype. If the field is static, the super class the access is on can be different, and therefore
                 // we generate a suffix to distinguish access to field with different receiver types in the super hierarchy.
-                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + field.parentAsClass.syntheticAccessorToSuperSuffix())
+                contribute(SUPER_QUALIFIER_SUFFIX_MARKER + field.parentAsClass.syntheticAccessorToSuperSuffix())
             }
         }
     }
