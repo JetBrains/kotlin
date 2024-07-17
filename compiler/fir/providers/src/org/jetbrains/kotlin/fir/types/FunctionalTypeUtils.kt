@@ -35,13 +35,15 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 // ---------------------------------------------- is type is a function type ----------------------------------------------
 
-fun ConeKotlinType.functionTypeKind(session: FirSession): FunctionTypeKind? {
-    return lowerBoundIfFlexible().functionTypeKind(session)
+fun ConeKotlinType.functionTypeKind(session: FirSession, expandTypeAliases: Boolean = true): FunctionTypeKind? {
+    return lowerBoundIfFlexible().functionTypeKind(session, expandTypeAliases)
 }
 
-fun ConeRigidType.functionTypeKind(session: FirSession): FunctionTypeKind? {
+fun ConeRigidType.functionTypeKind(session: FirSession, expandTypeAliases: Boolean = true): FunctionTypeKind? {
     if (this !is ConeClassLikeType) return null
-    return fullyExpandedType(session).lookupTag.functionTypeKind(session)
+
+    val targetType = if (expandTypeAliases) fullyExpandedType(session) else this
+    return targetType.lookupTag.functionTypeKind(session)
 }
 
 private fun ConeClassLikeLookupTag.functionTypeKind(session: FirSession): FunctionTypeKind? {

@@ -488,7 +488,13 @@ internal class KaSymbolByFirBuilder(
         }
 
         private fun hasFunctionalClassId(coneType: ConeClassLikeTypeImpl): Boolean {
-            return coneType.isSomeFunctionType(analysisSession.firResolveSession.useSiteFirSession)
+            // Avoid expansion of `coneType` when checking if it is a function type. Otherwise, a type alias pointing to a function type
+            // will be treated as a function type itself. Then, `TypeBuilder` will build a `KaFirFunctionType` instead of a
+            // `KaFirUsualClassType` to represent the type alias.
+            //
+            // If we have such a type alias pointing to a function type, it is most likely the abbreviation of an expanded function type. An
+            // abbreviation shouldn't be expanded, and so there shouldn't be any implicit expansion here.
+            return coneType.functionTypeKind(analysisSession.firResolveSession.useSiteFirSession, expandTypeAliases = false) != null
         }
 
         fun buildKtType(coneType: FirTypeRef): KaType {
