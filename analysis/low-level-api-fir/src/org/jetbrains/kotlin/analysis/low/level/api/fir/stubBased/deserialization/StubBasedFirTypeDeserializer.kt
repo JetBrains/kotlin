@@ -193,30 +193,37 @@ internal class StubBasedFirTypeDeserializer(
             return ConeDynamicType.create(moduleData.session)
         }
 
-        val userType = unwrappedTypeElement as? KtUserType
-        val userTypeStub = userType?.let { it.stub ?: loadStubByElement(it) } as? KotlinUserTypeStubImpl
-
-        val abbreviatedType = userTypeStub?.abbreviatedType?.let { deserializeClassType(it) }
-
-        val attributesWithAbbreviatedType = if (abbreviatedType != null) {
-            attributes.add(AbbreviatedTypeAttribute(abbreviatedType))
-        } else {
-            attributes
+        return when (unwrappedTypeElement) {
+            is KtFunctionType -> deserializeFunctionType(typeReference, unwrappedTypeElement, attributes)
+            is KtUserType -> deserializeUserType(typeReference, unwrappedTypeElement, attributes)
+            else -> simpleTypeOrError(typeReference, attributes)
         }
+    }
 
-        val coneType = simpleType(typeReference, attributesWithAbbreviatedType)
-            ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
+    private fun deserializeFunctionType(typeReference: KtTypeReference, type: KtFunctionType, attributes: ConeAttributes): ConeKotlinType {
+        val stub = (type.stub ?: loadStubByElement(type)) as? KotlinFunctionTypeStubImpl
+        return simpleTypeOrError(typeReference, attributes.withAbbreviation(stub?.abbreviatedType))
+    }
 
-        val upperBoundTypeBean = userTypeStub?.upperBound
-        if (upperBoundTypeBean != null) {
+    private fun deserializeUserType(typeReference: KtTypeReference, type: KtUserType, attributes: ConeAttributes): ConeKotlinType {
+        val stub = (type.stub ?: loadStubByElement(type)) as? KotlinUserTypeStubImpl
+        val coneType = simpleTypeOrError(typeReference, attributes.withAbbreviation(stub?.abbreviatedType))
+
+        val upperBoundTypeBean = stub?.upperBound
+        return if (upperBoundTypeBean != null) {
             val upperBoundType = type(upperBoundTypeBean)
 
             // If an upper bound is specified, `typeReference` represents a flexible type. The cone type deserialized from `typeReference`
             // is defined as the lower bound of this flexible type.
-            return ConeFlexibleType(coneType, upperBoundType as ConeSimpleKotlinType)
+            ConeFlexibleType(coneType, upperBoundType as ConeSimpleKotlinType)
         } else {
-            return coneType
+            coneType
         }
+    }
+
+    private fun ConeAttributes.withAbbreviation(abbreviatedType: KotlinClassTypeBean?): ConeAttributes {
+        if (abbreviatedType == null) return this
+        return add(AbbreviatedTypeAttribute(deserializeClassType(abbreviatedType)))
     }
 
     private fun typeParameterSymbol(typeParameterName: String): ConeTypeParameterLookupTag? =
@@ -261,6 +268,9 @@ internal class StubBasedFirTypeDeserializer(
             }
         )
     }
+
+    private fun simpleTypeOrError(typeReference: KtTypeReference, attributes: ConeAttributes): ConeRigidType =
+        simpleType(typeReference, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
 
     private fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
         getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
