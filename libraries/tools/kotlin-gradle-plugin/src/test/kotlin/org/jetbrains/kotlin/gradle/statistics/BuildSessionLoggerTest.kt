@@ -68,25 +68,28 @@ class BuildSessionLoggerTest {
     @Test
     fun testDeleteExtraFiles() {
         val maxFiles = 100
+        val buildId = UUID.randomUUID().toString()
         val logger = BuildSessionLogger(rootFolder, maxFiles)
-        logger.startBuildSession("buildId_1")
+        logger.startBuildSession(buildId)
         logger.finishBuildSession()
         assertEquals(1, statFilesCount())
 
         val statsFolder = rootFolder.listFiles()?.single() ?: fail("${rootFolder.absolutePath} was not created")
-        val singleStatFile = statsFolder.listFiles()?.single() ?: fail("stat file was not created")
+        assertEquals(1, statsFolder.listFiles()?.size, "stat file was not created")
 
         for (i in 1..200) {
             File(statsFolder, "$i").createNewFile()
             File(statsFolder, "${UUID.randomUUID()}.profile").createNewFile()
         }
 
-        logger.startBuildSession("buildId_1")
+        logger.startBuildSession(buildId)
         logger.finishBuildSession()
 
-        assertTrue(
-            statsFolder.listFiles()?.count { it.name == singleStatFile.name } == 1,
-            "Could not find expected file ${singleStatFile.name}"
+        //the first created file for build finished should be deleted as an old file
+        assertEquals(
+            1,
+            statsFolder.listFiles()?.count { it.readText().startsWith("Build: $buildId") },
+            "Could not find expected files for '$buildId' build"
         )
 
         // files not matching the pattern should not be affected
@@ -111,39 +114,61 @@ class BuildSessionLoggerTest {
 
         logger.startBuildSession(buildId)
         val reportFile = rootFolder.resolve(BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME)
-            .resolve(buildId + BuildSessionLogger.Companion.PROFILE_FILE_NAME_SUFFIX)
+            .resolve(UUID.randomUUID().toString() + BuildSessionLogger.Companion.PROFILE_FILE_NAME_SUFFIX)
 
         reportFile.createNewFile()
-        reportFile.appendText("${StringMetrics.USE_FIR.name}=true\n")
+        //FUS metrics file should contain "BUILD FINISHED", otherwise it will be skipped as invalid
+        reportFile.appendText(
+            """
+            ${StringMetrics.USE_FIR.name}=true
+            BUILD FINISHED
+           
+            """.trimIndent()
+        )
+
+        val invalidReportFile = rootFolder.resolve(BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME)
+            .resolve(UUID.randomUUID().toString() + BuildSessionLogger.Companion.PROFILE_FILE_NAME_SUFFIX)
+
+        invalidReportFile.appendText(
+            """
+            ${StringMetrics.USE_OLD_BACKEND.name}=true
+            
+            """.trimIndent()
+        )
 
         logger.finishBuildSession()
-        assertEquals(1, statFilesCount())
+        assertEquals(3, statFilesCount(), "Three files should be created: one from logger build finish, reportFile and invalidReportFile")
 
-        val statFile = rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")
-        statFile.appendBytes("break format of the file".toByteArray()) //this line should be filtered by MetricsContainer.readFromFile
+        val statFiles = rootFolder.listFiles()?.single()?.listFiles() ?: fail("Could not find stat file")
+        statFiles.forEach { it.appendBytes("break format of the file".toByteArray()) } //this line should be filtered by MetricsContainer.readFromFile
 
         logger.startBuildSession(buildId)
         logger.finishBuildSession()
 
         val metrics = ArrayList<MetricsContainer>()
-        MetricsContainer.readFromFile(statFile) {
-            metrics.add(it)
+        rootFolder.listFiles()?.single()?.listFiles()?.forEach { file ->
+            MetricsContainer.readFromFile(file) {
+                metrics.add(it)
+            }
         }
 
-        assertEquals(2, metrics.size, "Invalid number of MerticContainers was read")
+        assertEquals(3, metrics.size, "only invalidReportFile file should be filtered")
         assertEquals(
-            "true",
-            metrics[0].getMetric(StringMetrics.USE_FIR)?.getValue()
+            1,
+            metrics.filter { it.getMetric(StringMetrics.USE_FIR)?.getValue() == "true" }.size,
+            "USE_FIR metric should be red from reportFile"
         )
 
         assertEquals(
-            "1.2.3",
-            metrics[0].getMetric(StringMetrics.KOTLIN_COMPILER_VERSION)?.getValue()
+            1,
+            metrics.filter { it.getMetric(StringMetrics.KOTLIN_COMPILER_VERSION)?.getValue() == "1.2.3" }.size,
+            "KOTLIN_COMPILER_VERSION metric should be red from logger build finished file"
         )
 
         assertEquals(
-            null,
-            metrics[1].getMetric(StringMetrics.KOTLIN_COMPILER_VERSION)?.getValue()
+            0,
+            metrics.filter { it.getMetric(StringMetrics.USE_OLD_BACKEND)?.getValue() != null }.size,
+            "USE_OLD_BACKEND metric should be red"
         )
     }
 

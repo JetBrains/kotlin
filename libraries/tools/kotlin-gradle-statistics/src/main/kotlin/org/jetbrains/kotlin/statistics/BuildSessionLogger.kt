@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.statistics
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.*
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.file.Files
+import java.util.UUID
 
 class BuildSessionLogger(
     rootPath: File,
@@ -66,10 +66,11 @@ class BuildSessionLogger(
     private fun storeMetricsIntoFile(buildId: String) {
         try {
             statisticsFolder.mkdirs()
-            val file = File(statisticsFolder, buildId + PROFILE_FILE_NAME_SUFFIX)
+            val file = File(statisticsFolder, UUID.randomUUID().toString() + PROFILE_FILE_NAME_SUFFIX)
 
-            FileOutputStream(file, true).bufferedWriter().use {
-                metricsContainer.flush(it)
+            file.outputStream().bufferedWriter().use { writer ->
+                writer.write("Build: $buildId")
+                metricsContainer.flush(writer)
             }
         } catch (_: IOException) {
             //ignore io exception

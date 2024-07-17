@@ -2,8 +2,7 @@ package org.jetbrains.kotlin.gradle.fus
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.provider.ProviderFactory
-import org.jetbrains.kotlin.gradle.fus.internal.GradleBuildFusStatisticsBuildService
+import org.jetbrains.kotlin.gradle.fus.internal.registerGradleBuildFusStatisticsServiceIfAbsent
 import javax.inject.Inject
 
 /*
@@ -15,10 +14,9 @@ import javax.inject.Inject
  * FusStatisticsPlugin is a Gradle plugin that registers a BuildService to collect and report
  * feature usage statistics during the build process.
  */
-class FusStatisticsPlugin @Inject constructor(
-    private val providerFactory: ProviderFactory
-) : Plugin<Project> {
+class FusStatisticsPlugin @Inject constructor() : Plugin<Project> {
     override fun apply(project: Project) {
-        GradleBuildFusStatisticsBuildService.registerIfAbsent(project)
+        val uidService = BuildUidService.registerIfAbsent(project)
+        registerGradleBuildFusStatisticsServiceIfAbsent(project, uidService)
     }
 }
