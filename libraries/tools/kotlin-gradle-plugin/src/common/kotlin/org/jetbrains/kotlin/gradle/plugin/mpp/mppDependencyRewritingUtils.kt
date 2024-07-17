@@ -188,8 +188,16 @@ private fun associateDependenciesWithActualModuleDependencies(
                     val resolvedDependency = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
                         ?: return@associate noMapping
 
-                    if (resolvedDependency.moduleArtifacts.isEmpty() && resolvedDependency.children.size == 1) {
-                        // This is a dependency on a module that resolved to another module; map the original dependency to the target module
+                    // This is a heuristical check for External Variants.
+                    // In ResolvedDependency API these dependencies have no artifacts and single children dependency.
+                    // That single dependency is an actual variant that contains artifacts and other dependencies.
+                    // For example see: `org.jetbrains.kotlinx:kotlinx-coroutines-core` jvmApiElements-published
+                    // It has reference to `org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm` and has no other dependencies nor artifacts.
+                    // If dependency was resolved but moduleArtifacts for some reason failed to resolve: it's OK!
+                    // It means there are some artifacts that can't be resolved.
+                    // For example resolved project dependency to android variant from included build.
+                    val moduleArtifacts = runCatching { resolvedDependency.moduleArtifacts }.getOrNull() ?: return@associate noMapping
+                    if (moduleArtifacts.isEmpty() && resolvedDependency.children.size == 1) {
                         val targetModule = resolvedDependency.children.single()
                         coordinates to ModuleCoordinates(
                             targetModule.moduleGroup,
