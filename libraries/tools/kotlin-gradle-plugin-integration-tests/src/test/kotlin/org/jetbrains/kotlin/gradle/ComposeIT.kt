@@ -106,8 +106,6 @@ class ComposeIT : KGPBaseTest() {
 
             buildAndFail("assembleDebug") {
                 when (agpVersion) {
-                    TestVersions.AgpCompatibilityMatrix.AGP_71.version,
-                    TestVersions.AgpCompatibilityMatrix.AGP_72.version,
                     TestVersions.AgpCompatibilityMatrix.AGP_73.version,
                     TestVersions.AgpCompatibilityMatrix.AGP_74.version,
                     TestVersions.AgpCompatibilityMatrix.AGP_80.version,

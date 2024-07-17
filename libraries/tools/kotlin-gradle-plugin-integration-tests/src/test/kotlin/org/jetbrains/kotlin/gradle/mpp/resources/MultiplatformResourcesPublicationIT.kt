@@ -9,7 +9,6 @@ import kotlin.io.path.name
 import kotlin.io.path.writeText
 
 @MppGradlePluginTests
-@AndroidTestVersions(minVersion = TestVersions.AGP.AGP_73)
 @DisplayName("Test multiplatform resources publication")
 class MultiplatformResourcesPublicationIT : KGPBaseTest() {
 
@@ -33,28 +32,6 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
                 reference("androidFonts").toFile(),
                 forgiveOtherExtraFiles = false,
             )
-        },
-    )
-
-    @DisplayName("Multiplatform resources publication for Android target in AGP 7.1.3")
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71, maxVersion = TestVersions.AGP.AGP_71)
-    @GradleAndroidTest
-    fun testAndroidReleaseResourcesPublicationInAgp71(
-        gradleVersion: GradleVersion,
-        androidVersion: String,
-        providedJdk: JdkVersions.ProvidedJdk,
-    ) = testAndroidReleaseResourcesPublication(
-        gradleVersion, androidVersion, providedJdk,
-        assertEmbeddedResources = { classesJar ->
-            val embeddedResources = projectPath.resolve("embeddedResources")
-            unzipEmbeddedResources(
-                inputZip = classesJar,
-                outputDir = embeddedResources,
-            )
-            assertDirectoryDoesNotExist(embeddedResources)
-        },
-        assertAssets = { assetsInAar ->
-            assertDirectoryDoesNotExist(assetsInAar)
         },
     )
 

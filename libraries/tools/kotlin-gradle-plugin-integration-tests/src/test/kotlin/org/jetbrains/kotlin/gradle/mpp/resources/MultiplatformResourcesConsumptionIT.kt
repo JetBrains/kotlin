@@ -17,7 +17,6 @@ import kotlin.io.path.name
 import kotlin.io.path.pathString
 
 @MppGradlePluginTests
-@AndroidTestVersions(minVersion = TestVersions.AGP.AGP_73)
 @DisplayName("Test resources consumption APIs")
 class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
 

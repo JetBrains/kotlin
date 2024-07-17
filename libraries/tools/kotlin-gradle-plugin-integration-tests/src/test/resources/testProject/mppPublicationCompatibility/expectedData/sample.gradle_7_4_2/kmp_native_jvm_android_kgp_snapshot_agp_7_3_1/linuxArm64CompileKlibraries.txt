@@ -1,4 +1,4 @@
-project :kmp_native_android_kgp_snapshot_agp_max => [linuxArm64CompileKlibraries]
+project :kmp_native_jvm_android_kgp_snapshot_agp_7_3_1 => [linuxArm64CompileKlibraries]
 sample.gradle_7_4_2:kmp_native_android_kgp_snapshot_agp_7_3_1-linuxarm64:1.0 => [linuxArm64ApiElements-published]
 sample.gradle_7_4_2:kmp_native_android_kgp_snapshot_agp_7_3_1:1.0 => [linuxArm64ApiElements-published]
 sample.gradle_7_4_2:kmp_native_jvm_android_kgp_snapshot_agp_7_3_1-linuxarm64:1.0 => [linuxArm64ApiElements-published]
