@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.assertEquals
@@ -982,6 +983,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("yarn is set up from local archive")
     @GradleTest
+    @OsCondition(supportedOn = [OS.LINUX, OS.MAC])
     fun testYarnSetupFromLocalArchive(gradleVersion: GradleVersion) {
         project("yarn-setup", gradleVersion) {
             build("yarnFolderRemove")
