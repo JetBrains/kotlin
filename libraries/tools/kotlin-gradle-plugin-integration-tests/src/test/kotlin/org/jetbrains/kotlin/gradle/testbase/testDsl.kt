@@ -78,7 +78,9 @@ fun KGPBaseTest.project(
         gradleRunner,
         projectName,
         projectPath,
-        buildOptions,
+        buildOptions.copy(
+            configurationCache = gradleVersion >= GradleVersion.version("8.0")
+        ),
         gradleVersion,
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
