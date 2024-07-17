@@ -21,6 +21,11 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 
 class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAccessorGenerator<JvmBackendContext>(context) {
 
+    companion object {
+        const val JVM_DEFAULT_MARKER = "jd"
+        const val COMPANION_PROPERTY_MARKER = "cp"
+    }
+
     override fun accessorModality(parent: IrDeclarationParent): Modality =
         if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL
 
@@ -36,9 +41,16 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
             parent
         }
 
-    override fun mapFunctionName(function: IrSimpleFunction): String = context.defaultMethodSignatureMapper.mapFunctionName(function)
+    override fun contributeFunctionName(nameBuilder: AccessorNameBuilder, function: IrSimpleFunction) {
+        nameBuilder.contribute(context.defaultMethodSignatureMapper.mapFunctionName(function))
+    }
 
-    override fun functionAccessorSuffix(function: IrSimpleFunction, superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): String {
+    override fun contributeFunctionSuffix(
+        nameBuilder: AccessorNameBuilder,
+        function: IrSimpleFunction,
+        superQualifier: IrClassSymbol?,
+        scopes: List<ScopeWithIr>
+    ) {
         val currentClass = scopes.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }?.irElement as? IrClass
         if (currentClass != null &&
             currentClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS &&
@@ -46,21 +58,27 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
         ) {
             // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
             // The two cannot clash.
-            return if (DescriptorVisibilities.isPrivate(function.visibility)) "" else "\$jd"
+            if (!DescriptorVisibilities.isPrivate(function.visibility))
+                nameBuilder.contribute(JVM_DEFAULT_MARKER)
+        } else {
+            super.contributeFunctionSuffix(nameBuilder, function, superQualifier, scopes)
         }
-        return super.functionAccessorSuffix(function, superQualifier, scopes)
     }
 
-    override fun fieldGetterName(field: IrField): String = JvmAbi.getterName(field.name.asString())
+    override fun contributeFieldGetterName(nameBuilder: AccessorNameBuilder, field: IrField) {
+        nameBuilder.contribute(JvmAbi.getterName(field.name.asString()))
+    }
 
-    override fun fieldSetterName(field: IrField): String = JvmAbi.setterName(field.name.asString())
+    override fun contributeFieldSetterName(nameBuilder: AccessorNameBuilder, field: IrField) {
+        nameBuilder.contribute(JvmAbi.setterName(field.name.asString()))
+    }
 
-    override fun fieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?): String {
-        // Special _c_ompanion _p_roperty suffix for accessing companion backing field moved to outer
+    override fun contributeFieldAccessorSuffix(nameBuilder: AccessorNameBuilder, field: IrField, superQualifierSymbol: IrClassSymbol?) {
         if (field.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD && !field.parentAsClass.isCompanion) {
-            return "cp"
+            nameBuilder.contribute(COMPANION_PROPERTY_MARKER)
+        } else {
+            super.contributeFieldAccessorSuffix(nameBuilder, field, superQualifierSymbol)
         }
-        return super.fieldAccessorSuffix(field, superQualifierSymbol)
     }
 
     override val DescriptorVisibility.isProtected: Boolean

@@ -41,7 +41,27 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
 ) {
     private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
+    protected class AccessorNameBuilder {
+        private val nameParts = mutableListOf(ACCESSOR_PREFIX)
+
+        fun contribute(namePart: String) {
+            nameParts += namePart
+        }
+
+        fun build(): Name = Name.identifier(nameParts.joinToString(ACCESSOR_NAME_PARTS_SEPARATOR))
+    }
+
     companion object {
+        protected const val ACCESSOR_PREFIX = "access"
+        protected const val ACCESSOR_NAME_PARTS_SEPARATOR = "\$"
+
+        protected const val RECEIVER_VALUE_PARAMETER_NAME = "\$this"
+        protected const val SETTER_VALUE_PARAMETER_NAME = "<set-?>"
+        protected const val CONSTRUCTOR_MARKER_PARAMETER_NAME = "constructor_marker"
+
+        protected const val SUPER_QUALIFIER_SUFFIX_MARKER = "s"
+        protected const val PROPERTY_MARKER = "p"
+
         private var IrFunction.syntheticAccessors: MutableMap<AccessorKey, IrFunction>? by irAttribute(followAttributeOwner = false)
         private var IrField.getterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
         private var IrField.setterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
@@ -151,7 +171,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.addValueParameter(
-                "constructor_marker".synthesizedString,
+                CONSTRUCTOR_MARKER_PARAMETER_NAME.synthesizedString,
                 context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable(),
                 IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
             )
@@ -246,7 +266,7 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
             if (!field.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    "\$this", parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    RECEIVER_VALUE_PARAMETER_NAME, parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
@@ -307,11 +327,11 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
             if (!field.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    "\$this", parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    RECEIVER_VALUE_PARAMETER_NAME, parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
-            accessor.addValueParameter("<set-?>", field.type, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.addValueParameter(SETTER_VALUE_PARAMETER_NAME, field.type, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
 
             accessor.body = createAccessorBodyForSetter(field, accessor, superQualifierSymbol)
         }
@@ -382,59 +402,69 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
      */
     protected open fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>) = parent
 
-    protected open fun mapFunctionName(function: IrSimpleFunction): String = function.name.asString()
+    protected open fun contributeFunctionName(nameBuilder: AccessorNameBuilder, function: IrSimpleFunction) {
+        nameBuilder.contribute(function.name.asString())
+    }
 
-    protected open fun functionAccessorSuffix(
+    protected open fun contributeFunctionSuffix(
+        nameBuilder: AccessorNameBuilder,
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
         scopes: List<ScopeWithIr>,
-    ): String = function.run {
+    ) {
         when {
             // Accessors for top level functions never need a suffix.
-            isTopLevel -> ""
+            function.isTopLevel -> Unit
 
             // Accessor for _s_uper-qualified call
-            superQualifier != null -> "\$s" + superQualifier.owner.syntheticAccessorToSuperSuffix()
+            superQualifier != null -> {
+                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifier.owner.syntheticAccessorToSuperSuffix())
+            }
 
             // Access to protected members that need an accessor must be because they are inherited,
             // hence accessed on a _s_upertype. If what is accessed is static, we can point to different
             // parts of the inheritance hierarchy and need to distinguish with a suffix.
-            isStatic && visibility.isProtected -> "\$s" + parentAsClass.syntheticAccessorToSuperSuffix()
+            function.isStatic && function.visibility.isProtected -> {
+                nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + function.parentAsClass.syntheticAccessorToSuperSuffix())
+            }
 
-            else -> ""
+            else -> Unit
         }
     }
 
     private fun IrSimpleFunction.accessorName(superQualifier: IrClassSymbol?, scopes: List<ScopeWithIr>): Name {
-        return Name.identifier("access\$${mapFunctionName(this)}${functionAccessorSuffix(this, superQualifier, scopes)}")
+        val nameBuilder = AccessorNameBuilder()
+        contributeFunctionName(nameBuilder, this)
+        contributeFunctionSuffix(nameBuilder, this, superQualifier, scopes)
+        return nameBuilder.build()
     }
 
-    protected open fun fieldGetterName(field: IrField): String = "<get-${field.name}>"
-
-    private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name {
-        val getterName = fieldGetterName(this)
-        return Name.identifier("access\$$getterName\$${fieldAccessorSuffix(this, superQualifierSymbol)}")
+    protected open fun contributeFieldGetterName(nameBuilder: AccessorNameBuilder, field: IrField) {
+        nameBuilder.contribute("<get-${field.name}>")
     }
 
-    protected open fun fieldSetterName(field: IrField): String = "<set-${field.name}>"
-
-    private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name {
-        val setterName = fieldSetterName(this)
-        return Name.identifier("access\$$setterName\$${fieldAccessorSuffix(this, superQualifierSymbol)}")
+    protected open fun contributeFieldSetterName(nameBuilder: AccessorNameBuilder, field: IrField) {
+        nameBuilder.contribute("<set-${field.name}>")
     }
 
     /**
      * For both _reading_ and _writing_ field accessors, the suffix that includes some of [field]'s important properties.
      */
-    protected open fun fieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?): String = field.run {
-        if (superQualifierSymbol != null) {
-            return "p\$s${superQualifierSymbol.owner.syntheticAccessorToSuperSuffix()}"
-        }
+    protected open fun contributeFieldAccessorSuffix(
+        nameBuilder: AccessorNameBuilder,
+        field: IrField,
+        superQualifierSymbol: IrClassSymbol?,
+    ) {
+        nameBuilder.contribute(PROPERTY_MARKER)
 
-        // Accesses to static protected fields that need an accessor must be due to being inherited, hence accessed on a
-        // _s_upertype. If the field is static, the super class the access is on can be different, and therefore
-        // we generate a suffix to distinguish access to field with different receiver types in the super hierarchy.
-        return "p" + if (isStatic && visibility.isProtected) "\$s" + parentAsClass.syntheticAccessorToSuperSuffix() else ""
+        if (superQualifierSymbol != null) {
+            nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + superQualifierSymbol.owner.syntheticAccessorToSuperSuffix())
+        } else if (field.isStatic && field.visibility.isProtected) {
+            // Accesses to static protected fields that need an accessor must be due to being inherited, hence accessed on a
+            // _s_upertype. If the field is static, the super class the access is on can be different, and therefore
+            // we generate a suffix to distinguish access to field with different receiver types in the super hierarchy.
+            nameBuilder.contribute(SUPER_QUALIFIER_SUFFIX_MARKER + field.parentAsClass.syntheticAccessorToSuperSuffix())
+        }
     }
 
     private fun IrClass.syntheticAccessorToSuperSuffix(): String =
@@ -443,6 +473,20 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(
 
     protected open val DescriptorVisibility.isProtected
         get() = this == DescriptorVisibilities.PROTECTED
+
+    private fun IrField.accessorNameForGetter(superQualifierSymbol: IrClassSymbol?): Name {
+        val nameBuilder = AccessorNameBuilder()
+        contributeFieldGetterName(nameBuilder, this)
+        contributeFieldAccessorSuffix(nameBuilder, this, superQualifierSymbol)
+        return nameBuilder.build()
+    }
+
+    private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name {
+        val nameBuilder = AccessorNameBuilder()
+        contributeFieldSetterName(nameBuilder, this)
+        contributeFieldAccessorSuffix(nameBuilder, this, superQualifierSymbol)
+        return nameBuilder.build()
+    }
 
     /**
      * Produces a call to the synthetic accessor [accessorSymbol] to replace the call expression [oldExpression].
