@@ -105,7 +105,6 @@ val jsMainSources by task<Sync> {
             "kotlin/ItemArrayLike.kt",
             "kotlin/io/**",
             "kotlin/json.kt",
-            "kotlin/promise.kt",
             "kotlin/regexp.kt",
             "kotlin/sequenceJs.kt",
             "kotlin/throwableExtensions.kt",

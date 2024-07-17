@@ -1,0 +1,23 @@
+MODULES: lib1, lib2, main
+IGNORE_K1: true
+
+STEP 0:
+    language: +JsExportSuspendFunctions
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/lib, lib1/lib.export, lib1, lib2/lib, main/m, main/m.export, main
+STEP 1:
+    language: +JsExportSuspendFunctions
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/lib, lib1/lib.export, lib2/lib, main/m, main/m.export
+STEP 2:
+    language: +JsExportSuspendFunctions
+    libs: lib1, lib2, main
+    dirty js modules: lib1
+    dirty js files:   lib1/lib
+STEP 3:
+    language: +JsExportSuspendFunctions
+    libs: lib1, lib2, main
+    dirty js modules: lib2
+    dirty js files:   lib2/lib

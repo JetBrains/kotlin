@@ -58,6 +58,9 @@ abstract class JsAbstractInvalidationTest(
     override val environment: KotlinCoreEnvironment =
         KotlinCoreEnvironment.createForParallelTests(rootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
+    override fun isIgnoredTest(projectInfo: ProjectInfo) =
+        granularity in projectInfo.ignoredGranularities || super.isIgnoredTest(projectInfo)
+
     override fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
         val copy = super.createConfiguration(moduleName, language, moduleKind)
         copy.put(JSConfigurationKeys.USE_ES6_CLASSES, targetBackend == TargetBackend.JS_IR_ES6)
@@ -83,8 +86,6 @@ abstract class JsAbstractInvalidationTest(
         jsDir: File,
     ) : AbstractProjectStepsExecutor(projectInfo, moduleInfos, testDir, sourceDir, buildDir, jsDir) {
         override fun execute() {
-            if (granularity in projectInfo.ignoredGranularities) return
-
             val mainArguments = runIf(projectInfo.callMain) { emptyList<String>() }
             val dtsStrategy = when (granularity) {
                 JsGenerationGranularity.PER_FILE -> TsCompilationStrategy.EACH_FILE

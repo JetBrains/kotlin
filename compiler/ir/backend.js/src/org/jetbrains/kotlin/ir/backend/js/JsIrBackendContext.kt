@@ -190,6 +190,9 @@ class JsIrBackendContext(
     override val jsPromiseSymbol: IrClassSymbol?
         get() = intrinsics.promiseClassSymbol
 
+    override val jsExportIgnoreSymbol: IrClassSymbol?
+        get() = intrinsics.jsExportIgnoreAnnotationSymbol
+
     override val enumEntries = getIrClass(ENUMS_PACKAGE_FQNAME.child(Name.identifier("EnumEntries")))
     override val createEnumEntries = getFunctions(ENUMS_PACKAGE_FQNAME.child(Name.identifier("enumEntries")))
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }

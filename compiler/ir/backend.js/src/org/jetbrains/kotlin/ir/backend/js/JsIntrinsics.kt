@@ -208,6 +208,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.valueParameters.size == 2 }
     }
 
+    val awaitFunctionSymbol = getInternalWithoutPackage("kotlin.coroutines.await")
+    val promisifyFunctionSymbol = getInternalWithoutPackage("kotlin.coroutines.promisify")
     val suspendOrReturnFunctionSymbol = getInternalWithoutPackage("kotlin.coroutines.intrinsics.suspendOrReturn")
 
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")

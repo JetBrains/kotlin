@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.js.klib.compileModulesToAnalyzedFirWithLightTree
 import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
 import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
+import org.jetbrains.kotlin.codegen.K2_FRONTEND
+import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -63,6 +65,10 @@ abstract class FirAbstractInvalidationTest(
         val firInfoFile = defaultInfoFile.parentFile.resolve(firInfoFileName)
         return firInfoFile.takeIf { it.exists() } ?: defaultInfoFile
     }
+
+
+    override fun isIgnoredTest(projectInfo: ProjectInfo) =
+        K2_FRONTEND in projectInfo.ignoreFrontends || super.isIgnoredTest(projectInfo)
 
     override fun getModuleInfoFile(directory: File): File {
         return getFirInfoFile(super.getModuleInfoFile(directory))

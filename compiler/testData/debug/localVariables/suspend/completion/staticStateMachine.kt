@@ -27,8 +27,8 @@ suspend fun box() {
 // test.kt:13 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 
 // EXPECTATIONS JS_IR
-// test.kt:13 box: $completion=EmptyContinuation
-// test.kt:12 box: $completion=EmptyContinuation
+// test.kt:13 box: $completion=Lambda
+// test.kt:12 box: $completion=Lambda
 // test.kt:6 doResume:
 // test.kt:4 foo: $completion=Coroutine
 // test.kt:7 doResume:

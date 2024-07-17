@@ -51,7 +51,12 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(JsQualifierChecker)
         container.useInstance(JsNativeDiagnosticSuppressor)
         container.useInstance(JsExternalChecker(allowCompanionInInterface = true, allowUnsignedTypes = false))
-        container.useInstance(JsExportDeclarationChecker(allowCompanionInInterface = true, includeUnsignedNumbers = false))
+        container.useInstance(
+            JsExportDeclarationChecker(
+                allowCompanionInInterface = true,
+                includeUnsignedNumbers = false,
+            )
+        )
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

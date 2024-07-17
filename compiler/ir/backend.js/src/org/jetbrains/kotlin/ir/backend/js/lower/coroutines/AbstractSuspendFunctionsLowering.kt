@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -41,6 +42,9 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     companion object {
         val DECLARATION_ORIGIN_COROUTINE_IMPL = IrDeclarationOriginImpl("COROUTINE_IMPL")
     }
+
+    protected open val coroutineClassAnnotations: List<IrConstructorCall>
+        get() = emptyList()
 
     protected abstract val stateMachineMethodName: Name
     protected abstract fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol
@@ -146,7 +150,9 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             ?.let { it.origin === CallableReferenceLowering.Companion.LAMBDA_IMPL } == true
         private val functionParameters = if (isSuspendLambda) function.valueParameters else function.explicitParameters
 
-        private val coroutineClass: IrClass = getCoroutineClass(function)
+        private val coroutineClass: IrClass = getCoroutineClass(function).apply {
+            annotations = annotations memoryOptimizedPlus coroutineClassAnnotations
+        }
 
         private val coroutineClassThis = coroutineClass.thisReceiver!!
 

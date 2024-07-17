@@ -1,0 +1,3 @@
+@JsExport
+abstract class Foo {
+}

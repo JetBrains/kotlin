@@ -75,6 +75,12 @@ public class JsFirES6InvalidationPerModuleTestGenerated extends AbstractJsFirES6
   }
 
   @Test
+  @TestMetadata("classWithJsExportAndSuspendFunction")
+  public void testClassWithJsExportAndSuspendFunction() {
+    runTest("js/js.translator/testData/incremental/invalidation/classWithJsExportAndSuspendFunction/");
+  }
+
+  @Test
   @TestMetadata("companionConstVal")
   public void testCompanionConstVal() {
     runTest("js/js.translator/testData/incremental/invalidation/companionConstVal/");

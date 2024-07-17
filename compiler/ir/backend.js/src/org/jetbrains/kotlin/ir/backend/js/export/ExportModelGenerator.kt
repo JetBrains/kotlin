@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
+import org.jetbrains.kotlin.ir.backend.js.lower.PrepareSuspendFunctionsToExportLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -767,6 +768,9 @@ private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, cont
     // But, when we add @file:JsExport, the annotation appears on the all of enum entries
     // what make a wrong behaviour on non-exported members inside Enum Entry (check exportEnumClass and exportFileWithEnumClass tests)
     if (declaration is IrClass && declaration.kind == ClassKind.ENUM_ENTRY)
+        return false
+
+    if (declaration.isLocal)
         return false
 
     if (declaration.isJsExportIgnore())

@@ -52,15 +52,3 @@ private val minimalFqNames = mapOf(
 )
 
 private val knownFqNames = minimalFqNames + stdlibFqNames
-
-private object EmptyContinuation: Continuation<Any?> {
-    override val context: CoroutineContext
-        get() = EmptyCoroutineContext
-
-    override fun resumeWith(result: Result<Any?>) {
-        result.getOrThrow()
-    }
-}
-
-@JsExport
-fun makeEmptyContinuation(): dynamic = EmptyContinuation

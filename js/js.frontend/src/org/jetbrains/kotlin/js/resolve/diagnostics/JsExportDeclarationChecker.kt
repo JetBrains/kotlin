@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.types.typeUtil.*
 
 class JsExportDeclarationChecker(
     private val includeUnsignedNumbers: Boolean,
-    private val allowCompanionInInterface: Boolean
+    private val allowCompanionInInterface: Boolean,
 ) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val trace = context.trace

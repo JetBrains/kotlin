@@ -11,6 +11,15 @@ import B2 = JS_TESTS.foo.B2;
 import C2 = JS_TESTS.foo.C2;
 import EC = JS_TESTS.foo.EC;
 import A2 = JS_TESTS.foo.A2;
+import SecondSuspendOwner = JS_TESTS.foo.SecondSuspendOwner;
+import ThirdSuspendOwner = JS_TESTS.foo.ThirdSuspendOwner;
+import acceptSecondSuspendOwner = JS_TESTS.foo.acceptSecondSuspendOwner;
+
+class PatchedThirdSuspendOwner extends ThirdSuspendOwner {
+    override second(): Promise<string> {
+        return Promise.resolve("js second")
+    }
+}
 
 class Impl extends AC {
     z(z: number): void {
@@ -42,7 +51,7 @@ class A2Impl extends A2 {
 
 }
 
-function box(): string {
+async function box(): Promise<string> {
     const impl = new Impl();
     if (impl.acProp !== "acProp") return "Fail 1";
     if (impl.x !== "AC") return "Fail 2";
@@ -122,6 +131,10 @@ function box(): string {
     if (EC.EC3.bar != "bar") return "Fail 49"
     if (EC.EC3.baz != "ec3") return "Fail 50"
     if (EC.EC3.bay() != "bay") return "Fail 51"
+
+    if (await acceptSecondSuspendOwner(new SecondSuspendOwner()) !== "First is 'First' and second is 'Second'") return "Fail 52"
+    if (await acceptSecondSuspendOwner(new ThirdSuspendOwner()) !== "First is 'patched first' and second is 'patched second'") return "Fail 53"
+    if (await acceptSecondSuspendOwner(new PatchedThirdSuspendOwner()) !== "First is 'patched first' and second is 'js second'") return "Fail 54"
 
     return "OK";
 }

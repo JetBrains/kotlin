@@ -18,6 +18,7 @@ class ProjectInfo(
     val muted: Boolean,
     val moduleKind: ModuleKind,
     val ignoredGranularities: Set<JsGenerationGranularity>,
+    val ignoreFrontends: Set<String>,
     val callMain: Boolean
 ) {
 
@@ -89,6 +90,9 @@ private const val LANGUAGE = "language"
 private const val IGNORE_PER_FILE = "IGNORE_PER_FILE"
 private const val IGNORE_PER_MODULE = "IGNORE_PER_MODULE"
 
+private const val IGNORE_K1 = "IGNORE_K1"
+private const val IGNORE_K2 = "IGNORE_K2"
+
 const val MODULE_INFO_FILE = "module.info"
 private const val DEPENDENCIES = "dependencies"
 private const val FRIENDS = "friends"
@@ -98,6 +102,9 @@ private const val MODIFICATION_DELETE = "D"
 private const val EXPECTED_DTS_LIST = "expected dts"
 private const val REBUILD_KLIB = "rebuild klib"
 private const val COMPILER = "compiler"
+
+const val K1_FRONTEND = "K1"
+const val K2_FRONTEND = "K2"
 
 private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\.*(\\d+)?\\s*:?$")
 
@@ -192,6 +199,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
     override fun parse(entryName: String): ProjectInfo {
         val libraries = mutableListOf<String>()
         val steps = mutableListOf<ProjectInfo.ProjectBuildStep>()
+        val ignoreFrontends = mutableSetOf<String>()
         val ignoredGranularities = mutableSetOf<JsGenerationGranularity>()
         var muted = false
         var callMain = false
@@ -216,6 +224,8 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
             when {
                 op == MODULES_LIST -> libraries += split[1].splitAndTrim()
                 op == CALL_MAIN && split[1].trim() == "true" -> callMain = true
+                op == IGNORE_K1 && split[1].trim() == "true" -> ignoreFrontends += K1_FRONTEND
+                op == IGNORE_K2 && split[1].trim() == "true" -> ignoreFrontends += K2_FRONTEND
                 op == IGNORE_PER_FILE && split[1].trim() == "true" -> ignoredGranularities += JsGenerationGranularity.PER_FILE
                 op == IGNORE_PER_MODULE && split[1].trim() == "true" -> ignoredGranularities += JsGenerationGranularity.PER_MODULE
                 op == MODULES_KIND -> moduleKind = split[1].trim()
@@ -247,7 +257,16 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
             false
         }
 
-        return ProjectInfo(entryName, libraries, steps, muted, moduleKind, ignoredGranularities, callMain)
+        return ProjectInfo(
+            entryName,
+            libraries,
+            steps,
+            muted,
+            moduleKind,
+            ignoredGranularities,
+            ignoreFrontends,
+            callMain
+        )
     }
 }
 

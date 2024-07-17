@@ -18,10 +18,8 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
@@ -58,6 +56,12 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
     private fun IrSimpleFunction.addJsGeneratorAnnotation() {
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
             context.intrinsics.jsGeneratorAnnotationSymbol.owner.primaryConstructor!!.symbol
+        )
+    }
+
+    private fun IrSimpleFunction.addJsExportIgnoreAnnotation() {
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
+            context.intrinsics.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol
         )
     }
 
@@ -113,6 +117,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
                 })
             }
             addJsGeneratorAnnotation()
+            addJsExportIgnoreAnnotation()
         }
 
         function.body = context.createIrBuilder(function.symbol).irBlockBody {

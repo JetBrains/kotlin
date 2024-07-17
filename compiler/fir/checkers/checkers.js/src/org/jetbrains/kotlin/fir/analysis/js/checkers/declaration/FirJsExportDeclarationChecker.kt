@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -87,7 +88,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     return
                 }
 
-                if (declaration.isSuspend) {
+                if (declaration.isSuspend && !context.languageVersionSettings.supportsFeature(LanguageFeature.JsExportSuspendFunctions)) {
                     reportWrongExportedDeclaration("suspend function")
                     return
                 }

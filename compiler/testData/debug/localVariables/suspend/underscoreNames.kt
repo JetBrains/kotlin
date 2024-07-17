@@ -28,12 +28,12 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 
 // EXPECTATIONS JS_IR
-// test.kt:12 box: $completion=EmptyContinuation
+// test.kt:12 box: $completion=Lambda
 // test.kt:4 <init>:
-// test.kt:14 box: $completion=EmptyContinuation
+// test.kt:14 box: $completion=Lambda
 // test.kt:12 box$slambda:
-// test.kt:12 box: $completion=EmptyContinuation
-// test.kt:10 foo: a=A, block=Function2, $completion=EmptyContinuation
+// test.kt:12 box: $completion=Lambda
+// test.kt:10 foo: a=A, block=Function2, $completion=Lambda
 // test.kt:12 doResume:
 // test.kt:5 component1:
 // test.kt:12 doResume: x_param="O":kotlin.String

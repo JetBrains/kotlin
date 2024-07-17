@@ -51,7 +51,12 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(JsQualifierChecker)
         container.useInstance(WasmDiagnosticSuppressor)
         container.useInstance(JsExternalChecker(allowCompanionInInterface = false, allowUnsignedTypes = true))
-        container.useInstance(JsExportDeclarationChecker(allowCompanionInInterface = false, includeUnsignedNumbers = true))
+        container.useInstance(
+            JsExportDeclarationChecker(
+                allowCompanionInInterface = false,
+                includeUnsignedNumbers = true,
+            )
+        )
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

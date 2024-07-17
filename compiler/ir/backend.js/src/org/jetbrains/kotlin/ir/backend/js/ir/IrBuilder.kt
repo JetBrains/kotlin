@@ -106,6 +106,14 @@ object JsIrBuilder {
     fun buildRawReference(targetSymbol: IrFunctionSymbol, type: IrType): IrRawFunctionReference =
         IrRawFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol)
 
+    fun buildDynamicMemberExpression(dispatchReceiver: IrExpression, memberName: String, type: IrType): IrExpression =
+        IrDynamicMemberExpressionImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            type,
+            memberName,
+            dispatchReceiver
+        )
+
     fun buildReturn(targetSymbol: IrFunctionSymbol, value: IrExpression, type: IrType) =
         IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol, value)
 
