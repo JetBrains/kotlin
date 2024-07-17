@@ -89,7 +89,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             },
             registerExtraCheckers = { it.registerNativeCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
+            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
                     generatedSymbolsProvider,
