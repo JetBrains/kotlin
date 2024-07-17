@@ -1,0 +1,33 @@
+KtNameReferenceExpression(175,180): 'check'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        emptyList() -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = {dependency3.AsymmetricAlias2<{dependency1.IntAlias=} kotlin.Int, {dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>
+          symbol = list: {dependency3.AsymmetricAlias2<{dependency1.IntAlias=} kotlin.Int, {dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = dependency4.MyInterface
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = dependency4/MyInterface.check(<dispatch receiver>: dependency4.MyInterface, list: {dependency3.AsymmetricAlias2<{dependency1.IntAlias=} kotlin.Int, {dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = list
+              receiverType = null
+              returnType = {dependency3.AsymmetricAlias2<{dependency1.IntAlias=} kotlin.Int, {dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>
+              symbol = list: {dependency3.AsymmetricAlias2<{dependency1.IntAlias=} kotlin.Int, {dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{dependency2.AsymmetricAlias<{dependency1.BooleanAlias=} kotlin.Boolean, {dependency1.IntAlias=} kotlin.Int>=} kotlin.String>
+              callableId = null
+          ]
+          callableId = dependency4/MyInterface.check
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

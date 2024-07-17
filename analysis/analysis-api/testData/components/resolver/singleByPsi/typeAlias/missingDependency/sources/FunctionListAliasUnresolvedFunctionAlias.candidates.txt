@@ -1,0 +1,33 @@
+KtNameReferenceExpression(166,171): 'check'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        emptyList() -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+          symbol = list: {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = dependency3.MyInterface
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = dependency3/MyInterface.check(<dispatch receiver>: dependency3.MyInterface, list: {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = list
+              receiverType = null
+              returnType = {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+              symbol = list: {dependency2.ListAlias<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>=} kotlin.collections.List<{dependency1.FunctionAlias=} kotlin.Function1<kotlin.String, kotlin.Int>>
+              callableId = null
+          ]
+          callableId = dependency3/MyInterface.check
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
