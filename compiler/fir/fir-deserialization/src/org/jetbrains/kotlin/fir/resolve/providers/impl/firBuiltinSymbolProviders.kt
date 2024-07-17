@@ -42,6 +42,7 @@ abstract class AbstractFirBuiltinSymbolProvider(
     val moduleData: FirModuleData,
     val kotlinScopeProvider: FirKotlinScopeProvider,
     private val isFallback: Boolean,
+    deserializeAsActual: Boolean,
 ) : FirSymbolProvider(session) {
 
     protected abstract val builtInsPackageFragments: Map<FqName, BuiltInsPackageFragment>
@@ -51,7 +52,7 @@ abstract class AbstractFirBuiltinSymbolProvider(
 
     private val allPackageFragments by lazy {
         builtInsPackageFragments.mapValues { (fqName, foo) ->
-            BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider, isFallback)
+            BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider, isFallback, deserializeAsActual)
         }
     }
 
@@ -119,6 +120,7 @@ abstract class AbstractFirBuiltinSymbolProvider(
         val moduleData: FirModuleData,
         val kotlinScopeProvider: FirKotlinScopeProvider,
         private val originateFromFallbackBuiltIns: Boolean,
+        deserializeAsActual: Boolean,
     ) {
 
         private val packageProto get() = builtInsPackageFragment.packageProto
@@ -131,7 +133,8 @@ abstract class AbstractFirBuiltinSymbolProvider(
                 FirBuiltinAnnotationDeserializer(moduleData.session),
                 FirTypeDeserializer.FlexibleTypeFactory.Default,
                 FirConstDeserializer(BuiltInSerializerProtocol),
-                containerSource = null
+                containerSource = null,
+                deserializeAsActual = deserializeAsActual,
             ).memberDeserializer
         }
 
@@ -148,6 +151,7 @@ abstract class AbstractFirBuiltinSymbolProvider(
                 null,
                 origin = if (originateFromFallbackBuiltIns) FirDeclarationOrigin.BuiltInsFallback else FirDeclarationOrigin.BuiltIns,
                 this::findAndDeserializeClass,
+                isActual = deserializeAsActual,
             )
         }
 
@@ -196,7 +200,8 @@ class FirFallbackBuiltinSymbolProvider(
     session: FirSession,
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider,
-) : AbstractFirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider, true) {
+    deserializeAsActual: Boolean,
+) : AbstractFirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider, true, deserializeAsActual) {
 
     override val builtInsPackageFragments: Map<FqName, BuiltInsPackageFragment>
         get() = FirFallbackBuiltinSymbolProvider.builtInsPackageFragments
@@ -225,8 +230,9 @@ class FirClasspathBuiltinSymbolProvider(
     session: FirSession,
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider,
+    deserializeAsActual: Boolean,
     val findPackagePartData: (FqName) -> InputStream?,
-) : AbstractFirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider, false) {
+) : AbstractFirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider, false, deserializeAsActual) {
 
     override val builtInsPackageFragments: Map<FqName, BuiltInsPackageFragment> = buildMap {
         StandardClassIds.builtInsPackages.forEach { fqName ->

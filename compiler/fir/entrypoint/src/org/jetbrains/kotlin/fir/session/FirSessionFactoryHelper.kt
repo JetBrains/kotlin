@@ -156,12 +156,14 @@ object FirSessionFactoryHelper {
         builtinsModuleData: FirModuleData,
         kotlinScopeProvider: FirKotlinScopeProvider,
         kotlinClassFinder: KotlinClassFinder,
+        deserializeAsActual: Boolean = false,
     ): FirBuiltinsSymbolProvider = FirBuiltinsSymbolProvider(
         session, FirClasspathBuiltinSymbolProvider(
             session,
             builtinsModuleData,
-            kotlinScopeProvider
+            kotlinScopeProvider,
+            deserializeAsActual,
         ) { kotlinClassFinder.findBuiltInsData(it) },
-        FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
+        FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider, deserializeAsActual)
     )
 }

@@ -166,9 +166,16 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
     ): FirSymbolProvider? {
         return runIf(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && !session.moduleData.isCommon) {
             val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(projectEnvironment.getSearchScopeForProjectLibraries())
+            val initializeJvmActualizingProvider = session.moduleData.dependsOnDependencies.isNotEmpty()
             val builtinsSymbolProvider =
-                FirSessionFactoryHelper.initializeBuiltinsProvider(session, session.moduleData, kotlinScopeProvider, kotlinClassFinder)
-            if (session.moduleData.dependsOnDependencies.isNotEmpty()) {
+                FirSessionFactoryHelper.initializeBuiltinsProvider(
+                    session,
+                    session.moduleData,
+                    kotlinScopeProvider,
+                    kotlinClassFinder,
+                    deserializeAsActual = initializeJvmActualizingProvider
+                )
+            if (initializeJvmActualizingProvider) {
                 val refinedSourceSymbolProviders = dependencies.filter { it.session.kind == FirSession.Kind.Source }
                 FirJvmActualizingBuiltinSymbolProvider(builtinsSymbolProvider, refinedSourceSymbolProviders)
             } else {

@@ -56,7 +56,8 @@ fun deserializeClassToSymbol(
     parentContext: FirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
-    deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
+    deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?,
+    isActual: Boolean = false,
 ) {
     val flags = classProto.flags
     val kind = Flags.CLASS_KIND.get(flags)
@@ -68,7 +69,7 @@ fun deserializeClassToSymbol(
         visibility.toEffectiveVisibility(parentContext?.outerClassSymbol, forClass = true)
     ).apply {
         isExpect = Flags.IS_EXPECT_CLASS.get(flags)
-        isActual = false
+        this.isActual = isActual
         isCompanion = kind == ProtoBuf.Class.Kind.COMPANION_OBJECT
         isInner = Flags.IS_INNER.get(flags)
         isData = Flags.IS_DATA.get(classProto.flags)
@@ -105,7 +106,8 @@ fun deserializeClassToSymbol(
             flexibleTypeFactory,
             constDeserializer,
             containerSource,
-            symbol
+            symbol,
+            isActual,
         )
     if (status.isCompanion) {
         parentContext?.let {

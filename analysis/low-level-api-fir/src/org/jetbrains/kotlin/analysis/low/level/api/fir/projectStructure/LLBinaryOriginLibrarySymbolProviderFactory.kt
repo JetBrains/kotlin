@@ -129,7 +129,7 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
         kotlinScopeProvider: FirKotlinScopeProvider,
     ): List<FirSymbolProvider> {
         return listOf(
-            FirFallbackBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider),
+            FirFallbackBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider, deserializeAsActual = false),
             FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, moduleData, kotlinScopeProvider)
         )
     }
