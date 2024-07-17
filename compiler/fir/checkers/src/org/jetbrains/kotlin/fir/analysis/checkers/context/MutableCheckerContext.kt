@@ -54,7 +54,7 @@ class MutableCheckerContext private constructor(
         containingFile = null,
         sessionHolder,
         returnTypeCalculator,
-        suppressedDiagnostics = persistentSetOf(),
+        suppressedDiagnostics = getGloballySuppressedDiagnostics(sessionHolder.session),
         allInfosSuppressed = false,
         allWarningsSuppressed = false,
         allErrorsSuppressed = false
