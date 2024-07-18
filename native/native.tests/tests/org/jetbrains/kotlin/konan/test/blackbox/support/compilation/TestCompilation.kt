@@ -437,6 +437,8 @@ internal class CInteropCompilation(
             add("-fobjc-arc")
             add("-Xsource-compiler-option")
             add("-DNS_FORMAT_ARGUMENT(A)=")
+            add("-Xsource-compiler-option")
+            add("-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS")
             add("-compiler-option")
             add("-I${defFile.parentFile}")
         }
