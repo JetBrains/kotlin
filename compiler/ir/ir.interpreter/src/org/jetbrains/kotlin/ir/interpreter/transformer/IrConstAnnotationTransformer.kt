@@ -43,6 +43,7 @@ internal abstract class IrConstAnnotationTransformer(
     }
 
     private fun transformAnnotation(annotation: IrConstructorCall) {
+        if (annotation.type is IrErrorType) return
         for (i in 0 until annotation.valueArgumentsCount) {
             val arg = annotation.getValueArgument(i) ?: continue
             annotation.putValueArgument(i, transformAnnotationArgument(arg, annotation.symbol.owner.valueParameters[i]))
@@ -72,6 +73,7 @@ internal abstract class IrConstAnnotationTransformer(
 
     private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression {
         return when {
+            this is IrGetClass && argument.type is IrErrorType -> this
             this is IrGetEnumValue || this is IrClassReference -> this
             this is IrConstructorCall && this.type.isAnnotation() -> {
                 transformAnnotation(this)

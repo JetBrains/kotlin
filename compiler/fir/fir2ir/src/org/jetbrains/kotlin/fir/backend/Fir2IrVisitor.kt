@@ -543,7 +543,10 @@ class Fir2IrVisitor(
                 varargArgumentsExpression.resolvedType.toIrType(c),
                 varargArgumentsExpression.coneElementTypeOrNull?.toIrType(c)
                     ?: error("Vararg expression has incorrect type"),
-                varargArgumentsExpression.arguments.map { it.convertToIrVarargElement() }
+                varargArgumentsExpression.arguments.mapNotNull {
+                    if (isGetClassOfUnresolvedTypeInAnnotation(it)) null
+                    else it.convertToIrVarargElement()
+                }
             )
         }
     }
@@ -1723,6 +1726,12 @@ class Fir2IrVisitor(
             }
         }
     }
+
+    internal fun isGetClassOfUnresolvedTypeInAnnotation(expression: FirExpression): Boolean =
+    // In kapt mode, skip `Unresolved::class` in annotation arguments, because it cannot be handled by IrInterpreter,
+        // and because this replicates K1 behavior (see `ConstantExpressionEvaluatorVisitor.visitClassLiteralExpression`).
+        configuration.skipBodies && annotationMode &&
+                expression is FirGetClassCall && expression.argument.resolvedType is ConeErrorType
 }
 
 val KtSourceElement.isChildOfForLoop: Boolean

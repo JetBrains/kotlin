@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -884,6 +885,19 @@ class CallAndReferenceGenerator(
     fun convertToIrConstructorCall(annotation: FirAnnotation): IrExpression {
         val coneType = annotation.annotationTypeRef.coneType.fullyExpandedType(session)
         val type = coneType.toIrType()
+        if (configuration.skipBodies && type is IrErrorType) {
+            // Preserve constructor calls to error classes in kapt mode because kapt stub generator will later restore them in the
+            // "correct error types" mode.
+            return annotation.convertWithOffsets { startOffset, endOffset ->
+                @OptIn(UnsafeDuringIrConstructionAPI::class) // Error class constructor is already created, see IrErrorClassImpl.
+                IrConstructorCallImpl(
+                    startOffset, endOffset, type, type.symbol.owner.primaryConstructor!!.symbol,
+                    valueArgumentsCount = 0, typeArgumentsCount = 0, constructorTypeArgumentsCount = 0,
+                    source = FirAnnotationSourceElement(annotation),
+                )
+            }
+        }
+
         val symbol = type.classifierOrNull
         val firConstructorSymbol = (annotation.toResolvedCallableSymbol(session) as? FirConstructorSymbol)
             ?: run {
@@ -1098,9 +1112,7 @@ class CallAndReferenceGenerator(
         contextReceiverCount: Int,
         call: FirCall,
     ): IrExpression {
-        val converted = argumentMapping.entries.map { (argument, parameter) ->
-            parameter to convertArgument(argument, parameter, substitutor)
-        }
+        val converted = convertArguments(argumentMapping, substitutor)
         // If none of the parameters have side effects, the evaluation order doesn't matter anyway.
         // For annotations, this is always true, since arguments have to be compile-time constants.
         if (!visitor.annotationMode && !converted.all { (_, irArgument) -> irArgument.hasNoSideEffects() } &&
@@ -1150,6 +1162,15 @@ class CallAndReferenceGenerator(
             return this
         }
     }
+
+    private fun convertArguments(
+        argumentMapping: Map<FirExpression, FirValueParameter>,
+        substitutor: ConeSubstitutor,
+    ): List<Pair<FirValueParameter, IrExpression>> =
+        argumentMapping.entries.mapNotNull { (argument, parameter) ->
+            if (visitor.isGetClassOfUnresolvedTypeInAnnotation(argument)) null
+            else (parameter to convertArgument(argument, parameter, substitutor))
+        }
 
     private fun needArgumentReordering(
         parametersInActualOrder: Collection<FirValueParameter>,
