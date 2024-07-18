@@ -25354,6 +25354,22 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/metadata")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Metadata {
+      @Test
+      public void testAllFilesPresentInMetadata() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/metadata"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("exhaustiveExpectBoolean.kt")
+      public void testExhaustiveExpectBoolean() {
+        runTest("compiler/testData/diagnostics/tests/metadata/exhaustiveExpectBoolean.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/modifiers")
     @TestDataPath("$PROJECT_ROOT")
     public class Modifiers {
