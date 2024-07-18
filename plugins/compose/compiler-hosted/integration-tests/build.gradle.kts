@@ -50,7 +50,7 @@ kotlin {
 
 
                 runtimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
-                runtimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+                runtimeOnly(libs.intellij.fastutil)
                 runtimeOnly(jpsModelImpl())
                 implementation(project(":compiler:backend-common"))
                 implementation(project(":compiler:ir.backend.common"))

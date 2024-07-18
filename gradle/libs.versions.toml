@@ -45,6 +45,7 @@ kotlin-for-gradle-plugins-compilation = "2.0.20-RC"
 intellij-asm = "9.0"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
+fastutil = "8.5.4-9"
 # Wasm specific
 wasmedge = "0.14.0"
 vavr = "0.10.4"
@@ -124,6 +125,8 @@ android-gradle-plugin-gradle = { module = "com.android.tools.build:gradle", vers
 android-gradle-plugin-builder = { module = "com.android.tools.build:builder", version.ref = "android-gradle-plugin" }
 android-gradle-plugin-builder-model = { module = "com.android.tools.build:builder-model", version.ref = "android-gradle-plugin" }
 android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
+
+intellij-fastutil = { module = "org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil", version.ref = "fastutil" }
 
 xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 
