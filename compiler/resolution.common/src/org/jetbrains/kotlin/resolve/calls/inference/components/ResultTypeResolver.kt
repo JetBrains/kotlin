@@ -487,14 +487,13 @@ class ResultTypeResolver(
     private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
         isProperTypeForFixation(type, notFixedTypeVariables.keys) { isProperType(it) }
 
-    private fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? =
-        with(c) {
-            val properEqualityConstraints = variableWithConstraints.constraints.filter {
-                it.kind == ConstraintKind.EQUALITY && c.isProperTypeForFixation(it.type)
-            }
-
-            return c.representativeFromEqualityConstraints(properEqualityConstraints)
+    private fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
+        val properEqualityConstraints = variableWithConstraints.constraints.filter {
+            it.kind == ConstraintKind.EQUALITY && c.isProperTypeForFixation(it.type)
         }
+
+        return c.representativeFromEqualityConstraints(properEqualityConstraints)
+    }
 
     // Discriminate integer literal types as they are less specific than separate integer types (Int, Short...)
     private fun Context.representativeFromEqualityConstraints(constraints: List<Constraint>): KotlinTypeMarker? {
