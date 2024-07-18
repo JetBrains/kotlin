@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModules
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Test
 import java.io.File
@@ -19,7 +20,7 @@ class SerializationToolsTest {
 
     @Test
     fun `test hierarchy SwiftModule serialization`() {
-        val json = SerializationTools.writeToJson(hierarchyModules())
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(hierarchyModules(), 1721919536167))
         val hierarchyJson = hierarchyJson()
 
         assertEquals(json.unixStylePath(), hierarchyJson)
@@ -27,8 +28,8 @@ class SerializationToolsTest {
 
     @Test
     fun `test hierarchy SwiftModule deserialization`() {
-        val modules = SerializationTools.readFromJson<List<GradleSwiftExportModule>>(hierarchyJson())
-        val hierarchyModules = hierarchyModules()
+        val modules = SerializationTools.readFromJson<GradleSwiftExportModules>(hierarchyJson())
+        val hierarchyModules = GradleSwiftExportModules(hierarchyModules(), 1721919536167)
 
         assertEquals(modules, hierarchyModules)
     }
@@ -43,7 +44,7 @@ class SerializationToolsTest {
 
     @Test
     fun `test nested SwiftModule serialization`() {
-        val json = SerializationTools.writeToJson(nestedModules())
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(nestedModules(), 1721919536167))
         val nestedJson = nestedJson()
 
         assertEquals(json.unixStylePath(), nestedJson)
@@ -51,8 +52,8 @@ class SerializationToolsTest {
 
     @Test
     fun `test nested SwiftModule deserialization`() {
-        val modules = SerializationTools.readFromJson<List<GradleSwiftExportModule>>(nestedJson())
-        val nestedModules = nestedModules()
+        val modules = SerializationTools.readFromJson<GradleSwiftExportModules>(nestedJson())
+        val nestedModules = GradleSwiftExportModules(nestedModules(), 1721919536167)
 
         assertEquals(modules, nestedModules)
     }
@@ -67,7 +68,7 @@ class SerializationToolsTest {
 
     @Test
     fun `test Windows Unix SwiftModule paths`() {
-        val json = SerializationTools.writeToJson(simpleModules())
+        val json = SerializationTools.writeToJson(GradleSwiftExportModules(simpleModules(), 1721919536167))
         val simpleJson = simpleJson()
         val simpleWinJson = simpleWindowsJson()
 
@@ -80,35 +81,41 @@ class SerializationToolsTest {
     }
 
     private fun simpleJson(): String = """
-        [
-          {
-            "files": {
-              "swiftApi": "/A/SwiftFile.swift",
-              "kotlinBridges": "/A/KotlinBridge.kt",
-              "cHeaderBridges": "/A/Header.h"
-            },
-            "bridgeName": "Bridge_A",
-            "name": "Module_A",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": []
-          }
-        ]
+        {
+          "modules": [
+            {
+              "files": {
+                "swiftApi": "/A/SwiftFile.swift",
+                "kotlinBridges": "/A/KotlinBridge.kt",
+                "cHeaderBridges": "/A/Header.h"
+              },
+              "bridgeName": "Bridge_A",
+              "name": "Module_A",
+              "type": "BRIDGES_TO_KOTLIN",
+              "dependencies": []
+            }
+          ],
+          "timestamp": 1721919536167
+        }
     """.trimIndent()
 
     private fun simpleWindowsJson(): String = """
-        [
-          {
-            "files": {
-              "swiftApi": "\\A\\SwiftFile.swift",
-              "kotlinBridges": "\\A\\KotlinBridge.kt",
-              "cHeaderBridges": "\\A\\Header.h"
-            },
-            "bridgeName": "Bridge_A",
-            "name": "Module_A",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": []
-          }
-        ]
+        {
+          "modules": [
+            {
+              "files": {
+                "swiftApi": "\\A\\SwiftFile.swift",
+                "kotlinBridges": "\\A\\KotlinBridge.kt",
+                "cHeaderBridges": "\\A\\Header.h"
+              },
+              "bridgeName": "Bridge_A",
+              "name": "Module_A",
+              "type": "BRIDGES_TO_KOTLIN",
+              "dependencies": []
+            }
+          ],
+          "timestamp": 1721919536167
+        }
     """.trimIndent()
 
     private fun simpleModules(): List<GradleSwiftExportModule> = listOf(
@@ -134,54 +141,57 @@ class SerializationToolsTest {
      *  └── Module_E
      */
     private fun hierarchyJson(): String = """
-        [
-          {
-            "files": {
-              "swiftApi": "/A/SwiftFile.swift",
-              "kotlinBridges": "/A/KotlinBridge.kt",
-              "cHeaderBridges": "/A/Header.h"
+        {
+          "modules": [
+            {
+              "files": {
+                "swiftApi": "/A/SwiftFile.swift",
+                "kotlinBridges": "/A/KotlinBridge.kt",
+                "cHeaderBridges": "/A/Header.h"
+              },
+              "bridgeName": "Bridge_A",
+              "name": "Module_A",
+              "type": "BRIDGES_TO_KOTLIN",
+              "dependencies": [
+                "Module_C",
+                "Module_D"
+              ]
             },
-            "bridgeName": "Bridge_A",
-            "name": "Module_A",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": [
-              "Module_C",
-              "Module_D"
-            ]
-          },
-          {
-            "files": {
-              "swiftApi": "/B/SwiftFile.swift",
-              "kotlinBridges": "/B/KotlinBridge.kt",
-              "cHeaderBridges": "/B/Header.h"
+            {
+              "files": {
+                "swiftApi": "/B/SwiftFile.swift",
+                "kotlinBridges": "/B/KotlinBridge.kt",
+                "cHeaderBridges": "/B/Header.h"
+              },
+              "bridgeName": "Bridge_B",
+              "name": "Module_B",
+              "type": "BRIDGES_TO_KOTLIN",
+              "dependencies": [
+                "Module_C",
+                "Module_E"
+              ]
             },
-            "bridgeName": "Bridge_B",
-            "name": "Module_B",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": [
-              "Module_C",
-              "Module_E"
-            ]
-          },
-          {
-            "swiftApi": "/C/SwiftFile.swift",
-            "name": "Module_C",
-            "type": "SWIFT_ONLY",
-            "dependencies": []
-          },
-          {
-            "swiftApi": "/D/SwiftFile.swift",
-            "name": "Module_D",
-            "type": "SWIFT_ONLY",
-            "dependencies": []
-          },
-          {
-            "swiftApi": "/E/SwiftFile.swift",
-            "name": "Module_E",
-            "type": "SWIFT_ONLY",
-            "dependencies": []
-          }
-        ]
+            {
+              "swiftApi": "/C/SwiftFile.swift",
+              "name": "Module_C",
+              "type": "SWIFT_ONLY",
+              "dependencies": []
+            },
+            {
+              "swiftApi": "/D/SwiftFile.swift",
+              "name": "Module_D",
+              "type": "SWIFT_ONLY",
+              "dependencies": []
+            },
+            {
+              "swiftApi": "/E/SwiftFile.swift",
+              "name": "Module_E",
+              "type": "SWIFT_ONLY",
+              "dependencies": []
+            }
+          ],
+          "timestamp": 1721919536167
+        }
     """.trimIndent()
 
     private fun hierarchyModules(): List<GradleSwiftExportModule> = listOf(
@@ -230,56 +240,59 @@ class SerializationToolsTest {
      *             └── Module_E
      */
     private fun nestedJson() = """
-        [
-          {
-            "files": {
-              "swiftApi": "/A/SwiftFile.swift",
-              "kotlinBridges": "/A/KotlinBridge.kt",
-              "cHeaderBridges": "/A/Header.h"
+        {
+          "modules": [
+            {
+              "files": {
+                "swiftApi": "/A/SwiftFile.swift",
+                "kotlinBridges": "/A/KotlinBridge.kt",
+                "cHeaderBridges": "/A/Header.h"
+              },
+              "bridgeName": "Bridge_A",
+              "name": "Module_A",
+              "type": "BRIDGES_TO_KOTLIN",
+              "dependencies": [
+                "Module_B"
+              ]
             },
-            "bridgeName": "Bridge_A",
-            "name": "Module_A",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": [
-              "Module_B"
-            ]
-          },
-          {
-            "files": {
-              "swiftApi": "/B/SwiftFile.swift",
-              "kotlinBridges": "/B/KotlinBridge.kt",
-              "cHeaderBridges": "/B/Header.h"
+            {
+              "files": {
+                "swiftApi": "/B/SwiftFile.swift",
+                "kotlinBridges": "/B/KotlinBridge.kt",
+                "cHeaderBridges": "/B/Header.h"
+              },
+              "bridgeName": "Bridge_B",
+              "name": "Module_B",
+              "type": "BRIDGES_TO_KOTLIN",
+              "dependencies": [
+                "Module_C"
+              ]
             },
-            "bridgeName": "Bridge_B",
-            "name": "Module_B",
-            "type": "BRIDGES_TO_KOTLIN",
-            "dependencies": [
-              "Module_C"
-            ]
-          },
-          {
-            "swiftApi": "/C/SwiftFile.swift",
-            "name": "Module_C",
-            "type": "SWIFT_ONLY",
-            "dependencies": [
-              "Module_D"
-            ]
-          },
-          {
-            "swiftApi": "/D/SwiftFile.swift",
-            "name": "Module_D",
-            "type": "SWIFT_ONLY",
-            "dependencies": [
-              "Module_E"
-            ]
-          },
-          {
-            "swiftApi": "/E/SwiftFile.swift",
-            "name": "Module_E",
-            "type": "SWIFT_ONLY",
-            "dependencies": []
-          }
-        ]
+            {
+              "swiftApi": "/C/SwiftFile.swift",
+              "name": "Module_C",
+              "type": "SWIFT_ONLY",
+              "dependencies": [
+                "Module_D"
+              ]
+            },
+            {
+              "swiftApi": "/D/SwiftFile.swift",
+              "name": "Module_D",
+              "type": "SWIFT_ONLY",
+              "dependencies": [
+                "Module_E"
+              ]
+            },
+            {
+              "swiftApi": "/E/SwiftFile.swift",
+              "name": "Module_E",
+              "type": "SWIFT_ONLY",
+              "dependencies": []
+            }
+          ],
+          "timestamp": 1721919536167
+        }
     """.trimIndent()
 
     private fun nestedModules(): List<GradleSwiftExportModule> = listOf(

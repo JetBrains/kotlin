@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -42,6 +43,8 @@ class SwiftExportIT : KGPBaseTest() {
             ) {
                 assertTasksExecuted(":shared:iosArm64DebugSwiftExport")
                 assertTasksExecuted(":shared:iosArm64MainKlibrary")
+                assertTasksExecuted(":subproject:compileKotlinIosArm64")
+                assertTasksExecuted(":shared:compileKotlinIosArm64")
                 assertTasksExecuted(":shared:compileSwiftExportMainKotlinIosArm64")
                 assertTasksExecuted(":shared:linkSwiftExportBinaryDebugStaticIosArm64")
                 assertTasksExecuted(":shared:iosArm64DebugGenerateSPMPackage")
@@ -92,6 +95,8 @@ class SwiftExportIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
+            swiftExportKt.replaceText("fun functionToRemove(): Int = 4444", "")
+
             build(
                 ":shared:embedAndSignAppleFrameworkForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
@@ -109,6 +114,9 @@ class SwiftExportIT : KGPBaseTest() {
             assert(nmOutput.isSuccessful) { "nm call was not successfull" }
             assert(nmOutput.output.contains("com_github_jetbrains_swiftexport_barbarbar")) {
                 "barbarbar function is missing in libShared.a"
+            }
+            assert(nmOutput.output.contains("com_github_jetbrains_swiftexport_functionToRemove").not()) {
+                "functionToRemove function is present in libShared.a"
             }
         }
     }

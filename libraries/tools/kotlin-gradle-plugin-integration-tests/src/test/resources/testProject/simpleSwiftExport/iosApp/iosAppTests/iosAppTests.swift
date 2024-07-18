@@ -7,7 +7,8 @@
 //
 
 import XCTest
-@testable import Shared
+import Shared
+import Subproject
 
 final class iosAppTests: XCTestCase {
 
@@ -25,5 +26,10 @@ final class iosAppTests: XCTestCase {
         let param: Swift.Int32 = 42
         let result = com.github.jetbrains.swiftexport.foobar(param: param)
         XCTAssertEqual(result, 486, "foobar() should return the expected result for the given parameter")
+    }
+
+    func testSubprojectFoo() {
+        let result = com.subproject.library.libraryFoo()
+        XCTAssertEqual(result, 123456, "libraryFoo() should return the expected result")
     }
 }

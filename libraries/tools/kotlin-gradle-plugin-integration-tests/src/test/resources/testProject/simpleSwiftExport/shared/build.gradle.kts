@@ -12,4 +12,10 @@ kotlin {
             baseName = "Shared"
         }
     }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":subproject"))
+        }
+    }
 }
