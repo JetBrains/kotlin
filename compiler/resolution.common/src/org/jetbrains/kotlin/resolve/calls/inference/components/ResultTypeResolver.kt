@@ -95,17 +95,7 @@ class ResultTypeResolver(
         direction: ResolveDirection,
     ): KotlinTypeMarker? {
         val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints)
-        if (resultTypeFromEqualConstraint != null) {
-            with(c) {
-                if (!isK2 || !resultTypeFromEqualConstraint.contains { type ->
-                        type.typeConstructor().isIntegerLiteralConstantTypeConstructor()
-                    }
-                ) {
-                    // In K2, we don't return here ILT-based types immediately
-                    return resultTypeFromEqualConstraint
-                }
-            }
-        }
+        if (resultTypeFromEqualConstraint?.isAppropriateResultTypeFromEqualityConstraints(c) == true) return resultTypeFromEqualConstraint
 
         val subType = c.findSubType(variableWithConstraints)
         val superType = c.findSuperType(variableWithConstraints)
@@ -134,6 +124,17 @@ class ResultTypeResolver(
             with(c) { !resultTypeFromDirection.typeConstructor().isNothingConstructor() } &&
                     AbstractTypeChecker.isSubtypeOf(c, resultTypeFromDirection, resultTypeFromEqualConstraint) -> resultTypeFromDirection
             else -> resultTypeFromEqualConstraint
+        }
+    }
+
+    private fun KotlinTypeMarker.isAppropriateResultTypeFromEqualityConstraints(
+        c: Context,
+    ): Boolean = with(c) {
+        if (!isK2) return true
+
+        // In K2, we don't allow fixing to a result type from EQ constraints if they contain ILTs
+        !contains { type ->
+            type.typeConstructor().isIntegerLiteralConstantTypeConstructor()
         }
     }
 
