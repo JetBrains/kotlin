@@ -196,8 +196,6 @@
 -keep class com.intellij.util.containers.hash.EqualityPolicy.* { *; }
 -keep class com.intellij.util.containers.Interner { *; }
 -keep class com.intellij.util.containers.OpenTHashSet { *; }
--keep class gnu.trove.TIntHashSet { *; }
--keep class gnu.trove.TIntIterator { *; }
 -keep class org.iq80.snappy.SlowMemory { *; }
 
 -keepclassmembers enum * {

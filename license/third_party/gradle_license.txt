@@ -344,31 +344,6 @@ https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
 
 org.samba.jcifs:jcifs
 
-org.jetbrains.intellij.deps:trove4j
-
-------------------------------------------------------------------------------
-License for the GNU Trove library included by the Kotlin embeddable compiler
-------------------------------------------------------------------------------
-The source code for GNU Trove is licensed under the Lesser GNU Public License (LGPL).
-
-    Copyright (c) 2001, Eric D. Friedman All Rights Reserved. This library is free software; you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-    even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-    You should have received a copy of the GNU Lesser General Public License along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
-
-Two classes (HashFunctions and PrimeFinder) included in Trove are licensed under the following terms:
-
-    Copyright (c) 1999 CERN - European Organization for Nuclear Research. Permission to use, copy, modify, distribute and sell this software
-    and its documentation for any purpose is hereby granted without fee, provided that the above copyright notice appear in all copies and
-    that both that copyright notice and this permission notice appear in supporting documentation. CERN makes no representations about the
-    suitability of this software for any purpose. It is provided "as is" without expressed or implied warranty.
-
-The source code of modified GNU Trove library is available at
-    https://github.com/JetBrains/intellij-deps-trove4j (with trove4j_changes.txt describing the changes)
-
 ------------------------------------------------------------------------------
 Eclipse Distribution License 1.0
 https://www.eclipse.org/org/documents/edl-v10.php
