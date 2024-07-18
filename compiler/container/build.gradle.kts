@@ -15,7 +15,7 @@ dependencies {
     testCompileOnly(intellijCore())
 
     testRuntimeOnly(intellijCore())
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testRuntimeOnly(libs.intellij.fastutil)
 }
 
 sourceSets {
