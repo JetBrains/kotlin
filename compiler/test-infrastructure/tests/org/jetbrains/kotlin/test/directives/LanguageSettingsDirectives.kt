@@ -77,6 +77,18 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Disables -Xexpect-actual-classes key"
     )
 
+    val SUPPRESS_WARNINGS by stringDirective(
+        description = """
+            List of globally suppressed annotations.
+            This directive is different from `DiagnosticsDirectives.DIAGNOSTICS`:
+            - this one uses the compiler mechanism with `-XsuppressWarning` flag
+            - later one suppresses diagnostics on test infra level
+            
+            In most cases it's preferred to use `DIAGNOSTICS`, as it allows to suppress any
+              diagnostic, not just warnings
+        """.trimIndent()
+    )
+
     // --------------------- Jvm Analysis Flags ---------------------
 
     val JVM_DEFAULT_MODE by enumDirective(
