@@ -63,19 +63,20 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
 
 class FirDataFrameExtensionRegistrar(
     private val path: String?,
-    val schemasDirectory: String?
+    val schemasDirectory: String?,
+    val isTest: Boolean,
 ) : FirExtensionRegistrar() {
     @OptIn(FirExtensionApiInternals::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::ExtensionsGenerator
         +::ReturnTypeBasedReceiverInjector
         +{ it: FirSession ->
-            FunctionCallTransformer(path, it, jsonCache(it), schemasDirectory)
+            FunctionCallTransformer(path, it, jsonCache(it), schemasDirectory, isTest)
         }
         +::TokenGenerator
         +::DataRowSchemaSupertype
         +{ it: FirSession ->
-            ExpressionAnalysisAdditionalChecker(it, jsonCache(it), schemasDirectory)
+            ExpressionAnalysisAdditionalChecker(it, jsonCache(it), schemasDirectory, isTest)
         }
     }
 
@@ -92,7 +93,7 @@ class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val schemasDirectory = configuration.get(SCHEMAS)
         val path = configuration.get(PATH)
-        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(path, schemasDirectory))
+        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(path, schemasDirectory, isTest = false))
         IrGenerationExtension.registerExtension(IrBodyFiller(path, schemasDirectory))
     }
 
