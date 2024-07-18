@@ -24,7 +24,6 @@ dependencies {
     publishedRuntime(project(":kotlin-compiler"))
     publishedRuntime(project(":kotlin-scripting-compiler"))
     publishedRuntime(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    publishedRuntime(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
 }
 
 sourceSets {

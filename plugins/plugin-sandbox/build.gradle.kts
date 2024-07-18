@@ -39,7 +39,6 @@ dependencies {
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testRuntimeOnly(intellijJDom())
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(libs.intellij.fastutil)
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
