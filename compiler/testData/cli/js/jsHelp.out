@@ -1,5 +1,6 @@
 Usage: kotlinc-js <options> <source files>
 where possible options include:
+  -debugger-custom-formatters Add custom formatters to devtools
   -libraries <path>          Paths to Kotlin libraries with .meta.js and .kjsm files, separated by the system path separator.
   -main {call|noCall}        Specify whether the 'main' function should be called upon execution.
   -meta-info                 Generate .meta.js and .kjsm files with metadata. Use this to create a library.
