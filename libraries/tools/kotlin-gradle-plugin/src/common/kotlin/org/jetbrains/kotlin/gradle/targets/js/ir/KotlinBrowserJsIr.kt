@@ -279,6 +279,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         this.inputFilesDirectory.set(inputFilesDirectory)
 
+        this.configFile.set(project.file(npmProjectDir.map { it.resolve("webpack.config.js") }))
+
         val platformType = binary.compilation.platformType
         val moduleKind = binary.linkTask.flatMap { task ->
             task.compilerOptions.moduleKind.orElse(task.compilerOptions.target.map {
