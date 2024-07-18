@@ -912,7 +912,9 @@ internal class DokkaSymbolVisitor(
         // TODO https://youtrack.jetbrains.com/issue/KT-68236/Analysis-API-add-isExternal-property-for-KaPropertySymbol
         ExtraModifiers.KotlinOnlyModifiers.External.takeIf { (psi as? KtProperty)?.hasModifier(KtTokens.EXTERNAL_KEYWORD) == true },
         //ExtraModifiers.KotlinOnlyModifiers.Static.takeIf { isStatic },
-        ExtraModifiers.KotlinOnlyModifiers.Override.takeIf { isOverride }
+        ExtraModifiers.KotlinOnlyModifiers.Override.takeIf {
+            origin != KaSymbolOrigin.SUBSTITUTION_OVERRIDE && origin != KaSymbolOrigin.INTERSECTION_OVERRIDE && isOverride
+        }
     ).toSet().takeUnless { it.isEmpty() }
 
     private fun KaJavaFieldSymbol.additionalExtras() = listOfNotNull(
@@ -927,7 +929,9 @@ internal class DokkaSymbolVisitor(
 //ExtraModifiers.JavaOnlyModifiers.Static.takeIf { isJvmStaticInObjectOrClassOrInterface() },
         ExtraModifiers.KotlinOnlyModifiers.TailRec.takeIf { isTailRec },
         ExtraModifiers.KotlinOnlyModifiers.External.takeIf { isExternal },
-        ExtraModifiers.KotlinOnlyModifiers.Override.takeIf { isOverride }
+        ExtraModifiers.KotlinOnlyModifiers.Override.takeIf {
+            origin != KaSymbolOrigin.SUBSTITUTION_OVERRIDE && origin != KaSymbolOrigin.INTERSECTION_OVERRIDE && isOverride
+        }
     ).toSet().takeUnless { it.isEmpty() }
 
     private fun KaNamedClassSymbol.additionalExtras() = listOfNotNull(
