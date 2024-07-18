@@ -12,7 +12,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
     compileOnly(libs.guava)
-    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.intellij.fastutil)
 }
 
 sourceSets {

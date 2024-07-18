@@ -20,7 +20,7 @@ dependencies {
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)
     runtimeOnly(libs.kotlinx.coroutines.core)
 }

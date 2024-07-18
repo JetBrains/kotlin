@@ -12,7 +12,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.kotlinx.coroutines.core.jvm)
     compileOnly(libs.intellij.asm)
-    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.intellij.fastutil)
     compileOnly(libs.guava)
 }
 
