@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.jvm.*
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.LAMBDA_IMPL
 import org.jetbrains.kotlin.backend.jvm.extensions.descriptorOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
@@ -197,6 +199,9 @@ class ClassCodegen private constructor(
     }
 
     private fun shouldSkipCodeGenerationAccordingToGenerationFilter(): Boolean {
+        // What is inside lambda might be inlined, so the original PSI container is irrelevant
+        if (irClass.parentsWithSelf.any { it is IrClass && it.origin == LAMBDA_IMPL }) return false
+
         val filter = state.generateDeclaredClassFilter
         val ktFile = PsiSourceManager.findPsiElement(irClass, irClass, KtFile::class)
         val ktClass = PsiSourceManager.findPsiElement(irClass, irClass, KtClassOrObject::class)
