@@ -101,11 +101,6 @@ configurations {
         canBeConsumed = false
         canBeResolved = true
     }
-
-    trove4j_jar {
-        canBeConsumed = false
-        canBeResolved = true
-    }
 }
 
 apply plugin: CompilationDatabasePlugin
@@ -124,9 +119,6 @@ dependencies {
     nativeLibs project(path: ':kotlin-native:llvmInterop', configuration: 'nativeLibs')
     nativeLibs project(path: ':kotlin-native:Interop:Indexer', configuration: 'nativeLibs')
     nativeLibs project(path: ':kotlin-native:Interop:Runtime', configuration: 'nativeLibs')
-    use(RepoDependencies) {
-        trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
-    }
 
     // declared to be included in verification-metadata.xml
     implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:$bootstrapKotlinVersion:macos-aarch64@tar.gz")
@@ -193,8 +185,6 @@ def shadowJar = tasks.register("shadowJar", ShadowJar) {
     archiveBaseName.set("kotlin-native")
     archiveVersion.set("")
     archiveClassifier.set("")
-    // Exclude trove4j because of license agreement.
-    exclude "*trove4j*"
     exclude("META-INF/versions/9/module-info.class")
     configurations = [project.configurations.distPack]
     outputs.upToDateWhen {
@@ -263,11 +253,6 @@ tasks.register("distNativeLibs", Sync) {
 
 tasks.register("distCompilerJars", Sync) {
     from(shadowJar.map { it.archiveFile })
-    from(configurations.trove4j_jar) {
-        include "trove4j*.jar"
-        rename "trove4j(.*).jar", "trove4j.jar"
-        fileMode(0644)
-    }
     from(configurations.embeddableJar) {
         rename {
             "kotlin-native-compiler-embeddable.jar"

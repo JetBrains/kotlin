@@ -73,10 +73,6 @@ interface KotlinPaths {
     val samWithReceiverJarPath: File
         get() = jar(Jar.SamWithReceiver)
 
-//    @Deprecated("Obsolete API", ReplaceWith("jar(KotlinPaths.Jars.trove4j)"))
-    val trove4jJarPath: File
-        get() = jar(Jar.Trove4j)
-
 //    @Deprecated("Obsolete API", ReplaceWith("classPath(KotlinPaths.ClassPaths.Compiler)"))
     val compilerClasspath: List<File>
         get() = classPath(ClassPaths.Compiler)
@@ -99,7 +95,6 @@ interface KotlinPaths {
         LombokPlugin(PathUtil.LOMBOK_PLUGIN_NAME),
         SamWithReceiver(PathUtil.SAM_WITH_RECEIVER_PLUGIN_NAME),
         SerializationPlugin(PathUtil.SERIALIZATION_PLUGIN_NAME),
-        Trove4j(PathUtil.TROVE4J_NAME),
         Compiler(PathUtil.KOTLIN_COMPILER_NAME),
         ScriptingPlugin(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME),
         ScriptingImpl(PathUtil.KOTLIN_SCRIPTING_COMPILER_IMPL_NAME),
@@ -120,7 +115,7 @@ interface KotlinPaths {
                 else -> emptyList()
             }
         }),
-        Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.Trove4j, Jar.KotlinDaemon, Jar.CoroutinesCore),
+        Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.KotlinDaemon, Jar.CoroutinesCore),
         CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingImpl, Jar.ScriptingLib, Jar.ScriptingJvmLib),
         MainKts(StdLib, Jar.MainKts, Jar.ScriptRuntime, Jar.Reflect)
         ;

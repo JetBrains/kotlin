@@ -97,7 +97,6 @@ dependencies {
     testImplementation(project(path = ":examples:annotation-processor-example"))
     testImplementation(kotlinStdlib("jdk8"))
     testImplementation(project(":kotlin-parcelize-compiler"))
-    testImplementation(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-serialization-json"))
     testImplementation(libs.ktor.client.cio)
     testImplementation(libs.ktor.client.mock)
