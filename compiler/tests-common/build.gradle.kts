@@ -64,7 +64,7 @@ dependencies {
      *   declared as Api dependencies to propagate them to all modules
      *   which depend on current one
      */
-    testApi(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testApi(libs.intellij.fastutil)
     testApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testApi(commonDependency("one.util:streamex"))
     testApi(commonDependency("org.codehaus.woodstox:stax2-api"))

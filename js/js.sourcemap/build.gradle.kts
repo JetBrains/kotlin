@@ -8,7 +8,7 @@ dependencies {
     compileOnly(project(":js:js.ast"))
     compileOnly(project(":js:js.parser")) // TODO remove, required for JSON AST
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.intellij.fastutil)
 }
 
 sourceSets {

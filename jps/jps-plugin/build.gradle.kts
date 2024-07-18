@@ -38,7 +38,7 @@ dependencies {
         .forEach { implementation(it) { isTransitive = false } }
 
     implementation(project(":jps:jps-common"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.intellij.fastutil)
     compileOnly(jpsModel())
     compileOnly(jpsBuild())
     compileOnly(jpsModelSerialization())
