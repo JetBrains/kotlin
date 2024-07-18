@@ -45,7 +45,7 @@ kotlin-for-gradle-plugins-compilation = "2.0.20-RC"
 intellij-asm = "9.0"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
-fastutil = "8.5.4-9"
+fastutil = "8.5.13-jb4"
 # Wasm specific
 wasmedge = "0.14.0"
 vavr = "0.10.4"
