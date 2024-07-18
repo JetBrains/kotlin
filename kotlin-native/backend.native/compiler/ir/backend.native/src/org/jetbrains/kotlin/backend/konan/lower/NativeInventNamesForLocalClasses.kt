@@ -17,10 +17,10 @@ internal class NativeInventNamesForLocalClasses(val generationState: NativeGener
     override fun computeTopLevelClassName(clazz: IrClass): String = clazz.name.asString()
     override fun sanitizeNameIfNeeded(name: String) = name
 
-    override fun customizeNameInventorData(clazz: IrClass, data: NameInventorData): NameInventorData {
+    override fun customizeNameInventorData(clazz: IrClass, data: NameBuilder): NameBuilder {
         if (!clazz.isAnonymousObject) return data
         val customEnclosingName = (clazz.parent as? IrFile)?.packagePartClassName ?: return data
-        return data.copy(enclosingName = customEnclosingName, isLocal = true)
+        return NameBuilder(currentName = customEnclosingName, isLocal = true, processingInlinedFunction = data.processingInlinedFunction)
     }
 
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
