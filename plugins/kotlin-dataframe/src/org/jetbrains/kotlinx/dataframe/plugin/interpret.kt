@@ -90,7 +90,7 @@ fun <T> KotlinTypeFacade.interpret(
     val defaultArguments = processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet()
     val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
     val conflictingKeys = additionalArguments.keys intersect actualArgsMap.keys
-    if (conflictingKeys.isNotEmpty()) {
+    if (conflictingKeys.isNotEmpty() && isTest) {
         interpretationFrameworkError("Conflicting keys: $conflictingKeys")
     }
     val expectedArgsMap = processor.expectedArguments
@@ -98,7 +98,7 @@ fun <T> KotlinTypeFacade.interpret(
         .associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
 
     val unexpectedArguments = expectedArgsMap.keys - defaultArguments != actualArgsMap.keys - defaultArguments
-    if (unexpectedArguments) {
+    if (unexpectedArguments && isTest) {
         val message = buildString {
             appendLine("ERROR: Different set of arguments")
             appendLine("Implementation class: $processor")

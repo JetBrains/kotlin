@@ -42,14 +42,19 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.type
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,
     cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
-    schemasDirectory: String?
+    schemasDirectory: String?,
+    isTest: Boolean,
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(Checker(cache, schemasDirectory))
+        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(Checker(cache, schemasDirectory, isTest))
     }
 }
 
-private class Checker(val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>, val schemasDirectory: String?) : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
+private class Checker(
+    val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
+    val schemasDirectory: String?,
+    val isTest: Boolean,
+) : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
     companion object {
         val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
         val CAST_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
@@ -58,7 +63,7 @@ private class Checker(val cache: FirCache<String, PluginDataFrameSchema, KotlinT
     }
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        with(KotlinTypeFacadeImpl(context.session, cache, schemasDirectory)) {
+        with(KotlinTypeFacadeImpl(context.session, cache, schemasDirectory, isTest)) {
             analyzeCast(expression, reporter, context)
 //            analyzeRefinedCallShape(expression, reporter = object : InterpretationErrorReporter {
 //                override var errorReported: Boolean = false

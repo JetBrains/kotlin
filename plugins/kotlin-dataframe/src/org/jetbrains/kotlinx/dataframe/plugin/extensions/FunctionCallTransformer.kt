@@ -83,6 +83,7 @@ class FunctionCallTransformer(
     session: FirSession,
     override val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
     override val schemasDirectory: String?,
+    override val isTest: Boolean,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     companion object {
         const val DEFAULT_NAME = "DataFrameType"
