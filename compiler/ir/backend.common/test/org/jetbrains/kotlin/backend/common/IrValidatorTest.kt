@@ -123,6 +123,7 @@ class IrValidatorTest {
                     checkTypes = true,
                     checkValueScopes = true,
                     checkTypeParameterScopes = true,
+                    checkCrossFileFieldUsage = true,
                     checkVisibilities = true,
                 )
                 assertEquals(expectedMessages, messageCollector.messages)
@@ -444,6 +445,110 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 2, 4, null),
                 )
+            ),
+        )
+    }
+
+    @Test
+    fun `cross-file usages of fields are reported`() = with(IrFactoryImpl) {
+        fun IrElement.fortyTwo() = IrConstImpl.int(startOffset, endOffset, TestIrBuiltins.intType, 42)
+
+        fun IrDeclarationContainer.addField(name: String): IrField {
+            return buildField {
+                this.name = Name.identifier(name)
+                type = TestIrBuiltins.intType
+                startOffset = 1
+                endOffset = 2
+            }.also { field ->
+                field.initializer = createExpressionBody(startOffset, endOffset, fortyTwo())
+                addChild(field)
+            }
+        }
+
+        val file1 = createIrFile(name = "file1.kt")
+        val topLevelField = file1.addField("topLevelField")
+
+        val memberField = buildClass {
+            name = Name.identifier("MyClass")
+        }.let { clazz ->
+            file1.addChild(clazz)
+            clazz.addField("memberField")
+        }
+
+        val file2 = createIrFile(name = "file2.kt")
+
+        buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+            startOffset = 3
+            endOffset = 4
+        }.apply {
+            body = createBlockBody(
+                startOffset,
+                endOffset,
+                listOf(
+                    IrGetFieldImpl(startOffset, endOffset, topLevelField.symbol, topLevelField.type),
+                    IrSetFieldImpl(startOffset, endOffset, topLevelField.symbol, TestIrBuiltins.unitType).apply {
+                        value = fortyTwo()
+                    },
+                    IrGetFieldImpl(startOffset, endOffset, memberField.symbol, memberField.type),
+                    IrSetFieldImpl(startOffset, endOffset, memberField.symbol, TestIrBuiltins.unitType).apply {
+                        value = fortyTwo()
+                    },
+                ),
+            )
+
+            file2.addChild(this)
+        }
+
+        testValidation(
+            IrVerificationMode.WARNING,
+            file2,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Access to a field declared in another file: file1.kt
+                    GET_FIELD 'FIELD name:topLevelField type:kotlin.Int visibility:public declared in org.sample' type=kotlin.Int origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:file2.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("file2.kt", 1, 4, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Access to a field declared in another file: file1.kt
+                    SET_FIELD 'FIELD name:topLevelField type:kotlin.Int visibility:public declared in org.sample' type=kotlin.Unit origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:file2.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("file2.kt", 1, 4, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Access to a field declared in another file: file1.kt
+                    GET_FIELD 'FIELD name:memberField type:kotlin.Int visibility:public declared in org.sample.MyClass' type=kotlin.Int origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:file2.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("file2.kt", 1, 4, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Access to a field declared in another file: file1.kt
+                    SET_FIELD 'FIELD name:memberField type:kotlin.Int visibility:public declared in org.sample.MyClass' type=kotlin.Unit origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:file2.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("file2.kt", 1, 4, null),
+                ),
             ),
         )
     }

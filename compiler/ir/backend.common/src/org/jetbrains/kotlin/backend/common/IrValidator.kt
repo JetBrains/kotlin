@@ -29,6 +29,7 @@ internal class IrValidatorConfig(
     val checkProperties: Boolean = false,
     val checkValueScopes: Boolean = false,
     val checkTypeParameterScopes: Boolean = false,
+    val checkCrossFileFieldUsage: Boolean = false,
     val checkVisibilities: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
@@ -67,6 +68,9 @@ private class IrValidator(
         }
         if (config.checkTypeParameterScopes) {
             IrTypeParameterScopeValidator(this::error, parentChain).check(declaration)
+        }
+        if (config.checkCrossFileFieldUsage) {
+            declaration.acceptVoid(IrFieldCrossFileAccessValidator(declaration, reportError))
         }
         if (config.checkVisibilities) {
             declaration.acceptVoid(IrVisibilityChecker(declaration.module, declaration, reportError))
@@ -199,6 +203,7 @@ sealed interface IrValidationContext {
         checkProperties: Boolean = false,
         checkTypes: Boolean = false,
         checkVisibilities: Boolean = false,
+        checkCrossFileFieldUsage: Boolean = false,
         checkValueScopes: Boolean = false,
         checkTypeParameterScopes: Boolean = false,
         checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
@@ -211,6 +216,7 @@ sealed interface IrValidationContext {
                 checkProperties,
                 checkValueScopes,
                 checkTypeParameterScopes,
+                checkCrossFileFieldUsage,
                 checkVisibilities,
                 checkInlineFunctionUseSites,
             ),
