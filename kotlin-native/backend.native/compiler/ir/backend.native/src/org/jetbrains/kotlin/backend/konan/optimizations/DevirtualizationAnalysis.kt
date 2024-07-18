@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
+import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.util.LongArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -109,7 +111,9 @@ internal object DevirtualizationAnalysis {
             override fun visitFunctionReference(expression: IrFunctionReference) {
                 expression.acceptChildrenVoid(this)
 
-                leakingThroughFunctionReferences.add(moduleDFG.symbolTable.mapFunction(expression.symbol.owner))
+                val function = expression.symbol.owner
+                require(function is IrSimpleFunction) { "All constructors should've been lowered: ${expression.render()}" }
+                leakingThroughFunctionReferences.add(moduleDFG.symbolTable.mapFunction(function))
             }
         })
 
@@ -1180,15 +1184,6 @@ internal object DevirtualizationAnalysis {
                             doCall(node.callee, arguments, node.returnType)
                         }
 
-                        is DataFlowIR.Node.NewObject -> {
-                            val returnType = node.constructedType
-                            addInstantiatingClass(returnType)
-                            val instanceNode = concreteClass(returnType)
-                            val arguments = listOf(instanceNode) + node.arguments.map(::edgeToConstraintNode)
-                            doCall(node.callee, arguments, returnType)
-                            instanceNode
-                        }
-
                         is DataFlowIR.Node.VirtualCall -> {
                             val callee = node.callee
                             val receiverType = node.receiverType
@@ -1259,7 +1254,7 @@ internal object DevirtualizationAnalysis {
                             instanceNode
                         }
 
-                        is DataFlowIR.Node.AllocInstance -> {
+                        is DataFlowIR.Node.Alloc -> {
                             val type = node.type
                             addInstantiatingClass(type)
                             concreteClass(type)
@@ -1350,6 +1345,12 @@ internal object DevirtualizationAnalysis {
         val symbols = context.ir.symbols
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
         val isSubtype = symbols.isSubtype
+        val getObjectTypeInfo = symbols.getObjectTypeInfo
+        val createUninitializedInstance = symbols.createUninitializedInstance
+        val kClassImplType = symbols.kClassImpl.defaultType
+        val kClassImplConstructorImpl = symbols.kClassImplConstructor.owner.loweredConstructorFunction!!
+        val throwInvalidReceiverTypeException = symbols.throwInvalidReceiverTypeException
+
         val optimize = context.shouldOptimize()
         val genericSafeCasts = context.config.genericSafeCasts
 
@@ -1438,12 +1439,12 @@ internal object DevirtualizationAnalysis {
             return (actualCallee as? DataFlowIR.FunctionSymbol.Declared)?.bridgeTarget.let { bridgeTarget ->
                 if (bridgeTarget == null || genericSafeCasts) // Can't easily inline bridges with casts.
                     irDevirtualizedCall(callSite, actualType,
-                            actualCallee.irFunction as IrSimpleFunction,
+                            actualCallee.irFunction!!,
                             arguments.map { it.getFullValue(this@irDevirtualizedCall) }
                     )
                 else {
                     val callResult = irDevirtualizedCall(callSite, actualType,
-                            bridgeTarget.irFunction as IrSimpleFunction,
+                            bridgeTarget.irFunction!!,
                             arguments.mapIndexed { index, value ->
                                 val coercion = getTypeConversion(actualCallee.parameters[index], bridgeTarget.parameters[index])
                                 val fullValue = value.getFullValue(this@irDevirtualizedCall)
@@ -1452,6 +1453,20 @@ internal object DevirtualizationAnalysis {
                     val returnCoercion = getTypeConversion(bridgeTarget.returnParameter, actualCallee.returnParameter)
                     irCoerce(callResult, returnCoercion)
                 }
+            }
+        }
+
+        fun IrBuilderWithScope.irThrowInvalidReceiverTypeException(getTypeInfo: () -> IrExpression): IrExpression = irBlock {
+            val kClass = irTemporary(
+                    irCall(createUninitializedInstance, kClassImplType, listOf(kClassImplType)),
+                    nameHint = "clazz"
+            )
+            +irCall(kClassImplConstructorImpl).apply {
+                dispatchReceiver = irGet(kClass)
+                putValueArgument(0, getTypeInfo())
+            }
+            +irCall(throwInvalidReceiverTypeException).apply {
+                putValueArgument(0, irGet(kClass))
             }
         }
 
@@ -1490,17 +1505,12 @@ internal object DevirtualizationAnalysis {
                 val type = function.returnType
                 val irBuilder = context.createIrBuilder((caller as IrDeclaration).symbol, startOffset, endOffset)
                 irBuilder.run {
-                    val dispatchReceiver = expression.dispatchReceiver!!
                     return when {
                         possibleCallees.isEmpty() -> irBlock(expression) {
-                            val throwExpr = irCall(symbols.throwInvalidReceiverTypeException.owner).apply {
-                                putValueArgument(0,
-                                        irCallWithSubstitutedType(symbols.kClassImplConstructor.owner, listOf(dispatchReceiver.type)).apply {
-                                            putValueArgument(0,
-                                                    irCall(symbols.getObjectTypeInfo.owner).apply {
-                                                        putValueArgument(0, dispatchReceiver)
-                                                    })
-                                        })
+                            val throwExpr = irThrowInvalidReceiverTypeException {
+                                irCall(getObjectTypeInfo.owner).apply {
+                                    putValueArgument(0, expression.dispatchReceiver!!)
+                                }
                             }
                             // Insert proper unboxing (unreachable code):
                             +irCoerce(throwExpr, context.getTypeConversion(throwExpr.type, type))
@@ -1573,7 +1583,7 @@ internal object DevirtualizationAnalysis {
                             }
                             val receiver = irTemporary(arguments[0].getFullValue(this@irBlock))
                             val typeInfo by lazy {
-                                irTemporary(irCall(symbols.getObjectTypeInfo).apply {
+                                irTemporary(irCall(getObjectTypeInfo).apply {
                                     putValueArgument(0, irGet(receiver))
                                 })
                             }
@@ -1613,17 +1623,13 @@ internal object DevirtualizationAnalysis {
                                 )
                             }
                             if (!optimize) { // Add else branch throwing exception for debug purposes.
-                                branches.add(IrBranchImpl(
-                                        startOffset = startOffset,
-                                        endOffset = endOffset,
-                                        condition = irTrue(),
-                                        result = irCall(symbols.throwInvalidReceiverTypeException).apply {
-                                            putValueArgument(0,
-                                                    irCallWithSubstitutedType(symbols.kClassImplConstructor, listOf(dispatchReceiver.type)).apply {
-                                                        putValueArgument(0, irGet(typeInfo))
-                                                    }
-                                            )
-                                        })
+                                branches.add(
+                                        IrBranchImpl(
+                                                startOffset = startOffset,
+                                                endOffset = endOffset,
+                                                condition = irTrue(),
+                                                result = irThrowInvalidReceiverTypeException { irGet(typeInfo) }
+                                        )
                                 )
                             }
 

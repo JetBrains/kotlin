@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.*
 
 internal class RTTIGenerator(
         override val generationState: NativeGenerationState,
-        private val referencedFunctions: Set<IrFunction>?,
+        private val referencedFunctions: Set<IrSimpleFunction>?,
 ) : ContextUtils {
 
     private val acyclicCache = mutableMapOf<IrType, Boolean>()
@@ -491,7 +491,7 @@ internal class RTTIGenerator(
     // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
-            methodImpls: Map<IrFunction, ConstPointer>,
+            methodImpls: Map<IrSimpleFunction, ConstPointer>,
             bodyType: ObjectBodyType,
             immutable: Boolean = false
     ): ConstPointer {

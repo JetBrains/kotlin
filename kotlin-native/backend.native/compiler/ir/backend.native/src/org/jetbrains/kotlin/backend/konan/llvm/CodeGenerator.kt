@@ -29,11 +29,11 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
     fun addFunction(proto: LlvmFunctionProto): LlvmCallable =
             proto.createLlvmFunction(context, llvm.module)
 
-    fun llvmFunction(function: IrFunction): LlvmCallable =
+    fun llvmFunction(function: IrSimpleFunction): LlvmCallable =
             llvmFunctionOrNull(function)
                     ?: error("no function ${function.name} in ${function.file.packageFqName}")
 
-    fun llvmFunctionOrNull(function: IrFunction): LlvmCallable? =
+    fun llvmFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
             function.llvmFunctionOrNull
 
     val llvmDeclarations = generationState.llvmDeclarations
@@ -47,9 +47,9 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
 
     fun typeInfoValue(irClass: IrClass): LLVMValueRef = irClass.llvmTypeInfoPtr
 
-    fun param(fn: IrFunction, i: Int) = fn.llvmFunction.param(i)
+    fun param(fn: IrSimpleFunction, i: Int) = fn.llvmFunction.param(i)
 
-    fun functionEntryPointAddress(function: IrFunction) = function.entryPointAddress.llvm
+    fun functionEntryPointAddress(function: IrSimpleFunction) = function.entryPointAddress.llvm
 
     fun typeInfoForAllocation(constructedClass: IrClass): LLVMValueRef {
         assert(!constructedClass.isObjCClass())
@@ -103,7 +103,7 @@ val LLVMValueRef.isConst:Boolean
 
 internal inline fun generateFunction(
         codegen: CodeGenerator,
-        function: IrFunction,
+        function: IrSimpleFunction,
         startLocation: LocationInfo?,
         endLocation: LocationInfo?,
         code: FunctionGenerationContext.() -> Unit
@@ -556,7 +556,7 @@ internal abstract class FunctionGenerationContextBuilder<T : FunctionGenerationC
     var endLocation: LocationInfo? = null
     var switchToRunnable = false
     var needSafePoint = true
-    var irFunction: IrFunction? = null
+    var irFunction: IrSimpleFunction? = null
 
     abstract fun build(): T
 }
@@ -568,7 +568,7 @@ internal abstract class FunctionGenerationContext(
         protected val endLocation: LocationInfo?,
         private val switchToRunnable: Boolean,
         private val needSafePoint: Boolean,
-        internal val irFunction: IrFunction? = null
+        internal val irFunction: IrSimpleFunction? = null
 ) : ContextUtils {
 
     constructor(builder: FunctionGenerationContextBuilder<*>) : this(
@@ -592,8 +592,6 @@ internal abstract class FunctionGenerationContext(
     }
 
     var returnType: LLVMTypeRef? = function.returnType
-    val constructedClass: IrClass?
-        get() = (irFunction as? IrConstructor)?.constructedClass
     var returnSlot: LLVMValueRef? = null
         private set
     private var slotsPhi: LLVMValueRef? = null
@@ -1615,7 +1613,7 @@ internal class DefaultFunctionGenerationContext(
         endLocation: LocationInfo?,
         switchToRunnable: Boolean,
         needSafePoint: Boolean,
-        irFunction: IrFunction? = null
+        irFunction: IrSimpleFunction? = null
 ) : FunctionGenerationContext(
         function,
         codegen,

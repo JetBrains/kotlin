@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.getExternalObjCClassBinaryName
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
@@ -60,6 +60,7 @@ internal enum class IntrinsicType {
     OBJC_GET_SELECTOR,
     // Other
     CREATE_UNINITIALIZED_INSTANCE,
+    CREATE_UNINITIALIZED_ARRAY,
     IDENTITY,
     IMMUTABLE_BLOB,
     INIT_INSTANCE,
@@ -129,9 +130,6 @@ internal interface IntrinsicGeneratorEnvironment {
 
     fun calculateLifetime(element: IrElement): Lifetime
 
-    fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime,
-                     superClass: IrClass? = null, resultSlot: LLVMValueRef? = null): LLVMValueRef
-
     fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef>
 
     fun evaluateExpression(value: IrExpression, resultSlot: LLVMValueRef?): LLVMValueRef
@@ -193,16 +191,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 val selector = (callSite.getValueArgument(0) as IrConst).value as String
                 environment.functionGenerationContext.genObjCSelector(selector)
             }
-            IntrinsicType.INIT_INSTANCE -> {
-                val initializer = callSite.getValueArgument(1) as IrConstructorCall
-                val thiz = environment.evaluateExpression(callSite.getValueArgument(0)!!, null)
-                environment.evaluateCall(
-                        initializer.symbol.owner,
-                        listOf(thiz) + environment.evaluateExplicitArgs(initializer),
-                        environment.calculateLifetime(initializer),
-                )
-                codegen.theUnitInstanceRef.llvm
-            }
             else -> null
         }
     }
@@ -253,6 +241,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_WRITE_PRIMITIVE -> emitWritePrimitive(callSite, args)
                 IntrinsicType.INTEROP_GET_POINTER_SIZE -> emitGetPointerSize()
                 IntrinsicType.CREATE_UNINITIALIZED_INSTANCE -> emitCreateUninitializedInstance(callSite, resultSlot)
+                IntrinsicType.CREATE_UNINITIALIZED_ARRAY -> emitCreateUninitializedArray(callSite, resultSlot, args)
                 IntrinsicType.IS_SUBTYPE -> emitIsSubtype(callSite, args)
                 IntrinsicType.INTEROP_NATIVE_PTR_TO_LONG -> emitNativePtrToLong(callSite, args)
                 IntrinsicType.INTEROP_NATIVE_PTR_PLUS_LONG -> emitNativePtrPlusLong(args)
@@ -275,6 +264,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.RETURN_IF_SUSPENDED,
                 IntrinsicType.SAVE_COROUTINE_STATE,
                 IntrinsicType.RESTORE_COROUTINE_STATE,
+                IntrinsicType.INIT_INSTANCE,
                 IntrinsicType.INTEROP_BITS_TO_FLOAT,
                 IntrinsicType.INTEROP_BITS_TO_DOUBLE,
                 IntrinsicType.INTEROP_SIGN_EXTEND,
@@ -291,7 +281,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.GET_AND_SET_FIELD,
                 IntrinsicType.GET_AND_ADD_FIELD ->
                     reportNonLoweredIntrinsic(intrinsicType)
-                IntrinsicType.INIT_INSTANCE,
                 IntrinsicType.OBJC_INIT_BY,
                 IntrinsicType.OBJC_GET_SELECTOR,
                 IntrinsicType.IMMUTABLE_BLOB ->
@@ -461,9 +450,15 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitCreateUninitializedInstance(callSite: IrCall, resultSlot: LLVMValueRef?): LLVMValueRef {
-        val enumClass = callSite.getTypeArgument(0)!!
-        val enumIrClass = enumClass.getClass()!!
-        return allocInstance(enumIrClass, environment.calculateLifetime(callSite), resultSlot)
+        val type = callSite.getTypeArgument(0)!!
+        val clazz = type.getClass()!!
+        return allocInstance(clazz, environment.calculateLifetime(callSite), resultSlot)
+    }
+
+    private fun FunctionGenerationContext.emitCreateUninitializedArray(callSite: IrCall, resultSlot: LLVMValueRef?, args: List<LLVMValueRef>): LLVMValueRef {
+        val type = callSite.getTypeArgument(0)!!
+        val clazz = type.getClass()!!
+        return allocArray(clazz, args.single(), environment.calculateLifetime(callSite), environment.exceptionHandler, resultSlot)
     }
 
     private fun FunctionGenerationContext.emitIsSubtype(callSite: IrCall, args: List<LLVMValueRef>) =

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
+import org.jetbrains.kotlin.backend.konan.lower.getLoweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -938,7 +939,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         val llvmCallable = if (isVirtual) {
             codegen.getVirtualFunctionTrampoline(target as IrSimpleFunction)
         } else {
-            codegen.llvmFunction(target)
+            codegen.llvmFunction(target as? IrSimpleFunction ?: context.getLoweredConstructorFunction(target as IrConstructor))
         }
         call(llvmCallable, args, resultLifetime, exceptionHandler)
     }
@@ -1142,20 +1143,23 @@ private fun ObjCExportCodeGenerator.effectiveThrowsClasses(method: IrFunction, s
 private fun ObjCExportCodeGenerator.generateObjCImpForArrayConstructor(
         target: IrConstructor,
         methodBridge: MethodBridge
-): LlvmCallable = generateObjCImp(methodBridge, bridgeSuffix = target.computeSymbolName(), isDirect = true) { args, resultLifetime, exceptionHandler ->
-    val arrayInstance = callFromBridge(
-            llvm.allocArrayFunction,
-            listOf(target.constructedClass.llvmTypeInfoPtr, args.first()),
-            resultLifetime = Lifetime.ARGUMENT
-    )
+): LlvmCallable {
+    val targetFunction = context.getLoweredConstructorFunction(target)
+    return generateObjCImp(methodBridge, bridgeSuffix = targetFunction.computeSymbolName(), isDirect = true) { args, resultLifetime, exceptionHandler ->
+        val arrayInstance = callFromBridge(
+                llvm.allocArrayFunction,
+                listOf(target.constructedClass.llvmTypeInfoPtr, args.first()),
+                resultLifetime = Lifetime.ARGUMENT
+        )
 
-    call(target.llvmFunction, listOf(arrayInstance) + args, resultLifetime, exceptionHandler)
-    arrayInstance
+        call(targetFunction.llvmFunction, listOf(arrayInstance) + args, resultLifetime, exceptionHandler)
+        arrayInstance
+    }
 }
 
 // TODO: cache bridges.
 private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
-        irFunction: IrFunction,
+        irFunction: IrSimpleFunction,
         baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>
 ): ConstPointer {
     val baseIrFunction = baseMethod.owner
@@ -1417,7 +1421,7 @@ private fun MethodBridge.ReturnValue.isAutoreleasedObjCReference(): Boolean = wh
  * ```
  */
 private fun ObjCExportCodeGenerator.createReverseAdapter(
-        irFunction: IrFunction,
+        irFunction: IrSimpleFunction,
         baseMethod: ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>,
         vtableIndex: Int?,
         itablePlace: ClassLayoutBuilder.InterfaceTablePlace?

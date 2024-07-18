@@ -13,9 +13,8 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.isNullableNothing
@@ -32,13 +31,13 @@ internal class ReturnsInsertionLowering(val context: Context) : FileLoweringPass
                 element.acceptChildrenVoid(this)
             }
 
-            override fun visitFunction(declaration: IrFunction) {
+            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
                 declaration.acceptChildrenVoid(this)
 
                 val body = declaration.body ?: return
                 body as IrBlockBody
                 context.createIrBuilder(declaration.symbol, declaration.endOffset, declaration.endOffset).run {
-                    if (declaration is IrConstructor || declaration.returnType == context.irBuiltIns.unitType) {
+                    if (declaration.returnType == context.irBuiltIns.unitType) {
                         body.statements += irReturn(irCall(symbols.theUnitInstance, context.irBuiltIns.unitType))
                     } else if (declaration.returnType.isNullable()) {
                         // this is a workaround for KT-42832

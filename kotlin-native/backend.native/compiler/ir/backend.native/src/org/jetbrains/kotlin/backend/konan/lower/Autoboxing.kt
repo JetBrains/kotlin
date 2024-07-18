@@ -140,7 +140,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
         val target = expression.target
         return useAs(target.dispatchReceiverParameter!!.type,
-                forceSkipTypeCheck = currentFunction?.bridgeTarget == target) // A bridge cannot be called on an improper receiver.
+                // A bridge cannot be called on an improper receiver.
+                forceSkipTypeCheck = (currentFunction as? IrSimpleFunction)?.bridgeTarget == target)
     }
 
     override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {

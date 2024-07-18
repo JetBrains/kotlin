@@ -92,15 +92,9 @@ internal val IrField.needsGCRegistration
                         !isFinal) // or are not final
 
 
-internal fun IrFunction.shouldGenerateBody(): Boolean = when {
-    this is IrConstructor && constructedClass.isInlined() -> false
-    this is IrConstructor && isObjCConstructor -> false
-    this is IrSimpleFunction && modality == Modality.ABSTRACT -> false
-    isExternal -> false
-    else -> true
-}
+internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
 
-internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrFunction>?) : IrElementVisitorVoid {
+internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrSimpleFunction>?) : IrElementVisitorVoid {
     val generator = RTTIGenerator(generationState, referencedFunctions)
 
     val kotlinObjCClassInfoGenerator = KotlinObjCClassInfoGenerator(generationState)
@@ -250,9 +244,6 @@ internal class CodeGeneratorVisitor(
 
         override val exceptionHandler: ExceptionHandler
             get() = currentCodeContext.exceptionHandler
-
-        override fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, superClass: IrClass?, resultSlot: LLVMValueRef?) =
-                evaluateSimpleFunctionCall(function, args, resultLifetime, superClass, resultSlot)
 
         override fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef> =
                 this@CodeGeneratorVisitor.evaluateExplicitArgs(expression)
@@ -633,13 +624,6 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    override fun visitConstructor(declaration: IrConstructor) {
-        context.log{"visitConstructor               : ${ir2string(declaration)}"}
-        visitFunction(declaration)
-    }
-
-    //-------------------------------------------------------------------------//
-
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
         context.log{"visitAnonymousInitializer      : ${ir2string(declaration)}"}
     }
@@ -674,7 +658,7 @@ internal class CodeGeneratorVisitor(
      * The scope of parameter visibility.
      */
     private open inner class ParameterScope(
-            function: IrFunction?,
+            function: IrSimpleFunction?,
             private val functionGenerationContext: FunctionGenerationContext): InnerScopeImpl() {
 
         val parameters = bindParameters(function)
@@ -710,10 +694,10 @@ internal class CodeGeneratorVisitor(
      */
     private inner class FunctionScope private constructor(
             val functionGenerationContext: FunctionGenerationContext,
-            val declaration: IrFunction?,
+            val declaration: IrSimpleFunction?,
             val llvmFunction: LlvmCallable) : InnerScopeImpl() {
 
-        constructor(declaration: IrFunction, functionGenerationContext: FunctionGenerationContext) :
+        constructor(declaration: IrSimpleFunction, functionGenerationContext: FunctionGenerationContext) :
                 this(functionGenerationContext, declaration, codegen.llvmFunction(declaration))
 
         constructor(llvmFunction: LlvmCallable, functionGenerationContext: FunctionGenerationContext) :
@@ -721,7 +705,7 @@ internal class CodeGeneratorVisitor(
 
         override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) {
             if (declaration == null || target == declaration) {
-                if ((target as IrFunction).returnsUnit()) {
+                if ((target as IrSimpleFunction).returnsUnit()) {
                     functionGenerationContext.ret(null)
                 } else {
                     functionGenerationContext.ret(value!!)
@@ -769,7 +753,7 @@ internal class CodeGeneratorVisitor(
     /**
      * Binds LLVM function parameters to IR parameter descriptors.
      */
-    private fun bindParameters(function: IrFunction?): Map<IrValueParameter, LLVMValueRef> {
+    private fun bindParameters(function: IrSimpleFunction?): Map<IrValueParameter, LLVMValueRef> {
         if (function == null) return emptyMap()
         return function.allParameters.mapIndexed { i, irParameter ->
             val parameter = codegen.param(function, i)
@@ -803,10 +787,15 @@ internal class CodeGeneratorVisitor(
         codegen.getVirtualFunctionTrampoline(irFunction)
     }
 
-    override fun visitFunction(declaration: IrFunction) {
+    override fun visitConstructor(declaration: IrConstructor) {
+        // All constructors are lowered by this point, but for some cases original constructors are left as is; just skip them here.
+        return
+    }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         context.log{"visitFunction                  : ${ir2string(declaration)}"}
 
-        if (declaration is IrSimpleFunction && declaration.isOverridable && declaration.origin !is DECLARATION_ORIGIN_BRIDGE_METHOD)
+        if (declaration.isOverridable && declaration.origin !is DECLARATION_ORIGIN_BRIDGE_METHOD)
             buildVirtualFunctionTrampoline(declaration)
 
         val scopeState = llvm.initializersGenerationState.scopeState
@@ -828,15 +817,14 @@ internal class CodeGeneratorVisitor(
             scopeState.threadLocalInitState = getThreadLocalInitStateFor(declaration.parent as IrDeclarationContainer)
         }
 
-
         if (!declaration.shouldGenerateBody())
             return
 
-        // Some special functions may have empty body, thay are handled separetely.
+        // Some special functions may have empty body, they are handled separately.
         val body = declaration.body ?: return
+
         val file = run {
-            val original = (declaration as? IrSimpleFunction)?.attributeOwnerId ?: return@run null
-            val originalFunction = when (original) {
+            val originalFunction = when (val original = declaration.attributeOwnerId) {
                 is IrFunctionExpression -> original.function
                 is IrFunction -> original
                 else -> return@run null
@@ -883,7 +871,7 @@ internal class CodeGeneratorVisitor(
             verifyModule(llvm.module, "${ir2string(declaration.parent)}::${ir2string(declaration)}")
     }
 
-    private fun IrFunction.location(start: Boolean): LocationInfo? {
+    private fun IrSimpleFunction.location(start: Boolean): LocationInfo? {
         if (!context.shouldContainLocationDebugInfo() || startOffset == UNDEFINED_OFFSET) return null
 
         val (line, column) = if (start) startLineAndColumn() else endLineAndColumn()
@@ -951,9 +939,8 @@ internal class CodeGeneratorVisitor(
         when (value) {
             is IrTypeOperatorCall    -> return evaluateTypeOperator           (value, resultSlot)
             is IrCall                -> return evaluateCall                   (value, resultSlot)
-            is IrDelegatingConstructorCall ->
-                                        return evaluateCall                   (value, resultSlot)
-            is IrConstructorCall     -> return evaluateCall                   (value, resultSlot)
+            is IrConstructorCall, is IrDelegatingConstructorCall ->
+                                        error("Should've been lowered: ${value.render()}")
             is IrInstanceInitializerCall ->
                                         return evaluateInstanceInitializerCall(value)
             is IrGetValue            -> return evaluateGetValue               (value, resultSlot)
@@ -1404,7 +1391,7 @@ internal class CodeGeneratorVisitor(
     }
 
     //-------------------------------------------------------------------------//
-    private fun debugInfoIfNeeded(function: IrFunction?, element: IrElement): VariableDebugLocation? {
+    private fun debugInfoIfNeeded(function: IrSimpleFunction?, element: IrElement): VariableDebugLocation? {
         if (function == null || !element.needDebugInfo(context) || currentCodeContext.scope() == null) return null
         val locationInfo = element.startLocation ?: return null
         val location = codegen.generateLocationInfo(locationInfo)
@@ -1937,9 +1924,9 @@ internal class CodeGeneratorVisitor(
                     // Child(val otherField: ...) : Base(constantValue)
                     //
                     //  Child(constantValue) could be initialized constantly. This is required for function references.
-                    val delegatedCallConstants = constructor.body?.statements
-                            ?.filterIsInstance<IrDelegatingConstructorCall>()
-                            ?.singleOrNull()
+                    val delegatedCallConstants = constructor.loweredConstructorFunction?.body?.statements
+                            ?.filterIsInstance<IrCall>()
+                            ?.singleOrNull { it.origin == LOWERED_DELEGATING_CONSTRUCTOR_CALL }
                             ?.getArgumentsWithIr()
                             ?.filter { it.second is IrConstantValue }
                             ?.associate { it.first.name.toString() to it.second }
@@ -1996,6 +1983,7 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
     private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlock, val resultSlot: LLVMValueRef?) :
             FileScope(returnableBlock.inlineFunction?.let {
+                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
                 generationState.inlineFunctionOrigins[it]?.irFile ?: it.fileOrNull
             }
                     ?: (currentCodeContext.fileScope() as? FileScope)?.file
@@ -2005,12 +1993,14 @@ internal class CodeGeneratorVisitor(
         var resultPhi : LLVMValueRef? = null
         private val functionScope by lazy {
             returnableBlock.inlineFunction?.let {
+                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
                 it.scope(file().fileEntry.line(generationState.inlineFunctionOrigins[it]?.startOffset ?: it.startOffset))
             }
         }
 
         private fun getExit(): LLVMBasicBlockRef {
             val location = returnableBlock.inlineFunction?.let {
+                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
                 location(generationState.inlineFunctionOrigins[it]?.endOffset ?: it.endOffset)
             } ?: returnableBlock.statements.lastOrNull()?.let {
                 location(it.endOffset)
@@ -2181,7 +2171,7 @@ internal class CodeGeneratorVisitor(
     }
 
     //-------------------------------------------------------------------------//
-    private fun evaluateCall(value: IrFunctionAccessExpression, resultSlot: LLVMValueRef?): LLVMValueRef {
+    private fun evaluateCall(value: IrCall, resultSlot: LLVMValueRef?): LLVMValueRef {
         context.log{"evaluateCall                   : ${ir2string(value)}"}
 
         intrinsicGenerator.tryEvaluateSpecialCall(value, resultSlot)?.let { return it }
@@ -2189,11 +2179,7 @@ internal class CodeGeneratorVisitor(
         val args = evaluateExplicitArgs(value)
 
         updateBuilderDebugLocation(value)
-        return when (value) {
-            is IrDelegatingConstructorCall -> delegatingConstructorCall(value.symbol.owner, args)
-            is IrConstructorCall -> evaluateConstructorCall(value, args, resultSlot)
-            else -> evaluateFunctionCall(value as IrCall, args, resultLifetime(value), resultSlot)
-        }
+        return evaluateFunctionCall(value, args, resultLifetime(value), resultSlot)
     }
 
     //-------------------------------------------------------------------------//
@@ -2251,20 +2237,20 @@ internal class CodeGeneratorVisitor(
     private fun IrFile.diFileScope() = with(debugInfo) { diFileScope() }
 
     // Saved calculated IrFunction scope which is used several time for getting locations and generating debug info.
-    private var irFunctionSavedScope: Pair<IrFunction, DIScopeOpaqueRef?>? = null
+    private var irFunctionSavedScope: Pair<IrSimpleFunction, DIScopeOpaqueRef?>? = null
 
-    private fun IrFunction.scope(): DIScopeOpaqueRef? = if (startOffset != UNDEFINED_OFFSET) (
+    private fun IrSimpleFunction.scope(): DIScopeOpaqueRef? = if (startOffset != UNDEFINED_OFFSET) (
             if (irFunctionSavedScope != null && this == irFunctionSavedScope!!.first)
                 irFunctionSavedScope!!.second
             else
                 this.scope(startLine()).also { irFunctionSavedScope = Pair(this, it) }
             ) else null
 
-    private val IrFunction.isReifiedInline:Boolean
+    private val IrSimpleFunction.isReifiedInline:Boolean
         get() = isInline && typeParameters.any { it.isReified }
 
     @Suppress("UNCHECKED_CAST")
-    private fun IrFunction.scope(startLine:Int): DIScopeOpaqueRef? {
+    private fun IrSimpleFunction.scope(startLine:Int): DIScopeOpaqueRef? {
         if (!context.shouldContainLocationDebugInfo())
             return null
 
@@ -2272,12 +2258,12 @@ internal class CodeGeneratorVisitor(
             isReifiedInline -> null
             // TODO: May be tie up inline lambdas to their outer function?
             codegen.isExternal(this) && !KonanBinaryInterface.isExported(this) -> null
-            this is IrSimpleFunction && isSuspend -> this.getOrCreateFunctionWithContinuationStub(context).let { codegen.llvmFunctionOrNull(it) }
+            isSuspend -> this.getOrCreateFunctionWithContinuationStub(context).let { codegen.llvmFunctionOrNull(it) }
             else -> codegen.llvmFunctionOrNull(this)
         }
         return with(debugInfo) {
             val f = this@scope
-            val nodebug = f is IrConstructor && f.parentAsClass.isSubclassOf(context.irBuiltIns.throwableClass.owner)
+            val nodebug = f.originalConstructor != null && f.parentAsClass.isSubclassOf(context.irBuiltIns.throwableClass.owner)
             if (functionLlvmValue != null) {
                 subprograms.getOrPut(functionLlvmValue) {
                     diFunctionScope(file(), functionLlvmValue.name!!, startLine, nodebug).also {
@@ -2304,7 +2290,7 @@ internal class CodeGeneratorVisitor(
                 } as DIScopeOpaqueRef
             }
 
-    private fun IrFunction.returnsUnit() = returnType.isUnit().also {
+    private fun IrSimpleFunction.returnsUnit() = returnType.isUnit().also {
         require(!isSuspend) { "Suspend functions should be lowered out at this point"}
     }
 
@@ -2336,6 +2322,7 @@ internal class CodeGeneratorVisitor(
         assert (expression.getArgumentsWithIr().isEmpty())
 
         val function = expression.symbol.owner
+        require(function is IrSimpleFunction) { "References to constructors should've been lowered: ${expression.render()}" }
         assert (function.dispatchReceiverParameter == null)
 
         return codegen.functionEntryPointAddress(function)
@@ -2424,7 +2411,7 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-    private fun evaluateFileGlobalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
+    private fun evaluateFileGlobalInitializerCall(fileInitializer: IrSimpleFunction) = with(functionGenerationContext) {
         val statePtr = getGlobalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
 
@@ -2442,7 +2429,7 @@ internal class CodeGeneratorVisitor(
         codegen.theUnitInstanceRef.llvm
     }
 
-    private fun evaluateFileThreadLocalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
+    private fun evaluateFileThreadLocalInitializerCall(fileInitializer: IrSimpleFunction) = with(functionGenerationContext) {
         val globalStatePtr = getGlobalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val localState = getThreadLocalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val localStatePtr = localState.getAddress(functionGenerationContext)
@@ -2469,7 +2456,7 @@ internal class CodeGeneratorVisitor(
         codegen.theUnitInstanceRef.llvm
     }
 
-    private fun evaluateFileStandaloneThreadLocalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
+    private fun evaluateFileStandaloneThreadLocalInitializerCall(fileInitializer: IrSimpleFunction) = with(functionGenerationContext) {
         val state = getThreadLocalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val statePtr = state.getAddress(functionGenerationContext)
         val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
@@ -2490,10 +2477,10 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     private fun evaluateSimpleFunctionCall(
-            function: IrFunction, args: List<LLVMValueRef>,
+            function: IrSimpleFunction, args: List<LLVMValueRef>,
             resultLifetime: Lifetime, superClass: IrClass? = null, resultSlot: LLVMValueRef? = null): LLVMValueRef {
         //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
-        if (superClass == null && function is IrSimpleFunction && function.isOverridable)
+        if (superClass == null && function.isOverridable)
             return callVirtual(function, args, resultLifetime, resultSlot)
         else
             return callDirect(function, args, resultLifetime, resultSlot)
@@ -2502,33 +2489,6 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
     private fun resultLifetime(callee: IrElement): Lifetime {
         return lifetimes.getOrElse(callee) { /* TODO: make IRRELEVANT */ Lifetime.GLOBAL }
-    }
-
-    private fun evaluateConstructorCall(callee: IrConstructorCall, args: List<LLVMValueRef>, resultSlot: LLVMValueRef?): LLVMValueRef {
-        context.log{"evaluateConstructorCall        : ${ir2string(callee)}"}
-        return memScoped {
-            val constructedClass = callee.symbol.owner.constructedClass
-            val thisValue = when {
-                constructedClass.isArray -> {
-                    assert(args.isNotEmpty() && args[0].type == llvm.int32Type)
-                    functionGenerationContext.allocArray(constructedClass, args[0],
-                            resultLifetime(callee), currentCodeContext.exceptionHandler, resultSlot = resultSlot)
-                }
-                constructedClass == context.ir.symbols.string.owner -> {
-                    // TODO: consider returning the empty string literal instead.
-                    assert(args.isEmpty())
-                    functionGenerationContext.allocArray(constructedClass, count = llvm.kImmInt32Zero,
-                            lifetime = resultLifetime(callee), exceptionHandler = currentCodeContext.exceptionHandler, resultSlot = resultSlot)
-                }
-
-                constructedClass.isObjCClass() -> error("Call should've been lowered: ${callee.dump()}")
-
-                else -> functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee), resultSlot = resultSlot)
-            }
-            evaluateSimpleFunctionCall(callee.symbol.owner,
-                    listOf(thisValue) + args, Lifetime.IRRELEVANT /* constructor doesn't return anything */)
-            thisValue
-        }
     }
 
     private fun genGetObjCClass(irClass: IrClass): LLVMValueRef {
@@ -2621,7 +2581,7 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    fun callDirect(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef {
+    fun callDirect(function: IrSimpleFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef {
         val functionDeclarations = codegen.llvmFunction(function.target)
         return call(function, functionDeclarations, args, resultLifetime, resultSlot)
     }
@@ -2635,7 +2595,7 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private val IrFunction.needsNativeThreadState: Boolean
+    private val IrSimpleFunction.needsNativeThreadState: Boolean
         get() {
             // We assume that call site thread state switching is required for interop calls only.
             val result = origin == CBridgeOrigin.KOTLIN_TO_C_BRIDGE
@@ -2647,7 +2607,7 @@ internal class CodeGeneratorVisitor(
             return result
         }
 
-    private fun call(function: IrFunction, llvmCallable: LlvmCallable, args: List<LLVMValueRef>,
+    private fun call(function: IrSimpleFunction, llvmCallable: LlvmCallable, args: List<LLVMValueRef>,
                      resultLifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef {
         check(!function.isTypedIntrinsic)
 
@@ -2686,30 +2646,6 @@ internal class CodeGeneratorVisitor(
             resultSlot: LLVMValueRef? = null
     ): LLVMValueRef {
         return functionGenerationContext.call(function, args, resultLifetime, exceptionHandler, resultSlot = resultSlot)
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun delegatingConstructorCall(constructor: IrConstructor, args: List<LLVMValueRef>): LLVMValueRef {
-
-        val constructedClass = functionGenerationContext.constructedClass!!
-        val thisPtr = currentCodeContext.genGetValue(constructedClass.thisReceiver!!, null)
-
-        if (constructor.constructedClass.isExternalObjCClass() || constructor.constructedClass.isAny()) {
-            assert(args.isEmpty())
-            return codegen.theUnitInstanceRef.llvm
-        }
-
-        val thisPtrArgType = constructor.allParameters[0].type.toLLVMType(llvm)
-        val thisPtrArg = if (thisPtr.type == thisPtrArgType) {
-            thisPtr
-        } else {
-            // e.g. when array constructor calls super (i.e. Any) constructor.
-            functionGenerationContext.bitcast(thisPtrArgType, thisPtr)
-        }
-
-        return callDirect(constructor, listOf(thisPtrArg) + args,
-                Lifetime.IRRELEVANT /* no value returned */, null)
     }
 
     //-------------------------------------------------------------------------//

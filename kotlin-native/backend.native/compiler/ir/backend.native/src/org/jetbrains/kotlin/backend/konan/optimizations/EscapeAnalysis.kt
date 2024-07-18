@@ -15,21 +15,17 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.getAllSuperclasses
-
-private val DataFlowIR.Node.isAlloc
-    get() = this is DataFlowIR.Node.NewObject || this is DataFlowIR.Node.AllocInstance
 
 private val DataFlowIR.Node.ir
     get() = when (this) {
         is DataFlowIR.Node.Call -> irCallSite
-        is DataFlowIR.Node.AllocInstance -> irCallSite
+        is DataFlowIR.Node.Alloc -> irCallSite
         is DataFlowIR.Node.ArrayRead -> irCallSite
         is DataFlowIR.Node.FieldRead -> ir
         else -> null
@@ -37,14 +33,8 @@ private val DataFlowIR.Node.ir
 
 private val CallGraphNode.CallSite.arguments: List<DataFlowIR.Node>
     get() {
-        return if (call is DataFlowIR.Node.NewObject) {
-            (0..call.arguments.size).map {
-                if (it == 0) node else call.arguments[it - 1].node
-            }
-        } else {
-            (0..call.arguments.size).map {
-                if (it < call.arguments.size) call.arguments[it].node else node
-            }
+        return (0..call.arguments.size).map {
+            if (it < call.arguments.size) call.arguments[it].node else node
         }
     }
 
@@ -529,14 +519,12 @@ internal object EscapeAnalysis {
 
                         // Filter out some irrelevant cases (like globals and exceptions).
                         val isFilteredOut = functionSymbol.isStaticFieldInitializer ||
-                                (functionSymbol.irFunction as? IrConstructor)
-                                        ?.constructedClass?.kind?.let { kind ->
-                                            kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT
-                                        } == true ||
-                                (it is IrConstructorCall &&
-                                        throwable in it.symbol.owner.constructedClass.getAllSuperclasses())
+                                functionSymbol.irFunction?.originalConstructor?.constructedClass?.kind?.let { kind ->
+                                    kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT
+                                } == true ||
+                                (node as? DataFlowIR.Node.Alloc)?.type?.irClass?.getAllSuperclasses()?.contains(throwable) == true
 
-                        if (node.isAlloc) {
+                        if (node is DataFlowIR.Node.Alloc) {
                             if (lifetime == Lifetime.GLOBAL) {
                                 ++stats.totalGlobalAllocsCount
                                 if (!isFilteredOut)
@@ -913,7 +901,7 @@ internal object EscapeAnalysis {
                                     variable.addAssignmentEdge(nodes[value.node]!!)
                             }
                         }
-                        is DataFlowIR.Node.AllocInstance,
+                        is DataFlowIR.Node.Alloc,
                         is DataFlowIR.Node.Call,
                         is DataFlowIR.Node.Const,
                         is DataFlowIR.Node.FunctionReference,
@@ -1013,11 +1001,7 @@ internal object EscapeAnalysis {
 
                 fun mapNode(compressedNode: CompressedPointsToGraph.Node): Pair<DataFlowIR.Node?, PointsToGraphNode?> {
                     val (arg, rootNode) = when (val kind = compressedNode.kind) {
-                        CompressedPointsToGraph.NodeKind.Return ->
-                            if (call is DataFlowIR.Node.NewObject) // TODO: This better be an assertion.
-                                DataFlowIR.Node.Null to null
-                            else
-                                arguments.last() to nodes[arguments.last()]
+                        CompressedPointsToGraph.NodeKind.Return -> arguments.last() to nodes[arguments.last()]
                         is CompressedPointsToGraph.NodeKind.Param -> arguments[kind.index] to nodes[arguments[kind.index]]
                         is CompressedPointsToGraph.NodeKind.Drain -> null to calleeDrains[kind.index]
                     }
@@ -1616,12 +1600,12 @@ internal object EscapeAnalysis {
                         lifetime = Lifetime.GLOBAL
                     }
 
-                    if (lifetime == Lifetime.STACK && node is DataFlowIR.Node.NewObject) {
-                        val constructedType = node.constructedType
+                    if (lifetime == Lifetime.STACK && node is DataFlowIR.Node.AllocArray) {
+                        val constructedType = node.type
                         constructedType.irClass?.let { irClass ->
                             val itemSize = arrayItemSizeOf(irClass)
                             if (itemSize != null) {
-                                val sizeArgument = node.arguments.first().node
+                                val sizeArgument = node.size.node
                                 val arrayLength = arrayLengthOf(sizeArgument)?.takeIf { it >= 0 }
                                 val arraySize = arraySize(itemSize, arrayLength ?: Int.MAX_VALUE)
                                 if (arraySize <= allowedToAlloc) {
@@ -1636,7 +1620,7 @@ internal object EscapeAnalysis {
                     }
 
                     if (lifetime != computedLifetime) {
-                        if (propagateExiledToHeapObjects && node.isAlloc) {
+                        if (propagateExiledToHeapObjects && node is DataFlowIR.Node.Alloc) {
                             context.log { "Forcing node ${nodeToString(node)} to escape" }
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)
