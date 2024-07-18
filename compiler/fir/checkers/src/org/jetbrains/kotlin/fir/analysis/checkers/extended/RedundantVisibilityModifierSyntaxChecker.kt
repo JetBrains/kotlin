@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.diagnostics.visibilityModifier
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
@@ -41,7 +42,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (element is FirPropertyAccessor) {
+        if (element is FirPropertyAccessor || element is FirValueParameter) {
             return
         }
 
@@ -121,7 +122,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (element.source?.kind is KtFakeSourceElementKind) {
+        if (element.source?.kind is KtFakeSourceElementKind && !element.isPropertyFromParameter) {
             return
         }
 
@@ -146,6 +147,9 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             reportElement(element, context, reporter)
         }
     }
+
+    private val FirElement.isPropertyFromParameter: Boolean
+        get() = this is FirProperty && source?.kind == KtFakeSourceElementKind.PropertyFromParameter
 
     private fun reportElement(element: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         reporter.reportOn(element.source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER, context)
