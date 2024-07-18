@@ -1,4 +1,3 @@
-// LANGUAGE: -ProhibitGenericArrayClassLiteral
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -30,6 +29,9 @@ expect annotation class Anno(
     val e: E = E.E1,
     val a: A = A("1"),
     val stra: Array<String> = ["bu", "zz"],
+    // In FIR, we don't report CLASS_LITERAL_LHS_NOT_A_CLASS on Array<Array<Array<Int>>>::class
+    // because the common code is checked with a JVM session (because the only platform module is JVM).
+    // In Analysis API mode, the common code is checked with a common session, and so we report it.
     val ka: Array<KClass<*>> = [Double::class, String::class, LongArray::class, Array<Array<Array<Int>>>::class, Unit::class],
     val ea: Array<E> = [E.E2, E.E3],
     val aa: Array<A> = [A("2"), A("3")],

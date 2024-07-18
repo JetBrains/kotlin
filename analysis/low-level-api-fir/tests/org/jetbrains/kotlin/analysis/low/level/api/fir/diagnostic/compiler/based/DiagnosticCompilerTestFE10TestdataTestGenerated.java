@@ -27480,6 +27480,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("genericArrayClassReference.kt")
+        public void testGenericArrayClassReference() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/genericArrayClassReference.kt");
+        }
+
+        @Test
         @TestMetadata("methodDefaultArgsViaActualTypealias.kt")
         public void testMethodDefaultArgsViaActualTypealias() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/methodDefaultArgsViaActualTypealias.kt");

@@ -47,7 +47,7 @@ fun test() {}
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual typealias <!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE, ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>Anno<!> = Jnno
+actual typealias Anno = Jnno
 
 // FILE: Jnno.java
 
