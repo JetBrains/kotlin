@@ -544,6 +544,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("falsePositiveRedundantVisibility.kt")
+    public void testFalsePositiveRedundantVisibility() {
+      runTest("compiler/testData/diagnostics/tests/falsePositiveRedundantVisibility.kt");
+    }
+
+    @Test
     @TestMetadata("fileDependencyRecursion.kt")
     public void testFileDependencyRecursion() {
       runTest("compiler/testData/diagnostics/tests/fileDependencyRecursion.kt");
