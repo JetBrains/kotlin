@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
@@ -46,26 +45,29 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  * See related [translateToObjCExtensionFacades]
  */
 fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFile): ObjCInterface? {
-    val extensions = file.callableSymbols
+    val topLevelCallables = file.callableSymbols
         .filter { analysisSession.getClassIfCategory(it) == null }
         .toList()
         .sortedWith(StableCallableOrder)
-        .ifEmpty { return null }
+        .flatMap { translateToObjCExportStub(it) }
 
     val fileName = getObjCFileClassOrProtocolName(file)
 
-    return ObjCInterfaceImpl(
-        name = fileName.objCName,
-        comment = null,
-        origin = null,
-        attributes = listOf(OBJC_SUBCLASSING_RESTRICTED) + fileName.toNameAttributes(),
-        superProtocols = emptyList(),
-        members = extensions.flatMap { translateToObjCExportStub(it) },
-        categoryName = null,
-        generics = emptyList(),
-        superClass = exportSession.getDefaultSuperClassOrProtocolName().objCName,
-        superClassGenerics = emptyList()
-    )
+    return if (topLevelCallables.isEmpty())
+        null
+    else
+        ObjCInterfaceImpl(
+            name = fileName.objCName,
+            comment = null,
+            origin = null,
+            attributes = listOf(OBJC_SUBCLASSING_RESTRICTED) + fileName.toNameAttributes(),
+            superProtocols = emptyList(),
+            members = topLevelCallables,
+            categoryName = null,
+            generics = emptyList(),
+            superClass = exportSession.getDefaultSuperClassOrProtocolName().objCName,
+            superClassGenerics = emptyList()
+        )
 }
 
 internal fun ObjCExportContext.isExtensionOfMappedObjCType(symbol: KaCallableSymbol): Boolean {

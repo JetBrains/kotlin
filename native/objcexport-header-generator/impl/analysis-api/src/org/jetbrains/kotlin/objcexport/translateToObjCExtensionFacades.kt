@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
 
@@ -58,7 +57,6 @@ fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExport
     val extensions = file.callableSymbols
         .filter { analysisSession.getClassIfCategory(it) != null && it.isExtension }
         .sortedWith(StableCallableOrder)
-        .ifEmpty { return emptyList() }
         .groupBy {
             val type = it.receiverParameter?.returnType
             if (analysisSession.isMappedObjCType(type)) return@groupBy null
@@ -81,13 +79,16 @@ fun ObjCExportContext.translateToObjCExtensionFacades(file: KtResolvedObjCExport
             .mapNotNull { it?.symbol as? KaClassSymbol }
             .mapNotNull { translateToObjCClass(it) }
 
-        extensionTypes + ObjCInterfaceImpl(
+        val translatedMembers = extensionSymbols.flatMap { ext -> translateToObjCExportStub(ext) }
+
+        if (translatedMembers.isEmpty()) extensionTypes
+        else extensionTypes + ObjCInterfaceImpl(
             name = objCName ?: return@flatMap emptyList(),
             comment = null,
             origin = null,
             attributes = emptyList(),
             superProtocols = emptyList(),
-            members = extensionSymbols.flatMap { ext -> translateToObjCExportStub(ext) },
+            members = translatedMembers,
             categoryName = extensionsCategoryName,
             generics = emptyList(),
             superClass = null,
