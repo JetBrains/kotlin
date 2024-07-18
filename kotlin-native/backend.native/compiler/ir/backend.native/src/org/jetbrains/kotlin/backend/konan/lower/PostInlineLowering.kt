@@ -51,7 +51,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 return if (irClassSymbol == null) {
                     data.at(expression).irCall(symbols.throwNullPointerException.owner)
                 } else {
-                    data.toNativeReflectionBuilder(symbols).at(expression).irKClass(irClassSymbol)
+                    data.toNativeConstantReflectionBuilder(symbols).at(expression).irKClass(irClassSymbol)
                 }
             }
 
@@ -102,7 +102,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
 
             override fun visitConstantObject(expression: IrConstantObject, data: IrBuilderWithScope): IrConstantValue {
                 return if (tryGetConstantConstructorIntrinsicType(expression.constructor) == ConstantConstructorIntrinsicType.KTYPE_IMPL) {
-                    val generator = data.toNativeReflectionBuilder(context.ir.symbols) {
+                    val generator = data.toNativeConstantReflectionBuilder(context.ir.symbols) {
                         // Inline functions themselves are not called (they have been inlined at all call sites),
                         // so it is ok not to build exact type parameters for them.
                         if ((container as? IrSimpleFunction)?.isInline != true) {

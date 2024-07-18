@@ -38,7 +38,7 @@ internal class TypeOfLowering(val context: Context) : BodyLoweringPass {
 
                 return when {
                     Symbols.isTypeOfIntrinsic(expression.symbol) -> {
-                        val generator = data.toNativeReflectionBuilder(context.ir.symbols) {
+                        val generator = data.toNativeConstantReflectionBuilder(context.ir.symbols) {
                             context.reportCompilationError(it, irFile, expression)
                         }
                         generator.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = true)

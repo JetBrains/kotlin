@@ -118,7 +118,7 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
 
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
-                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset).toNativeReflectionBuilder(context.ir.symbols)
+                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset).toNativeConstantReflectionBuilder(context.ir.symbols)
                 val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
                 if (receiversCount == 2)
                     throw AssertionError("Callable reference to properties with two receivers is not allowed: ${expression}")
@@ -254,8 +254,8 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
         }
     }
 
-    private fun NativeReflectionIrBuilder.createLocalKProperty(propertyName: String,
-                                                               propertyType: IrType): IrConstantValue {
+    private fun NativeConstantReflectionIrBuilder.createLocalKProperty(propertyName: String,
+                                                                       propertyType: IrType): IrConstantValue {
         val symbols = this@PropertyDelegationLowering.context.ir.symbols
         return irConstantObject(
                 symbols.kLocalDelegatedPropertyImpl.owner,
