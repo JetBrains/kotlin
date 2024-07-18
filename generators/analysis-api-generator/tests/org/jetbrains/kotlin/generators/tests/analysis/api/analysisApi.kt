@@ -55,10 +55,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatu
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.smartCastProvider.AbstractHLSmartCastInfoTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateInheritanceTypeSubstitutorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.subtyping.AbstractLenientSubtypingTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.subtyping.AbstractLenientTypeEqualityTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.subtyping.AbstractSubtypingTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.subtyping.AbstractTypeEqualityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientSubtypingTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientTypeEqualityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractSubtypingTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractTypeEqualityTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
@@ -595,7 +595,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    component("subtyping") {
+    component("typeRelationChecker") {
         test<AbstractTypeEqualityTest> {
             model(it, "subtypingAndEquality")
         }
