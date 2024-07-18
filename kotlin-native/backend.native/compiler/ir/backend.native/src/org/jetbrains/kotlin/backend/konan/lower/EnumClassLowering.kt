@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
-private var IrClass.enumValueGetter: IrFunction? by irAttribute(followAttributeOwner = false)
+private var IrClass.enumValueGetter: IrSimpleFunction? by irAttribute(followAttributeOwner = false)
 private var IrClass.enumEntriesMap: Map<Name, LoweredEnumEntryDescription>? by irAttribute(followAttributeOwner = false)
 
 internal data class LoweredEnumEntryDescription(val ordinal: Int, val getterId: Int)
@@ -61,7 +61,7 @@ internal class EnumsSupport(
         }
     }
 
-    fun getValueGetter(enumClass: IrClass): IrFunction {
+    fun getValueGetter(enumClass: IrClass): IrSimpleFunction {
         require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
         return enumClass::enumValueGetter.getOrSetIfNull {
             irFactory.buildFun {

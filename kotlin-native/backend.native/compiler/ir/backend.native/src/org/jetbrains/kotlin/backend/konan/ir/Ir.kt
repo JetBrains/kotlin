@@ -353,6 +353,8 @@ internal class KonanSymbols(
 
     val createUninitializedInstance = internalFunction("createUninitializedInstance")
 
+    val createUninitializedArray = internalFunction("createUninitializedArray")
+
     val initInstance = internalFunction("initInstance")
 
     val isSubtype = internalFunction("isSubtype")

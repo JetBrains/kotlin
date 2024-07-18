@@ -12319,6 +12319,9 @@ final fun <#A: kotlin/Any?> kotlin.native.concurrent/waitForMultipleFutures(kotl
 final fun <#A: kotlin/Any?> kotlin.native.internal/createCleaner(#A, kotlin/Function1<#A, kotlin/Unit>): kotlin.native.internal/Cleaner // kotlin.native.internal/createCleaner|createCleaner(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
+final fun <#A: kotlin/Any?> kotlin.native.internal/createUninitializedArray(kotlin/Int): #A // kotlin.native.internal/createUninitializedArray|createUninitializedArray(kotlin.Int){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
 final fun <#A: kotlin/Any?> kotlin.native.internal/createUninitializedInstance(): #A // kotlin.native.internal/createUninitializedInstance|createUninitializedInstance(){0§<kotlin.Any?>}[0]
 
 // Targets: [native]

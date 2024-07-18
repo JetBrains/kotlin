@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFGBuilder
 import org.jetbrains.kotlin.backend.konan.optimizations.dce
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
 internal val GHAPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "GHAPhase",
@@ -76,7 +76,7 @@ internal data class DCEInput(
         get() = irModule
 }
 
-internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DCEInput, Set<IrFunction>?>(
+internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DCEInput, Set<IrSimpleFunction>?>(
         name = "DCEPhase",
         description = "Dead code elimination",
         outputIfNotEnabled = { _, _, _, _ -> null },

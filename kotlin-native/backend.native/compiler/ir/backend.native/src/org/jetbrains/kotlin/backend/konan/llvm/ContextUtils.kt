@@ -10,6 +10,7 @@ import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.lower.constructor
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
@@ -163,22 +164,27 @@ internal interface ContextUtils : RuntimeAware {
         return !generationState.llvmModuleSpecification.containsDeclaration(declaration)
     }
 
-    fun linkageOf(irFunction: IrFunction) = when {
-        isExternal(irFunction) -> LLVMLinkage.LLVMExternalLinkage
-        irFunction.isExported() -> LLVMLinkage.LLVMExternalLinkage
-        context.config.producePerFileCache && irFunction in generationState.calledFromExportedInlineFunctions -> LLVMLinkage.LLVMExternalLinkage
-        else -> LLVMLinkage.LLVMInternalLinkage
+    fun linkageOf(irFunction: IrSimpleFunction): LLVMLinkage {
+        if (isExternal(irFunction) || irFunction.isExported())
+            return LLVMLinkage.LLVMExternalLinkage
+        if (context.config.producePerFileCache) {
+            val originalFunction = irFunction.constructor ?: irFunction
+            if (originalFunction in generationState.calledFromExportedInlineFunctions)
+                return LLVMLinkage.LLVMExternalLinkage
+        }
+
+        return LLVMLinkage.LLVMInternalLinkage
     }
 
     /**
      * LLVM function generated from the Kotlin function.
      * It may be declared as external function prototype.
      */
-    val IrFunction.llvmFunction: LlvmCallable
+    val IrSimpleFunction.llvmFunction: LlvmCallable
         get() = llvmFunctionOrNull
                 ?: error("$name in ${file.name}/${parent.fqNameForIrSerialization}")
 
-    val IrFunction.llvmFunctionOrNull: LlvmCallable?
+    val IrSimpleFunction.llvmFunctionOrNull: LlvmCallable?
         get() {
             assert(this.isReal) {
                 this.computeFullName()
@@ -203,7 +209,7 @@ internal interface ContextUtils : RuntimeAware {
     /**
      * Address of entry point of [llvmFunction].
      */
-    val IrFunction.entryPointAddress: ConstPointer
+    val IrSimpleFunction.entryPointAddress: ConstPointer
         get() {
             return llvmFunction.toConstPointer().bitcast(llvm.int8PtrType)
         }
@@ -239,9 +245,9 @@ internal fun stringAsBytes(str: String) = str.toByteArray(Charsets.UTF_8)
 
 internal class ScopeInitializersGenerationState {
     val topLevelFields = mutableListOf<IrField>()
-    var globalInitFunction: IrFunction? = null
+    var globalInitFunction: IrSimpleFunction? = null
     var globalInitState: LLVMValueRef? = null
-    var threadLocalInitFunction: IrFunction? = null
+    var threadLocalInitFunction: IrSimpleFunction? = null
     var threadLocalInitState: AddressAccess? = null
     val globalSharedObjects = mutableSetOf<LLVMValueRef>()
     fun isEmpty() = topLevelFields.isEmpty() &&

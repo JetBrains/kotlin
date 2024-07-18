@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.ContextUtils
 import org.jetbrains.kotlin.backend.konan.llvm.ExceptionHandler
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
+import org.jetbrains.kotlin.backend.konan.lower.getConstructorImpl
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -46,7 +44,8 @@ internal class CAdapterCodegen(
                 val function = declaration as FunctionDescriptor
                 val irFunction = irSymbol.owner as IrFunction
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
-                val signature = LlvmFunctionSignature(irFunction, this@CAdapterCodegen)
+                val implFunction = irFunction as? IrSimpleFunction ?: context.getConstructorImpl(irFunction as IrConstructor)
+                val signature = LlvmFunctionSignature(implFunction, this@CAdapterCodegen)
                 val bridgeFunctionProto = signature.toProto(cname, null, LLVMLinkage.LLVMExternalLinkage)
                 // If function is virtual, we need to resolve receiver properly.
                 generateFunction(codegen, bridgeFunctionProto) {
@@ -55,7 +54,7 @@ internal class CAdapterCodegen(
                     } else {
                         // KT-45468: Alias insertion may not be handled by LLVM properly, in case callee is in the cache.
                         // Hence, insert not an alias but a wrapper, hoping it will be optimized out later.
-                        codegen.llvmFunction(irFunction)
+                        codegen.llvmFunction(implFunction)
                     }
 
                     val args = signature.parameterTypes.indices.map { param(it) }
