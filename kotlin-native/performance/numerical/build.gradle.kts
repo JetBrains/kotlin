@@ -29,6 +29,7 @@ native.apply {
             headers("$projectDir/src/nativeInterop/cinterop/pi.h")
             extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/pi.c")
             extraOpts("-Xsource-compiler-option", "-O3")
+            extraOpts("-Xsource-compiler-option", "-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS")
         }
     }
 }
