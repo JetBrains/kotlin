@@ -678,7 +678,9 @@ object NativeTestSupport {
     /*************** Test run settings (simplified) ***************/
 
     // Note: SimpleTestRunSettings is not cached!
-    fun ExtensionContext.createSimpleTestRunSettings(): SimpleTestRunSettings {
+    fun ExtensionContext.createSimpleTestRunSettings(
+        defaultDirectives: ((SimpleTestClassSettings) -> RegisteredDirectives) = { RegisteredDirectives.Empty },
+    ): SimpleTestRunSettings {
         val testClassSettings = getOrCreateSimpleTestClassSettings()
 
         return SimpleTestRunSettings(
@@ -686,6 +688,7 @@ object NativeTestSupport {
             listOf(
                 computeSimpleTestInstances(),
                 computeBinariesForSimpleTests(testClassSettings.get(), testClassSettings.get()),
+                RegisteredDirectives::class to defaultDirectives(testClassSettings)
             )
         )
     }
