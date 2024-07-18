@@ -75,7 +75,7 @@ private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
                     // TODO: remove this condition after the fix of KT-69457:
                     inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
 
-                    // TODO: remove this condition after the fix of KT-67169:
+                    // TODO: remove this condition after the fix of KT-70361:
                     isTypeOfIntrinsic(inlineFunction.symbol) -> true // temporarily permitted
 
                     else -> false // forbidden

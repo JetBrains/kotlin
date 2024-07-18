@@ -15,10 +15,14 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.inline.CallInlinerStrategy
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getPackageFragment
@@ -81,8 +85,6 @@ internal class NativeInlineFunctionResolver(
 
         val experimentalDoubleInlining = context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)
 
-        TypeOfLowering(context).lower(body, function, irFile)
-
         NullableFieldsForLateinitCreationLowering(context).lowerWithLocalDeclarations(function)
         NullableFieldsDeclarationLowering(context).lowerWithLocalDeclarations(function)
         LateinitUsageLowering(context).lower(body, function)
@@ -115,5 +117,16 @@ internal class NativeInlineFunctionResolver(
     private fun DeclarationTransformer.lowerWithLocalDeclarations(function: IrFunction) {
         if (transformFlat(function) != null)
             error("Unexpected transformation of function ${function.dump()}")
+    }
+
+    override val callInlinerStrategy: CallInlinerStrategy = NativeCallInlinerStrategy()
+
+    inner class NativeCallInlinerStrategy : CallInlinerStrategy {
+        override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
+            val symbols = this@NativeInlineFunctionResolver.context.ir.symbols
+            return context.createIrBuilder(symbols.interopTypeOf, expression.startOffset, expression.endOffset)
+                    .toNativeRuntimeReflectionBuilder(symbols)
+                    .irKType(nonSubstitutedTypeArgument, leaveReifiedForLater = true)
+        }
     }
 }

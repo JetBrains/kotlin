@@ -39,7 +39,6 @@ internal class NoInlineFunctionUseSitesValidator(
     private fun checkFunctionUseSite(expression: IrMemberAccessExpression<IrFunctionSymbol>) {
         val function = expression.symbol.owner
         if (!function.isInline || inlineFunctionUseSiteChecker.isPermitted(expression)) return
-
         reportError(function, expression)
     }
 

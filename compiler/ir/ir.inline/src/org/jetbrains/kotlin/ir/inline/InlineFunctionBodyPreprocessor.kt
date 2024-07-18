@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -21,7 +22,9 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 private enum class NonReifiedTypeParameterRemappingMode {
@@ -43,7 +46,14 @@ internal class InlineFunctionBodyPreprocessor(
         symbolRemapper.typeArguments = typeArguments
 
         // Copy IR.
-        val result = irElement.transform(copier, data = null)
+        val result = irElement.transform(copier, data = null).let {
+            // Just a performance optimization. In most cases nothing is to be done in this postprocess, so no reason to traverse the tree.
+            if (copier.typeOfNodes.isNotEmpty()) {
+                it.transform(TypeOfPostProcessor(), null)
+            } else {
+                it
+            }
+        }
 
         result.patchDeclarationParents(parent)
         return result as IrFunction
@@ -152,6 +162,7 @@ internal class InlineFunctionBodyPreprocessor(
     private val symbolRemapper = SymbolRemapperImpl(NullDescriptorsRemapper)
     private val typeRemapper = InlinerTypeRemapper(symbolRemapper, typeArguments)
     private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
+        var typeOfNodes = mutableMapOf<IrCall, IrType>()
 
         private fun IrType.leaveNonReifiedAsIs() = typeRemapper.remapType(this, NonReifiedTypeParameterRemappingMode.LEAVE_AS_IS)
 
@@ -168,13 +179,27 @@ internal class InlineFunctionBodyPreprocessor(
         }
 
         override fun visitCall(expression: IrCall): IrCall {
-            val expressionCopy = super.visitCall(expression)
-            if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
+            return super.visitCall(expression).also {
+                // We can't do it right now, because we need to return IrCall, and postprocessor for Native
+                // want to return IrConstructorCall. In principle this could be done by changing return type in
+                // DeepCopyIrTreeWithSymbols, but that's too invasive.
+                // So we postpone the postprocessor call for a separate run. This shouldn't be a significant performance hit,
+                // as typeOf calls are rare.
+                if (Symbols.isTypeOfIntrinsic(expression.symbol)) {
+                    typeOfNodes[it] = expression.getTypeArgument(0)!!.leaveNonReifiedAsIs()
+                }
+            }
+        }
+    }
+
+    inner class TypeOfPostProcessor : IrElementTransformerVoid() {
+        override fun visitCall(expression: IrCall): IrExpression {
+            expression.transformChildrenVoid(this)
+            return copier.typeOfNodes[expression]?.let { oldType ->
                 // We should neither erase nor substitute non-reified type parameters in the `typeOf` call so that reflection is able
                 // to create a proper KTypeParameter for it. See KT-60175, KT-30279.
-                return strategy.postProcessTypeOf(expression, expression.getTypeArgument(0)!!.leaveNonReifiedAsIs())
-            }
-            return expressionCopy
+                return strategy.postProcessTypeOf(expression, oldType)
+            } ?: expression
         }
     }
 }

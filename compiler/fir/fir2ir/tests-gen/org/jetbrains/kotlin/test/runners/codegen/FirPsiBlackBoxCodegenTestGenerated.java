@@ -53153,6 +53153,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("inNestedInline.kt")
+      public void testInNestedInline() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/inNestedInline.kt");
+      }
+
+      @Test
       @TestMetadata("inlineClasses.kt")
       public void testInlineClasses() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/inlineClasses.kt");

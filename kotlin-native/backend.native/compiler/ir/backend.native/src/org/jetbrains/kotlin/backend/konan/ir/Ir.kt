@@ -436,6 +436,7 @@ internal class KonanSymbols(
     val kTypeImplIntrinsicConstructor = lookup.findNoParametersConstructor(kTypeImpl)!!
     val kTypeImplForTypeParametersWithRecursiveBounds = internalClass("KTypeImplForTypeParametersWithRecursiveBounds")
     val kTypeProjectionList = internalClass("KTypeProjectionList")
+    val typeOf = irBuiltIns.findFunctions(Name.identifier("typeOf"), StandardNames.KOTLIN_REFLECT_FQ_NAME).single()
 
     val threadLocal = topLevelClass(KonanFqNames.threadLocal)
 

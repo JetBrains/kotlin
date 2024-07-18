@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
+import org.jetbrains.kotlin.backend.jvm.ir.isReifiedTypeParameter
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
@@ -106,6 +108,10 @@ internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhas
                             // TODO: remove this condition after the fix of KT-69457:
                             inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
 
+                            // it's fine to have typeOf<T> with reified T, it would be correctly handled by inliner on inlining to next use-sites.
+                            // maybe it should be replaced by separate node to avoid this special case and simplify detection code - KT-70360
+                            Symbols.isTypeOfIntrinsic(inlineFunction.symbol) && inlineFunctionUseSite.getTypeArgument(0)?.isReifiedTypeParameter == true -> true
+
                             else -> false // forbidden
                         }
                     }
@@ -143,11 +149,6 @@ private val annotationImplementationPhase = createFileLoweringPhase(
         description = "Create synthetic annotations implementations and use them in annotations constructor calls"
 )
 
-private val lowerBeforeInlinePhase = createFileLoweringPhase(
-        ::TypeOfLowering,
-        name = "LowerBeforeInline",
-        description = "Special operations processing before inlining"
-)
 
 private val inlineCallableReferenceToLambdaPhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState -> NativeInlineCallableReferenceToLambdaPhase(context) },
@@ -396,7 +397,7 @@ private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
         },
         name = "InlineOnlyPrivateFunctions",
         description = "The first phase of inlining (inline only private functions)",
-        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
+        prerequisite = setOf(arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
 internal val syntheticAccessorGenerationPhase = createFileLoweringPhase(
@@ -412,7 +413,7 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         },
         name = "InlineAllFunctions",
         description = "The second phase of inlining (inline all functions)",
-        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
+        prerequisite = setOf(arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
 private val interopPhase = createFileLoweringPhase(
@@ -601,7 +602,6 @@ private val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
-        lowerBeforeInlinePhase,
         lateinitPhase,
         sharedVariablesPhase,
         outerThisSpecialAccessorInInlineFunctionsPhase,

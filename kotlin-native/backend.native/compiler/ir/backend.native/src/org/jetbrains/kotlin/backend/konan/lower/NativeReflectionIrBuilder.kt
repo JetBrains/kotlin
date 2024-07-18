@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.irConstantArray
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -28,6 +30,59 @@ import org.jetbrains.kotlin.types.Variance
 internal fun IrBuilderWithScope.toNativeConstantReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: (String) -> Unit = {}) = NativeConstantReflectionIrBuilder(
         context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound
 )
+
+internal fun IrBuilderWithScope.toNativeRuntimeReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: (String) -> Unit = {}) = NativeRuntimeReflectionIrBuilder(
+        context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound
+)
+
+internal class NativeRuntimeReflectionIrBuilder(
+        context: IrGeneratorContext,
+        scope: Scope,
+        startOffset: Int, endOffset: Int,
+        symbols: KonanSymbols,
+        onRecursiveUpperBound: (String) -> Unit,
+) : NativeReflectionIrBuilderBase<IrExpression>(context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound) {
+    override fun irKClass(symbol: IrClassSymbol): IrExpression {
+        val kClassType = symbols.kClassImpl.typeWith(symbol.defaultType)
+        return IrClassReferenceImpl(startOffset, endOffset, kClassType, symbol, kClassType)
+    }
+
+    override fun irKTypeOfReified(type: IrType): IrExpression {
+        return irCall(symbols.typeOf).apply {
+            putTypeArgument(0, type)
+        }
+    }
+
+    override fun irCreateInstance(
+            clazz: IrClass,
+            elements: Map<String, IrExpression>,
+            typeArguments: List<IrType>
+    ): IrExpression {
+        val constructor = clazz.primaryConstructor!!.symbol.owner
+        val arguments = constructor.valueParameters.also {
+            require(it.size == elements.size) {
+                "Wrong number of values provided for ${clazz.name} construction: ${elements.size} instead of ${it.size}"
+            }
+        }.map {
+            elements[it.name.asString()] ?: error("No value for field named ${it.name} provided")
+        }
+        return irCallConstructor(constructor.symbol, typeArguments).apply {
+            for ((index, i) in arguments.withIndex()) {
+                putValueArgument(index, i)
+            }
+        }
+    }
+
+    override fun irConstantNull() = irNull()
+    override fun irConstantString(string: String) = irString(string)
+    override fun irConstantInt(int: Int) = irInt(int)
+    override fun irConstantBoolean(boolean: Boolean) = irBoolean(boolean)
+
+    override fun irCreateArray(elementType: IrType, values: List<IrExpression>): IrExpression {
+        val arrayType = symbols.irBuiltIns.primitiveArrayForType[elementType]?.defaultType ?: symbols.array.typeWith(elementType)
+        return IrVarargImpl(startOffset, endOffset, arrayType, elementType, values)
+    }
+}
 
 
 // these constants are copy-pasted from KVarianceMapper.Companion in KTypeImpl.kt
