@@ -10,8 +10,16 @@ import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>, useSiteSession: FirSession): ConeSubstitutor {
-    return ConeSubstitutorByMap.create(substitution, useSiteSession, allowIdenticalSubstitution = false)
+/**
+ * If [allowIdenticalSubstitution] set to false then for empty and identical substitutions
+ *   [ConeSubstitutor.Empty] will be returned
+ */
+fun substitutorByMap(
+    substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
+    useSiteSession: FirSession,
+    allowIdenticalSubstitution: Boolean = false,
+): ConeSubstitutor {
+    return ConeSubstitutorByMap.create(substitution, useSiteSession, allowIdenticalSubstitution)
 }
 
 class ConeSubstitutorByMap private constructor(
@@ -20,10 +28,13 @@ class ConeSubstitutorByMap private constructor(
     private val useSiteSession: FirSession
 ) : AbstractConeSubstitutor(useSiteSession.typeContext) {
     companion object {
+        /**
+         * See KDoc to [substitutorByMap]
+         */
         fun create(
             substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
             useSiteSession: FirSession,
-            allowIdenticalSubstitution: Boolean = true,
+            allowIdenticalSubstitution: Boolean,
         ): ConeSubstitutor {
             if (substitution.isEmpty()) return Empty
 
