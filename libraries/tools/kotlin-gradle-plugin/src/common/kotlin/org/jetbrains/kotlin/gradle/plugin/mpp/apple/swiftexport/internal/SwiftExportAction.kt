@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import java.io.File
+import java.time.Instant
 import java.util.logging.Level
 import java.util.logging.Logger
 
-internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
+internal abstract class SwiftExportAction : WorkAction<SwiftExportWorkParameters> {
 
     companion object : SwiftExportLogger {
         private val logger = Logger.getLogger(this::class.java.name)
@@ -31,50 +32,53 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
     }
 
     override fun execute() {
-        runSwiftExport(
-            input = setOf(
-                InputModule(
-                    name = parameters.swiftApiModuleName.get(),
-                    path = parameters.kotlinLibraryFile.getFile().toPath(),
-                    config = SwiftExportConfig(
-                        settings = mapOf(
-                            SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.stableDeclarationsOrder.getOrElse(true).toString(),
-                            SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
-                            SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString(),
-                        ),
-                        logger = Companion,
-                        distribution = parameters.konanDistribution.get(),
-                        outputPath = parameters.outputPath.getFile().toPath(),
-                        multipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.IntoSingleModule
-                    )
-                )
+
+        val exportModules = parameters.swiftModules.get().map { module ->
+            module.toInputModule(config())
+        }.toSet()
+
+        val modules = GradleSwiftExportModules(
+            runSwiftExport(exportModules).getOrThrow().toPlainList(),
+            Instant.now().toEpochMilli()
+        )
+
+        val json = SerializationTools.writeToJson(modules)
+        parameters.swiftModulesFile.getFile().writeText(json)
+    }
+
+    private fun config(): SwiftExportConfig {
+        return SwiftExportConfig(
+            settings = mapOf(
+                SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.stableDeclarationsOrder.getOrElse(true).toString(),
+                SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
+                SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString()
             ),
-        ).apply {
-            val modules = getOrThrow().toPlainList()
-            val path = parameters.swiftModulesFile.getFile().canonicalPath
-            val json = SerializationTools.writeToJson(modules)
-            File(path).writeText(json)
-        }
+            logger = Companion,
+            distribution = parameters.konanDistribution.get(),
+            outputPath = parameters.outputPath.getFile().toPath()
+        )
     }
 }
 
 internal fun Set<SwiftExportModule>.toPlainList(): List<GradleSwiftExportModule> {
-    val modules = mutableListOf<GradleSwiftExportModule>()
-    val processedModules = mutableSetOf<GradleSwiftExportModule>()
+    val modules = mutableSetOf<GradleSwiftExportModule>()
 
-    fun processModule(module: SwiftExportModule) {
+    for (module in this) {
         val kgpModule = module.toKGPModule()
-        if (kgpModule in processedModules) return
-
-        modules.add(kgpModule)
-        processedModules.add(kgpModule)
+        if (kgpModule !in modules) {
+            modules.add(kgpModule)
+        }
     }
 
-    this.forEach {
-        processModule(it)
-    }
+    return modules.toList()
+}
 
-    return modules
+private fun SwiftExportedModule.toInputModule(config: SwiftExportConfig): InputModule {
+    return InputModule(
+        name = moduleName,
+        path = artifact.toPath(),
+        config = config
+    )
 }
 
 private fun SwiftExportModule.toKGPModule(): GradleSwiftExportModule {
