@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.ErrorAboutDataClassCopyVisibilityChange
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingTypesInPrimaryConstructorProperties
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidProjectionsInAnnotationProperties
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidReifiedTypeParametersOnTypeAliases
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate
 import org.jetbrains.kotlin.config.LanguageFeature.ModifierNonBuiltinSuspendFunError
@@ -119,6 +120,7 @@ import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeProjection
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.psi.KtWhenCondition
@@ -287,6 +289,7 @@ object FirErrors {
     val ANNOTATION_CLASS_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_CLASS_MEMBER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)
     val INVALID_TYPE_OF_ANNOTATION_MEMBER: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_TYPE_OF_ANNOTATION_MEMBER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
+    val PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER", ForbidProjectionsInAnnotationProperties, SourceElementPositioningStrategies.DEFAULT, KtTypeReference::class)
     val LOCAL_ANNOTATION_CLASS_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("LOCAL_ANNOTATION_CLASS_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, KtClassOrObject::class)
     val MISSING_VAL_ON_ANNOTATION_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("MISSING_VAL_ON_ANNOTATION_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtParameter::class)
     val NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class)

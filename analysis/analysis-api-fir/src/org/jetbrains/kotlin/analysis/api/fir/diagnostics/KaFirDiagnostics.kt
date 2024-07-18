@@ -77,6 +77,7 @@ import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeProjection
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.psi.KtWhenCondition
@@ -735,6 +736,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface InvalidTypeOfAnnotationMember : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = InvalidTypeOfAnnotationMember::class
+    }
+
+    interface ProjectionInTypeOfAnnotationMemberError : KaFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass get() = ProjectionInTypeOfAnnotationMemberError::class
+    }
+
+    interface ProjectionInTypeOfAnnotationMemberWarning : KaFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass get() = ProjectionInTypeOfAnnotationMemberWarning::class
     }
 
     interface LocalAnnotationClassError : KaFirDiagnostic<KtClassOrObject> {

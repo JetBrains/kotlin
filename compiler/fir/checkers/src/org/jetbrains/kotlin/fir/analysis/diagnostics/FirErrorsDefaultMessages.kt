@@ -542,6 +542,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_PROPERTY_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE
@@ -1079,6 +1080,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(MISSING_VAL_ON_ANNOTATION_PARAMETER, "'val' keyword is missing in annotation parameter.")
         map.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "Annotation parameters cannot be nullable.")
         map.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member.")
+        map.put(PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER, "Projection in type of annotation member.")
         map.put(VAR_ANNOTATION_PARAMETER, "An annotation parameter cannot be 'var'.")
         map.put(ANNOTATION_CLASS_CONSTRUCTOR_CALL, "Annotation class cannot be instantiated.")
         map.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated.")

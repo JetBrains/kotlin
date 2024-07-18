@@ -1,3 +1,4 @@
+// LANGUAGE: +ForbidProjectionsInAnnotationProperties
 // DIAGNOSTICS: -REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION
 
 annotation class Anno1In(val x: Array<in Anno2In>)

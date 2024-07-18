@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// LATEST_LV_DIFFERENCE
 import kotlin.reflect.KClass
 
 open class A

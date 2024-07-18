@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeProjection
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.psi.KtWhenCondition
@@ -1001,6 +1002,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER) { firDiagnostic ->
         InvalidTypeOfAnnotationMemberImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER.errorFactory) { firDiagnostic ->
+        ProjectionInTypeOfAnnotationMemberErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER.warningFactory) { firDiagnostic ->
+        ProjectionInTypeOfAnnotationMemberWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

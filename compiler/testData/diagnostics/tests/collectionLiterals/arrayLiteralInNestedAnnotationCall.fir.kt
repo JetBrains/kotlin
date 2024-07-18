@@ -1,10 +1,11 @@
+// LANGUAGE: +ForbidProjectionsInAnnotationProperties
 // DIAGNOSTICS: -REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION
 
-annotation class Anno1In(val x: Array<in Anno2In>)
-annotation class Anno2In(val x: Array<in String>)
+annotation class Anno1In(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_ERROR!>Array<in Anno2In><!>)
+annotation class Anno2In(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_ERROR!>Array<in String><!>)
 
-annotation class Anno1Out(val x: Array<out Anno2Out>)
-annotation class Anno2Out(val x: Array<out String>)
+annotation class Anno1Out(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_ERROR!>Array<out Anno2Out><!>)
+annotation class Anno2Out(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_ERROR!>Array<out String><!>)
 
 @Repeatable
 annotation class Anno1Inv(val x: Array<Anno2Inv>)

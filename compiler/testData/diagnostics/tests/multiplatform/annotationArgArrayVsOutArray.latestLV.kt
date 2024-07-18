@@ -2,7 +2,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect annotation class A(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_WARNING!>Array<out String><!>)
+expect annotation class A(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_ERROR!>Array<out String><!>)
 
 @A(<!ARGUMENT_TYPE_MISMATCH!>"abc"<!>, <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
 fun test() {}
@@ -19,7 +19,7 @@ actual annotation class A(val <!ACTUAL_MISSING!>x<!>: Array<String>)
 @A(<!ARGUMENT_TYPE_MISMATCH!>"abc"<!>, <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
 fun test2() {}
 
-annotation class B(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_WARNING!>Array<out String><!>)
+annotation class B(val x: <!PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER_ERROR!>Array<out String><!>)
 
 @B(<!ARGUMENT_TYPE_MISMATCH!>"abc"<!>, <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
 fun test3() {}
