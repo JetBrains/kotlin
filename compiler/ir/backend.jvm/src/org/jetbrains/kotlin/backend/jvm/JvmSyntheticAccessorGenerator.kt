@@ -99,6 +99,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
      */
     private fun AccessorNameBuilder.contributeFieldAccessorSuffix(field: IrField, superQualifierSymbol: IrClassSymbol?) {
         if (field.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD && !field.parentAsClass.isCompanion) {
+            // Special _c_ompanion _p_roperty suffix for accessing companion backing field moved to outer
             contribute(COMPANION_PROPERTY_MARKER)
         } else {
             contribute(PROPERTY_MARKER)
