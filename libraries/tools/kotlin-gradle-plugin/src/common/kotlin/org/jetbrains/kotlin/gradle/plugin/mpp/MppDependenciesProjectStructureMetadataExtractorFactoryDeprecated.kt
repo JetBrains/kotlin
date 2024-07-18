@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
@@ -16,22 +18,22 @@ import org.jetbrains.kotlin.gradle.utils.buildNameCompat
 import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 
-internal val Project.kotlinMppDependencyProjectStructureMetadataExtractorFactory: MppDependencyProjectStructureMetadataExtractorFactory
-    get() = MppDependencyProjectStructureMetadataExtractorFactory.getOrCreate(this)
+internal val Project.kotlinMppDependencyProjectStructureMetadataExtractorFactoryDeprecated: MppDependenciesProjectStructureMetadataExtractorFactoryDeprecated
+    get() = MppDependenciesProjectStructureMetadataExtractorFactoryDeprecated.getOrCreate(this)
 
-internal data class ProjectPathWithBuildPath(
-    val projectPath: String,
-    val buildPath: String,
+@Deprecated(
+    message = "This factory is not Gradle project isolation compatible.",
+    replaceWith = ReplaceWith("MppDependencyProjectStructureMetadataExtractorFactory")
 )
-
-internal class MppDependencyProjectStructureMetadataExtractorFactory
+internal class MppDependenciesProjectStructureMetadataExtractorFactoryDeprecated
 private constructor(
     private val currentBuild: CurrentBuildIdentifier,
     private val includedBuildsProjectStructureMetadataProviders: Lazy<Map<ProjectPathWithBuildPath, Lazy<KotlinProjectStructureMetadata?>>>,
     private val currentBuildProjectStructureMetadataProviders: Map<String, Lazy<KotlinProjectStructureMetadata?>>,
-) {
-    fun create(
+): IMppDependenciesProjectStructureMetadataExtractorFactory {
+    override fun create(
         metadataArtifact: ResolvedArtifactResult,
+        resolvedMetadataConfiguration: LazyResolvedConfiguration?,
     ): MppDependencyProjectStructureMetadataExtractor {
         val moduleId = metadataArtifact.variant.owner
 
@@ -40,7 +42,7 @@ private constructor(
                 val projectStructureMetadataProvider = currentBuildProjectStructureMetadataProviders[moduleId.projectPath]
                     ?: error("Project structure metadata not found for project '${moduleId.projectPath}'")
 
-                ProjectMppDependencyProjectStructureMetadataExtractor(
+                ProjectMppDependencyProjectStructureMetadataExtractorDeprecated(
                     projectPath = moduleId.projectPath,
                     projectStructureMetadataProvider = projectStructureMetadataProvider::value
                 )
@@ -69,10 +71,10 @@ private constructor(
     }
 
     companion object {
-        private val extensionName = MppDependencyProjectStructureMetadataExtractorFactory::class.java.simpleName
-        fun getOrCreate(project: Project): MppDependencyProjectStructureMetadataExtractorFactory =
+        private val extensionName = MppDependenciesProjectStructureMetadataExtractorFactoryDeprecated::class.java.simpleName
+        fun getOrCreate(project: Project): MppDependenciesProjectStructureMetadataExtractorFactoryDeprecated =
             project.rootProject.extraProperties.getOrPut(extensionName) {
-                MppDependencyProjectStructureMetadataExtractorFactory(
+                MppDependenciesProjectStructureMetadataExtractorFactoryDeprecated(
                     currentBuild = project.currentBuild,
                     lazy { GlobalProjectStructureMetadataStorage.getProjectStructureMetadataProvidersFromAllGradleBuilds(project) },
                     collectAllProjectStructureMetadataInCurrentBuild(project)

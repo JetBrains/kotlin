@@ -3,14 +3,17 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.lenientArtifactsView
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class MetadataDependencyTransformationTaskInputs(
@@ -21,6 +24,19 @@ internal class MetadataDependencyTransformationTaskInputs(
 
     private val currentBuild = project.currentBuild
 
+    // GMT algorithm uses the project-structure-metadata.json files from the other subprojects.
+    // Resolving `projectStructureMetadataResolvableConfiguration` triggers other subprojects' tasks
+    // to generate project-structure-metadata.json.
+    // Thus, this should be a Gradle input to trigger the whole process.
+    @Suppress("unused") // Gradle input
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    val projectStructureMetadataFileCollection: ConfigurableFileCollection = project.filesProvider {
+        kotlinSourceSet.internal.projectStructureMetadataResolvableConfiguration?.lenientArtifactsView?.artifactFiles
+    }
+
     @Suppress("unused") // Gradle input
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -30,6 +46,7 @@ internal class MetadataDependencyTransformationTaskInputs(
         .internal
         .resolvableMetadataConfiguration
         .applyIf(!keepProjectDependencies) { withoutProjectDependencies() }
+
 
     @Suppress("unused") // Gradle input
     @get:InputFiles

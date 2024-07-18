@@ -144,6 +144,11 @@ internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () 
 internal inline fun <reified T> Project.setProperty(noinline itemsProvider: () -> Iterable<T>): SetProperty<T> =
     objects.setProperty(T::class.java).apply { set(provider(itemsProvider)) }
 
+internal inline fun <reified T> Project.listProvider(noinline provider: () -> List<T>): Provider<List<T>> {
+    return project.objects.listProperty<T>().apply {
+        set(project.provider(provider))
+    }
+}
 /**
  * Changing Provider will be evaluated every time it accessed.
  *

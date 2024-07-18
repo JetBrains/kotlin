@@ -7,7 +7,9 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import mockProjectStructureMetadataFileForProject
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -21,6 +23,9 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidPlatformBinaryDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.toJson
+import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import kotlin.test.BeforeTest
@@ -100,6 +105,8 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         root.evaluate()
         producer.evaluate()
         consumer.evaluate()
+
+        mockProjectStructureMetadataFileForProject(producer)
 
         root.allprojects { project ->
             project.repositories.mavenLocal()
@@ -187,9 +194,13 @@ class IdeJvmAndAndroidDependencyResolutionTest {
             api(project(":b"))
         }
 
+
         root.evaluate()
         a.evaluate()
         b.evaluate()
+
+        mockProjectStructureMetadataFileForProject(b)
+        mockProjectStructureMetadataFileForProject(a)
 
         a.kotlinIdeMultiplatformImport.resolveDependencies("jvmAndAndroidTest").assertMatches(
             friendSourceDependency(":a/commonMain"),
@@ -217,6 +228,8 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         root.evaluate()
         producer.evaluate()
         consumer.evaluate()
+
+        mockProjectStructureMetadataFileForProject(producer)
 
         consumer.kotlinIdeMultiplatformImport.resolveDependencies("commonMain").assertMatches(
             regularSourceDependency(":producer/commonMain"),

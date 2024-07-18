@@ -9,18 +9,13 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.sources.*
-import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.listProperty
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 /**
  * @see resolvableMetadataConfiguration
@@ -39,6 +34,20 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
         .maybeCreateResolvable(resolvableMetadataConfigurationName)
         .configureMetadataDependenciesAttribute(project)
 
+    addDependsOnClosureConfigurationsTo(configuration)
+
+    // needed for old IDEs
+    configureLegacyMetadataDependenciesConfigurations(configuration)
+
+    configuration
+}
+
+/**
+ * Extends the given [configuration] from the configurations defined in the [withDependsOnClosure] of the source set.
+ *
+ * @param configuration The configuration to be extended.
+ */
+internal fun InternalKotlinSourceSet.addDependsOnClosureConfigurationsTo(configuration: Configuration) {
     withDependsOnClosure.forAll { sourceSet ->
         val extenders = sourceSet.internal.compileDependenciesConfigurations
         configuration.extendsFrom(*extenders.toTypedArray())
@@ -55,13 +64,9 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
         }
     })
 
-    // needed for old IDEs
-    configureLegacyMetadataDependenciesConfigurations(configuration)
-
-    configuration
 }
 
-private val InternalKotlinSourceSet.compileDependenciesConfigurations: List<Configuration>
+internal val InternalKotlinSourceSet.compileDependenciesConfigurations: List<Configuration>
     get() = listOf(
         project.configurations.getByName(apiConfigurationName),
         project.configurations.getByName(implementationConfigurationName),
@@ -88,16 +93,14 @@ private fun InternalKotlinSourceSet.configureLegacyMetadataDependenciesConfigura
     }
 }
 
-private fun Configuration.configureMetadataDependenciesAttribute(project: Project): Configuration = apply {
-    usesPlatformOf(project.multiplatformExtension.metadata())
+internal fun Configuration.configureMetadataDependenciesAttribute(project: Project): Configuration = apply {
+    if (project.multiplatformExtensionOrNull != null) {
+        project.launch {
+            usesPlatformOf(project.multiplatformExtension.awaitMetadataTarget())
+        }
+    }
     attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
     attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-}
-
-private inline fun <reified T> Project.listProvider(noinline provider: () -> List<T>): Provider<List<T>> {
-    return project.objects.listProperty<T>().apply {
-        set(project.provider(provider))
-    }
 }
 
 /**
@@ -115,7 +118,7 @@ internal val SetupConsistentMetadataDependenciesResolution = KotlinProjectSetupC
     }
 
     for ((sourceSetTree, sourceSetsOfTree) in sourceSetsBySourceSetTree) {
-        val configurationName = when(sourceSetTree) {
+        val configurationName = when (sourceSetTree) {
             null -> continue // for unknown trees there should be no relation between source sets, so just skip
             KotlinSourceSetTree.main -> "allSourceSetsCompileDependenciesMetadata"
             else -> lowerCamelCaseName("all", sourceSetTree.name, "SourceSetsCompileDependenciesMetadata")

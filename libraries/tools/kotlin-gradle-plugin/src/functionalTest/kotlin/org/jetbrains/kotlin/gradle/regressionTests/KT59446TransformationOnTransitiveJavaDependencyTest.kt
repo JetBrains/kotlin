@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import mockProjectStructureMetadataFileForProject
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
@@ -39,6 +40,9 @@ class KT59446TransformationOnTransitiveJavaDependencyTest {
         projectA.multiplatformExtension.sourceSets.commonMain.dependencies {
             api(project(":b"))
         }
+
+        projectB.evaluate()
+        mockProjectStructureMetadataFileForProject(projectB)
 
         /*
         Call transformation

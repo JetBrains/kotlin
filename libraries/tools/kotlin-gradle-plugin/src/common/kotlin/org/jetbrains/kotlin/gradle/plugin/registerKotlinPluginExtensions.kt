@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetu
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataForJVMSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataForKMPSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformResourcesPublicationExtensionAction
@@ -63,6 +65,12 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, ScriptingGradleSubpluginSetupAction)
         }
 
+        if (isJvm) {
+            if (isKmpProjectIsolationEnabled) {
+                register(project, ProjectStructureMetadataForJVMSetupAction)
+            }
+        }
+
         if (isMultiplatform) {
             register(project, ApplyJavaBasePluginSetupAction)
             register(project, DeprecateJavaPluginsApplicationSetupAction)
@@ -89,7 +97,12 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, RegisterMultiplatformResourcesPublicationExtensionAction)
             register(project, SetUpMultiplatformJvmResourcesPublicationAction)
             register(project, SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction)
+
+            if (isKmpProjectIsolationEnabled) {
+                register(project, ProjectStructureMetadataForKMPSetupAction)
+            }
         }
+
     }
 
     KotlinTargetSideEffect.extensionPoint.apply {
@@ -160,6 +173,8 @@ internal fun Project.registerKotlinPluginExtensions() {
         }
     }
 }
+
+private val Project.isKmpProjectIsolationEnabled get() = PropertiesProvider(project).kotlinKmpProjectIsolationEnabled
 
 /* Helper functions to make configuration code above easier to read */
 

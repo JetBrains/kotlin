@@ -16,12 +16,32 @@ sealed class MppDependencyProjectStructureMetadataExtractor {
     companion object Factory
 }
 
-internal class ProjectMppDependencyProjectStructureMetadataExtractor(
+internal abstract class AbstractProjectMppDependencyProjectStructureMetadataExtractor(
     val projectPath: String,
+) : MppDependencyProjectStructureMetadataExtractor()
+
+@Deprecated(
+    message = "This class is not compatible with gradle project Isolation",
+    replaceWith = ReplaceWith("ProjectMppDependencyProjectStructureMetadataExtractor")
+)
+internal class ProjectMppDependencyProjectStructureMetadataExtractorDeprecated(
+    projectPath: String,
     private val projectStructureMetadataProvider: () -> KotlinProjectStructureMetadata?,
-) : MppDependencyProjectStructureMetadataExtractor() {
+) : AbstractProjectMppDependencyProjectStructureMetadataExtractor(projectPath) {
 
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? = projectStructureMetadataProvider()
+}
+
+internal class ProjectMppDependencyProjectStructureMetadataExtractor(
+    projectPath: String,
+    private val projectStructureMetadataFile: File?,
+) : AbstractProjectMppDependencyProjectStructureMetadataExtractor(projectPath) {
+
+    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
+        return projectStructureMetadataFile?.let {
+            parseKotlinSourceSetMetadataFromJson(projectStructureMetadataFile.readText())
+        }
+    }
 }
 
 internal open class JarMppDependencyProjectStructureMetadataExtractor(
@@ -49,6 +69,10 @@ internal open class JarMppDependencyProjectStructureMetadataExtractor(
 internal class IncludedBuildMppDependencyProjectStructureMetadataExtractor(
     primaryArtifact: File,
     private val projectStructureMetadataProvider: () -> KotlinProjectStructureMetadata?,
+    private val projectStructureMetadataFile: File? = null,
 ) : JarMppDependencyProjectStructureMetadataExtractor(primaryArtifact) {
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? = projectStructureMetadataProvider()
+    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? =
+        projectStructureMetadataFile?.let {
+            parseKotlinSourceSetMetadataFromJson(projectStructureMetadataFile.readText())
+        } ?: projectStructureMetadataProvider()
 }

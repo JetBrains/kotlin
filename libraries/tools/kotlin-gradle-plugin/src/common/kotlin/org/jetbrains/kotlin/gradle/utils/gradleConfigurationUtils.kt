@@ -13,7 +13,6 @@ import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
 import org.gradle.util.GradleVersion
-import java.lang.RuntimeException
 
 fun Project.addExtendsFromRelation(extendingConfigurationName: String, extendsFromConfigurationName: String, forced: Boolean = true) {
     if (extendingConfigurationName == extendsFromConfigurationName) return
@@ -31,7 +30,7 @@ fun NamedDomainObjectProvider<Configuration>.extendsFrom(other: NamedDomainObjec
 }
 
 internal fun Configuration.addGradlePluginMetadataAttributes(
-    project: Project
+    project: Project,
 ) {
     attributes {
         it.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
@@ -44,4 +43,16 @@ internal fun Configuration.addGradlePluginMetadataAttributes(
             )
         }
     }
+}
+
+/**
+ * Extends the dependencies of this configuration by adding the specified [configurations]'s dependencies only.
+ *
+ * @param project The project on which the configuration is applied.
+ * @param configurations The configurations whose projects' dependencies will be added to this configuration.
+ */
+internal fun Configuration.copyDependenciesLazy(project: Project, vararg configurations: Configuration) {
+    return dependencies.addAllLater(project.listProvider {
+        configurations.flatMap { it.allDependencies }
+    })
 }

@@ -62,7 +62,10 @@ internal fun ConfigurationContainer.detachedResolvable(vararg dependencies: Depe
         isCanBeConsumed = false
     }
 
-internal fun ConfigurationContainer.createConsumable(name: String): Configuration = create(name).apply {
+internal fun ConfigurationContainer.createConsumable(
+    name: String,
+    configurationOnCreate: Configuration.() -> Unit = {},
+): Configuration = create(name, configurationOnCreate).apply {
     isCanBeResolved = false
 }
 
@@ -74,8 +77,11 @@ internal fun ConfigurationContainer.findConsumable(name: String): Configuration?
     }
 }
 
-internal fun ConfigurationContainer.maybeCreateConsumable(name: String): Configuration =
-    findConsumable(name) ?: createConsumable(name)
+internal fun ConfigurationContainer.maybeCreateConsumable(
+    name: String,
+    configurationOnCreate: Configuration.() -> Unit = {},
+): Configuration =
+    findConsumable(name) ?: createConsumable(name, configurationOnCreate)
 
 internal fun ConfigurationContainer.createDependencyScope(
     name: String,
@@ -131,3 +137,5 @@ internal fun Configuration.addSecondaryOutgoingJvmClassesVariant(
         }
     }
 }
+
+internal val Configuration.lenientArtifactsView get() = incoming.artifactView { view -> view.isLenient = true }.artifacts
