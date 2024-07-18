@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNon
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -176,6 +177,16 @@ private val sharedVariablesPhase = createFileLoweringPhase(
         name = "SharedVariables",
         description = "Shared variable lowering",
         prerequisite = setOf(lateinitPhase)
+)
+
+private val outerThisSpecialAccessorInInlineFunctionsPhase = createFileLoweringPhase(
+        { context, irFile ->
+            // Make accessors public if `SyntheticAccessorLowering` is disabled.
+            val generatePublicAccessors = !context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)
+            OuterThisInInlineFunctionsSpecialAccessorLowering(context, generatePublicAccessors).lower(irFile)
+        },
+        name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
+        description = "Generate a special private member accessor for outer@this implicit value parameter in inline functions"
 )
 
 private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
@@ -385,7 +396,7 @@ private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
         },
         name = "InlineOnlyPrivateFunctions",
         description = "The first phase of inlining (inline only private functions)",
-        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies)
+        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
 internal val syntheticAccessorGenerationPhase = createFileLoweringPhase(
@@ -401,7 +412,7 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         },
         name = "InlineAllFunctions",
         description = "The second phase of inlining (inline all functions)",
-        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies)
+        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies, outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
 private val interopPhase = createFileLoweringPhase(
@@ -587,6 +598,7 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSynt
         lowerBeforeInlinePhase,
         lateinitPhase,
         sharedVariablesPhase,
+        outerThisSpecialAccessorInInlineFunctionsPhase,
         extractLocalClassesFromInlineBodies,
         inlineCallableReferenceToLambdaPhase,
         arrayConstructorPhase,

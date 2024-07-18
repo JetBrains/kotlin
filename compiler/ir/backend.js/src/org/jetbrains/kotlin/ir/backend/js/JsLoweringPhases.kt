@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNon
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -214,6 +215,12 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(lateinitDeclarationLoweringPhase, lateinitUsageLoweringPhase)
 )
 
+private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
+    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+    name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
+    description = "Generate a special private member accessor for outer@this implicit value parameter in inline functions"
+)
+
 private val localClassesInInlineLambdasPhase = makeIrModulePhase(
     ::LocalClassesInInlineLambdasLowering,
     name = "LocalClassesInInlineLambdasPhase",
@@ -262,6 +269,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
     },
     name = "InlineOnlyPrivateFunctions",
     description = "The first phase of inlining (inline only private functions)",
+    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
 internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
@@ -308,7 +316,7 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
     },
     name = "InlineAllFunctions",
     description = "The second phase of inlining (inline all functions)",
-    prerequisite = setOf(cacheInlineFunctionsBeforeInliningAllFunctionsPhase)
+    prerequisite = setOf(cacheInlineFunctionsBeforeInliningAllFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase)
 )
 
 private val copyInlineFunctionBodyLoweringPhase = makeIrModulePhase(
@@ -875,6 +883,7 @@ fun getJsLowerings(
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,
     sharedVariablesLoweringPhase,
+    outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
     localClassesInInlineFunctionsPhase,
     localClassesExtractionFromInlineFunctionsPhase,

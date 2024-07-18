@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -78,6 +79,8 @@ internal class NativeInlineFunctionResolver(
     private fun lower(function: IrFunction, irFile: IrFile, functionIsCached: Boolean) {
         val body = function.body ?: return
 
+        val experimentalDoubleInlining = context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)
+
         TypeOfLowering(context).lower(body, function, irFile)
 
         NullableFieldsForLateinitCreationLowering(context).lowerWithLocalDeclarations(function)
@@ -85,6 +88,11 @@ internal class NativeInlineFunctionResolver(
         LateinitUsageLowering(context).lower(body, function)
 
         SharedVariablesLowering(context).lower(body, function)
+
+        OuterThisInInlineFunctionsSpecialAccessorLowering(
+                context,
+                generatePublicAccessors = !experimentalDoubleInlining // Make accessors public if `SyntheticAccessorLowering` is disabled.
+        ).lowerWithoutAddingAccessorsToParents(function)
 
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
 
@@ -98,7 +106,7 @@ internal class NativeInlineFunctionResolver(
         ArrayConstructorLowering(context).lower(body, function)
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
 
-        if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
+        if (experimentalDoubleInlining) {
             NativeIrInliner(generationState, inlineOnlyPrivateFunctions = true).lower(body, function)
             SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         }
