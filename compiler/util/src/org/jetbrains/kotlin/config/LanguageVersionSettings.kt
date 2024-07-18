@@ -344,6 +344,7 @@ enum class LanguageFeature(
     ReferencesToSyntheticJavaProperties(KOTLIN_2_2), // KT-8575
     ForbidUsingExpressionTypesWithInaccessibleContent(KOTLIN_2_2, kind = BUG_FIX), // KT-66691
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(KOTLIN_2_2, kind = BUG_FIX), // KT-66691, KT-66742
+    ReportExposedTypeForMoreCasesOfTypeParameterBounds(KOTLIN_2_2, kind = BUG_FIX), // KT-69653
 
     // End of 2.* language features --------------------------------------------------
 
@@ -412,7 +413,6 @@ enum class LanguageFeature(
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, kind = OTHER), // KT-56386
     WhenGuards(sinceVersion = null, kind = OTHER), // KT-13626
     MultiDollarInterpolation(sinceVersion = null, kind = OTHER), // KT-2425
-    ReportExposedTypeForMoreCasesOfTypeParameterBounds(sinceVersion = null, kind = BUG_FIX), // KT-27112
     ;
 
     init {
