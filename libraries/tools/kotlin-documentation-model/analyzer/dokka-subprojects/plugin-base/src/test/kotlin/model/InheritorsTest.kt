@@ -566,4 +566,46 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
             }
         }
     }
+
+    @Test
+    fun `substitution override (fake override) fun and prop should not have the override modifier`() {
+        inlineModelTest(
+            """
+            |open class Job<T> {
+            |    open fun do1(p: T) = p
+            |    var p: T? = null
+            |}
+            |class GoodJob : Job<Int>()
+        """
+        ) {
+            with((this / "inheritors" / "GoodJob" / "do1").cast<DFunction>()) {
+                name equals "do1"
+                extra[AdditionalModifiers]?.content?.values?.singleOrNull().orEmpty() equals emptySet<ExtraModifiers>()
+            }
+            with((this / "inheritors" / "GoodJob" / "p").cast<DProperty>()) {
+                name equals "p"
+                extra[AdditionalModifiers]?.content?.values?.singleOrNull().orEmpty() equals emptySet<ExtraModifiers>()
+            }
+        }
+    }
+
+    @Test
+    fun `intersection override (fake override) fun and prop should not have the override modifier`() {
+        inlineModelTest(
+            """
+            |interface A { fun x() val p: Int } 
+            |interface B { fun x() val p: Int }  
+            |interface C : A, B
+        """
+        ) {
+            with((this / "inheritors" / "C" / "x").cast<DFunction>()) {
+                name equals "x"
+                extra[AdditionalModifiers]?.content?.values?.singleOrNull().orEmpty() equals emptySet<ExtraModifiers>()
+            }
+            with((this / "inheritors" / "C" / "p").cast<DProperty>()) {
+                name equals "p"
+                extra[AdditionalModifiers]?.content?.values?.singleOrNull().orEmpty() equals emptySet<ExtraModifiers>()
+            }
+        }
+    }
 }
