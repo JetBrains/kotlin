@@ -43,7 +43,7 @@ dependencies {
 
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testRuntimeOnly(libs.intellij.fastutil)
     testRuntimeOnly(commonDependency("one.util:streamex"))
 
     testRuntimeOnly(jpsModel())
