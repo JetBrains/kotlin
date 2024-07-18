@@ -140,9 +140,10 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
         get() = this is FirConstructorSymbol && isPrimary || origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 
     private fun checkFile(file: FirFile, inspector: FirDeclarationCollector<FirBasedSymbol<*>>, context: CheckerContext) {
-        val packageMemberScope: FirPackageMemberScope = context.sessionHolder.scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {
-            FirPackageMemberScope(file.packageFqName, context.sessionHolder.session)
-        }
+        val packageMemberScope: FirPackageMemberScope =
+            context.sessionHolder.scopeSession.getOrBuild(file.packageFqName to context.session, PACKAGE_MEMBER) {
+                FirPackageMemberScope(file.packageFqName, context.sessionHolder.session)
+            }
         inspector.collectTopLevel(file, packageMemberScope)
     }
 }

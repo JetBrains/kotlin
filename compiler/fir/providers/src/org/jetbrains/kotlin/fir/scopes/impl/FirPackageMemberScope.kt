@@ -73,4 +73,4 @@ class FirPackageMemberScope(
     override val scopeOwnerLookupNames: List<String> = SmartList(fqName.asString())
 }
 
-val PACKAGE_MEMBER: ScopeSessionKey<FqName, FirPackageMemberScope> = scopeSessionKey()
+val PACKAGE_MEMBER: ScopeSessionKey<Pair<FqName, FirSession>, FirPackageMemberScope> = scopeSessionKey()
