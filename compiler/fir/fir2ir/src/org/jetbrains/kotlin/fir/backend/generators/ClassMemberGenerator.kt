@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationC
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFromEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -168,7 +169,9 @@ internal class ClassMemberGenerator(
                 if (regularBody != null) {
                     body.statements += regularBody.statements
                 }
-                if (body.statements.isNotEmpty()) {
+                // Constructor of `Any` is a special case because
+                // constructors of other classes have at least a delegation call to a super constructor
+                if (body.statements.isNotEmpty() || containingClass?.classId == StandardClassIds.Any) {
                     irFunction.body = body
                 }
             } else if (irFunction !is IrConstructor && !irFunction.isExpect) {
