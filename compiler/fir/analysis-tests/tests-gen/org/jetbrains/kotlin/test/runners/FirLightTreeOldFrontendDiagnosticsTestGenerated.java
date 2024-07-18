@@ -8210,6 +8210,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("elvisOperator.kt")
+        public void testElvisOperator() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/elvisOperator.kt");
+        }
+
+        @Test
         @TestMetadata("kt3444_ReturnFromLocalFunctions.kt")
         public void testKt3444_ReturnFromLocalFunctions() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/kt3444_ReturnFromLocalFunctions.kt");
