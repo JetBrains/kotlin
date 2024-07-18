@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.model.*
 class ResultTypeResolver(
     val typeApproximator: AbstractTypeApproximator,
     val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
 ) {
     interface Context : TypeSystemInferenceExtensionContext, ConstraintSystemBuilder {
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
@@ -36,7 +36,7 @@ class ResultTypeResolver(
 
     private fun Context.getDefaultTypeForSelfType(
         constraints: List<Constraint>,
-        typeVariable: TypeVariableMarker
+        typeVariable: TypeVariableMarker,
     ): KotlinTypeMarker? {
         val typeVariableConstructor = typeVariable.freshTypeConstructor() as TypeVariableTypeConstructorMarker
         val typesForRecursiveTypeParameters = constraints.mapNotNull { constraint ->
@@ -51,7 +51,7 @@ class ResultTypeResolver(
     private fun Context.getDefaultType(
         direction: ResolveDirection,
         constraints: List<Constraint>,
-        typeVariable: TypeVariableMarker
+        typeVariable: TypeVariableMarker,
     ): KotlinTypeMarker {
         if (isTypeInferenceForSelfTypesSupported) {
             getDefaultTypeForSelfType(constraints, typeVariable)?.let { return it }
@@ -283,7 +283,7 @@ class ResultTypeResolver(
     private fun Context.resultType(
         firstCandidate: KotlinTypeMarker?,
         secondCandidate: KotlinTypeMarker?,
-        variableWithConstraints: VariableWithConstraints
+        variableWithConstraints: VariableWithConstraints,
     ): KotlinTypeMarker? {
         if (firstCandidate == null || secondCandidate == null) return firstCandidate ?: secondCandidate
 
