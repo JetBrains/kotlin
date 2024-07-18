@@ -26073,6 +26073,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("dnnInValue.kt")
+    public void testDnnInValue() {
+      runTest("compiler/testData/codegen/box/inlineClasses/dnnInValue.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+    }
+
+    @Test
     @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
     public void testElvisWithInlineClassAndNullConstant() {
       runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());

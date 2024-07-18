@@ -20744,6 +20744,7 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         register("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        register("compiler/testData/codegen/box/inlineClasses/dnnInValue.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstantGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         register("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21605,6 +21606,13 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       public void testDefaultWithInlineClassArgumentGeneric() {
         // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
         runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgumentGeneric.kt");
+      }
+
+      @Test
+      @TestMetadata("dnnInValue.kt")
+      public void testDnnInValue() {
+        // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+        runTest("compiler/testData/codegen/box/inlineClasses/dnnInValue.kt");
       }
 
       @Test

@@ -226,10 +226,9 @@ fun deserializeClassToSymbol(
             classProto.loadValueClassRepresentation(
                 context.nameResolver,
                 context.typeTable,
-                // Looks like DNN types are not possible here
-                { context.typeDeserializer.inflexibleType(it) as ConeSimpleKotlinType }) { name ->
+                { context.typeDeserializer.inflexibleType(it) }) { name ->
                 val member = declarations.singleOrNull { it is FirProperty && it.receiverParameter == null && it.name == name }
-                (member as FirProperty?)?.returnTypeRef?.coneType as ConeSimpleKotlinType
+                (member as FirProperty?)?.returnTypeRef?.coneType as ConeInflexibleType
             } ?: computeValueClassRepresentation(this, session)
 
         replaceAnnotations(
