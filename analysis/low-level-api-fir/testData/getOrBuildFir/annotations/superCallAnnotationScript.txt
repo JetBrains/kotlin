@@ -11,21 +11,21 @@ FILE: [ResolvedTo(IMPORTS)] superCallAnnotationScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-superCallAnnotationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superCallAnnotationScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class B : R|@R|Anno|()  A| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-superCallAnnotationScript.kts>] class B : R|@R|Anno|()  A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<@R|Anno|[Types]() A>
             }

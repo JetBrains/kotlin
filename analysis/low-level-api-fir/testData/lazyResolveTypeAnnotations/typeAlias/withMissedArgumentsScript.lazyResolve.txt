@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] withMissedArgumentsScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: String): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -251,7 +251,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] withMissedArgumentsScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|TypeAnnWithArg| {
                 super<R|kotlin/Any|>()
             }

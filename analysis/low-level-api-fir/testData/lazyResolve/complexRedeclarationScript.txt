@@ -4,65 +4,65 @@ FILE: [ResolvedTo(RAW_FIR)] complexRedeclarationScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class B : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -79,19 +79,19 @@ FILE: [ResolvedTo(RAW_FIR)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class I : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<P>
                 }
@@ -109,65 +109,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class B : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -184,19 +184,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class I : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<P>
                 }
@@ -214,65 +214,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class B : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -289,19 +289,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class I : P {
+            public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : P {
                 public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<P>
                 }
@@ -319,65 +319,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class B : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -394,19 +394,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(COMPANION_GENERATION)] class I : P {
+            public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : P {
                 public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<P>
                 }
@@ -424,65 +424,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(SUPER_TYPES)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -499,19 +499,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] object B : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(SUPER_TYPES)] class I : R|P| {
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<P>
                 }
@@ -529,65 +529,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(SUPER_TYPES)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -604,19 +604,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final? [ResolvedTo(TYPES)] object B : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(TYPES)] class I : R|P| {
+            public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public? [ResolvedTo(TYPES)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -634,65 +634,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -709,19 +709,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] class I : R|P| {
+            public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -739,65 +739,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<A>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -814,19 +814,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class I : R|P| {
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -844,65 +844,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class B : R|A| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|A|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -919,19 +919,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] class I : R|P| {
+            public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -949,65 +949,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class B : R|A| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|A|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -1024,19 +1024,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class I : R|P| {
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -1054,65 +1054,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class B : R|A| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|A|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -1129,19 +1129,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONSTANT_EVALUATION)] class I : R|P| {
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -1159,65 +1159,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class B : R|A| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|A|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -1234,19 +1234,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class I : R|P| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
@@ -1264,65 +1264,65 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class B : R|A| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|A|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface C : A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : C, A {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : B, A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
                 LAZY_super<A>
             }
 
         }
 
-        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object H : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class J : P {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : P {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
                     LAZY_super<P>
                 }
 
             }
 
-            public final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] object V : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : P {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         LAZY_super<P>
                     }
 
                 }
 
-                public final? [ResolvedTo(RAW_FIR)] class M : P {
+                public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : P {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         LAZY_super<P>
                     }
@@ -1339,19 +1339,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class K : P {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : P {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
                 LAZY_super<P>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class I : R|P| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
                     super<R|P|>()
                 }
@@ -1369,65 +1369,65 @@ FILE: [ResolvedTo(BODY_RESOLVE)] complexRedeclarationScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public sealed [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public sealed [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class A : R|kotlin/Any| {
             protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class B : R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class B : R|A| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|A|>()
             }
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface C : R|A| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface C : R|A| {
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface D : R|C|, R|A| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] interface D : R|C|, R|A| {
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class E : R|B|, R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class E : R|B|, R|A| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] constructor(): R|E| {
                 super<R|A|>()
             }
 
         }
 
-        public sealed [ResolvedTo(BODY_RESOLVE)] class P : R|kotlin/Any| {
+        public sealed [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class P : R|kotlin/Any| {
             protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] object H : R|P| {
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object H : R|P| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=H] constructor(): R|P.H| {
                     super<R|P|>()
                 }
 
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] class J : R|P| {
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class J : R|P| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=J] constructor(): R|P.J| {
                     super<R|P|>()
                 }
 
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] object T : R|kotlin/Any| {
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object T : R|kotlin/Any| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=T] constructor(): R|P.T| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] object V : R|P| {
+                public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object V : R|P| {
                     private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=V] constructor(): R|P.T.V| {
                         super<R|P|>()
                     }
 
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] class M : R|P| {
+                public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class M : R|P| {
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=M] constructor(): R|P.T.M| {
                         super<R|P|>()
                     }
@@ -1456,19 +1456,19 @@ FILE: [ResolvedTo(BODY_RESOLVE)] complexRedeclarationScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class K : R|P| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class K : R|P| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=K] constructor(): R|K| {
                 super<R|P|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] object B : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] object B : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] class I : R|P| {
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-complexRedeclarationScript.kts>] class I : R|P| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
                     super<R|P|>()
                 }

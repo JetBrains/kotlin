@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringAnnotation.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(STATUS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-destructuringAnnotation.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/MyPair.a] a: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringAnnotation.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] annotation class DestrAnno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-destructuringAnnotation.kts>] annotation class DestrAnno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=DestrAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/DestrAnno.s] s: R|kotlin/String|): R|DestrAnno| {
                 LAZY_super<R|kotlin/Any|>
             }

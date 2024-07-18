@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:Deprecated[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) i: Int, [ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) b: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:Deprecated[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) i: Int, [ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) b: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -68,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(constructor)) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=A] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(param)) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) i: Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(parameter)) @Anno[Unresolved](LAZY_EXPRESSION) b: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(constructor)) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=A] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(param)) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) i: Int, [ResolvedTo(COMPANION_GENERATION)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(parameter)) @Anno[Unresolved](LAZY_EXPRESSION) b: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -122,7 +122,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(constructor)) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(param)) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) i: Int, [ResolvedTo(SUPER_TYPES)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(parameter)) @Anno[Unresolved](LAZY_EXPRESSION) b: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -149,7 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[Types](String(constructor)) @R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|, [ResolvedTo(TYPES)] @R|kotlin/Deprecated|[Types](String(parameter)) @R|Anno|[Types](LAZY_EXPRESSION) b: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[Types](String(constructor)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](String(parameter)) @R|Anno|[Types](LAZY_EXPRESSION) b: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[Types](String(constructor)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/Deprecated|[Types](String(parameter)) @R|Anno|[Types](LAZY_EXPRESSION) b: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -230,7 +230,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[Types](String(constructor)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] @R|kotlin/Deprecated|[Types](String(parameter)) @R|Anno|[Types](LAZY_EXPRESSION) b: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -247,7 +247,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -257,7 +257,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[Types](String(constructor)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](String(parameter)) @R|Anno|[Types](LAZY_EXPRESSION) b: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -284,7 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[Types](String(constructor)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) i: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] @R|kotlin/Deprecated|[Types](String(parameter)) @R|Anno|[Types](LAZY_EXPRESSION) b: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -311,7 +311,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -328,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -338,7 +338,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -355,7 +355,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnConstructorPropert
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -365,7 +365,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnConstructorPropert
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>] class A : R|kotlin/Any| {
             @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
                 super<R|kotlin/Any|>()
             }

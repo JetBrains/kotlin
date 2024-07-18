@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|util/A| { LAZY_BLOCK }
 
         }
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|util/A| { LAZY_BLOCK }
 
         }
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=A] constructor(): R|util/A| { LAZY_BLOCK }
 
         }
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=A] constructor(): R|util/A| { LAZY_BLOCK }
 
         }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] constructor(): R|util/A| { LAZY_BLOCK }
 
         }
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|util/A| { LAZY_BLOCK }
 
         }
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|util/A| { LAZY_BLOCK }
 
         }
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] constructor(): R|util/A| { LAZY_BLOCK }
 
         }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor(): R|util/A| {
                 super<R|kotlin/Any|>()
                 local final? [ResolvedTo(RAW_FIR)] class OuterIntoLocal : R|kotlin/Any| {
@@ -287,7 +287,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -302,7 +302,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|util/A| {
                 super<R|kotlin/Any|>()
                 local final? [ResolvedTo(RAW_FIR)] class OuterIntoLocal : R|kotlin/Any| {
@@ -354,7 +354,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -369,7 +369,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] constructor(): R|util/A| {
                 super<R|kotlin/Any|>()
                 local final? [ResolvedTo(RAW_FIR)] class OuterIntoLocal : R|kotlin/Any| {
@@ -421,7 +421,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -436,7 +436,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor(): R|util/A| {
                 super<R|kotlin/Any|>()
                 local final? [ResolvedTo(RAW_FIR)] class OuterIntoLocal : R|kotlin/Any| {
@@ -488,7 +488,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -505,7 +505,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
             ^bar Null(null)
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|util/A| {
                 super<R|kotlin/Any|>()
                 local final [ResolvedTo(BODY_RESOLVE)] class OuterIntoLocal : R|kotlin/Any| {
@@ -557,7 +557,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -574,7 +574,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberFunctionScript.kts
             ^bar Null(null)
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|util/A| {
                 super<R|kotlin/Any|>()
                 local final [ResolvedTo(BODY_RESOLVE)] class OuterIntoLocal : R|kotlin/Any| {

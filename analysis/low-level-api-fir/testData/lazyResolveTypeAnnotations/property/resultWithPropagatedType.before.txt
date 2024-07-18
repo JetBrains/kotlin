@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol foo.<script-resultWithPropagatedType.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }

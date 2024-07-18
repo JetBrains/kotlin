@@ -3,7 +3,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectAccessorsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }

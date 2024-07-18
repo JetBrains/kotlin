@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript.kts>] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -46,10 +46,10 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypesAndAnnot
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>|
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript.kts>] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             }
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }

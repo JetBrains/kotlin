@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] classTypeParemeterScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class X<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-classTypeParemeterScript.kts>] class X<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }

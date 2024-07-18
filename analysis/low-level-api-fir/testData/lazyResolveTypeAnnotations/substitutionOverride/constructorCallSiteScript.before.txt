@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -25,12 +25,12 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(STATUS)] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class P2<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2, [ResolvedTo(STATUS)] Outer(T1)> : R|@R|Anno|(String(P1 super type))  P1<@R|Anno|(String(nested P1 super type))  T1>| {
+            public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P2<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2, [ResolvedTo(STATUS)] Outer(T1)> : R|@R|Anno|(String(P1 super type))  P1<@R|Anno|(String(nested P1 super type))  T1>| {
                 public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2>([ResolvedTo(EXPECT_ACTUAL_MATCHING)] i: R|kotlin/String|): R|P1.P2<T2, T1>| {
                     LAZY_super<R|@R|Anno|(String(P1 super type))  P1<@R|Anno|(String(nested P1 super type))  T1>|>
                 }

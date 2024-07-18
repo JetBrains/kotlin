@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedPartOfQualifiedCallUnresolvedScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class FF : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-qualifiedPartOfQualifiedCallUnresolvedScript.kts>] class FF : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=FF] constructor(): R|FF| {
                 LAZY_super<R|kotlin/Any|>
             }

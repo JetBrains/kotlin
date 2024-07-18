@@ -28,7 +28,7 @@ FILE: [ResolvedTo(RAW_FIR)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -286,7 +286,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -329,7 +329,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -372,7 +372,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -415,7 +415,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -458,7 +458,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -501,7 +501,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -551,7 +551,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         public final [ResolvedTo(BODY_RESOLVE)] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -607,7 +607,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script2.kts
         public final [ResolvedTo(BODY_RESOLVE)] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-script2.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }

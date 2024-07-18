@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorPropertyWithArgumentsSc
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ResolveMe : R|A| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnConstructorPropertyWithArgumentsScript.kts>] class ResolveMe : R|A| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/ResolveMe.addCommaWarning] addCommaWarning: R|@R|Anno|(value = String(abc))  kotlin/Boolean| = LAZY_EXPRESSION): R|ResolveMe| {
                 LAZY_super<R|A|>
             }
@@ -22,14 +22,14 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorPropertyWithArgumentsSc
 
         }
 
-        public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnConstructorPropertyWithArgumentsScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnConstructorPropertyWithArgumentsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.value] value: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }

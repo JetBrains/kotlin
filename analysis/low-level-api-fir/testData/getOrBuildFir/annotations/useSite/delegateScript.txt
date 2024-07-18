@@ -11,14 +11,14 @@ FILE: [ResolvedTo(IMPORTS)] delegateScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateScript.kts>] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateScript.kts>] class X : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }

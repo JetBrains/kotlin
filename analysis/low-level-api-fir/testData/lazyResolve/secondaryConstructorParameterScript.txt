@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -179,7 +179,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -229,7 +229,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -254,7 +254,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -279,7 +279,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -304,7 +304,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -331,7 +331,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorParameterScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorParameterScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = Int(42), [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/String|): R|A| {
                 super<R|kotlin/Any|>()
             }

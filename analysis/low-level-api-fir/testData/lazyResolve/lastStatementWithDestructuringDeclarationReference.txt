@@ -25,7 +25,7 @@ FILE: [ResolvedTo(RAW_FIR)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -277,7 +277,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -361,7 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -407,7 +407,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -457,7 +457,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -507,7 +507,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -557,7 +557,7 @@ FILE: [ResolvedTo(IMPORTS)] lastStatementWithDestructuringDeclarationReference.k
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -607,7 +607,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lastStatementWithDestructuringDeclarationRefere
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val a6: R|kotlin/String| = R|<local>/<destruct>|.R|/MyClass.component2|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-lastStatementWithDestructuringDeclarationReference.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
                 super<R|kotlin/Any|>()
             }

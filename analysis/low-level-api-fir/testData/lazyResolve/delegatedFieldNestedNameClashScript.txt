@@ -4,12 +4,12 @@ FILE: [ResolvedTo(RAW_FIR)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegatedFieldNestedNameClashScript.kts
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base = R|<local>/prop|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -31,12 +31,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base = R|<local>/prop|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -58,12 +58,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base = R|<local>/prop|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -85,12 +85,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base = R|<local>/prop|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -112,12 +112,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base = R|<local>/prop|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -139,12 +139,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base = R|<local>/prop|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -166,12 +166,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base|
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -193,12 +193,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base|
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -220,12 +220,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base|
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -247,12 +247,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base|
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -274,12 +274,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -289,7 +289,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base|
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -301,12 +301,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base|
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -328,12 +328,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -343,7 +343,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base|
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }
@@ -355,13 +355,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             public open [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base|): R|second/MyClass| {
                 super<R|kotlin/Any|>()
             }
@@ -371,7 +371,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashScript.kts
             public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|second/Base| = R|<local>/prop|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|second/Base|
 
-            public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
+            public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashScript.kts>] interface Base : R|kotlin/Any| {
             }
 
         }

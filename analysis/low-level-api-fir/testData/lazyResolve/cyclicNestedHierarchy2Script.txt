@@ -4,12 +4,12 @@ FILE: [ResolvedTo(RAW_FIR)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class C : D {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : D {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class CC : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(RAW_FIR)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class D : C.CC {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : C.CC {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -32,12 +32,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class C : D {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : D {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class CC : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class D : C.CC {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : C.CC {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -60,12 +60,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class C : D {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : D {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class CC : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -74,7 +74,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class D : C.CC {
+        public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : C.CC {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -88,12 +88,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class C : D {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : D {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class CC : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(COMPANION_GENERATION)] class D : C.CC {
+        public open [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : C.CC {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -116,12 +116,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -144,12 +144,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(TYPES)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -172,12 +172,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(STATUS)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -200,12 +200,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -214,7 +214,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -228,12 +228,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -242,7 +242,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(CONTRACTS)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -256,12 +256,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -270,7 +270,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -284,12 +284,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(CONSTANT_EVALUATION)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -312,12 +312,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }
 
-            public open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -326,7 +326,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
                 LAZY_super<C.CC>
             }
@@ -340,12 +340,12 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<R|D|>
             }
 
-            public open [ResolvedTo(STATUS)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -354,7 +354,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor(): R|D| {
                 super<R|C.CC|>()
             }
@@ -368,12 +368,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] cyclicNestedHierarchy2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
                 super<R|D|>()
             }
 
-            public open [ResolvedTo(BODY_RESOLVE)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
+            public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CC] constructor(): R|C.CC| {
                     super<R|kotlin/Any|>()
                 }
@@ -382,7 +382,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] cyclicNestedHierarchy2Script.kts
 
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-cyclicNestedHierarchy2Script.kts>] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor(): R|D| {
                 super<R|C.CC|>()
             }

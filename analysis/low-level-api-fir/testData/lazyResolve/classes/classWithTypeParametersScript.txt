@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] classWithTypeParametersScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ResolveMe<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K> : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] class ResolveMe<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K> : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] class ResolveMe<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -74,7 +74,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(TYPES)] class ResolveMe<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K> : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class ResolveMe<[ResolvedTo(STATUS)] T : R|kotlin/Int|, [ResolvedTo(STATUS)] K> : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(STATUS)] T : R|kotlin/Int|, [ResolvedTo(STATUS)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Int|, [ResolvedTo(STATUS)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ResolveMe<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> : R|kotlin/Any| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] class ResolveMe<[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K> : R|kotlin/Any| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ResolveMe<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K> : R|kotlin/Any| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] class ResolveMe<[ResolvedTo(CONSTANT_EVALUATION)] T : R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] K> : R|kotlin/Any| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(CONSTANT_EVALUATION)] T : R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(CONSTANT_EVALUATION)] T : R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ResolveMe<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] K> : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] K> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] K>(): R|ResolveMe<T, K>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K>(): R|ResolveMe<T, K>| {
                 super<R|kotlin/Any|>()
             }
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] classWithTypeParametersScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-classWithTypeParametersScript.kts>] class ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K>(): R|ResolveMe<T, K>| {
                 super<R|kotlin/Any|>()
             }

@@ -11,17 +11,17 @@ FILE: [ResolvedTo(IMPORTS)] firstPartOfQualifiedCallWithNestedClassesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-firstPartOfQualifiedCallWithNestedClassesScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+            public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-firstPartOfQualifiedCallWithNestedClassesScript.kts>] class B : R|kotlin/Any| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|A.B| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(STATUS)] class C : R|kotlin/Any| {
+                public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-firstPartOfQualifiedCallWithNestedClassesScript.kts>] class C : R|kotlin/Any| {
                     public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|A.B.C| {
                         LAZY_super<R|kotlin/Any|>
                     }

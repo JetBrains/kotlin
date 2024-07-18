@@ -4,28 +4,28 @@ FILE: [ResolvedTo(RAW_FIR)] superTypesLoopScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class resolveMe : C {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : C {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class A : B {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : B {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class B : C {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : C {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class C : A {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -39,28 +39,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class resolveMe : C {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : C {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class A : B {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : B {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class B : C {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : C {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class C : A {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -74,28 +74,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class resolveMe : C {
+        public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : C {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class A : B {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : B {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class B : C {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : C {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class C : A {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -109,28 +109,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(COMPANION_GENERATION)] class resolveMe : C {
+        public open [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : C {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class A : B {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : B {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class B : C {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : C {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] class C : A {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : A {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -144,28 +144,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class resolveMe : R|C| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -179,28 +179,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(TYPES)] class resolveMe : R|C| {
+        public open [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -214,28 +214,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class resolveMe : R|C| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -249,28 +249,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class resolveMe : R|C| {
+        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -284,28 +284,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(CONTRACTS)] class resolveMe : R|C| {
+        public open [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -319,28 +319,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class resolveMe : R|C| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -354,28 +354,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(CONSTANT_EVALUATION)] class resolveMe : R|C| {
+        public open [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -389,28 +389,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class resolveMe : R|C| {
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<A>
             }
@@ -424,28 +424,28 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoopScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(BODY_RESOLVE)] class resolveMe : R|C| {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 super<R|C|>()
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<B>
             }
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<C>
             }
 
         }
 
-        public open [ResolvedTo(STATUS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<R|A|>
             }
@@ -459,28 +459,28 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypesLoopScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(BODY_RESOLVE)] class resolveMe : R|C| {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class resolveMe : R|C| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 super<R|C|>()
             }
 
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|B|>()
             }
 
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|C|>()
             }
 
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-superTypesLoopScript.kts>] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
                 super<R|A|>()
             }

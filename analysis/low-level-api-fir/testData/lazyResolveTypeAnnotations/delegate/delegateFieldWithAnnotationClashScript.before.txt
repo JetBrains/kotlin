@@ -7,7 +7,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.int] int: Int): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClashScript.kts
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>] interface Base : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): Base { LAZY_BLOCK }
@@ -25,14 +25,14 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClashScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(constant#)  second/Base| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(constant#)  second/Base| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
 
             private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(constant#)  second/Base| = LAZY_EXPRESSION
 
-            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>] annotation class Anno : R|kotlin/Annotation| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.Anno.string] string: String): R|second/MyClass.Anno| {
                     LAZY_super<R|kotlin/Any|>
                 }

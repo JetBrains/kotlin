@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-withMissedArgumentsScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }

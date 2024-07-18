@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.position] position: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
                 LAZY_super<<implicit>>
             }

@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplexScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol pack.<script-insideFunctionComplexScript.kts>] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|pack/TypeAnnWithArg| {
                 LAZY_super<R|kotlin/Any|>
             }

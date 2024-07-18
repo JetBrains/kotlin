@@ -6,7 +6,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -25,10 +25,10 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] interface OriginalInterface : R|kotlin/Any| {
             @R|Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(STATUS)] fun <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.explicitType([ResolvedTo(STATUS)] @R|Anno|[Types](LAZY_EXPRESSION) param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/ListIterator<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>|): R|@R|Anno|(<strcat>(String(explicitType return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested nested return type ), prop#))  kotlin/Int>>| { LAZY_BLOCK }
 
-            public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -68,10 +68,10 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] interface OriginalInterface : R|kotlin/Any| {
             @R|Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.explicitType([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|Anno|[Types](LAZY_EXPRESSION) param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/ListIterator<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>|): R|@R|Anno|(<strcat>(String(explicitType return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested nested return type ), prop#))  kotlin/Int>>| { LAZY_BLOCK }
 
-            public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -111,12 +111,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] interface OriginalInterface : R|kotlin/Any| {
             @R|Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONTRACTS)] fun <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.explicitType([ResolvedTo(CONTRACTS)] @R|Anno|[Types](LAZY_EXPRESSION) param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/ListIterator<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>|): R|@R|Anno|(<strcat>(String(explicitType return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested nested return type ), prop#))  kotlin/Int>>| {
                 ^explicitType IntegerLiteral(1)
             }
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -156,12 +156,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] interface OriginalInterface : R|kotlin/Any| {
             @R|Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.explicitType([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|Anno|[Types](LAZY_EXPRESSION) param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/ListIterator<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>|): R|@R|Anno|(<strcat>(String(explicitType return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested nested return type ), prop#))  kotlin/Int>>| {
                 ^explicitType IntegerLiteral(1)
             }
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -201,12 +201,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] interface OriginalInterface : R|kotlin/Any| {
             @R|Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONSTANT_EVALUATION)] fun <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|@R|Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/Collection<@R|Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/String>>|.explicitType([ResolvedTo(CONSTANT_EVALUATION)] @R|Anno|[Types](LAZY_EXPRESSION) param: R|@R|Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/ListIterator<@R|Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>|): R|@R|Anno|(<strcat>(String(explicitType return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested return type ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(explicitType nested nested return type ), prop#))  kotlin/Int>>| {
                 ^explicitType IntegerLiteral(1)
             }
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -227,7 +227,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -237,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -246,12 +246,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] interface OriginalInterface : R|kotlin/Any| {
             @R|Anno|[Types](position = <strcat>(String(explicitType ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|.explicitType([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|Anno|[Types](position = <strcat>(String(parameter annotation ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) param: R|@R|Anno|(position = <strcat>(String(parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int>>| {
                 ^explicitType IntegerLiteral(1)
             }
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -282,7 +282,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -291,12 +291,12 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] interface OriginalInterface : R|kotlin/Any| {
             @R|Anno|[Types](position = <strcat>(String(explicitType ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|.explicitType([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|Anno|[Types](position = <strcat>(String(parameter annotation ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) param: R|@R|Anno|(position = <strcat>(String(parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int>>| {
                 ^explicitType IntegerLiteral(1)
             }
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithExplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -325,7 +325,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor([ResolvedTo(BODY_RESOLVE)] i: R|OriginalInterface|): R|Derived| {
                 super<R|kotlin/Any|>()
             }
@@ -334,12 +334,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithExplicitTypeUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface OriginalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] interface OriginalInterface : R|kotlin/Any| {
             @R|Anno|[Types](position = <strcat>(String(explicitType ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) public open [ResolvedTo(BODY_RESOLVE)] fun <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|.explicitType([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = <strcat>(String(parameter annotation ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) param: R|@R|Anno|(position = <strcat>(String(parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int>>| {
                 ^explicitType Int(1)
             }
 
-            public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithExplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                     super<R|kotlin/Any|>()
                 }

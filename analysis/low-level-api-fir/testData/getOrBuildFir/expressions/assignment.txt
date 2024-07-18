@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] assignment.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-assignment.kts>] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }

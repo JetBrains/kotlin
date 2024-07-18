@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] generatedCopyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/MyClass.property1] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/MyClass.property2] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -43,7 +43,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/MyClass.property1] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/MyClass.property2] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : R|kotlin/Any| {
+        public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=properties/MyClass.property1] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=properties/MyClass.property2] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(COMPANION_GENERATION)] class MyClass : R|kotlin/Any| {
+        public final? data [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=properties/MyClass.property1] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=properties/MyClass.property2] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -173,7 +173,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(SUPER_TYPES)] class MyClass : R|kotlin/Any| {
+        public final? data [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=properties/MyClass.property1] property1: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=properties/MyClass.property2] property2: @Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -199,7 +199,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(TYPES)] class MyClass : R|kotlin/Any| {
+        public final? data [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(<strcat>(String(parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter1 type: ), constant#))  kotlin/Int>>|, [ResolvedTo(TYPES)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(<strcat>(String(parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>>|): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -238,7 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -251,7 +251,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(<strcat>(String(parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter1 type: ), constant#))  kotlin/Int>>|, [ResolvedTo(STATUS)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(<strcat>(String(parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>>|): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -277,7 +277,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|kotlin/Any| {
+        public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(<strcat>(String(parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter1 type: ), constant#))  kotlin/Int>>|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(<strcat>(String(parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>>|): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -329,7 +329,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] class MyClass : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(<strcat>(String(parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter1 type: ), constant#))  kotlin/Int>>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(<strcat>(String(parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>>|): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -355,7 +355,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -368,7 +368,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+        public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(<strcat>(String(parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter1 type: ), constant#))  kotlin/Int>>|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(<strcat>(String(parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>>|): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -394,7 +394,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -407,7 +407,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|kotlin/Any| {
+        public final data [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(<strcat>(String(parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter1 type: ), constant#))  kotlin/Int>>|, [ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(<strcat>(String(parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>>|): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -433,7 +433,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=properties/Anno.position] position: R|kotlin/String|): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -446,7 +446,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(position = <strcat>(String(parameter1 type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter1 type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter1 type: ), R|properties/constant|))  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(position = <strcat>(String(parameter2 type: ), R|properties/constant|))  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested parameter2 type: ), R|properties/constant|))  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested nested parameter2 type: ), R|properties/constant|))  kotlin/String>>|): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -472,7 +472,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=properties/Anno.position] position: R|kotlin/String|): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -485,7 +485,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(position = <strcat>(String(parameter1 type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter1 type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter1 type: ), R|properties/constant|))  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(position = <strcat>(String(parameter2 type: ), R|properties/constant|))  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested parameter2 type: ), R|properties/constant|))  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested nested parameter2 type: ), R|properties/constant|))  kotlin/String>>|): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -511,7 +511,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedCopyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=properties/Anno.position] position: R|kotlin/String|): R|properties/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -524,7 +524,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedCopyScript.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final data [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+        public final data [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(position = <strcat>(String(parameter1 type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested parameter1 type: ), R|properties/constant|))  kotlin/collections/List<@R|properties/Anno|(position = <strcat>(String(nested nested parameter1 type: ), R|properties/constant|))  kotlin/Int>>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(position = <strcat>(String(parameter2 type: ), R|properties/constant|))  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested parameter2 type: ), R|properties/constant|))  kotlin/collections/Collection<@R|properties/Anno|(position = <strcat>(String(nested nested parameter2 type: ), R|properties/constant|))  kotlin/String>>|): R|properties/MyClass| {
                 super<R|kotlin/Any|>()
             }

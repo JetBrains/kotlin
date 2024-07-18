@@ -14,7 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverTypeScript.kts
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|A|[Types]() [ResolvedTo(ANNOTATION_ARGUMENTS)] T> R|T|.test(): R|kotlin/Unit| {
         }
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class A : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-receiverTypeScript.kts>] annotation class A : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }

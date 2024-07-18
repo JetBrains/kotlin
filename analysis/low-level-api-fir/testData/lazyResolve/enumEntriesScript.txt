@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] enumEntriesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -124,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -244,7 +244,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -292,7 +292,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enumEntriesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-enumEntriesScript.kts>] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
                 super<R|kotlin/Enum<one/MyEnum>|>()
             }

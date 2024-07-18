@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] destructEntry.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -249,7 +249,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -311,7 +311,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -347,7 +347,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -360,7 +360,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -396,7 +396,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -409,7 +409,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/MyPair.b] b: Int): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -445,7 +445,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -458,7 +458,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -494,7 +494,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -507,7 +507,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -543,7 +543,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -556,7 +556,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -592,7 +592,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -605,7 +605,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -641,7 +641,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructEntry.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -654,7 +654,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructEntry.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final data [ResolvedTo(BODY_RESOLVE)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
                 super<R|kotlin/Any|>()
             }

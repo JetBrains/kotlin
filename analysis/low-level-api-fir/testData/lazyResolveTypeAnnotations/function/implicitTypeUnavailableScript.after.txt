@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=lowlevel/Anno.position] position: R|kotlin/String|): R|lowlevel/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] object Obj : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-implicitTypeUnavailableScript.kts>] object Obj : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Obj] constructor(): R|lowlevel/Obj| {
                 LAZY_super<R|kotlin/Any|>
             }

@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-explicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -68,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-explicitTypeScript.kts>] interface A : R|kotlin/Any| {
         }
 
         @R|lowlevel/Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun <@R|lowlevel/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] T : R|@R|lowlevel/Anno|(<strcat>(String(bound type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested bound type ), prop#))  kotlin/String>|, R|@R|lowlevel/Anno|(<strcat>(String(constraint type ), prop#))  kotlin/collections/Collection<@R|lowlevel/Anno|(<strcat>(String(nested constraint type ), prop#))  kotlin/Int>|> @RECEIVER:R|lowlevel/Anno|[Types](LAZY_EXPRESSION) R|@R|lowlevel/Anno|(<strcat>(String(receiver type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested receiver type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested receiver type ), prop#))  kotlin/Int>>|.function([ResolvedTo(TYPES)] @R|lowlevel/Anno|[Types](LAZY_EXPRESSION) param: R|@R|lowlevel/Anno|(<strcat>(String(parameter type ), prop#))  kotlin/collections/Collection<@R|lowlevel/Anno|(<strcat>(String(nested parameter type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested parameter type ), prop#))  kotlin/String>>| = LAZY_EXPRESSION): R|@R|lowlevel/Anno|(<strcat>(String(return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested return type ), prop#))  kotlin/collections/List<@R|lowlevel/Anno|(<strcat>(String(nested nested return type ), prop#))  kotlin/Int>>| { LAZY_BLOCK }

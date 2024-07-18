@@ -1,7 +1,7 @@
 FILE: script.kts
     SCRIPT: <script-script.kts>
 
-        public final? class Builder : R|kotlin/Any| {
+        public final? [ContainingScriptKey=FirScriptSymbol <script-script.kts>] class Builder : R|kotlin/Any| {
             public? [ContainingClassKey=Builder] constructor(): R|Builder| {
                 super<R|kotlin/Any|>()
             }
@@ -14,7 +14,7 @@ FILE: script.kts
                 println#(version#)
             }
 
-            public final? class Nested : R|kotlin/Any| {
+            public final? [ContainingScriptKey=FirScriptSymbol <script-script.kts>] class Nested : R|kotlin/Any| {
                 public? [ContainingClassKey=Nested] constructor(): R|Builder.Nested| {
                     super<R|kotlin/Any|>()
                 }
@@ -40,7 +40,7 @@ FILE: script.kts
         init {
             build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 version# = String(123)
-                local final? class A : R|kotlin/Any| {
+                local final? [ContainingScriptKey=FirScriptSymbol <script-script.kts>] class A : R|kotlin/Any| {
                     public? [ContainingClassKey=A] constructor(): R|<local>/A| {
                         super<R|kotlin/Any|>()
                     }

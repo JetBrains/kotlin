@@ -11,12 +11,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassTypeScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassTypeScript.kts>] class Foo : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassTypeScript.kts>] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Foo.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassTypeScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassTypeScript.kts>] class Bar : R|Foo| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
                 LAZY_super<R|Foo|>
             }

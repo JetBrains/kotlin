@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] setOperatorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol test.<script-setOperatorScript.kts>] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/B.n] n: R|kotlin/Int|): R|test/B| {
                 LAZY_super<R|kotlin/Any|>
             }

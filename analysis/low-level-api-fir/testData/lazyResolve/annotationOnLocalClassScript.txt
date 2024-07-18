@@ -4,14 +4,14 @@ FILE: [ResolvedTo(RAW_FIR)] annotationOnLocalClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -30,14 +30,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -56,14 +56,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -82,14 +82,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -108,14 +108,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -134,14 +134,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -160,14 +160,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -186,14 +186,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -212,14 +212,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -246,14 +246,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -280,14 +280,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -314,14 +314,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -348,14 +348,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -382,14 +382,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnLocalClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.two.<script-annotationOnLocalClassScript.kts>] annotation class KotlinAnnotation : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
                 super<R|kotlin/Any|>()
             }

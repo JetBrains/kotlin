@@ -4,14 +4,14 @@ FILE: [ResolvedTo(RAW_FIR)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -27,14 +27,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -50,14 +50,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -73,14 +73,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -96,14 +96,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -119,14 +119,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -142,14 +142,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -165,14 +165,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -188,14 +188,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -216,14 +216,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -244,14 +244,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -272,14 +272,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? fun [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public final? fun [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Arg): Arg
 
         }
@@ -300,14 +300,14 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract fun [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
 
         }
@@ -329,14 +329,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lambdaAsSAMInterfaceScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class Arg : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] class Arg : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract fun [ResolvedTo(BODY_RESOLVE)] interface Foo : R|kotlin/Any| {
+        public abstract fun [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol foo.<script-lambdaAsSAMInterfaceScript.kts>] interface Foo : R|kotlin/Any| {
             public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|foo/Arg|): R|foo/Arg|
 
         }

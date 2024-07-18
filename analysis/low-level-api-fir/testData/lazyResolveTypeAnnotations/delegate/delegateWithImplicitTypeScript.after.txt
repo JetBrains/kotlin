@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|OriginalInterface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] i: R|OriginalInterface|): R|Derived| {
                 LAZY_super<<implicit>>
             }
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] interface OriginalInterface : R|kotlin/Any| {
             @R|Anno|[Types](position = <strcat>(String(implicitType ), R|/prop|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|Anno|[Types](position = <strcat>(String(type param ), R|/prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), R|/prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), R|/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), R|/prop|))  kotlin/String>>|.implicitType([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|Anno|[Types](position = <strcat>(String(parameter annotation ), R|/prop|)) param: R|@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|))  kotlin/Int>>| {
                 ^implicitType R|/explicitType|()
             }

@@ -4,11 +4,11 @@ FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -34,11 +34,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -64,11 +64,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ResolveMe : OV {
+            public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -94,11 +94,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public final? [ResolvedTo(COMPANION_GENERATION)] class ResolveMe : OV {
+            public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -124,11 +124,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface OV : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public final? [ResolvedTo(SUPER_TYPES)] class ResolveMe : R|OV| {
+            public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -140,7 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -154,11 +154,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(TYPES)] interface OV : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public final? [ResolvedTo(TYPES)] class ResolveMe : R|OV| {
+            public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -170,7 +170,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -184,11 +184,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public final [ResolvedTo(STATUS)] class ResolveMe : R|OV| {
+            public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -214,11 +214,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ResolveMe : R|OV| {
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -230,7 +230,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -244,11 +244,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public final [ResolvedTo(CONTRACTS)] class ResolveMe : R|OV| {
+            public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -260,7 +260,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -274,11 +274,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ResolveMe : R|OV| {
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -304,11 +304,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public final [ResolvedTo(CONSTANT_EVALUATION)] class ResolveMe : R|OV| {
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -320,7 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -334,11 +334,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ResolveMe : R|OV| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }
@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -364,11 +364,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public final [ResolvedTo(BODY_RESOLVE)] class ResolveMe : R|OV| {
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<R|kotlin/Any|>()
                 }
@@ -380,7 +380,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -394,11 +394,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedClassWithPropertiesOverridesScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] interface OV : R|kotlin/Any| {
             public abstract [ResolvedTo(BODY_RESOLVE)] val originalExpressions: R|A|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OV] get(): R|A|
 
-            public final [ResolvedTo(BODY_RESOLVE)] class ResolveMe : R|OV| {
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class ResolveMe : R|OV| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<R|kotlin/Any|>()
                 }
@@ -410,7 +410,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedClassWithPropertiesOverridesScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassWithPropertiesOverridesScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }

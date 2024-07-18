@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeUnavailableS
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=foo/Anno.position] position: R|kotlin/String|): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeUnavailableS
 
         }
 
-        public final [ResolvedTo(STATUS)] object Obj : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol foo.<script-localDelegatedPropertyWithPropagatedTypeUnavailableScript.kts>] object Obj : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
                 LAZY_super<R|kotlin/Any|>
             }

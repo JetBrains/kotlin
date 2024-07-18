@@ -8,7 +8,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -18,21 +18,21 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B>(): R|second/Pair<A, B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
                 @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|
                 @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|): R|kotlin/Unit|
 
-            public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -74,21 +74,21 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B>(): R|second/Pair<A, B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -97,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
                 @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|
                 @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|): R|kotlin/Unit|
 
-            public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -130,21 +130,21 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B>(): R|second/Pair<A, B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
                 @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|
                 @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|): R|kotlin/Unit|
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -186,21 +186,21 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B>(): R|second/Pair<A, B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
                 @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|
                 @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|): R|kotlin/Unit|
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -242,21 +242,21 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B>(): R|second/Pair<A, B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
                 @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|
                 @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] set([ResolvedTo(CONSTANT_EVALUATION)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|@R|second/Anno|(<strcat>(String(return type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested return type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested return type ), constant#))  T>>|): R|kotlin/Unit|
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -298,21 +298,21 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>| {
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B>(): R|second/Pair<A, B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -321,7 +321,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
                 @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(position = <strcat>(String(return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>|
                 @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|)) value: R|@R|second/Anno|(position = <strcat>(String(return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>|): R|kotlin/Unit|
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -344,7 +344,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -354,21 +354,21 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>| {
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B>(): R|second/Pair<A, B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -377,7 +377,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailableScript.kts
                 @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(position = <strcat>(String(return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>|
                 @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|)) value: R|@R|second/Anno|(position = <strcat>(String(return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>|): R|kotlin/Unit|
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -396,7 +396,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -406,21 +406,21 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class Pair<[ResolvedTo(BODY_RESOLVE)] A, [ResolvedTo(BODY_RESOLVE)] B> : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class Pair<[ResolvedTo(BODY_RESOLVE)] A, [ResolvedTo(BODY_RESOLVE)] B> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] constructor<[ResolvedTo(BODY_RESOLVE)] A, [ResolvedTo(BODY_RESOLVE)] B>(): R|second/Pair<A, B>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|second/AbstractClass<T>| {
                 super<R|kotlin/Any|>()
             }
@@ -429,7 +429,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyUnavailableScript.kts
                 @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(position = <strcat>(String(return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>|
                 @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|)) value: R|@R|second/Anno|(position = <strcat>(String(return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>|): R|kotlin/Unit|
 
-            public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                     super<R|kotlin/Any|>()
                 }

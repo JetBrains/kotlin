@@ -7,7 +7,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] interface Base : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(IntegerLiteral(0).plus#(inner#))  second/Base|): R|second/MyClass| {
                 LAZY_super<<implicit>>
             }
@@ -38,10 +38,10 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotationsAsConstru
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: @R|second/Anno|[Unresolved](IntegerLiteral(0).plus#(inner#)) second.Base = R|<local>/prop|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): @R|second/Anno|[Unresolved](IntegerLiteral(0).plus#(inner#)) second.Base
 
-            public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] interface Base : R|kotlin/Any| {
             }
 
-            public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }

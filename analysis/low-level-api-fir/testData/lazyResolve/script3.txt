@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] script3.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(COMPANION_GENERATION)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(SUPER_TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(STATUS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -270,7 +270,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(EXPECT_ACTUAL_MATCHING)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(CONTRACTS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -346,7 +346,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -384,7 +384,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(CONSTANT_EVALUATION)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -422,7 +422,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -460,7 +460,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -513,7 +513,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script3.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class UnusedClass : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-script3.kts>] class UnusedClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
                 super<R|kotlin/Any|>()
             }

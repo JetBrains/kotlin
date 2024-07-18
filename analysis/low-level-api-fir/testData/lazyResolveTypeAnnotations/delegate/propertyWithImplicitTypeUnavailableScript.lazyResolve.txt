@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,12 +14,12 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -58,12 +58,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -102,12 +102,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -146,12 +146,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -190,12 +190,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -224,7 +224,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -234,12 +234,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -278,12 +278,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -322,12 +322,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -356,7 +356,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -366,12 +366,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -400,7 +400,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -410,12 +410,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -453,7 +453,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -463,12 +463,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -506,7 +506,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -516,12 +516,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -559,7 +559,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -569,12 +569,12 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 LAZY_super<<implicit>>
             }
 
-            private final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -612,7 +612,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -622,12 +622,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
                 super<R|kotlin/Any|>()
             }
 
-            private final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private final companion [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-propertyWithImplicitTypeUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
                     super<R|kotlin/Any|>()
                 }

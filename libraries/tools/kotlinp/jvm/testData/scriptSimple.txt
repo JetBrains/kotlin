@@ -18,7 +18,7 @@ public final class ScriptSimple {
 }
 // ScriptSimple$A.class
 // ------------------------------------------
-public final class A : kotlin/Any {
+public final class ScriptSimple.A : kotlin/Any {
 
   // signature: <init>(Ljava/lang/String;)V
   public constructor(p: kotlin/String)
@@ -32,7 +32,7 @@ public final class A : kotlin/Any {
 }
 // ScriptSimple$B.class
 // ------------------------------------------
-public final class B<T#0 /* T */> : kotlin/Any {
+public final class ScriptSimple.B<T#0 /* T */> : kotlin/Any {
 
   // requires language version 1.7.0 (level=ERROR)
   // signature: <init>(Ljava/lang/Object;)V

@@ -6,7 +6,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(CONTRACTS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(CONSTANT_EVALUATION)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -159,7 +159,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }
@@ -173,7 +173,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitTypeScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aaa] constructor([ResolvedTo(BODY_RESOLVE)] i: R|Interface|): R|Aaa| {
                 super<R|kotlin/Any|>()
             }
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-delegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
                 ^implicitType Int(42)
             }

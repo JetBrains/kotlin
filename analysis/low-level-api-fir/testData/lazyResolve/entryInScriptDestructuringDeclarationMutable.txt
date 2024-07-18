@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -74,7 +74,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -179,7 +179,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -214,7 +214,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -249,7 +249,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -284,7 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? data [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.b] b: Int): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(CONTRACTS)] class X : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -354,7 +354,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(CONTRACTS)] class X : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -389,7 +389,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(CONTRACTS)] class X : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -424,7 +424,7 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(CONTRACTS)] class X : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -459,7 +459,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] entryInScriptDestructuringDeclarationMutable.kt
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+        public final data [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-entryInScriptDestructuringDeclarationMutable.kts>] class X : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
                 super<R|kotlin/Any|>()
             }

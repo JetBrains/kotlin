@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
             ^bar Null(null)
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|util/A| {
                 super<R|kotlin/Any|>()
                 local final [ResolvedTo(BODY_RESOLVE)] class OuterIntoLocal : R|kotlin/Any| {

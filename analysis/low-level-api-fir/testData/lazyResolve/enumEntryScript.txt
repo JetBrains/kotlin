@@ -4,14 +4,14 @@ FILE: [ResolvedTo(RAW_FIR)] enumEntryScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -35,14 +35,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -66,14 +66,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -97,14 +97,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -128,14 +128,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -159,14 +159,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(TYPES)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -190,14 +190,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -221,14 +221,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -252,14 +252,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -283,14 +283,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -314,14 +314,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -345,14 +345,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -376,14 +376,14 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
@@ -413,14 +413,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enumEntryScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] enum class Foo : R|kotlin/Enum<Foo>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class Foo : R|kotlin/Enum<Foo>| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
                 super<R|kotlin/Enum<Foo>|>()
             }

@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -17,14 +17,14 @@ FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(RAW_FIR)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) AbstractClass<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) AbstractClass<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -49,14 +49,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(RAW_FIR)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) AbstractClass<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) AbstractClass<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
@@ -68,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -81,14 +81,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(RAW_FIR)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) AbstractClass<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) AbstractClass<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -113,14 +113,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(RAW_FIR)] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(RAW_FIR)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) AbstractClass<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) AbstractClass<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -145,14 +145,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(SUPER_TYPES)] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -177,14 +177,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(SUPER_TYPES)] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(TYPES)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -209,14 +209,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
@@ -228,7 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -241,14 +241,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
@@ -260,7 +260,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -273,14 +273,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 super<<implicit>>()
             }
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -307,14 +307,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 super<<implicit>>()
             }
@@ -328,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -341,14 +341,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 super<<implicit>>()
             }
@@ -362,7 +362,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -375,14 +375,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 super<<implicit>>()
             }
@@ -396,7 +396,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -409,14 +409,14 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 super<R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>|>()
             }
@@ -430,7 +430,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -443,14 +443,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorScript.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|util/AbstractClass<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 super<R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>|>()
             }

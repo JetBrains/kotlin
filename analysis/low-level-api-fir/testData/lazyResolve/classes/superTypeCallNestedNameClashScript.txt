@@ -4,19 +4,19 @@ FILE: [ResolvedTo(RAW_FIR)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : Base<Base<Int>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : Base<Base<Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<Base<Int>>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -32,19 +32,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass : Base<Base<Int>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : Base<Base<Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<Base<Int>>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -60,19 +60,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : Base<Base<Int>> {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : Base<Base<Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<Base<Int>>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -88,19 +88,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : Base<Base<Int>> {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : Base<Base<Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<Base<Int>>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -116,19 +116,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<R|second/Base<kotlin/Int>|>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -144,19 +144,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(TYPES)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<R|second/Base<kotlin/Int>|>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -172,19 +172,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<R|second/Base<kotlin/Int>|>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -200,19 +200,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<R|second/Base<kotlin/Int>|>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -228,19 +228,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<R|second/Base<kotlin/Int>|>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -256,19 +256,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<R|second/Base<kotlin/Int>|>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -284,19 +284,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<R|second/Base<kotlin/Int>|>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -312,19 +312,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<Base<R|second/Base<kotlin/Int>|>>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -340,19 +340,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|second/Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 super<R|second/Base<second/Base<kotlin/Int>>|>()
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -368,19 +368,19 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNestedNameClashScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(BODY_RESOLVE)] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|second/Base<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 super<R|second/Base<second/Base<kotlin/Int>>|>()
             }
 
-            public open [ResolvedTo(BODY_RESOLVE)] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+            public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNestedNameClashScript.kts>] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|second/MyClass.Base<T>| {
                     super<R|kotlin/Any|>()
                 }

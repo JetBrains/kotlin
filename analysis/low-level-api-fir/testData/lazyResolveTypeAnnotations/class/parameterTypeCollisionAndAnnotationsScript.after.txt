@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionAndAnnotationsScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-parameterTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/Anno.i] i: R|kotlin/Int|): R|one/two/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -28,14 +28,14 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionAndAnnotationsScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-parameterTypeCollisionAndAnnotationsScript.kts>] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyDataClass : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-parameterTypeCollisionAndAnnotationsScript.kts>] class MyDataClass : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -43,14 +43,14 @@ FILE: [ResolvedTo(IMPORTS)] parameterTypeCollisionAndAnnotationsScript.kts
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component1, IsFromPrimaryConstructor=true] val prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|
 
-            public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-parameterTypeCollisionAndAnnotationsScript.kts>] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
             }
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            public final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-parameterTypeCollisionAndAnnotationsScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }

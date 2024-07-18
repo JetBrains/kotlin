@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=properties/Anno.position] position: String): R|properties/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedCopyScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(TYPES)] class MyClass : R|kotlin/Any| {
+        public final? data [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol properties.<script-generatedCopyScript.kts>] class MyClass : R|kotlin/Any| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=properties/MyClass.property1] property1: R|@R|properties/Anno|(<strcat>(String(parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested parameter1 type: ), constant#))  kotlin/collections/List<@R|properties/Anno|(<strcat>(String(nested nested parameter1 type: ), constant#))  kotlin/Int>>|, [ResolvedTo(TYPES)] [CorrespondingProperty=properties/MyClass.property2] property2: R|@R|properties/Anno|(<strcat>(String(parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested parameter2 type: ), constant#))  kotlin/collections/Collection<@R|properties/Anno|(<strcat>(String(nested nested parameter2 type: ), constant#))  kotlin/String>>|): R|properties/MyClass| {
                 LAZY_super<R|kotlin/Any|>
             }

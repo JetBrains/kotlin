@@ -4,12 +4,12 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfClass2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -25,12 +25,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -46,12 +46,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? inner [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Second<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -67,12 +67,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? inner [ResolvedTo(COMPANION_GENERATION)] class Second<[ResolvedTo(COMPANION_GENERATION)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(COMPANION_GENERATION)] Type2, [ResolvedTo(RAW_FIR)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(COMPANION_GENERATION)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -88,12 +88,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] class MyClass<[ResolvedTo(SUPER_TYPES)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(SUPER_TYPES)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(SUPER_TYPES)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? inner [ResolvedTo(SUPER_TYPES)] class Second<[ResolvedTo(SUPER_TYPES)] Type2, [ResolvedTo(SUPER_TYPES)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(SUPER_TYPES)] Type2, [ResolvedTo(SUPER_TYPES)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(SUPER_TYPES)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -109,12 +109,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(TYPES)] class MyClass<[ResolvedTo(TYPES)] Type> : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(TYPES)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(TYPES)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final? inner [ResolvedTo(TYPES)] class Second<[ResolvedTo(TYPES)] Type2, [ResolvedTo(TYPES)] Outer(Type)> : R|kotlin/Any| {
+            public final? inner [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(TYPES)] Type2, [ResolvedTo(TYPES)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(TYPES)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -130,12 +130,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
+            public final inner [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -151,12 +151,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Second<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
+            public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -172,12 +172,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(CONTRACTS)] class Second<[ResolvedTo(CONTRACTS)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
+            public final inner [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(CONTRACTS)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(CONTRACTS)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -193,12 +193,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Second<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
+            public final inner [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -214,12 +214,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(CONSTANT_EVALUATION)] class Second<[ResolvedTo(CONSTANT_EVALUATION)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
+            public final inner [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(CONSTANT_EVALUATION)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(CONSTANT_EVALUATION)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -235,12 +235,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class Second<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
+            public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -256,12 +256,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final inner [ResolvedTo(BODY_RESOLVE)] class Second<[ResolvedTo(BODY_RESOLVE)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
+            public final inner [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(BODY_RESOLVE)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(BODY_RESOLVE)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
@@ -277,12 +277,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfClass2Script.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] Type> : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class MyClass<[ResolvedTo(BODY_RESOLVE)] Type> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(BODY_RESOLVE)] class Second<[ResolvedTo(BODY_RESOLVE)] Type2, [ResolvedTo(BODY_RESOLVE)] Outer(Type)> : R|kotlin/Any| {
+            public final inner [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfClass2Script.kts>] class Second<[ResolvedTo(BODY_RESOLVE)] Type2, [ResolvedTo(BODY_RESOLVE)] Outer(Type)> : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(BODY_RESOLVE)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }

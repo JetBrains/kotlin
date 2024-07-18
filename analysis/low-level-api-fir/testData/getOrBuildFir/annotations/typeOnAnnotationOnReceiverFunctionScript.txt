@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverFunctionScript.kts
             ^check Int(1)
         }
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnReceiverFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }

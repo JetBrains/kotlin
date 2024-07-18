@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -122,7 +122,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(SUPER_TYPES)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(TYPES)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -230,7 +230,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -266,7 +266,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -276,7 +276,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -292,7 +292,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -302,7 +302,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -329,7 +329,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -339,7 +339,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -349,7 +349,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -366,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -376,7 +376,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -386,7 +386,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -403,7 +403,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -413,7 +413,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -423,7 +423,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -440,7 +440,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -450,7 +450,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -460,7 +460,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }
@@ -477,7 +477,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverrideScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Unit|
@@ -487,7 +487,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(BODY_RESOLVE)] fun bar([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -497,7 +497,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideScript.kts>] class Usage : R|Foo2| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 super<R|kotlin/Any|>()
             }

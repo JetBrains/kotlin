@@ -11,14 +11,14 @@ FILE: [ResolvedTo(IMPORTS)] constructorDelegationSuperCallScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorDelegationSuperCallScript.kts>] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|B| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class A : R|B| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-constructorDelegationSuperCallScript.kts>] class A : R|B| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|B|>(Int(1))
             }

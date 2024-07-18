@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] complexLocalHierarchyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
@@ -202,7 +202,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
@@ -236,7 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface NonLocalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
@@ -270,7 +270,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] complexLocalHierarchyScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface NonLocalInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-complexLocalHierarchyScript.kts>] interface NonLocalInterface : R|kotlin/Any| {
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {

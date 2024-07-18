@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] functionInValueClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+        @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>] class Value : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+        @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>] class Value : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+        @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>] class Value : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+        @JvmInline[Unresolved]() public final? inline [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>] class Value : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @JvmInline[Unresolved]() public final? inline [ResolvedTo(SUPER_TYPES)] class Value : R|kotlin/Any| {
+        @JvmInline[Unresolved]() public final? inline [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>] class Value : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[Types]() public final? inline [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>] class Value : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>, FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>, FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>, FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>, FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>, FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>, FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -236,7 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>, FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionInValueClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-functionInValueClassScript.kts>, FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Value] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
                 super<R|kotlin/Any|>()
             }

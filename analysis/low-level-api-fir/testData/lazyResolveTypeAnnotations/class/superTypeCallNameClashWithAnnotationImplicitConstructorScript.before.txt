@@ -7,7 +7,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationImplicitConstruc
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationImplicitConstruc
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/Base| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -30,19 +30,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationImplicitConstruc
         public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(TYPES)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts>] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
                 LAZY_super<@R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base>
             }
 
-            public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+            public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|second/MyClass.Base| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
             }
 
-            public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            public final? companion [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }

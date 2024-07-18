@@ -12,7 +12,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-fileScript.kts>] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
                 LAZY_super<R|kotlin/Any|>
             }

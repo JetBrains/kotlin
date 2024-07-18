@@ -12,7 +12,7 @@ FILE: [ResolvedTo(RAW_FIR)] destructuringFirstEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -276,7 +276,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -320,7 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -364,7 +364,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -408,7 +408,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -452,7 +452,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -496,7 +496,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -540,7 +540,7 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -584,7 +584,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringFirstEntry.kts
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final data [ResolvedTo(BODY_RESOLVE)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-destructuringFirstEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
                 super<R|kotlin/Any|>()
             }

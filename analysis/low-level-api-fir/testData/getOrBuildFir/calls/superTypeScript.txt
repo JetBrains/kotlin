@@ -11,10 +11,10 @@ FILE: [ResolvedTo(IMPORTS)] superTypeScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] interface A : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypeScript.kts>] interface A : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|A| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-superTypeScript.kts>] class C : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<<implicit>>
             }

@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] primaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Problem : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] class Problem : R|kotlin/Any| {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -68,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] class Problem : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(TYPES)] class Problem : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -180,7 +180,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class Problem : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-primaryConstructorScript.kts>] class Problem : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }

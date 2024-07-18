@@ -7,7 +7,7 @@ FILE: [ResolvedTo(RAW_FIR)] getterWithDelegationScript.kts
         public? final? [ResolvedTo(RAW_FIR)] val one: Intby LAZY_EXPRESSION
             @Deprecated[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public? final? [ResolvedTo(RAW_FIR)] val one: Intby LAZY_EXPRESSION
             @Deprecated[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val one: Intby LAZY_EXPRESSION
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(reason)) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public? final? [ResolvedTo(COMPANION_GENERATION)] val one: Intby LAZY_EXPRESSION
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(reason)) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -83,7 +83,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public? final? [ResolvedTo(SUPER_TYPES)] val one: Intby LAZY_EXPRESSION
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(reason)) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public? final? [ResolvedTo(TYPES)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public final [ResolvedTo(STATUS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -140,7 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -159,7 +159,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public final [ResolvedTo(CONTRACTS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public final [ResolvedTo(CONSTANT_EVALUATION)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -237,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
                 ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
             }
 
-        public final [ResolvedTo(STATUS)] class Prp : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -260,7 +260,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] getterWithDelegationScript.kts
                 ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
             }
 
-        public final [ResolvedTo(BODY_RESOLVE)] class Prp : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-getterWithDelegationScript.kts>] class Prp : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Prp] constructor(): R|Prp| {
                 super<R|kotlin/Any|>()
             }

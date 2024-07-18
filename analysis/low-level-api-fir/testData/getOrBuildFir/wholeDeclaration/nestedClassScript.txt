@@ -3,7 +3,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassScript.kts>] class X : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|Y.X| {
         super<R|kotlin/Any|>()
     }
@@ -18,12 +18,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassScript.kts>] class Y : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassScript.kts>] class X : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|Y.X| {
                     super<R|kotlin/Any|>()
                 }

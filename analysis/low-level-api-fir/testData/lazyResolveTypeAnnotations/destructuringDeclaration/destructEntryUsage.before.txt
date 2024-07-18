@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryUsage.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntryUsage.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(IntegerLiteral(0).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(1).plus#(constant#))  kotlin/collections/List<@R|util/Anno|(IntegerLiteral(2).plus#(constant#))  kotlin/Int>>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }

@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] callWithConstructorScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-callWithConstructorScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -28,14 +28,14 @@ FILE: [ResolvedTo(IMPORTS)] callWithConstructorScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-callWithConstructorScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|util/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-callWithConstructorScript.kts>] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
                 super<R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>|>()
             }

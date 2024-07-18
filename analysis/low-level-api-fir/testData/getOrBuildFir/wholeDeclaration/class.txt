@@ -3,7 +3,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public open [ResolvedTo(BODY_RESOLVE)] class Builder : R|kotlin/Any| {
+public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-class.kts>] class Builder : R|kotlin/Any| {
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] constructor(): R|Builder| {
         super<R|kotlin/Any|>()
     }
@@ -14,7 +14,7 @@ public open [ResolvedTo(BODY_RESOLVE)] class Builder : R|kotlin/Any| {
 
     public final [ResolvedTo(STATUS)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
-    public final? [ResolvedTo(RAW_FIR)] class NestedBuilder : Builder {
+    public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-class.kts>] class NestedBuilder : Builder {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedBuilder] constructor(): R|Builder.NestedBuilder| {
             LAZY_super<Builder>
         }
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] class.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(BODY_RESOLVE)] class Builder : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-class.kts>] class Builder : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 super<R|kotlin/Any|>()
             }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] class.kts
 
             public final [ResolvedTo(STATUS)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public final? [ResolvedTo(RAW_FIR)] class NestedBuilder : Builder {
+            public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-class.kts>] class NestedBuilder : Builder {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedBuilder] constructor(): R|Builder.NestedBuilder| {
                     LAZY_super<Builder>
                 }

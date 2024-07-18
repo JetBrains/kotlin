@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-enumEntryScript.kts>] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
                 LAZY_super<R|kotlin/Enum<X>|>
             }

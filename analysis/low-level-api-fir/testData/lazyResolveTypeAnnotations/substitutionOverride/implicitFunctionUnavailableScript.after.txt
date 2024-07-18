@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailableScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-implicitFunctionUnavailableScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -79,14 +79,14 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailableScript.kts
 
         }
 
-        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>| {
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-implicitFunctionUnavailableScript.kts>] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
                 LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), <Unresolved name: constant>#))  kotlin/String>>>|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-implicitFunctionUnavailableScript.kts>] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailableScript.kts
                 ^resolveMe this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.explicitType|()
             }
 
-            private final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private final companion [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-implicitFunctionUnavailableScript.kts>] object Companion : R|kotlin/Any| {
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                     LAZY_super<R|kotlin/Any|>
                 }

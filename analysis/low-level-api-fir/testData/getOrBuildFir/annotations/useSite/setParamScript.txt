@@ -11,14 +11,14 @@ FILE: [ResolvedTo(IMPORTS)] setParamScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-setParamScript.kts>] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class X : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-setParamScript.kts>] class X : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/X.x] x: R|kotlin/Int|): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }

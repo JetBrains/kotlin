@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyPair : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }

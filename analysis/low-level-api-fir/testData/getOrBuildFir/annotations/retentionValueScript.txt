@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] retentionValueScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-retentionValueScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }

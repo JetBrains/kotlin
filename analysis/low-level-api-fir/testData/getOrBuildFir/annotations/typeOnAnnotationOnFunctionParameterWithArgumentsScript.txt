@@ -14,14 +14,14 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnFunctionParameterWithArgumentsScri
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun t([ResolvedTo(ANNOTATION_ARGUMENTS)] addCommaWarning: R|@R|Anno|(value = String(abcd))  kotlin/Boolean|): R|kotlin/Unit| {
         }
 
-        public open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnFunctionParameterWithArgumentsScript.kts>] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnFunctionParameterWithArgumentsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.value] value: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }

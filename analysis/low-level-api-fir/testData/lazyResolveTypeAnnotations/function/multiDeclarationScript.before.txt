@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] class Pair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] class Pair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Pair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?|): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }

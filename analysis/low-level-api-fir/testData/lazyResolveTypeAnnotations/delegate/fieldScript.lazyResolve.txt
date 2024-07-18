@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] fieldScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|one/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -149,7 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -191,7 +191,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -236,7 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -249,7 +249,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.position] position: String): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -307,7 +307,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(<strcat>(String(super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested super type ref ), prop#))  kotlin/collections/List<@R|one/Anno|(<strcat>(String(nested nested super type ref ), prop#))  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -323,7 +323,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.position] position: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -336,7 +336,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -352,7 +352,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.position] position: R|kotlin/String|): R|one/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -365,7 +365,7 @@ FILE: [ResolvedTo(IMPORTS)] fieldScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 LAZY_super<<implicit>>
             }
@@ -381,7 +381,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fieldScript.kts
         <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.position] position: R|kotlin/String|): R|one/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -394,7 +394,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fieldScript.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fieldScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Usage] constructor([ResolvedTo(BODY_RESOLVE)] prop: R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|): R|one/Usage| {
                 super<R|kotlin/Any|>()
             }
