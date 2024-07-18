@@ -1,0 +1,6 @@
+@Suppress(names = ["INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"])
+fun filterInts(list: List<Any>): List<Int> {
+  val result: List<Int> = list.filterIsInstance<Int>()
+  return result
+}
+

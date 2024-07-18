@@ -796,6 +796,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       }
 
       @Test
+      @TestMetadata("noInfer.kt")
+      public void testNoInfer() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/noInfer.kt");
+      }
+
+      @Test
       @TestMetadata("primaryConstructorParameterWithAnnotations.kt")
       public void testPrimaryConstructorParameterWithAnnotations() {
         runTest("compiler/testData/ir/irText/declarations/annotations/primaryConstructorParameterWithAnnotations.kt");

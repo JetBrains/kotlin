@@ -1,0 +1,12 @@
+FILE fqName:<root> fileName:/noInfer.kt
+  FUN name:filterInts visibility:public modality:FINAL <> (list:kotlin.collections.List<kotlin.Any>) returnType:kotlin.collections.List<kotlin.Int>
+    annotations:
+      Suppress(names = ["INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+    VALUE_PARAMETER name:list index:0 type:kotlin.collections.List<kotlin.Any>
+    BLOCK_BODY
+      VAR name:result type:kotlin.collections.List<@[NoInfer] kotlin.Int> [val]
+        CALL 'public final fun filterIsInstance <R> (): kotlin.collections.List<@[NoInfer] R of kotlin.collections.filterIsInstance> declared in kotlin.collections' type=kotlin.collections.List<@[NoInfer] kotlin.Int> origin=null
+          <R>: kotlin.Int
+          $receiver: GET_VAR 'list: kotlin.collections.List<kotlin.Any> declared in <root>.filterInts' type=kotlin.collections.List<kotlin.Any> origin=null
+      RETURN type=kotlin.Nothing from='public final fun filterInts (list: kotlin.collections.List<kotlin.Any>): kotlin.collections.List<kotlin.Int> declared in <root>'
+        GET_VAR 'val result: kotlin.collections.List<@[NoInfer] kotlin.Int> declared in <root>.filterInts' type=kotlin.collections.List<@[NoInfer] kotlin.Int> origin=null

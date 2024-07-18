@@ -1,0 +1,10 @@
+// CHECK JS_IR NATIVE:
+//   Mangled name: #filterInts(kotlin.collections.List<kotlin.Any>){}
+//   Public signature: /filterInts|2468847281142073283[0]
+//   Public signature debug description: filterInts(kotlin.collections.List<kotlin.Any>){}
+// CHECK JVM_IR:
+//   Mangled name: #filterInts(kotlin.collections.List<kotlin.Any>){}kotlin.collections.List<kotlin.Int>
+//   Public signature: /filterInts|-8324919666747148060[0]
+//   Public signature debug description: filterInts(kotlin.collections.List<kotlin.Any>){}kotlin.collections.List<kotlin.Int>
+fun filterInts(list: List<Any>): List<Int>
+
