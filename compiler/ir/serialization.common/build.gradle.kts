@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":compiler:psi"))
     implementation(project(":compiler:frontend.common-psi"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.intellij.fastutil)
 
     compileOnly(intellijCore())
     compileOnly(project(":compiler:cli-common"))

@@ -17,7 +17,7 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
-    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(libs.intellij.fastutil)
 
     jflexPath(commonDependency("org.jetbrains.intellij.deps.jflex", "jflex"))
 }
