@@ -1,3 +1,9 @@
+## 1.9.25
+
+### Tools. JPS
+
+- [`KT-69204`](https://youtrack.jetbrains.com/issue/KT-69204) Generate lookups in dumb mode for compatibility with ref index
+
 ## 1.9.24
 
 ### Backend. Wasm
