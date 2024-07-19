@@ -59,7 +59,7 @@ interface TestVersions {
         const val AGP_86 = "8.6.0-alpha08"
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
-        const val MIN_SUPPORTED = AGP_73 // KotlinAndroidPlugin.minimalSupportedAgpVersion
+        const val MIN_SUPPORTED = AGP_73 // AgpCompatibilityCheck.minimalSupportedAgpVersion
         const val MAX_SUPPORTED = AGP_85 // Update once Gradle MAX_SUPPORTED version will be bumped
     }
 

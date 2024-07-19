@@ -11,6 +11,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheck
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmPlugin.Companion.configureCompilerOptionsForTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -23,6 +24,7 @@ internal open class KotlinAndroidPlugin(
 ) : Plugin<Project> {
 
     override fun apply(project: Project) {
+        project.runAgpCompatibilityCheck()
         project.dynamicallyApplyWhenAndroidPluginIsApplied(
             {
                 project.objects.newInstance(
@@ -54,22 +56,7 @@ internal open class KotlinAndroidPlugin(
     }
 
     companion object {
-        private val minimalSupportedAgpVersion = AndroidGradlePluginVersion(7, 1, 3)
-        fun androidTargetHandler(): AndroidProjectHandler {
-            val tasksProvider = KotlinTasksProvider()
-            val androidGradlePluginVersion = AndroidGradlePluginVersion.currentOrNull
-
-            if (androidGradlePluginVersion != null) {
-                if (androidGradlePluginVersion < minimalSupportedAgpVersion) {
-                    throw IllegalStateException(
-                        "Kotlin: Unsupported version of com.android.tools.build:gradle plugin: " +
-                                "version $minimalSupportedAgpVersion or higher should be used with kotlin-android plugin"
-                    )
-                }
-            }
-
-            return AndroidProjectHandler(tasksProvider)
-        }
+        internal fun androidTargetHandler(): AndroidProjectHandler = AndroidProjectHandler(KotlinTasksProvider())
 
         internal fun Project.dynamicallyApplyWhenAndroidPluginIsApplied(
             kotlinAndroidTargetProvider: () -> KotlinAndroidTarget,

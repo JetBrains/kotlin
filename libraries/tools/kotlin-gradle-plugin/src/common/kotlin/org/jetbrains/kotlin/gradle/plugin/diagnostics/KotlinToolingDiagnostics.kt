@@ -207,6 +207,20 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object IncompatibleAgpVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(
+            androidGradlePluginVersionString: String,
+            minSupported: String,
+        ) = build(
+            """
+                Kotlin Gradle Plugin <-> Android Gradle Plugin compatibility issue:
+                The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is lower than the minimum supported $minSupported.
+
+                Please update the Android Gradle Plugin version to at least $minSupported.
+            """.trimIndent()
+        )
+    }
+
     object IncompatibleAgpVersionTooLowWarning : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(androidGradlePluginVersionString: String, minSupported: String, maxTested: String) = build(
             """
