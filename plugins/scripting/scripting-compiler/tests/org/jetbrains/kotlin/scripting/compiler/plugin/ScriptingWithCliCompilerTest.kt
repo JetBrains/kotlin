@@ -296,13 +296,15 @@ class ScriptingWithCliCompilerTest {
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                         "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path,
                         "-Xuse-fir-lt=false",
+                        "-Xextended-compiler-checks",
                         "-Xallow-any-scripts-in-source-roots", "-verbose",
                         "$TEST_DATA_DIR/compiler/mixedCompilation/nonScriptAccessingScript.kt",
                         SIMPLE_TEST_SCRIPT
                     )
                 )
             }
-            println(err)
+            Assert.assertTrue("Expecting an error about unresolved 'SimpleScript_main', got:\n$err", err.contains("error: unresolved reference 'SimpleScript_main'"))
+            Assert.assertTrue("Expecting an error about unresolved 'ok', got:\n$err", err.contains("error: unresolved reference 'ok'"))
             Assert.assertEquals(ExitCode.COMPILATION_ERROR.code, ret.code)
         }
     }
