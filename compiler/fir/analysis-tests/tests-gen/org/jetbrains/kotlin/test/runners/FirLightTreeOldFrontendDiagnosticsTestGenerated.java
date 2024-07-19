@@ -4678,6 +4678,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         public void testKt67993() {
           runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt67993.kt");
         }
+
+        @Test
+        @TestMetadata("kt69170.kt")
+        public void testKt69170() {
+          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt69170.kt");
+        }
+
+        @Test
+        @TestMetadata("kt69170Original.kt")
+        public void testKt69170Original() {
+          runTest("compiler/testData/diagnostics/tests/builderInference/issues/kt69170Original.kt");
+        }
       }
 
       @Nested
