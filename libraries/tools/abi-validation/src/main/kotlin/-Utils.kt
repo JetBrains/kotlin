@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import java.io.File
 import java.io.Serializable
 
 /**
@@ -59,4 +60,10 @@ public class KlibDumpMetadata(
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     public val dumpFile: RegularFileProperty
+) : Serializable
+
+// Workaround for serialization exception occurring when KlibDumpMetadata is supplied to WorkerParameters.
+internal class KlibMetadataLocal(
+    val target: KlibTarget,
+    val dumpFile: File
 ) : Serializable

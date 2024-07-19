@@ -12,6 +12,11 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkerExecutor
+import org.slf4j.LoggerFactory
+import javax.inject.Inject
 
 /**
  * Task infers a possible KLib ABI dump for an unsupported target.
@@ -24,7 +29,7 @@ import org.gradle.api.tasks.*
  * The resulting dump is then used as an inferred dump for the unsupported target.
  */
 @CacheableTask
-public abstract class KotlinKlibInferAbiTask : DefaultTask() {
+public abstract class KotlinKlibInferAbiTask : WorkerAwareTaskBase() {
     /**
      * The name of a target to infer a dump for.
      */
@@ -50,15 +55,44 @@ public abstract class KotlinKlibInferAbiTask : DefaultTask() {
     @get:OutputFile
     public abstract val outputAbiFile: RegularFileProperty
 
-    @OptIn(ExperimentalBCVApi::class)
+    @get:Inject
+    public abstract val executor: WorkerExecutor
+
     @TaskAction
     internal fun generate() {
-        val availableDumps = inputDumps.get().map {
-            it.target to it.dumpFile.asFile.get()
+        val q = executor.classLoaderIsolation {
+            it.classpath.from(runtimeClasspath)
+        }
+        q.submit(KlibInferAbiWorker::class.java) { params ->
+            params.target.set(target)
+            params.inputDumps.set(inputDumps.get().map {
+                KlibMetadataLocal(it.target, it.dumpFile.get().asFile)
+            })
+            params.oldMergedKlibDump.set(oldMergedKlibDump)
+            params.outputAbiFile.set(outputAbiFile)
+        }
+        q.await()
+    }
+}
+
+internal interface KlibInferAbiParameters : WorkParameters {
+    val target: Property<KlibTarget>
+    val inputDumps: SetProperty<KlibMetadataLocal>
+    val oldMergedKlibDump: RegularFileProperty
+    val outputAbiFile: RegularFileProperty
+}
+
+internal abstract class KlibInferAbiWorker : WorkAction<KlibInferAbiParameters> {
+    private val logger = LoggerFactory.getLogger(KlibInferAbiWorker::class.java)
+
+    @OptIn(ExperimentalBCVApi::class)
+    override fun execute() {
+        val availableDumps = parameters.inputDumps.get().map {
+            it.target to it.dumpFile
         }.filter { it.second.exists() }.toMap()
         // Find a set of supported targets that are closer to unsupported target in the hierarchy.
         // Note that dumps are stored using configurable name, but grouped by the canonical target name.
-        val matchingTargets = findMatchingTargets(availableDumps.keys, target.get())
+        val matchingTargets = findMatchingTargets(availableDumps.keys, parameters.target.get())
         // Load dumps that are a good fit for inference
         val supportedTargetDumps = matchingTargets.map { target ->
             val dumpFile = availableDumps[target]!!
@@ -69,7 +103,7 @@ public abstract class KotlinKlibInferAbiTask : DefaultTask() {
 
         // Load an old dump, if any
         var image: KlibDump? = null
-        val oldDumpFile = oldMergedKlibDump.asFile.get()
+        val oldDumpFile = parameters.oldMergedKlibDump.asFile.get()
         if (oldDumpFile.exists()) {
             if (oldDumpFile.length() > 0L) {
                 image = KlibDump.from(oldDumpFile)
@@ -77,18 +111,18 @@ public abstract class KotlinKlibInferAbiTask : DefaultTask() {
                 logger.warn(
                     "Project's ABI file exists, but empty: $oldDumpFile. " +
                             "The file will be ignored during ABI dump inference for the unsupported target " +
-                            target.get()
+                            parameters.target.get()
                 )
             }
         }
 
-        inferAbi(target.get(), supportedTargetDumps, image).saveTo(outputAbiFile.asFile.get())
+        inferAbi(parameters.target.get(), supportedTargetDumps, image).saveTo(parameters.outputAbiFile.asFile.get())
 
         logger.warn(
-            "An ABI dump for target ${target.get()} was inferred from the ABI generated for the following targets " +
+            "An ABI dump for target ${parameters.target.get()} was inferred from the ABI generated for the following targets " +
                     "as the former target is not supported by the host compiler: " +
                     "[${matchingTargets.joinToString(",")}]. " +
-                    "Inferred dump may not reflect an actual ABI for the target ${target.get()}. " +
+                    "Inferred dump may not reflect an actual ABI for the target ${parameters.target.get()}. " +
                     "It is recommended to regenerate the dump on the host supporting all required compilation target."
         )
     }

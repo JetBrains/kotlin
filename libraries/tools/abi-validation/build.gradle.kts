@@ -64,10 +64,10 @@ val createClasspathManifest = tasks.register("createClasspathManifest") {
 
 dependencies {
     implementation(gradleApi())
-    implementation(libs.kotlinx.metadata)
+    compileOnly(libs.kotlinx.metadata)
     compileOnly(libs.kotlin.compiler.embeddable)
-    implementation(libs.ow2.asm)
-    implementation(libs.ow2.asmTree)
+    compileOnly(libs.ow2.asm)
+    compileOnly(libs.ow2.asmTree)
     implementation(libs.javaDiffUtils)
     compileOnly(libs.gradlePlugin.kotlin)
 
@@ -169,12 +169,17 @@ testing {
                 implementation(project())
                 implementation(libs.assertJ.core)
                 implementation(libs.kotlin.test)
-                implementation(libs.kotlin.compiler.embeddable)
             }
         }
 
         val test by getting(JvmTestSuite::class) {
             description = "Regular unit tests"
+            dependencies {
+                implementation(libs.kotlinx.metadata)
+                implementation(libs.kotlin.compiler.embeddable)
+                implementation(libs.ow2.asm)
+                implementation(libs.ow2.asmTree)
+            }
         }
 
         val functionalTest by creating(JvmTestSuite::class) {
@@ -184,6 +189,8 @@ testing {
             dependencies {
                 implementation(files(createClasspathManifest))
 
+                implementation(libs.kotlinx.metadata)
+                implementation(libs.kotlin.compiler.embeddable)
                 implementation(gradleApi())
                 implementation(gradleTestKit())
             }

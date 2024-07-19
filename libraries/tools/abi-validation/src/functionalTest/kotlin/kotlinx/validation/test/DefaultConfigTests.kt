@@ -98,6 +98,29 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
     }
 
     @Test
+    fun `apiCheck should succeed when public classes match api file with K2`() {
+        val runner = test {
+            buildGradleKts {
+                resolve("/examples/gradle/base/withPluginK2.gradle.kts")
+            }
+            kotlin("AnotherBuildConfig.kt") {
+                resolve("/examples/classes/AnotherBuildConfig.kt")
+            }
+            apiFile(projectName = rootProjectDir.name) {
+                resolve("/examples/classes/AnotherBuildConfig.dump")
+            }
+
+            runner {
+                arguments.add(":apiCheck")
+            }
+        }
+
+        runner.build().apply {
+            assertTaskSuccess(":apiCheck")
+        }
+    }
+
+    @Test
     fun `apiCheck should fail when public classes match api file ignoring case`() {
         Assume.assumeTrue(underlyingFsIsCaseSensitive())
 
