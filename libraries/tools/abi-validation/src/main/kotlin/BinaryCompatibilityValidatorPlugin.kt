@@ -38,17 +38,6 @@ public class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
             for (project in ignored) {
                 require(project in all) { "Cannot find excluded project $project in all projects: $all" }
             }
-            if (extension.klib.enabled) {
-                try {
-                    LibraryAbiReader.javaClass
-                } catch (e: NoClassDefFoundError) {
-                    throw IllegalStateException(
-                        "KLib validation is not available. " +
-                                "Make sure the project uses at least Kotlin 1.9.20 or disable KLib validation " +
-                                "by setting apiValidation.klib.enabled to false", e
-                    )
-                }
-            }
         }
     }
 
