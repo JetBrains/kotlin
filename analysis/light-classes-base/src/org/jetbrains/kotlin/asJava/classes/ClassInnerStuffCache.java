@@ -7,27 +7,20 @@ package org.jetbrains.kotlin.asJava.classes;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.ModificationTracker;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.*;
-import com.intellij.psi.augment.PsiAugmentProvider;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.PsiImplUtil;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.ConcurrentFactoryMap;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Interner;
-import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.intellij.util.ObjectUtils.notNull;
+import java.util.stream.Collectors;
 
 /**
  * Copy-pasted and updated from com.intellij.psi.impl.source.ClassInnerStuffCache
@@ -39,7 +32,6 @@ public final class ClassInnerStuffCache {
 
     private final @NotNull KtExtensibleLightClass myClass;
     private final @NotNull List<ModificationTracker> myModificationTrackers;
-    private final @NotNull Ref<Pair<Long, Interner<PsiMember>>> myInterner = Ref.create();
 
     public ClassInnerStuffCache(
             @NotNull KtExtensibleLightClass aClass,
@@ -115,13 +107,15 @@ public final class ClassInnerStuffCache {
             return PsiClassImplUtil.findMethodsByName(myClass, name, true);
         }
         else {
-            return copy(notNull(CachedValuesManager.getCachedValue(
+            List<PsiMethod> methods = CachedValuesManager.getCachedValue(
                     myClass,
                     () -> CachedValueProvider.Result.create(
                             getMethodsMap(),
                             myModificationTrackers
                     )
-            ).get(name), PsiMethod.EMPTY_ARRAY));
+            ).get(name);
+
+            return methods == null || methods.isEmpty() ? PsiMethod.EMPTY_ARRAY : methods.toArray(PsiMethod.EMPTY_ARRAY);
         }
     }
 
@@ -148,45 +142,19 @@ public final class ClassInnerStuffCache {
     @NotNull
     private PsiField[] calcFields() {
         List<PsiField> own = myClass.getOwnFields();
-        List<PsiField> ext = internMembers(PsiAugmentProvider.collectAugments(myClass, PsiField.class, null));
-        return ArrayUtil.mergeCollections(own, ext, PsiField.ARRAY_FACTORY);
-    }
-
-    @NotNull
-    private <T extends PsiMember> List<T> internMembers(List<T> members) {
-        return ContainerUtil.map(members, this::internMember);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T extends PsiMember> T internMember(T m) {
-        if (m == null) return null;
-        long modCount = 0;
-        for (ModificationTracker tracker : myModificationTrackers) {
-            modCount += tracker.getModificationCount();
-        }
-
-        synchronized (myInterner) {
-            Pair<Long, Interner<PsiMember>> pair = myInterner.get();
-            if (pair == null || pair.first.longValue() != modCount) {
-                myInterner.set(pair = Pair.create(modCount, Interner.createWeakInterner()));
-            }
-
-            return (T) pair.second.intern(m);
-        }
+        return own.isEmpty() ? PsiField.EMPTY_ARRAY : own.toArray(PsiField.EMPTY_ARRAY);
     }
 
     @NotNull
     private PsiMethod[] calcMethods() {
         List<PsiMethod> own = myClass.getOwnMethods();
-        List<PsiMethod> ext = internMembers(PsiAugmentProvider.collectAugments(myClass, PsiMethod.class, null));
-        return ArrayUtil.mergeCollections(own, ext, PsiMethod.ARRAY_FACTORY);
+        return own.isEmpty() ? PsiMethod.EMPTY_ARRAY : own.toArray(PsiMethod.EMPTY_ARRAY);
     }
 
     @NotNull
     private PsiClass[] calcInnerClasses() {
         List<PsiClass> own = myClass.getOwnInnerClasses();
-        List<PsiClass> ext = internMembers(PsiAugmentProvider.collectAugments(myClass, PsiClass.class, null));
-        return ArrayUtil.mergeCollections(own, ext, PsiClass.ARRAY_FACTORY);
+        return own.isEmpty() ? PsiClass.EMPTY_ARRAY : own.toArray(PsiClass.EMPTY_ARRAY);
     }
 
     @NotNull
@@ -197,21 +165,12 @@ public final class ClassInnerStuffCache {
             cachedFields.putIfAbsent(name, field);
         }
 
-        return ConcurrentFactoryMap.createMap(name -> {
-            PsiField result = cachedFields.get(name);
-            return result != null ? result :
-                   internMember(ContainerUtil.getFirstItem(PsiAugmentProvider.collectAugments(myClass, PsiField.class, name)));
-        });
+        return cachedFields;
     }
 
     @NotNull
-    private Map<String, PsiMethod[]> getMethodsMap() {
-        List<PsiMethod> ownMethods = myClass.getOwnMethods();
-        return ConcurrentFactoryMap.createMap(name -> JBIterable
-                .from(ownMethods)
-                .filter(m -> name.equals(m.getName()))
-                .append(internMembers(PsiAugmentProvider.collectAugments(myClass, PsiMethod.class, name)))
-                .toArray(PsiMethod.EMPTY_ARRAY));
+    private Map<String, List<PsiMethod>> getMethodsMap() {
+        return myClass.getOwnMethods().stream().collect(Collectors.groupingBy(PsiMethod::getName));
     }
 
     @NotNull
@@ -222,16 +181,11 @@ public final class ClassInnerStuffCache {
             if (name == null) {
                 Logger.getInstance(ClassInnerStuffCache.class).error("$psiClass has no name");
             }
-            else if (!(psiClass instanceof ExternallyDefinedPsiElement) || !cachedInners.containsKey(name)) {
-                cachedInners.put(name, psiClass);
+            else {
+                cachedInners.putIfAbsent(name, psiClass);
             }
         }
 
-        return ConcurrentFactoryMap.createMap(name -> {
-            PsiClass result = cachedInners.get(name);
-            return result != null
-                   ? result
-                   : internMember(ContainerUtil.getFirstItem(PsiAugmentProvider.collectAugments(myClass, PsiClass.class, name)));
-        });
+        return cachedInners;
     }
 }
