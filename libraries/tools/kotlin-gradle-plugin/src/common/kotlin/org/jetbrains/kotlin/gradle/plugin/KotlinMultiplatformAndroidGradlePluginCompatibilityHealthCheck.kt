@@ -84,7 +84,6 @@ internal object KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck {
         compatibleAndroidGradlePluginVersionRange: AndroidGradlePluginVersionRange =
             KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.compatibleAndroidGradlePluginVersionRange
     ) = runProjectConfigurationHealthCheck check@{
-        if (project.kotlinPropertiesProvider.ignoreAndroidGradlePluginCompatibilityIssues) return@check
         getOrPutRootProjectProperty(PROPERTY_KEY_EXECUTED_PROJECT_PATHS) { mutableSetOf<String>() }.add(path)
 
         /* Return when no android plugin is applied */

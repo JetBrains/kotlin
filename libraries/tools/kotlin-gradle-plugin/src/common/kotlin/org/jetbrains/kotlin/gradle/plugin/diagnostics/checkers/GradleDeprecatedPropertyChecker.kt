@@ -22,6 +22,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         "kotlin.wasm.stability.nowarn",
         KotlinJsCompilerType.jsCompilerProperty,
         "${KotlinJsCompilerType.jsCompilerProperty}.nowarn",
+        "kotlin.mpp.androidGradlePluginCompatibility.nowarn", // Since 2.1.0
     )
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {

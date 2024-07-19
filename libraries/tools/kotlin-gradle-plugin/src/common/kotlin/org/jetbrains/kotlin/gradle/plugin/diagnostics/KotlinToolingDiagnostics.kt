@@ -230,7 +230,7 @@ object KotlinToolingDiagnostics {
                 Minimum supported Android Gradle Plugin version: $minSupported
                 Maximum tested Android Gradle Plugin version: $maxTested
                 
-                To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN}=true' to your gradle.properties
+                To suppress this message add 'kotlin.mpp.androidGradlePluginCompatibility.nowarn=true' to your gradle.properties
             """.trimIndent()
         )
     }
