@@ -9,7 +9,7 @@ internal inline fun customSetVar(value: Int)
     /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = value)
 internal inline fun customGetVar(): Int
     /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
-/* ACCESSOR declaration */ public fun access$<set-privateVar>$tAKt(<set-?>: Int)
-    /* TARGET use-site */ <set-privateVar>(<set-?> = <set-?>)
 /* ACCESSOR declaration */ public fun access$<get-privateVar>$tAKt(): Int
     /* TARGET use-site */ <get-privateVar>()
+/* ACCESSOR declaration */ public fun access$<set-privateVar>$tAKt(<set-?>: Int)
+    /* TARGET use-site */ <set-privateVar>(<set-?> = <set-?>)

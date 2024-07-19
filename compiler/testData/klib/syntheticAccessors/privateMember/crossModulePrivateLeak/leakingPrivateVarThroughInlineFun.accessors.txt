@@ -10,7 +10,7 @@ public class A
         /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = value)
     internal inline fun customGetVar(): Int
         /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
-    /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: A, <set-?>: Int)
-        /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
     /* ACCESSOR declaration */ public fun access$<get-privateVar>($this: A): Int
         /* TARGET use-site */ $this.<get-privateVar>()
+    /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: A, <set-?>: Int)
+        /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)

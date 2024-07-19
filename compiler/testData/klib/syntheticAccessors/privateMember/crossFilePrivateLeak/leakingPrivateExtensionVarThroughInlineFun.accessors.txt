@@ -10,7 +10,7 @@ public class A
 private var A.privateVar: Int
     /* TARGET declaration */ private fun A.<get-privateVar>(): Int
     /* TARGET declaration */ private fun A.<set-privateVar>(value: Int)
-/* ACCESSOR declaration */ public fun access$<set-privateVar>$tAKt($receiver: A, value: Int)
-    /* TARGET use-site */ $receiver.<set-privateVar>(value = value)
 /* ACCESSOR declaration */ public fun access$<get-privateVar>$tAKt($receiver: A): Int
     /* TARGET use-site */ $receiver.<get-privateVar>()
+/* ACCESSOR declaration */ public fun access$<set-privateVar>$tAKt($receiver: A, value: Int)
+    /* TARGET use-site */ $receiver.<set-privateVar>(value = value)
