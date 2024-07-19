@@ -70,6 +70,8 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     override fun apply(project: Project) {
         project.registerDefaultVariantImplementations()
+        checkGradleCompatibility()
+        project.runAgpCompatibilityCheckIfAgpIsApplied()
 
         if (project.kotlinPropertiesProvider.enableFusMetricsCollection) {
             BuildFusService.registerIfAbsent(project, pluginVersion)
@@ -259,8 +261,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
     override fun apply(project: Project) {
         super.apply(project)
         project.logger.info("Using Kotlin Gradle Plugin $pluginVariant variant")
-        checkGradleCompatibility()
-        project.runAgpCompatibilityCheckIfAgpIsApplied()
 
         project.configurations.maybeCreateResolvable(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             isVisible = false
