@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.test.frontend.classic.handlers
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.TEST_ALONGSIDE_K1_TESTDATA
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.isFirTestData
+import org.jetbrains.kotlin.test.utils.isLatestLVTestData
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import java.io.File
 
@@ -28,7 +32,16 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
         val moduleStructure = testServices.moduleStructure
         val testData = moduleStructure.originalTestDataFiles.first()
         if (testData.extension == "kts") return
-        if (FirDiagnosticsDirectives.FIR_IDENTICAL in moduleStructure.allDirectives) return
+        val directives = moduleStructure.allDirectives
+        if (TEST_ALONGSIDE_K1_TESTDATA in directives && FIR_IDENTICAL !in directives) {
+            checkK1AndFirTestData(testData)
+        }
+        if (LATEST_LV_DIFFERENCE in directives && testData.isLatestLVTestData) {
+            checkFirAndLatestLVTestData(testData, directives)
+        }
+    }
+
+    private fun checkK1AndFirTestData(testData: File) {
         val (firTestData, originalTestData) = when {
             testData.isFirTestData -> testData to testData.originalTestDataFile
             else -> testData.firTestDataFile to testData
@@ -37,11 +50,22 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
             runFirTestAndGeneratedTestData(testData, firTestData)
             return
         }
-        val firPreprocessedTextData = firTestData.preprocessSource()
+        checkTwoFiles(originalTestData, firTestData, "Original and FIR test data aren't identical. ")
+    }
+
+    private fun checkFirAndLatestLVTestData(latestLVTestData: File, directives: RegisteredDirectives) {
+        val firTestData = when {
+            TEST_ALONGSIDE_K1_TESTDATA in directives || FIR_IDENTICAL in directives -> latestLVTestData.originalTestDataFile
+            else -> latestLVTestData.firTestDataFile
+        }
+        checkTwoFiles(firTestData, latestLVTestData, "Original and Latest Stable LV testdata aren't identical. ")
+    }
+
+    private fun checkTwoFiles(originalTestData: File, secondTestData: File, message: String) {
+        val secondPreprocessedTextData = secondTestData.preprocessSource()
         val originalPreprocessedTextData = originalTestData.preprocessSource()
-        testServices.assertions.assertEquals(firPreprocessedTextData, originalPreprocessedTextData) {
-            "Original and FIR test data aren't identical. " +
-                    "Please, add changes from ${originalTestData.name} to ${firTestData.name}"
+        testServices.assertions.assertEquals(secondPreprocessedTextData, originalPreprocessedTextData) {
+            message + "Please, add changes from ${originalTestData.name} to ${secondTestData.name}"
         }
     }
 

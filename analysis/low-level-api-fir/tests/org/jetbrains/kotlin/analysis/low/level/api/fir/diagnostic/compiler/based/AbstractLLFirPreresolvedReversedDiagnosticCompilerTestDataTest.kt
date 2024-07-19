@@ -44,7 +44,7 @@ internal class ReversedDiagnosticsConfigurator(testServices: TestServices) : Met
 class ReversedFirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChecker(testServices) {
     override fun checkTestDataFile(testDataFile: File) {
         if (".reversed." !in testDataFile.path) return
-
+        val helper = Helper()
         val originalFile = helper.getClassicFileToCompare(testDataFile).path.replace(".reversed", "").let(::File)
         val baseFile = originalFile.llFirTestDataFile.takeIf(File::exists)
             ?: originalFile.firTestDataFile.takeIf(File::exists)

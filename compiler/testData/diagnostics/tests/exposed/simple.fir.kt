@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 private interface My
 
 private open class Base

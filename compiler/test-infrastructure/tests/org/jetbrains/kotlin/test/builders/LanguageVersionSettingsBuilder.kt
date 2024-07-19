@@ -62,7 +62,9 @@ class LanguageVersionSettingsBuilder {
             val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
             this.languageVersion = languageVersion
         }
-        val languageVersionDirective = directives.singleOrZeroValue(LanguageSettingsDirectives.LANGUAGE_VERSION)
+        // We can't call singleOrZero here, as the runner can set one value in `defaultDirectives`, and one can be set directly
+        //   in the test. So in such a situation, we need to take the value from the test
+        val languageVersionDirective = directives[LanguageSettingsDirectives.LANGUAGE_VERSION].firstOrNull()
         val allowDangerousLanguageVersionTesting =
             directives.contains(LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING)
         if (languageVersionDirective != null) {

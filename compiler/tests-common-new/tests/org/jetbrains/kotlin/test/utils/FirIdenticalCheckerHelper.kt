@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 
 abstract class FirIdenticalCheckerHelper(private val testServices: TestServices) {
@@ -64,7 +63,11 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
         }
     }
 
-    fun removeDirectiveFromClassicFileAndAssert(testDataFile: File, directiveToRemove: Directive) {
+    fun removeDirectiveFromClassicFileAndAssert(
+        testDataFile: File,
+        directiveToRemove: Directive,
+        header: String = "Dumps via FIR & via old FE are the same",
+    ) {
         val directiveName = directiveToRemove.name
         if (!isTeamCityBuild) {
             val classicFileContent = testDataFile.readLines()
@@ -84,7 +87,7 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
         }
         testServices.assertions.fail {
             """
-                    Dumps via FIR & via old FE are the same. 
+                    $header. 
                     $message
                     Please re-run the test now
                 """.trimIndent()

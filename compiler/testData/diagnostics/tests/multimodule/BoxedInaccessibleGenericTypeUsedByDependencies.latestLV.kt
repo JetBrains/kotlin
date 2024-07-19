@@ -14,10 +14,10 @@ fun consumeBoxedInaccessibleType(arg: Box<InaccessibleType<Any?>>) {}
 // MODULE: main(library)
 
 fun test() {
-    consumeBoxedInaccessibleType(produceBoxedInaccessibleType())
+    <!MISSING_DEPENDENCY_CLASS!>consumeBoxedInaccessibleType<!>(<!ARGUMENT_TYPE_MISMATCH!><!MISSING_DEPENDENCY_CLASS!>produceBoxedInaccessibleType<!>()<!>)
 }
 
 fun test2() {
-    val a = produceBoxedInaccessibleType()
-    consumeBoxedInaccessibleType(a)
+    val a = <!MISSING_DEPENDENCY_CLASS!>produceBoxedInaccessibleType<!>()
+    <!MISSING_DEPENDENCY_CLASS!>consumeBoxedInaccessibleType<!>(<!ARGUMENT_TYPE_MISMATCH, MISSING_DEPENDENCY_CLASS!>a<!>)
 }

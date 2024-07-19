@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 
 abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    protected inner class SpecificHelper : FirIdenticalCheckerHelper(testServices) {
+    protected inner class Helper : FirIdenticalCheckerHelper(testServices) {
         override fun getClassicFileToCompare(testDataFile: File): File = testDataFile.originalTestDataFile
         override fun getFirFileToCompare(testDataFile: File): File = testDataFile.firTestDataFile
     }
-
-    protected val helper = SpecificHelper()
 
     protected abstract fun checkTestDataFile(testDataFile: File)
 

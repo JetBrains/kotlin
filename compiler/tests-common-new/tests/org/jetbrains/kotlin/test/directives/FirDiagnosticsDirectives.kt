@@ -45,6 +45,27 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
+    val LATEST_LV_DIFFERENCE by directive(
+        description = """
+            Diagnostics differs between latest stable and latest language version
+            Separate file for latest LV should be checked
+        """.trimIndent()
+    )
+
+    val TEST_ALONGSIDE_K1_TESTDATA by directive(
+        description = """
+            This directive indicates that the test is run on the testdata,
+            which is also used for K1 tests
+        """.trimIndent()
+    )
+
+    val USE_LATEST_LANGUAGE_VERSION by directive(
+        description = """
+            Indicates that test is run with latest language version.
+            This directive should not be used directly in testdata
+        """.trimIndent()
+    )
+
     val FIR_PARSER by enumDirective<FirParser>(
         description = "Defines which parser should be used for FIR compiler"
     )

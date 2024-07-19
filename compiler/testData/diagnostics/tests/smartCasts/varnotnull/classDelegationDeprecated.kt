@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // ISSUE: KT-57417
 
 interface HasProperty {

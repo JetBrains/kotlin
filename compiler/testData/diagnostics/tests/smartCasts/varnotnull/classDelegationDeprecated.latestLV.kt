@@ -8,5 +8,5 @@ interface HasProperty {
 class Test(delegate: HasProperty) : HasProperty by delegate
 
 fun test(a: Test) {
-    if (a.property != null) <!DEPRECATED_SMARTCAST_ON_DELEGATED_PROPERTY!>a.property<!> + 1
+    if (a.property != null) <!SMARTCAST_IMPOSSIBLE!>a.property<!> + 1
 }

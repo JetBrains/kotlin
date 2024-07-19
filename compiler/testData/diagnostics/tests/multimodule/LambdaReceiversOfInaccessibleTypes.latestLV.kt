@@ -15,6 +15,6 @@ fun withGenericReceiver(arg: InaccessibleGenericType<*>.() -> Unit) {}
 // FILE: end.kt
 
 fun test() {
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withConcreteReceiver<!> <!MISSING_DEPENDENCY_CLASS!>{}<!>
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withGenericReceiver<!> <!MISSING_DEPENDENCY_CLASS!>{}<!>
+    <!MISSING_DEPENDENCY_CLASS!>withConcreteReceiver<!> <!MISSING_DEPENDENCY_CLASS!>{}<!>
+    <!MISSING_DEPENDENCY_CLASS!>withGenericReceiver<!> <!MISSING_DEPENDENCY_CLASS!>{}<!>
 }
