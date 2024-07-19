@@ -363,3 +363,7 @@ internal suspend fun KotlinMultiplatformExtension.awaitMetadataTarget(): KotlinM
     awaitTargets()
     return metadataTarget
 }
+
+internal fun KotlinMultiplatformExtension.supportedAppleTargets() = targets
+    .withType(KotlinNativeTarget::class.java)
+    .matching { it.konanTarget.family.isAppleFamily }
