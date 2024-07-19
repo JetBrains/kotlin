@@ -2,6 +2,9 @@
 // WITH_STDLIB
 // FULL_JDK
 // TARGET_BACKEND: JVM
+// IGNORE_INLINER: IR
+// ^^^ Name invent works before coroutines lowering and after IR inline, so `invokeSuspend` and `doResume` don't present yet.
+
 // FILE: flow.kt
 
 package flow

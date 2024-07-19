@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.getAdditionalStatementsFromInlinedBlock
+import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import kotlin.collections.set
 
-abstract class InventNamesForLocalClasses(private val generateNamesForRegeneratedObjects: Boolean = false) : FileLoweringPass {
+abstract class InventNamesForLocalClasses : FileLoweringPass {
 
     protected abstract fun computeTopLevelClassName(clazz: IrClass): String
     protected abstract fun sanitizeNameIfNeeded(name: String): String
@@ -36,12 +36,15 @@ abstract class InventNamesForLocalClasses(private val generateNamesForRegenerate
 
     /**
      * @property isLocal true if the next declaration to be encountered in the IR tree is local
+     * @property processingInlinedFunction true if inside scope of `IrInlinedFunctionBlock`
+     * @property nameBelongToVariable true if `currentName` is the name of a variable
      */
     protected class NameBuilder(
         val parent: NameBuilder? = EMPTY,
         val currentName: String,
         val isLocal: Boolean = parent?.isLocal ?: false,
         val processingInlinedFunction: Boolean = parent?.processingInlinedFunction ?: false,
+        private val nameBelongToVariable: Boolean = false
     ) {
         companion object {
             val EMPTY = NameBuilder(parent = null, currentName = "")
@@ -54,12 +57,14 @@ abstract class InventNamesForLocalClasses(private val generateNamesForRegenerate
         fun copy(
             isLocal: Boolean = this.isLocal,
             processingInlinedFunction: Boolean = this.processingInlinedFunction,
+            nameBelongToVariable: Boolean = this.nameBelongToVariable,
         ): NameBuilder {
             return NameBuilder(
                 parent = this.parent,
                 currentName = this.currentName,
                 isLocal = isLocal,
-                processingInlinedFunction = processingInlinedFunction
+                processingInlinedFunction = processingInlinedFunction,
+                nameBelongToVariable = nameBelongToVariable,
             )
         }
 
@@ -73,6 +78,7 @@ abstract class InventNamesForLocalClasses(private val generateNamesForRegenerate
         private fun getEnclosingName(): String {
             val enclosingName = generateSequence(this) { it.parent }
                 .toList().dropLast(1).reversed()
+                .filterNot { this.processingInlinedFunction && it.nameBelongToVariable }
                 .joinToString("\$") { it.currentName }
             return enclosingName
         }
@@ -87,12 +93,9 @@ abstract class InventNamesForLocalClasses(private val generateNamesForRegenerate
         }
 
         override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: NameBuilder) {
-            if (!generateNamesForRegeneratedObjects) {
-                return inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
-            }
-
+            inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
             if (!data.processingInlinedFunction && inlinedBlock.isFunctionInlining()) {
-                inlinedBlock.getAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
+                inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
 
                 val inlinedAt = inlinedBlock.inlineCall.symbol.owner.name
                 val newData = data.append("\$inlined\$$inlinedAt").copy(isLocal = true, processingInlinedFunction = true)
@@ -156,13 +159,11 @@ abstract class InventNamesForLocalClasses(private val generateNamesForRegenerate
                         localFunctionNames[declaration.symbol] = it.buildAndSanitize()
                     }
                 }
-
-                declaration is IrVariable && generateNamesForRegeneratedObjects || data.processingInlinedFunction -> data.copy()
                 data.parent != null -> data.appendName(declaration)
                 else -> NameBuilder(currentName = simpleName)
             }
 
-            val newData = internalName.copy(isLocal = true)
+            val newData = internalName.copy(isLocal = true, nameBelongToVariable = declaration is IrVariable)
             if ((declaration is IrProperty && declaration.isDelegated) || declaration is IrLocalDelegatedProperty) {
                 // Old backend currently reserves a name here, in case a property reference-like anonymous object will need
                 // to be generated in the codegen later, which is now happening for local delegated properties in inline functions.
