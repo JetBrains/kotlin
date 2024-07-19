@@ -30,12 +30,9 @@ import org.jetbrains.kotlin.name.Name
  * Generates visible synthetic accessor functions for symbols that are otherwise inaccessible, for example,
  * when inlining a function that references a private method of a class outside of that class, or generating a class for a lambda
  * expression that uses a `super` qualifier in its body.
- *
- * @param addAccessorToParent Whether a newly generated accessor should be immediately added to its parent as a child.
  */
 abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
     protected val context: Context,
-    private val addAccessorToParent: Boolean = false,
 ) {
     private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
@@ -137,10 +134,6 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
                     function.makeConstructorAccessor()
                 is IrSimpleFunction ->
                     function.makeSimpleFunctionAccessor(superQualifierSymbol, dispatchReceiverType, parent, scopeInfo)
-            }.also {
-                if (addAccessorToParent) {
-                    parent.declarations.add(it)
-                }
             }
         }
     }
@@ -234,11 +227,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         val getterMap =
             field.getterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.getterSyntheticAccessors = it }
         return getterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
-            makeGetterAccessor(field, parent, expression.superQualifierSymbol).also {
-                if (addAccessorToParent) {
-                    parent.declarations.add(it)
-                }
-            }
+            makeGetterAccessor(field, parent, expression.superQualifierSymbol)
         }
     }
 
@@ -293,11 +282,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         val setterMap =
             field.setterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.setterSyntheticAccessors = it }
         return setterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
-            makeSetterAccessor(field, parent, expression.superQualifierSymbol).also {
-                if (addAccessorToParent) {
-                    parent.declarations.add(it)
-                }
-            }
+            makeSetterAccessor(field, parent, expression.superQualifierSymbol)
         }
     }
 

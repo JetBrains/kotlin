@@ -16,7 +16,7 @@ typealias InlineFunctionInfo = Nothing?
 
 class KlibSyntheticAccessorGenerator(
     context: CommonBackendContext
-) : SyntheticAccessorGenerator<CommonBackendContext, InlineFunctionInfo>(context, addAccessorToParent = true) {
+) : SyntheticAccessorGenerator<CommonBackendContext, InlineFunctionInfo>(context) {
 
     companion object {
         const val TOP_LEVEL_FUNCTION_SUFFIX_MARKER = "t"
