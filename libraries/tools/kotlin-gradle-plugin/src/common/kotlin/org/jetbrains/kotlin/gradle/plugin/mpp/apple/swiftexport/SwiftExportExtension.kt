@@ -82,10 +82,10 @@ abstract class SwiftExportExtension @Inject constructor(
             else -> providerFactory.provider { dependencyHandler.create(dependency) }
         }
 
-        forAllSwiftExportBinaries { binary ->
-            dependencyHandler.addProvider(binary.exportConfigurationName, dependencyProvider)
+        forAllSwiftExportBinaries {
+            dependencyHandler.addProvider(exportConfigurationName, dependencyProvider)
             dependencyHandler.addProvider(
-                binary.compilation.internal.configurations.compileDependencyConfiguration.name,
+                compilation.internal.configurations.compileDependencyConfiguration.name,
                 dependencyProvider
             )
         }
@@ -113,7 +113,7 @@ abstract class SwiftExportExtension @Inject constructor(
     /**
      * Returns a list of exported modules.
      */
-    val exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>> = providerFactory.provider {
+    internal val exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>> = providerFactory.provider {
         _exportedModules
     }
 
@@ -135,10 +135,6 @@ abstract class SwiftExportExtension @Inject constructor(
 
     private fun forAllSwiftExportBinaries(configure: AbstractNativeLibrary.() -> Unit) {
         _swiftExportBinaries.configureEach(configure)
-    }
-
-    private fun forAllSwiftExportBinaries(action: Action<in AbstractNativeLibrary>) {
-        _swiftExportBinaries.configureEach(action)
     }
 }
 

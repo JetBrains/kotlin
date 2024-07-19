@@ -1023,6 +1023,19 @@ object KotlinToolingDiagnostics {
             )
         }
     }
+
+    object XcodeUserScriptSandboxingDiagnostic : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(taskName: String, userScriptSandboxingEnabled: Boolean) = build(
+            """
+            ${if (userScriptSandboxingEnabled) "You" else "BUILT_PRODUCTS_DIR is not accessible, probably you"} have sandboxing for user scripts enabled.
+            To make the $taskName task pass, disable this feature.
+            In your Xcode project, navigate to "Build Setting",
+            and under "Build Options" set "User script sandboxing" (ENABLE_USER_SCRIPT_SANDBOXING) to "NO".
+            Then, run "./gradlew --stop" to stop the Gradle daemon
+            For more information, see documentation: https://jb.gg/ltd9e6
+            """.trimIndent()
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

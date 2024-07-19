@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.gradle.workers.WorkParameters
-import org.jetbrains.kotlin.konan.target.Distribution
 
 internal interface SwiftExportTaskParameters {
 
@@ -27,15 +25,11 @@ internal interface SwiftExportTaskParameters {
     val renderDocComments: Property<Boolean>
 
     @get:Input
-    val konanDistribution: Property<Distribution>
+    val swiftModules: ListProperty<SwiftExportedModule>
 
     @get:OutputDirectory
     val outputPath: DirectoryProperty
 
     @get:OutputFile
     val swiftModulesFile: RegularFileProperty
-}
-
-internal interface SwiftExportWorkParameters : SwiftExportTaskParameters, WorkParameters {
-    val swiftModules: ListProperty<SwiftExportedModule>
 }
