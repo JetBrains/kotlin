@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.test.fir
 
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
-import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -87,7 +87,7 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
         super.configureTestBuilder(builder)
 
         facadeStep(::Fir2IrResultsConverter)
-        facadeStep(::FirJsKlibBackendFacade)
+        facadeStep(::FirJsKlibSerializerFacade)
 
         // TODO: Currently do not run lowerings, because they don't report anything;
         //      see KT-61881, KT-61882

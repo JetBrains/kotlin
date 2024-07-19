@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
 
-class FirJsKlibBackendFacade(
+class FirJsKlibSerializerFacade(
     testServices: TestServices,
     private val firstTimeCompilation: Boolean
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
@@ -48,7 +48,7 @@ class FirJsKlibBackendFacade(
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
         require(inputArtifact is IrBackendInput.JsIrAfterFrontendBackendInput) {
-            "JsKlibBackendFacade expects IrBackendInput.JsIrAfterFrontendBackendInput as input"
+            "FirJsKlibSerializerFacade expects IrBackendInput.JsIrAfterFrontendBackendInput as input"
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)

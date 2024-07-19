@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library.abi
 
-import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
 import org.jetbrains.kotlin.library.abi.handlers.LibraryAbiDumpHandler
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -114,7 +114,7 @@ open class AbstractFirJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<Fi
         get() = ::Fir2IrResultsConverter
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirJsKlibBackendFacade
+        get() = ::FirJsKlibSerializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) {
         builder.configureFirParser(FirParser.Psi)

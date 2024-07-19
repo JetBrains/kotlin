@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.fir
 
-import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTextTestBase
 import org.jetbrains.kotlin.test.Constructor
@@ -34,7 +34,7 @@ abstract class AbstractFirJsIrTextTestBase(private val parser: FirParser) : Abst
 
     override val klibFacades: KlibFacades
         get() = KlibFacades(
-            serializerFacade = ::FirJsKlibBackendFacade,
+            serializerFacade = ::FirJsKlibSerializerFacade,
             deserializerFacade = ::JsIrDeserializerFacade,
         )
 
