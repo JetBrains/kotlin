@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinDefaultHierarchyFallbackDependsOnUsageDetected.onlyIf
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -27,9 +28,10 @@ internal fun TestProject.buildXcodeProject(
     buildMode: XcodeBuildMode = XcodeBuildMode.BUILD,
     testRunEnvironment: Map<String, String> = emptyMap(),
     buildSettingOverrides: Map<String, String> = emptyMap(),
+    appendToProperties: () -> String = { "" },
     expectedExitCode: Int = 0,
 ) {
-    prepareForXcodebuild()
+    prepareForXcodebuild(appendToProperties)
 
     xcodebuild(
         xcodeproj = xcodeproj,
@@ -101,7 +103,7 @@ internal fun TestProject.xcodebuild(
     )
 }
 
-internal fun TestProject.prepareForXcodebuild() {
+internal fun TestProject.prepareForXcodebuild(appendToProperties: () -> String = { "" }) {
     overrideMavenLocalIfNeeded()
 
     gradleProperties
@@ -109,6 +111,9 @@ internal fun TestProject.prepareForXcodebuild() {
         ?.let {
             it.append("kotlin_version=${buildOptions.kotlinVersion}")
             it.append("test_fixes_version=${KOTLIN_VERSION}")
+            appendToProperties().let { extraProperties ->
+                it.append(extraProperties)
+            }
             buildOptions.konanDataDir?.let { konanDataDir ->
                 it.append("konan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
             }
