@@ -1,3 +1,7 @@
+fun invokeLater(body: () -> Unit) {}
+
+class Stable(val x: String? = "...")
+
 interface I {
     val x: String?
 }
@@ -13,13 +17,15 @@ class UnstableImpl : ImplBase("...") {
 
 fun makeUnstableImpl(): ImplBase = UnstableImpl()
 
-fun main() {
+fun test1() {
     val a: ImplBase = DefaultImpl()
     if (a is DefaultImpl) {
         a.x as String
         <!SMARTCAST_IMPOSSIBLE!>a.x<!>.length // ok
     }
+}
 
+fun test2() {
     var b: I = DefaultImpl()
     if (b is DefaultImpl) {
         b.x as String
@@ -29,10 +35,32 @@ fun main() {
         b.x as String
         <!SMARTCAST_IMPOSSIBLE!>b.x<!>.length // bad
     }
+}
 
+fun test3() {
     val c: Any = DefaultImpl()
     if (c is DefaultImpl) {
         <!DEBUG_INFO_SMARTCAST!>c<!>.x as String
         <!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>c<!>.x<!>.length // ok
     }
+}
+
+fun test4() {
+    var b = DefaultImpl()
+    invokeLater {
+        b = DefaultImpl()
+    }
+
+    b.x as String
+    <!SMARTCAST_IMPOSSIBLE!>b.x<!>.length // bad
+}
+
+fun test5() {
+    var b = Stable()
+    invokeLater {
+        b = Stable()
+    }
+
+    b.x as String
+    <!SMARTCAST_IMPOSSIBLE!>b.x<!>.length // bad
 }
