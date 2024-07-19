@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> protected constructor(
-    internal val classOrObjectDeclaration: KtClassOrObject?,
-    internal val classSymbolPointer: KaSymbolPointer<SType>,
+internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> protected constructor(
+    val classOrObjectDeclaration: KtClassOrObject?,
+    val classSymbolPointer: KaSymbolPointer<SType>,
     ktModule: KaModule,
     manager: PsiManager,
 ) : SymbolLightClassBase(ktModule, manager),

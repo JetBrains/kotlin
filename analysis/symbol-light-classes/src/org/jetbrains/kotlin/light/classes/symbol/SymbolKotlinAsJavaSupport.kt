@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 
-class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KaModule>(project) {
+internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KaModule>(project) {
     private val projectStructureProvider by lazy { KotlinProjectStructureProvider.Companion.getInstance(project) }
 
     private fun PsiElement.getModuleIfSupportEnabled(): KaModule? = projectStructureProvider.getModule(

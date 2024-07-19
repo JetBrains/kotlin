@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
 
-abstract class SymbolLightClassBase protected constructor(val ktModule: KaModule, manager: PsiManager) :
+internal abstract class SymbolLightClassBase protected constructor(val ktModule: KaModule, manager: PsiManager) :
     LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
 
     private val myInnersCache by lazyPub {

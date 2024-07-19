@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.kapt3.stubs.MemberData
 import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
 import org.jetbrains.kotlin.kapt3.stubs.extractComment
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -636,7 +635,7 @@ private class StubGenerator(
             @OptIn(KaNonPublicApi::class)
             private fun calculateMetadata(lightClass: PsiClass): Metadata? =
                 if (stripMetadata) null
-                else if (psiClass.name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && (psiClass as? SymbolLightClassForNamedClassLike)?.containingClass?.isInterface == true) {
+                else if (psiClass.name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && psiClass.containingClass?.isInterface == true) {
                     Metadata(
                         kind = KotlinClassHeader.Kind.SYNTHETIC_CLASS.id,
                         metadataVersion = metadataVersion,
@@ -649,7 +648,7 @@ private class StubGenerator(
                                 lightClass.qualifiedName?.let { createMultifileClassMetadata(lightClass, it) }
                             else
                                 lightClass.files.singleOrNull()?.calculateMetadata(elementMapping(lightClass))
-                        is SymbolLightClassForNamedClassLike ->
+                        is KtLightClass ->
                             lightClass.kotlinOrigin?.calculateMetadata(elementMapping(lightClass))
                         else -> null
                     }
