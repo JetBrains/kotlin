@@ -20,35 +20,6 @@ import org.junit.jupiter.api.TestFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase as TC
 
 @Tag("stdlib")
-@PredefinedTestCases(
-    TC(
-        name = "default",
-        runnerType = TestRunnerType.DEFAULT,
-        freeCompilerArgs = [
-            ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
-            ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
-            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE,
-            "-language-version", "1.9",
-            "-api-version", "2.0",
-            "-Xsuppress-api-version-greater-than-language-version-error"
-        ],
-        sourceLocations = [
-            "libraries/stdlib/test/**.kt",
-            "libraries/stdlib/common/test/**.kt",
-            "libraries/stdlib/native-wasm/test/**.kt",
-            "kotlin-native/runtime/test/**.kt"
-        ],
-        ignoredTests = [DISABLED_STDLIB_TEST]
-    )
-)
-@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "4m")
-@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-class StdlibTest : AbstractNativeBlackBoxTest() {
-    @TestFactory
-    fun default() = dynamicTestCase(TestCaseId.Named("default"))
-}
-
-@Tag("stdlib")
 @Tag("frontend-fir")
 @PredefinedTestCases(
     TC(
@@ -75,7 +46,7 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "4m")
 @FirPipeline
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-class FirStdlibTest : AbstractNativeBlackBoxTest() {
+class StdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
 }
