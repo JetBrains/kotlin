@@ -5,18 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
+import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
-import java.io.File
+import org.jetbrains.kotlin.konan.target.Distribution
 import java.time.Instant
 import java.util.logging.Level
 import java.util.logging.Logger
 
-internal abstract class SwiftExportAction : WorkAction<SwiftExportWorkParameters> {
+internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftExportWorkParameters> {
+    internal interface SwiftExportWorkParameters : SwiftExportTaskParameters, WorkParameters {
+        val konanDistribution: Property<Distribution>
+    }
 
-    companion object : SwiftExportLogger {
+    private val swiftExportLogger = object : SwiftExportLogger {
         private val logger = Logger.getLogger(this::class.java.name)
 
         override fun report(severity: SwiftExportLogger.Severity, message: String) {
@@ -34,7 +39,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportWorkParameters
     override fun execute() {
 
         val exportModules = parameters.swiftModules.get().map { module ->
-            module.toInputModule(config())
+            module.toInputModule(config(module.flattenPackage))
         }.toSet()
 
         val modules = GradleSwiftExportModules(
@@ -46,14 +51,16 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportWorkParameters
         parameters.swiftModulesFile.getFile().writeText(json)
     }
 
-    private fun config(): SwiftExportConfig {
+    private fun config(flattenPackage: String?): SwiftExportConfig {
         return SwiftExportConfig(
-            settings = mapOf(
+            settings = mutableMapOf(
                 SwiftExportConfig.STABLE_DECLARATIONS_ORDER to parameters.stableDeclarationsOrder.getOrElse(true).toString(),
                 SwiftExportConfig.BRIDGE_MODULE_NAME to parameters.bridgeModuleName.getOrElse(SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME),
-                SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString()
-            ),
-            logger = Companion,
+                SwiftExportConfig.RENDER_DOC_COMMENTS to parameters.renderDocComments.getOrElse(false).toString(),
+            ).also { settings ->
+                flattenPackage?.let { settings[SwiftExportConfig.ROOT_PACKAGE] = it }
+            },
+            logger = swiftExportLogger,
             distribution = parameters.konanDistribution.get(),
             outputPath = parameters.outputPath.getFile().toPath()
         )

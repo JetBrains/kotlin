@@ -123,7 +123,7 @@ abstract class SwiftExportExtension @Inject constructor(
     /**
      * Returns a list of exported modules.
      */
-    val exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>> = providerFactory.provider {
+    internal val exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>> = providerFactory.provider {
         _exportedModules
     }
 
@@ -145,10 +145,6 @@ abstract class SwiftExportExtension @Inject constructor(
 
     private fun forAllSwiftExportBinaries(configure: AbstractNativeLibrary.() -> Unit) {
         _swiftExportBinaries.configureEach(configure)
-    }
-
-    private fun forAllSwiftExportBinaries(action: Action<in AbstractNativeLibrary>) {
-        _swiftExportBinaries.configureEach(action)
     }
 }
 

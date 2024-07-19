@@ -1024,6 +1024,18 @@ object KotlinToolingDiagnostics {
         }
     }
 
+    object XcodeUserScriptSandboxingDiagnostic : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(userScriptSandboxingEnabled: Boolean) = build(
+            """
+            ${if (userScriptSandboxingEnabled) "You" else "BUILT_PRODUCTS_DIR is not accessible, probably you"} have sandboxing for user scripts enabled.
+            In your Xcode project, navigate to "Build Setting",
+            and under "Build Options" set "User script sandboxing" (ENABLE_USER_SCRIPT_SANDBOXING) to "NO".
+            Then, run "./gradlew --stop" to stop the Gradle daemon
+            For more information, see documentation: https://kotl.in/iq4uke
+            """.trimIndent()
+        )
+    }
+
     object UnsupportedTargetShortcutError : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(shortcutName: String, explicitTargets: String, trace: Throwable) = build(
             """
