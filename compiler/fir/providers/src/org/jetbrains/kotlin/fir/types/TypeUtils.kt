@@ -282,9 +282,9 @@ fun coneFlexibleOrSimpleType(
 ): ConeKotlinType {
     return when (lowerBound) {
         is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound.lowerBound, upperBound)
-        is ConeInflexibleType -> when (upperBound) {
+        is ConeRigidType -> when (upperBound) {
             is ConeFlexibleType -> coneFlexibleOrSimpleType(typeContext, lowerBound, upperBound.upperBound)
-            is ConeInflexibleType -> when {
+            is ConeRigidType -> when {
                 AbstractStrictEqualityTypeChecker.strictEqualTypes(typeContext, lowerBound, upperBound) -> lowerBound
                 else -> ConeFlexibleType(lowerBound, upperBound)
             }
@@ -482,7 +482,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
     fun findCorrespondingCapturedArgumentsForType(type: ConeKotlinType) =
         capturedArgumentsByComponents.find { typeToCapture -> typeToCapture.isSuitableForType(type, this) }?.capturedArguments
 
-    fun replaceArgumentsWithCapturedArgumentsByIntersectionComponents(typeToReplace: ConeInflexibleType): List<ConeKotlinType>? {
+    fun replaceArgumentsWithCapturedArgumentsByIntersectionComponents(typeToReplace: ConeRigidType): List<ConeKotlinType>? {
         return if (typeToReplace is ConeIntersectionType) {
             typeToReplace.intersectedTypes.map { componentType ->
                 val capturedArguments = findCorrespondingCapturedArgumentsForType(componentType)
@@ -515,7 +515,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
             ConeFlexibleType(lowerIntersectedType.coneLowerBoundIfFlexible(), upperIntersectedType.coneUpperBoundIfFlexible())
         }
 
-        is ConeInflexibleType -> {
+        is ConeRigidType -> {
             intersectTypes(
                 replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
             ).withNullability(type.isNullableType()) as ConeKotlinType

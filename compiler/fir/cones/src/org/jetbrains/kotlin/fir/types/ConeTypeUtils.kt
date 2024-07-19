@@ -83,7 +83,7 @@ fun ConeKotlinType.unwrapLowerBound(): ConeSimpleKotlinType {
     }
 }
 
-fun ConeKotlinType.upperBoundIfFlexible(): ConeInflexibleType {
+fun ConeKotlinType.upperBoundIfFlexible(): ConeRigidType {
     return when (this) {
         is ConeSimpleKotlinType -> this
         is ConeFlexibleType -> upperBound
@@ -91,7 +91,7 @@ fun ConeKotlinType.upperBoundIfFlexible(): ConeInflexibleType {
     }
 }
 
-fun ConeKotlinType.lowerBoundIfFlexible(): ConeInflexibleType {
+fun ConeKotlinType.lowerBoundIfFlexible(): ConeRigidType {
     return when (this) {
         is ConeSimpleKotlinType -> this
         is ConeFlexibleType -> lowerBound
@@ -157,7 +157,7 @@ fun ConeKotlinType.hasError(): Boolean = contains { it is ConeErrorType }
 
 fun ConeKotlinType.hasCapture(): Boolean = contains { it is ConeCapturedType }
 
-fun ConeInflexibleType.getConstructor(): TypeConstructorMarker {
+fun ConeRigidType.getConstructor(): TypeConstructorMarker {
     return when (this) {
         is ConeLookupTagBasedType -> this.lookupTag
         is ConeCapturedType -> this.constructor

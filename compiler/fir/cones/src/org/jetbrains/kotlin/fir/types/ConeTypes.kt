@@ -37,9 +37,24 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
     abstract override fun hashCode(): Int
 }
 
-sealed class ConeInflexibleType : ConeKotlinType(), SimpleTypeMarker
+/**
+ * Normally should represent a type with one related constructor, see [getConstructor],
+ * but still can require unwrapping, as [ConeDefinitelyNotNullType].
+ *
+ * Known properties of [ConeRigidType] are:
+ * - it does not have bounds as [ConeFlexibleType]
+ * - it has one related constructor. [ConeIntersectionType] is currently an exception, see [KT-70049](https://youtrack.jetbrains.com/issue/KT-70049).
+ * - it can require unwrapping
+ *
+ * [ConeRigidType] currently doesn't have a marker counterpart and inherit [SimpleTypeMarker] directly.
+ * See [KT-70014](https://youtrack.jetbrains.com/issue/KT-70014).
+ */
+sealed class ConeRigidType : ConeKotlinType(), SimpleTypeMarker
 
-sealed class ConeSimpleKotlinType : ConeInflexibleType(), SimpleTypeMarker
+/**
+ * Normally should represent a type with one related constructor that does not require unwrapping.
+ */
+sealed class ConeSimpleKotlinType : ConeRigidType(), SimpleTypeMarker
 
 class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
 
@@ -70,9 +85,12 @@ abstract class ConeClassLikeType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeClassLikeLookupTag
 }
 
+/**
+ * Represents types with two bounds. [lowerBound] must be a subtype of [upperBound].
+ */
 open class ConeFlexibleType(
-    val lowerBound: ConeInflexibleType,
-    val upperBound: ConeInflexibleType
+    val lowerBound: ConeRigidType,
+    val upperBound: ConeRigidType
 ) : ConeKotlinType(), FlexibleTypeMarker {
 
     final override val typeArguments: Array<out ConeTypeProjection>
@@ -107,13 +125,13 @@ open class ConeFlexibleType(
 annotation class DynamicTypeConstructor
 
 class ConeDynamicType @DynamicTypeConstructor constructor(
-    lowerBound: ConeInflexibleType,
-    upperBound: ConeInflexibleType
+    lowerBound: ConeRigidType,
+    upperBound: ConeRigidType
 ) : ConeFlexibleType(lowerBound, upperBound), DynamicTypeMarker {
     companion object
 }
 
-private fun ConeInflexibleType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
+private fun ConeRigidType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
     return when (this) {
         is ConeDefinitelyNotNullType -> original
         is ConeSimpleKotlinType -> this
@@ -184,7 +202,7 @@ data class ConeCapturedType(
  */
 data class ConeDefinitelyNotNullType(
     val original: ConeSimpleKotlinType
-) : ConeInflexibleType(), DefinitelyNotNullTypeMarker {
+) : ConeRigidType(), DefinitelyNotNullTypeMarker {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = original.typeArguments
 
@@ -198,13 +216,13 @@ data class ConeDefinitelyNotNullType(
 }
 
 class ConeRawType private constructor(
-    lowerBound: ConeInflexibleType,
-    upperBound: ConeInflexibleType
+    lowerBound: ConeRigidType,
+    upperBound: ConeRigidType
 ) : ConeFlexibleType(lowerBound, upperBound) {
     companion object {
         fun create(
-            lowerBound: ConeInflexibleType,
-            upperBound: ConeInflexibleType,
+            lowerBound: ConeRigidType,
+            upperBound: ConeRigidType,
         ): ConeRawType {
             require(lowerBound is ConeClassLikeType && upperBound is ConeClassLikeType) {
                 "Raw bounds are expected to be class-like types, but $lowerBound and $upperBound were found"
@@ -246,6 +264,7 @@ class ConeIntersectionType(
     val intersectedTypes: Collection<ConeKotlinType>,
     val upperBoundForApproximation: ConeKotlinType? = null,
 ) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker {
+    // TODO: consider inheriting directly from ConeKotlinType (KT-70049)
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY
 

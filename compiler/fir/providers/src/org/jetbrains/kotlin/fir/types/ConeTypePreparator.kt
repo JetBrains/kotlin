@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.types.AbstractTypePreparator
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator() {
-    private fun <T : ConeInflexibleType> prepareType(type: T): T {
+    private fun <T : ConeRigidType> prepareType(type: T): T {
         @Suppress("UNCHECKED_CAST")
         return when (type) {
             is ConeClassLikeType -> type.fullyExpandedType(session)
@@ -31,7 +31,7 @@ class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator() {
 
                 ConeFlexibleType(lowerBound, prepareType(type.upperBound))
             }
-            is ConeInflexibleType -> prepareType(type)
+            is ConeRigidType -> prepareType(type)
         }
     }
 }

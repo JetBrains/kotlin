@@ -473,14 +473,14 @@ internal class AdapterGenerator(
     // and the possibility of incorrectly mapped details that might break some code when using K1.
     private fun ConeKotlinType.removeExternalProjections(): ConeKotlinType? =
         when (this) {
-            is ConeInflexibleType -> removeExternalProjections()
+            is ConeRigidType -> removeExternalProjections()
             is ConeFlexibleType -> ConeFlexibleType(
                 lowerBound.removeExternalProjections() ?: lowerBound,
                 upperBound.removeExternalProjections() ?: upperBound,
             )
         }
 
-    private fun ConeInflexibleType.removeExternalProjections(): ConeInflexibleType? =
+    private fun ConeRigidType.removeExternalProjections(): ConeRigidType? =
         with(session.typeContext) {
             val typeConstructor = typeConstructor()
             val parameters = typeConstructor.getParameters()

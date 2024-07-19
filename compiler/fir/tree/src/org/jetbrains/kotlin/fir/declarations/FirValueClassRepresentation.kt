@@ -8,17 +8,17 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
-import org.jetbrains.kotlin.fir.types.ConeInflexibleType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 
 private object FirValueClassRepresentationKey : FirDeclarationDataKey()
 
-var FirRegularClass.valueClassRepresentation: ValueClassRepresentation<ConeInflexibleType>?
+var FirRegularClass.valueClassRepresentation: ValueClassRepresentation<ConeRigidType>?
         by FirDeclarationDataRegistry.data(FirValueClassRepresentationKey)
 
-val FirRegularClass.inlineClassRepresentation: InlineClassRepresentation<ConeInflexibleType>?
-    get() = valueClassRepresentation as? InlineClassRepresentation<ConeInflexibleType>
+val FirRegularClass.inlineClassRepresentation: InlineClassRepresentation<ConeRigidType>?
+    get() = valueClassRepresentation as? InlineClassRepresentation<ConeRigidType>
 
-val FirRegularClass.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<ConeInflexibleType>?
-    get() = valueClassRepresentation as? MultiFieldValueClassRepresentation<ConeInflexibleType>
+val FirRegularClass.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<ConeRigidType>?
+    get() = valueClassRepresentation as? MultiFieldValueClassRepresentation<ConeRigidType>
 
 

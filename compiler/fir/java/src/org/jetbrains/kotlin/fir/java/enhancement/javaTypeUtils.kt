@@ -84,7 +84,7 @@ private fun ClassId.mutableToReadOnly(): ClassId? {
     return JavaToKotlinClassMap.mutableToReadOnly(this)
 }
 
-private fun ConeInflexibleType.enhanceInflexibleType(
+private fun ConeRigidType.enhanceInflexibleType(
     session: FirSession,
     position: TypeComponentPosition,
     qualifiers: IndexedJavaTypeQualifiers,
@@ -92,7 +92,7 @@ private fun ConeInflexibleType.enhanceInflexibleType(
     subtreeSizes: List<Int>,
     isFromDefinitelyNotNullType: Boolean,
     convertErrorToWarning: Boolean,
-): ConeInflexibleType? {
+): ConeRigidType? {
     if (this is ConeDefinitelyNotNullType) {
         return original.enhanceInflexibleType(session, position, qualifiers, index, subtreeSizes, isFromDefinitelyNotNullType = true, convertErrorToWarning)
     }
@@ -165,7 +165,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
     nullabilityFromQualifiers: NullabilityQualifier?,
     enhancedTag: ConeClassifierLookupTag,
     convertNestedErrorsToWarnings: Boolean,
-): ConeInflexibleType? {
+): ConeRigidType? {
     val enhancedIsNullable = when (nullabilityFromQualifiers) {
         NullabilityQualifier.NULLABLE -> true
         NullabilityQualifier.NOT_NULL -> false

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeRawType
-import org.jetbrains.kotlin.fir.types.ConeInflexibleType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -113,8 +113,8 @@ class JvmClassFileBasedSymbolProvider(
     private object JavaAwareFlexibleTypeFactory : FirTypeDeserializer.FlexibleTypeFactory {
         override fun createFlexibleType(
             proto: ProtoBuf.Type,
-            lowerBound: ConeInflexibleType,
-            upperBound: ConeInflexibleType,
+            lowerBound: ConeRigidType,
+            upperBound: ConeRigidType,
         ): ConeFlexibleType = when (proto.hasExtension(JvmProtoBuf.isRaw)) {
             true -> ConeRawType.create(lowerBound, upperBound)
             false -> ConeFlexibleType(lowerBound, upperBound)

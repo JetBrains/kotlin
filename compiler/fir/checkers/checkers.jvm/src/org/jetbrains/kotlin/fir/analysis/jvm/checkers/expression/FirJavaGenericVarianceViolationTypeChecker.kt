@@ -135,11 +135,11 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
                 lowerBound.removeOutProjection(isCovariant),
                 upperBound.removeOutProjection(isCovariant)
             )
-            is ConeInflexibleType -> removeOutProjection(isCovariant)
+            is ConeRigidType -> removeOutProjection(isCovariant)
         }
     }
 
-    private fun ConeInflexibleType.removeOutProjection(isCovariant: Boolean): ConeInflexibleType {
+    private fun ConeRigidType.removeOutProjection(isCovariant: Boolean): ConeRigidType {
         return when (this) {
             is ConeSimpleKotlinType -> removeOutProjection(isCovariant)
             is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
@@ -188,7 +188,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
 
     private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(
         subType: ConeKotlinType,
-        superType: ConeInflexibleType,
+        superType: ConeRigidType,
     ): Boolean {
         return AbstractTypeChecker.isSubtypeOfClass(this, subType.typeConstructor(), superType.typeConstructor())
     }

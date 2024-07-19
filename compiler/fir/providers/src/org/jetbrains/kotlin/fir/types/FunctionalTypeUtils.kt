@@ -39,7 +39,7 @@ fun ConeKotlinType.functionTypeKind(session: FirSession): FunctionTypeKind? {
     return lowerBoundIfFlexible().functionTypeKind(session)
 }
 
-fun ConeInflexibleType.functionTypeKind(session: FirSession): FunctionTypeKind? {
+fun ConeRigidType.functionTypeKind(session: FirSession): FunctionTypeKind? {
     if (this !is ConeClassLikeType) return null
     return fullyExpandedType(session).lookupTag.functionTypeKind(session)
 }

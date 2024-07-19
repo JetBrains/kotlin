@@ -35,9 +35,9 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
     return symbol.fir.inlineClassRepresentation?.underlyingType
 }
 
-fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeInflexibleType>? {
+fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
-    val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeInflexibleType }
+    val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
     fields.singleOrNull()?.let { (name, type) ->
         if (isRecursiveSingleFieldValueClass(type, session, mutableSetOf(type))) { // escape stack overflow
             return InlineClassRepresentation(name, type)
@@ -53,15 +53,15 @@ private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSessio
 }
 
 private fun isRecursiveSingleFieldValueClass(
-    type: ConeInflexibleType,
+    type: ConeRigidType,
     session: FirSession,
-    visited: MutableSet<ConeInflexibleType>
+    visited: MutableSet<ConeRigidType>
 ): Boolean {
     val nextType = type.valueClassRepresentationTypeMarkersList(session)?.singleOrNull()?.second ?: return false
     return !visited.add(nextType) || isRecursiveSingleFieldValueClass(nextType, session, visited)
 }
 
-private fun ConeInflexibleType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeInflexibleType>>? {
+private fun ConeRigidType.valueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeRigidType>>? {
     val symbol = this.toRegularClassSymbol(session) ?: return null
     if (!symbol.fir.isInline) return null
     symbol.fir.valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }

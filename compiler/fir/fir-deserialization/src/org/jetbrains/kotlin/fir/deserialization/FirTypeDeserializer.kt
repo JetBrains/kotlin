@@ -142,15 +142,15 @@ class FirTypeDeserializer(
         return type(proto, attributesFromAnnotations(proto))
     }
 
-    fun inflexibleType(proto: ProtoBuf.Type): ConeInflexibleType {
-        return inflexibleType(proto, attributesFromAnnotations(proto))
+    fun rigidType(proto: ProtoBuf.Type): ConeRigidType {
+        return rigidType(proto, attributesFromAnnotations(proto))
             ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
     }
 
     private fun type(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeKotlinType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
-            val lowerBound = inflexibleType(proto, attributes)
-            val upperBound = inflexibleType(proto.flexibleUpperBound(typeTable)!!, attributes)
+            val lowerBound = rigidType(proto, attributes)
+            val upperBound = rigidType(proto.flexibleUpperBound(typeTable)!!, attributes)
 
             val isDynamic = lowerBound?.classId == moduleData.session.builtinTypes.nothingType.id &&
                     upperBound?.classId == moduleData.session.builtinTypes.nullableAnyType.id
@@ -163,21 +163,21 @@ class FirTypeDeserializer(
             }
         }
 
-        return inflexibleType(proto, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
+        return rigidType(proto, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
     }
 
     interface FlexibleTypeFactory {
         fun createFlexibleType(
             proto: Type,
-            lowerBound: ConeInflexibleType,
-            upperBound: ConeInflexibleType,
+            lowerBound: ConeRigidType,
+            upperBound: ConeRigidType,
         ): ConeFlexibleType
 
         object Default : FlexibleTypeFactory {
             override fun createFlexibleType(
                 proto: Type,
-                lowerBound: ConeInflexibleType,
-                upperBound: ConeInflexibleType,
+                lowerBound: ConeRigidType,
+                upperBound: ConeRigidType,
             ): ConeFlexibleType = ConeFlexibleType(lowerBound, upperBound)
         }
     }
@@ -197,7 +197,7 @@ class FirTypeDeserializer(
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    private fun inflexibleType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeInflexibleType? {
+    private fun rigidType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeRigidType? {
         val constructor = typeSymbol(proto) ?: return null
         if (constructor is ConeTypeParameterLookupTag) {
             return ConeTypeParameterTypeImpl(constructor, isNullable = proto.nullable, attributes).let {
@@ -237,7 +237,7 @@ class FirTypeDeserializer(
             else -> ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable, attributes)
         }
 
-        val abbreviatedType = proto.abbreviatedType(typeTable)?.let { inflexibleType(it, attributes) }
+        val abbreviatedType = proto.abbreviatedType(typeTable)?.let { rigidType(it, attributes) }
             ?: return classLikeType
 
         return classLikeType.withAttributes(classLikeType.attributes.add(AbbreviatedTypeAttribute(abbreviatedType)))

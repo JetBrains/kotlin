@@ -93,10 +93,10 @@ fun ConeSimpleKotlinType.fullyExpandedType(
 /**
  * @see fullyExpandedType (the first function in the file)
  */
-fun ConeInflexibleType.fullyExpandedType(
+fun ConeRigidType.fullyExpandedType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
-): ConeInflexibleType {
+): ConeRigidType {
     return when (this) {
         is ConeSimpleKotlinType -> fullyExpandedType(useSiteSession, expandedConeType)
         // Expanding DNN type makes no sense, as its original type cannot be class-like type

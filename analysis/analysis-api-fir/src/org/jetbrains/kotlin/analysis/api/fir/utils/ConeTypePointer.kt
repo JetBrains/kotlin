@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionIn
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
 import org.jetbrains.kotlin.fir.types.ConeRawType
-import org.jetbrains.kotlin.fir.types.ConeInflexibleType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
@@ -219,14 +219,14 @@ private abstract class AbstractConeFlexibleTypePointer<T : ConeFlexibleType>(
         return restore(lowerBound, upperBound)
     }
 
-    abstract fun restore(lowerBound: ConeInflexibleType, upperBound: ConeInflexibleType): T
+    abstract fun restore(lowerBound: ConeRigidType, upperBound: ConeRigidType): T
 }
 
 private class ConeFlexibleTypePointer(
     coneType: ConeFlexibleType,
     builder: KaSymbolByFirBuilder,
 ) : AbstractConeFlexibleTypePointer<ConeFlexibleType>(coneType, builder) {
-    override fun restore(lowerBound: ConeInflexibleType, upperBound: ConeInflexibleType): ConeFlexibleType {
+    override fun restore(lowerBound: ConeRigidType, upperBound: ConeRigidType): ConeFlexibleType {
         return ConeFlexibleType(lowerBound, upperBound)
     }
 }
@@ -235,7 +235,7 @@ private class ConeRawTypePointer(
     coneType: ConeFlexibleType,
     builder: KaSymbolByFirBuilder,
 ) : AbstractConeFlexibleTypePointer<ConeFlexibleType>(coneType, builder) {
-    override fun restore(lowerBound: ConeInflexibleType, upperBound: ConeInflexibleType): ConeFlexibleType {
+    override fun restore(lowerBound: ConeRigidType, upperBound: ConeRigidType): ConeFlexibleType {
         return ConeRawType.create(lowerBound, upperBound)
     }
 }
