@@ -189,6 +189,7 @@ internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, 
 internal external class JsObject {
     companion object {
         fun getPrototypeOf(obj: Any?): dynamic
+        fun setPrototypeOf(obj: Any?, prototype: Any?): dynamic
     }
 }
 

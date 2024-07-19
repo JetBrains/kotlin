@@ -57,6 +57,8 @@ function testImmutableList() {
     assertThrow(() => { listReadonlyArrayView["foo"] }, "Immutable list getting a random index from its readonly array view")
 
     assert(consumeList(KtList.fromJsArray([1, 2, 3])), "Problem with array to list conversion for Kotlin list")
+
+    assert(Array.isArray(listReadonlyArrayView), "Problem with the readonly array view of immutable list in Array.isArray check")
 }
 
 function testMutableList() {
@@ -75,6 +77,8 @@ function testMutableList() {
     // @ts-expect-error
     assertThrow(() => { mutableListReadonlyArrayView["foo"] }, "Immutable list getting a random index from its readonly array view")
 
+    assert(Array.isArray(mutableListReadonlyArrayView), "Problem with the readonly array view of mutable list in Array.isArray check")
+
     const mutableListArrayView = mutableList.asJsArrayView()
     mutableListArrayView.pop()
 
@@ -85,6 +89,8 @@ function testMutableList() {
     assert(mutableListArrayView.map(x => x + 1).join("") == "5678", "Problem with mutable list array view after original list is mutated")
     // @ts-expect-error
     assertThrow(() => { mutableListArrayView["foo"] = 4 }, "Mutable list setting a random index in its array view")
+
+    assert(Array.isArray(mutableListArrayView), "Problem with the array view of mutable list in Array.isArray check")
 
     mutableListArrayView.shift()
     mutableListArrayView.unshift(9)
