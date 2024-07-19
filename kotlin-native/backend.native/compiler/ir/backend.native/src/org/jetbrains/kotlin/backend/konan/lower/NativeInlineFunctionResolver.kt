@@ -102,7 +102,9 @@ internal class NativeInlineFunctionResolver(
 
         if (context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)) {
             NativeIrInliner(generationState, inlineOnlyPrivateFunctions = true).lower(body, function)
-            SyntheticAccessorLowering(context).lower(body, function)
+
+            // TODO: KT-69527 uncomment
+            //SyntheticAccessorLowering(context).lower(body, function)
         }
     }
 
