@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ReferenceInformationHolder
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -108,9 +107,9 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun getScope(): PsiElement = parent
 
-    override fun getOwnFields(): List<KtLightField> = cachedValue {
+    override fun getOwnFields(): List<PsiField> = cachedValue {
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
-            val result = mutableListOf<KtLightField>()
+            val result = mutableListOf<PsiField>()
 
             // Then, add instance fields: properties from parameters, and then member properties
             enumEntrySymbol.enumEntryInitializer?.let { initializer ->

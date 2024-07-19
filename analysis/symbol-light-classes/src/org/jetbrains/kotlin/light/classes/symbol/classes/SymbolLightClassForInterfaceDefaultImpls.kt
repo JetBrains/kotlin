@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -73,5 +72,5 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
         return super.acceptCallableSymbol(symbol) && symbol.modality != KaSymbolModality.ABSTRACT
     }
 
-    override fun getOwnFields(): List<KtLightField> = emptyList()
+    override fun getOwnFields(): List<PsiField> = emptyList()
 }

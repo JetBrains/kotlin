@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.psi.PsiField
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
@@ -94,7 +94,7 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
         }
     }
 
-    override fun getOwnFields(): List<KtLightField> = cachedValue {
+    override fun getOwnFields(): List<PsiField> = cachedValue {
         withClassSymbol { classSymbol ->
             val propertySymbol = propertySymbol(classSymbol)
             val field = propertySymbol?.let { createField(propertySymbol, SymbolLightField.FieldNameGenerator(), isStatic = false) }

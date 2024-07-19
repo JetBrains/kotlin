@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
@@ -75,8 +74,8 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         }
     }
 
-    override fun getOwnFields(): List<KtLightField> = cachedValue {
-        val result = mutableListOf<KtLightField>()
+    override fun getOwnFields(): List<PsiField> = cachedValue {
+        val result = mutableListOf<PsiField>()
         val nameGenerator = SymbolLightField.FieldNameGenerator()
 
         withClassSymbol {

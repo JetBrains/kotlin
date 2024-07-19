@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.psi.PsiField
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifierList
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -229,9 +229,9 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         }
     }
 
-    override fun getOwnFields(): List<KtLightField> = cachedValue {
+    override fun getOwnFields(): List<PsiField> = cachedValue {
         withClassSymbol { classSymbol ->
-            val result = mutableListOf<KtLightField>()
+            val result = mutableListOf<PsiField>()
 
             // First, add static fields: companion object and fields from companion object
             addCompanionObjectFieldIfNeeded(result, classSymbol)
@@ -253,7 +253,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     context(KaSession)
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>, classSymbol: KaNamedClassSymbol) {
+    private fun addInstanceFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
         if (classKind() != KaClassKind.OBJECT || isLocal) return
 
         result.add(
@@ -270,7 +270,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     context(KaSession)
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun addFieldsForEnumEntries(result: MutableList<KtLightField>, classSymbol: KaNamedClassSymbol) {
+    private fun addFieldsForEnumEntries(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
         if (!isEnum) return
 
         classSymbol.staticDeclaredMemberScope.callables

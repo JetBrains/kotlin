@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForScriptDefaultConstructor
@@ -63,10 +62,10 @@ internal class SymbolLightClassForScript private constructor(
         result
     }
 
-    override fun getOwnFields(): List<KtLightField> = cachedValue {
-        buildList {
-            symbolPointer.withSymbol(ktModule) { scriptSymbol ->
-                addPropertyBackingFields(this@buildList, scriptSymbol, SymbolLightField.FieldNameGenerator())
+    override fun getOwnFields(): List<PsiField> = cachedValue {
+        symbolPointer.withSymbol(ktModule) { scriptSymbol ->
+            buildList {
+                addPropertyBackingFields(this, scriptSymbol, SymbolLightField.FieldNameGenerator())
             }
         }
     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.*
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -427,7 +427,7 @@ internal fun SymbolLightClassBase.createAndAddField(
     declaration: KaPropertySymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
     isStatic: Boolean,
-    result: MutableList<KtLightField>
+    result: MutableList<PsiField>
 ) {
     val field = createField(declaration, nameGenerator, isStatic) ?: return
     result += field
@@ -656,7 +656,7 @@ private val KaDeclarationSymbol.hasReifiedParameters: Boolean
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassBase.addPropertyBackingFields(
-    result: MutableList<KtLightField>,
+    result: MutableList<PsiField>,
     containerSymbol: KaDeclarationContainerSymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
     forceIsStaticTo: Boolean? = null,

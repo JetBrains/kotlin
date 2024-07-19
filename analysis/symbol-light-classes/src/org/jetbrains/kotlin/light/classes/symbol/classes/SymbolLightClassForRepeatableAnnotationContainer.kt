@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.*
 import kotlinx.collections.immutable.persistentHashSetOf
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightRepeatableAnnotationContainerMethod
@@ -31,7 +30,7 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
     override fun getContainingClass(): KtLightClass = containerOwner
     override fun getScope(): PsiElement = containerOwner
     override fun getOwnInnerClasses(): List<PsiClass> = emptyList()
-    override fun getOwnFields(): List<KtLightField> = emptyList()
+    override fun getOwnFields(): List<PsiField> = emptyList()
     override fun isDeprecated(): Boolean = false
     override fun hasTypeParameters(): Boolean = false
 

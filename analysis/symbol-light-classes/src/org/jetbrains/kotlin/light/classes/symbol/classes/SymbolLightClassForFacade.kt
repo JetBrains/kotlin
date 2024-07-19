@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -110,7 +109,7 @@ internal class SymbolLightClassForFacade(
     private fun loadFieldsFromFile(
         fileScope: KaScope,
         nameGenerator: SymbolLightField.FieldNameGenerator,
-        result: MutableList<KtLightField>
+        result: MutableList<PsiField>
     ) {
         for (propertySymbol in fileScope.callables) {
             if (propertySymbol !is KaKotlinPropertySymbol) continue
@@ -131,7 +130,7 @@ internal class SymbolLightClassForFacade(
         this?.toPsiVisibilityForMember()?.let { it == PsiModifier.PUBLIC } != false
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
-        val result = mutableListOf<KtLightField>()
+        val result = mutableListOf<PsiField>()
         val nameGenerator = SymbolLightField.FieldNameGenerator()
         withFileSymbols { fileSymbols ->
             for (fileSymbol in fileSymbols) {
