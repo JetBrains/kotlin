@@ -168,7 +168,6 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ComposePluginSuggestApplyChecker)
 
         if (isMultiplatform) {
-            register(project, KotlinMultiplatformAndroidGradlePluginCompatibilityChecker)
             register(project, MultipleSourceSetRootsInCompilationChecker)
         }
     }

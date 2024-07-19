@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.unitTests.checkers
 import org.gradle.api.InvalidUserCodeException
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.AndroidGradlePluginVersionProvider
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.minimalSupportedAgpVersion
-import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheck
+import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheckIfAgpIsApplied
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -31,7 +31,7 @@ class AgpCompatibilityCheckTest {
     @Test
     fun testVersionNotSupported() {
         val error = assertFails {
-            projectWithAgpApplied.runAgpCompatibilityCheck(unsupportedAgpVersion)
+            projectWithAgpApplied.runAgpCompatibilityCheckIfAgpIsApplied(unsupportedAgpVersion)
         }
 
         assertTrue(error is InvalidUserCodeException)
@@ -40,13 +40,13 @@ class AgpCompatibilityCheckTest {
 
     @Test
     fun testVersionNotDetected() {
-        projectWithAgpApplied.runAgpCompatibilityCheck(unknownAgpVersion)
+        projectWithAgpApplied.runAgpCompatibilityCheckIfAgpIsApplied(unknownAgpVersion)
         projectWithAgpApplied.checkDiagnostics("checkers/agpCompatibilityCheck/versionUnknown")
     }
 
     @Test
     fun testVersionIsCompatible() {
-        projectWithAgpApplied.runAgpCompatibilityCheck(supportedAgpVersion)
+        projectWithAgpApplied.runAgpCompatibilityCheckIfAgpIsApplied(supportedAgpVersion)
         projectWithAgpApplied.assertNoDiagnostics()
     }
 
@@ -54,7 +54,7 @@ class AgpCompatibilityCheckTest {
     fun testDiagnosticNotTriggeredOnNoAgpPluginApplied() {
         val project = buildProject()
 
-        project.runAgpCompatibilityCheck(unsupportedAgpVersion)
+        project.runAgpCompatibilityCheckIfAgpIsApplied(unsupportedAgpVersion)
 
         project.assertNoDiagnostics()
     }

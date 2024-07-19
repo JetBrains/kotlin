@@ -11,7 +11,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheck
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmPlugin.Companion.configureCompilerOptionsForTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -24,7 +23,6 @@ internal open class KotlinAndroidPlugin(
 ) : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.runAgpCompatibilityCheck()
         project.dynamicallyApplyWhenAndroidPluginIsApplied(
             {
                 project.objects.newInstance(

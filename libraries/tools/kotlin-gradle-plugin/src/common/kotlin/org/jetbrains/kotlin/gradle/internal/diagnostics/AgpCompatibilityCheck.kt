@@ -15,14 +15,14 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal object AgpCompatibilityCheck {
     val minimalSupportedAgpVersion = AndroidGradlePluginVersion(7, 3, 1)
 
-    fun Project.runAgpCompatibilityCheck(
+    fun Project.runAgpCompatibilityCheckIfAgpIsApplied(
         agpVersionProvider: AndroidGradlePluginVersionProvider = AndroidGradlePluginVersionProvider.Default
     ) {
         val wasChecked = AtomicBoolean(false)
         androidPluginIds.forEach { agpPluginId ->
             plugins.withId(agpPluginId) {
                 if (!wasChecked.getAndSet(true)) {
-                    checkAgpVersion(agpVersionProvider)
+                    checkAgpVersion(agpVersionProvider, agpPluginId)
                 }
             }
         }
@@ -30,12 +30,12 @@ internal object AgpCompatibilityCheck {
 
     private fun Project.checkAgpVersion(
         agpVersionProvider: AndroidGradlePluginVersionProvider,
+        agpPluginId: String,
     ) {
         val androidGradlePluginVersion = agpVersionProvider.get()
 
         if (androidGradlePluginVersion == null) {
-            // TODO: pass plugin id to diagnostic
-            reportDiagnosticOncePerProject(KotlinToolingDiagnostics.FailedToGetAgpVersionWarning())
+            reportDiagnosticOncePerProject(KotlinToolingDiagnostics.FailedToGetAgpVersionWarning(agpPluginId))
             return
         }
 

@@ -221,22 +221,13 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object IncompatibleAgpVersionTooLowWarning : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(androidGradlePluginVersionString: String, minSupported: String, maxTested: String) = build(
+    object FailedToGetAgpVersionWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(agpPluginId: String) = build(
             """
-                Kotlin Multiplatform <-> Android Gradle Plugin compatibility issue:
-                The applied Android Gradle Plugin version ($androidGradlePluginVersionString) is lower than the minimum supported
-                
-                Minimum supported Android Gradle Plugin version: $minSupported
-                Maximum tested Android Gradle Plugin version: $maxTested
-                
-                To suppress this message add 'kotlin.mpp.androidGradlePluginCompatibility.nowarn=true' to your gradle.properties
+            Failed to get Android Gradle Plugin version (for '$agpPluginId' plugin).
+            Please report a new Kotlin issue via https://kotl.in/issue.
             """.trimIndent()
         )
-    }
-
-    object FailedToGetAgpVersionWarning : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke() = build("Failed to get AndroidGradlePluginVersion")
     }
 
     object AndroidSourceSetLayoutV1SourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR) {
