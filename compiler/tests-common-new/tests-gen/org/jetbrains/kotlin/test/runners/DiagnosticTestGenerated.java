@@ -19849,6 +19849,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
           }
 
           @Test
+          @TestMetadata("kt69170.kt")
+          public void testKt69170() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt69170.kt");
+          }
+
+          @Test
+          @TestMetadata("kt69170Original.kt")
+          public void testKt69170Original() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt69170Original.kt");
+          }
+
+          @Test
           @TestMetadata("namedArgumentTypeSubstitution.kt")
           public void testNamedArgumentTypeSubstitution() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/namedArgumentTypeSubstitution.kt");
