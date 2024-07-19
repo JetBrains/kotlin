@@ -1,0 +1,37 @@
+// MODULE: m1
+// FILE: module_m1_overriddenSetterParamName.kt
+
+abstract class Base<T : Any?> {
+  val x: T
+    field = x
+    get
+
+  constructor(x: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract var bar: T
+    abstract get
+    abstract set
+
+}
+
+// MODULE: m2
+// FILE: module_m2_overriddenSetterParamName.kt
+
+class Derived1<T : Any?> : Base<T> {
+  override var bar: T
+    field = x
+    override get
+    override set
+
+  constructor(x: T) /* primary */ {
+    super/*Base*/<T>(x = x)
+    /* <init>() */
+
+  }
+
+}
+

@@ -4695,6 +4695,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
     }
 
     @Test
+    @TestMetadata("overriddenSetterParamName.kt")
+    public void testOverriddenSetterParamName() {
+      runTest("compiler/testData/ir/irText/stubs/overriddenSetterParamName.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/ir/irText/stubs/simple.kt");

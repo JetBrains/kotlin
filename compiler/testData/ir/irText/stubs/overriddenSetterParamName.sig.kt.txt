@@ -1,0 +1,100 @@
+// MODULE: m1
+// FILE: module_m1_overriddenSetterParamName.kt
+
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+abstract class Base<T : Any?> {
+  // CHECK:
+  //   Mangled name: Base{}x
+  //   Public signature: /Base.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: T
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Base#<get-x>(){}
+    //   Public signature: /Base.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-x>(){}1:0
+    //   Public signature: /Base.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
+    get
+
+  // CHECK:
+  //   Mangled name: Base#<init>(1:0){}
+  //   Public signature: /Base.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
+  constructor(x: T) /* primary */
+
+  // CHECK:
+  //   Mangled name: Base{}bar
+  //   Public signature: /Base.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
+  abstract var bar: T
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Base#<get-bar>(){}
+    //   Public signature: /Base.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-bar>(){}1:0
+    //   Public signature: /Base.bar.<get-bar>|7899956589744407340[0]
+    //   Public signature debug description: <get-bar>(){}1:0
+    abstract get
+    // CHECK:
+    //   Mangled name: Base#<set-bar>(1:0){}
+    //   Public signature: /Base.bar.<set-bar>|3083825024913650500[0]
+    //   Public signature debug description: <set-bar>(1:0){}
+    abstract set
+
+}
+
+// MODULE: m2
+// FILE: module_m2_overriddenSetterParamName.kt
+
+// CHECK:
+//   Mangled name: Derived1
+//   Public signature: /Derived1|null[0]
+class Derived1<T : Any?> : Base<T> {
+  // CHECK:
+  //   Mangled name: Derived1{}bar
+  //   Public signature: /Derived1.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
+  override var bar: T
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Derived1#<get-bar>(){}
+    //   Public signature: /Derived1.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: Derived1#<get-bar>(){}1:0
+    //   Public signature: /Derived1.bar.<get-bar>|7899956589744407340[0]
+    //   Public signature debug description: <get-bar>(){}1:0
+    override get
+    // CHECK:
+    //   Mangled name: Derived1#<set-bar>(1:0){}
+    //   Public signature: /Derived1.bar.<set-bar>|3083825024913650500[0]
+    //   Public signature debug description: <set-bar>(1:0){}
+    override set
+
+  // CHECK:
+  //   Mangled name: Derived1#<init>(1:0){}
+  //   Public signature: /Derived1.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
+  constructor(x: T) /* primary */
+
+  // CHECK:
+  //   Mangled name: Derived1{}x
+  //   Public signature: /Derived1.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  /* fake */ override val x: T
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Derived1#<get-x>(){}
+    //   Public signature: /Derived1.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: Derived1#<get-x>(){}1:0
+    //   Public signature: /Derived1.x.<get-x>|-8893883356128097563[0]
+    //   Public signature debug description: <get-x>(){}1:0
+    /* fake */ override get(): T
+
+}
+
