@@ -11,6 +11,8 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.workers.WorkAction
+import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
+import org.jetbrains.kotlin.library.abi.LibraryAbiReader
 
 /**
  * Generates a text file with a KLib ABI dump for a single klib.
@@ -76,8 +78,18 @@ internal interface KlibAbiBuildParameters : BuildParametersBase {
 }
 
 internal abstract class KlibAbiBuildWorker : WorkAction<KlibAbiBuildParameters> {
-    @OptIn(ExperimentalBCVApi::class)
+    @OptIn(ExperimentalBCVApi::class, ExperimentalLibraryAbiReader::class)
     override fun execute() {
+        try {
+            LibraryAbiReader.javaClass
+        } catch (e: NoClassDefFoundError) {
+            error(
+                "KLib validation is not available. " +
+                        "Make sure the project uses at least Kotlin 1.9.20 or disable KLib validation " +
+                        "by setting apiValidation.klib.enabled to false"
+            )
+        }
+
         val outputFile = parameters.outputAbiFile.asFile.get()
         outputFile.delete()
         outputFile.parentFile.mkdirs()
