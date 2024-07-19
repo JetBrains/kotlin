@@ -11,6 +11,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     copyCommonKlibBasedCompilerArguments(from, to)
 
     to.cacheDirectory = from.cacheDirectory
+    to.debuggerCustomFormatters = from.debuggerCustomFormatters
     to.enableJsScripting = from.enableJsScripting
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals
     to.fakeOverrideValidator = from.fakeOverrideValidator

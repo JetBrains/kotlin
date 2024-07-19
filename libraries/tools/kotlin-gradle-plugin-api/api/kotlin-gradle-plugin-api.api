@@ -280,6 +280,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinHierarchyD
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions {
+	public abstract fun getDebuggerCustomFormatters ()Lorg/gradle/api/provider/Property;
 	public abstract fun getFriendModulesDisabled ()Lorg/gradle/api/provider/Property;
 	public abstract fun getMain ()Lorg/gradle/api/provider/Property;
 	public abstract fun getMetaInfo ()Lorg/gradle/api/provider/Property;
@@ -319,6 +320,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions$DefaultImp
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions {
+	public abstract fun getDebuggerCustomFormatters ()Z
 	public abstract fun getFriendModulesDisabled ()Z
 	public abstract fun getMain ()Ljava/lang/String;
 	public abstract fun getMetaInfo ()Z
@@ -333,6 +335,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 	public abstract fun getTarget ()Ljava/lang/String;
 	public abstract fun getTypedArrays ()Z
 	public abstract fun getUseEsClasses ()Ljava/lang/Boolean;
+	public abstract fun setDebuggerCustomFormatters (Z)V
 	public abstract fun setFriendModulesDisabled (Z)V
 	public abstract fun setMain (Ljava/lang/String;)V
 	public abstract fun setMetaInfo (Z)V
@@ -351,6 +354,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls {
 	public static fun getAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getApiVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
+	public static fun getDebuggerCustomFormatters (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/util/List;
 	public static fun getFriendModulesDisabled (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getLanguageVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
@@ -371,6 +375,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setApiVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
+	public static fun setDebuggerCustomFormatters (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/util/List;)V
 	public static fun setFriendModulesDisabled (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setLanguageVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
