@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ir.inline
+import org.jetbrains.kotlin.backend.common.ir.isTmpForInline
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.pop
@@ -1182,11 +1183,8 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             }
         }.unwrapBlock()
 
-    private val IrDeclarationOrigin.isTemporary
-        get() =
-            this == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
-                    || this == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
-                    || this == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
+    private val IrVariable.isTemporary
+        get() = this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE || this.isTmpForInline
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
         val initializer = declaration.initializer
@@ -1194,7 +1192,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             val irClass = declaration.type.erasedUpperBound
             val rootNode = replacements.getRootMfvcNode(irClass)
             return context.createJvmIrBuilder(getCurrentScopeSymbol(), declaration).irBlock {
-                val origin = if (declaration.origin.isTemporary) {
+                val origin = if (declaration.isTemporary) {
                     JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
                 } else {
                     JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE

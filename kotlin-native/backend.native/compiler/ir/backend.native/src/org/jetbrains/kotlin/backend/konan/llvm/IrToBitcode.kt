@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.ir.isTmpForInline
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
@@ -975,10 +974,10 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-    private fun generateStatement(statement: IrStatement, isInlinedArgument: Boolean = false) {
+    private fun generateStatement(statement: IrStatement) {
         when (statement) {
             is IrExpression -> evaluateExpression(statement)
-            is IrVariable -> generateVariable(statement, isInlinedArgument)
+            is IrVariable -> generateVariable(statement)
             else -> TODO(ir2string(statement))
         }
     }
@@ -1429,8 +1428,9 @@ internal class CodeGeneratorVisitor(
         else -> true
     }
 
-    private fun generateVariable(variable: IrVariable, isInlinedArgument: Boolean) {
+    private fun generateVariable(variable: IrVariable) {
         context.log { "generateVariable               : ${ir2string(variable)}" }
+        val isInlinedArgument = variable.isTmpForInline
         val value = variable.initializer?.let { initializer ->
             (currentCodeContext.functionScope()?.takeIf { isInlinedArgument } as? FunctionScope)
                     ?.declaration?.symbol?.let {
@@ -2158,18 +2158,15 @@ internal class CodeGeneratorVisitor(
             VariableScope()
         }
 
-        val isInlinedArgument = value is IrComposite &&
-                (value.origin == INLINED_FUNCTION_ARGUMENTS || value.origin == INLINED_FUNCTION_DEFAULT_ARGUMENTS)
-
         using(scope) {
             value.statements.dropLast(1).forEach {
-                generateStatement(it, isInlinedArgument)
+                generateStatement(it)
             }
             value.statements.lastOrNull()?.let {
                 if (it is IrExpression) {
                     return evaluateExpression(it, resultSlot)
                 } else {
-                    generateStatement(it, isInlinedArgument)
+                    generateStatement(it)
                 }
             }
 
