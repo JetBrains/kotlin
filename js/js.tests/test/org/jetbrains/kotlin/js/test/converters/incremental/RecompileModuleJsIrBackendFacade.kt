@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.test.converters.incremental
 
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
-import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.test.*
@@ -32,7 +32,7 @@ class RecompileModuleJsIrBackendFacade(
             }
         }
 
-        facadeStep { JsKlibBackendFacade(it, firstTimeCompilation = false) }
+        facadeStep { JsKlibSerializerFacade(it, firstTimeCompilation = false) }
         facadeStep { JsIrBackendFacade(it, firstTimeCompilation = false) }
     }
 
