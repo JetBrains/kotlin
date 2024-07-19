@@ -71,8 +71,7 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
     abstract override fun getOwnMethods(): List<PsiMethod>
     abstract override fun getOwnInnerClasses(): List<PsiClass>
 
-    private val ownConstructors: Array<PsiMethod>
-        get() = cachedValue { PsiImplUtil.getConstructors(this) }
+    open val ownConstructors: Array<PsiMethod> get() = cachedValue { PsiImplUtil.getConstructors(this) }
 
     override fun processDeclarations(
         processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement

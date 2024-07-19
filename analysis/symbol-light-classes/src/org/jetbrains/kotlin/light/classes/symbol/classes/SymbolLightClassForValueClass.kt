@@ -61,6 +61,8 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
         manager = manager,
     )
 
+    override val ownConstructors: Array<PsiMethod> get() = PsiMethod.EMPTY_ARRAY
+
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol { classSymbol ->
             val result = mutableListOf<PsiMethod>()

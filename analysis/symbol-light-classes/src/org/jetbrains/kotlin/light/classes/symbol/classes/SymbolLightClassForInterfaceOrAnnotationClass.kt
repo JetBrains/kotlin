@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiReferenceList
@@ -85,6 +86,8 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
     }
 
     final override fun getModifierList(): PsiModifierList? = _modifierList
+
+    override val ownConstructors: Array<PsiMethod> get() = PsiMethod.EMPTY_ARRAY
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
         withClassSymbol { classSymbol ->

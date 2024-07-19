@@ -78,6 +78,8 @@ internal class SymbolLightClassForFacade(
 
     override fun getScope(): PsiElement = parent
 
+    override val ownConstructors: Array<PsiMethod> get() = PsiMethod.EMPTY_ARRAY
+
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withFileSymbols { fileSymbols ->
             val result = mutableListOf<PsiMethod>()
