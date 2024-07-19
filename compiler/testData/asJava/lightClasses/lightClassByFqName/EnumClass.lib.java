@@ -5,10 +5,10 @@ public enum MyEnumClass /* one.MyEnumClass*/ {
   public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<one.MyEnumClass> getEntries();//  getEntries()
 
   @org.jetbrains.annotations.NotNull()
-  public static one.MyEnumClass valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+  public static @org.jetbrains.annotations.NotNull() one.MyEnumClass @org.jetbrains.annotations.NotNull() [] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static one.MyEnumClass[] values();//  values()
+  public static @org.jetbrains.annotations.NotNull() one.MyEnumClass valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   private  MyEnumClass();//  .ctor()
 

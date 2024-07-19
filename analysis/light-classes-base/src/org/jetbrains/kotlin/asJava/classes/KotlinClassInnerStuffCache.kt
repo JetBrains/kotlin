@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -139,7 +139,7 @@ class KotlinClassInnerStuffCache(
         }
     }
 
-    private val valuesMethodCache = cache { KotlinEnumSyntheticMethod(myClass, KotlinEnumSyntheticMethod.Kind.VALUES) }
+    private val valuesMethodCache = cache { getEnumValuesPsiMethod(myClass) }
 
     private fun getValuesMethod(): PsiMethod? {
         if (myClass.isEnum && !myClass.isAnonymous && !isClassNameSealed()) {
@@ -149,7 +149,7 @@ class KotlinClassInnerStuffCache(
         return null
     }
 
-    private val valueOfMethodCache = cache { KotlinEnumSyntheticMethod(myClass, KotlinEnumSyntheticMethod.Kind.VALUE_OF) }
+    private val valueOfMethodCache = cache { getEnumValueOfPsiMethod(myClass) }
 
     fun getValueOfMethod(): PsiMethod? {
         if (myClass.isEnum && !myClass.isAnonymous) {
@@ -314,3 +314,9 @@ private fun <T> copy(value: Array<T>): Array<T> {
 
 fun getEnumEntriesPsiMethod(enumClass: KtExtensibleLightClass): PsiMethod =
     KotlinEnumSyntheticMethod(enumClass, KotlinEnumSyntheticMethod.Kind.ENTRIES)
+
+fun getEnumValueOfPsiMethod(enumClass: KtExtensibleLightClass): PsiMethod =
+    KotlinEnumSyntheticMethod(enumClass, KotlinEnumSyntheticMethod.Kind.VALUE_OF)
+
+fun getEnumValuesPsiMethod(enumClass: KtExtensibleLightClass): PsiMethod =
+    KotlinEnumSyntheticMethod(enumClass, KotlinEnumSyntheticMethod.Kind.VALUES)

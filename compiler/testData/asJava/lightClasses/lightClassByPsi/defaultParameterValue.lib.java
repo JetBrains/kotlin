@@ -3,13 +3,13 @@ public enum Em /* Em*/ {
   BAR;
 
   @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() Em @org.jetbrains.annotations.NotNull() [] values();//  values()
+
+  @org.jetbrains.annotations.NotNull()
+  public static @org.jetbrains.annotations.NotNull() Em valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
+
+  @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<Em> getEntries();//  getEntries()
-
-  @org.jetbrains.annotations.NotNull()
-  public static Em valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
-
-  @org.jetbrains.annotations.NotNull()
-  public static Em[] values();//  values()
 
   private  Em();//  .ctor()
 }

@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.classes.ClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
+import org.jetbrains.kotlin.asJava.classes.getEnumValueOfPsiMethod
+import org.jetbrains.kotlin.asJava.classes.getEnumValuesPsiMethod
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.isGetEntriesMethod
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
@@ -46,7 +48,6 @@ open class KtLightClassForDecompiledDeclaration(
     private val myInnersCache by lazyPub {
         ClassInnerStuffCache(
             /* aClass = */ this,
-            /* generateEnumMethods = */ true,
             /* modificationTrackers = */ listOf(KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker),
         )
     }
@@ -132,9 +133,18 @@ open class KtLightClassForDecompiledDeclaration(
     override fun getOwnMethods(): List<PsiMethod> = cachedValueWithLibraryTracker {
         val isEnum = isEnum
         this.clsDelegate.methods.mapNotNull { psiMethod ->
-            if (isSyntheticValuesOrValueOfMethod(psiMethod)) return@mapNotNull null
-            if (isEnum && isGetEntriesMethod(psiMethod)) {
-                return@mapNotNull getEnumEntriesPsiMethod(this)
+            // We replace cls method with generated ones to provide nullability annotations
+            when {
+                !isEnum -> {}
+                isSyntheticValuesOrValueOfMethod(psiMethod) -> {
+                    return@mapNotNull if (psiMethod.name == "valueOf") {
+                        getEnumValueOfPsiMethod(this)
+                    } else {
+                        getEnumValuesPsiMethod(this)
+                    }
+                }
+
+                isGetEntriesMethod(psiMethod) -> return@mapNotNull getEnumEntriesPsiMethod(this)
             }
 
             KtLightMethodForDecompiledDeclaration(
