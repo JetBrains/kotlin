@@ -190,6 +190,7 @@ internal class AppendableScope(val filePath: String) {
 
 internal class Runner(withConfigurationCache: Boolean = true) {
     val arguments: MutableList<String> = mutableListOf<String>().apply {
+        add("--stacktrace")
         if (!koverEnabled && withConfigurationCache) {
             // Configuration cache is incompatible with javaagents being enabled for Gradle
             // See https://github.com/gradle/gradle/issues/25979
