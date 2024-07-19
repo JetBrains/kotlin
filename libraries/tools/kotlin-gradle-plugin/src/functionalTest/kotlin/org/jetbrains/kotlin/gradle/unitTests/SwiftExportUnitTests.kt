@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("FunctionName")
+@file:OptIn(ExperimentalSwiftExportDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests
 
@@ -13,20 +14,22 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositori
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.swiftExportedModules
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.swiftexport.ExperimentalSwiftExportDsl
 import org.junit.Assume
 import org.junit.Test
 import kotlin.test.BeforeTest
@@ -86,10 +89,10 @@ class SwiftExportUnitTests {
         val linkSwiftExportBinaryTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64")
         val mergeLibrariesTask = project.tasks.getByName("mergeIosSimulatorDebugSwiftExportLibraries")
         val copySwiftExportTask = project.tasks.getByName("copyDebugSPMIntermediates")
-        val embedAndSignTask = project.tasks.getByName("embedAndSignAppleFrameworkForXcode")
+        val embedSwiftExportTask = project.tasks.getByName("embedSwiftExportForXcode")
 
         // Check embedAndSign task dependencies
-        val embedAndSignTaskDependencies = embedAndSignTask.taskDependencies.getDependencies(null)
+        val embedAndSignTaskDependencies = embedSwiftExportTask.taskDependencies.getDependencies(null)
         assert(embedAndSignTaskDependencies.contains(copySwiftExportTask))
 
         // Check copySwiftExport task dependencies
@@ -114,17 +117,15 @@ class SwiftExportUnitTests {
 
     @Test
     fun `test swift export missing arch`() {
-        val project = swiftExportProject(archs = "arm64", targets = {
-            listOf(iosSimulatorArm64(), iosX64(), iosArm64()).forEach {
-                it.binaries.framework()
-            }
+        val project = swiftExportProject(archs = "arm64", multiplatform = {
+            listOf(iosSimulatorArm64(), iosX64(), iosArm64())
         })
 
         project.evaluate()
 
-        val embedAndSignTask = project.tasks.getByName("embedAndSignAppleFrameworkForXcode")
+        val embedSwiftExportTask = project.tasks.getByName("embedSwiftExportForXcode")
 
-        val buildType = embedAndSignTask.inputs.properties["type"] as NativeBuildType
+        val buildType = embedSwiftExportTask.inputs.properties["type"] as NativeBuildType
 
         val arm64SimLib = project.multiplatformExtension.iosSimulatorArm64().binaries.findStaticLib("SwiftExportBinary", buildType)
         val arm64Lib = project.multiplatformExtension.iosArm64().binaries.findStaticLib("SwiftExportBinary", buildType)
@@ -143,19 +144,17 @@ class SwiftExportUnitTests {
 
     @Test
     fun `test swift export embed and sign inputs`() {
-        val project = swiftExportProject(archs = "arm64 x86_64", targets = {
-            listOf(iosSimulatorArm64(), iosX64()).forEach {
-                it.binaries.framework()
-            }
+        val project = swiftExportProject(archs = "arm64 x86_64", multiplatform = {
+            listOf(iosSimulatorArm64(), iosX64())
         })
 
         project.evaluate()
 
-        val embedAndSignTask = project.tasks.getByName("embedAndSignAppleFrameworkForXcode")
+        val embedSwiftExportTask = project.tasks.getByName("embedSwiftExportForXcode")
 
         @Suppress("UNCHECKED_CAST")
-        val targets = embedAndSignTask.inputs.properties["targets"] as List<KonanTarget>
-        val buildType = embedAndSignTask.inputs.properties["type"] as NativeBuildType
+        val targets = embedSwiftExportTask.inputs.properties["targets"] as List<KonanTarget>
+        val buildType = embedSwiftExportTask.inputs.properties["type"] as NativeBuildType
 
         assert(targets.contains(KonanTarget.IOS_SIMULATOR_ARM64)) { "Targets doesn't contain ios_simulator_arm64" }
         assert(targets.contains(KonanTarget.IOS_X64)) { "Targets doesn't contain ios_x64" }
@@ -211,34 +210,57 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test swift export multiple modules tasks graph`() {
+        val projects = multiModuleSwiftExportProject(subprojects = listOf("subproject", "anotherproject", "miniproject"))
+        projects.forEach { it.evaluate() }
+        val project = projects[0]
+        val subProject1 = projects[1]
+        val subProject2 = projects[2]
+        val subProject3 = projects[3]
+
+        val projectCompileTask = project.tasks.getByName("compileKotlinIosSimulatorArm64")
+        val subProject1CompileTask = subProject1.tasks.getByName("compileKotlinIosSimulatorArm64")
+        val subProject2CompileTask = subProject2.tasks.getByName("compileKotlinIosSimulatorArm64")
+        val subProject3CompileTask = subProject3.tasks.getByName("compileKotlinIosSimulatorArm64")
+
+        val projectCompileTaskDependencies = projectCompileTask.taskDependencies.getDependencies(null)
+        assert(projectCompileTaskDependencies.contains(subProject1CompileTask))
+        assert(projectCompileTaskDependencies.contains(subProject2CompileTask))
+        assert(projectCompileTaskDependencies.contains(subProject3CompileTask))
+    }
+
+    @Test
     fun `test swift export exported modules`() {
-        val targets: KotlinMultiplatformExtension.() -> List<KotlinNativeTarget> = { listOf(iosSimulatorArm64()) }
-        val project = buildProject(
-            projectBuilder = {
-                withName("shared")
-            },
-            configureProject = {
-                configureRepositoriesForTests()
-            }
-        )
-        val subproject = project.subProject("subproject", targets)
-        project.setupForSwiftExport(targets = targets) {
-            sourceSets.commonMain {
-                dependencies {
-                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
-                    implementation(project(":${subproject.name}"))
+        val projects = multiModuleSwiftExportProject {
+            export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+
+            binaries {
+                linkTaskProvider.configure {
+                    freeCompilerArgs += "-opt-in=some.value"
                 }
             }
         }
 
-        listOf(project, subproject).forEach { it.evaluate() }
+        projects.forEach { it.evaluate() }
+        val project = projects.first()
+
+        val embedSwiftExportTask = project.tasks.getByName("embedSwiftExportForXcode")
+        val buildType = embedSwiftExportTask.inputs.properties["type"] as NativeBuildType
+        val arm64SimLib = project.multiplatformExtension.iosSimulatorArm64().binaries.findStaticLib(
+            SwiftExportDSLConstants.SWIFT_EXPORT_LIBRARY_PREFIX,
+            buildType
+        )
+
+        assertNotNull(arm64SimLib)
+        assertEquals(arm64SimLib.freeCompilerArgs.single(), "-opt-in=some.value")
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val configuration = swiftExportTask.configuration.get()
+        val modules = swiftExportTask.parameters.swiftModules.get()
 
-        val modules = configuration.swiftExportedModules()
-
-        assert(modules.size == 3)
+        assertEquals(
+            listOf("Subproject", "KotlinxCoroutinesCore"),
+            modules.map { it.moduleName },
+        )
 
         val subProject = modules.single { it.moduleName == "Subproject" }
         assertEquals(subProject.moduleName, "Subproject")
@@ -247,18 +269,145 @@ class SwiftExportUnitTests {
         val kotlinXCoroutines = modules.single { it.moduleName == "KotlinxCoroutinesCore" }
         assertEquals(kotlinXCoroutines.moduleName, "KotlinxCoroutinesCore")
         assertEquals(kotlinXCoroutines.artifact.name, "kotlinx-coroutines-core.klib")
-
-        val atomicFu = modules.single { it.moduleName == "Atomicfu" }
-        assertEquals(atomicFu.moduleName, "Atomicfu")
-        assertEquals(atomicFu.artifact.name, "atomicfu.klib")
     }
+
+    @Test
+    fun `test non-exported compilation dependencies are not exported`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+                    implementation("com.arkivanov.decompose:decompose:3.1.0")
+                }
+            },
+            swiftExport = {
+                export("com.arkivanov.decompose:decompose:3.1.0")
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val modules = swiftExportTask.parameters.swiftModules.get()
+
+        val decompose = modules.single { it.moduleName == "Decompose" }
+        assertEquals(decompose.moduleName, "Decompose")
+        assertEquals(decompose.artifact.name, "decompose.klib")
+
+        val KotlinXDatetime = modules.singleOrNull { it.moduleName == "KotlinxDatetime" }
+        assertNull(KotlinXDatetime, "Transitive dependency kotlinx-datetime should not be exported")
+    }
+
+    @Test
+    fun `test transitive dependencies of exported dependencies are not exported`() {
+        val project = swiftExportProject(
+            swiftExport = {
+                export("com.arkivanov.decompose:decompose:3.1.0")
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val modules = swiftExportTask.parameters.swiftModules.get()
+
+        val decompose = modules.single { it.moduleName == "Decompose" }
+        assertEquals(decompose.moduleName, "Decompose")
+        assertEquals(decompose.artifact.name, "decompose.klib")
+
+        val kotlinXCoroutines = modules.singleOrNull { it.moduleName == "KotlinxCoroutinesCore" }
+        assertNull(kotlinXCoroutines, "Transitive dependency kotlinx-coroutines-core should not be exported")
+    }
+
+    @Test
+    fun `test dependency is exported with one version and compiled against with another version`() {
+        val project = swiftExportProject(
+            multiplatform = {
+                iosSimulatorArm64()
+
+                sourceSets.commonMain.dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+                }
+            },
+            swiftExport = {
+                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC")
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val modules = swiftExportTask.parameters.swiftModules.get()
+
+        val kotlinXCoroutines = modules.single { it.moduleName == "KotlinxCoroutinesCore" }
+        assertEquals(kotlinXCoroutines.moduleName, "KotlinxCoroutinesCore")
+        assertEquals(kotlinXCoroutines.artifact.name, "kotlinx-coroutines-core.klib")
+        assertContains("/1.9.0-RC/", kotlinXCoroutines.artifact.path)
+        assertNotContains("/1.8.0/", kotlinXCoroutines.artifact.path)
+    }
+
+    @Test
+    fun `test dependency export custom parameters`() {
+        val project = swiftExportProject(
+            swiftExport = {
+                export("com.arkivanov.decompose:decompose:3.1.0") {
+                    moduleName.set("CustomDecompose")
+                }
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val modules = swiftExportTask.parameters.swiftModules.get()
+
+        val decompose = modules.single { it.moduleName == "CustomDecompose" }
+        assertEquals(decompose.moduleName, "CustomDecompose")
+        assertEquals(decompose.artifact.name, "decompose.klib")
+    }
+
+    @Test
+    fun `test swift export experimental feature message`() {
+        val project = swiftExportProject()
+        project.evaluate()
+
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.ExperimentalFeatureWarning)
+    }
+}
+
+private fun multiModuleSwiftExportProject(
+    mainProjectName: String = "shared",
+    subprojects: List<String> = listOf("subproject"),
+    code: SwiftExportExtension.() -> Unit = {},
+): List<ProjectInternal> {
+    val multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() }
+    val project = buildProject(
+        projectBuilder = {
+            withName(mainProjectName)
+        },
+        configureProject = {
+            configureRepositoriesForTests()
+        }
+    )
+    val projectDependencies = subprojects.map { project.subProject(it, multiplatform) }
+    project.setupForSwiftExport(multiplatform = multiplatform) {
+        projectDependencies.forEach { export(it) }
+        code()
+    }
+
+    return listOf(project) + projectDependencies
 }
 
 private fun swiftExportProject(
     configuration: String = "DEBUG",
     sdk: String = "iphonesimulator",
     archs: String = "arm64",
-    targets: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64().binaries.framework() },
+    multiplatform: KotlinMultiplatformExtension.() -> Unit = {
+        iosSimulatorArm64()
+    },
+    swiftExport: SwiftExportExtension.() -> Unit = {},
 ): ProjectInternal = buildProjectWithMPP(
     preApplyCode = {
         applyEmbedAndSignEnvironment(
@@ -266,11 +415,16 @@ private fun swiftExportProject(
             sdk = sdk,
             archs = archs,
         )
+        configureRepositoriesForTests()
         enableSwiftExport()
     },
     code = {
-        repositories.mavenLocal()
-        kotlin { targets() }
+        kotlin {
+            multiplatform()
+            swiftExport {
+                swiftExport()
+            }
+        }
     }
 )
 
@@ -278,8 +432,10 @@ private fun ProjectInternal.setupForSwiftExport(
     configuration: String = "DEBUG",
     sdk: String = "iphonesimulator",
     archs: String = "arm64",
-    targets: KotlinMultiplatformExtension.() -> List<KotlinNativeTarget> = { listOf(iosSimulatorArm64()) },
-    code: KotlinMultiplatformExtension.() -> Unit = {},
+    multiplatform: KotlinMultiplatformExtension.() -> Unit = {
+        iosSimulatorArm64()
+    },
+    swiftExport: SwiftExportExtension.() -> Unit = {},
 ) {
     applyEmbedAndSignEnvironment(
         configuration = configuration,
@@ -289,17 +445,16 @@ private fun ProjectInternal.setupForSwiftExport(
     enableSwiftExport()
     applyMultiplatformPlugin()
     kotlin {
-        targets.invoke(this).forEach {
-            it.binaries.framework()
+        multiplatform()
+        swiftExport {
+            swiftExport()
         }
-
-        code.invoke(this)
     }
 }
 
 private fun ProjectInternal.subProject(
     name: String,
-    targets: KotlinMultiplatformExtension.() -> List<KotlinNativeTarget> = { listOf(iosSimulatorArm64()) }
+    multiplatform: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64() },
 ): ProjectInternal = buildProjectWithMPP(
     projectBuilder = {
         withParent(this@subProject)
@@ -307,7 +462,7 @@ private fun ProjectInternal.subProject(
     },
     code = {
         kotlin {
-            targets.invoke(this)
+            multiplatform()
         }
     }
 )
