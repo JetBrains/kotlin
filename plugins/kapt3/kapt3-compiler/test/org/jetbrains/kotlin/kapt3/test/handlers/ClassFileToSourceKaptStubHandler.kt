@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.kapt3.test.handlers
 
 import com.intellij.openapi.util.text.StringUtil
-import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLogBase
-import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.NON_EXISTENT_CLASS
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.NO_VALIDATION
 import org.jetbrains.kotlin.kapt3.test.messageCollectorProvider
+import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
@@ -46,27 +45,27 @@ class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHan
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
-        if (kaptContext.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
-            val log = Log.instance(kaptContext.context) as KaptJavaLogBase
+        val log = Log.instance(kaptContext.context) as KaptJavaLogBase
 
-            val actualErrors = log.reportedDiagnostics
-                .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }
-                .map {
-                    // Unfortunately, we can't use the file name as it can contain temporary prefix
-                    val name = it.source?.name?.substringAfterLast("/") ?: ""
-                    val kind = when (name.substringAfterLast(".").lowercase()) {
-                        "kt" -> "kotlin"
-                        "java" -> "java"
-                        else -> "other"
-                    }
-
-                    val javaLocation = "($kind:${it.lineNumber}:${it.columnNumber}) "
-                    javaLocation + it.getMessage(Locale.US).lines().first()
+        val actualErrors = log.reportedDiagnostics
+            .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }
+            .map {
+                // Unfortunately, we can't use the file name as it can contain temporary prefix
+                val name = it.source?.name?.substringAfterLast("/") ?: ""
+                val kind = when (name.substringAfterLast(".").lowercase()) {
+                    "kt" -> "kotlin"
+                    "java" -> "java"
+                    else -> "other"
                 }
-                .sorted()
 
-            log.flush()
+                val javaLocation = "($kind:${it.lineNumber}:${it.columnNumber}) "
+                javaLocation + it.getMessage(Locale.US).lines().first()
+            }
+            .sorted()
 
+        log.flush()
+
+        if (actualErrors.isNotEmpty()) {
             val lineSeparator = System.getProperty("line.separator")
             val actualErrorsStr = actualErrors.joinToString(lineSeparator) { it.toDirectiveView() }
 
