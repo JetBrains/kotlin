@@ -88,7 +88,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     spec.mainClass.set(toolSpec.mainClass)
                     spec.classpath = toolSpec.classpath
                     spec.jvmArgs(toolSpec.jvmArgs.get())
-                    spec.systemProperties(toolSpec.systemProperties)
+                    spec.systemProperties(systemProperties)
                     spec.environment(toolSpec.environment)
                     toolSpec.environmentBlacklist.forEach { spec.environment.remove(it) }
                     spec.args(toolArgsPair.second)
