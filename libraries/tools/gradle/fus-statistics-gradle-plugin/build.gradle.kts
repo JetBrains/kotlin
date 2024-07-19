@@ -8,3 +8,6 @@ dependencies {
     commonApi(project(":kotlin-gradle-plugin"))
 }
 
+tasks.named("publishPlugins") {
+    enabled = false
+}
