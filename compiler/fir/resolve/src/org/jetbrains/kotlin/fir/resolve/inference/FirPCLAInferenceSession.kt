@@ -177,10 +177,24 @@ class FirPCLAInferenceSession(
             "$coneTypeVariableTypeConstructor not found"
         }
 
-        if (coneTypeVariableTypeConstructor in myCs.outerTypeVariables.orEmpty()) return null
-
         val variableWithConstraints = myCs.notFixedTypeVariables[coneTypeVariableTypeConstructor] ?: return null
         val c = myCs.getBuilder()
+
+        if (coneTypeVariableTypeConstructor in myCs.outerTypeVariables.orEmpty()) {
+            // For outer TV, we don't allow semi-fixing them (adding the new equality constraints),
+            // but if there's already some proper EQ constraint, it's safe & sound to use it as a representative
+            c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {
+                inferenceComponents.resultTypeResolver.findResultIfThereIsEqualsConstraint(
+                    c,
+                    variableWithConstraints,
+                    isStrictMode = true,
+                ) as ConeKotlinType?
+            }?.let { appropriateResultType ->
+                return Pair(coneTypeVariableTypeConstructor, appropriateResultType)
+            }
+
+            return null
+        }
 
         val resultType = c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {
             inferenceComponents.resultTypeResolver.findResultType(

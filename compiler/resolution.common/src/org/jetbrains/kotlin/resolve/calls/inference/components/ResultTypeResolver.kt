@@ -94,7 +94,7 @@ class ResultTypeResolver(
         variableWithConstraints: VariableWithConstraints,
         direction: ResolveDirection,
     ): KotlinTypeMarker? {
-        val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints)
+        val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints, isStrictMode = false)
         if (resultTypeFromEqualConstraint?.isAppropriateResultTypeFromEqualityConstraints(c) == true) return resultTypeFromEqualConstraint
 
         val subType = c.findSubType(variableWithConstraints)
@@ -488,22 +488,40 @@ class ResultTypeResolver(
     private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
         isProperTypeForFixation(type, notFixedTypeVariables.keys) { isProperType(it) }
 
-    private fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
+    fun findResultIfThereIsEqualsConstraint(
+        c: Context,
+        variableWithConstraints: VariableWithConstraints,
+        isStrictMode: Boolean,
+    ): KotlinTypeMarker? {
         val properEqualityConstraints = variableWithConstraints.constraints.filter {
             it.kind == ConstraintKind.EQUALITY && c.isProperTypeForFixation(it.type)
         }
 
-        return c.representativeFromEqualityConstraints(properEqualityConstraints)
+        return c.representativeFromEqualityConstraints(properEqualityConstraints, isStrictMode)
     }
 
     // Discriminate integer literal types as they are less specific than separate integer types (Int, Short...)
-    private fun Context.representativeFromEqualityConstraints(constraints: List<Constraint>): KotlinTypeMarker? {
+    private fun Context.representativeFromEqualityConstraints(
+        constraints: List<Constraint>,
+        // Allow only types not-containing ILT and which might work as a representative of other ones from EQ constraints
+        // TODO: Consider making it always `true` (see KT-70062)
+        isStrictMode: Boolean
+    ): KotlinTypeMarker? {
         if (constraints.isEmpty()) return null
 
         val constraintTypes = constraints.map { it.type }
-        val nonLiteralTypes = constraintTypes.filter { !it.typeConstructor().isIntegerLiteralTypeConstructor() }
-        return nonLiteralTypes.singleBestRepresentative()
-            ?: constraintTypes.singleBestRepresentative()
+        val nonLiteralTypes = constraintTypes.filter { constraintType ->
+            if (isStrictMode)
+                !constraintType.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
+            else
+                !constraintType.typeConstructor().isIntegerLiteralTypeConstructor()
+        }
+
+        nonLiteralTypes.singleBestRepresentative()?.let { return it }
+
+        if (isStrictMode) return null
+
+        return constraintTypes.singleBestRepresentative()
             ?: constraintTypes.first() // seems like constraint system has contradiction
     }
 }
