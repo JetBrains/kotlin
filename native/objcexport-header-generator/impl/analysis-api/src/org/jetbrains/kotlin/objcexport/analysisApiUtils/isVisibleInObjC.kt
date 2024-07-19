@@ -42,7 +42,7 @@ internal fun KaSession.isVisibleInObjC(symbol: KaClassSymbol): Boolean {
     // TODO if(specialMapped()) return false
     // TODO if(!defaultType.isObjCObjectType()) return false
 
-    if (!isPublicApi(symbol)) return false
+    if (!isPublic(symbol)) return false
     if (isHiddenFromObjCByDeprecation(symbol)) return false
     if (isHiddenFromObjCByAnnotation(symbol)) return false
     if (!symbol.classKind.isVisibleInObjC()) return false
@@ -55,7 +55,7 @@ internal fun KaSession.isVisibleInObjC(symbol: KaClassSymbol): Boolean {
 Private utility functions
  */
 
-private fun KaSession.isPublic(symbol: KaCallableSymbol): Boolean {
+private fun KaSession.isPublic(symbol: KaDeclarationSymbol): Boolean {
     /**
      * Visibility check is a temp workaround, since AA doesn't have something similar to K1 [DeclarationDescriptorWithVisibility.isEffectivelyPublicApi]
      * Remove when KT-69122 is implemented

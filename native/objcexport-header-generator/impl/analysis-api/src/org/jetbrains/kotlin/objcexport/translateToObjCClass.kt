@@ -16,7 +16,14 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 
 fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? {
-    require(symbol.classKind == KaClassKind.CLASS || symbol.classKind == KaClassKind.ENUM_CLASS || symbol.classKind == KaClassKind.COMPANION_OBJECT)
+    require(
+        symbol.classKind == KaClassKind.CLASS ||
+                symbol.classKind == KaClassKind.ENUM_CLASS ||
+                symbol.classKind == KaClassKind.COMPANION_OBJECT ||
+                symbol.classKind == KaClassKind.OBJECT
+    ) {
+        "Unsupported symbol.classKind: ${symbol.classKind}"
+    }
     if (!analysisSession.isVisibleInObjC(symbol)) return null
 
     val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS

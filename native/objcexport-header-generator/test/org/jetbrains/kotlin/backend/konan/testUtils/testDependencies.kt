@@ -21,6 +21,10 @@ val testLibraryBKlibFile
     get() = testDependencyKlibs.firstOrNull { it.contains(Path("testLibraryB")) }
         ?: error("Missing 'testLibraryB' in 'testDependencyKlibs' System Property")
 
+val testInternalKlibFile
+    get() = testDependencyKlibs.firstOrNull { it.contains(Path("testInternalLibrary")) }
+        ?: error("Missing 'testInternalLibrary' in 'testDependencyKlibs' System Property")
+
 
 val testLibraryKotlinxSerializationJson
     get() = testDependencyKlibs.firstOrNull {

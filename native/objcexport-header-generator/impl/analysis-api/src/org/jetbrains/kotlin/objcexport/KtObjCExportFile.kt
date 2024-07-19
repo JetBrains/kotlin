@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.native.analysis.api.*
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllClassOrObjectSymbols
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllVisibleInObjClassifiers
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.tooling.core.withClosure
 
 interface KtObjCExportFile {
     val fileName: String
@@ -91,7 +90,7 @@ private class KtPsiObjCExportFile(
         return KtResolvedObjCExportFile(
             fileName = fileName,
             packageFqName = packageFqName,
-            classifierSymbols = getAllClassOrObjectSymbols(symbol),
+            classifierSymbols = getAllVisibleInObjClassifiers(symbol),
             callableSymbols = symbol.fileScope.callables.toList()
         )
     }
@@ -122,15 +121,13 @@ private class KtKlibObjCExportFile(
     override fun KaSession.resolve(): KtResolvedObjCExportFile {
         val classifierAddresses = addresses.filterIsInstance<KlibClassAddress>()
         val callableAddresses = addresses.filterIsInstance<KlibCallableAddress>()
+        val symbols = classifierAddresses.mapNotNull { classAddress -> classAddress.getClassOrObjectSymbol() }
+        val classifiers = getAllVisibleInObjClassifiers(symbols)
 
         return KtResolvedObjCExportFile(
             fileName = fileName,
             packageFqName = packageFqName,
-            classifierSymbols = classifierAddresses
-                .mapNotNull { classAddress -> classAddress.getClassOrObjectSymbol() }
-                .withClosure<KaClassSymbol> { symbol ->
-                    symbol.memberScope.classifiers.filterIsInstance<KaClassSymbol>().asIterable()
-                }.toList(),
+            classifierSymbols = classifiers,
             callableSymbols = callableAddresses.flatMap { address ->
                 address.getCallableSymbols()
             }

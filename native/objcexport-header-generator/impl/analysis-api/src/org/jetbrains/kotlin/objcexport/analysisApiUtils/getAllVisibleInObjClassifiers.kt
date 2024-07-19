@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.tooling.core.withClosure
 
 
 /**
@@ -25,23 +26,20 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
  *
  * See K1 [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderGenerator.collectClasses]
  */
-internal fun KaSession.getAllClassOrObjectSymbols(file: KaFileSymbol): List<KaClassSymbol> {
-    return file.fileScope.classifiers
-        .filterIsInstance<KaClassSymbol>()
-        .flatMap { classSymbol ->
-            if (isVisibleInObjC(classSymbol)) listOf(classSymbol) + getAllClassOrObjectSymbols(classSymbol)
-            else emptyList()
-        }
-        .toList()
+internal fun KaSession.getAllVisibleInObjClassifiers(file: KaFileSymbol): List<KaClassSymbol> {
+    return getAllVisibleInObjClassifiers(file.fileScope.classifiers.filterIsInstance<KaClassSymbol>())
 }
 
-private fun KaSession.getAllClassOrObjectSymbols(symbol: KaClassSymbol): Sequence<KaClassSymbol> {
-    return sequence {
-        val nestedClasses = symbol.memberScope.classifiers.filterIsInstance<KaClassSymbol>()
-        yieldAll(nestedClasses)
+internal fun KaSession.getAllVisibleInObjClassifiers(symbols: Sequence<KaClassSymbol>): List<KaClassSymbol> {
+    return getAllVisibleInObjClassifiers(symbols.toList())
+}
 
-        nestedClasses.forEach { nestedClass ->
-            yieldAll(getAllClassOrObjectSymbols(nestedClass))
+internal fun KaSession.getAllVisibleInObjClassifiers(symbols: Iterable<KaClassSymbol>): List<KaClassSymbol> {
+    return symbols.withClosure<KaClassSymbol> { symbol ->
+        if (isVisibleInObjC(symbol)) {
+            symbol.memberScope.classifiers.filterIsInstance<KaClassSymbol>().asIterable()
+        } else {
+            emptyList()
         }
-    }
+    }.toList()
 }

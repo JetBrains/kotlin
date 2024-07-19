@@ -136,6 +136,7 @@ include ":benchmarks",
         ":native:objcexport-header-generator-analysis-api",
         ":native:objcexport-header-generator:testLibraryA",
         ":native:objcexport-header-generator:testLibraryB",
+        ":native:objcexport-header-generator:testInternalLibrary",
         ":core:compiler.common",
         ":core:compiler.common.jvm",
         ":core:compiler.common.js",
@@ -758,6 +759,7 @@ project(':native:objcexport-header-generator-k1').projectDir = "$rootDir/native/
 project(':native:objcexport-header-generator-analysis-api').projectDir = "$rootDir/native/objcexport-header-generator/impl/analysis-api" as File
 project(':native:objcexport-header-generator:testLibraryA').projectDir = "$rootDir/native/objcexport-header-generator/testDependencies/testLibraryA" as File
 project(':native:objcexport-header-generator:testLibraryB').projectDir = "$rootDir/native/objcexport-header-generator/testDependencies/testLibraryB" as File
+project(':native:objcexport-header-generator:testInternalLibrary').projectDir = "$rootDir/native/objcexport-header-generator/testDependencies/testInternalLibrary" as File
 project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
 project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
 project(':kotlin-parcelize-compiler').projectDir = "$rootDir/prepare/parcelize-compiler-gradle" as File

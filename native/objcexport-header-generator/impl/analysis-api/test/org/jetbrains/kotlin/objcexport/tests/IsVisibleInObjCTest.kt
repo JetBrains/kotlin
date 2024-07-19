@@ -127,7 +127,7 @@ class IsVisibleInObjCTest(
 
         analyze(file) {
             val fooSymbol = getClassOrFail(file, "Foo")
-            assertTrue(isVisibleInObjC(fooSymbol))
+            assertFalse(isVisibleInObjC(fooSymbol))
         }
     }
 

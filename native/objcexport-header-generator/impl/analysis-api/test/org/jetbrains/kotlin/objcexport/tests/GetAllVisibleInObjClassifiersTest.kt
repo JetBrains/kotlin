@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllClassOrObjectSymbols
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getAllVisibleInObjClassifiers
 import org.jetbrains.kotlin.objcexport.testUtils.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.objcexport.testUtils.getClassOrFail
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class GetAllClassOrObjectSymbolsTest(
+class GetAllVisibleInObjClassifiersTest(
     private val inlineSourceCodeAnalysis: InlineSourceCodeAnalysis,
 ) {
 
@@ -20,7 +20,7 @@ class GetAllClassOrObjectSymbolsTest(
     fun `test - no classifiers in file`() {
         val file = inlineSourceCodeAnalysis.createKtFile("val foo = 42")
         analyze(file) {
-            assertEquals(emptyList(), getAllClassOrObjectSymbols(file.symbol))
+            assertEquals(emptyList(), getAllVisibleInObjClassifiers(file.symbol))
         }
     }
 
@@ -28,7 +28,7 @@ class GetAllClassOrObjectSymbolsTest(
     fun `test - single class in file`() {
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
-            assertEquals(listOf(getClassOrFail(file, "Foo")), getAllClassOrObjectSymbols(file.symbol))
+            assertEquals(listOf(getClassOrFail(file, "Foo")), getAllVisibleInObjClassifiers(file.symbol))
         }
     }
 
@@ -52,13 +52,12 @@ class GetAllClassOrObjectSymbolsTest(
             assertEquals(
                 listOf(
                     getClassOrFail(file, "A"),
-                    getClassOrFail(file, "A").memberScope.getClassOrFail("B"),
-                    getClassOrFail(file, "A").memberScope.getClassOrFail("B").memberScope.getClassOrFail("C"),
-
                     getClassOrFail(file, "D"),
-                    getClassOrFail(file, "D").memberScope.getClassOrFail("E")
+                    getClassOrFail(file, "A").memberScope.getClassOrFail("B"),
+                    getClassOrFail(file, "D").memberScope.getClassOrFail("E"),
+                    getClassOrFail(file, "A").memberScope.getClassOrFail("B").memberScope.getClassOrFail("C")
                 ),
-                getAllClassOrObjectSymbols(file.symbol)
+                getAllVisibleInObjClassifiers(file.symbol)
             )
         }
     }

@@ -53,21 +53,19 @@ fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFi
 
     val fileName = getObjCFileClassOrProtocolName(file)
 
-    return if (topLevelCallables.isEmpty())
-        null
-    else
-        ObjCInterfaceImpl(
-            name = fileName.objCName,
-            comment = null,
-            origin = null,
-            attributes = listOf(OBJC_SUBCLASSING_RESTRICTED) + fileName.toNameAttributes(),
-            superProtocols = emptyList(),
-            members = topLevelCallables,
-            categoryName = null,
-            generics = emptyList(),
-            superClass = exportSession.getDefaultSuperClassOrProtocolName().objCName,
-            superClassGenerics = emptyList()
-        )
+    if (topLevelCallables.isNotEmpty()) return ObjCInterfaceImpl(
+        name = fileName.objCName,
+        comment = null,
+        origin = null,
+        attributes = listOf(OBJC_SUBCLASSING_RESTRICTED) + fileName.toNameAttributes(),
+        superProtocols = emptyList(),
+        members = topLevelCallables,
+        categoryName = null,
+        generics = emptyList(),
+        superClass = exportSession.getDefaultSuperClassOrProtocolName().objCName,
+        superClassGenerics = emptyList()
+    )
+    return null
 }
 
 internal fun ObjCExportContext.isExtensionOfMappedObjCType(symbol: KaCallableSymbol): Boolean {
