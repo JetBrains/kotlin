@@ -145,18 +145,14 @@ internal fun String.splitQuotedArgs(): List<String> =
         it.value.replace("\"", "")
     }.toList()
 
-internal fun KotlinMultiplatformExtension.supportedTargets() = targets
-    .withType(KotlinNativeTarget::class.java)
-    .matching { it.konanTarget.family.isAppleFamily }
-
 
 open class KotlinCocoapodsPlugin : Plugin<Project> {
 
     private fun KotlinMultiplatformExtension.targetsForPlatform(requestedPlatform: KonanTarget) =
-        supportedTargets().matching { it.konanTarget == requestedPlatform }
+        supportedAppleTargets().matching { it.konanTarget == requestedPlatform }
 
     private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension) {
-        kotlinExtension.supportedTargets().all { target ->
+        kotlinExtension.supportedAppleTargets().all { target ->
             target.binaries.framework(POD_FRAMEWORK_PREFIX) {
                 baseName = project.name.asValidFrameworkName()
             }
@@ -309,7 +305,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 // to avoid showing it in the `tasks` output.
             }
 
-            kotlinExtension.supportedTargets().all { target ->
+            kotlinExtension.supportedAppleTargets().all { target ->
                 val cinterops = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops
                 cinterops.create(pod.moduleName) { interop ->
                     project.tasks.configureByName<CInteropProcess>(interop.interopProcessingTaskName) { interopTask ->
@@ -547,7 +543,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
             val appleTargets = mutableSetOf<AppleTarget>()
 
-            kotlinExtension.supportedTargets().all loop@{ target ->
+            kotlinExtension.supportedAppleTargets().all loop@{ target ->
 
                 val appleTarget = target.appleTarget
 
@@ -593,7 +589,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             task.description = "Called on Gradle sync, depends on Cinterop tasks for every used pod"
             task.dependsOn(podInstallTaskProvider)
 
-            kotlinExtension.supportedTargets().all { target ->
+            kotlinExtension.supportedAppleTargets().all { target ->
                 target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.all { interop ->
                     task.dependsOn(interop.interopProcessingTaskName)
                 }
@@ -606,7 +602,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     }
 
     private fun configureLinkingOptions(project: Project, cocoapodsExtension: CocoapodsExtension) {
-        project.multiplatformExtension.supportedTargets().all { target ->
+        project.multiplatformExtension.supportedAppleTargets().all { target ->
             target.binaries.all { binary ->
                 val testExecutable = binary is TestExecutable
                 val podFramework = binary is Framework && binary.name.startsWith(POD_FRAMEWORK_PREFIX)
@@ -658,7 +654,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     ): TaskProvider<XCFrameworkTask> =
         with(project) {
             registerTask(lowerCamelCaseName(POD_FRAMEWORK_PREFIX, "publish", buildType.getName(), "XCFramework")) { task ->
-                multiplatformExtension.supportedTargets().all { target ->
+                multiplatformExtension.supportedAppleTargets().all { target ->
                     target.binaries.matching { it.buildType == buildType && it.name.startsWith(POD_FRAMEWORK_PREFIX) }
                         .withType(Framework::class.java) { framework ->
                             task.from(framework)
@@ -717,7 +713,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         buildType: NativeBuildType
     ) =
         with(project) {
-            multiplatformExtension.supportedTargets().all { target ->
+            multiplatformExtension.supportedAppleTargets().all { target ->
                 target.binaries.matching { it.buildType == buildType && it.name.startsWith(POD_FRAMEWORK_PREFIX) }
                     .withType(Framework::class.java) { framework ->
 
