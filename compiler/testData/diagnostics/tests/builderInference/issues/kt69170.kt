@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-69170
 fun <T1> layerConfig(config: LayerConfigurer<T1>.() -> Unit) {}
 
