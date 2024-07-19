@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAccessorGenerator<JvmBackendContext>(context) {
+class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
+    SyntheticAccessorGenerator<JvmBackendContext, List<ScopeWithIr>>(context) {
 
     companion object {
         const val SUPER_QUALIFIER_SUFFIX_MARKER = "s"
@@ -30,9 +31,12 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
     override fun accessorModality(parent: IrDeclarationParent): Modality =
         if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL
 
-    override fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>): IrDeclarationParent =
+    override fun IrDeclarationWithVisibility.accessorParent(
+        parent: IrDeclarationParent,
+        scopeInfo: List<ScopeWithIr>,
+    ): IrDeclarationParent =
         if (visibility == JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY) {
-            val classes = scopes.map { it.irElement }.filterIsInstance<IrClass>()
+            val classes = scopeInfo.map { it.irElement }.filterIsInstance<IrClass>()
             val companions = classes.mapNotNull(IrClass::companionObject)
             val objectsInScope =
                 classes.flatMap { it.declarations.filter(IrDeclaration::isAnonymousObject).filterIsInstance<IrClass>() }
@@ -45,18 +49,18 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) : SyntheticAcces
     override fun AccessorNameBuilder.buildFunctionName(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
-        scopes: List<ScopeWithIr>
+        scopeInfo: List<ScopeWithIr>
     ) {
         contribute(context.defaultMethodSignatureMapper.mapFunctionName(function))
-        contributeFunctionSuffix(function, superQualifier, scopes)
+        contributeFunctionSuffix(function, superQualifier, scopeInfo)
     }
 
     private fun AccessorNameBuilder.contributeFunctionSuffix(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
-        scopes: List<ScopeWithIr>
+        scopeInfo: List<ScopeWithIr>
     ) {
-        val currentClass = scopes.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }?.irElement as? IrClass
+        val currentClass = scopeInfo.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }?.irElement as? IrClass
         when {
             currentClass != null &&
                     currentClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS &&

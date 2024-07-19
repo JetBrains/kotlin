@@ -6,27 +6,29 @@
 package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.render
 
+// TODO: use some class to bear information about the inline function where the accessor is needed
+typealias InlineFunctionInfo = Nothing?
+
 class KlibSyntheticAccessorGenerator(
     context: CommonBackendContext
-) : SyntheticAccessorGenerator<CommonBackendContext>(context, addAccessorToParent = true) {
+) : SyntheticAccessorGenerator<CommonBackendContext, InlineFunctionInfo>(context, addAccessorToParent = true) {
 
     companion object {
         const val TOP_LEVEL_FUNCTION_SUFFIX_MARKER = "t"
     }
 
     override fun accessorModality(parent: IrDeclarationParent) = Modality.FINAL
-    override fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopes: List<ScopeWithIr>) = parent
+    override fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent, scopeInfo: InlineFunctionInfo) = parent
 
     override fun AccessorNameBuilder.buildFunctionName(
         function: IrSimpleFunction,
         superQualifier: IrClassSymbol?,
-        scopes: List<ScopeWithIr>,
+        scopeInfo: InlineFunctionInfo,
     ) {
         contribute(function.name.asString())
 
