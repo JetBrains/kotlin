@@ -37,6 +37,12 @@ val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 
 bitcode {
     allTargets {
+        if (target.family.isAppleFamily) {
+            modules.all {
+                compilerArgs.add("-D_Float16=short")
+            }
+        }
+
         module("main") {
             headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp")
             sourceSets {

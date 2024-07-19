@@ -1,5 +1,6 @@
 #import <objc/NSObject.h>
-#include <simd/simd.h>
+typedef __attribute__((__ext_vector_type__(4))) float simd_float4;
+typedef struct { simd_float4 vector; } simd_quatf;
 
 @interface PrimitiveTestSubject : NSObject
 
