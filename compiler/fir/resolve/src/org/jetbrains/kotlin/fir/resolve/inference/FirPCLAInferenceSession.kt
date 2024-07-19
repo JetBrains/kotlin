@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -181,22 +182,28 @@ class FirPCLAInferenceSession(
         val variableWithConstraints = myCs.notFixedTypeVariables[coneTypeVariableTypeConstructor] ?: return null
         val c = myCs.getBuilder()
 
-        val resultType = c.run {
-            c.withTypeVariablesThatAreCountedAsProperTypes(c.outerTypeVariables.orEmpty()) {
-                if (!inferenceComponents.variableFixationFinder.isTypeVariableHasProperConstraint(c, coneTypeVariableTypeConstructor)) {
-                    return@withTypeVariablesThatAreCountedAsProperTypes null
-                }
-                inferenceComponents.resultTypeResolver.findResultType(
-                    c,
-                    variableWithConstraints,
-                    TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-                ) as ConeKotlinType
-            }
+        val resultType = c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {
+            inferenceComponents.resultTypeResolver.findResultType(
+                c,
+                variableWithConstraints,
+                TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+            ) as ConeKotlinType
         } ?: return null
         val variable = variableWithConstraints.typeVariable
         c.addEqualityConstraint(variable.defaultType(c), resultType, ConeSemiFixVariableConstraintPosition(variable))
 
         return Pair(coneTypeVariableTypeConstructor, resultType)
+    }
+
+    private fun ConstraintSystemCompletionContext.prepareContextForTypeVariableForSemiFixation(
+        coneTypeVariableTypeConstructor: ConeTypeVariableTypeConstructor,
+        resultTypeCallback: () -> ConeKotlinType?,
+    ): ConeKotlinType? = withTypeVariablesThatAreCountedAsProperTypes(outerTypeVariables.orEmpty()) {
+        if (!inferenceComponents.variableFixationFinder.isTypeVariableHasProperConstraint(this, coneTypeVariableTypeConstructor)) {
+            return@withTypeVariablesThatAreCountedAsProperTypes null
+        }
+
+        resultTypeCallback()
     }
 
     /**
