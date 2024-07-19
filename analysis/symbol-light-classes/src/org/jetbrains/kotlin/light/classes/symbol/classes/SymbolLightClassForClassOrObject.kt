@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -109,7 +108,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol { classSymbol ->
-            val result = mutableListOf<KtLightMethod>()
+            val result = mutableListOf<PsiMethod>()
 
             // We should use the combined declared member scope here because an enum class may contain static callables.
             val declaredMemberScope = classSymbol.combinedDeclaredMemberScope
@@ -157,7 +156,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     context(KaSession)
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>, classSymbol: KaNamedClassSymbol) {
+    private fun addMethodsFromDataClass(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
         if (!classSymbol.isData) return
 
         // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
@@ -171,7 +170,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         generateMethodsFromAny(classSymbol, result)
     }
 
-    private fun KaSession.createMethodFromAny(functionSymbol: KaNamedFunctionSymbol, result: MutableList<KtLightMethod>) {
+    private fun KaSession.createMethodFromAny(functionSymbol: KaNamedFunctionSymbol, result: MutableList<PsiMethod>) {
         // Similar to `copy`, synthetic members from `Any` should refer to `data` class as origin, not the function in `Any`.
         val lightMemberOrigin = classOrObjectDeclaration?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER) }
         result.add(
@@ -187,7 +186,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         )
     }
 
-    protected fun KaSession.generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<KtLightMethod>) {
+    protected fun KaSession.generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>) {
         // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final.
         // We want to mimic that.
         val generatedFunctionsFromAny = classSymbol.memberScope
@@ -205,7 +204,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     context(KaSession)
     @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    protected fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classSymbol: KaNamedClassSymbol) {
+    protected fun addDelegatesToInterfaceMethods(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
         fun createDelegateMethod(functionSymbol: KaNamedFunctionSymbol) {
             val kotlinOrigin = functionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
             val lightMemberOrigin = kotlinOrigin?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.DELEGATION) }

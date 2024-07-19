@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -53,7 +52,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
     override fun classKind(): KaClassKind = KaClassKind.ANNOTATION_CLASS
 
     protected open fun computeOwnMethods(): List<PsiMethod> = withClassSymbol { classSymbol ->
-        val result = mutableListOf<KtLightMethod>()
+        val result = mutableListOf<PsiMethod>()
         val visibleDeclarations = classSymbol.declaredMemberScope.callables
             .filterNot { it is KaNamedFunctionSymbol && it.visibility == KaSymbolVisibility.PRIVATE }
             .filterNot { it is KaConstructorSymbol }

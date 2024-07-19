@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ReferenceInformationHolder
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
@@ -131,9 +130,9 @@ internal class SymbolLightClassForEnumEntry(
         }
     }
 
-    override fun getOwnMethods(): List<KtLightMethod> = cachedValue {
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
-            val result = mutableListOf<KtLightMethod>()
+            val result = mutableListOf<PsiMethod>()
 
             enumEntrySymbol.enumEntryInitializer?.let { initializer ->
                 val declaredMemberScope = initializer.declaredMemberScope

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -67,7 +66,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol {
-            val result = mutableListOf<KtLightMethod>()
+            val result = mutableListOf<PsiMethod>()
             val declaredMemberScope = it.declaredMemberScope
 
             createMethods(declaredMemberScope.callables, result)

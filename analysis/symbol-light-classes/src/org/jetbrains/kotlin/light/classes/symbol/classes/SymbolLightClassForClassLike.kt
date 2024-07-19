@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.*
@@ -78,9 +77,6 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override fun isDeprecated(): Boolean = _isDeprecated
 
     abstract override fun getModifierList(): PsiModifierList?
-
-    abstract override fun getOwnFields(): List<KtLightField>
-    abstract override fun getOwnMethods(): List<PsiMethod>
 
     override fun getNameIdentifier(): PsiIdentifier? = KtLightIdentifier(this, classOrObjectDeclaration)
 

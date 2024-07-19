@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -132,7 +133,7 @@ context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassBase.createConstructors(
     declarations: Sequence<KaConstructorSymbol>,
-    result: MutableList<KtLightMethod>,
+    result: MutableList<PsiMethod>,
 ) {
     val constructors = declarations.toList()
     if (constructors.isEmpty()) {
@@ -219,7 +220,7 @@ context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassBase.createMethods(
     declarations: Sequence<KaCallableSymbol>,
-    result: MutableList<KtLightMethod>,
+    result: MutableList<PsiMethod>,
     isTopLevel: Boolean = false,
     suppressStatic: Boolean = false
 ) {
@@ -285,8 +286,8 @@ context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private inline fun <T : KaFunctionSymbol> createJvmOverloadsIfNeeded(
     declaration: T,
-    result: MutableList<KtLightMethod>,
-    lightMethodCreator: (Int, BitSet) -> KtLightMethod
+    result: MutableList<PsiMethod>,
+    lightMethodCreator: (Int, BitSet) -> PsiMethod
 ) {
     if (!declaration.hasJvmOverloadsAnnotation()) return
     var methodIndex = METHOD_INDEX_BASE
@@ -303,7 +304,7 @@ private inline fun <T : KaFunctionSymbol> createJvmOverloadsIfNeeded(
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun SymbolLightClassBase.createPropertyAccessors(
-    result: MutableList<KtLightMethod>,
+    result: MutableList<PsiMethod>,
     declaration: KaPropertySymbol,
     isTopLevel: Boolean,
     isMutable: Boolean = !declaration.isVal,

@@ -67,6 +67,10 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
 
     override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
 
+    abstract override fun getOwnFields(): List<PsiField>
+    abstract override fun getOwnMethods(): List<PsiMethod>
+    abstract override fun getOwnInnerClasses(): List<PsiClass>
+
     private val ownConstructors: Array<PsiMethod>
         get() = cachedValue { PsiImplUtil.getConstructors(this) }
 
