@@ -304,8 +304,7 @@ class ScriptingHostTest : TestCase() {
             }
         )
         definition.evalScriptAndCheckOutput("println(v)", listOf("first"))
-        // TODO: uncomment after fixing KT-68545
-//        definition.evalScriptAndCheckOutput("println(this@TestClass2.v)", listOf("first"))
+        definition.evalScriptAndCheckOutput("println(this@TestClass2.v)", listOf("second"))
     }
 
     fun testScriptWithImplicitReceiverAndBaseClassWithSameNamedProperty() {

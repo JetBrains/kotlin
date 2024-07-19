@@ -127,7 +127,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
                 implicitReceiver?.let {
                     callee.replaceBoundSymbol(it.boundSymbol)
-                    if (it is ContextReceiverValue) {
+                    if (it is ContextReceiverValue || it is ImplicitReceiverValueForScript) {
                         callee.replaceContextReceiverNumber(it.contextReceiverNumber)
                     }
                 }
