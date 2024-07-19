@@ -55,6 +55,7 @@ internal class PlatformLibrariesGenerator(
         classLoadersCachingService,
         useXcodeMessageStyle,
         nativeProperties,
+        konanPropertiesService
     )
 
     private val konanHome

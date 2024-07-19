@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -38,6 +39,8 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
         val konanHome: DirectoryProperty
     }
 
+    private val logger = Logging.getLogger(this::class.java)
+
     private val properties: Properties by lazy {
         Distribution(parameters.konanHome.get().asFile.absolutePath).properties
     }
@@ -66,6 +69,16 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
 
     internal fun additionalCacheFlags(target: KonanTarget): List<String> =
         properties.resolvablePropertyList("additionalCacheFlags", target.visibleName)
+
+    internal val environmentBlacklist: Set<String> by lazy {
+        val envBlacklistFile = parameters.konanHome.get().asFile.resolve("tools/env_blacklist")
+        if (envBlacklistFile.exists()) {
+            envBlacklistFile.readLines().toSet()
+        } else {
+            logger.warn("Can't find env_blacklist file at $envBlacklistFile.")
+            emptySet()
+        }
+    }
 
     companion object {
         fun registerIfAbsent(project: Project): Provider<KonanPropertiesBuildService> = project.gradle

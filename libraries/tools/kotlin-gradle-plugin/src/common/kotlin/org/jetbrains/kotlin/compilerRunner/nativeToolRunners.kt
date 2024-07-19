@@ -86,16 +86,22 @@ internal abstract class KotlinNativeToolRunner(
         val classpath: FileCollection,
         val konanDataDir: String?,
         val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
+        val execEnvironmentBlacklist: Provider<Set<String>>
     ) {
         companion object {
-            fun of(konanHome: String, konanDataDir: String?, project: Project) = Settings(
+            fun of(
+                konanHome: String,
+                konanDataDir: String?,
+                project: Project,
+            ) = Settings(
                 konanHome = konanHome,
                 konanPropertiesFile = project.file("${konanHome}/konan/konan.properties"),
                 useXcodeMessageStyle = project.useXcodeMessageStyle.get(),
                 jvmArgs = project.nativeProperties.jvmArgs.get(),
                 classpath = project.files(project.kotlinNativeCompilerJar, "${konanHome}/konan/lib/trove4j.jar"),
                 konanDataDir = konanDataDir,
-                kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
+                kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel,
+                execEnvironmentBlacklist = KonanPropertiesBuildService.registerIfAbsent(project).map { it.environmentBlacklist },
             )
         }
     }
@@ -107,13 +113,8 @@ internal abstract class KotlinNativeToolRunner(
         get() = if (!settings.useXcodeMessageStyle) "daemonMain" else "daemonMainWithXcodeRenderer"
 
     // We need to unset some environment variables which are set by XCode and may potentially affect the tool executed.
-    final override val execEnvironmentBlacklist: Set<String> by lazy {
-        HashSet<String>().also { collector ->
-            KotlinNativeToolRunner::class.java.getResourceAsStream("/env_blacklist")?.let { stream ->
-                stream.reader().use { r -> r.forEachLine { collector.add(it) } }
-            }
-        }
-    }
+    final override val execEnvironmentBlacklist: Set<String>
+        get() = settings.execEnvironmentBlacklist.get()
 
     final override val execSystemProperties by lazy {
         val messageRenderer = if (settings.useXcodeMessageStyle) MessageRenderer.XCODE_STYLE else MessageRenderer.GRADLE_STYLE

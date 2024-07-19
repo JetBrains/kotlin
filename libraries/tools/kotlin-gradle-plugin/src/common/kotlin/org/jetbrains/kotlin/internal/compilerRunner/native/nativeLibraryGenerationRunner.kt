@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
+import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
@@ -22,16 +23,18 @@ internal fun ObjectFactory.KotlinNativeLibraryGenerationRunner(
     metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     useXcodeMessageStyle: Provider<Boolean>,
-    nativeProperties: NativeProperties
+    nativeProperties: NativeProperties,
+    konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
 ): KotlinNativeToolRunner = newInstance(
     metricsReporter,
     classLoadersCachingBuildService,
-    kotlinToolSpec(useXcodeMessageStyle, nativeProperties)
+    kotlinToolSpec(useXcodeMessageStyle, nativeProperties, konanPropertiesBuildService)
 )
 
 private fun ObjectFactory.kotlinToolSpec(
     useXcodeMessageStyle: Provider<Boolean>,
     nativeProperties: NativeProperties,
+    konanPropertiesBuildService: Provider<KonanPropertiesBuildService>
 ) = KotlinNativeToolRunner.ToolSpec(
     displayName = property("generatePlatformLibraries"),
     optionalToolName = property("generatePlatformLibraries"),
@@ -42,7 +45,7 @@ private fun ObjectFactory.kotlinToolSpec(
     shouldPassArgumentsViaArgFile = property(false),
     systemProperties = execSystemProperties(useXcodeMessageStyle),
     environment = execLLVMEnvironment,
-    environmentBlacklist = execEnvironmentBlacklist
+    environmentBlacklist = konanPropertiesBuildService.get().environmentBlacklist,
 ).enableAssertions()
     .configureDefaultMaxHeapSize()
 
@@ -65,16 +68,6 @@ private fun ObjectFactory.nativeCompilerClasspath(
     nativeProperties.kotlinNativeCompilerJar,
     nativeProperties.actualNativeHomeDirectory.map { it.resolve("konan/lib/trove4j.jar") },
 )
-
-// We need to unset some environment variables that are set by XCode
-// and may potentially affect the tool executed.
-private val execEnvironmentBlacklist: Set<String> by lazy {
-    KotlinNativeToolRunner::class.java.getResourceAsStream("/env_blacklist")?.let { stream ->
-        stream.bufferedReader().use { reader ->
-            reader.readLines().toSet()
-        }
-    } ?: emptySet()
-}
 
 private fun execSystemProperties(
     useXcodeMessageStyle: Provider<Boolean>
