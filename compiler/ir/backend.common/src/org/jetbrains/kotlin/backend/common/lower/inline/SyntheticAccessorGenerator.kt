@@ -230,9 +230,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         }
 
     fun getSyntheticGetter(expression: IrGetField, scopeInfo: ScopeInfo): IrSimpleFunction {
-        val dispatchReceiverClassSymbol = expression.receiver?.type?.classifierOrNull as? IrClassSymbol
-        val field = expression.symbol.owner
-        val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopeInfo) as IrClass
+        val (field, parent) = extractFieldAndParent(expression, scopeInfo)
         val getterMap =
             field.getterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.getterSyntheticAccessors = it }
         return getterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
@@ -291,9 +289,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
     }
 
     fun getSyntheticSetter(expression: IrSetField, scopeInfo: ScopeInfo): IrSimpleFunction {
-        val dispatchReceiverClassSymbol = expression.receiver?.type?.classifierOrNull as? IrClassSymbol
-        val field = expression.symbol.owner
-        val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopeInfo) as IrClass
+        val (field, parent) = extractFieldAndParent(expression, scopeInfo)
         val setterMap =
             field.setterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.setterSyntheticAccessors = it }
         return setterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
@@ -356,6 +352,14 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
                 superQualifierSymbol = superQualifierSymbol
             )
         )
+    }
+
+    private fun extractFieldAndParent(expression: IrFieldAccessExpression, scopeInfo: ScopeInfo): Pair<IrField, IrClass> {
+        val dispatchReceiverClassSymbol = expression.receiver?.type?.classifierOrNull as? IrClassSymbol
+        val field = expression.symbol.owner
+        val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopeInfo) as IrClass
+
+        return field to parent
     }
 
     private fun copyAllParamsToArgs(
