@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -40,7 +40,7 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
             val substitution = klass.typeParameters.associate {
                 it.symbol to it.toConeType()
             }
-            ConeSubstitutorByMap.create(substitution, useSiteSession)
+            substitutorByMap(substitution, useSiteSession)
         }
         processor(matchedClass, substitutor)
     }

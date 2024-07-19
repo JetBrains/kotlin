@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -79,7 +79,7 @@ class FirLocalScope private constructor(
         val klass = classes[name]
         if (klass != null) {
             val substitution = klass.typeParameterSymbols.associateWith { it.toConeType() }
-            processor(klass, ConeSubstitutorByMap.create(substitution, useSiteSession))
+            processor(klass, substitutorByMap(substitution, useSiteSession))
         }
     }
 

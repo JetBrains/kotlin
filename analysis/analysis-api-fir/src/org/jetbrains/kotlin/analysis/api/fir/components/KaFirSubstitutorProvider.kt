@@ -20,11 +20,12 @@ import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.substitutorForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 internal class KaFirSubstitutorProvider(
     override val analysisSessionProvider: () -> KaFirSession
@@ -89,7 +90,7 @@ internal class KaFirSubstitutorProvider(
             }
         }
 
-        return when (val coneSubstitutor = ConeSubstitutorByMap.create(firSubstitution, analysisSession.firSession)) {
+        return when (val coneSubstitutor = substitutorByMap(firSubstitution, analysisSession.firSession)) {
             is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
             else -> KaFirGenericSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
         }
