@@ -53,6 +53,9 @@ internal class KaFirFunctionDummySignature<out S : KaFunctionSymbol>(
         firSymbol.valueParameterSymbols.map { KaFirVariableDummySignature(token, it, firSymbolBuilder) }
     }
 
+    override val isRaw: Boolean
+        get() = withValidityAssertion { true }
+
     override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
         require(substitutor is AbstractKaFirSubstitutor<*>)
@@ -85,6 +88,9 @@ internal class KaFirFunctionSubstitutorBasedSignature<out S : KaFunctionSymbol>(
             KaFirVariableSubstitutorBasedSignature(token, firValueParameter.symbol, firSymbolBuilder, coneSubstitutor)
         }
     }
+
+    override val isRaw: Boolean
+        get() = withValidityAssertion { coneSubstitutor == ConeSubstitutor.Empty }
 
     override fun substitute(substitutor: KaSubstitutor): KaFirFunctionSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this

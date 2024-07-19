@@ -51,6 +51,9 @@ internal class KaFirVariableDummySignature<out S : KaVariableSymbol>(
     override val receiverType: KaType?
         get() = withValidityAssertion { symbol.receiverType }
 
+    override val isRaw: Boolean
+        get() = withValidityAssertion { true }
+
     override fun substitute(substitutor: KaSubstitutor): KaFirVariableSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this
         require(substitutor is AbstractKaFirSubstitutor<*>)
@@ -79,6 +82,9 @@ internal class KaFirVariableSubstitutorBasedSignature<out S : KaVariableSymbol>(
             firSymbolBuilder.typeBuilder.buildKtType(coneSubstitutor.substituteOrSelf(typeRef.coneType))
         }
     }
+
+    override val isRaw: Boolean
+        get() = withValidityAssertion { coneSubstitutor == ConeSubstitutor.Empty }
 
     override fun substitute(substitutor: KaSubstitutor): KaFirVariableSignature<S> = withValidityAssertion {
         if (substitutor is KaSubstitutor.Empty) return@withValidityAssertion this

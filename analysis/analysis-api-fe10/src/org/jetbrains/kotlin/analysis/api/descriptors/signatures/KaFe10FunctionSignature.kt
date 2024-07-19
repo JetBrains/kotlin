@@ -41,6 +41,9 @@ internal class KaFe10FunctionSignature<out S : KaFunctionSymbol>(
         )
     }
 
+    override val isRaw: Boolean
+        get() = withValidityAssertion { false }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -45,6 +45,8 @@ public sealed interface KaCallableSignature<out S : KaCallableSymbol> : KaLifeti
      */
     public val callableId: CallableId? get() = withValidityAssertion { symbol.callableId }
 
+    public val isRaw: Boolean
+
     @Deprecated("Use `callableId` instead.", ReplaceWith("callableId"))
     public val callableIdIfNonLocal: CallableId? get() = callableId
 
