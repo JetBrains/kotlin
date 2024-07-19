@@ -64,6 +64,10 @@ internal class FirLocalVariableAssignmentAnalyzer {
         if (assignedLocalVariablesByDeclaration == null) return false
 
         val realFir = fir.unwrapElement() as? FirQualifiedAccessExpression ?: return false
+        realFir.dispatchReceiver?.let {
+            if (isAccessToUnstableLocalVariable(it, targetTypes = null, session)) return true
+        }
+
         val property = realFir.calleeReference.toResolvedPropertySymbol()?.fir ?: return false
         // Have data => have a root function => `scopes` is not empty.
         return !isStableType(scopes.top().second[property], targetTypes, session) || postponedLambdas.all().any { lambdas ->
