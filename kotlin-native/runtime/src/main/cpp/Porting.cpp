@@ -211,6 +211,7 @@ static void onThreadExitInit() {
 }
 
 void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
+  CallsCheckerIgnoreGuard guard; // TODO describe
   // We cannot use pthread_cleanup_push() as it is lexical scope bound.
   pthread_once(&terminationKeyOnceControl, onThreadExitInit);
   DestructorRecord* destructorRecord = (DestructorRecord*)std::calloc(1, sizeof(DestructorRecord));
