@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
@@ -45,13 +46,13 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
         return listOf(project.createProjectWideOutOfBlockModificationTracker())
     }
 
-    override fun getFields(): Array<PsiField> = myInnersCache.fields
+    override fun getFields(): Array<PsiField> = ownFields.toArrayIfNotEmptyOrDefault(PsiField.EMPTY_ARRAY)
 
-    override fun getMethods(): Array<PsiMethod> = myInnersCache.methods
+    override fun getMethods(): Array<PsiMethod> = ownMethods.toArrayIfNotEmptyOrDefault(PsiMethod.EMPTY_ARRAY)
 
     override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
 
-    override fun getInnerClasses(): Array<out PsiClass> = myInnersCache.innerClasses
+    override fun getInnerClasses(): Array<out PsiClass> = ownInnerClasses.toArrayIfNotEmptyOrDefault(PsiClass.EMPTY_ARRAY)
 
     override fun getAllFields(): Array<PsiField> = PsiClassImplUtil.getAllFields(this)
 

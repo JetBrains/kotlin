@@ -39,6 +39,10 @@ internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
     )
 }
 
+private inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
+    return if (isNotEmpty()) toTypedArray() else default
+}
+
 open class KtLightClassForDecompiledDeclaration(
     clsDelegate: PsiClass,
     clsParent: PsiElement,
@@ -52,10 +56,10 @@ open class KtLightClassForDecompiledDeclaration(
         )
     }
 
-    override fun getFields(): Array<PsiField> = myInnersCache.fields
-    override fun getMethods(): Array<PsiMethod> = myInnersCache.methods
+    override fun getFields(): Array<PsiField> = ownFields.toArrayIfNotEmptyOrDefault(PsiField.EMPTY_ARRAY)
+    override fun getMethods(): Array<PsiMethod> = ownMethods.toArrayIfNotEmptyOrDefault(PsiMethod.EMPTY_ARRAY)
     override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
-    override fun getInnerClasses(): Array<PsiClass> = myInnersCache.innerClasses
+    override fun getInnerClasses(): Array<PsiClass> = ownInnerClasses.toArrayIfNotEmptyOrDefault(PsiClass.EMPTY_ARRAY)
     override fun findFieldByName(name: String, checkBases: Boolean): PsiField? = myInnersCache.findFieldByName(name, checkBases)
     override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
     override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)

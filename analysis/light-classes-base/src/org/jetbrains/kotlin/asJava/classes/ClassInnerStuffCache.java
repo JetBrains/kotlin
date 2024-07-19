@@ -52,39 +52,6 @@ public final class ClassInnerStuffCache {
         ));
     }
 
-    @NotNull
-    public PsiField[] getFields() {
-        return copy(CachedValuesManager.getCachedValue(
-                myClass,
-                () -> CachedValueProvider.Result.create(
-                        calcFields(),
-                        myModificationTrackers
-                )
-        ));
-    }
-
-    @NotNull
-    public PsiMethod[] getMethods() {
-        return copy(CachedValuesManager.getCachedValue(
-                myClass,
-                () -> CachedValueProvider.Result.create(
-                        calcMethods(),
-                        myModificationTrackers
-                )
-        ));
-    }
-
-    @NotNull
-    public PsiClass[] getInnerClasses() {
-        return copy(CachedValuesManager.getCachedValue(
-                myClass,
-                () -> CachedValueProvider.Result.create(
-                        calcInnerClasses(),
-                        myModificationTrackers
-                )
-        ));
-    }
-
     @Nullable
     public PsiField findFieldByName(String name, boolean checkBases) {
         if (checkBases) {
@@ -137,24 +104,6 @@ public final class ClassInnerStuffCache {
 
     private static <T> T[] copy(T[] value) {
         return value.length == 0 ? value : value.clone();
-    }
-
-    @NotNull
-    private PsiField[] calcFields() {
-        List<PsiField> own = myClass.getOwnFields();
-        return own.isEmpty() ? PsiField.EMPTY_ARRAY : own.toArray(PsiField.EMPTY_ARRAY);
-    }
-
-    @NotNull
-    private PsiMethod[] calcMethods() {
-        List<PsiMethod> own = myClass.getOwnMethods();
-        return own.isEmpty() ? PsiMethod.EMPTY_ARRAY : own.toArray(PsiMethod.EMPTY_ARRAY);
-    }
-
-    @NotNull
-    private PsiClass[] calcInnerClasses() {
-        List<PsiClass> own = myClass.getOwnInnerClasses();
-        return own.isEmpty() ? PsiClass.EMPTY_ARRAY : own.toArray(PsiClass.EMPTY_ARRAY);
     }
 
     @NotNull
