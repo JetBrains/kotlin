@@ -58,7 +58,7 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun getFields(): Array<PsiField> = ownFields.toArrayIfNotEmptyOrDefault(PsiField.EMPTY_ARRAY)
     override fun getMethods(): Array<PsiMethod> = ownMethods.toArrayIfNotEmptyOrDefault(PsiMethod.EMPTY_ARRAY)
-    override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
+    override fun getConstructors(): Array<PsiMethod> = ownConstructors.let { if (it.isEmpty()) it else it.clone() }
     override fun getInnerClasses(): Array<PsiClass> = ownInnerClasses.toArrayIfNotEmptyOrDefault(PsiClass.EMPTY_ARRAY)
     override fun findFieldByName(name: String, checkBases: Boolean): PsiField? = myInnersCache.findFieldByName(name, checkBases)
     override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
@@ -133,6 +133,11 @@ open class KtLightClassForDecompiledDeclaration(
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClassImplUtil.getAllInnerClasses(this)
     override fun getAllMethods(): Array<PsiMethod> = PsiClassImplUtil.getAllMethods(this)
     override fun getAllFields(): Array<PsiField> = PsiClassImplUtil.getAllFields(this)
+
+    private val ownConstructors: Array<PsiMethod>
+        get() = cachedValueWithLibraryTracker {
+            PsiImplUtil.getConstructors(this)
+        }
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValueWithLibraryTracker {
         val isEnum = isEnum

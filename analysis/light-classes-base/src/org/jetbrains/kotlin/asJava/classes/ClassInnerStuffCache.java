@@ -11,7 +11,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.PsiClassImplUtil;
-import com.intellij.psi.impl.PsiImplUtil;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
@@ -39,17 +38,6 @@ public final class ClassInnerStuffCache {
     ) {
         myClass = aClass;
         myModificationTrackers = modificationTrackers;
-    }
-
-    @NotNull
-    public PsiMethod[] getConstructors() {
-        return copy(CachedValuesManager.getCachedValue(
-                myClass,
-                () -> CachedValueProvider.Result.create(
-                        PsiImplUtil.getConstructors(myClass),
-                        myModificationTrackers
-                )
-        ));
     }
 
     @Nullable
@@ -100,10 +88,6 @@ public final class ClassInnerStuffCache {
                     )
             ).get(name);
         }
-    }
-
-    private static <T> T[] copy(T[] value) {
-        return value.length == 0 ? value : value.clone();
     }
 
     @NotNull

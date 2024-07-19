@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
@@ -50,7 +51,7 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
 
     override fun getMethods(): Array<PsiMethod> = ownMethods.toArrayIfNotEmptyOrDefault(PsiMethod.EMPTY_ARRAY)
 
-    override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
+    override fun getConstructors(): Array<PsiMethod> = ownConstructors.let { if (it.isEmpty()) it else it.clone() }
 
     override fun getInnerClasses(): Array<out PsiClass> = ownInnerClasses.toArrayIfNotEmptyOrDefault(PsiClass.EMPTY_ARRAY)
 
@@ -65,6 +66,9 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
     override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
 
     override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
+
+    private val ownConstructors: Array<PsiMethod>
+        get() = cachedValue { PsiImplUtil.getConstructors(this) }
 
     override fun processDeclarations(
         processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement
