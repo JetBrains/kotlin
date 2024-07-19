@@ -174,34 +174,36 @@ private class KotlinEnumSyntheticMethod(
 
     private val returnType = run {
         val elementFactory = JavaPsiFacade.getElementFactory(project)
-        val enumTypeWithoutAnnotation = elementFactory.createType(enumClass)
-        val enumType = enumTypeWithoutAnnotation
-            .annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
+        val enumType = elementFactory.createType(enumClass).withNotNullAnnotation()
 
         when (kind) {
             Kind.VALUE_OF -> enumType
-            Kind.VALUES -> enumType.createArrayType().annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
+            Kind.VALUES -> enumType.createArrayType().withNotNullAnnotation()
             Kind.ENTRIES -> {
                 val enumEntriesClass = JavaPsiFacade.getInstance(project).findClass(
                     /* qualifiedName = */ StandardClassIds.EnumEntries.asFqNameString(),
-                    /* scope = */ resolveScope
+                    /* scope = */ resolveScope,
                 )
+
                 val type = if (enumEntriesClass != null) {
-                    elementFactory.createType(enumEntriesClass, enumTypeWithoutAnnotation)
+                    elementFactory.createType(enumEntriesClass, enumType)
                 } else {
                     elementFactory.createTypeFromText(
                         /* text = */ "${StandardClassIds.EnumEntries.asFqNameString()}<${enumClass.qualifiedName}>",
                         /* context = */ enumClass,
                     )
                 }
-                type.annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
+
+                type.withNotNullAnnotation()
             }
         }
     }
 
+    private fun PsiType.withNotNullAnnotation(): PsiType = annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
+
     private val parameterList = LightParameterListBuilder(manager, language).apply {
         if (kind == Kind.VALUE_OF) {
-            val stringType = PsiType.getJavaLangString(manager, GlobalSearchScope.allScope(project))
+            val stringType = PsiType.getJavaLangString(manager, GlobalSearchScope.allScope(project)).withNotNullAnnotation()
             val valueParameter =
                 object : LightParameter(
                     DEFAULT_VALUE_PARAMETER.identifier,
