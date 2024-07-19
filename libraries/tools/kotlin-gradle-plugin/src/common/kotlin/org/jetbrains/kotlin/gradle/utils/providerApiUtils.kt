@@ -18,7 +18,7 @@ import kotlin.reflect.KProperty
 
 // Workaround for https://github.com/gradle/gradle/issues/12388
 // which should be fixed via https://github.com/gradle/gradle/issues/24767
-internal fun <IN : Any, OUT> Provider<IN>.mapOrNull(
+internal fun <IN : Any?, OUT> Provider<IN>.mapOrNull(
     providerFactory: ProviderFactory,
     block: (IN) -> OUT?
 ): Provider<OUT> = flatMap { providerFactory.provider { (block(it)) } }

@@ -72,13 +72,11 @@ internal class PlatformLibrariesGenerator(
     private val defDirectory =
         File(distribution.platformDefs(konanTarget)).absoluteFile
 
-    private val konanCacheKind: NativeCacheKind by lazy {
-        propertiesProvider.getKonanCacheKind(konanTarget, konanPropertiesService)
-    }
+    private val konanCacheKind: Provider<NativeCacheKind> = nativeProperties.getKonanCacheKind(konanTarget, konanPropertiesService)
 
     private val shouldBuildCaches: Boolean
         get() = konanPropertiesService.get().cacheWorksFor(konanTarget) &&
-                konanCacheKind != NativeCacheKind.NONE
+                konanCacheKind.get() != NativeCacheKind.NONE
 
     private val presentDefs: Set<String> by lazy {
         defDirectory
@@ -110,10 +108,10 @@ internal class PlatformLibrariesGenerator(
         }
 
         val cacheDirectory = CacheBuilder.getRootCacheDirectory(
-            konanHome, konanTarget, true, konanCacheKind
+            konanHome, konanTarget, true, konanCacheKind.get()
         )
         return presentDefs.toPlatformLibNames().all {
-            cacheDirectory.resolve(CacheBuilder.getCacheFileName(it, konanCacheKind)).listFilesOrEmpty().isNotEmpty()
+            cacheDirectory.resolve(CacheBuilder.getCacheFileName(it, konanCacheKind.get())).listFilesOrEmpty().isNotEmpty()
         }
     }
 
@@ -142,14 +140,14 @@ internal class PlatformLibrariesGenerator(
         //       Alternatively we can rely on the library generator tool in the CacheBuilder and eliminate a separate
         //       logic for library caching there.
         if (shouldBuildCaches) {
-            args.addArg("-cache-kind", konanCacheKind.produce!!)
+            args.addArg("-cache-kind", konanCacheKind.get().produce!!)
             args.addArg(
                 "-cache-directory",
                 CacheBuilder.getRootCacheDirectory(
                     nativeProperties.actualNativeHomeDirectory.get(),
                     konanTarget,
                     true,
-                    konanCacheKind
+                    konanCacheKind.get()
                 ).absolutePath
             )
             args.addArg("-cache-arg", "-g")
@@ -175,7 +173,7 @@ internal class PlatformLibrariesGenerator(
 
         // Don't run the generator if libraries/caches for this target were already built during this Gradle invocation.
         val alreadyGenerated = alreadyProcessed.isGenerated(platformLibsDirectory)
-        val alreadyCached = alreadyProcessed.isCached(platformLibsDirectory, konanCacheKind)
+        val alreadyCached = alreadyProcessed.isCached(platformLibsDirectory, konanCacheKind.get())
         if ((alreadyGenerated && alreadyCached) || !defDirectory.exists()) {
             return
         }
@@ -188,14 +186,14 @@ internal class PlatformLibrariesGenerator(
 
         val cachesAreReady = checkCaches()
         if (cachesAreReady) {
-            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind)
+            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
         }
 
         val generationMessage = when {
             !platformLibsAreReady && !cachesAreReady ->
-                "Generate and precompile platform libraries for $konanTarget (precompilation: ${konanCacheKind.visibleName})"
+                "Generate and precompile platform libraries for $konanTarget (precompilation: ${konanCacheKind.get().visibleName})"
             platformLibsAreReady && !cachesAreReady ->
-                "Precompile platform libraries for $konanTarget (precompilation: ${konanCacheKind.visibleName})"
+                "Precompile platform libraries for $konanTarget (precompilation: ${konanCacheKind.get().visibleName})"
             !platformLibsAreReady && cachesAreReady ->
                 "Generate platform libraries for $konanTarget"
             else -> {
@@ -218,7 +216,7 @@ internal class PlatformLibrariesGenerator(
         val librariesAreActuallyCached = checkCaches()
         assert(librariesAreActuallyCached) { "Some platform libraries were not precompiled" }
         if (librariesAreActuallyCached) {
-            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind)
+            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
         }
     }
 

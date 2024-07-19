@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.gradle.internal.properties
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.mapOrNull
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.presetName
 import java.io.File
 
 internal val Project.nativeProperties: NativeProperties
@@ -37,6 +41,13 @@ internal interface NativeProperties {
      */
     val actualNativeHomeDirectory: Provider<File>
 
+    val nativeCacheKind: Provider<NativeCacheKind?>
+
+    /**
+     * Dependencies caching strategy for [target].
+     */
+    fun nativeCacheKindForTarget(target: KonanTarget): Provider<NativeCacheKind?>
+
     companion object {
         /**
          * Allows a user to provide a local Kotlin/Native distribution instead of a downloaded one.
@@ -47,9 +58,10 @@ internal interface NativeProperties {
     }
 }
 
-private class NativePropertiesLoader(project: Project) : NativeProperties {
+private class NativePropertiesLoader(private val project: Project) : NativeProperties {
 
     private val propertiesService = project.propertiesService
+    private val providerFactory = project.providers
 
     override val isUseXcodeMessageStyleEnabled: Provider<Boolean> = propertiesService.flatMap {
         it.property(USE_XCODE_MESSAGE_STYLE, project)
@@ -107,6 +119,24 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
 
     override val isUseEmbeddableCompilerJar: Provider<Boolean> = propertiesService.flatMap {
         it.property(NATIVE_USE_EMBEDDABLE_COMPILER_JAR, project)
+    }
+
+    override val nativeCacheKind: Provider<NativeCacheKind?> = propertiesService.flatMap {
+        it.property(NATIVE_CACHE_KIND, project).mapOrNull(providerFactory) {
+            @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+            NativeCacheKind.byCompilerArgument(it!!)
+        }
+    }
+
+    override fun nativeCacheKindForTarget(target: KonanTarget): Provider<NativeCacheKind?> {
+        return propertiesService.flatMap {
+            val propType = PropertiesBuildService.NullableStringGradleProperty("$PROPERTIES_PREFIX.cacheKind.${target.presetName}")
+            it.property(propType, project)
+                .mapOrNull(providerFactory) {
+                    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+                    NativeCacheKind.byCompilerArgument(it!!)
+                }
+        }
     }
 
     companion object {
@@ -184,6 +214,13 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
         private val NATIVE_USE_EMBEDDABLE_COMPILER_JAR = PropertiesBuildService.BooleanGradleProperty(
             name = "$PROPERTIES_PREFIX.useEmbeddableCompilerJar",
             defaultValue = true
+        )
+
+        /**
+         * Dependencies caching strategy for all targets that support caches.
+         */
+        private val NATIVE_CACHE_KIND = PropertiesBuildService.NullableStringGradleProperty(
+            name = "$PROPERTIES_PREFIX.cacheKind.enable",
         )
     }
 }

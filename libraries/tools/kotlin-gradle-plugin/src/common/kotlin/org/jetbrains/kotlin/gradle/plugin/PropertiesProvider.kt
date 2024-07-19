@@ -10,7 +10,6 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
-import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
@@ -361,18 +360,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val enableSlowIdeSourcesJarResolver: Boolean
         get() = booleanProperty(KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER) ?: true
-
-    /**
-     * Dependencies caching strategy for all targets that support caches.
-     */
-    val nativeCacheKind: NativeCacheKind?
-        get() = property("kotlin.native.cacheKind").orNull?.let { NativeCacheKind.byCompilerArgument(it) }
-
-    /**
-     * Dependencies caching strategy for [target].
-     */
-    fun nativeCacheKindForTarget(target: KonanTarget): NativeCacheKind? =
-        property("kotlin.native.cacheKind.${target.presetName}").orNull?.let { NativeCacheKind.byCompilerArgument(it) }
 
     /**
      * Dependencies caching orchestration machinery.

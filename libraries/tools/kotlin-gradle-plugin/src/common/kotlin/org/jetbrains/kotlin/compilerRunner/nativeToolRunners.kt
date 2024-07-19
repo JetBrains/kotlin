@@ -32,21 +32,16 @@ import java.nio.file.Files
 import java.util.*
 import javax.inject.Inject
 
-internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind =
-    kotlinPropertiesProvider.getKonanCacheKind(target, KonanPropertiesBuildService.registerIfAbsent(this))
+internal fun Project.getKonanCacheKind(target: KonanTarget): Provider<NativeCacheKind> =
+    nativeProperties.getKonanCacheKind(target, KonanPropertiesBuildService.registerIfAbsent(this))
 
-internal fun PropertiesProvider.getKonanCacheKind(
+@Suppress("UNCHECKED_CAST")
+internal fun NativeProperties.getKonanCacheKind(
     target: KonanTarget,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>
-): NativeCacheKind {
-    val commonCacheKind = nativeCacheKind
-    val targetCacheKind = nativeCacheKindForTarget(target)
-    return when {
-        targetCacheKind != null -> targetCacheKind
-        commonCacheKind != null -> commonCacheKind
-        else -> konanPropertiesBuildService.get().defaultCacheKindForTarget(target)
-    }
-}
+): Provider<NativeCacheKind> = nativeCacheKind
+    .orElse(nativeCacheKindForTarget(target))
+    .orElse(konanPropertiesBuildService.map { it.defaultCacheKindForTarget(target) }) as Provider<NativeCacheKind>
 
 internal fun Project.getKonanCacheOrchestration(): NativeCacheOrchestration {
     return PropertiesProvider(this).nativeCacheOrchestration ?: NativeCacheOrchestration.Compiler

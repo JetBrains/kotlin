@@ -107,9 +107,7 @@ constructor(
 
     @Suppress("unused")
     @get:Input
-    protected val konanCacheKind: Provider<NativeCacheKind> = objectFactory.providerWithLazyConvention {
-        project.getKonanCacheKind(konanTarget)
-    }
+    protected val konanCacheKind: Provider<NativeCacheKind> = project.getKonanCacheKind(konanTarget)
 
     @Suppress("unused")
     @get:Input
@@ -218,7 +216,7 @@ constructor(
 
     private val cacheSettings by lazy {
         CacheSettings(
-            project.getKonanCacheOrchestration(), project.getKonanCacheKind(konanTarget),
+            project.getKonanCacheOrchestration(), project.getKonanCacheKind(konanTarget).get(),
             project.isKonanIncrementalCompilationEnabled(), project.getKonanParallelThreads(),
             project.gradle.gradleUserHomeDir, project.layout.buildDirectory.get().asFile
         )
