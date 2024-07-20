@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.isSimulator
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
+import org.jetbrains.kotlin.konan.util.CInteropHints
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -524,5 +527,35 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         } finally {
             process.destroyForcibly()
         }
+    }
+
+    @Test
+    @TestMetadata("kt69094")
+    fun testCinteropCatchesSimdFloat16IssuesKT69094() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily && targets.testTarget.architecture == Architecture.X64)
+        val clang = ProcessBuilder(
+            // Use clang version to infer Xcode version because of internal toolchain
+            File((testRunSettings.configurables as AppleConfigurables).absoluteTargetToolchain).resolve("bin/clang").path,
+            "--version",
+        ).start()
+        val output = clang.inputStream.readBytes().decodeToString()
+        assertEquals(0, clang.waitFor(), output)
+        val isXcode16 = output.contains("clang version 16")
+        // Check that we are running with Xcode 16 toolchain because Xcode 15 doesn't use _Float16 and thus doesn't fail
+        Assumptions.assumeTrue(isXcode16)
+
+        val cinteropResult = cinteropToLibrary(
+            targets,
+            interopObjCDir.resolve("kt69094/simd.def"),
+            buildDir,
+            TestCInteropArgs()
+        )
+        if (cinteropResult !is TestCompilationResult.CompilationToolFailure) {
+            error("Cinterop result is not a compilation failure: ${cinteropResult}")
+        }
+        assertContains(
+            cinteropResult.loggedData.toolOutput,
+            CInteropHints.simdFloat16Hint,
+        )
     }
 }

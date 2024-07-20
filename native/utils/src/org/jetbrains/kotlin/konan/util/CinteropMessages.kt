@@ -17,4 +17,8 @@ object CInteropHints {
                 extraOpts += listOf("-compiler-option", "-fmodules")
             }
         """.trimIndent()
+
+    val simdFloat16Hint = """
+            It seems that your library imports simd headers with _Float16 usages. Please see https://kotl.in/simdFloat16 for a possible workaround.  
+        """.trimIndent()
 }

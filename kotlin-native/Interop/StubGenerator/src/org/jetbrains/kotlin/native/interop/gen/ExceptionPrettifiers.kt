@@ -38,6 +38,28 @@ object ClangModulesDisabledPrettifier : ExceptionPrettifier {
 }
 
 /**
+ * https://youtrack.jetbrains.com/issue/KT-69094
+ */
+object SimdFloat16Prettifier : ExceptionPrettifier {
+
+    private val supportedPatterns = listOf(
+        /**
+         * This occurs in simd headers because we redefine _Float16=short for intel targets for Xcode 16 which collides with existing
+         * simd_bitselect definitions
+         */
+        "redefinition of 'simd_bitselect'",
+    )
+
+    override fun matches(throwable: Throwable): Boolean {
+        return supportedPatterns.any { throwable.message?.contains(it) == true }
+    }
+
+    override fun prettify(throwable: Throwable): CInteropPrettyException {
+        return CInteropPrettyException(CInteropHints.simdFloat16Hint)
+    }
+}
+
+/**
  * Wraps invocation of [action] into exception handler and makes messages of supported exceptions more user-friendly.
  * Can be optionally [disabled] which is useful when one want to find the root cause of the prettified exception.
  */
@@ -50,6 +72,7 @@ inline fun <T> withExceptionPrettifier(disabled: Boolean = false, action: () -> 
     } catch (throwable: Throwable) {
         val prettifiers = listOf(
                 ClangModulesDisabledPrettifier,
+                SimdFloat16Prettifier,
         )
         throw prettifiers.firstOrNull { it.matches(throwable) }?.prettify(throwable) ?: throwable
     }
