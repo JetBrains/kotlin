@@ -1,6 +1,2 @@
 Test key, Issue, State (optional: MUTE or FAIL), Status (optional: FLAKY)
 org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,,
-org.jetbrains.kotlin.jps.build.IncrementalK1JvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testPotentialSamAdapter, fixed in new JPS graph impl on IJ side - KT-21534,,
-org.jetbrains.kotlin.jps.build.IncrementalK2FirICLightTreeJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testPotentialSamAdapter, fixed in new JPS graph impl on IJ side - KT-21534,,
-org.jetbrains.kotlin.jps.build.IncrementalK2JvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testPotentialSamAdapter, fixed in new JPS graph impl on IJ side - KT-21534,,
-org.jetbrains.kotlin.jps.build.IncrementalK2LightTreeJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testPotentialSamAdapter, fixed in new JPS graph impl on IJ side - KT-21534,,
