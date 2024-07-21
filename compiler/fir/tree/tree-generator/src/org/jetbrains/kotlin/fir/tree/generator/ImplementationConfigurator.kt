@@ -572,7 +572,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(valueParameter, "FirDefaultSetterValueParameter") {
-            default("name", "Name.identifier(\"value\")")
+            default("name", "Name.special(\"<set-?>\")")
         }
 
         impl(simpleFunction)
