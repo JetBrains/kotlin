@@ -1,0 +1,1887 @@
+diff --git a/README.md b/README.md
+deleted file mode 100644
+index 70d234c..0000000
+--- a/README.md
++++ /dev/null
+@@ -1,215 +0,0 @@
+-# LitmusKt
+-
+-**LitmusKt** is a litmus testing tool for Kotlin.
+-Litmus tests are small concurrent programs exposing various relaxed behaviors, arising due to compiler or hardware
+-optimizations (for example, instruction reordering).
+-
+-This project is in an **experimental** stage of the development.
+-The tool's API is unstable and might be a subject to a further change.
+-
+-## Setup
+-
+-Simply clone the project and run `./gradlew build`.
+-
+-Note that for Kotlin/JVM this project relies on [jcstress](https://github.com/openjdk/jcstress).
+-
+-## Running
+-
+-The entry point is the CLI tool residing in `:cli` subproject. You can use the `--help` flag to find the details about
+-the CLI, but most basic example requires two settings:
+-
+-1. Choose a runner with `-r` option
+-2. After the options are specified, choose the tests to run using regex patterns
+-
+-### Running on Native
+-
+-Create an executable and run it:
+-
+-```bash
+-./gradlew :cli:linkReleaseExecutableLinuxX64
+-./build/bin/linuxX64/releaseExecutable/cli.kexe -r pthread 'StoreBuffering.*'
+-```
+-
+-Depending on what you need, you can:
+-
+-* Switch between `debug` and `release` (which, among other things, toggles the `-opt` compiler flag)
+-* Specify the platform (`linuxX64` / `macosX64` / `macosArm64`)
+-
+-### Running on JVM
+-
+-Simply run the project with Gradle:
+-
+-```bash
+-./gradlew :cli:jvmRun --args="-r jcstress -j '-m sanity' 'StoreBuffering.*'"
+-```
+-
+-## Overview
+-
+-A single litmus test consists of the following parts:
+-
+-* a state shared between threads;
+-* code for each thread;
+-* an outcome &mdash; a certain value which is the result of running the test;
+-* a specification listing accepted and forbidden outcomes
+-
+-The tool runs litmus tests with various parameters,
+-using the standard techniques also employed by other tools,
+-like [herdtools/litmus7](https://github.com/herd/herdtools7) and [JCStress](https://github.com/openjdk/jcstress).
+-
+-The tool allocates a batch of shared state instances
+-and runs the threads on one state instance after another,
+-occasionally synchronizing threads with barriers.
+-After all threads finish running, states are converted into outcomes, and the same outcomes are counted.
+-The end result is the list of all different observed outcomes,
+-their frequencies and their types (accepted, interesting or forbidden).
+-
+-### Litmus Test Syntax
+-
+-Here is an example of the `LitmusKt` test:
+-
+-```kotlin
+-class StoreBufferingState(
+-  var x: Int = 0,
+-  var y: Int = 0,
+-  var r1: Int = 0,
+-  var r2: Int = 0,
+-)
+-
+-val StoreBuffering = litmusTest(::StoreBufferingState) {
+-    thread {
+-        x = 1
+-        r1 = y
+-    }
+-    thread {
+-        y = 1
+-        r2 = x
+-    }
+-    outcome {
+-        r1 to r2
+-    }
+-    spec {
+-        accept(listOf(0 to 1, 1 to 0, 1 to 1))
+-        interesting(listOf(0 to 0))
+-    }
+-}
+-```
+-
+-And here is an example of the tool's output:
+-
+-```
+- outcome |    type     |  count  | frequency 
+----------------------------------------------
+- [1, 0]  |  ACCEPTED   | 6298680 |  48.451%  
+- [0, 1]  |  ACCEPTED   | 6291034 |  48.392%  
+- [0, 0]  | INTERESTING | 405062  |  3.1158%  
+- [1, 1]  |  ACCEPTED   |  5224   |  0.0401%  
+-```
+-
+-Let us describe the litmus test's declaration.
+-
+-* As a first argument `litmusTest` takes a function producing the shared state instance.
+-* The second argument is DSL builder lambda, setting up the litmus test.
+-* `thread { ... }` lambdas set up the code run in different threads of the litmus tests —
+-  these lambdas take shared state instance as a receiver.
+-* `outcome { ... }` lambda sets up the outcome of a test obtained after all threads have run —
+-  these lambdas also take shared state instance as a receiver.
+-* the `spec { ... }` lambda classifies the outcomes into acceptable, interesting, and forbidden categories.
+-
+-Here are a few additional convenient features.
+-
+-* Classes implementing `LitmusAutoOutcome` interface set up an outcome automatically.
+-  There are a few predefined subclasses of this interface.
+-  For example, the class `LitmusIIOutcome` with `II` standing for "int, int" expects two integers as an outcome.
+-  This class have two fields `var r1: Int` and `var r2: Int`.
+-  These fields should be set inside litmus test's threads, and then they will be automatically used to form an outcome.
+-* Additionally, if the state implements `LitmusAutoOutcome`, you can use a shorter syntax for declaring accepted / interesting / forbidden outcomes. 
+-  For example, for `LitmusIIOutcome` you can use `accept(r1: Int, r2: Int)` to add `(r1, r2)` as an accepted outcome.
+-* Finally, `LitmusAutoOutcome` is considerably more performant than manually creating any extra outcome object. It is therefore strongly advised to use this interface at all times.
+-* Since each test usually has its own specific state, it is quite useful to use anonymous classes for them.
+-
+-Using these features, the test from above can be shortened as follows:
+-
+-```kotlin
+-val StoreBuffering: LitmusTest<*> = litmusTest({
+-    object : LitmusIIOutcome() {
+-        var x = 0
+-        var y = 0
+-    }
+-}) {
+-    thread {
+-        x = 1
+-        r1 = y
+-    }
+-    thread {
+-        y = 1
+-        r2 = x
+-    }
+-    spec {
+-        accept(0, 1)
+-        accept(1, 0)
+-        accept(1, 1)
+-        interesting(0, 0)
+-    }
+-}
+-```
+-
+-### Litmus Test Runners
+-
+-Litmus tests are run with a `LitmusRunner`. This interface has several running functions:
+-
+-* `runTests(tests, params, timeLimit)` runs several `tests` one after another, each with the given `params`, optionally repeating each test for the duration of `timeLimit`.
+-* `runSingleTestParallel(test, params, timeLimit = 0, instances = ...)` runs a single test in parallel `instances`, with the given `params` and optionally repeating for `timeLimit`. The default value for `instances` is `#{of cpu cores} / #{of threads in test}`.
+-
+-The following implementations of `LitmusRunner` are available:
+-
+-* For native:
+-  * `WorkerRunner`: based on K/N `Worker` API
+-  * `PthreadRunner`: based on C interop pthread API
+-* For JVM:
+-  * `JvmThreadRunner`: a simple runner based on Java threads
+-  * `JCStressRunner`: a **special** runner that delegates to JCStress. Note that many of `LitmusRunner` parameters are not applicable to JCStress. Furthermore, there are JCStress-exclusive options as well.
+-
+-### Litmus Test Parameters
+-
+-There is a number of parameters that can be varied between test runs. Their influence on the results can change
+-drastically depending on the particular test, hardware, and so on.
+-
+-* `AffinityMap`: bindings from thread to CPU cores.
+-  Obtained through `AffinityManager`, which is available from `getAffinityManager()` top-level function.
+-* `syncEvery`: the number of tests between barrier synchronizations.
+-  Practice shows that on Native the reasonable range is somewhere in the range from 10 to 100,
+-  while on JVM it works best in the range from 1000 to 10000.
+-  This highly depends on the particular test.
+-* `Barrier`: can be either Kotlin-implemented (`KNativeSpinBarrier`) or C-implemented (`CinteropSpinBarrier`).
+-  C-implemented might yield better results.
+-  On JVM, use `JvmSpinBarrier` in favor of `JvmCyclicBarrier`.
+-
+-Common practice is to iterate through different parameter bundles and aggregate the results across them.
+-
+-* Function `variateParameters()` takes the cross-product of all passed parameters
+-  (hence use `listOf(null)` instead of `emptyList()` for unused arguments).
+-* For results aggregation, use `List<LitmusResult>.mergeResults()`.
+-* You can also use `LitmusResult.generateTable()` to format the results into a human-readable table.
+-
+-### Project structure
+-
+-The project consists of several subprojects:
+-
+-* `:core` contains the core infrastructure such as `LitmusTest` and `LitmusRunner` interfaces, etc.
+-* `:testsuite` contains the litmus tests themselves.
+-* `:codegen` uses KSP to collect all tests from `:testsuite`.
+-* `:jcstress-wrapper` contains the code to convert `LitmusTest`-s into JCStress-compatible Java wrappers.
+-* `:cli` is a user-friendly entry point.
+-
+-## Notes
+-
+-* If you decide to add some litmus tests, and you wish for them to be registered in the CLI, you must put them into `:testsuite` subproject. Use the existing tests as reference for the proper test structure. 
+-* Setting thread affinity is not supported on macOS yet. As such, `getAffinityManager()` returns `null` on macOS.
+-* It is possible to run the tests with `@Test` annotation. However, the tests are run in debug mode by
+-  the `kotlinx.test` framework. Running litmus tests in the debug mode can affect their results, potentially hiding some
+-  relaxed behaviors.
+-* In practice, all cases of currently found relaxed behaviors can be consistently found in under a minute of running.
+-* Avoid creating unnecessary objects inside threads, especially if they get shared. This not only significantly slows
+-  down the performance, but can also introduce unexpected relaxed behaviors.
+-* The tool currently doesn't address the false sharing problem. It has been shown to be fairly significant, but we looked for a solution and found none good enough. This problem can be resolved with a `@Contended`-like annotation in Kotlin, which does not yet exist.
+-* When writing tests with `LitmusAutoOutcome`, it is possible to achieve a post-processing step similar to JCStress `@Arbiter`. To do that, you can write your code in the `outcome{}` section, and then return `this` from it. An example can be found in the [WordTearing](testsuite/src/commonMain/kotlin/org/jetbrains/litmuskt/tests/WordTearing.kt) test.
+diff --git a/build.gradle.kts b/build.gradle.kts
+deleted file mode 100644
+index 6df6864..0000000
+--- a/build.gradle.kts
++++ /dev/null
+@@ -1,17 +0,0 @@
+-plugins {
+-    kotlin("multiplatform") version "2.0.0" apply false
+-}
+-
+-repositories {
+-    mavenCentral()
+-    gradlePluginPortal()
+-}
+-
+-subprojects {
+-    group = "org.jetbrains.litmuskt"
+-    version = "1.0-SNAPSHOT"
+-    repositories {
+-        mavenCentral()
+-        gradlePluginPortal()
+-    }
+-}
+diff --git a/cli/build.gradle.kts b/cli/build.gradle.kts
+deleted file mode 100644
+index 8d1010c..0000000
+--- a/cli/build.gradle.kts
++++ /dev/null
+@@ -1,48 +0,0 @@
+-plugins {
+-    kotlin("multiplatform")
+-}
+-
+-kotlin {
+-    val nativeTargets = listOf(
+-        linuxX64(),
+-        // 1) no machine currently available 2) CLI library does not support
+-//        linuxArm64(),
+-        macosX64(),
+-        macosArm64(),
+-        mingwX64(),
+-    )
+-    nativeTargets.forEach { target ->
+-        target.binaries {
+-            executable {
+-                entryPoint = "main"
+-            }
+-        }
+-    }
+-    jvm {
+-        withJava()
+-    }
+-
+-    sourceSets {
+-        commonMain {
+-            val cliktVersion = project.findProperty("cliktVersion")
+-            dependencies {
+-                implementation(project(":core"))
+-                implementation(project(":testsuite"))
+-                implementation("com.github.ajalt.clikt:clikt:$cliktVersion")
+-            }
+-        }
+-        jvmMain {
+-            dependencies {
+-                implementation(project(":jcstress-wrapper"))
+-            }
+-        }
+-    }
+-}
+-
+-tasks.whenTaskAdded {
+-    if (name == "jvmRun") {
+-        dependsOn(":jcstress-wrapper:copyCoreToJCStress")
+-        dependsOn(":jcstress-wrapper:copyTestsuiteToJCStress")
+-        dependsOn(":jcstress-wrapper:run")
+-    }
+-}
+diff --git a/cli/src/commonMain/kotlin/org/jetbrains/litmuskt/CliCommon.kt b/cli/src/commonMain/kotlin/org/jetbrains/litmuskt/CliCommon.kt
+deleted file mode 100644
+index 7fd03d4..0000000
+--- a/cli/src/commonMain/kotlin/org/jetbrains/litmuskt/CliCommon.kt
++++ /dev/null
+@@ -1,125 +0,0 @@
+-package org.jetbrains.litmuskt
+-
+-import com.github.ajalt.clikt.core.CliktCommand
+-import com.github.ajalt.clikt.parameters.arguments.argument
+-import com.github.ajalt.clikt.parameters.arguments.check
+-import com.github.ajalt.clikt.parameters.arguments.multiple
+-import com.github.ajalt.clikt.parameters.arguments.transformAll
+-import com.github.ajalt.clikt.parameters.options.*
+-import com.github.ajalt.clikt.parameters.types.int
+-import org.jetbrains.litmuskt.generated.LitmusTestRegistry
+-import kotlin.time.Duration
+-
+-abstract class CliCommon : CliktCommand(
+-    name = "litmuskt",
+-    printHelpOnEmptyArgs = true,
+-) {
+-    companion object {
+-        const val DEFAULT_BATCH_SIZE = 1_000_000
+-        const val DEFAULT_SYNC_EVERY = 100
+-    }
+-
+-    protected open val batchSizeSchedule by option("-b", "--batchSize")
+-        .int().varargValues().default(listOf(DEFAULT_BATCH_SIZE))
+-
+-    protected open val syncEverySchedule by option("-s", "--syncEvery")
+-        .int().varargValues().default(listOf(DEFAULT_SYNC_EVERY))
+-
+-    protected open val tests by argument("tests")
+-        .multiple(required = true)
+-        .transformAll { args ->
+-            val regexes = args.map {
+-                try {
+-                    Regex(it)
+-                } catch (_: IllegalArgumentException) {
+-                    fail("invalid regex: $it")
+-                }
+-            }
+-            regexes.flatMap { LitmusTestRegistry[it] }
+-        }
+-        .check("no tests were selected") { it.isNotEmpty() || listOnly }
+-
+-    protected val PARALLELISM_DISABLED = Int.MAX_VALUE - 1
+-    protected val PARALLELISM_AUTO = Int.MAX_VALUE - 2
+-    protected open val parallelism by option("-p", "--parallelism")
+-        .int().optionalValue(PARALLELISM_AUTO).default(PARALLELISM_DISABLED)
+-        .check("value must be in range 2..1000") {
+-            it in 2..1000 || it == PARALLELISM_DISABLED || it == PARALLELISM_AUTO
+-        }
+-
+-    protected open val duration by option("-d", "--duration")
+-        .convert { Duration.parse(it) }
+-        .default(Duration.ZERO)
+-        .check("value must not be negative") { !it.isNegative() }
+-
+-    protected abstract val affinityMapSchedule: List<AffinityMap?>
+-    protected abstract val runner: LitmusRunner
+-    protected abstract val barrierProducer: BarrierProducer
+-    // TODO: we don't talk about memshuffler for now
+-
+-    protected val listOnly by option("-l", "--listOnly").flag()
+-    // TODO: dry run = simply list tests
+-
+-    override fun run() {
+-        if (listOnly) {
+-            runListOnly()
+-            return
+-        }
+-        echo("selected ${tests.size} tests: \n" + tests.joinToString("\n") { " - " + it.alias })
+-        echo()
+-
+-        val paramsList = variateRunParams(
+-            batchSizeSchedule = batchSizeSchedule,
+-            affinityMapSchedule = affinityMapSchedule,
+-            syncPeriodSchedule = syncEverySchedule,
+-            barrierSchedule = listOf(barrierProducer),
+-        ).toList()
+-        if (paramsList.isEmpty()) {
+-            echo("parameters list is empty; ensure no empty lists are used", err = true)
+-            return
+-        }
+-        echo("parameter combinations per each test: ${paramsList.size}")
+-        echo()
+-
+-        for (test in tests) {
+-            echo("running test ${test.alias}...")
+-            // TODO: handle exceptions
+-            // TODO: print ETA (later: calculate based on part of run)
+-            paramsList.map { params ->
+-                runTest(params, test)
+-            }.mergeResults().let {
+-                echo(it.generateTable())
+-            }
+-            echo()
+-        }
+-    }
+-
+-    private fun runTest(params: LitmusRunParams, test: LitmusTest<*>): LitmusResult {
+-        return when (parallelism) {
+-            PARALLELISM_DISABLED -> {
+-                // note: not running all tests here because of changing params
+-                runner.runTests(listOf(test), params, duration).first()
+-            }
+-            PARALLELISM_AUTO -> {
+-                runner.runSingleTestParallel(test, params, timeLimit = duration)
+-            }
+-            else -> {
+-                runner.runSingleTestParallel(test, params, timeLimit = duration, instances = parallelism)
+-            }
+-        }
+-    }
+-
+-    protected fun runListOnly() {
+-        echo("all known tests:\n" + LitmusTestRegistry.all().joinToString("\n") { " * " + it.alias })
+-        echo()
+-        echo("selected tests:\n" + tests.joinToString("\n") { " - " + it.alias })
+-    }
+-}
+-
+-fun commonMain(args: Array<String>, cli: CliCommon) {
+-    try {
+-        cli.main(args)
+-    } catch (e: Exception) {
+-        cli.echo(e.stackTraceToString(), err = true, trailingNewline = true)
+-    }
+-}
+diff --git a/cli/src/jvmMain/kotlin/JvmMain.kt b/cli/src/jvmMain/kotlin/JvmMain.kt
+deleted file mode 100644
+index 3d9c77a..0000000
+--- a/cli/src/jvmMain/kotlin/JvmMain.kt
++++ /dev/null
+@@ -1,3 +0,0 @@
+-import org.jetbrains.litmuskt.CliJvm
+-
+-fun main(args: Array<String>) = CliJvm().main(args)
+diff --git a/cli/src/jvmMain/kotlin/org/jetbrains/litmuskt/CliJvm.kt b/cli/src/jvmMain/kotlin/org/jetbrains/litmuskt/CliJvm.kt
+deleted file mode 100644
+index fd4efce..0000000
+--- a/cli/src/jvmMain/kotlin/org/jetbrains/litmuskt/CliJvm.kt
++++ /dev/null
+@@ -1,86 +0,0 @@
+-package org.jetbrains.litmuskt
+-
+-import com.github.ajalt.clikt.parameters.groups.OptionGroup
+-import com.github.ajalt.clikt.parameters.groups.groupChoice
+-import com.github.ajalt.clikt.parameters.groups.required
+-import com.github.ajalt.clikt.parameters.options.convert
+-import com.github.ajalt.clikt.parameters.options.default
+-import com.github.ajalt.clikt.parameters.options.flag
+-import com.github.ajalt.clikt.parameters.options.option
+-import jcstressDirectory
+-import org.jetbrains.litmuskt.barriers.JvmSpinBarrier
+-
+-private sealed class RunnerOptions : OptionGroup() {
+-    abstract val runner: LitmusRunner
+-}
+-
+-private class JvmThreadRunnerOptions : RunnerOptions() {
+-    override val runner = JvmThreadRunner()
+-}
+-
+-private class JCStressRunnerOptions : RunnerOptions() {
+-    private val jcstressFreeArgs by option("-j", "--jcsargs")
+-        .convert { it.split(" ") }
+-        .default(emptyList())
+-
+-    override val runner get() = JCStressRunner(jcstressDirectory, jcstressFreeArgs)
+-}
+-
+-class CliJvm : CliCommon() {
+-    private val runnerOptions by option("-r", "--runner").groupChoice(
+-        "thread" to JvmThreadRunnerOptions(),
+-        "jcstress" to JCStressRunnerOptions(),
+-    ).required()
+-    override val runner get() = runnerOptions.runner
+-
+-    override val barrierProducer = ::JvmSpinBarrier
+-    override val affinityMapSchedule = listOf(null)
+-
+-    private val allowJCStressReruns by option("--allow-jcs-reruns")
+-        .flag()
+-
+-    override fun run() = if (runner is JCStressRunner) jcstressRun() else super.run()
+-
+-    private fun jcstressRun() {
+-        if (listOnly) {
+-            runListOnly()
+-            return
+-        }
+-
+-        val paramsList = variateRunParams(
+-            batchSizeSchedule = batchSizeSchedule,
+-            affinityMapSchedule = affinityMapSchedule,
+-            syncPeriodSchedule = syncEverySchedule,
+-            barrierSchedule = listOf(barrierProducer),
+-        ).toList()
+-        when (paramsList.size) {
+-            0 -> {
+-                echo("parameters list is empty; ensure no empty lists are used", err = true)
+-                return
+-            }
+-
+-            1 -> {} // ok
+-            else -> {
+-                if (!allowJCStressReruns) {
+-                    echo(
+-                        "you likely don't want to run JCStress multiple times;" +
+-                                " if you're sure, enable --allow-jcs-reruns",
+-                        err = true
+-                    )
+-                    return
+-                }
+-            }
+-        }
+-
+-        for (params in paramsList) {
+-            val jcsParams = if (
+-                params.batchSize == DEFAULT_BATCH_SIZE &&
+-                params.syncPeriod == DEFAULT_SYNC_EVERY
+-            ) JCStressRunner.DEFAULT_LITMUSKT_PARAMS else params // jcstress defaults are different
+-
+-            val jcsRunner = runner as JCStressRunner // use the correct runTests()!
+-            val results = jcsRunner.runTests(tests, jcsParams).first()
+-            echo("\n" + results.generateTable())
+-        }
+-    }
+-}
+diff --git a/cli/src/nativeMain/kotlin/NativeMain.kt b/cli/src/nativeMain/kotlin/NativeMain.kt
+deleted file mode 100755
+index b5ef711..0000000
+--- a/cli/src/nativeMain/kotlin/NativeMain.kt
++++ /dev/null
+@@ -1,4 +0,0 @@
+-import org.jetbrains.litmuskt.CliNative
+-import org.jetbrains.litmuskt.commonMain
+-
+-fun main(args: Array<String>) = commonMain(args, CliNative())
+diff --git a/cli/src/nativeMain/kotlin/org/jetbrains/litmuskt/CliNative.kt b/cli/src/nativeMain/kotlin/org/jetbrains/litmuskt/CliNative.kt
+deleted file mode 100644
+index 0aaab8b..0000000
+--- a/cli/src/nativeMain/kotlin/org/jetbrains/litmuskt/CliNative.kt
++++ /dev/null
+@@ -1,25 +0,0 @@
+-package org.jetbrains.litmuskt
+-
+-import com.github.ajalt.clikt.parameters.options.default
+-import com.github.ajalt.clikt.parameters.options.option
+-import com.github.ajalt.clikt.parameters.types.choice
+-import org.jetbrains.litmuskt.barriers.CinteropSpinBarrier
+-
+-class CliNative : CliCommon() {
+-    override val runner by option("-r", "--runner")
+-        .choice(mapOf("worker" to WorkerRunner(), "pthread" to PthreadRunner()))
+-        .default(WorkerRunner())
+-
+-    private val affinityMapChoices = run {
+-        val schedulesMapped = mutableMapOf<String, List<AffinityMap?>>("none" to listOf(null))
+-        affinityManager?.let {
+-            schedulesMapped["short"] = it.presetShort()
+-            schedulesMapped["long"] = it.presetLong()
+-        }
+-        schedulesMapped
+-    }
+-    override val affinityMapSchedule by option("-a", "--affinity")
+-        .choice(affinityMapChoices).default(listOf(null))
+-
+-    override val barrierProducer = ::CinteropSpinBarrier
+-}
+diff --git a/codegen/build.gradle.kts b/codegen/build.gradle.kts
+deleted file mode 100644
+index 2a746f0..0000000
+--- a/codegen/build.gradle.kts
++++ /dev/null
+@@ -1,7 +0,0 @@
+-plugins {
+-    kotlin("jvm")
+-}
+-
+-dependencies {
+-    implementation("com.google.devtools.ksp:symbol-processing-api:2.0.0-1.0.23")
+-}
+diff --git a/codegen/src/main/kotlin/org/jetbrains/litmuskt/LitmusTestProcessor.kt b/codegen/src/main/kotlin/org/jetbrains/litmuskt/LitmusTestProcessor.kt
+deleted file mode 100644
+index 2ebbed5..0000000
+--- a/codegen/src/main/kotlin/org/jetbrains/litmuskt/LitmusTestProcessor.kt
++++ /dev/null
+@@ -1,94 +0,0 @@
+-package org.jetbrains.litmuskt
+-
+-import com.google.devtools.ksp.processing.*
+-import com.google.devtools.ksp.symbol.ClassKind
+-import com.google.devtools.ksp.symbol.KSAnnotated
+-import com.google.devtools.ksp.symbol.KSClassDeclaration
+-
+-class LitmusTestProcessorProvider : SymbolProcessorProvider {
+-    override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
+-        return LitmusTestProcessor(environment.codeGenerator, environment.logger)
+-    }
+-}
+-
+-private const val testContainerAnnotationFQN = "org.jetbrains.litmuskt.LitmusTestContainer"
+-private const val basePackage = "org.jetbrains.litmuskt"
+-private const val generatedPackage = "$basePackage.generated"
+-private const val registryFileName = "LitmusTestRegistry"
+-
+-class LitmusTestProcessor(
+-    private val codeGenerator: CodeGenerator,
+-    private val logger: KSPLogger
+-) : SymbolProcessor {
+-
+-    override fun process(resolver: Resolver): List<KSAnnotated> {
+-        val containerClassDecls = resolver.getSymbolsWithAnnotation(testContainerAnnotationFQN)
+-            .filterIsInstance<KSClassDeclaration>()
+-            .toList()
+-        // check for name collisions
+-        containerClassDecls
+-            .groupingBy { it.simpleName.asString() }
+-            .eachCount()
+-            .filter { it.value > 1 }
+-            .takeIf { it.isNotEmpty() }
+-            ?.let { logger.error("container class name collision: $it") }
+-        // check that all containers are objects
+-        containerClassDecls
+-            .filterNot { it.classKind == ClassKind.OBJECT }
+-            .takeIf { it.isNotEmpty() }
+-            ?.let { logger.error("container class must be an object: $it") }
+-
+-        val decls = containerClassDecls
+-            .flatMap { it.getAllProperties() }
+-            .filter { it.type.resolve().declaration.simpleName.asString() == "LitmusTest" }
+-            .toList()
+-        // should prevent extra rounds, or else createNewFile() will throw
+-        if (decls.isEmpty()) return emptyList()
+-
+-        val inputFiles = decls.mapNotNull { it.containingFile }.toSet()
+-        val dependencies = Dependencies(true, *inputFiles.toTypedArray())
+-        val registryFile = codeGenerator.createNewFile(dependencies, generatedPackage, registryFileName)
+-
+-        val namedTestsMap = decls.associate {
+-            val testAlias = run {
+-                val parentClassDecl = it.parentDeclaration
+-                    ?: error("test declaration at ${it.location} has no parent container class")
+-                parentClassDecl.simpleName.asString() + "." + it.simpleName.asString()
+-            }
+-            val testFQN = it.qualifiedName!!.asString()
+-            testAlias to testFQN
+-        }
+-
+-        val registryCode = """
+-package $generatedPackage
+-import $basePackage.LitmusTest
+-
+-actual object LitmusTestRegistry {
+-
+-    private data class TestData(
+-        val alias: String,
+-        val fqn: String,
+-    )
+-
+-    private val tests: Map<LitmusTest<*>, TestData> = mapOf(
+-        ${
+-            namedTestsMap.entries.joinToString(",\n" + " ".repeat(8)) { (alias, fqn) ->
+-                "$fqn to TestData(\"$alias\", \"$fqn\")"
+-            }
+-        }
+-    )
+-    
+-    actual operator fun get(regex: Regex): List<LitmusTest<*>> = 
+-        tests.entries.filter { regex.matches(it.value.alias) }.map { it.key }
+-    
+-    actual fun all(): List<LitmusTest<*>> = tests.keys.toList()
+-    actual fun getAlias(test: LitmusTest<*>): String = tests[test]?.alias ?: error("unknown test")
+-    actual fun getFQN(test: LitmusTest<*>): String = tests[test]?.fqn ?: error("unknown test") 
+-}
+-
+-        """.trimIndent()
+-
+-        registryFile.write(registryCode.toByteArray())
+-        return emptyList()
+-    }
+-}
+diff --git a/codegen/src/main/resources/META-INF/services/com.google.devtools.ksp.processing.SymbolProcessorProvider b/codegen/src/main/resources/META-INF/services/com.google.devtools.ksp.processing.SymbolProcessorProvider
+deleted file mode 100644
+index 8e4e936..0000000
+--- a/codegen/src/main/resources/META-INF/services/com.google.devtools.ksp.processing.SymbolProcessorProvider
++++ /dev/null
+@@ -1 +0,0 @@
+-org.jetbrains.litmuskt.LitmusTestProcessorProvider
+\ No newline at end of file
+diff --git a/core/build.gradle.kts b/core/build.gradle.kts
+index cd48963..73bed02 100644
+--- a/core/build.gradle.kts
++++ b/core/build.gradle.kts
+@@ -1,6 +1,5 @@
+ plugins {
+     kotlin("multiplatform")
+-    `java-library`
+ }
+ 
+ kotlin {
+diff --git a/core/src/nativeMain/kotlin/org/jetbrains/litmuskt/RepoUtils.kt b/core/src/nativeMain/kotlin/org/jetbrains/litmuskt/RepoUtils.kt
+new file mode 100644
+index 0000000..2b2609e
+--- /dev/null
++++ b/core/src/nativeMain/kotlin/org/jetbrains/litmuskt/RepoUtils.kt
+@@ -0,0 +1,22 @@
++package org.jetbrains.litmuskt
++
++import org.jetbrains.litmuskt.barriers.*
++import kotlin.time.Duration.Companion.seconds
++
++fun runTestWithSampleParams(test: LitmusTest<*>): LitmusResult {
++    val runner = WorkerRunner()
++    // Later there should be more variations for less frequent but longer test runs
++    val paramsList: List<LitmusRunParams> = variateRunParams(
++        batchSizeSchedule = listOf(1_000_000),
++        affinityMapSchedule = listOf(null),
++        syncPeriodSchedule = listOf(10, 100),
++        barrierSchedule = listOf(::CinteropSpinBarrier)
++    ).toList()
++
++    val result = paramsList.map { params ->
++        runner.runSingleTestParallel(test, params, timeLimit = 1.seconds, instances = 3)
++    }.mergeResults()
++    return result
++}
++
++fun LitmusResult.hasForbidden() = any { it.type == LitmusOutcomeType.FORBIDDEN }
+diff --git a/gradle.properties b/gradle.properties
+deleted file mode 100644
+index 16c8225..0000000
+--- a/gradle.properties
++++ /dev/null
+@@ -1,10 +0,0 @@
+-kotlin.code.style=official
+-kotlin.native.ignoreDisabledTargets=true
+-kotlin.mpp.enableCInteropCommonization=true
+-cliktVersion=4.2.2
+-atomicfuVersion=0.23.2
+-
+-# this one is required for jvmRun task; can also be passed as -DmainClass=JvmMainKt
+-mainClass=JvmMainKt
+-# path to custom compiler dist
+-#kotlin.native.home=./fresh-kn-compiler/kotlin-native-linux-x86_64-1.9.0-RC
+diff --git a/gradle/wrapper/gradle-wrapper.jar b/gradle/wrapper/gradle-wrapper.jar
+deleted file mode 100644
+index 41d9927..0000000
+Binary files a/gradle/wrapper/gradle-wrapper.jar and /dev/null differ
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+deleted file mode 100644
+index e411586..0000000
+--- a/gradle/wrapper/gradle-wrapper.properties
++++ /dev/null
+@@ -1,5 +0,0 @@
+-distributionBase=GRADLE_USER_HOME
+-distributionPath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip
+-zipStoreBase=GRADLE_USER_HOME
+-zipStorePath=wrapper/dists
+diff --git a/gradlew b/gradlew
+deleted file mode 100755
+index 1b6c787..0000000
+--- a/gradlew
++++ /dev/null
+@@ -1,234 +0,0 @@
+-#!/bin/sh
+-
+-#
+-# Copyright © 2015-2021 the original authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#      https://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-##############################################################################
+-#
+-#   Gradle start up script for POSIX generated by Gradle.
+-#
+-#   Important for running:
+-#
+-#   (1) You need a POSIX-compliant shell to run this script. If your /bin/sh is
+-#       noncompliant, but you have some other compliant shell such as ksh or
+-#       bash, then to run this script, type that shell name before the whole
+-#       command line, like:
+-#
+-#           ksh Gradle
+-#
+-#       Busybox and similar reduced shells will NOT work, because this script
+-#       requires all of these POSIX shell features:
+-#         * functions;
+-#         * expansions «$var», «${var}», «${var:-default}», «${var+SET}»,
+-#           «${var#prefix}», «${var%suffix}», and «$( cmd )»;
+-#         * compound commands having a testable exit status, especially «case»;
+-#         * various built-in commands including «command», «set», and «ulimit».
+-#
+-#   Important for patching:
+-#
+-#   (2) This script targets any POSIX shell, so it avoids extensions provided
+-#       by Bash, Ksh, etc; in particular arrays are avoided.
+-#
+-#       The "traditional" practice of packing multiple parameters into a
+-#       space-separated string is a well documented source of bugs and security
+-#       problems, so this is (mostly) avoided, by progressively accumulating
+-#       options in "$@", and eventually passing that to Java.
+-#
+-#       Where the inherited environment variables (DEFAULT_JVM_OPTS, JAVA_OPTS,
+-#       and GRADLE_OPTS) rely on word-splitting, this is performed explicitly;
+-#       see the in-line comments for details.
+-#
+-#       There are tweaks for specific operating systems such as AIX, CygWin,
+-#       Darwin, MinGW, and NonStop.
+-#
+-#   (3) This script is generated from the Groovy template
+-#       https://github.com/gradle/gradle/blob/master/subprojects/plugins/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
+-#       within the Gradle project.
+-#
+-#       You can find Gradle at https://github.com/gradle/gradle/.
+-#
+-##############################################################################
+-
+-# Attempt to set APP_HOME
+-
+-# Resolve links: $0 may be a link
+-app_path=$0
+-
+-# Need this for daisy-chained symlinks.
+-while
+-    APP_HOME=${app_path%"${app_path##*/}"}  # leaves a trailing /; empty if no leading path
+-    [ -h "$app_path" ]
+-do
+-    ls=$( ls -ld "$app_path" )
+-    link=${ls#*' -> '}
+-    case $link in             #(
+-      /*)   app_path=$link ;; #(
+-      *)    app_path=$APP_HOME$link ;;
+-    esac
+-done
+-
+-APP_HOME=$( cd "${APP_HOME:-./}" && pwd -P ) || exit
+-
+-APP_NAME="Gradle"
+-APP_BASE_NAME=${0##*/}
+-
+-# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+-DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+-
+-# Use the maximum available, or set MAX_FD != -1 to use that value.
+-MAX_FD=maximum
+-
+-warn () {
+-    echo "$*"
+-} >&2
+-
+-die () {
+-    echo
+-    echo "$*"
+-    echo
+-    exit 1
+-} >&2
+-
+-# OS specific support (must be 'true' or 'false').
+-cygwin=false
+-msys=false
+-darwin=false
+-nonstop=false
+-case "$( uname )" in                #(
+-  CYGWIN* )         cygwin=true  ;; #(
+-  Darwin* )         darwin=true  ;; #(
+-  MSYS* | MINGW* )  msys=true    ;; #(
+-  NONSTOP* )        nonstop=true ;;
+-esac
+-
+-CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
+-
+-
+-# Determine the Java command to use to start the JVM.
+-if [ -n "$JAVA_HOME" ] ; then
+-    if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
+-        # IBM's JDK on AIX uses strange locations for the executables
+-        JAVACMD=$JAVA_HOME/jre/sh/java
+-    else
+-        JAVACMD=$JAVA_HOME/bin/java
+-    fi
+-    if [ ! -x "$JAVACMD" ] ; then
+-        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
+-
+-Please set the JAVA_HOME variable in your environment to match the
+-location of your Java installation."
+-    fi
+-else
+-    JAVACMD=java
+-    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+-
+-Please set the JAVA_HOME variable in your environment to match the
+-location of your Java installation."
+-fi
+-
+-# Increase the maximum file descriptors if we can.
+-if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
+-    case $MAX_FD in #(
+-      max*)
+-        MAX_FD=$( ulimit -H -n ) ||
+-            warn "Could not query maximum file descriptor limit"
+-    esac
+-    case $MAX_FD in  #(
+-      '' | soft) :;; #(
+-      *)
+-        ulimit -n "$MAX_FD" ||
+-            warn "Could not set maximum file descriptor limit to $MAX_FD"
+-    esac
+-fi
+-
+-# Collect all arguments for the java command, stacking in reverse order:
+-#   * args from the command line
+-#   * the main class name
+-#   * -classpath
+-#   * -D...appname settings
+-#   * --module-path (only if needed)
+-#   * DEFAULT_JVM_OPTS, JAVA_OPTS, and GRADLE_OPTS environment variables.
+-
+-# For Cygwin or MSYS, switch paths to Windows format before running java
+-if "$cygwin" || "$msys" ; then
+-    APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
+-    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
+-
+-    JAVACMD=$( cygpath --unix "$JAVACMD" )
+-
+-    # Now convert the arguments - kludge to limit ourselves to /bin/sh
+-    for arg do
+-        if
+-            case $arg in                                #(
+-              -*)   false ;;                            # don't mess with options #(
+-              /?*)  t=${arg#/} t=/${t%%/*}              # looks like a POSIX filepath
+-                    [ -e "$t" ] ;;                      #(
+-              *)    false ;;
+-            esac
+-        then
+-            arg=$( cygpath --path --ignore --mixed "$arg" )
+-        fi
+-        # Roll the args list around exactly as many times as the number of
+-        # args, so each arg winds up back in the position where it started, but
+-        # possibly modified.
+-        #
+-        # NB: a `for` loop captures its iteration list before it begins, so
+-        # changing the positional parameters here affects neither the number of
+-        # iterations, nor the values presented in `arg`.
+-        shift                   # remove old arg
+-        set -- "$@" "$arg"      # push replacement arg
+-    done
+-fi
+-
+-# Collect all arguments for the java command;
+-#   * $DEFAULT_JVM_OPTS, $JAVA_OPTS, and $GRADLE_OPTS can contain fragments of
+-#     shell script including quotes and variable substitutions, so put them in
+-#     double quotes to make sure that they get re-expanded; and
+-#   * put everything else in single quotes, so that it's not re-expanded.
+-
+-set -- \
+-        "-Dorg.gradle.appname=$APP_BASE_NAME" \
+-        -classpath "$CLASSPATH" \
+-        org.gradle.wrapper.GradleWrapperMain \
+-        "$@"
+-
+-# Use "xargs" to parse quoted args.
+-#
+-# With -n1 it outputs one arg per line, with the quotes and backslashes removed.
+-#
+-# In Bash we could simply go:
+-#
+-#   readarray ARGS < <( xargs -n1 <<<"$var" ) &&
+-#   set -- "${ARGS[@]}" "$@"
+-#
+-# but POSIX shell has neither arrays nor command substitution, so instead we
+-# post-process each arg (as a line of input to sed) to backslash-escape any
+-# character that might be a shell metacharacter, then use eval to reverse
+-# that process (while maintaining the separation between arguments), and wrap
+-# the whole thing up as a single "set" statement.
+-#
+-# This will of course break if any of these variables contains a newline or
+-# an unmatched quote.
+-#
+-
+-eval "set -- $(
+-        printf '%s\n' "$DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS" |
+-        xargs -n1 |
+-        sed ' s~[^-[:alnum:]+,./:=@_]~\\&~g; ' |
+-        tr '\n' ' '
+-    )" '"$@"'
+-
+-exec "$JAVACMD" "$@"
+diff --git a/gradlew.bat b/gradlew.bat
+deleted file mode 100644
+index ac1b06f..0000000
+--- a/gradlew.bat
++++ /dev/null
+@@ -1,89 +0,0 @@
+-@rem
+-@rem Copyright 2015 the original author or authors.
+-@rem
+-@rem Licensed under the Apache License, Version 2.0 (the "License");
+-@rem you may not use this file except in compliance with the License.
+-@rem You may obtain a copy of the License at
+-@rem
+-@rem      https://www.apache.org/licenses/LICENSE-2.0
+-@rem
+-@rem Unless required by applicable law or agreed to in writing, software
+-@rem distributed under the License is distributed on an "AS IS" BASIS,
+-@rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-@rem See the License for the specific language governing permissions and
+-@rem limitations under the License.
+-@rem
+-
+-@if "%DEBUG%" == "" @echo off
+-@rem ##########################################################################
+-@rem
+-@rem  Gradle startup script for Windows
+-@rem
+-@rem ##########################################################################
+-
+-@rem Set local scope for the variables with windows NT shell
+-if "%OS%"=="Windows_NT" setlocal
+-
+-set DIRNAME=%~dp0
+-if "%DIRNAME%" == "" set DIRNAME=.
+-set APP_BASE_NAME=%~n0
+-set APP_HOME=%DIRNAME%
+-
+-@rem Resolve any "." and ".." in APP_HOME to make it shorter.
+-for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
+-
+-@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+-set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m"
+-
+-@rem Find java.exe
+-if defined JAVA_HOME goto findJavaFromJavaHome
+-
+-set JAVA_EXE=java.exe
+-%JAVA_EXE% -version >NUL 2>&1
+-if "%ERRORLEVEL%" == "0" goto execute
+-
+-echo.
+-echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+-echo.
+-echo Please set the JAVA_HOME variable in your environment to match the
+-echo location of your Java installation.
+-
+-goto fail
+-
+-:findJavaFromJavaHome
+-set JAVA_HOME=%JAVA_HOME:"=%
+-set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+-
+-if exist "%JAVA_EXE%" goto execute
+-
+-echo.
+-echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+-echo.
+-echo Please set the JAVA_HOME variable in your environment to match the
+-echo location of your Java installation.
+-
+-goto fail
+-
+-:execute
+-@rem Setup the command line
+-
+-set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
+-
+-
+-@rem Execute Gradle
+-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*
+-
+-:end
+-@rem End local scope for the variables with windows NT shell
+-if "%ERRORLEVEL%"=="0" goto mainEnd
+-
+-:fail
+-rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+-rem the _cmd.exe /c_ return code!
+-if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
+-exit /b 1
+-
+-:mainEnd
+-if "%OS%"=="Windows_NT" endlocal
+-
+-:omega
+diff --git a/jcstress-tests/Custom_LB.java b/jcstress-tests/Custom_LB.java
+deleted file mode 100644
+index ed33ba8..0000000
+--- a/jcstress-tests/Custom_LB.java
++++ /dev/null
+@@ -1,63 +0,0 @@
+-/*
+- * Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- *
+- * This code is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 only, as
+- * published by the Free Software Foundation.  Oracle designates this
+- * particular file as subject to the "Classpath" exception as provided
+- * by Oracle in the LICENSE file that accompanied this code.
+- *
+- * This code is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+- * version 2 for more details (a copy is included in the LICENSE file that
+- * accompanied this code).
+- *
+- * You should have received a copy of the GNU General Public License version
+- * 2 along with this work; if not, write to the Free Software Foundation,
+- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+- *
+- * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
+- * or visit www.oracle.com if you need additional information or have any
+- * questions.
+- */
+-package org.openjdk.jcstress.tests.lb;
+-
+-import org.openjdk.jcstress.annotations.Actor;
+-import org.openjdk.jcstress.annotations.JCStressTest;
+-import org.openjdk.jcstress.annotations.Outcome;
+-import org.openjdk.jcstress.annotations.State;
+-import org.openjdk.jcstress.infra.results.II_Result;
+-
+-import static org.openjdk.jcstress.annotations.Expect.*;
+-
+-public class Custom_LB {
+-
+-    /*
+-     * $ java -jar jcstress-samples/target/jcstress.jar -t Custom_LB[.SubTestName]
+-     */
+-
+-    @JCStressTest
+-    @Outcome(id = "0, 0", expect = ACCEPTABLE, desc = "ok")
+-    @Outcome(id = "1, 1", expect = ACCEPTABLE_INTERESTING, desc = "weak!")
+-    @Outcome(id = "0, 1", expect = ACCEPTABLE, desc = "ok")
+-    @Outcome(id = "1, 0", expect = ACCEPTABLE, desc = "ok")
+-    @State
+-    public static class BasicLB {
+-        int x;
+-        int y;
+-
+-        @Actor
+-        public void actor1(II_Result r) {
+-            r.r1 = x;
+-            y = 1;
+-        }
+-
+-        @Actor
+-        public void actor2(II_Result r) {
+-            r.r2 = y;
+-            x = 1;
+-        }
+-    }
+-}
+\ No newline at end of file
+diff --git a/jcstress-wrapper/build.gradle.kts b/jcstress-wrapper/build.gradle.kts
+deleted file mode 100644
+index e0bafda..0000000
+--- a/jcstress-wrapper/build.gradle.kts
++++ /dev/null
+@@ -1,42 +0,0 @@
+-plugins {
+-    kotlin("jvm")
+-    application
+-}
+-
+-application {
+-    mainClass = "MainKt"
+-}
+-
+-dependencies {
+-    implementation(project(":core"))
+-    implementation(project(":testsuite"))
+-    implementation(kotlin("reflect"))
+-}
+-
+-val jcsDir = rootProject.layout.projectDirectory.dir("jcstress")
+-
+-tasks.register<Copy>("copyCoreToJCStress") {
+-    dependsOn(":core:jvmJar")
+-    from(project(":core").layout.buildDirectory.file("libs/core-jvm-$version.jar"))
+-    rename { "litmusktJvm-1.0.jar" }
+-    into(jcsDir.dir("libs/org/jetbrains/litmuskt/litmusktJvm/1.0/"))
+-    doFirst {
+-        if (inputs.sourceFiles.isEmpty) throw GradleException("missing files to copy")
+-    }
+-}
+-
+-tasks.register<Copy>("copyTestsuiteToJCStress") {
+-    dependsOn(":testsuite:jvmJar")
+-    from(project(":testsuite").layout.buildDirectory.file("libs/testsuite-jvm-$version.jar"))
+-    rename { "litmusktJvmTestsuite-1.0.jar" }
+-    into(jcsDir.dir("libs/org/jetbrains/litmuskt/litmusktJvmTestsuite/1.0/"))
+-    doFirst {
+-        if (inputs.sourceFiles.isEmpty) throw GradleException("missing files to copy")
+-    }
+-}
+-
+-tasks.register<Delete>("cleanJCStress") {
+-    delete(jcsDir.dir("generatedSrc"), jcsDir.dir("libs"))
+-}
+-
+-tasks.getByName("clean").finalizedBy("cleanJCStress")
+diff --git a/jcstress-wrapper/src/main/kotlin/Main.kt b/jcstress-wrapper/src/main/kotlin/Main.kt
+deleted file mode 100644
+index 9c22548..0000000
+--- a/jcstress-wrapper/src/main/kotlin/Main.kt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-import org.jetbrains.litmuskt.generateWrapperFile
+-import org.jetbrains.litmuskt.generated.LitmusTestRegistry
+-import kotlin.io.path.ExperimentalPathApi
+-import kotlin.io.path.Path
+-import kotlin.io.path.deleteRecursively
+-import kotlin.io.path.div
+-
+-@OptIn(ExperimentalPathApi::class)
+-fun main() {
+-    var successCnt = 0
+-    val allTests = LitmusTestRegistry.all()
+-    val generatedSrc = jcstressDirectory / "generatedSrc"
+-    runCatching {
+-        generatedSrc.deleteRecursively()
+-    }
+-    for (test in allTests) {
+-        val success = generateWrapperFile(test, generatedSrc)
+-        if (success) successCnt++
+-    }
+-    if (successCnt != allTests.size) {
+-        System.err.println("WARNING: generated wrappers for $successCnt out of ${allTests.size} known tests")
+-    }
+-}
+-
+-// TODO: this is very shaky, only works because all subprojects are on the same level
+-val jcstressDirectory = Path("../jcstress/")
+diff --git a/jcstress-wrapper/src/main/kotlin/org/jetbrains/litmuskt/Codegen.kt b/jcstress-wrapper/src/main/kotlin/org/jetbrains/litmuskt/Codegen.kt
+deleted file mode 100644
+index 79ce4fa..0000000
+--- a/jcstress-wrapper/src/main/kotlin/org/jetbrains/litmuskt/Codegen.kt
++++ /dev/null
+@@ -1,149 +0,0 @@
+-package org.jetbrains.litmuskt
+-
+-import org.jetbrains.litmuskt.autooutcomes.LitmusAutoOutcome
+-import java.nio.file.Path
+-import kotlin.io.path.createParentDirectories
+-import kotlin.io.path.div
+-import kotlin.io.path.writeText
+-import kotlin.reflect.full.allSuperclasses
+-import kotlin.reflect.full.isSubclassOf
+-import kotlin.reflect.full.superclasses
+-
+-fun generateWrapperFile(test: LitmusTest<*>, generatedSrc: Path): Boolean {
+-    val targetFile = run {
+-        val targetFilePackageFolder = test.qualifiedName.split(".").dropLast(2).joinToString("/")
+-        val targetFileClassName = test.javaClassName + ".java"
+-        generatedSrc / "main" / targetFilePackageFolder / targetFileClassName
+-    }
+-    targetFile.createParentDirectories()
+-    val targetCode = try {
+-        generateWrapperCode(test)
+-    } catch (e: Throwable) {
+-        System.err.println("WARNING: could not generate wrapper for ${test.alias} because: ${e.message}")
+-        return false
+-    }
+-    targetFile.writeText(targetCode)
+-    return true
+-}
+-
+-private fun generateWrapperCode(test: LitmusTest<*>): String {
+-    val stateClass = test.stateProducer()::class
+-    require(stateClass.allSuperclasses.contains(LitmusAutoOutcome::class)) {
+-        "to use JCStress, test state must extend some LitmusAutoOutcome (e.g. LitmusIIOutcome)"
+-    }
+-
+-    val autoOutcomeClassList = stateClass.superclasses.filter { it.isSubclassOf(LitmusAutoOutcome::class) }
+-    require(autoOutcomeClassList.size == 1) { "test state should extend exactly one LitmusAutoOutcome" }
+-    val outcomeTypeName = autoOutcomeClassList.first().simpleName!!
+-        .removePrefix("Litmus")
+-        .removeSuffix("Outcome")
+-    val (outcomeVarType, outcomeVarCount) = when (outcomeTypeName) {
+-        "I" -> "Integer" to 1
+-        "II" -> "Integer" to 2
+-        "III" -> "Integer" to 3
+-        "IIII" -> "Integer" to 4
+-        else -> error("unknown AutoOutcome type $outcomeTypeName")
+-    }
+-
+-    val javaTestGetter: String = run {
+-        val (className, testName) = test.alias.split(".")
+-        val getter = "get${testName.replaceFirstChar { it.uppercaseChar() }}()"
+-        "$className.INSTANCE.$getter"
+-    }
+-
+-    val javaArbiterDecl: String = run {
+-        val jcstressResultClassName = outcomeTypeName + "_Result"
+-        """
+-@Arbiter
+-public void a($jcstressResultClassName r) {
+-    List<$outcomeVarType> result = (List<$outcomeVarType>) (Object) ((LitmusAutoOutcome) fA.invoke(state)).toList();
+-    ${List(outcomeVarCount) { "r.r${it + 1} = result.get($it);" }.joinToString("\n    ")}
+-}
+-        """.trim()
+-    }
+-
+-    val jcstressOutcomeDecls: String = run {
+-        val outcomes = test.outcomeSpec.accepted.associateWith { "ACCEPTABLE" } +
+-                test.outcomeSpec.interesting.associateWith { "ACCEPTABLE_INTERESTING" } +
+-                test.outcomeSpec.forbidden.associateWith { "FORBIDDEN" }
+-
+-        // since only AutoOutcome is allowed, the cast is safe
+-        outcomes.map { (o, t) ->
+-            val oId = (o as LitmusAutoOutcome).toList().joinToString(", ")
+-            "@Outcome(id = \"$oId\", expect = $t)"
+-        }.joinToString("\n")
+-    }
+-
+-    val jcstressDefaultOutcomeType = when (test.outcomeSpec.default) {
+-        LitmusOutcomeType.ACCEPTED -> "ACCEPTABLE"
+-        LitmusOutcomeType.FORBIDDEN -> "FORBIDDEN"
+-        LitmusOutcomeType.INTERESTING -> "ACCEPTABLE_INTERESTING"
+-    }
+-
+-    val testParentClassFQN = test.qualifiedName.split(".").dropLast(1).joinToString(".")
+-
+-    return wrapperCode(
+-        test,
+-        jcstressOutcomeDecls,
+-        jcstressDefaultOutcomeType,
+-        javaTestGetter,
+-        javaArbiterDecl,
+-        testParentClassFQN
+-    )
+-}
+-
+-private fun javaThreadFunctionDecl(index: Int) =
+-    "private static final Function1<Object, Unit> fT$index = test.getThreadFunctions().get($index);"
+-
+-private fun javaActorDecl(index: Int) = """
+-    @Actor
+-    public void t$index() {
+-        fT$index.invoke(state);
+-    }
+-    """.trimIndent()
+-
+-fun wrapperCode(
+-    test: LitmusTest<*>,
+-    jcstressOutcomeDecls: String,
+-    jcstressDefaultOutcomeType: String,
+-    javaTestGetter: String,
+-    javaArbiterDecl: String,
+-    testParentClassFQN: String,
+-) = """
+-package ${test.qualifiedName.split(".").dropLast(2).joinToString(".")};
+-
+-import org.jetbrains.litmuskt.*;
+-import org.jetbrains.litmuskt.autooutcomes.*;
+-
+-import $testParentClassFQN;
+-
+-import kotlin.Unit;
+-import kotlin.jvm.functions.Function1;
+-import java.util.List;
+-
+-import org.openjdk.jcstress.annotations.*;
+-import org.openjdk.jcstress.infra.results.*;
+-
+-import static org.openjdk.jcstress.annotations.Expect.*;
+-
+-@JCStressTest
+-@State
+-$jcstressOutcomeDecls
+-@Outcome(expect = $jcstressDefaultOutcomeType)
+-public class ${test.javaClassName} {
+-
+-    private static final LitmusTest<Object> test = (LitmusTest<Object>) $javaTestGetter;
+-    ${List(test.threadCount) { javaThreadFunctionDecl(it) }.joinToString("\n    ")}
+-    private static final Function1<Object, Object> fA = test.getOutcomeFinalizer();
+-
+-    public ${test.javaClassName}() {}
+-
+-    public Object state = test.getStateProducer().invoke();
+-    
+-    ${List(test.threadCount) { javaActorDecl(it).padded(4) }.joinToString("\n\n    ")}
+-    
+-    ${javaArbiterDecl.padded(4)}
+-}
+-""".trimIndent()
+-
+-private fun String.padded(padding: Int) = replace("\n", "\n" + " ".repeat(padding))
+diff --git a/jcstress-wrapper/src/main/kotlin/org/jetbrains/litmuskt/JCStressRunner.kt b/jcstress-wrapper/src/main/kotlin/org/jetbrains/litmuskt/JCStressRunner.kt
+deleted file mode 100644
+index 1c286b2..0000000
+--- a/jcstress-wrapper/src/main/kotlin/org/jetbrains/litmuskt/JCStressRunner.kt
++++ /dev/null
+@@ -1,163 +0,0 @@
+-package org.jetbrains.litmuskt
+-
+-import org.jetbrains.litmuskt.barriers.JvmCyclicBarrier
+-import java.nio.file.Files
+-import java.nio.file.Path
+-import kotlin.io.path.div
+-import kotlin.streams.asSequence
+-
+-/**
+- * Note that this 'runner' is severely different from all others.
+- */
+-class JCStressRunner(
+-    private val jcstressDirectory: Path,
+-    private val jcstressFreeArgs: List<String>,
+-) : LitmusRunner() {
+-
+-    companion object {
+-        val DEFAULT_LITMUSKT_PARAMS = LitmusRunParams(0, 0, null, ::JvmCyclicBarrier)
+-    }
+-
+-    override fun <S : Any> startTest(
+-        test: LitmusTest<S>,
+-        states: Array<S>,
+-        barrierProducer: BarrierProducer,
+-        syncPeriod: Int,
+-        affinityMap: AffinityMap?
+-    ): () -> LitmusResult {
+-        throw NotImplementedError("jcstress runner should not be called with explicit params like this")
+-    }
+-
+-    override fun <S : Any> LitmusRunner.startTestParallel(
+-        test: LitmusTest<S>,
+-        params: LitmusRunParams,
+-        instances: Int
+-    ): List<() -> LitmusResult> {
+-        throw NotImplementedError(
+-            "jcstress runs tests in parallel by default; asking for parallelism explicitly is meaningless"
+-        )
+-    }
+-
+-    internal fun startTests(
+-        tests: List<LitmusTest<*>>,
+-        params: LitmusRunParams
+-    ): () -> List<LitmusResult> {
+-        val mvn = ProcessBuilder("mvn", "install", "verify", "-U")
+-            .directory(jcstressDirectory.toFile())
+-            .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+-            .redirectError(ProcessBuilder.Redirect.INHERIT)
+-            .start()
+-        mvn.waitFor()
+-        if (mvn.exitValue() != 0) {
+-            error("mvn exited with code ${mvn.exitValue()}")
+-        }
+-
+-        val jcsParams = if (params != DEFAULT_LITMUSKT_PARAMS) {
+-            arrayOf("strideSize", "${params.syncPeriod}", "strideCount", "${params.batchSize / params.syncPeriod}")
+-        } else emptyArray()
+-        val jcs = ProcessBuilder(
+-            "java",
+-            "-jar",
+-            "target/jcstress.jar",
+-            *(jcsParams + jcstressFreeArgs),
+-            "-t",
+-            tests.joinToString("|") { "(${it.javaClassName})" },
+-        )
+-            .directory(jcstressDirectory.toFile())
+-            .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+-            .redirectError(ProcessBuilder.Redirect.INHERIT)
+-            .start()
+-
+-        return handle@{
+-            jcs.waitFor()
+-            if (jcs.exitValue() != 0) error("jcstress exited with code ${jcs.exitValue()}")
+-            return@handle tests.map { test -> parseJCStressResults(test) }
+-        }
+-    }
+-
+-    override fun <S : Any> startTest(test: LitmusTest<S>, params: LitmusRunParams): () -> LitmusResult {
+-        val handle = startTests(listOf(test), params)
+-        return { handle().first() }
+-    }
+-
+-    /**
+-     * Parses JCStress HTML output file. Here is the expected structure of the file, using SB as an example:
+-     *
+-     * ...
+-     * <th colspan=3>Observed States</th>    <-- read the number of observed states
+-     * </tr>
+-     * <tr>
+-     * <th colspan=4></th>
+-     * <th nowrap align='center'>0, 1</th>   <-- read the observed states in this order
+-     * <th nowrap align='center'>1, 0</th>
+-     * <th nowrap align='center'>1, 1</th>
+-     * ...
+-     * </td>
+-     * <td align='center' bgColor='green '>OK</td>
+-     * <td align='right' width='33.333333333333336%' bgColor=#00ff00>3</td>   <-- read the number of times observed
+-     * <td align='right' width='33.333333333333336%' bgColor=#00ff00>1</td>
+-     * <td align='right' width='33.333333333333336%' bgColor=#c0c0c0>0</td>
+-     * </tr>    <-- these lines repeat per each configuration, so the results are summed in the end
+-     * ...
+-     */
+-    private fun parseJCStressResults(test: LitmusTest<*>): LitmusResult {
+-        val resultsFile = jcstressDirectory / "results" / "${test.javaFQN}.html"
+-        var lines = Files.lines(resultsFile).asSequence()
+-
+-        val allOutcomes = test.outcomeSpec.all
+-        val outcomeStrings = allOutcomes.associateBy { it.toString().trim('(', ')') }
+-
+-        // get the number of observed outcomes
+-        lines = lines.dropWhile { !it.contains("Observed States") }
+-        val observedOutcomesLine = lines.splitFirst().let { (first, rest) -> lines = rest; first }
+-        val observedSize = Regex("colspan=(\\d+)").find(observedOutcomesLine)!!.groupValues[1].toInt()
+-
+-        // skip to <tr> with outcomes
+-        lines = lines.drop(3)
+-        val linesOutcomes = lines.splitTake(observedSize).let { (first, rest) -> lines = rest; first }
+-        val outcomesOrdered = linesOutcomes.map {
+-            val outcomeString = parseElementData(it)
+-            outcomeStrings[outcomeString] ?: error("unrecognized outcome: $outcomeString")
+-        }.toList()
+-
+-        // lines with "bgColor" and "width" are the only ones with data
+-        val outcomesCounts = lines.filter { it.contains("bgColor") && it.contains("width") }
+-            .map { parseElementData(it).toLong() }
+-            .chunked(observedSize)
+-            .fold(MutableList(observedSize) { 0L }) { acc, counts ->
+-                acc.also { for (i in acc.indices) acc[i] += counts[i] }
+-            } as List<Long>
+-
+-        val results = List(observedSize) { i ->
+-            val outcome = outcomesOrdered[i]
+-            LitmusOutcomeStats(outcome, outcomesCounts[i], test.outcomeSpec.getType(outcome))
+-        }
+-        return results
+-    }
+-
+-    private fun parseElementData(it: String) = it.dropWhile { it != '>' }.dropLastWhile { it != '<' }.trim('>', '<')
+-}
+-
+-// does NOT shadow the common extension function, but can be accessed directly
+-fun JCStressRunner.runTests(
+-    tests: List<LitmusTest<*>>,
+-    params: LitmusRunParams,
+-): List<LitmusResult> = startTests(tests, params).invoke()
+-
+-/**
+- * Split a sequence into two: one with the first [size] elements and one with the rest.
+- */
+-fun <T> Sequence<T>.splitTake(size: Int): Pair<Sequence<T>, Sequence<T>> {
+-    val iter = iterator()
+-    val seq1 = iter.asSequence().take(size)
+-    val seq2 = iter.asSequence()
+-    return seq1 to seq2
+-}
+-
+-/**
+- * Split a sequence into its first element and the sequence of rest.
+- */
+-fun <T> Sequence<T>.splitFirst(): Pair<T, Sequence<T>> {
+-    val iter = iterator()
+-    return iter.next() to iter.asSequence()
+-}
+diff --git a/jcstress/.gitignore b/jcstress/.gitignore
+deleted file mode 100644
+index 1110e26..0000000
+--- a/jcstress/.gitignore
++++ /dev/null
+@@ -1,6 +0,0 @@
+-target/
+-libs/
+-results/
+-*.bin.gz
+-test.iml
+-generatedSrc/
+diff --git a/jcstress/pom.xml b/jcstress/pom.xml
+deleted file mode 100644
+index 820187d..0000000
+--- a/jcstress/pom.xml
++++ /dev/null
+@@ -1,175 +0,0 @@
+-<!--
+-Copyright (c) 2017, Red Hat Inc.
+-All rights reserved.
+-
+-Redistribution and use in source and binary forms, with or without
+-modification, are permitted provided that the following conditions are met:
+-
+- * Redistributions of source code must retain the above copyright notice,
+-   this list of conditions and the following disclaimer.
+-
+- * Redistributions in binary form must reproduce the above copyright
+-   notice, this list of conditions and the following disclaimer in the
+-   documentation and/or other materials provided with the distribution.
+-
+- * Neither the name of Oracle nor the names of its contributors may be used
+-   to endorse or promote products derived from this software without
+-   specific prior written permission.
+-
+-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+-THE POSSIBILITY OF SUCH DAMAGE.
+--->
+-
+-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-    <modelVersion>4.0.0</modelVersion>
+-
+-    <groupId>org.sample</groupId>
+-    <artifactId>test</artifactId>
+-    <version>1.0</version>
+-    <packaging>jar</packaging>
+-
+-    <name>JCStress test sample</name>
+-
+-    <!--
+-       This is the demo/sample template build script for building concurrency tests with JCStress.
+-       Edit as needed.
+-    -->
+-
+-    <prerequisites>
+-        <maven>3.2</maven>
+-    </prerequisites>
+-
+-    <repositories>
+-        <repository>
+-            <id>libs</id>
+-            <name>libs</name>
+-            <releases>
+-                <enabled>true</enabled>
+-                <checksumPolicy>ignore</checksumPolicy>
+-            </releases>
+-            <snapshots>
+-                <enabled>false</enabled>
+-            </snapshots>
+-            <url>file://${basedir}/libs</url>
+-        </repository>
+-    </repositories>
+-
+-    <dependencies>
+-        <dependency>
+-            <groupId>org.openjdk.jcstress</groupId>
+-            <artifactId>jcstress-core</artifactId>
+-            <version>${jcstress.version}</version>
+-        </dependency>
+-        <dependency>
+-            <groupId>org.jetbrains.kotlin</groupId>
+-            <artifactId>kotlin-stdlib</artifactId>
+-            <version>2.0.0</version>
+-        </dependency>
+-        <dependency>
+-            <groupId>org.jetbrains.litmuskt</groupId>
+-            <artifactId>litmusktJvm</artifactId>
+-            <version>1.0</version>
+-        </dependency>
+-        <dependency>
+-            <groupId>org.jetbrains.litmuskt</groupId>
+-            <artifactId>litmusktJvmTestsuite</artifactId>
+-            <version>1.0</version>
+-        </dependency>
+-    </dependencies>
+-
+-    <properties>
+-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-
+-        <!--
+-            jcstress version to use with this project.
+-          -->
+-        <jcstress.version>0.16</jcstress.version>
+-
+-        <!--
+-            Java source/target to use for compilation.
+-          -->
+-        <javac.target>17</javac.target>
+-
+-        <!--
+-            Name of the test Uber-JAR to generate.
+-          -->
+-        <uberjar.name>jcstress</uberjar.name>
+-    </properties>
+-
+-    <build>
+-        <plugins>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-compiler-plugin</artifactId>
+-                <version>3.8.0</version>
+-                <configuration>
+-                    <compilerVersion>${javac.target}</compilerVersion>
+-                    <source>${javac.target}</source>
+-                    <target>${javac.target}</target>
+-                </configuration>
+-            </plugin>
+-
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-shade-plugin</artifactId>
+-                <version>3.2.1</version>
+-                <executions>
+-                    <execution>
+-                        <id>main</id>
+-                        <phase>package</phase>
+-                        <goals>
+-                            <goal>shade</goal>
+-                        </goals>
+-                        <configuration>
+-                            <finalName>${uberjar.name}</finalName>
+-                            <transformers>
+-                                <transformer
+-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+-                                    <mainClass>org.openjdk.jcstress.Main</mainClass>
+-                                </transformer>
+-                                <transformer
+-                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+-                                    <resource>META-INF/TestList</resource>
+-                                </transformer>
+-                            </transformers>
+-                            <artifactSet>
+-                                <includes>
+-                                    <include>*</include>
+-                                </includes>
+-                            </artifactSet>
+-                        </configuration>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-            <plugin>
+-                <groupId>org.codehaus.mojo</groupId>
+-                <artifactId>build-helper-maven-plugin</artifactId>
+-                <version>3.0.0</version>
+-                <executions>
+-                    <execution>
+-                        <phase>generate-sources</phase>
+-                        <goals>
+-                            <goal>add-source</goal>
+-                        </goals>
+-                        <configuration>
+-                            <sources>
+-                                <source>generatedSrc/main/</source>
+-                            </sources>
+-                        </configuration>
+-                    </execution>
+-                </executions>
+-            </plugin>
+-        </plugins>
+-    </build>
+-
+-</project>
+diff --git a/settings.gradle.kts b/settings.gradle.kts
+deleted file mode 100644
+index ef43551..0000000
+--- a/settings.gradle.kts
++++ /dev/null
+@@ -1,7 +0,0 @@
+-rootProject.name = "litmuskt"
+-
+-include(":core")
+-include(":codegen")
+-include(":jcstress-wrapper")
+-include(":cli")
+-include(":testsuite")
+diff --git a/testsuite/build.gradle.kts b/testsuite/build.gradle.kts
+index 88f8ddc..17df2fb 100644
+--- a/testsuite/build.gradle.kts
++++ b/testsuite/build.gradle.kts
+@@ -1,7 +1,5 @@
+ plugins {
+     kotlin("multiplatform")
+-    id("com.google.devtools.ksp") version "2.0.0-1.0.23"
+-    `java-library`
+ }
+ 
+ kotlin {
+@@ -18,18 +16,8 @@ kotlin {
+     sourceSets {
+         commonMain {
+             dependencies {
+-                implementation(project(":core"))
++                implementation(project(":litmuskt:core"))
+             }
+         }
+     }
+ }
+-
+-// ======== ksp ========
+-
+-val kspTasks = setOf("kspJvm", "kspLinuxX64", "kspMacosX64", "kspMacosArm64", "kspMingwX64")
+-
+-dependencies {
+-    for (kspTask in kspTasks) {
+-        add(kspTask, project(":codegen"))
+-    }
+-}
+diff --git a/testsuite/src/commonMain/kotlin/org/jetbrains/litmuskt/LitmusTestExtensions.kt b/testsuite/src/commonMain/kotlin/org/jetbrains/litmuskt/LitmusTestExtensions.kt
+deleted file mode 100644
+index 0e78d6e..0000000
+--- a/testsuite/src/commonMain/kotlin/org/jetbrains/litmuskt/LitmusTestExtensions.kt
++++ /dev/null
+@@ -1,14 +0,0 @@
+-package org.jetbrains.litmuskt
+-
+-import org.jetbrains.litmuskt.generated.LitmusTestRegistry
+-
+-val LitmusTest<*>.alias get() = LitmusTestRegistry.getAlias(this)
+-val LitmusTest<*>.qualifiedName get() = LitmusTestRegistry.getFQN(this)
+-
+-val LitmusTest<*>.javaClassName get() = alias.replace('.', '_')
+-val LitmusTest<*>.javaFQN
+-    get(): String {
+-        val kotlinQN = qualifiedName
+-        val lastDotIdx = kotlinQN.indexOfLast { it == '.' }
+-        return kotlinQN.replaceRange(lastDotIdx..lastDotIdx, "_")
+-    }
+diff --git a/testsuite/src/commonMain/kotlin/org/jetbrains/litmuskt/generated/LitmusTestRegistry.kt b/testsuite/src/commonMain/kotlin/org/jetbrains/litmuskt/generated/LitmusTestRegistry.kt
+deleted file mode 100644
+index 79e7202..0000000
+--- a/testsuite/src/commonMain/kotlin/org/jetbrains/litmuskt/generated/LitmusTestRegistry.kt
++++ /dev/null
+@@ -1,10 +0,0 @@
+-package org.jetbrains.litmuskt.generated
+-
+-import org.jetbrains.litmuskt.LitmusTest
+-
+-expect object LitmusTestRegistry {
+-    operator fun get(regex: Regex): List<LitmusTest<*>>
+-    fun all(): List<LitmusTest<*>>
+-    fun getAlias(test: LitmusTest<*>): String
+-    fun getFQN(test: LitmusTest<*>): String
+-}
+\ No newline at end of file
+diff --git a/testsuite/src/nativeMain/kotlin/org/jetbrains/litmuskt/tests/WordTearingNative.kt b/testsuite/src/nativeMain/kotlin/org/jetbrains/litmuskt/tests/WordTearingNative.kt
+deleted file mode 100644
+index cc4c926..0000000
+--- a/testsuite/src/nativeMain/kotlin/org/jetbrains/litmuskt/tests/WordTearingNative.kt
++++ /dev/null
+@@ -1,35 +0,0 @@
+-package org.jetbrains.litmuskt.tests
+-
+-import org.jetbrains.litmuskt.LitmusTestContainer
+-import org.jetbrains.litmuskt.autooutcomes.LitmusZZOutcome
+-import org.jetbrains.litmuskt.autooutcomes.accept
+-import org.jetbrains.litmuskt.autooutcomes.interesting
+-import org.jetbrains.litmuskt.litmusTest
+-
+-@LitmusTestContainer
+-@OptIn(ObsoleteNativeApi::class)
+-object WordTearingNative {
+-
+-    val Bitset = litmusTest({
+-        object : LitmusZZOutcome() {
+-            val bs = BitSet()
+-        }
+-    }) {
+-        thread {
+-            bs.set(0)
+-        }
+-        thread {
+-            bs.set(1)
+-        }
+-        outcome {
+-            r1 = bs[0]
+-            r2 = bs[1]
+-            this
+-        }
+-        spec {
+-            accept(true, true)
+-            interesting(true, false)
+-            interesting(false, true)
+-        }
+-    }
+-}

@@ -20,14 +20,15 @@ In `./native/litmuskt`:
 
 1. `git clone https://github.com/JetBrains-Research/litmuskt new-version -b development`
 1. Fix the new version files:
-    * Only keep `:core` and `:testsuite` subprojects
+    * Only keep `:core` and `:testsuite` subprojects. Remove all other subprojects and build files
     * In `:testsuite` build file, add the `:litmuskt` prefix to `:core`, remove all KSP 
-    * In `:core` build file, remove `jvmToolchain` references
     * In both build files, remove `java-library` plugin
-1. Swap the old `:core` and `:testsuite` subprojects with the new ones
 1. Remove `testsuite/src/.../generated/LitmusTestRegistry.kt` and `.../LitmusTestExtensions.kt`
-1. Remove `WordTearingNative.kt` test (or find a way to make it compile, with `Bitset` being obsolete and `@ObsoleveNativeApi` being internal)
+1. Remove `testsuite/.../WordTearingNative.kt` test (or find a way to make it compile, with `Bitset` being obsolete and `@ObsoleveNativeApi` being internal)
 1. Make sure the wrappers are still correct, in case there were API-breaking changes
 1. Keep the `core/nativeMain/src/.../RepoUtils.kt` file in the new version
+1. Swap the old `:core` and `:testsuite` subprojects with the new ones
 
 And that should be it. If something fails, read the generated HTML, it is the only place with detailed error message and stacktrace.
+
+**UPD**: all the changes above can be done by applying the `repo-integration.patch` to the freshly cloned version of LitmusKt. Moreover, you can use the `update.sh` script to clone LitmusKt, apply the patch, and overwrite the current `:core` and `:testsuite`. **Be careful** as it will overwrite any tests you might have manually added to `:testsuite`!
