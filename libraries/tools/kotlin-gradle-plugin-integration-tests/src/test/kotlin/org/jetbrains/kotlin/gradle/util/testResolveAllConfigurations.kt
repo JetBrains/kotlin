@@ -17,32 +17,33 @@ private val unresolvedConfigurationRegex = "${Regex.escape(UNRESOLVED_MARKER)}(.
 
 fun TestProject.testResolveAllConfigurations(
     subproject: String? = null,
-    skipSetup: Boolean = false,
-    excludeConfigurations: List<String> = listOf(),
-    options: BuildOptions = buildOptions,
     withUnresolvedConfigurationNames: TestProject.(unresolvedConfigurations: List<String>, buildResult: BuildResult) -> Unit = { conf, _ ->
         assertTrue("Unresolved configurations: $conf") { conf.isEmpty() }
     },
 ) {
-    if (!skipSetup) {
-        val targetProject = subproject?.let { subProject(it) } ?: this
-        when {
-            Files.exists(targetProject.buildGradle) -> targetProject.buildGradle
-                .append("\n${generateResolveAllConfigurationsTask(excludeConfigurations)}")
-            Files.exists(targetProject.buildGradleKts) -> targetProject.buildGradleKts
-                .append("\n${generateResolveAllConfigurationsTaskKts(excludeConfigurations)}")
-            else -> error("Build script does not exist under $projectPath")
-        }
+    val targetProject = subproject?.let { subProject(it) } ?: this
+    when {
+        Files.exists(targetProject.buildGradle) -> targetProject.buildGradle
+            .append("\n${generateResolveAllConfigurationsTask()}")
+        Files.exists(targetProject.buildGradleKts) -> targetProject.buildGradleKts
+            .append("\n${generateResolveAllConfigurationsTaskKts()}")
+        else -> error("Build script does not exist under $projectPath")
     }
 
-    build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, buildOptions = options) {
+    build(
+        RESOLVE_ALL_CONFIGURATIONS_TASK_NAME,
+        buildOptions = buildOptions.copy(
+            // The configuration resolution happens during execution, so we have to disable CC
+            configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+        )
+    ) {
         assertTasksExecuted(":${subproject?.let { "$it:" }.orEmpty()}$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME")
         val unresolvedConfigurations = unresolvedConfigurationRegex.findAll(output).map { it.groupValues[1] }.toList()
         withUnresolvedConfigurationNames(unresolvedConfigurations, this)
     }
 }
 
-private fun generateResolveAllConfigurationsTask(excludes: List<String>) =
+private fun generateResolveAllConfigurationsTask() =
     """
         tasks.register("$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME") {
             if ("commonizeNativeDistribution" in rootProject.tasks.names) {
@@ -50,7 +51,7 @@ private fun generateResolveAllConfigurationsTask(excludes: List<String>) =
             }
             doFirst {
                 def excludeConfigs = ["default", "archives"]
-                ${computeExcludeConfigurations(excludes)}
+                ${computeExcludeConfigurations()}
 
                 project.configurations
                     .matching { it.canBeResolved }
@@ -74,7 +75,7 @@ private fun generateResolveAllConfigurationsTask(excludes: List<String>) =
         }
     """.trimIndent()
 
-private fun generateResolveAllConfigurationsTaskKts(excludes: List<String>) =
+private fun generateResolveAllConfigurationsTaskKts() =
     """
         tasks.register("$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME") {
             if ("commonizeNativeDistribution" in rootProject.tasks.names) {
@@ -82,7 +83,6 @@ private fun generateResolveAllConfigurationsTaskKts(excludes: List<String>) =
             }
             doFirst {
                 val excludeConfigs = mutableListOf("default", "archives")
-                ${computeExcludeConfigurations(excludes)}
 
                 project.configurations
                     .filter { it.isCanBeResolved }
@@ -108,7 +108,7 @@ private fun generateResolveAllConfigurationsTaskKts(excludes: List<String>) =
         }
     """.trimIndent()
 
-private fun computeExcludeConfigurations(excludes: List<String>): String {
+private fun computeExcludeConfigurations(): String {
     val excludingConfigurations = listOf("compile", "runtime", "compileOnly", "runtimeOnly")
     return """
         kotlin.sourceSets.forEach { sourceSet ->
@@ -120,10 +120,6 @@ private fun computeExcludeConfigurations(excludes: List<String>): String {
         "${excludingConfigurations.joinToString()}".split(", ").toList().forEach {
             excludeConfigs.add(it)
             excludeConfigs.add("test" + it.capitalize())
-        }
-
-        "${excludes.joinToString()}".split(", ").toList().forEach {
-            excludeConfigs.add(it)
         }
     """.trimIndent()
 }
