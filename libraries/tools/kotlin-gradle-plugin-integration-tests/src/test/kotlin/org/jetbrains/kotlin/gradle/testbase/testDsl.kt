@@ -83,7 +83,7 @@ fun KGPBaseTest.project(
             configurationCache = when (buildOptions.configurationCache) {
                 BuildOptions.ConfigurationCacheValue.DISABLED_BY_DEFAULT -> if (
                     shouldTestWithConfigurationCacheByDefault(
-                        host = HostManager.host,
+//                        host = HostManager.host,
                         gradleVersion = gradleVersion
                     )
                 ) {
@@ -978,10 +978,10 @@ sealed interface DependencyManagement {
 fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion) = workingDir.resolve(gradleVersion.version).resolve("repo")
 
 private fun shouldTestWithConfigurationCacheByDefault(
-    host: KonanTarget,
+//    host: KonanTarget,
     gradleVersion: GradleVersion,
-): Boolean =
-    // For now test with CC by default only on macOS
-    host.family.isAppleFamily
-        // Test with CC since Gradle 8.0 and higher because since 8.0 Gradle deserializes from CC on the execution
-        && gradleVersion >= GradleVersion.version("8.0")
+): Boolean = gradleVersion >= GradleVersion.version("8.0")
+//    // For now test with CC by default only on macOS
+//    host.family.isAppleFamily
+//        // Test with CC since Gradle 8.0 and higher because since 8.0 Gradle deserializes from CC on the execution
+//        && gradleVersion >= GradleVersion.version("8.0")
