@@ -53,6 +53,6 @@ FILE: explicitBackingFieldType.kt
             public get(): R|kotlin/Int| {
                 ^ this@R|/A|.F|/A.setterNeeded|.R|kotlin/String.length|
             }
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }

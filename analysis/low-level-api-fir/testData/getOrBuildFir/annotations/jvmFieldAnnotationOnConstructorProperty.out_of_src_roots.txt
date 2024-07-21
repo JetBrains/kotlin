@@ -14,7 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] jvmFieldAnnotationOnConstructorProperty.kt
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|kotlin/Boolean| = R|<local>/addCommaWarning|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: R|kotlin/Boolean|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Boolean|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {

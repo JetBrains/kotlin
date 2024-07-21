@@ -22,35 +22,35 @@ public open [ResolvedTo(BODY_RESOLVE)] fun anotherFunction([ResolvedTo(BODY_RESO
 
 @R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /IntermediateClass.propertyWithAnnotations, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.propertyWithAnnotations] var propertyWithAnnotations: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|
     @PROPERTY_GETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|
-    @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Unit|
 
 @R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/IntermediateClass.propertyWithAnnotations] var propertyWithAnnotations: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|
     @PROPERTY_GETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|
-    @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Unit|
 
 @R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/BaseClass.propertyWithAnnotations] var propertyWithAnnotations: R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME|
     @PROPERTY_GETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IntermediateClass] get(): R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME|
-    @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IntermediateClass] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IntermediateClass] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME|): R|kotlin/Unit|
 
 @R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public abstract [ResolvedTo(BODY_RESOLVE)] var propertyWithAnnotations: R|SCHEME|
     @PROPERTY_GETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseClass] get(): R|SCHEME|
-    @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseClass] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) value: R|SCHEME|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseClass] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](str = <strcat>(String(property ), R|/constant|)) <set-?>: R|SCHEME|): R|kotlin/Unit|
 
 public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /IntermediateClass.property, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.property] var property: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Unit|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Unit|
 
 public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/IntermediateClass.property] var property: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Unit|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(str = <strcat>(String(class ), R|/constant|))  @R|Anno|(str = <strcat>(String(super ), R|/constant|))  kotlin/Int|): R|kotlin/Unit|
 
 public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/BaseClass.property] var property: R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME|
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IntermediateClass] get(): R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME|
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IntermediateClass] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME|): R|kotlin/Unit|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IntermediateClass] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(str = <strcat>(String(super ), R|/constant|))  SCHEME|): R|kotlin/Unit|
 
 public abstract [ResolvedTo(BODY_RESOLVE)] var property: R|SCHEME|
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseClass] get(): R|SCHEME|
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseClass] set([ResolvedTo(BODY_RESOLVE)] value: R|SCHEME|): R|kotlin/Unit|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseClass] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|SCHEME|): R|kotlin/Unit|
 
 public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 

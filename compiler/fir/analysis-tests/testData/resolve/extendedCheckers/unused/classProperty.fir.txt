@@ -6,7 +6,7 @@ FILE: classProperty.kt
 
         public final var v: R|kotlin/String?| = Null(null)
             public get(): R|kotlin/String?|
-            public set(value: R|kotlin/String?|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String?|): R|kotlin/Unit|
 
     }
     public final fun foo(): R|kotlin/String?| {

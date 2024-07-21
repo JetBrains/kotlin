@@ -32,7 +32,7 @@ FILE: RedundantModalityModifierChecker.kt
     public abstract interface B : R|kotlin/Any| {
         public abstract var bar: R|kotlin/Unit|
             public get(): R|kotlin/Unit|
-            public set(value: R|kotlin/Unit|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Unit|): R|kotlin/Unit|
 
         public abstract fun foo(): R|kotlin/Unit|
 

@@ -126,7 +126,7 @@ KaKotlinPropertySymbol:
       isVararg: false
       location: LOCAL
       modality: FINAL
-      name: value
+      name: <set-?>
       origin: LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -164,7 +164,7 @@ KaKotlinPropertySymbol:
         isVararg: false
         location: LOCAL
         modality: FINAL
-        name: value
+        name: <set-?>
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:

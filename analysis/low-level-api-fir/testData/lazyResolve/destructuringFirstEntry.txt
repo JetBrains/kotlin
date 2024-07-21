@@ -6,11 +6,11 @@ FILE: [ResolvedTo(RAW_FIR)] destructuringFirstEntry.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
@@ -50,11 +50,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
@@ -94,11 +94,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
@@ -138,11 +138,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
@@ -182,11 +182,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
@@ -226,11 +226,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
@@ -270,11 +270,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
@@ -314,11 +314,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
@@ -358,11 +358,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         public final? data [ResolvedTo(RAW_FIR)] class MyPair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyPair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyPair.b] b: Int): R|MyPair| {
@@ -402,11 +402,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var b: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
@@ -446,11 +446,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var b: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
@@ -490,11 +490,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var b: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
@@ -534,11 +534,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var b: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final data [ResolvedTo(CONTRACTS)] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {
@@ -578,11 +578,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringFirstEntry.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final [ResolvedTo(BODY_RESOLVE)] var b: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final data [ResolvedTo(BODY_RESOLVE)] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyPair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyPair.i] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyPair.b] b: R|kotlin/Int|): R|MyPair| {

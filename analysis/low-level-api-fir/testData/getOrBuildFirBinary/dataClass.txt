@@ -51,7 +51,7 @@ public final data [ResolvedTo(BODY_RESOLVE)] class MyDependency : R|kotlin/Any| 
 
     public final [ResolvedTo(BODY_RESOLVE)] var d: R|one/D|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|one/D|
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|one/D|): R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|one/D|): R|kotlin/Unit|
 
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDependency] constructor([ResolvedTo(BODY_RESOLVE)] b: R|one/B|, [ResolvedTo(BODY_RESOLVE)] d: R|one/D|): R|one/MyDependency|
 

@@ -24,19 +24,19 @@ public abstract override [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=s
 
 public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
     public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): R|T|
-    public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] value: R|T|): R|kotlin/Unit|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] <set-?>: R|T|): R|kotlin/Unit|
 
 public abstract [ResolvedTo(STATUS)] var bar: R|T|
     public [ResolvedTo(STATUS)] [ContainingClassKey=C] get(): R|T|
-    public [ResolvedTo(STATUS)] [ContainingClassKey=C] set([ResolvedTo(STATUS)] value: R|T|): R|kotlin/Unit|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=C] set([ResolvedTo(STATUS)] <set-?>: R|T|): R|kotlin/Unit|
 
 @R|second/Anno|[Types](LAZY_EXPRESSION) public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/D.bar] var bar: R|T|
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): R|T|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] value: R|T|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] <set-?>: R|T|): R|kotlin/Unit|
 
 @R|second/Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(STATUS)] var bar: R|F|
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=D] get(): R|F|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=D] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|F|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=D] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) <set-?>: R|F|): R|kotlin/Unit|
 
 public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 

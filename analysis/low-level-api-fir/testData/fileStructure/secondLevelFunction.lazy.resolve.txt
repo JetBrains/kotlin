@@ -5,7 +5,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondLevelFunction.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         [ResolvedTo(BODY_RESOLVE)] init {
             when () {

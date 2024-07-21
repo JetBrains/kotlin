@@ -52,6 +52,6 @@ FILE: repeatedModifier.kt
 
         protected final var double: R|kotlin/Double| = this@R|/E|.R|/E.int|.R|kotlin/Int.plus|(Double(8.0))
             protected get(): R|kotlin/Double|
-            protected set(value: R|kotlin/Double|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/Double|): R|kotlin/Unit|
 
     }

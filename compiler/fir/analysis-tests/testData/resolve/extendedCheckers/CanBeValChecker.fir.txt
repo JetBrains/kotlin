@@ -10,7 +10,7 @@ FILE: CanBeValChecker.kt
 
         private final var value: R|T| = R|<local>/value|
             private get(): R|T|
-            private set(value: R|T|): R|kotlin/Unit|
+            private set(<set-?>: R|T|): R|kotlin/Unit|
 
         public final operator fun getValue(thisRef: R|kotlin/Nothing?|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
             ^getValue this@R|/LocalFreezableVar|.R|/LocalFreezableVar.value|
@@ -234,7 +234,7 @@ FILE: CanBeValChecker.kt
     }
     public final var global: R|kotlin/Int| = Int(1)
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
     public final class C : R|kotlin/Any| {
         public constructor(): R|C| {
             super<R|kotlin/Any|>()
@@ -242,7 +242,7 @@ FILE: CanBeValChecker.kt
 
         public final var field: R|kotlin/Int| = Int(2)
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final fun foo(): R|kotlin/Unit| {
             R|kotlin/io/print|(this@R|/C|.R|/C.field|)

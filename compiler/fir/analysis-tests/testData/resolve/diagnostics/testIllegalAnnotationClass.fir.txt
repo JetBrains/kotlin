@@ -13,7 +13,7 @@ FILE: KotlinImporterComponent.kt
 
             public final var directories: R|kotlin/collections/List<kotlin/String>| = R|<local>/directories|
                 public get(): R|kotlin/collections/List<kotlin/String>|
-                public set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+                public set(<set-?>: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
 
         }
 

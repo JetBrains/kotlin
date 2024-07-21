@@ -98,7 +98,7 @@ FILE: localAnnotations.kt
 
                             @Prop() public? final? var localProperty: @PropType() String = IntegerLiteral(1)
                                 @PROPERTY_GETTER:Getter() public? [ContainingClassKey=Local] get(): @PropType() String
-                                @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() value: @PropType() String): R|kotlin/Unit|
+                                @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() <set-?>: @PropType() String): R|kotlin/Unit|
 
                         }
 
@@ -106,7 +106,7 @@ FILE: localAnnotations.kt
 
                     @Prop() public? final? var localProperty: @PropType() String = IntegerLiteral(1)
                         @PROPERTY_GETTER:Getter() public? [ContainingClassKey=Local] get(): @PropType() String
-                        @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() value: @PropType() String): R|kotlin/Unit|
+                        @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() <set-?>: @PropType() String): R|kotlin/Unit|
 
                 }
 
@@ -183,7 +183,7 @@ FILE: localAnnotations.kt
 
                                 @Prop() public? final? var localProperty: @PropType() String = IntegerLiteral(1)
                                     @PROPERTY_GETTER:Getter() public? [ContainingClassKey=Local] get(): @PropType() String
-                                    @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() value: @PropType() String): R|kotlin/Unit|
+                                    @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() <set-?>: @PropType() String): R|kotlin/Unit|
 
                             }
 
@@ -195,7 +195,7 @@ FILE: localAnnotations.kt
 
             @Prop() public? final? var localProperty: @PropType() String = IntegerLiteral(1)
                 @PROPERTY_GETTER:Getter() public? [ContainingClassKey=Local] get(): @PropType() String
-                @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() value: @PropType() String): R|kotlin/Unit|
+                @PROPERTY_SETTER:Setter() public? [ContainingClassKey=Local] set(@SETTER_PARAMETER:Parameter() <set-?>: @PropType() String): R|kotlin/Unit|
 
         }
 

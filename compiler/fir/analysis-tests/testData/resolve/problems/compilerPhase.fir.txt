@@ -4,7 +4,7 @@ FILE: compilerPhase.kt
     public abstract interface PhaserState<Data> : R|kotlin/Any| {
         public abstract var depth: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public abstract interface PhaseConfig : R|kotlin/Any| {

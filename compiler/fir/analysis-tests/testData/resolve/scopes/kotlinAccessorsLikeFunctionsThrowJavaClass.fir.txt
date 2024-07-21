@@ -14,7 +14,7 @@ FILE: A.kt
 
         protected final var scope: R|kotlin/String?| = Null(null)
             protected get(): R|kotlin/String?|
-            protected set(value: R|kotlin/String?|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String?|): R|kotlin/Unit|
 
     }
 FILE: main.kt

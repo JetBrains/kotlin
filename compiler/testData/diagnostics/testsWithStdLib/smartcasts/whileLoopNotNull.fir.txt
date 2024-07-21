@@ -7,7 +7,7 @@ FILE: whileLoopNotNull.fir.kt
     }
     public final var result: R|kotlin/Boolean| = Boolean(false)
         public get(): R|kotlin/Boolean|
-        public set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/Boolean|): R|kotlin/Unit|
     public final fun b(): R|kotlin/Boolean| {
         R|/result| = R|/result|.R|kotlin/Boolean.not|()
         ^b R|/result|

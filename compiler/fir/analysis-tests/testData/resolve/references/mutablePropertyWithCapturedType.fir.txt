@@ -12,7 +12,7 @@ FILE: mutablePropertyWithCapturedType.kt
 
         public final var mutableProperty: R|Generic<T>| = R|/Generic.Generic|<R|T|>()
             public get(): R|Generic<T>|
-            public set(value: R|Generic<T>|): R|kotlin/Unit|
+            public set(<set-?>: R|Generic<T>|): R|kotlin/Unit|
 
     }
     public final fun test(): R|kotlin/Unit| {

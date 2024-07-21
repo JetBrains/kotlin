@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 

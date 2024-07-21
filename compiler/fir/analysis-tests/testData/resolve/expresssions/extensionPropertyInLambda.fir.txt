@@ -6,7 +6,7 @@ FILE: extensionPropertyInLambda.kt
 
         public final var x: R|T| = R|<local>/x|
             public get(): R|T|
-            public set(value: R|T|): R|kotlin/Unit|
+            public set(<set-?>: R|T|): R|kotlin/Unit|
 
     }
     public final var <T> R|C<T>|.y: R|T|

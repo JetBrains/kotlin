@@ -6,7 +6,7 @@ FILE: C.kt
 
         private final var name: R|kotlin/String| = R|<local>/name|
             private get(): R|kotlin/String|
-            private set(value: R|kotlin/String|): R|kotlin/Unit|
+            private set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
         public open override fun getName(): R|kotlin/String| {
             ^getName this@R|/C|.R|/C.name|

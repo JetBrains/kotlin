@@ -6,7 +6,7 @@ FILE: RedundantVisibilityDueToOverride.kt
 
         public open var attribute: R|kotlin/String| = String(a)
             public get(): R|kotlin/String|
-            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final class C1 : R|A| {
@@ -16,7 +16,7 @@ FILE: RedundantVisibilityDueToOverride.kt
 
         public open override var attribute: R|kotlin/String| = this@R|/C1|.super<R|A|>.R|/A.attribute|
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public abstract class B2 : R|A| {
@@ -26,7 +26,7 @@ FILE: RedundantVisibilityDueToOverride.kt
 
         public open override var attribute: R|kotlin/String| = String(b)
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final class C2 : R|B2| {
@@ -36,6 +36,6 @@ FILE: RedundantVisibilityDueToOverride.kt
 
         public open override var attribute: R|kotlin/String| = this@R|/C2|.super<R|B2|>.R|/B2.attribute|
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }

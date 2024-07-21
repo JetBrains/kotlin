@@ -18,11 +18,11 @@ FILE: openInInterface.kt
 
         public abstract var xx: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public open var yy: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public open var zz: R|kotlin/Int|
             public get(): R|kotlin/Int|

@@ -2,7 +2,7 @@ FILE: receiverWithCapturedType.kt
     public abstract interface ResolvedCall<D : R|CallableDescriptor|> : R|kotlin/Any| {
         public abstract var d: R|D|
             public get(): R|D|
-            public set(value: R|D|): R|kotlin/Unit|
+            public set(<set-?>: R|D|): R|kotlin/Unit|
 
     }
     public abstract interface CallableDescriptor : R|kotlin/Any| {

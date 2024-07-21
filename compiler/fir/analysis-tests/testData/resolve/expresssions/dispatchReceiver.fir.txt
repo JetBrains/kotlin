@@ -10,7 +10,7 @@ FILE: dispatchReceiver.kt
 
         public final lateinit var delegate: R|Base|
             public get(): R|Base|
-            public set(value: R|Base|): R|kotlin/Unit|
+            public set(<set-?>: R|Base|): R|kotlin/Unit|
 
         public final fun check(): R|kotlin/Unit| {
             ^check this@R|/My|.R|/My.delegate|.R|/Base.check|()

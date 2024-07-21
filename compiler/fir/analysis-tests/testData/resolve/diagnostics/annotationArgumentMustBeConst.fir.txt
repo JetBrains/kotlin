@@ -28,10 +28,10 @@ FILE: annotationArgumentMustBeConst.kt
     }
     public final var foo: R|kotlin/String| = String(a)
         public get(): R|kotlin/String|
-        public set(value: R|kotlin/String|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
     public final var bar: R|kotlin/Int| = Int(1)
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
     public final fun baz(): R|kotlin/Int| {
         ^baz Int(2)
     }

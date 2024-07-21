@@ -20,6 +20,6 @@ FILE: [ResolvedTo(IMPORTS)] field.kt
 
         field:@FIELD:R|Ann|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var x: R|kotlin/Int| = R|<local>/x|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }

@@ -10,7 +10,7 @@ FILE: instanceAccessBeforeSuperCall.kt
 
         public final var keker: R|kotlin/String| = String(test)
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final class B : R|kotlin/Any| {
@@ -36,7 +36,7 @@ FILE: instanceAccessBeforeSuperCall.kt
     public final class D : R|kotlin/Any| {
         public final var a: R|kotlin/Int| = Int(20)
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public constructor(): R|D| {
             super<R|kotlin/Any|>()
@@ -72,7 +72,7 @@ FILE: instanceAccessBeforeSuperCall.kt
 
         public final var a: R|kotlin/Int| = R|<local>/a|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public constructor(x: R|kotlin/Int|): R|F| {
             this<R|F|>(R|<local>/x|, R|<local>/x|, fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {

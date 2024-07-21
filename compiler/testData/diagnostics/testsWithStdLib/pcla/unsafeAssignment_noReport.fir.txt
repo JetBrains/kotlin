@@ -9,7 +9,7 @@ FILE: unsafeAssignment_noReport.fir.kt
 
         public final var a: R|T?| = Null(null)
             public get(): R|T?|
-            public set(value: R|T?|): R|kotlin/Unit|
+            public set(<set-?>: R|T?|): R|kotlin/Unit|
 
     }
     public final fun <T : R|kotlin/Any|> myBuilder(block: R|Foo<T>.() -> kotlin/Unit|): R|Foo<T>| {

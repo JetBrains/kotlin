@@ -28,6 +28,6 @@ FILE: annotationArgumentMustBeEnumConst.kt
         public get(): R|TestEnum|
     public final var bar: R|TestEnum| = Q|TestEnum|.R|/TestEnum.Foo|
         public get(): R|TestEnum|
-        public set(value: R|TestEnum|): R|kotlin/Unit|
+        public set(<set-?>: R|TestEnum|): R|kotlin/Unit|
     @R|Ann|(a = vararg(R|/foo|, R|/bar|)) public final fun test(): R|kotlin/Unit| {
     }

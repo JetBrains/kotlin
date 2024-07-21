@@ -34,11 +34,11 @@ FILE: [ResolvedTo(RAW_FIR)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -79,11 +79,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -124,11 +124,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -169,11 +169,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -214,11 +214,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -259,11 +259,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -304,11 +304,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -349,11 +349,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -403,11 +403,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -457,11 +457,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -511,11 +511,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -565,11 +565,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] var kind: Kind<T>
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): Kind<T>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: Kind<T>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: Kind<T>): R|kotlin/Unit|
 
             public? abstract [ResolvedTo(RAW_FIR)] var value: T
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] get(): T
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] value: T): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=IrConst] set([ResolvedTo(RAW_FIR)] <set-?>: T): R|kotlin/Unit|
 
         }
 
@@ -621,11 +621,11 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
             public abstract [ResolvedTo(CONTRACTS)] var kind: R|Kind<T>|
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] get(): R|Kind<T>|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] set([ResolvedTo(CONTRACTS)] value: R|Kind<T>|): R|kotlin/Unit|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] set([ResolvedTo(CONTRACTS)] <set-?>: R|Kind<T>|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(CONTRACTS)] var value: R|T|
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] get(): R|T|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] set([ResolvedTo(CONTRACTS)] value: R|T|): R|kotlin/Unit|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=IrConst] set([ResolvedTo(CONTRACTS)] <set-?>: R|T|): R|kotlin/Unit|
 
         }
 
@@ -679,11 +679,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fakeOverrideScript.kts
 
             public abstract [ResolvedTo(BODY_RESOLVE)] var kind: R|Kind<T>|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] get(): R|Kind<T>|
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] set([ResolvedTo(BODY_RESOLVE)] value: R|Kind<T>|): R|kotlin/Unit|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|Kind<T>|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(BODY_RESOLVE)] var value: R|T|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] get(): R|T|
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] set([ResolvedTo(BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IrConst] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|T|): R|kotlin/Unit|
 
         }
 

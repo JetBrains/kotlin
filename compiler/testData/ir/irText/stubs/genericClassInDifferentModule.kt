@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // IGNORE_BACKEND_K1: JS_IR
 // REASON: There is no library for descriptor <m1>
 

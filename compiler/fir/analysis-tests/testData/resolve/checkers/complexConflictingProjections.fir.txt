@@ -24,7 +24,7 @@ FILE: complexConflictingProjections.kt
 
         public final var f: R|T2| = R|<local>/f|
             public get(): R|T2|
-            public set(value: R|T2|): R|kotlin/Unit|
+            public set(<set-?>: R|T2|): R|kotlin/Unit|
 
     }
     public final class Quux<T> : R|kotlin/Any| {

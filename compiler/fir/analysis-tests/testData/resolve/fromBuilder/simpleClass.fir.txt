@@ -27,7 +27,7 @@ FILE: simpleClass.kt
 
         public final lateinit var fau: R|kotlin/Double|
             public get(): R|kotlin/Double|
-            public set(value: R|kotlin/Double|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Double|): R|kotlin/Unit|
 
     }
     public final inline class InlineClass : R|kotlin/Any| {

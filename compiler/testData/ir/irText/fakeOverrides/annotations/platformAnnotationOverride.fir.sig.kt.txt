@@ -49,7 +49,7 @@ class A : Java1 {
     //   Public signature: /A.c.<set-c>|8694985733648793496[0]
     //   Public signature debug description: <set-c>(kotlin.String){}
     @JvmName(name = "setText")
-    /* fake */ override set(value: String): Unit
+    /* fake */ override set(<set-?>: String): Unit
 
 }
 
@@ -103,7 +103,7 @@ class B : Java1 {
     //   Public signature: /B.c.<set-c>|8694985733648793496[0]
     //   Public signature debug description: <set-c>(kotlin.String){}
     @JvmName(name = "setText")
-    /* fake */ override set(value: String): Unit
+    /* fake */ override set(<set-?>: String): Unit
 
 }
 
@@ -284,7 +284,7 @@ abstract class E : Java1, Java3 {
     //   Public signature: /E.c.<set-c>|8694985733648793496[0]
     //   Public signature debug description: <set-c>(kotlin.String){}
     @JvmName(name = "setText")
-    /* fake */ override set(value: String): Unit
+    /* fake */ override set(<set-?>: String): Unit
 
 }
 
@@ -363,7 +363,7 @@ class F : Java1, Java3 {
     //   Public signature: /F.c.<set-c>|8694985733648793496[0]
     //   Public signature debug description: <set-c>(kotlin.String){}
     @JvmName(name = "setText")
-    /* fake */ override set(value: String): Unit
+    /* fake */ override set(<set-?>: String): Unit
 
 }
 
@@ -441,7 +441,7 @@ abstract class G : Java1, KotlinInterface {
     //   Public signature: /G.c.<set-c>|8694985733648793496[0]
     //   Public signature debug description: <set-c>(kotlin.String){}
     @JvmName(name = "setText")
-    /* fake */ override set(value: String): Unit
+    /* fake */ override set(<set-?>: String): Unit
 
 }
 
@@ -519,7 +519,7 @@ class H : Java1, KotlinInterface {
     //   Public signature: /H.c.<set-c>|8694985733648793496[0]
     //   Public signature debug description: <set-c>(kotlin.String){}
     @JvmName(name = "setText")
-    /* fake */ override set(value: String): Unit
+    /* fake */ override set(<set-?>: String): Unit
 
 }
 

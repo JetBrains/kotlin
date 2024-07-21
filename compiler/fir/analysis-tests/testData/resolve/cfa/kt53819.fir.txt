@@ -3,7 +3,7 @@ FILE: kt53819.kt
         local final class Foo : R|kotlin/Any| {
             private final var _x: R|kotlin/Int|
                 private get(): R|kotlin/Int|
-                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+                private set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
             public constructor(x: R|kotlin/Int|): R|<local>/Foo| {
                 super<R|kotlin/Any|>()

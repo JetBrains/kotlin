@@ -47,7 +47,7 @@ FILE: listAssignmentInWhen.fir.kt
     }
     public final var x: R|kotlin/String| = String()
         public get(): R|kotlin/String|
-        public set(value: R|kotlin/String|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
     public final fun assign(condition: R|kotlin/Boolean|): R|kotlin/Unit| {
         ^assign when () {
             R|<local>/condition| ->  {

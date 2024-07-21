@@ -51,14 +51,14 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-c> (): kotlin.String declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, value:kotlin.String) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, <set-?>:kotlin.String) returnType:kotlin.Unit [fake_override]
         annotations:
           JvmName(name = "setText")
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
         overridden:
-          public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
+          public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.String
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -110,14 +110,14 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-c> (): kotlin.String declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, value:kotlin.String) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, <set-?>:kotlin.String) returnType:kotlin.Unit [fake_override]
         annotations:
           JvmName(name = "setText")
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
         overridden:
-          public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
+          public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.String
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -301,14 +301,14 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-c> (): kotlin.String declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, value:kotlin.String) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, <set-?>:kotlin.String) returnType:kotlin.Unit [fake_override]
         annotations:
           JvmName(name = "setText")
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
         overridden:
-          public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
+          public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.String
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
@@ -390,14 +390,14 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-c> (): kotlin.String declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, value:kotlin.String) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, <set-?>:kotlin.String) returnType:kotlin.Unit [fake_override]
         annotations:
           JvmName(name = "setText")
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
         overridden:
-          public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
+          public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.String
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
   CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
@@ -474,15 +474,15 @@ FILE fqName:<root> fileName:/1.kt
           public final fun <get-c> (): kotlin.String declared in <root>.Java1
           public abstract fun <get-c> (): kotlin.String declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, value:kotlin.String) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, <set-?>:kotlin.String) returnType:kotlin.Unit [fake_override]
         annotations:
           JvmName(name = "setText")
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
         overridden:
-          public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
+          public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Java1
           public abstract fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.String
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     PROPERTY name:b visibility:public modality:OPEN [val]
@@ -569,15 +569,15 @@ FILE fqName:<root> fileName:/1.kt
           public final fun <get-c> (): kotlin.String declared in <root>.Java1
           public abstract fun <get-c> (): kotlin.String declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, value:kotlin.String) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:FINAL <> ($this:<root>.Java1, <set-?>:kotlin.String) returnType:kotlin.Unit [fake_override]
         annotations:
           JvmName(name = "setText")
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
         overridden:
-          public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
+          public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Java1
           public abstract fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.String
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
   CLASS CLASS name:KotlinClass modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinClass
     PROPERTY name:a visibility:public modality:FINAL [val]
@@ -728,9 +728,9 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-c> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-      CALL 'public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-        value: CONST String type=kotlin.String value="2"
+        <set-?>: CONST String type=kotlin.String value="2"
       CALL 'public open fun overloadMethod (first: kotlin.String, second: kotlin.String, third: kotlin.Int): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         first: CONST String type=kotlin.String value=""
@@ -740,9 +740,9 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-c> (): kotlin.String declared in <root>.B' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-      CALL 'public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-        value: CONST String type=kotlin.String value="2"
+        <set-?>: CONST String type=kotlin.String value="2"
       CALL 'public open fun overloadMethod (first: kotlin.String, second: kotlin.String, third: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         first: CONST String type=kotlin.String value=""
@@ -791,9 +791,9 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-c> (): kotlin.String declared in <root>.E' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
-      CALL 'public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.E' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.E' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
-        value: CONST String type=kotlin.String value="2"
+        <set-?>: CONST String type=kotlin.String value="2"
       CALL 'public abstract fun setB (text: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.E' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
         text: CONST String type=kotlin.String value="2"
@@ -809,9 +809,9 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-c> (): kotlin.String declared in <root>.F' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
-      CALL 'public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
-        value: CONST String type=kotlin.String value="2"
+        <set-?>: CONST String type=kotlin.String value="2"
       CALL 'public open fun setB (text: kotlin.String): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
         text: CONST String type=kotlin.String value="2"
@@ -827,9 +827,9 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-c> (): kotlin.String declared in <root>.G' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
-      CALL 'public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
-        value: CONST String type=kotlin.String value="2"
+        <set-?>: CONST String type=kotlin.String value="2"
       CALL 'public abstract fun overloadMethod (first: kotlin.String): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=null
         $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
         first: CONST String type=kotlin.String value=""

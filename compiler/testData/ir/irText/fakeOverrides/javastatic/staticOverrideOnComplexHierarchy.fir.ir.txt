@@ -311,12 +311,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public abstract fun <get-a> (): kotlin.Int declared in <root>.Java4
         $this: VALUE_PARAMETER name:<this> type:<root>.Java4
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java4, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java4, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
-          public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.Java4
+          public abstract fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java4
         $this: VALUE_PARAMETER name:<this> type:<root>.Java4
-        VALUE_PARAMETER name:value index:0 type:kotlin.Int
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
   CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
@@ -366,7 +366,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-a> visibility:public modality:OPEN <> ($this:<root>.G, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.Java4
+          public abstract fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java4
         $this: VALUE_PARAMETER name:<this> type:<root>.G
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
@@ -392,7 +392,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.H, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.Java4
+          public abstract fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java4
         $this: VALUE_PARAMETER name:<this> type:<root>.H
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY

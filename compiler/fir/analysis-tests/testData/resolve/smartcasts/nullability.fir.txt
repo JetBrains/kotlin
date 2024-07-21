@@ -39,7 +39,7 @@ FILE: nullability.kt
 
         public open override var data: R|MyData?| = R|<local>/data|
             public get(): R|MyData?|
-            public set(value: R|MyData?|): R|kotlin/Unit|
+            public set(<set-?>: R|MyData?|): R|kotlin/Unit|
 
         public open override fun fdata(): R|MyData?| {
             ^fdata Null(null)

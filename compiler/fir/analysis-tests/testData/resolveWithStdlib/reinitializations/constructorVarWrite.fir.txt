@@ -6,7 +6,7 @@ FILE: constructorVarWrite.kt
 
         public final var foo: R|kotlin/Int| = R|<local>/foo|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         init {
             when () {

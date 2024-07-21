@@ -8,7 +8,7 @@ FILE: script.kts
 
             public? final? var version: String = LAZY_EXPRESSION
                 public? get(): String
-                public? set(value: String): R|kotlin/Unit|
+                public? set(<set-?>: String): R|kotlin/Unit|
 
             public? final? fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 

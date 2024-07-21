@@ -16,5 +16,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] topLevelPropertyScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] var z: R|kotlin/Int| = Int(15)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 

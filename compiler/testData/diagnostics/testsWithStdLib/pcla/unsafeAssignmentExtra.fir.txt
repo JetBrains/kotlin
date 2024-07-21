@@ -2,7 +2,7 @@ FILE: unsafeAssignmentExtra.fir.kt
     public abstract interface Foo<T : R|kotlin/Any|> : R|kotlin/Any| {
         public abstract var a: R|T|
             public get(): R|T|
-            public set(value: R|T|): R|kotlin/Unit|
+            public set(<set-?>: R|T|): R|kotlin/Unit|
 
         public abstract val b: R|kotlin/Array<T>|
             public get(): R|kotlin/Array<T>|

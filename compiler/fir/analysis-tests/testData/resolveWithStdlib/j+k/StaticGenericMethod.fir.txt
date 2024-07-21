@@ -8,7 +8,7 @@ FILE: User.kt
 
         private final var settings: R|T| = this@R|/User|.R|/User.createSettings|()
             private get(): R|T|
-            private set(value: R|T|): R|kotlin/Unit|
+            private set(<set-?>: R|T|): R|kotlin/Unit|
 
         protected abstract fun createSettings(): R|T|
 

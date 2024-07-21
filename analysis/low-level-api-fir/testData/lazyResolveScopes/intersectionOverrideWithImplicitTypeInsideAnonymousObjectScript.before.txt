@@ -16,27 +16,27 @@ public open [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] x: R|F| = LAZY_EXP
 
 public? open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverridePropertySymbol second/B.bar), IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: <implicit>
 
-    public? [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+    public? [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 public? open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=CallableCopyIntersection(mostSpecific=[FirPropertySymbol second/B.bar, FirPropertySymbol second/B.bar]), IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/C.bar] var bar: <implicit>
 
-    public? [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=special/accessor] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+    public? [ResolvedTo(STATUS)] [IntersectionOverrideOriginalKey=special/accessor] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> T}, baseSymbol=FirPropertySymbol second/C.bar), SubstitutedOverrideOriginalKey=second/C.bar] var bar: <implicit>
     public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): <implicit>
-    public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 public open [ResolvedTo(STATUS)] var bar: <implicit> = LAZY_EXPRESSION
     public [ResolvedTo(STATUS)] [ContainingClassKey=C] get(): <implicit>
-    public [ResolvedTo(STATUS)] [ContainingClassKey=C] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=C] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 @R|second/Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={F -> T}, baseSymbol=FirPropertySymbol second/D.bar), SubstitutedOverrideOriginalKey=second/D.bar] var bar: <implicit>
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): <implicit>
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 @R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(STATUS)] var bar: <implicit> = LAZY_EXPRESSION
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=D] get(): <implicit>
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=D] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=D] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit|
 
 public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 

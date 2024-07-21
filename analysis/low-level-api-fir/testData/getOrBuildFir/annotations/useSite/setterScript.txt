@@ -25,6 +25,6 @@ FILE: [ResolvedTo(IMPORTS)] setterScript.kts
 
             public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var x: R|kotlin/Int| = R|<local>/x|
                 public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-                @PROPERTY_SETTER:R|Ann|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit|
+                @PROPERTY_SETTER:R|Ann|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         }

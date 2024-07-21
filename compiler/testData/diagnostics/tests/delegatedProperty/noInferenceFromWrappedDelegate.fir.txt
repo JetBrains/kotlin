@@ -6,7 +6,7 @@ FILE: noInferenceFromWrappedDelegate.kt
 
         public final var value: R|S| = R|<local>/value|
             public get(): R|S|
-            public set(value: R|S|): R|kotlin/Unit|
+            public set(<set-?>: R|S|): R|kotlin/Unit|
 
     }
     public final inline operator fun <V> R|State<V>|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V| {

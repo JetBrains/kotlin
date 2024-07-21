@@ -6,7 +6,7 @@ FILE: postponedLambdaInReturn.kt
 
         public final lateinit var value: R|R|
             public get(): R|R|
-            public set(value: R|R|): R|kotlin/Unit|
+            public set(<set-?>: R|R|): R|kotlin/Unit|
 
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final inline fun <R : R|kotlin/Any|> build(crossinline builder: R|Lateinit<R>.() -> kotlin/Unit|): R|R|

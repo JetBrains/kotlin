@@ -5,7 +5,7 @@ FILE: expectNestedClassMembers.kt
 
             public? final? expect var property: Any
                 public? [ContainingClassKey=Nested] get(): Any
-                public? [ContainingClassKey=Nested] set(value: Any): R|kotlin/Unit|
+                public? [ContainingClassKey=Nested] set(<set-?>: Any): R|kotlin/Unit|
 
         }
 

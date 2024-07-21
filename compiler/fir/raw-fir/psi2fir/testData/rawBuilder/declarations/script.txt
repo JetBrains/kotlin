@@ -8,7 +8,7 @@ FILE: script.kts
 
             public? final? var version: String = String()
                 public? [ContainingClassKey=Builder] get(): String
-                public? [ContainingClassKey=Builder] set(value: String): R|kotlin/Unit|
+                public? [ContainingClassKey=Builder] set(<set-?>: String): R|kotlin/Unit|
 
             public? final? fun execute(): R|kotlin/Unit| {
                 println#(version#)

@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var resolveMe: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] var resolveMe: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var resolveMe: <implicit>
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
-            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <set-?>: <implicit>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] var resolveMe: <implicit>
             public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
-            public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] <set-?>: <implicit>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] var resolveMe: <implicit>
             public? [ResolvedTo(SUPER_TYPES)] get(): <implicit>
-            public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] <set-?>: <implicit>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public? final? [ResolvedTo(TYPES)] var resolveMe: <implicit>
             public? [ResolvedTo(TYPES)] get(): <implicit>
-            public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: <implicit>): R|kotlin/Unit|
+            public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] <set-?>: <implicit>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -205,7 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public final [ResolvedTo(STATUS)] var resolveMe: <implicit>
             public [ResolvedTo(STATUS)] get(): <implicit>
-            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -236,7 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var resolveMe: <implicit>
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] <set-?>: <implicit>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -267,7 +267,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public final [ResolvedTo(CONTRACTS)] var resolveMe: <implicit>
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
-            public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit|
+            public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: <implicit>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -329,7 +329,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(CONSTANT_EVALUATION)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-            public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+            public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -360,7 +360,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -391,7 +391,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
         [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
 
@@ -422,7 +422,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessorsScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
 
         [ResolvedTo(BODY_RESOLVE)] init {
             <Unresolved name: set>#(<Unresolved name: value>#)

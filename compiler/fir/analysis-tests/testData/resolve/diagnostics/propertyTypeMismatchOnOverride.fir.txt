@@ -6,7 +6,7 @@ FILE: propertyTypeMismatchOnOverride.kt
 
         public open var test: R|kotlin/Number| = Int(10)
             public get(): R|kotlin/Number|
-            public set(value: R|kotlin/Number|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Number|): R|kotlin/Unit|
 
     }
     public open class B : R|A| {
@@ -16,7 +16,7 @@ FILE: propertyTypeMismatchOnOverride.kt
 
         public open override var test: R|kotlin/Double| = Double(20.0)
             public get(): R|kotlin/Double|
-            public set(value: R|kotlin/Double|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Double|): R|kotlin/Unit|
 
     }
     public final class C : R|A| {
@@ -26,7 +26,7 @@ FILE: propertyTypeMismatchOnOverride.kt
 
         public open override var test: R|kotlin/String| = String(Test)
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public open class D : R|B| {
@@ -36,7 +36,7 @@ FILE: propertyTypeMismatchOnOverride.kt
 
         public open override var test: R|kotlin/Char| = Char(10)
             public get(): R|kotlin/Char|
-            public set(value: R|kotlin/Char|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Char|): R|kotlin/Unit|
 
     }
     public final class E<T : R|kotlin/Double|> : R|B| {
@@ -49,7 +49,7 @@ FILE: propertyTypeMismatchOnOverride.kt
 
         public open override var test: R|T| = this@R|/E|.R|/E.value|
             public get(): R|T|
-            public set(value: R|T|): R|kotlin/Unit|
+            public set(<set-?>: R|T|): R|kotlin/Unit|
 
     }
     public open class F<T : R|kotlin/Number|> : R|kotlin/Any| {
@@ -62,7 +62,7 @@ FILE: propertyTypeMismatchOnOverride.kt
 
         public open var rest: R|T| = this@R|/F|.R|/F.value|
             public get(): R|T|
-            public set(value: R|T|): R|kotlin/Unit|
+            public set(<set-?>: R|T|): R|kotlin/Unit|
 
     }
     public final class G<E : R|kotlin/Double|> : R|F<E>| {
@@ -75,7 +75,7 @@ FILE: propertyTypeMismatchOnOverride.kt
 
         public open override var rest: R|E| = this@R|/G|.R|/G.balue|
             public get(): R|E|
-            public set(value: R|E|): R|kotlin/Unit|
+            public set(<set-?>: R|E|): R|kotlin/Unit|
 
     }
     public final class H<E : R|kotlin/String|> : R|F<E>| {
@@ -88,7 +88,7 @@ FILE: propertyTypeMismatchOnOverride.kt
 
         public open override var rest: R|E| = this@R|/H|.R|/H.balue|
             public get(): R|E|
-            public set(value: R|E|): R|kotlin/Unit|
+            public set(<set-?>: R|E|): R|kotlin/Unit|
 
     }
     public final class M<E : R|kotlin/String|> : R|F<kotlin/Double>| {
@@ -101,6 +101,6 @@ FILE: propertyTypeMismatchOnOverride.kt
 
         public open override var rest: R|E| = this@R|/M|.R|/M.balue|
             public get(): R|E|
-            public set(value: R|E|): R|kotlin/Unit|
+            public set(<set-?>: R|E|): R|kotlin/Unit|
 
     }

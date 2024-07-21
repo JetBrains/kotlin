@@ -9,7 +9,7 @@ FILE: calls.kt
 
         public? final? var x: Int = R|<local>/x|
             public? get(): Int
-            public? set(value: Int): R|kotlin/Unit|
+            public? set(<set-?>: Int): R|kotlin/Unit|
 
         public? final? operator fun invoke(): <implicit> { LAZY_BLOCK }
 

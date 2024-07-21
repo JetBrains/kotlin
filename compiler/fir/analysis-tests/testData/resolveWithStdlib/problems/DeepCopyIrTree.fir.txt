@@ -12,7 +12,7 @@ FILE: DeepCopyIrTree.kt
     public abstract interface IrTypeParametersContainer : R|IrDeclaration|, R|IrDeclarationParent| {
         public abstract var typeParameters: R|kotlin/collections/List<IrTypeParameter>|
             public get(): R|kotlin/collections/List<IrTypeParameter>|
-            public set(value: R|kotlin/collections/List<IrTypeParameter>|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/collections/List<IrTypeParameter>|): R|kotlin/Unit|
 
     }
     public abstract interface IrDeclaration : R|kotlin/Any| {

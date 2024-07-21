@@ -7,7 +7,7 @@ FILE: RedundantVisibilityModifierCheckerWithExplicitApiMode.kt
 
             public final var foo: R|kotlin/Int| = Int(0)
                 public get(): R|kotlin/Int|
-                public set(value: R|kotlin/Int|): R|kotlin/Unit|
+                public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         }
 
@@ -106,10 +106,10 @@ FILE: RedundantVisibilityModifierCheckerWithExplicitApiMode.kt
     }
     public final var baz1: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
     public final var baz2: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
     public final class J1 : R|kotlin/Any| {
         public constructor(): R|J1| {
             super<R|kotlin/Any|>()

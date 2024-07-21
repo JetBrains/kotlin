@@ -6,7 +6,7 @@ FILE: delegateInference.kt
 
         private final var value: R|T| = R|<local>/value|
             private get(): R|T|
-            private set(value: R|T|): R|kotlin/Unit|
+            private set(<set-?>: R|T|): R|kotlin/Unit|
 
         public final operator fun getValue(thisRef: R|kotlin/Any|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
             ^getValue this@R|/FreezableVar|.R|/FreezableVar.value|
@@ -24,7 +24,7 @@ FILE: delegateInference.kt
 
         private final var value: R|T| = R|<local>/value|
             private get(): R|T|
-            private set(value: R|T|): R|kotlin/Unit|
+            private set(<set-?>: R|T|): R|kotlin/Unit|
 
         public final operator fun getValue(thisRef: R|kotlin/Nothing?|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
             ^getValue this@R|/LocalFreezableVar|.R|/LocalFreezableVar.value|

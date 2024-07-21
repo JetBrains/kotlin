@@ -1,7 +1,7 @@
 STATUS:
 TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/String}, baseSymbol=FirPropertySymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: <implicit>
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): <implicit>
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -30,14 +30,14 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
 
         @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var resolveMe: <implicit> = LAZY_EXPRESSION
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): <implicit>
-            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
+            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit|
 
     }
 
 EXPECT_ACTUAL_MATCHING:
 TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/String}, baseSymbol=FirPropertySymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: <implicit>
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] get(): <implicit>
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SubClass] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] <set-?>: <implicit>): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -66,14 +66,14 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
 
         @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var resolveMe: <implicit> = LAZY_EXPRESSION
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] get(): <implicit>
-            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
+            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AbstractClass] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit|
 
     }
 
 CONTRACTS:
 TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/String}, baseSymbol=FirPropertySymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: <implicit>
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] get(): <implicit>
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=SubClass] set([ResolvedTo(CONTRACTS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -102,14 +102,14 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
 
         @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] var resolveMe: <implicit> = explicitType#()
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] get(): <implicit>
-            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
+            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit|
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -140,14 +140,14 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
 
         @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T?|
-            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|T?|): R|kotlin/Unit|
+            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) <set-?>: R|T?|): R|kotlin/Unit|
 
     }
 
 CONSTANT_EVALUATION:
 TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=SubClass] set([ResolvedTo(CONSTANT_EVALUATION)] <set-?>: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -178,14 +178,14 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
 
         @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] get(): R|T?|
-            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] set([ResolvedTo(CONSTANT_EVALUATION)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|T?|): R|kotlin/Unit|
+            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] set([ResolvedTo(CONSTANT_EVALUATION)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) <set-?>: R|T?|): R|kotlin/Unit|
 
     }
 
 ANNOTATION_ARGUMENTS:
 TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
     @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -216,14 +216,14 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
 
         @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
             @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T?|
-            @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|T?|): R|kotlin/Unit|
+            @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) <set-?>: R|T?|): R|kotlin/Unit|
 
     }
 
 BODY_RESOLVE:
 TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
     @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -254,7 +254,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverrideProperty.kt
 
         @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
             @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T?|
-            @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|T?|): R|kotlin/Unit|
+            @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) <set-?>: R|T?|): R|kotlin/Unit|
 
     }
 
@@ -288,6 +288,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitSubstitutionOverrideProperty.kt
 
         @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
             @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T?|
-            @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|T?|): R|kotlin/Unit|
+            @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) <set-?>: R|T?|): R|kotlin/Unit|
 
     }

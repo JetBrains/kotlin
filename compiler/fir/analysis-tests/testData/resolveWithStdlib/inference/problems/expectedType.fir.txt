@@ -45,7 +45,7 @@ FILE: expectedType.kt
 
         private final var _value: R|kotlin/Any?| = Null(null)
             private get(): R|kotlin/Any?|
-            private set(value: R|kotlin/Any?|): R|kotlin/Unit|
+            private set(<set-?>: R|kotlin/Any?|): R|kotlin/Unit|
 
         public final val value: R|M|
             public get(): R|M| {

@@ -14,7 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorPropertyAndParameter.kt
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = R|<local>/addCommaWarning|
             public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|@R|Anno|()  kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] set([ResolvedTo(STATUS)] value: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] set([ResolvedTo(STATUS)] <set-?>: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {

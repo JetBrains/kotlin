@@ -25,6 +25,6 @@ FILE: [ResolvedTo(IMPORTS)] paramScript.kts
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var x: R|kotlin/Int| = R|<local>/x|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         }

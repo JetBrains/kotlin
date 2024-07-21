@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] delegate.kt
     public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] var R|kotlin/Int|.zoo: R|kotlin/Unit|
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Unit|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] set([ResolvedTo(STATUS)] value: R|kotlin/Unit|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Unit|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] delegate.kt
 
         public abstract [ResolvedTo(STATUS)] var bar: R|kotlin/Long|
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Long|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] set([ResolvedTo(STATUS)] value: R|kotlin/Long|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Long|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] val R|kotlin/Int|.doo: R|kotlin/String|
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/String|

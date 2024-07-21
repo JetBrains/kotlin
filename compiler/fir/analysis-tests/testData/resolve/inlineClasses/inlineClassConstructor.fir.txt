@@ -54,7 +54,7 @@ FILE: inlineClassConstructor.kt
 
         public final var x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final inline class SimpleParameter : R|kotlin/Any| {

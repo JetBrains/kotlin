@@ -3,12 +3,12 @@ FILE: ifWithCR.kt
         private get(): R|kotlin/CharSequence?| {
             ^ Null(null)
         }
-        private set(value: R|kotlin/CharSequence?|): R|kotlin/Unit|
+        private set(<set-?>: R|kotlin/CharSequence?|): R|kotlin/Unit|
     private final var R|kotlin/Int|.mutableWrapper: R|kotlin/CharSequence?|
         private get(): R|kotlin/CharSequence?| {
             ^ Null(null)
         }
-        private set(value: R|kotlin/CharSequence?|): R|kotlin/Unit|
+        private set(<set-?>: R|kotlin/CharSequence?|): R|kotlin/Unit|
     public final fun main(x: R|kotlin/Int|): R|kotlin/Unit| {
         lval x: R|kotlin/reflect/KMutableProperty0<kotlin/CharSequence?>| = when () {
             CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1))) ->  {

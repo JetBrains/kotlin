@@ -6,6 +6,6 @@ FILE: valOnAnnotationParameter.kt
 
         public final var a: R|kotlin/Int| = R|<local>/a|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }

@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPANION_GENERATION:
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public? final? [ResolvedTo(SUPER_TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
@@ -103,7 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public? final? [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
         local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -171,11 +171,11 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
 
             public? final? [ResolvedTo(RAW_FIR)] var foo: <implicit> = bar#
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): <implicit>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] var baz: <implicit> = foo#
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): <implicit>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         }
 
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -210,11 +210,11 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
 
             public? final? [ResolvedTo(RAW_FIR)] var foo: <implicit> = bar#
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): <implicit>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] var baz: <implicit> = foo#
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): <implicit>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         }
 
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
         local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -249,11 +249,11 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
 
             public? final? [ResolvedTo(RAW_FIR)] var foo: <implicit> = bar#
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): <implicit>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] var baz: <implicit> = foo#
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): <implicit>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         }
 
@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var bar: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|kotlin/Unit|
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
         local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -288,11 +288,11 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
 
             public? final? [ResolvedTo(RAW_FIR)] var foo: <implicit> = bar#
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): <implicit>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] var baz: <implicit> = foo#
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): <implicit>
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
 
         }
 
@@ -313,7 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var bar: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| = Null(null)
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -327,11 +327,11 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberProperty.kt
 
             public final [ResolvedTo(BODY_RESOLVE)] var foo: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| = R|util/bar|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
 
             public final [ResolvedTo(BODY_RESOLVE)] var baz: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| = this@R|<local>/Local|.R|<local>/foo|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
 
         }
 
@@ -352,7 +352,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberProperty.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(BODY_RESOLVE)] var bar: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| = Null(null)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -366,11 +366,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationToLocalMemberProperty.kt
 
             public final [ResolvedTo(BODY_RESOLVE)] var foo: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| = R|util/bar|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
 
             public final [ResolvedTo(BODY_RESOLVE)] var baz: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| = this@R|<local>/Local|.R|<local>/foo|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?|): R|kotlin/Unit|
 
         }
 

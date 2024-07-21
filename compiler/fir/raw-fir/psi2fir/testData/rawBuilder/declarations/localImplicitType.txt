@@ -21,7 +21,7 @@ FILE: localImplicitType.kt
 
                 public? final? var foo: @Anno(<getClass>(C#)) List<@Anno(<getClass>(C#)) Collection<@Anno(<getClass>(C#)) String>>? = Null(null)
                     public? [ContainingClassKey=B] get(): @Anno(<getClass>(C#)) List<@Anno(<getClass>(C#)) Collection<@Anno(<getClass>(C#)) String>>?
-                    public? [ContainingClassKey=B] set(value: @Anno(<getClass>(C#)) List<@Anno(<getClass>(C#)) Collection<@Anno(<getClass>(C#)) String>>?): R|kotlin/Unit|
+                    public? [ContainingClassKey=B] set(<set-?>: @Anno(<getClass>(C#)) List<@Anno(<getClass>(C#)) Collection<@Anno(<getClass>(C#)) String>>?): R|kotlin/Unit|
 
                 public? final? fun doo(): @Anno(<getClass>(C#)) List<@Anno(<getClass>(C#)) Collection<@Anno(<getClass>(C#)) String>>? {
                     ^doo Null(null)

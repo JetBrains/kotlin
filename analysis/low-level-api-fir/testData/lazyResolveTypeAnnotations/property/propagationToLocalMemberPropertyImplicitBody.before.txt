@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberPropertyImplicitBody.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(CONTRACTS)] var bar: R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| = Null(null)
         public [ResolvedTo(CONTRACTS)] get(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?|
-        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?|): R|kotlin/Unit|
+        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?|): R|kotlin/Unit|
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
@@ -162,11 +162,11 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberPropertyImplicitBody.kt
 
                 public final [ResolvedTo(RAW_FIR)] var foo: R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| = R|util/bar|
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?|): R|kotlin/Unit|
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?|): R|kotlin/Unit|
 
                 public final [ResolvedTo(RAW_FIR)] var baz: R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?| = this@R|<local>/Local|.R|<local>/foo|
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] value: R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?|): R|kotlin/Unit|
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] set([ResolvedTo(RAW_FIR)] <set-?>: R|@R|util/Anno|(<strcat>(String(bar ), prop#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(nested bar ), prop#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(nested nested bar ), prop#))  kotlin/Int>>?|): R|kotlin/Unit|
 
             }
 

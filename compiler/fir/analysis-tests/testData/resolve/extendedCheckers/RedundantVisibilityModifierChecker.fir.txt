@@ -8,7 +8,7 @@ FILE: RedundantVisibilityModifierChecker.kt
 
             internal final var foo: R|kotlin/Int| = Int(0)
                 internal get(): R|kotlin/Int|
-                internal set(value: R|kotlin/Int|): R|kotlin/Unit|
+                internal set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         }
 
@@ -139,7 +139,7 @@ FILE: RedundantVisibilityModifierChecker.kt
     }
     public final var baz: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
     public open class J : R|kotlin/Any| {
         public constructor(): R|J| {
             super<R|kotlin/Any|>()

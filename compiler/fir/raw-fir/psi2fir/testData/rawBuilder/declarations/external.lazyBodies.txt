@@ -22,4 +22,4 @@ FILE: external.kt
     }
     public? final? var z: Int
         public? external get(): Int
-        public? external set(value: Int): R|kotlin/Unit|
+        public? external set(<set-?>: Int): R|kotlin/Unit|

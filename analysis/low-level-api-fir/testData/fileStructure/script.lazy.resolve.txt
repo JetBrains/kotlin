@@ -10,7 +10,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
 
             public final [ResolvedTo(BODY_RESOLVE)] var version: R|kotlin/String| = String()
                 public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-                public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit|
+                public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/String|): R|kotlin/Unit|
 
             public final [ResolvedTo(BODY_RESOLVE)] fun execute(): R|kotlin/Unit| {
                 <Unresolved name: println>#(this@R|/Builder|.R|/Builder.version|)

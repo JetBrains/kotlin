@@ -16,35 +16,35 @@ public open [ResolvedTo(STATUS)] fun anotherFunction([ResolvedTo(STATUS)] name: 
 
 @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirPropertySymbol /IntermediateClass.propertyWithAnnotations), DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /IntermediateClass.propertyWithAnnotations, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.propertyWithAnnotations] var propertyWithAnnotations: <implicit>
     @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): <implicit>
-    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={SCHEME -> @R|Anno|(<strcat>(String(class ), constant#))  kotlin/Int}, baseSymbol=FirPropertySymbol /IntermediateClass.propertyWithAnnotations), SubstitutedOverrideOriginalKey=/IntermediateClass.propertyWithAnnotations] var propertyWithAnnotations: <implicit>
     @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): <implicit>
-    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={SCHEME -> @R|Anno|(LAZY_EXPRESSION)  SCHEME | MUTABLE_SCHEME -> @R|Anno|(LAZY_EXPRESSION)  kotlin/Int}, baseSymbol=FirPropertySymbol /BaseClass.propertyWithAnnotations), SubstitutedOverrideOriginalKey=/BaseClass.propertyWithAnnotations] var propertyWithAnnotations: <implicit>
     @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=IntermediateClass] get(): <implicit>
-    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=IntermediateClass] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=IntermediateClass] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
 
 @R|Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(STATUS)] var propertyWithAnnotations: <implicit> = LAZY_EXPRESSION
     @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=BaseClass] get(): <implicit>
-    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=BaseClass] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
+    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=BaseClass] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit|
 
 public open override [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /IntermediateClass.property, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0, SubstitutedOverrideOriginalKey=/IntermediateClass.property] var property: R|@R|Anno|(<strcat>(String(class ), constant#))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
     public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|Anno|(<strcat>(String(class ), constant#))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
-    public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: R|@R|Anno|(<strcat>(String(class ), constant#))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] <set-?>: R|@R|Anno|(<strcat>(String(class ), constant#))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit|
 
 public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/IntermediateClass.property] var property: R|@R|Anno|(<strcat>(String(class ), constant#))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
     public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|@R|Anno|(<strcat>(String(class ), constant#))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
-    public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: R|@R|Anno|(<strcat>(String(class ), constant#))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] <set-?>: R|@R|Anno|(<strcat>(String(class ), constant#))  @R|Anno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit|
 
 public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/BaseClass.property] var property: R|@R|Anno|(LAZY_EXPRESSION)  SCHEME|
     public [ResolvedTo(STATUS)] [ContainingClassKey=IntermediateClass] get(): R|@R|Anno|(LAZY_EXPRESSION)  SCHEME|
-    public [ResolvedTo(STATUS)] [ContainingClassKey=IntermediateClass] set([ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  SCHEME|): R|kotlin/Unit|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=IntermediateClass] set([ResolvedTo(STATUS)] <set-?>: R|@R|Anno|(LAZY_EXPRESSION)  SCHEME|): R|kotlin/Unit|
 
 public abstract [ResolvedTo(STATUS)] var property: R|SCHEME|
     public [ResolvedTo(STATUS)] [ContainingClassKey=BaseClass] get(): R|SCHEME|
-    public [ResolvedTo(STATUS)] [ContainingClassKey=BaseClass] set([ResolvedTo(STATUS)] value: R|SCHEME|): R|kotlin/Unit|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=BaseClass] set([ResolvedTo(STATUS)] <set-?>: R|SCHEME|): R|kotlin/Unit|
 
 public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
 

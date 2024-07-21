@@ -9,10 +9,10 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuring.kt
     public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
     public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
     public? final? [ResolvedTo(RAW_FIR)] val pair: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>

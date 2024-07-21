@@ -6,12 +6,12 @@ FILE: varProperties.kt
 
         public final var bar: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final var bar: R|kotlin/Int| = Int(1)
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
     public final fun foo1(x: R|kotlin/reflect/KMutableProperty0<kotlin/Int>|): R|kotlin/Unit| {
     }
     public final fun foo2(x: R|kotlin/reflect/KMutableProperty1<A, kotlin/Int>|): R|kotlin/Unit| {

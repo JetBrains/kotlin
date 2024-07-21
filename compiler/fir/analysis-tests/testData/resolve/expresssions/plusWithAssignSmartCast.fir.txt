@@ -6,7 +6,7 @@ FILE: plusWithAssignSmartCast.kt
 
         public final var bar: R|kotlin/String?| = Null(null)
             public get(): R|kotlin/String?|
-            public set(value: R|kotlin/String?|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String?|): R|kotlin/Unit|
 
         public final fun addToBar(other: R|kotlin/String|): R|kotlin/Unit| {
             when () {

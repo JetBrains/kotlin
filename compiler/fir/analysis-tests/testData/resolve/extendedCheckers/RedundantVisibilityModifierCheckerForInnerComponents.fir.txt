@@ -6,7 +6,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public abstract var id: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         protected open val a: R|kotlin/String| = String(test)
             protected get(): R|kotlin/String|
@@ -19,7 +19,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open override var id: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public open override val a: R|kotlin/String| = String(rest)
             public get(): R|kotlin/String|
@@ -32,7 +32,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open var attribute: R|kotlin/String| = String(a)
             public get(): R|kotlin/String|
-            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final class C1 : R|A1| {
@@ -42,7 +42,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open override var attribute: R|kotlin/String| = this@R|/C1|.super<R|A1|>.R|/A1.attribute|
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final fun test1(): R|kotlin/Unit| {
@@ -55,7 +55,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open var attribute: R|kotlin/String| = String(a)
             public get(): R|kotlin/String|
-            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final class C2 : R|A2| {
@@ -65,7 +65,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open override var attribute: R|kotlin/String| = this@R|/C2|.super<R|A2|>.R|/A2.attribute|
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public abstract class A3 : R|kotlin/Any| {
@@ -75,7 +75,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open var attribute: R|kotlin/String| = String(a)
             public get(): R|kotlin/String|
-            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public abstract class B3 : R|A3| {
@@ -85,7 +85,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open override var attribute: R|kotlin/String| = String(b)
             public get(): R|kotlin/String|
-            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final class C3 : R|B3| {
@@ -95,7 +95,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open override var attribute: R|kotlin/String| = this@R|/C3|.super<R|B3|>.R|/B3.attribute|
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public abstract class A4 : R|kotlin/Any| {
@@ -105,7 +105,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open var attribute: R|kotlin/String| = String(a)
             public get(): R|kotlin/String|
-            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public abstract class B4 : R|A4| {
@@ -115,7 +115,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open override var attribute: R|kotlin/String| = String(b)
             public get(): R|kotlin/String|
-            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final class C4 : R|B4| {
@@ -125,7 +125,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open override var attribute: R|kotlin/String| = this@R|/C4|.super<R|B4|>.R|/B4.attribute|
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public abstract class A5 : R|kotlin/Any| {
@@ -135,7 +135,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open var attribute: R|kotlin/String| = String(a)
             public get(): R|kotlin/String|
-            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final class B5 : R|A5| {
@@ -145,7 +145,7 @@ FILE: RedundantVisibilityModifierCheckerForInnerComponents.kt
 
         public open override var attribute: R|kotlin/String| = String(b)
             public get(): R|kotlin/String|
-            protected set(value: R|kotlin/String|): R|kotlin/Unit|
+            protected set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
     }
     public final fun test5(): R|kotlin/Unit| {

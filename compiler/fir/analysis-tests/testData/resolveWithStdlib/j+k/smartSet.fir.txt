@@ -6,7 +6,7 @@ FILE: smartSet.kt
 
         public open override var size: R|kotlin/Int| = Int(0)
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public open override operator fun iterator(): R|kotlin/collections/MutableIterator<T>| {
             ^iterator R|kotlin/TODO|()

@@ -15,7 +15,7 @@ FILE: calls.kt
 
         public? final? [IsFromPrimaryConstructor=true] var x: Int = R|<local>/x|
             public? [ContainingClassKey=My] get(): Int
-            public? [ContainingClassKey=My] set(value: Int): R|kotlin/Unit|
+            public? [ContainingClassKey=My] set(<set-?>: Int): R|kotlin/Unit|
 
         public? final? operator fun invoke(): <implicit> {
             ^invoke x#

@@ -42,7 +42,7 @@ FILE: targetOnPrimaryCtorParameter.kt
 
         @R|PropertyOnly|() @R|PropertyOnly2|() field:@R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final fun box(): R|kotlin/String| {

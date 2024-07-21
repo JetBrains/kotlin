@@ -12,7 +12,7 @@ FILE: secondaryConstructorCfg.kt
 
         public final var p3: R|kotlin/String|
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
         public constructor(p0: R|kotlin/String|, p1: R|kotlin/String|): R|B| {
             this<R|B|>(R|<local>/p0|)

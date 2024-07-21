@@ -6,7 +6,7 @@ FILE: accessInSetter.kt
 
         public final var isEnabled: R|kotlin/Boolean| = R|<local>/isEnabled|
             public get(): R|kotlin/Boolean|
-            public set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Boolean|): R|kotlin/Unit|
 
     }
     public final class My : R|kotlin/Any| {

@@ -13,11 +13,11 @@ FILE: [ResolvedTo(IMPORTS)] destructuringScript.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var b: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val pair: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/Int|>(R|/a|, R|/b|)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Pair<kotlin/Int, kotlin/Int>|

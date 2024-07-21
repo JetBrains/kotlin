@@ -15,7 +15,7 @@ FILE: assignToStarProjectedType.kt
 
         public final var foo: R|Inv<T>?| = R|/invOf|<R|T|>()
             public get(): R|Inv<T>?|
-            public set(value: R|Inv<T>?|): R|kotlin/Unit|
+            public set(<set-?>: R|Inv<T>?|): R|kotlin/Unit|
 
     }
     public final class Bar : R|Base<kotlin/String>| {

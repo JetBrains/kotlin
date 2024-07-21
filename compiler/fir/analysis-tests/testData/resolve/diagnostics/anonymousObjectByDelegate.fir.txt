@@ -2,7 +2,7 @@ FILE: anonymousObjectByDelegate.kt
     public abstract interface A : R|kotlin/Any| {
         public abstract var b: R|B|
             public get(): R|B|
-            public set(value: R|B|): R|kotlin/Unit|
+            public set(<set-?>: R|B|): R|kotlin/Unit|
 
     }
     public abstract interface B : R|kotlin/Any| {

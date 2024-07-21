@@ -16,7 +16,7 @@ FILE: [ResolvedTo(RAW_FIR)] constructorParameterWithImplicitParameterAnnotation.
 
         @ParameterAnnotation[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] get(): Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] <set-?>: Int): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         @ParameterAnnotation[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] get(): Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] <set-?>: Int): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         @ParameterAnnotation[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] get(): Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] <set-?>: Int): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         @ParameterAnnotation[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] get(): Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] <set-?>: Int): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         @ParameterAnnotation[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] get(): Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] <set-?>: Int): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         @ParameterAnnotation[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] get(): Int
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] <set-?>: Int): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
@@ -304,7 +304,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameterWithImplicitParameterAnnotation.
 
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
@@ -328,7 +328,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorParameterWithImplicitParameterAnnota
 
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val konstant: R|kotlin/Int| = Int(0)

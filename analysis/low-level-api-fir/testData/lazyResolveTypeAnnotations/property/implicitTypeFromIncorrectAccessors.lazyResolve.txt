@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var resolveMe: <implicit>
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] var resolveMe: <implicit>
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -47,7 +47,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var resolveMe: <implicit>
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
-        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: <implicit>): R|kotlin/Unit|
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <set-?>: <implicit>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(COMPANION_GENERATION)] var resolveMe: <implicit>
         public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
-        public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] value: <implicit>): R|kotlin/Unit|
+        public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] <set-?>: <implicit>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(SUPER_TYPES)] var resolveMe: <implicit>
         public? [ResolvedTo(SUPER_TYPES)] get(): <implicit>
-        public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] value: <implicit>): R|kotlin/Unit|
+        public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] <set-?>: <implicit>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(TYPES)] var resolveMe: <implicit>
         public? [ResolvedTo(TYPES)] get(): <implicit>
-        public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: <implicit>): R|kotlin/Unit|
+        public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] <set-?>: <implicit>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(STATUS)] var resolveMe: <implicit>
         public [ResolvedTo(STATUS)] get(): <implicit>
-        public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+        public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var resolveMe: <implicit>
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
-        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] <set-?>: <implicit>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -149,7 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(CONTRACTS)] var resolveMe: <implicit>
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
-        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit|
+        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: <implicit>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(CONSTANT_EVALUATION)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-        public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+        public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
@@ -217,7 +217,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessors.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessors.kt
@@ -234,5 +234,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessors.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
     [ResolvedTo(BODY_RESOLVE)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(BODY_RESOLVE)] @R|low/Anno|[Types](position = <strcat>(String(setter parameter type ), R|low/prop|)) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(BODY_RESOLVE)] @R|low/Anno|[Types](position = <strcat>(String(setter nested parameter type ), R|low/prop|)) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(BODY_RESOLVE)] @R|low/Anno|[Types](position = <strcat>(String(setter nested nested parameter type ), R|low/prop|)) <DANGLING MODIFIER: Top level declaration expected>

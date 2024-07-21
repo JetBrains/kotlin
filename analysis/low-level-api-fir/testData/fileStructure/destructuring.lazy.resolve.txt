@@ -5,11 +5,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuring.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final [ResolvedTo(BODY_RESOLVE)] var b: R|kotlin/Int| = Int(0)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final data [ResolvedTo(BODY_RESOLVE)] class MyPair : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int|): R|MyPair| {

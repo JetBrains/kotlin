@@ -26,12 +26,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-a> (): kotlin.Int declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:FINAL <> ($this:<root>.JavaChild, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:FINAL <> ($this:<root>.JavaChild, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
         overridden:
-          public final fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
+          public final fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-        VALUE_PARAMETER name:value index:0 type:kotlin.Int
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
       overridden:
         public final b: kotlin.Int declared in <root>.JavaChild
@@ -40,12 +40,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-b> (): kotlin.Int declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-      FUN FAKE_OVERRIDE name:<set-b> visibility:protected modality:FINAL <> ($this:<root>.JavaChild, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:protected modality:FINAL <> ($this:<root>.JavaChild, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
         overridden:
-          protected final fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
+          protected final fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-        VALUE_PARAMETER name:value index:0 type:kotlin.Int
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
       overridden:
         public final c: kotlin.Int declared in <root>.JavaChild
@@ -62,12 +62,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-d> (): kotlin.Int declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-      FUN FAKE_OVERRIDE name:<set-d> visibility:internal modality:FINAL <> ($this:<root>.JavaChild, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-d> visibility:internal modality:FINAL <> ($this:<root>.JavaChild, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
         overridden:
-          internal final fun <set-d> (value: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
+          internal final fun <set-d> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-        VALUE_PARAMETER name:value index:0 type:kotlin.Int
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:e visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open e: kotlin.Int declared in <root>.JavaChild

@@ -29,7 +29,7 @@ FILE: RedundantSetterParameterTypeChecker.kt
 
         public final var z: R|kotlin/Double| = Double(3.14)
             public get(): R|kotlin/Double|
-            private set(value: R|kotlin/Double|): R|kotlin/Unit|
+            private set(<set-?>: R|kotlin/Double|): R|kotlin/Unit|
 
         public final var w: R|kotlin/Boolean| = Boolean(true)
             public get(): R|kotlin/Boolean|

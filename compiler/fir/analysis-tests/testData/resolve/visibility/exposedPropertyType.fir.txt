@@ -50,26 +50,26 @@ FILE: exposedPropertyType.kt
 
         public final var var1: R|kotlin/String|
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
         public final var var2: R|kotlin/String|
             public get(): R|kotlin/String|
-            public set(value: R|kotlin/String|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/String|): R|kotlin/Unit|
 
         public final var var3: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+            public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
         public final var var4: <ERROR TYPE REF: HIDDEN: A.AInnerPrivate is invisible>
             public get(): <ERROR TYPE REF: HIDDEN: A.AInnerPrivate is invisible>
-            public set(value: <ERROR TYPE REF: HIDDEN: A.AInnerPrivate is invisible>): R|kotlin/Unit|
+            public set(<set-?>: <ERROR TYPE REF: HIDDEN: A.AInnerPrivate is invisible>): R|kotlin/Unit|
 
         public final var var5: R|A.AInnerPublic|
             public get(): R|A.AInnerPublic|
-            public set(value: R|A.AInnerPublic|): R|kotlin/Unit|
+            public set(<set-?>: R|A.AInnerPublic|): R|kotlin/Unit|
 
         public final var var6: <ERROR TYPE REF: HIDDEN: A.AInnerProtectedEnum is invisible>
             public get(): <ERROR TYPE REF: HIDDEN: A.AInnerProtectedEnum is invisible>
-            public set(value: <ERROR TYPE REF: HIDDEN: A.AInnerProtectedEnum is invisible>): R|kotlin/Unit|
+            public set(<set-?>: <ERROR TYPE REF: HIDDEN: A.AInnerProtectedEnum is invisible>): R|kotlin/Unit|
 
     }
