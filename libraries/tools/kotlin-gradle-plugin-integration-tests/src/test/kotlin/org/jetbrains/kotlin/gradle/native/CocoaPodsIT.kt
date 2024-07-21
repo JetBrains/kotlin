@@ -904,7 +904,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 cocoapodsArchs = "x86_64",
                 cocoapodsConfiguration = "Debug"
             ),
-            configurationCache = true
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
         )
 
         nativeProjectWithCocoapodsAndIosAppPodFile(

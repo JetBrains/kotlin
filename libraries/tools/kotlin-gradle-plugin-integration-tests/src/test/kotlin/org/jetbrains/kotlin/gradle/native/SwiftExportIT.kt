@@ -38,7 +38,7 @@ class SwiftExportIT : KGPBaseTest() {
                 ":shared:embedAndSignAppleFrameworkForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
                 buildOptions = defaultBuildOptions.copy(
-                    configurationCache = true,
+                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 )
             ) {
                 assertTasksExecuted(":shared:iosArm64DebugSwiftExport")
@@ -76,7 +76,7 @@ class SwiftExportIT : KGPBaseTest() {
                 ":shared:embedAndSignAppleFrameworkForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
                 buildOptions = defaultBuildOptions.copy(
-                    configurationCache = true,
+                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 )
             ) {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
@@ -130,7 +130,7 @@ class SwiftExportIT : KGPBaseTest() {
                 ":shared:embedAndSignAppleFrameworkForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, listOf("arm64", "x86_64"), "iphonesimulator"),
                 buildOptions = defaultBuildOptions.copy(
-                    configurationCache = true,
+                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 )
             ) {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
@@ -168,7 +168,7 @@ class SwiftExportIT : KGPBaseTest() {
                 ":shared:embedAndSignAppleFrameworkForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
                 buildOptions = defaultBuildOptions.copy(
-                    configurationCache = true,
+                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 )
             ) {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
@@ -204,7 +204,7 @@ class SwiftExportIT : KGPBaseTest() {
                 ":shared:embedAndSignAppleFrameworkForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, listOf("arm64", "x86_64"), "iphonesimulator"),
                 buildOptions = defaultBuildOptions.copy(
-                    configurationCache = true,
+                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 )
             ) {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayName
 @NativeGradlePluginTests
 class NativeWithConfigurationCacheIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(configurationCache = true)
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
 
     @DisplayName(
         "Configuration phase should be reused from configuration cache for the second build " +

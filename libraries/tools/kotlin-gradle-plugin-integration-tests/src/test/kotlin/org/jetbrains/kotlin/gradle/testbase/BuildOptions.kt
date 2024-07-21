@@ -26,7 +26,7 @@ data class BuildOptions(
     val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
     val warningMode: WarningMode = WarningMode.Fail,
-    val configurationCache: Boolean? = false, //null value is only for cases, when project isolation is used without configuration cache. Otherwise Gradle runner will throw exception "The configuration cache cannot be disabled when isolated projects is enabled."
+    val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.DISABLED_BY_DEFAULT,
     val projectIsolation: Boolean = false,
     val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
@@ -59,6 +59,14 @@ data class BuildOptions(
     val kotlinUserHome: Path? = testKitDir.resolve(".kotlin"),
     val compilerArgumentsLogLevel: String? = "info",
 ) {
+    enum class ConfigurationCacheValue {
+        DISABLED_BY_DEFAULT,
+        DISABLED,
+        ENABLED,
+        // DONT_SPECIFY value is only for cases, when project isolation is used without configuration cache. Otherwise Gradle runner will throw exception "The configuration cache cannot be disabled when isolated projects is enabled."
+        DONT_SPECIFY
+    }
+
     val isK2ByDefault
         get() = KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0
 
@@ -120,7 +128,13 @@ data class BuildOptions(
             WarningMode.None -> arguments.add("--warning-mode=none")
         }
 
-        if (configurationCache != null) {
+        val configurationCacheValue = when (configurationCache) {
+            ConfigurationCacheValue.DISABLED,
+            ConfigurationCacheValue.DISABLED_BY_DEFAULT -> false
+            ConfigurationCacheValue.ENABLED -> true
+            ConfigurationCacheValue.DONT_SPECIFY -> null
+        }
+        if (configurationCacheValue != null) {
             arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCache")
             arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
         }

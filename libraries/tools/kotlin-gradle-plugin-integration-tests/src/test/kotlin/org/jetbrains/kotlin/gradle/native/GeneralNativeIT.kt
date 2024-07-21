@@ -396,7 +396,7 @@ class GeneralNativeIT : KGPBaseTest() {
                  * - Before 8.0 Gradle doesn't deserialize CC during the first execution and the issue is not visible
                  * - Before 7.4.2 there is a CC serialization failure because Gradle can't serialize ComponentResult
                  */
-                configurationCache = gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_0)
+                configurationCache = if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_0)) BuildOptions.ConfigurationCacheValue.ENABLED else BuildOptions.ConfigurationCacheValue.DISABLED
             )
         ) {
             val binaries = mutableListOf(

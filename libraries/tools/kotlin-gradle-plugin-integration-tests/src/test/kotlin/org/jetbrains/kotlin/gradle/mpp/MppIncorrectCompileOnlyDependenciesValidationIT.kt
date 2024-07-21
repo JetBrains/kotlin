@@ -16,7 +16,7 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             logLevel = LIFECYCLE, // less logging, faster tests
-            configurationCache = true, // more caching, faster tests
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED, // more caching, faster tests
         )
 
     @GradleTest

@@ -94,7 +94,7 @@ class MppTestsIT : KGPBaseTest() {
     fun testKt68638KotlinNativeLinkApiFilesResolutionError(gradleVersion: GradleVersion) {
         project("kt-68638-native-link-self-dependency", gradleVersion) {
             val buildOptions = defaultBuildOptions.copy(
-                configurationCache = true,
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 freeArgs = listOf("--dry-run")
             )
             // no build failure is expected

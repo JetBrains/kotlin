@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayName
 class JsIrConfigurationCacheIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
-            configurationCache = true,
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
             configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
         )
 

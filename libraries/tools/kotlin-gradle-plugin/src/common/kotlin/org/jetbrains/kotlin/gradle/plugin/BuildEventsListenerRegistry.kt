@@ -7,11 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.build.event.BuildEventsListenerRegistry
-import javax.inject.Inject
+import org.gradle.internal.extensions.core.serviceOf
 
-open class BuildEventsListenerRegistryHolder @Inject constructor(val listenerRegistry: BuildEventsListenerRegistry) {
-    companion object {
-        fun getInstance(project: Project) =
-            project.objects.newInstance(BuildEventsListenerRegistryHolder::class.java)
-    }
-}
+internal val Project.buildEventsListenerRegistry: BuildEventsListenerRegistry get() = serviceOf()

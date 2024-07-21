@@ -162,7 +162,7 @@ class FusStatisticsIT : KGPBaseTest() {
         project(
             "instantExecutionWithIncludedBuildPlugin",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(configurationCache = true)
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
         ) {
             build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
                 Files.list(projectPath.resolve("kotlin-profile")).forEach {
@@ -261,7 +261,7 @@ class FusStatisticsIT : KGPBaseTest() {
             "simpleProject",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                configurationCache = true,
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
                 projectIsolation = isProjectIsolationEnabled,
                 buildReport = listOf(BuildReportType.FILE)
             ),

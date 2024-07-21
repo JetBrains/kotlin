@@ -61,4 +61,4 @@ fun BuildResult.assertConfigurationCacheReused() {
 }
 
 val BuildOptions.withConfigurationCache: BuildOptions
-    get() = copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
+    get() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
