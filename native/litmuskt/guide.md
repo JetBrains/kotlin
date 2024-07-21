@@ -31,4 +31,4 @@ In `./native/litmuskt`:
 
 And that should be it. If something fails, read the generated HTML, it is the only place with detailed error message and stacktrace.
 
-**UPD**: all the changes above can be done by applying the `repo-integration.patch` to the freshly cloned version of LitmusKt. Moreover, you can use the `update.sh` script to clone LitmusKt, apply the patch, and overwrite the current `:core` and `:testsuite`. **Be careful** as it will overwrite any tests you might have manually added to `:testsuite`!
+**UPD**: all the changes above can be done by applying the `repo-integration.patch` to a freshly cloned version of LitmusKt. Moreover, you can use the `update.sh` script from this folder to clone LitmusKt, apply the patch, and overwrite the current `:core` and `:testsuite`. **Be careful** as it will overwrite any tests you might have manually added to `:testsuite`!
