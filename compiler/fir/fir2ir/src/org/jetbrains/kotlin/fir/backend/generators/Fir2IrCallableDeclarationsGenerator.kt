@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
@@ -579,7 +580,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         type: IrType,
         parent: IrFunction,
         firValueParameter: FirValueParameter?,
-        name: Name? = null,
         isCrossinline: Boolean = false,
         isNoinline: Boolean = false,
     ): IrValueParameter {
@@ -587,7 +587,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             startOffset = startOffset,
             endOffset = endOffset,
             origin = IrDeclarationOrigin.DEFINED,
-            name = name ?: SpecialNames.IMPLICIT_SET_PARAMETER,
+            name = firValueParameter?.name ?: StandardNames.DEFAULT_VALUE_PARAMETER,
             type = type,
             isAssignable = false,
             symbol = IrValueParameterSymbolImpl(),
