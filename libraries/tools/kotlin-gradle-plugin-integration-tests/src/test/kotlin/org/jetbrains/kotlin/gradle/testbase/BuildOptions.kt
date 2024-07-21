@@ -135,7 +135,7 @@ data class BuildOptions(
             ConfigurationCacheValue.DONT_SPECIFY -> null
         }
         if (configurationCacheValue != null) {
-            arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCache")
+            arguments.add("-Dorg.gradle.unsafe.configuration-cache=$configurationCacheValue")
             arguments.add("-Dorg.gradle.unsafe.configuration-cache-problems=${configurationCacheProblems.name.lowercase(Locale.getDefault())}")
         }
 
