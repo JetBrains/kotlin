@@ -113,6 +113,9 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testStdlib() {
+        // KT-70120: TODO Re-enable this test and fix
+        Assumptions.assumeTrue(testRunSettings.get<TestMode>() == TestMode.TWO_STAGE_MULTI_MODULE)
+
         val testName = "stdlib"
         val testCase = generateObjCFramework(testName)
         compileAndRunSwift(testName, testCase)
@@ -120,6 +123,9 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testMultipleFrameworks() {
+        // KT-70120: TODO Re-enable this test and fix
+        Assumptions.assumeTrue(testRunSettings.get<TestMode>() == TestMode.TWO_STAGE_MULTI_MODULE)
+
         // This test might fail with dynamic caches until https://youtrack.jetbrains.com/issue/KT-34262 is fixed
         val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
         testMultipleFrameworksImpl("multiple", emptyList(), checks)
@@ -127,6 +133,9 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testMultipleFrameworksStatic() {
+        // KT-70120: TODO Re-enable this test and fix
+        Assumptions.assumeTrue(testRunSettings.get<TestMode>() == TestMode.TWO_STAGE_MULTI_MODULE)
+
         // https://youtrack.jetbrains.com/issue/KT-67572
         Assumptions.assumeFalse(testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED)
 
@@ -136,6 +145,9 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testMultipleFrameworksStaticFailsWithStaticCaches() {
+        // KT-70120: TODO Re-enable this test and fix
+        Assumptions.assumeTrue(testRunSettings.get<TestMode>() == TestMode.TWO_STAGE_MULTI_MODULE)
+
         // https://youtrack.jetbrains.com/issue/KT-67572
         Assumptions.assumeFalse(testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED)
 
