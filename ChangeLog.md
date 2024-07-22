@@ -1,3 +1,10 @@
+## 2.0.10-RC2
+
+### Frontend
+
+- [`KT-69876`](https://youtrack.jetbrains.com/issue/KT-69876) K2 Compile exception: Only IrBlockBody together with kotlinx serialization
+
+
 ## 2.0.10-RC
 
 ### Apple Ecosystem
