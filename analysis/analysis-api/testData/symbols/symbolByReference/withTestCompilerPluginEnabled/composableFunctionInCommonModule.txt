@@ -51,12 +51,18 @@ KaNamedFunctionSymbol:
       name: text
       origin: SOURCE
       receiverParameter: null
-      returnType: KaClassErrorType:
+      returnType: KaFunctionType:
         annotations: [
           org/jetbrains/kotlin/fir/plugin/MyComposable()
             psi: KtAnnotationEntry
         ]
-        type: ERROR_TYPE
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Unit
+        ]
+        type: @R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(Common.kt)
       getContainingJvmClassName: test.CommonKt
