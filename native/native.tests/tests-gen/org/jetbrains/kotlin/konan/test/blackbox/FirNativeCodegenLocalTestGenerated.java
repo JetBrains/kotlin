@@ -1049,6 +1049,12 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
     }
 
     @Test
+    @TestMetadata("runtime_attributes_compatible.kt")
+    public void testRuntime_attributes_compatible() {
+      runTest("native/native.tests/testData/codegen/fileCheck/runtime_attributes_compatible.kt");
+    }
+
+    @Test
     @TestMetadata("signext_zeroext0.kt")
     public void testSignext_zeroext0() {
       runTest("native/native.tests/testData/codegen/fileCheck/signext_zeroext0.kt");
