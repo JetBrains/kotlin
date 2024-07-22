@@ -427,7 +427,22 @@ class AppleFrameworkIT : KGPBaseTest() {
             )
 
             buildAndFail(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = environmentVariables) {
-                assertOutputContains("error: Could not find com.example.unknown:dependency:0.0.1.")
+                if (gradleVersion >= GradleVersion.version("8.0")) {
+                    assertOutputContains("error: Execution failed for task ':shared:compileKotlinIosArm64'.")
+                    assertOutputContains("error:   Could not resolve all files for configuration ':shared:iosArm64CompileKlibraries'.")
+                    assertOutputContains("error:     Could not resolve all dependencies for configuration ':shared:iosArm64CompileKlibraries'.")
+                    assertOutputContains("error:       Could not find com.example.unknown:dependency:0.0.1.")
+                    assertOutputContains("error:       Searched in the following locations:")
+                    assertOutputContains("error:       Required by:")
+                    assertOutputContains("error:           project :shared")
+                } else {
+                    assertOutputContains("error: Execution failed for task ':shared:compileKotlinIosArm64'.")
+                    assertOutputContains("error:   Could not resolve all files for configuration ':shared:iosArm64CompileKlibraries'.")
+                    assertOutputContains("error:     Could not find com.example.unknown:dependency:0.0.1.")
+                    assertOutputContains("error:     Searched in the following locations:")
+                    assertOutputContains("error:     Required by:")
+                    assertOutputContains("error:         project :shared")
+                }
             }
         }
     }
@@ -456,7 +471,8 @@ class AppleFrameworkIT : KGPBaseTest() {
 
             buildAndFail(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = environmentVariables) {
                 assertOutputContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Syntax error: Expecting a top level declaration")
-                assertOutputContains("error: Compilation finished with errors")
+                assertOutputContains("error: Execution failed for task ':shared:compileKotlinIosArm64'.")
+                assertOutputContains("error:   Compilation finished with errors")
             }
         }
     }
@@ -485,7 +501,7 @@ class AppleFrameworkIT : KGPBaseTest() {
 
             buildAndFail(":shared:assembleDebugAppleFrameworkForXcodeIosArm64", environmentVariables = environmentVariables) {
                 assertOutputContains("e: file:///")
-                assertOutputDoesNotContain("error: Compilation finished with errors")
+                assertOutputDoesNotContain("error:.*Compilation finished with errors".toRegex())
             }
         }
     }
@@ -518,7 +534,8 @@ class AppleFrameworkIT : KGPBaseTest() {
                 environmentVariables = environmentVariables
             ) {
                 assertOutputContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Syntax error: Expecting a top level declaration")
-                assertOutputContains("error: Compilation finished with errors")
+                assertOutputContains("error: Execution failed for task ':shared:compileKotlinIosArm64'.")
+                assertOutputContains("error:   Compilation finished with errors")
             }
         }
     }

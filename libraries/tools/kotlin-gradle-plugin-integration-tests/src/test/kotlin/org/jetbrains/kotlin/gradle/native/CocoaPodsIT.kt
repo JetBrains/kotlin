@@ -532,7 +532,22 @@ class CocoaPodsIT : KGPBaseTest() {
                 )
             )
             buildAndFail("syncFramework", buildOptions = buildOptions) {
-                assertOutputContains("error: Could not find com.example.unknown:dependency:0.0.1.")
+                if (gradleVersion >= GradleVersion.version("8.0")) {
+                    assertOutputContains("error: Execution failed for task ':compileKotlinIOS'.")
+                    assertOutputContains("error:   Could not resolve all files for configuration ':iOSCompileKlibraries'.")
+                    assertOutputContains("error:     Could not resolve all dependencies for configuration ':iOSCompileKlibraries'.")
+                    assertOutputContains("error:       Could not find com.example.unknown:dependency:0.0.1.")
+                    assertOutputContains("error:       Searched in the following locations:")
+                    assertOutputContains("error:       Required by:")
+                    assertOutputContains("error:           project :")
+                } else {
+                    assertOutputContains("error: Execution failed for task ':compileKotlinIOS'.")
+                    assertOutputContains("error:   Could not resolve all files for configuration ':iOSCompileKlibraries'.")
+                    assertOutputContains("error:     Could not find com.example.unknown:dependency:0.0.1.")
+                    assertOutputContains("error:     Searched in the following locations:")
+                    assertOutputContains("error:     Required by:")
+                    assertOutputContains("error:         project :")
+                }
             }
         }
     }
@@ -551,7 +566,8 @@ class CocoaPodsIT : KGPBaseTest() {
             )
             buildAndFail("syncFramework", buildOptions = buildOptions) {
                 assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Syntax error: Expecting a top level declaration")
-                assertOutputContains("error: Compilation finished with errors")
+                assertOutputContains("error: Execution failed for task ':compileKotlinIOS'.")
+                assertOutputContains("error:   Compilation finished with errors")
             }
         }
     }
@@ -571,7 +587,7 @@ class CocoaPodsIT : KGPBaseTest() {
             buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
                 assertOutputContains("e: file:///")
                 assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2 Syntax error: Expecting a top level declaration")
-                assertOutputDoesNotContain("error: Compilation finished with errors")
+                assertOutputDoesNotContain("error:.*Compilation finished with errors".toRegex())
             }
         }
     }
@@ -591,7 +607,8 @@ class CocoaPodsIT : KGPBaseTest() {
             )
             buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
                 assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Syntax error: Expecting a top level declaration")
-                assertOutputContains("error: Compilation finished with errors")
+                assertOutputContains("error: Execution failed for task ':compileKotlinIOS'.")
+                assertOutputContains("error:   Compilation finished with errors")
             }
         }
     }
