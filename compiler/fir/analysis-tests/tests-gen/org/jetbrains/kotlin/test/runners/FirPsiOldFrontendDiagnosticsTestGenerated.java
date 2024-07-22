@@ -36428,6 +36428,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("branchesBeforeAssignment.kt")
+        public void testBranchesBeforeAssignment() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/branchesBeforeAssignment.kt");
+        }
+
+        @Test
         @TestMetadata("capturedByAtLeastOnce.kt")
         public void testCapturedByAtLeastOnce() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/capturedByAtLeastOnce.kt");
