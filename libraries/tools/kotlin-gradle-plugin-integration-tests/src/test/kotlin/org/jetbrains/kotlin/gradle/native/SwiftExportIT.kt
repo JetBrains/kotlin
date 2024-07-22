@@ -26,7 +26,7 @@ class SwiftExportIT : KGPBaseTest() {
 
     @DisplayName("embedSwiftExport executes normally when Swift Export is enabled")
     @GradleTest
-    fun testEmbedAnsSignExecutionWithSwiftExportEnabled(
+    fun testSwiftExportExecutionWithSwiftExportEnabled(
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
     ) {
@@ -48,6 +48,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:iosArm64DebugSwiftExport")
                 assertTasksExecuted(":shared:iosArm64MainKlibrary")
                 assertTasksExecuted(":subproject:compileKotlinIosArm64")
+                assertTasksExecuted(":not-good-looking-project-name:compileKotlinIosArm64")
                 assertTasksExecuted(":shared:compileKotlinIosArm64")
                 assertTasksExecuted(":shared:compileSwiftExportMainKotlinIosArm64")
                 assertTasksExecuted(":shared:linkSwiftExportBinaryDebugStaticIosArm64")
@@ -288,7 +289,7 @@ class SwiftExportIT : KGPBaseTest() {
 }
 
 @OptIn(EnvironmentalVariablesOverride::class)
-private fun GradleProject.swiftExportEmbedAndSignEnvVariables(
+fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
     archs: List<String> = listOf("arm64"),
     sdk: String = "iphoneos123",

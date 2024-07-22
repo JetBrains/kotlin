@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportedModuleVersionMetadata
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedToUpperCamelCase
-import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.io.Serializable
 
@@ -42,6 +40,7 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
         val dependencyArtifacts = getArtifacts(component)
             .map { it.file }
             .filterNotCinteropKlibs()
+            .filterKlibsPassedToSwiftExport()
 
         check(dependencyArtifacts.isNotEmpty() && dependencyArtifacts.size == 1) {
             "Component $component ${
@@ -61,9 +60,10 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
 }
 
 private val File.isCinteropKlib get() = extension == "klib" && nameWithoutExtension.contains("cinterop-interop")
+private val File.canKlibBePassedToSwiftExport get() = extension == "klib" || isDirectory
 
 private fun Collection<File>.filterNotCinteropKlibs(): List<File> = filterNot(File::isCinteropKlib)
-
+private fun Collection<File>.filterKlibsPassedToSwiftExport(): List<File> = filter(File::canKlibBePassedToSwiftExport)
 
 private fun findAndCreateSwiftExportedModule(
     exportedModules: Set<SwiftExportedModuleVersionMetadata>,
