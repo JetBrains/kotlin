@@ -1,1 +1,1 @@
-public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun aaa(): R|kotlin/Unit| { LAZY_BLOCK }
+public? final? [ResolvedTo(RAW_FIR)] fun aaa(): R|kotlin/Unit| { LAZY_BLOCK }
