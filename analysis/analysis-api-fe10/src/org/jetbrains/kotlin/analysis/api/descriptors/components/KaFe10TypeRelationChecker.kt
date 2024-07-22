@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeRelationChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.findClassifierAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
@@ -38,8 +41,26 @@ internal class KaFe10TypeRelationChecker(
         return getTypeCheckerFor(errorTypePolicy).isSubtypeOf(this.fe10Type, supertype.fe10Type)
     }
 
+    override fun KaClassType.isClassSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+        val superclassDescriptor = analysisContext.resolveSession.moduleDescriptor.findClassifierAcrossModuleDependencies(classId)
+            ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
+
+        return isClassSubtypeOf(superclassDescriptor, errorTypePolicy)
+    }
+
+    override fun KaClassType.isClassSubtypeOf(
+        symbol: KaClassLikeSymbol,
+        errorTypePolicy: KaSubtypingErrorTypePolicy,
+    ): Boolean {
+        val superclassDescriptor = getSymbolDescriptor(symbol) as? ClassifierDescriptor ?: return false
+        return isClassSubtypeOf(superclassDescriptor, errorTypePolicy)
+    }
+
     @OptIn(TypeRefinement::class)
-    override fun KaClassType.isSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+    private fun KaClassType.isClassSubtypeOf(
+        superclassDescriptor: ClassifierDescriptor,
+        errorTypePolicy: KaSubtypingErrorTypePolicy,
+    ): Boolean {
         require(this is KaFe10Type)
 
         // We have to refine and prepare the type to be in line with `equalTypes` and `isSubtypeOf`.
@@ -48,16 +69,13 @@ internal class KaFe10TypeRelationChecker(
 
         val classDescriptor = preparedType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
 
-        val targetDescriptor = analysisContext.resolveSession.moduleDescriptor.findClassifierAcrossModuleDependencies(classId)
-            ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
-
-        val superclassDescriptor = when (targetDescriptor) {
-            is ClassDescriptor -> targetDescriptor
-            is TypeAliasDescriptor -> targetDescriptor.classDescriptor ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
+        val expandedSuperclassDescriptor = when (superclassDescriptor) {
+            is ClassDescriptor -> superclassDescriptor
+            is TypeAliasDescriptor -> superclassDescriptor.classDescriptor ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
             else -> return false
         }
 
-        return classDescriptor.isSubclassOf(superclassDescriptor)
+        return classDescriptor.isSubclassOf(expandedSuperclassDescriptor)
     }
 
     private fun getTypeCheckerFor(errorTypePolicy: KaSubtypingErrorTypePolicy): KotlinTypeChecker {

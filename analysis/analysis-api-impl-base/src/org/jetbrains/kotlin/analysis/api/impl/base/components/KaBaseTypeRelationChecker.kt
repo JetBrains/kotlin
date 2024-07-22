@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker
+import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -20,8 +22,22 @@ abstract class KaBaseTypeRelationChecker<T : KaSession> : KaSessionComponent<T>(
         if (this is KaErrorType) return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
         if (this !is KaClassType) return false
 
-        return isSubtypeOf(classId, errorTypePolicy)
+        return isClassSubtypeOf(classId, errorTypePolicy)
     }
 
-    protected abstract fun KaClassType.isSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
+    protected abstract fun KaClassType.isClassSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean
+
+    override fun KaType.isSubtypeOf(symbol: KaClassLikeSymbol, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+        symbol.assertIsValidAndAccessible()
+
+        if (this is KaErrorType) return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
+        if (this !is KaClassType) return false
+
+        return isClassSubtypeOf(symbol, errorTypePolicy)
+    }
+
+    protected abstract fun KaClassType.isClassSubtypeOf(
+        symbol: KaClassLikeSymbol,
+        errorTypePolicy: KaSubtypingErrorTypePolicy,
+    ): Boolean
 }

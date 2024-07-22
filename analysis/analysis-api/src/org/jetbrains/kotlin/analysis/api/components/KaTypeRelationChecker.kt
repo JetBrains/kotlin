@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 
@@ -79,6 +80,29 @@ public interface KaTypeRelationChecker {
      */
     public fun KaType.isSubtypeOf(
         classId: ClassId,
+        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
+    ): Boolean
+
+    /**
+     * Returns whether this [KaType] is a subtype of a class represented by [symbol].
+     *
+     * This function provides a convenient way to check if a class extends a certain base class or interface while disregarding type
+     * arguments.
+     *
+     * The [errorTypePolicy] is applied as such: If this [KaType] is an error type, the [LENIENT][KaSubtypingErrorTypePolicy.LENIENT] policy
+     * leads to a trivially `true` result. Errors in type arguments are not considered, as the subclass check is concerned with the applied
+     * class type and not its type arguments.
+     *
+     * This function for [KaClassLikeSymbol]s is a convenient dual to other [isSubtypeOf] functions. As such, its result is the same as a
+     * call to [isSubtypeOf] with the following right-hand [KaType]: `a.b.Class<*, *, ...>?` given a class called `a.b.Class` with all type
+     * arguments instantiated to a star projection.
+     *
+     * This has the following interesting implication: If the [symbol] points to or actualizes to a type alias, subclassing is checked for
+     * the expanded type, as other [isSubtypeOf] implementations also take expansion into account. If the type alias doesn't expand to a
+     * [KaClassType][org.jetbrains.kotlin.analysis.api.types.KaClassType], [isSubtypeOf] is trivially `false`.
+     */
+    public fun KaType.isSubtypeOf(
+        symbol: KaClassLikeSymbol,
         errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
     ): Boolean
 }
