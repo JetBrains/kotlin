@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.dispatchReceiverType
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
+import org.jetbrains.kotlin.analysis.api.fir.utils.ConeSupertypeCalculationMode
+import org.jetbrains.kotlin.analysis.api.fir.utils.getAllStrictSupertypes
+import org.jetbrains.kotlin.analysis.api.fir.utils.getDirectSupertypes
 import org.jetbrains.kotlin.analysis.api.fir.utils.toConeNullability
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -31,18 +34,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
-import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
@@ -50,9 +48,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.CaptureStatus
-import org.jetbrains.kotlin.util.bfs
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -265,63 +260,18 @@ internal class KaFirTypeProvider(
 
     override fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
         require(this is KaFirType)
-        return coneType.getDirectSuperTypes(shouldApproximate).map { it.asKtType() }
-    }
-
-    private fun ConeKotlinType.getDirectSuperTypes(shouldApproximate: Boolean): Sequence<ConeKotlinType> {
-        return when (this) {
-            // We also need to collect those on `upperBound` due to nullability.
-            is ConeFlexibleType -> lowerBound.getDirectSuperTypes(shouldApproximate) + upperBound.getDirectSuperTypes(shouldApproximate)
-            is ConeDefinitelyNotNullType -> original.getDirectSuperTypes(shouldApproximate).map {
-                ConeDefinitelyNotNullType.create(it, analysisSession.firSession.typeContext) ?: it
-            }
-            is ConeIntersectionType -> intersectedTypes.asSequence().flatMap { it.getDirectSuperTypes(shouldApproximate) }
-            is ConeErrorType -> emptySequence()
-            is ConeLookupTagBasedType -> getSubstitutedSuperTypes(shouldApproximate)
-            else -> emptySequence()
-        }.distinct()
-    }
-
-    private fun ConeLookupTagBasedType.getSubstitutedSuperTypes(shouldApproximate: Boolean): Sequence<ConeKotlinType> {
-        val session = analysisSession.firResolveSession.useSiteFirSession
-        val symbol = lookupTag.toSymbol(session)
-        val superTypes = when (symbol) {
-            is FirAnonymousObjectSymbol -> symbol.resolvedSuperTypes
-            is FirRegularClassSymbol -> symbol.resolvedSuperTypes
-            is FirTypeAliasSymbol -> symbol.fullyExpandedClass(session)?.resolvedSuperTypes ?: return emptySequence()
-            is FirTypeParameterSymbol -> symbol.resolvedBounds.map { it.coneType }
-            else -> return emptySequence()
-        }
-
-        val typeParameterSymbols = symbol.typeParameterSymbols ?: return superTypes.asSequence()
-        val argumentTypes = (session.typeContext.captureArguments(this, CaptureStatus.FROM_EXPRESSION)?.toList()
-            ?: this.typeArguments.mapNotNull { it.type })
-
-        if (typeParameterSymbols.size != argumentTypes.size) {
-            // Should not happen in valid code
-            return emptySequence()
-        }
-
-        val substitutor = substitutorByMap(typeParameterSymbols.zip(argumentTypes).toMap(), session)
-        return superTypes.asSequence().map {
-            val type = substitutor.substituteOrSelf(it)
-            if (shouldApproximate) {
-                session.typeApproximator.approximateToSuperType(
-                    type,
-                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-                ) ?: type
-            } else {
-                type
-            }.withNullability(nullability, session.typeContext)
-        }
+        return coneType.getDirectSupertypes(
+            analysisSession.firSession,
+            ConeSupertypeCalculationMode.substitution(shouldApproximate),
+        ).map { it.asKtType() }
     }
 
     override fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
         require(this is KaFirType)
-        return listOf(this.coneType)
-            .bfs { it.getDirectSuperTypes(shouldApproximate).iterator() }
-            .drop(1)
-            .map { it.asKtType() }
+        return coneType.getAllStrictSupertypes(
+            analysisSession.firSession,
+            ConeSupertypeCalculationMode.substitution(shouldApproximate),
+        ).map { it.asKtType() }
     }
 
     @Suppress("OVERRIDE_DEPRECATION")
