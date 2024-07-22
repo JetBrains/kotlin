@@ -190,6 +190,16 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         )
     }
 
+    @Test
+    fun `test - extensions library`() {
+        doTest(
+            dependenciesDir.resolve("extensionsLibrary"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testExtensionsKlibFile),
+                exportedDependencies = setOf(testExtensionsKlibFile)
+            )
+        )
+    }
+
     private fun doTest(root: File, configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

@@ -79,15 +79,21 @@ private class KtObjCExportHeaderGenerator(
         }
 
         /**
-         * Step 2: Translate file facades (see [translateToTopLevelFileFacade], [translateToExtensionFacade])
+         * Step 2: Translate extensions (see [translateToObjCExtensionFacades])
+         * This step has to be done after all classifiers were translated to match the translation order of K1
+         */
+        translateExtensionsFacades(files)
+
+        /**
+         * Step 3: Translate top level callables (see [translateToTopLevelFileFacade])
          * This step has to be done after all classifiers were translated to match the translation order of K1
          */
         files.forEach { file ->
-            translateFileFacades(file)
+            translateTopLevelFacade(file)
         }
 
         /**
-         * Step 3: Translate dependency classes referenced by Step 1 and Step 2
+         * Step 4: Translate dependency classes referenced by Step 1 and Step 2
          * Note: Transitive dependencies will still add to this queue and will be processed until we're finished
          */
         while (true) {
@@ -108,14 +114,16 @@ private class KtObjCExportHeaderGenerator(
         }
     }
 
-    private fun ObjCExportContext.translateFileFacades(file: KtObjCExportFile) {
-        val resolvedFile = with(file) { analysisSession.resolve() }
-
-        translateToObjCExtensionFacades(resolvedFile).forEach { facade ->
+    private fun ObjCExportContext.translateExtensionsFacades(files: List<KtObjCExportFile>) {
+        translateToObjCExtensionFacades(files).forEach { facade ->
             addObjCStubIfNotTranslated(facade)
             enqueueDependencyClasses(facade)
             objCClassForwardDeclarations += facade.name
         }
+    }
+
+    private fun ObjCExportContext.translateTopLevelFacade(file: KtObjCExportFile) {
+        val resolvedFile = with(file) { analysisSession.resolve() }
 
         translateToObjCTopLevelFacade(resolvedFile)?.let { topLevelFacade ->
             addObjCStubIfNotTranslated(topLevelFacade)
