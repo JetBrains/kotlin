@@ -41,8 +41,10 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-/*
+/**
  * Provides function interfaces for function kinds from compiler plugins
+ *
+ * @see org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
  */
 class FirExtensionSyntheticFunctionInterfaceProvider(
     session: FirSession,

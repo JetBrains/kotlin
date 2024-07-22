@@ -37,6 +37,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                     providers = listOfNotNull(
                         context.firProvider.symbolProvider,
                         context.switchableExtensionDeclarationsSymbolProvider,
+                        context.syntheticFunctionInterfaceProvider,
                     ),
                     context.dependencyProvider,
                 )
