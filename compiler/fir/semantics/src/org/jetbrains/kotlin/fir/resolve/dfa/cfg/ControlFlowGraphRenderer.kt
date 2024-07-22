@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -72,11 +72,17 @@ private class ControlFlowGraphRenderer(
             val nodeName = node.render()
             val nodeHeader = if (options.renderLevels) "$nodeName [${node.level}]" else nodeName
             val flowInfo = node.takeIf { options.renderFlow && it.flowInitialized }?.flow?.renderHtmlLike()
-            if (!flowInfo.isNullOrEmpty()) {
+            val nodeData = options.data(node)
+            if (!flowInfo.isNullOrEmpty() || !nodeData.isNullOrEmpty()) {
                 val label = buildString {
                     append("<TABLE BORDER=\"0\">")
                     append("<TR><TD>").append(nodeHeader.renderHtmlLike()).append("</TD></TR>")
-                    append("<TR><TD ALIGN=\"LEFT\" BALIGN=\"LEFT\">").append(flowInfo).append("</TD></TR>")
+                    if (!flowInfo.isNullOrEmpty()) {
+                        append("<TR><TD ALIGN=\"LEFT\" BALIGN=\"LEFT\">").append(flowInfo).append("</TD></TR>")
+                    }
+                    if (!nodeData.isNullOrEmpty()) {
+                        append("<TR><TD ALIGN=\"LEFT\" BALIGN=\"LEFT\">").append(nodeData.renderHtmlLike()).append("</TD></TR>")
+                    }
                     append("</TABLE>")
                 }
                 attributes += "label=< $label >"
@@ -195,9 +201,14 @@ private class ControlFlowGraphRenderer(
         .replace("&", "&amp;")
         .replace(">", "&gt;")
         .replace("<", "&lt;")
+        .replace("\n", "<BR/>")
 }
 
-data class ControlFlowGraphRenderOptions(val renderLevels: Boolean = false, val renderFlow: Boolean = false)
+data class ControlFlowGraphRenderOptions(
+    val renderLevels: Boolean = false,
+    val renderFlow: Boolean = false,
+    val data: (CFGNode<*>) -> String? = { null },
+)
 
 fun ControlFlowGraph.renderTo(builder: StringBuilder, options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions()) {
     ControlFlowGraphRenderer(builder, options).run {

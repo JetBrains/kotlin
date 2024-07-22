@@ -22,3 +22,14 @@ abstract class VariableInitializationInfoData {
 
     abstract fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo
 }
+
+@Suppress("unused") // Can be used from the debugger
+fun VariableInitializationInfoData.render(node: CFGNode<*>): String = buildString {
+    for ((path, data) in getValue(node)) {
+        appendLine(path.label ?: "NormalPath")
+        for ((symbol, range) in data) {
+            appendLine("$symbol ${range.withoutMarker}")
+        }
+        appendLine()
+    }
+}
