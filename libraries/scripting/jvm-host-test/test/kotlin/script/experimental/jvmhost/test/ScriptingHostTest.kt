@@ -9,6 +9,7 @@ import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -304,7 +305,12 @@ class ScriptingHostTest : TestCase() {
             }
         )
         definition.evalScriptAndCheckOutput("println(v)", listOf("first"))
-        definition.evalScriptAndCheckOutput("println(this@TestClass2.v)", listOf("second"))
+
+        val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+        if (isK2) {
+            // this is not supported in K1
+            definition.evalScriptAndCheckOutput("println(this@TestClass2.v)", listOf("second"))
+        }
     }
 
     fun testScriptWithImplicitReceiverAndBaseClassWithSameNamedProperty() {
