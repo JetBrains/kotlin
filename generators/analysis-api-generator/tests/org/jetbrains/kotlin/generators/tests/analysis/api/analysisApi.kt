@@ -72,6 +72,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassSubtypingTypeRelationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassSubtypingTypeRelationTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest
@@ -610,6 +612,14 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test<AbstractLenientSubtypingTest> {
             model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractNonLenientClassSubtypingTypeRelationTest> {
+            model(it, "classSubtyping")
+        }
+
+        test<AbstractLenientClassSubtypingTypeRelationTest> {
+            model(it, "classSubtyping")
         }
     }
 
