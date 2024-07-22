@@ -9,27 +9,33 @@
 import XCTest
 import Shared
 import Subproject
+import NotGoodLookingProjectName
 
 final class iosAppTests: XCTestCase {
 
     func testFoo() {
-        let result = com.github.jetbrains.swiftexport.foo()
+        let result = foo()
         XCTAssertEqual(result, 321, "foo() should return the expected result")
     }
 
     func testBar() {
-        let result = com.github.jetbrains.swiftexport.bar()
+        let result = bar()
         XCTAssertEqual(result, 123, "bar() should return the expected result")
     }
 
     func testFoobar() {
         let param: Swift.Int32 = 42
-        let result = com.github.jetbrains.swiftexport.foobar(param: param)
+        let result = foobar(param: param)
         XCTAssertEqual(result, 486, "foobar() should return the expected result for the given parameter")
     }
 
     func testSubprojectFoo() {
-        let result = com.subproject.library.libraryFoo()
+        let result = libraryFoo()
         XCTAssertEqual(result, 123456, "libraryFoo() should return the expected result")
+    }
+
+    func testNotGoodLookingProjectNameUglyFoo() {
+        let result = com.not.good.looking.project.libraryUglyFoo()
+        XCTAssertEqual(result, 12345632442, "libraryUglyFoo() should return the expected result")
     }
 }
