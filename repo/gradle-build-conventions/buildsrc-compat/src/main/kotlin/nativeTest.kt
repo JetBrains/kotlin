@@ -41,6 +41,13 @@ private enum class TestProperty(shortName: String) {
     val fullName = "kotlin.internal.native.test.$shortName"
 }
 
+/**
+ * A tests tags property name.
+ *
+ * Test tags are being used by the test infrastructure to control the subsets of tests (fir, stdlib).
+ */
+private const val TESTS_TAGS = "kotlin.native.tests.tags"
+
 private sealed class ComputedTestProperty {
     abstract val name: String
     abstract val value: String?
@@ -254,7 +261,8 @@ fun Project.nativeTest(
         environment("GRADLE_TASK_NAME", path)
 
         useJUnitPlatform {
-            tag?.let { includeTags(it) }
+            val tags = tag ?: findProperty(TESTS_TAGS)?.toString()
+            tags?.let { includeTags(it) }
         }
 
         if (!allowParallelExecution) {
