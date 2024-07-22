@@ -124,6 +124,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Test
+    @TestMetadata("recursiveTypealiasWithProjection.kt")
+    public void testRecursiveTypealiasWithProjection() {
+      runTest("compiler/testData/diagnostics/tests/recursiveTypealiasWithProjection.kt");
+    }
+
+    @Test
     @TestMetadata("ReserveYield2.kt")
     public void testReserveYield2() {
       runTest("compiler/testData/diagnostics/tests/ReserveYield2.kt");
