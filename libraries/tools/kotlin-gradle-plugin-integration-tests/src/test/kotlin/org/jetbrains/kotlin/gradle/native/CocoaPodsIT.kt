@@ -533,7 +533,11 @@ class CocoaPodsIT : KGPBaseTest() {
             )
             buildAndFail("syncFramework", buildOptions = buildOptions) {
                 if (gradleVersion >= GradleVersion.version("8.0")) {
-                    assertOutputContains("error: Execution failed for task ':compileKotlinIOS'.")
+                    if (buildOptions.configurationCache == BuildOptions.ConfigurationCacheValue.ENABLED) {
+                        assertOutputContains("error: Configuration cache state could not be cached: field `libraries` of task `:compileKotlinIOS` of type `org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile`: error writing value of type 'org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection'")
+                    } else {
+                        assertOutputContains("error: Execution failed for task ':compileKotlinIOS'.")
+                    }
                     assertOutputContains("error:   Could not resolve all files for configuration ':iOSCompileKlibraries'.")
                     assertOutputContains("error:     Could not resolve all dependencies for configuration ':iOSCompileKlibraries'.")
                     assertOutputContains("error:       Could not find com.example.unknown:dependency:0.0.1.")
@@ -921,7 +925,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 cocoapodsArchs = "x86_64",
                 cocoapodsConfiguration = "Debug"
             ),
-            configurationCache = true
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
         )
 
         nativeProjectWithCocoapodsAndIosAppPodFile(

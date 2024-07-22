@@ -428,7 +428,11 @@ class AppleFrameworkIT : KGPBaseTest() {
 
             buildAndFail(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = environmentVariables) {
                 if (gradleVersion >= GradleVersion.version("8.0")) {
-                    assertOutputContains("error: Execution failed for task ':shared:compileKotlinIosArm64'.")
+                    if (buildOptions.configurationCache == BuildOptions.ConfigurationCacheValue.ENABLED) {
+                        assertOutputContains("error: Configuration cache state could not be cached: field `libraries` of task `:shared:compileKotlinIosArm64` of type `org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile`: error writing value of type 'org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection'")
+                    } else {
+                        assertOutputContains("error: Execution failed for task ':shared:compileKotlinIosArm64'.")
+                    }
                     assertOutputContains("error:   Could not resolve all files for configuration ':shared:iosArm64CompileKlibraries'.")
                     assertOutputContains("error:     Could not resolve all dependencies for configuration ':shared:iosArm64CompileKlibraries'.")
                     assertOutputContains("error:       Could not find com.example.unknown:dependency:0.0.1.")
@@ -594,7 +598,11 @@ class AppleFrameworkIT : KGPBaseTest() {
         nativeProject(
             "appleGradlePluginConsumesAppleFrameworks",
             gradleVersion,
-            buildJdk = providedJdk.location
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(
+                // Apple plugin doesn't support configuration cache
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+            )
         ) {
             fun dependencyInsight(configuration: String) = arrayOf(
                 ":iosApp:dependencyInsight", "--configuration", configuration, "--dependency", "iosLib"
@@ -630,7 +638,7 @@ class AppleFrameworkIT : KGPBaseTest() {
             "sharedAppleFramework",
             gradleVersion,
             // enable CC to make sure that external process isn't run during configuration
-            buildOptions = defaultBuildOptions.copy(configurationCache = true),
+            buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED),
         ) {
             build(":shared:linkReleaseFrameworkIosSimulatorArm64") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.XcodeVersionTooHighWarning)

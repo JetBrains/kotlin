@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -78,7 +79,21 @@ fun KGPBaseTest.project(
         gradleRunner,
         projectName,
         projectPath,
-        buildOptions,
+        buildOptions.copy(
+            configurationCache = when (buildOptions.configurationCache) {
+                BuildOptions.ConfigurationCacheValue.DISABLED_BY_DEFAULT -> if (
+                    shouldTestWithConfigurationCacheByDefault(
+                        host = HostManager.host,
+                        gradleVersion = gradleVersion
+                    )
+                ) {
+                    BuildOptions.ConfigurationCacheValue.ENABLED
+                } else {
+                    BuildOptions.ConfigurationCacheValue.DISABLED_BY_DEFAULT
+                }
+                else -> buildOptions.configurationCache
+            }
+        ),
         gradleVersion,
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
@@ -961,3 +976,18 @@ sealed interface DependencyManagement {
  * Resolves the temporary local repository path for the test with specified Gradle version.
  */
 fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion) = workingDir.resolve(gradleVersion.version).resolve("repo")
+
+private fun shouldTestWithConfigurationCacheByDefault(
+    host: KonanTarget,
+    gradleVersion: GradleVersion,
+): Boolean =
+    // For now test with CC by default only on macOS
+    host.family.isAppleFamily
+        // Test with CC since Gradle 8.0 and higher because since 8.0 Gradle deserializes from CC on the execution
+        && gradleVersion >= GradleVersion.version("8.0")
+
+fun runWithConfigurationCacheSinceGradle(
+    sinceGradleVersion: String,
+    currentGradleVersion: GradleVersion
+): BuildOptions.ConfigurationCacheValue =
+    if (GradleVersion.version(sinceGradleVersion) >= currentGradleVersion) BuildOptions.ConfigurationCacheValue.ENABLED else BuildOptions.ConfigurationCacheValue.DISABLED_BY_DEFAULT

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayName
 class WasmConfigurationCacheIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
-            configurationCache = true,
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
         )
 
     @DisplayName("configuration cache is working for wasm")

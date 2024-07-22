@@ -121,7 +121,7 @@ class CinteropIT : KGPBaseTest() {
             "cinterop-with-header",
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                configurationCache = true
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
             )
         ) {
             val dummyHeaderPath = projectPath.resolve("libs").resolve("include").resolve("dummy.h").toFile().canonicalPath
