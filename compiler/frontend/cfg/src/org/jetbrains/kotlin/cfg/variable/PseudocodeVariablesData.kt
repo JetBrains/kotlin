@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescriptorForDeclaration
-import org.jetbrains.kotlin.util.javaslang.*
+import org.jetbrains.kotlin.util.vavr.*
 
 class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
     private val containsDoWhile = pseudocode.rootPseudocode.containsDoWhile
