@@ -24,6 +24,24 @@ public interface KaTypePointer<out T : KaType> {
     public fun restore(session: KaSession): T?
 }
 
+/**
+ * [KaType] represents a concrete Kotlin type, such as `Int`, `Foo` for a class `Foo`, or `Bar<String>` for a class `Bar<T>`.
+ *
+ * The represented type may either be valid, or a [KaErrorType]. In that case, [KaErrorType] and the more specific [KaClassErrorType]
+ * provide additional information about the nature of the type error, such as an [error message][KaErrorType.errorMessage].
+ *
+ * ### Structural and semantic equality
+ *
+ * [KaType.equals] implements *structural type equality*, which may not match with the usual intuition of type equality. Structural equality
+ * is favored for `equals` because it is fast and predictable, and additionally it allows constructing a hash code. For semantic type
+ * comparisons, [semanticallyEquals][org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.semanticallyEquals] should be used,
+ * as it implements the equality rules defined by the type system.
+ *
+ * While structural equality lends itself well to usage of [KaType] as a key, avoid relying on hash maps to collect equal [KaType]s, as you
+ * most likely want semantic equality in such cases. A possible alternative would be to use a hash map, but with a post-processing step of
+ * comparing the map's keys with [semanticallyEquals][org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.semanticallyEquals]
+ * to uncover additional equal types.
+ */
 public interface KaType : KaLifetimeOwner, KaAnnotated {
     public val nullability: KaTypeNullability
 

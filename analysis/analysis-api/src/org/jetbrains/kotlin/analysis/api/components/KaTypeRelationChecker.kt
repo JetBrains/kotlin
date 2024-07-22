@@ -13,24 +13,33 @@ public interface KaTypeRelationChecker {
     @Deprecated("Use 'semanticallyEquals()' instead", replaceWith = ReplaceWith("semanticallyEquals(other)"))
     public fun KaType.isEqualTo(other: KaType): Boolean = semanticallyEquals(other)
 
+    /**
+     * Returns whether this [KaType] is semantically equal to [other].
+     *
+     * Semantic equality stands in contrast to the structural equality implemented by [KaType.equals]. See [KaType] for a detailed
+     * discussion about structural vs. semantic type equality.
+     */
     public fun KaType.semanticallyEquals(
         other: KaType,
-        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
+        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
     ): Boolean
 
     @Deprecated("Use 'semanticallyEquals()' instead.", replaceWith = ReplaceWith("semanticallyEquals(other, errorTypePolicy)"))
     public fun KaType.isEqualTo(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
         semanticallyEquals(other, errorTypePolicy)
 
+    /**
+     * Returns whether this [KaType] is a subtype of [supertype]. The relation is non-strict, i.e. any type `t` is a subtype of itself.
+     */
     public fun KaType.isSubtypeOf(
         supertype: KaType,
-        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
+        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
     ): Boolean
 
     @Deprecated("Use 'isSubtypeOf' instead.", replaceWith = ReplaceWith("isSubtypeOf(other, errorTypePolicy)"))
     public fun KaType.isSubTypeOf(
         superType: KaType,
-        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
+        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
     ): Boolean = isSubtypeOf(superType, errorTypePolicy)
 
     @Deprecated(
@@ -39,7 +48,7 @@ public interface KaTypeRelationChecker {
     )
     public fun KaType.isNotSubTypeOf(
         superType: KaType,
-        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT
+        errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
     ): Boolean = withValidityAssertion {
         return !isSubtypeOf(superType, errorTypePolicy)
     }
