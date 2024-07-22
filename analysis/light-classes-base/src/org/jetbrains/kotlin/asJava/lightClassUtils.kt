@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -228,39 +228,6 @@ fun accessorNameByPropertyName(name: String, accessor: KtLightMethod): String? =
 
 fun getAccessorNamesCandidatesByPropertyName(name: String): List<String> {
     return listOf(JvmAbi.setterName(name), JvmAbi.getterName(name))
-}
-
-fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierListOwner>): Boolean {
-    val elementIsApplicable = lightElement is KtLightMember<*> || lightElement is LightParameter
-    if (!elementIsApplicable) return false
-
-    val annotatedElement = lightElement.kotlinOrigin ?: return true
-
-    // all data-class generated members are not-null
-    if (annotatedElement is KtClass && annotatedElement.isData()) return true
-
-    // backing fields for lateinit props are skipped
-    if (lightElement is KtLightField && annotatedElement is KtProperty && annotatedElement.hasModifier(KtTokens.LATEINIT_KEYWORD)) return false
-
-    if (lightElement is KtLightMethod && (annotatedElement as? KtModifierListOwner)?.isPrivate() == true) {
-        return false
-    }
-
-    if (annotatedElement is KtParameter) {
-        val containingClassOrObject = annotatedElement.containingClassOrObject
-        if (containingClassOrObject?.isAnnotation() == true) return false
-        if ((containingClassOrObject as? KtClass)?.isEnum() == true) {
-            if (annotatedElement.parent.parent is KtPrimaryConstructor) return false
-        }
-
-        when (val parent = annotatedElement.parent.parent) {
-            is KtConstructor<*> -> if (lightElement is KtLightParameter && parent.isPrivate()) return false
-            is KtNamedFunction -> return !parent.isPrivate()
-            is KtPropertyAccessor -> return (parent.parent as? KtProperty)?.isPrivate() != true
-        }
-    }
-
-    return true
 }
 
 private val PsiMethod.canBeGetter: Boolean
