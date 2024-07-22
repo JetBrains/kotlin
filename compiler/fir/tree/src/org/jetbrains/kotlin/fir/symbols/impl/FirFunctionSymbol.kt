@@ -117,6 +117,10 @@ open class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyA
     val isGetter: Boolean get() = fir.isGetter
     val isSetter: Boolean get() = fir.isSetter
     open val propertySymbol: FirPropertySymbol get() = fir.propertySymbol
+
+    override fun deprecationsAreDefinitelyEmpty(): Boolean {
+        return super.currentDeclarationDeprecationsAreDefinitelyEmpty() && propertySymbol.currentDeclarationDeprecationsAreDefinitelyEmpty()
+    }
 }
 
 class FirSyntheticPropertyAccessorSymbol : FirPropertyAccessorSymbol() {
