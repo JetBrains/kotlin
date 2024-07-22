@@ -474,6 +474,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
     }
 
     @Test
+    @TestMetadata("composableFunctionInCommonModule.kt")
+    public void testComposableFunctionInCommonModule() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/composableFunctionInCommonModule.kt");
+    }
+
+    @Test
     @TestMetadata("generatedCompanionWorksAsValue.kt")
     public void testGeneratedCompanionWorksAsValue() {
       runTest("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled/generatedCompanionWorksAsValue.kt");
