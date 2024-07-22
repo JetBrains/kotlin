@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Copy-pasted and updated from com.intellij.psi.impl.source.ClassInnerStuffCache
+ * Inspired by {@link com.intellij.psi.impl.source.ClassInnerStuffCache ClassInnerStuffCache}.
+ * <p>
+ * This class contains only caches for `find*ByName` methods.
  *
  * @see com.intellij.psi.impl.source.ClassInnerStuffCache
  */
