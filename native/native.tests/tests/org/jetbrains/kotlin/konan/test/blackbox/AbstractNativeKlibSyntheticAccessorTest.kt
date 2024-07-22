@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationT
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExternalSourceTransformersProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.extension.ExtendWith
 import org.opentest4j.AssertionFailedError
 import java.io.File
@@ -39,6 +41,11 @@ abstract class AbstractNativeKlibSyntheticAccessorTest : ExternalSourceTransform
      * This function should be called from a method annotated with [org.junit.jupiter.api.Test].
      */
     protected fun runTest(@TestDataFile testDataFilePath: String) {
+        // In one-stage test mode of K/N, an intermediate klib in introduced between stages with unpredictable unique name,
+        // and this messes the per-module logic in DumpSyntheticAccessors.
+        // Synthetic accessors are not dependent on test mode, so safely may be tested only in TWO_STAGE_MULTI_MODULE
+        Assumptions.assumeTrue(testRunSettings.get<TestMode>() == TestMode.TWO_STAGE_MULTI_MODULE)
+
         val absoluteTestFile = getAbsoluteFile(testDataFilePath)
         val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
 
