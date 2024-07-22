@@ -91,6 +91,13 @@ open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProp
             lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return fir.controlFlowGraphReference
         }
+
+    override fun deprecationsAreDefinitelyEmpty(): Boolean {
+        return super.currentDeclarationDeprecationsAreDefinitelyEmpty()
+                && getterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
+                && setterSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
+                && backingFieldSymbol?.currentDeclarationDeprecationsAreDefinitelyEmpty() != false
+    }
 }
 
 class FirIntersectionOverridePropertySymbol(
@@ -111,6 +118,10 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBacki
 
     val getterSymbol: FirPropertyAccessorSymbol?
         get() = fir.propertySymbol.fir.getter?.symbol
+
+    override fun deprecationsAreDefinitelyEmpty(): Boolean {
+        return super.currentDeclarationDeprecationsAreDefinitelyEmpty() && propertySymbol.currentDeclarationDeprecationsAreDefinitelyEmpty()
+    }
 }
 
 class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)

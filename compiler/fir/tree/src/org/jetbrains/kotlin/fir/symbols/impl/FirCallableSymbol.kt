@@ -82,8 +82,25 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
         get() = fir.containerSource
 
     fun getDeprecation(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
+        if (deprecationsAreDefinitelyEmpty()) {
+            return EmptyDeprecationsPerUseSite
+        }
+
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         return fir.deprecationsProvider.getDeprecationsInfo(languageVersionSettings)
+    }
+
+
+    protected open fun deprecationsAreDefinitelyEmpty(): Boolean {
+        return currentDeclarationDeprecationsAreDefinitelyEmpty()
+    }
+
+    internal fun currentDeclarationDeprecationsAreDefinitelyEmpty(): Boolean {
+        if (annotations.isEmpty() && fir.versionRequirements.isNullOrEmpty() && !rawStatus.isOverride) return true
+        if (fir.deprecationsProvider == EmptyDeprecationsProvider) {
+            return true
+        }
+        return false
     }
 
     private fun ensureType(typeRef: FirTypeRef?) {
