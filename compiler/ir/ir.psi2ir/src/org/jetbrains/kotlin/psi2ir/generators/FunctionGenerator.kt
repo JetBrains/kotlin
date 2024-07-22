@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.util.SKIP_BODIES_ERROR_DESCRIPTION
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -368,16 +368,18 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
                         (valueParameterDescriptor.containingDeclaration as? ConstructorDescriptor)?.isAnnotationConstructor() == true
                     if (inAnnotation) {
                         generateDefaultAnnotationParameterValue(defaultValue, valueParameterDescriptor)
-                    } else if (context.configuration.generateBodies) {
-                        bodyGenerator.generateExpressionBody(defaultValue)
-                    } else context.irFactory.createExpressionBody(
-                        IrErrorExpressionImpl(
-                            defaultValue.startOffsetSkippingComments,
-                            defaultValue.endOffset,
-                            context.irBuiltIns.nothingType,
-                            defaultValue::class.java.simpleName
+                    } else if (context.configuration.skipBodies) {
+                        context.irFactory.createExpressionBody(
+                            IrErrorExpressionImpl(
+                                defaultValue.startOffsetSkippingComments,
+                                defaultValue.endOffset,
+                                context.irBuiltIns.nothingType,
+                                SKIP_BODIES_ERROR_DESCRIPTION,
+                            )
                         )
-                    )
+                    } else {
+                        bodyGenerator.generateExpressionBody(defaultValue)
+                    }
                 }
             }
         }

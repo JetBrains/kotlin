@@ -1642,3 +1642,5 @@ fun IrDeclaration.isPublishedApi(): Boolean =
                 ?.correspondingPropertySymbol
                 ?.owner
                 ?.hasAnnotation(StandardClassIds.Annotations.PublishedApi) ?: false
+
+const val SKIP_BODIES_ERROR_DESCRIPTION = "skipBodies"

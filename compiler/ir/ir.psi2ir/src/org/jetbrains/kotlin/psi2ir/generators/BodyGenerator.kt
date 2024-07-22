@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.SKIP_BODIES_ERROR_DESCRIPTION
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
@@ -67,9 +68,8 @@ internal class BodyGenerator(
                     ktBody.startOffsetSkippingComments,
                     ktBody.endOffset,
                     context.irBuiltIns.nothingType,
-                    ktBody::class.java.simpleName
+                    SKIP_BODIES_ERROR_DESCRIPTION,
                 )
-            // For implicit returns, use the expression endOffset to generate the expected line number for debugging.
             irBlockBody.statements.add(generateReturnExpression(irBody.endOffset, irBody.endOffset, irBody))
             return irBlockBody
         }
