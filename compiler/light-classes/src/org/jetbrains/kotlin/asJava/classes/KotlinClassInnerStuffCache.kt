@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.*
+import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
-import com.intellij.psi.impl.light.*
 import com.intellij.psi.util.PsiUtil
 import com.intellij.util.ArrayUtil
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
@@ -155,4 +155,8 @@ private val PsiClass.isAnonymous: Boolean
 
 private fun <T> copy(value: Array<T>): Array<T> {
     return if (value.isEmpty()) value else value.clone()
+}
+
+private fun <Psi : PsiElement> collectAugments(element: PsiElement, type: Class<out Psi>): List<Psi> {
+    return PsiAugmentProvider.collectAugments(element, type, null)
 }
