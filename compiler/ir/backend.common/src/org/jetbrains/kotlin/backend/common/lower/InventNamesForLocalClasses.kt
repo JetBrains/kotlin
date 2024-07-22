@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import kotlin.collections.set
 
-abstract class InventNamesForLocalClasses : FileLoweringPass {
+abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName: Boolean = true) : FileLoweringPass {
 
     protected abstract fun computeTopLevelClassName(clazz: IrClass): String
     protected abstract fun sanitizeNameIfNeeded(name: String): String
@@ -172,6 +172,14 @@ abstract class InventNamesForLocalClasses : FileLoweringPass {
             }
 
             declaration.acceptChildren(this, newData)
+        }
+
+        override fun visitVariable(declaration: IrVariable, data: NameBuilder) {
+            if (shouldIncludeVariableName) {
+                super.visitVariable(declaration, data)
+            } else {
+                declaration.acceptChildren(this, data)
+            }
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: NameBuilder) {

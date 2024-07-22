@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 
 // TODO: consider replacing '$' by another delimeter that can't be used in class name specified with backticks (``)
-internal class NativeInventNamesForLocalClasses(val generationState: NativeGenerationState) : InventNamesForLocalClasses() {
+internal class NativeInventNamesForLocalClasses(val generationState: NativeGenerationState) : InventNamesForLocalClasses(
+        shouldIncludeVariableName = false
+) {
     override fun computeTopLevelClassName(clazz: IrClass): String = clazz.name.asString()
     override fun sanitizeNameIfNeeded(name: String) = name
 
