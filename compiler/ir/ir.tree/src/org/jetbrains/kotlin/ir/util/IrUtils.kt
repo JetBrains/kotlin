@@ -642,9 +642,6 @@ val IrDeclaration.parentClassOrNull: IrClass?
         }
     }
 
-val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
-    get() = generateSequence(this) { it.parent as? IrDeclaration }
-
 val IrFunction.allTypeParameters: List<IrTypeParameter>
     get() = when (this) {
         is IrConstructor -> parentAsClass.typeParameters + typeParameters
@@ -1577,8 +1574,11 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffse
     toIrConstOrNull(irType, startOffset, endOffset)
         ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
 
+val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
+    get() = generateSequence(this) { it.parent as? IrDeclaration }
+
 val IrDeclaration.parentsWithSelf: Sequence<IrDeclarationParent>
-    get() = generateSequence(this as? IrDeclarationParent) { (it as? IrDeclaration)?.parent }
+    get() = parentDeclarationsWithSelf.filterIsInstance<IrDeclarationParent>()
 
 val IrDeclaration.parents: Sequence<IrDeclarationParent>
     get() = generateSequence(parent) { (it as? IrDeclaration)?.parent }
