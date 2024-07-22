@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
  * @see com.intellij.psi.impl.source.ClassInnerStuffCache
  */
 public final class ClassInnerStuffCache {
-    public static final String NOT_NULL_ANNOTATION_QUALIFIER = "@" + NotNull.class.getName();
-
     private final @NotNull KtExtensibleLightClass myClass;
     private final @NotNull List<ModificationTracker> myModificationTrackers;
 

@@ -20,6 +20,7 @@ import com.intellij.psi.util.PsiUtil
 import com.intellij.util.ArrayUtil
 import com.intellij.util.IncorrectOperationException
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
@@ -298,9 +299,11 @@ private class KotlinEnumSyntheticMethod(
     override fun getTextRange(): TextRange = TextRange.EMPTY_RANGE
 
     private companion object {
+        private val NOT_NULL_ANNOTATION_QUALIFIER: String = "@" + NotNull::class.qualifiedName
+
         private fun makeNotNullAnnotation(context: PsiClass): PsiAnnotation {
             return PsiElementFactory.getInstance(context.project).createAnnotationFromText(
-                ClassInnerStuffCache.NOT_NULL_ANNOTATION_QUALIFIER,
+                NOT_NULL_ANNOTATION_QUALIFIER,
                 context,
             )
         }
