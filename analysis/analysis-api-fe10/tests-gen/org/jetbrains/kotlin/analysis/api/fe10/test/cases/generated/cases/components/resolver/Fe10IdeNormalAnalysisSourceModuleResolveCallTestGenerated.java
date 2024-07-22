@@ -4868,6 +4868,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("callWithUnresolvedReturnType.kt")
+    public void testCallWithUnresolvedReturnType() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/callWithUnresolvedReturnType.kt");
+    }
+
+    @Test
+    @TestMetadata("callWithUnresolvedTypeBound.kt")
+    public void testCallWithUnresolvedTypeBound() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/callWithUnresolvedTypeBound.kt");
+    }
+
+    @Test
     @TestMetadata("ClassNameBeforeDot.kt")
     public void testClassNameBeforeDot() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ClassNameBeforeDot.kt");
