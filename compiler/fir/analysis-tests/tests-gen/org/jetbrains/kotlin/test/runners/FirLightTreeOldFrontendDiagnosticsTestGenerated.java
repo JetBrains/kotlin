@@ -7867,6 +7867,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("reassignmenGraphLoop.kt")
+      public void testReassignmenGraphLoop() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmenGraphLoop.kt");
+      }
+
+      @Test
       @TestMetadata("reassignmentInCatch.kt")
       public void testReassignmentInCatch() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmentInCatch.kt");

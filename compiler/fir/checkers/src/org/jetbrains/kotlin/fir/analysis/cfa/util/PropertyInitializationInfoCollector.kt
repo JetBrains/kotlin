@@ -121,11 +121,11 @@ private class PropertyDeclarationCollector(
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: FirStatement?) {
-        visitRepeatable(whileLoop, whileLoop)
+        visitRepeatable(whileLoop, data)
     }
 
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: FirStatement?) {
-        visitRepeatable(doWhileLoop, doWhileLoop)
+        visitRepeatable(doWhileLoop, data)
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: FirStatement?) {

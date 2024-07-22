@@ -103,45 +103,7 @@ abstract class VariableInitializationCheckProcessor {
             path: EdgeLabel,
             visited: MutableSet<CFGNode<*>>,
         ) {
-            require(visited.add(this)) {
-                val problemNode = this@reportErrorsOnInitializationsInInputs
-                val containingDeclaration = problemNode.containingDeclaration()
-                buildString {
-                    appendLine("Node has already been visited and could result in infinite recursion.")
-                    appendLine()
-
-                    appendLine("CFG")
-                    append("- Node: ").appendLine(problemNode.render())
-                    append("- Path: ").appendLine(path.label)
-                    appendLine("- Visited:")
-                    for (n in visited) {
-                        append("  - ").appendLine(n.render())
-                    }
-                    appendLine()
-
-                    appendLine("Context")
-                    append("File Path: ").appendLine(context.containingFilePath)
-                    appendLine("Declarations:")
-                    for (d in context.containingDeclarations) {
-                        append("- ").appendLine(d.symbol.fqName)
-                    }
-                    appendLine()
-
-                    appendLine("Variable")
-                    append("- FQName: ").appendLine(symbol.fqName)
-                    append("- ElementKind: ").appendLine(symbol.source?.kind?.let { it::class.simpleName })
-                    appendLine(symbol.source?.getElementTextInContextForDebug())
-                    appendLine()
-
-                    if (containingDeclaration != null) {
-                        appendLine("Containing Declaration")
-                        append("- FQName: ").appendLine(containingDeclaration.symbol.fqName)
-                        append("- ElementKind: ").appendLine(containingDeclaration.source?.kind?.let { it::class.simpleName })
-                        appendLine(containingDeclaration.source?.getElementTextInContextForDebug())
-                        appendLine()
-                    }
-                }
-            }
+            require(visited.add(this)) { buildRecursionErrorMessage(this, symbol, context) }
 
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
@@ -348,20 +310,41 @@ private val FirVariableSymbol<*>.isLocal: Boolean
         else -> false
     }
 
-private fun CFGNode<*>.containingDeclaration(): FirDeclaration? {
+fun buildRecursionErrorMessage(
+    problemNode: CFGNode<*>,
+    symbol: FirVariableSymbol<*>,
+    context: CheckerContext,
+): String {
+    return buildString {
+        appendLine("Node has already been visited and could result in infinite recursion.")
+        appendLine()
+        append("File Path: ").appendLine(context.containingFilePath)
+        append("Variable: ").appendLine(symbol.getDebugFqName())
+        appendLine("Declarations:")
+        problemNode.firstGraphDeclaration()?.let { declaration ->
+            append("- ").append(declaration.symbol.getDebugFqName()).appendLine(" (graph declaration)")
+        }
+        for (declaration in context.containingDeclarations) {
+            append("- ").appendLine(declaration.symbol.getDebugFqName())
+        }
+    }
+}
+
+private fun CFGNode<*>.firstGraphDeclaration(): FirDeclaration? {
     owner.declaration?.let { return it }
-    return owner.enterNode.previousNodes.firstNotNullOfOrNull { it.containingDeclaration() }
+    return owner.enterNode.previousNodes.firstNotNullOfOrNull { it.firstGraphDeclaration() }
 }
 
 @OptIn(SymbolInternals::class)
-private val FirBasedSymbol<*>.fqName: FqName
-    get() = when (val fir = this.fir) {
+private fun FirBasedSymbol<*>.getDebugFqName(): FqName {
+    return when (val fir = this.fir) {
         is FirFile -> fir.packageFqName.child(Name.identifier(fir.name))
         is FirScript -> fir.symbol.fqName
         is FirClassLikeDeclaration -> fir.symbol.classId.asSingleFqName()
-        is FirTypeParameter -> fir.containingDeclarationSymbol.fqName.child(fir.name)
-        is FirAnonymousInitializer -> fir.containingDeclarationSymbol.fqName.child(Name.special("<init>"))
-        is FirCallableDeclaration -> fir.symbol.callableId.asSingleFqName()
+        is FirTypeParameter -> fir.containingDeclarationSymbol.getDebugFqName().child(fir.name)
+        is FirAnonymousInitializer -> fir.containingDeclarationSymbol.getDebugFqName().child(Name.special("<init>"))
+        is FirCallableDeclaration -> fir.symbol.callableId.asFqNameForDebugInfo()
         is FirCodeFragment -> FqName.topLevel(Name.special("<fragment>"))
         is FirDanglingModifierList -> FqName.topLevel(Name.special("<dangling>"))
     }
+}
