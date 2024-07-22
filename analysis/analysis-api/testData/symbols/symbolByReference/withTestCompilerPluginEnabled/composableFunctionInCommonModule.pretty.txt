@@ -1,2 +1,2 @@
 @org.jetbrains.kotlin.fir.plugin.MyComposable
-fun Foo(text: ERROR_TYPE(Symbol not found for some/MyComposableFunction0))
+fun Foo(text: @org.jetbrains.kotlin.fir.plugin.MyComposable (() -> kotlin.Unit))
