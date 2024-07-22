@@ -8,7 +8,7 @@ dependencies {
     api(project(":core:compiler.common.jvm"))
     api(project(":compiler:psi"))
     implementation(project(":compiler:util"))
-    implementation(commonDependency("io.javaslang","javaslang"))
+    implementation(commonDependency("io.vavr", "vavr"))
     compileOnly(intellijCore())
     compileOnly(libs.kotlinx.coroutines.core.jvm)
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))

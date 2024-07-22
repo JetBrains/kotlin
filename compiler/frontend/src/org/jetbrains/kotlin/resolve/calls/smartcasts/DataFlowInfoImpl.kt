@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import com.google.common.collect.LinkedHashMultimap
 import com.google.common.collect.SetMultimap
-import javaslang.Tuple2
+import io.vavr.Tuple2
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.util.javaslang.*
+import org.jetbrains.kotlin.util.vavr.*
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import java.util.*
 

@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
-import org.jetbrains.kotlin.util.javaslang.ImmutableMap
+import org.jetbrains.kotlin.util.vavr.ImmutableHashMap
+import org.jetbrains.kotlin.util.vavr.ImmutableMap
 
 interface ReadOnlyControlFlowInfo<K : Any, D : Any> {
     fun getOrNull(key: K): D?

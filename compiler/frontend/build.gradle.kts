@@ -17,7 +17,7 @@ dependencies {
     api(project(":compiler:frontend.common"))
     api(project(":compiler:frontend.common-psi"))
     api(project(":kotlin-script-runtime"))
-    api(commonDependency("io.javaslang","javaslang"))
+    api(commonDependency("io.vavr", "vavr"))
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     compileOnly(libs.guava)

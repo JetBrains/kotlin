@@ -43,7 +43,7 @@ val packagesToExcludeFromDummy =
         "META-INF/**",
         "com/sun/jna/**",
         "com/thoughtworks/xstream/**",
-        "javaslang/**",
+        "io/vavr/**",
         "*.proto",
         "messages/**",
         "net/sf/cglib/**",
