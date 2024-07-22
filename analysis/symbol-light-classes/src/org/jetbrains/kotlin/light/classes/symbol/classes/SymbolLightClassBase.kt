@@ -38,8 +38,8 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
 
     private val myInnersCache by lazyPub {
         ClassInnerStuffCache(
-            /* aClass = */ this,
-            /* modificationTrackers = */ modificationTrackerForClassInnerStuff(),
+            extensibleClass = this,
+            modificationTrackers = modificationTrackerForClassInnerStuff(),
         )
     }
 

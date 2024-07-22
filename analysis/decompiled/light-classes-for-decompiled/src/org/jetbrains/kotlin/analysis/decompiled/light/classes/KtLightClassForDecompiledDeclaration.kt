@@ -51,8 +51,8 @@ open class KtLightClassForDecompiledDeclaration(
 ) : KtLightClassForDecompiledDeclarationBase(clsDelegate, clsParent, kotlinOrigin) {
     private val myInnersCache by lazyPub {
         ClassInnerStuffCache(
-            /* aClass = */ this,
-            /* modificationTrackers = */ listOf(KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker),
+            extensibleClass = this,
+            modificationTrackers = listOf(KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker),
         )
     }
 
