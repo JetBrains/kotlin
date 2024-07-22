@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
+import org.jetbrains.kotlin.analysis.api.fir.utils.isSubclassOf
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
@@ -192,9 +192,9 @@ internal class KaFirSymbolDeclarationOverridesProvider(
         require(superClass is KaFirSymbol<*>)
 
         if (subClass == superClass) return false
-        return isSubClassOf(
-            subClass = subClass.firSymbol.fir as FirClass,
-            superClass = superClass.firSymbol.fir as FirClass,
+        return isSubclassOf(
+            subclass = subClass.firSymbol.fir as FirClass,
+            superclass = superClass.firSymbol.fir as FirClass,
             rootModuleSession,
             allowIndirectSubtyping,
         )

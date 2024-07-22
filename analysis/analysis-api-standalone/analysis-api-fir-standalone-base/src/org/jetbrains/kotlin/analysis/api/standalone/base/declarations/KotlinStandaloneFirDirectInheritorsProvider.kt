@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
+import org.jetbrains.kotlin.analysis.api.fir.utils.isSubclassOf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
@@ -102,7 +102,7 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
 
         // `KotlinDirectInheritorsProvider`'s interface guarantees that `getDirectKotlinInheritors` is only called from lazy resolution to
         // `SEALED_CLASS_INHERITORS` or later, so `isSubClassOf` resolving to `SUPER_TYPES` is legal.
-        return isSubClassOf(candidateFirClass, baseFirClass, candidateFirClass.moduleData.session, allowIndirectSubtyping = false)
+        return isSubclassOf(candidateFirClass, baseFirClass, candidateFirClass.moduleData.session, allowIndirectSubtyping = false)
     }
 
     private fun KtClassOrObject.toFirSymbol(classId: ClassId, ktModule: KaModule): FirClassLikeSymbol<*>? {

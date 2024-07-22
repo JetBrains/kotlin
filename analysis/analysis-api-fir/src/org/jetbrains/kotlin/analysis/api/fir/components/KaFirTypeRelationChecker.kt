@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
-import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
+import org.jetbrains.kotlin.analysis.api.fir.utils.isSubclassOf
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeRelationChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -62,7 +62,7 @@ internal class KaFirTypeRelationChecker(
         val superclassSymbol = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)?.fullyExpandedClass(useSiteSession)
             ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
 
-        return classSymbol == superclassSymbol || isSubClassOf(
+        return classSymbol == superclassSymbol || isSubclassOf(
             classSymbol.fir,
             superclassSymbol.fir,
             useSiteSession,

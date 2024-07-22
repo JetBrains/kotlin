@@ -26,23 +26,23 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.types.Variance
 
 /**
- * Returns whether [subClass] is a strict subtype of [superClass]. Resolves [subClass] to [FirResolvePhase.SUPER_TYPES].
+ * Returns whether [subclass] is a strict subtype of [superclass]. Resolves [subclass] to [FirResolvePhase.SUPER_TYPES].
  */
 @KaImplementationDetail
-fun isSubClassOf(
-    subClass: FirClass,
-    superClass: FirClass,
+fun isSubclassOf(
+    subclass: FirClass,
+    superclass: FirClass,
     useSiteSession: FirSession,
     allowIndirectSubtyping: Boolean = true,
 ): Boolean {
-    subClass.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+    subclass.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
 
-    if (subClass.superConeTypes.any { it.toRegularClassSymbol(useSiteSession) == superClass.symbol }) return true
+    if (subclass.superConeTypes.any { it.toRegularClassSymbol(useSiteSession) == superclass.symbol }) return true
     if (!allowIndirectSubtyping) return false
 
-    subClass.superConeTypes.forEach { superType ->
+    subclass.superConeTypes.forEach { superType ->
         val superOfSub = superType.toRegularClassSymbol(useSiteSession) ?: return@forEach
-        if (isSubClassOf(superOfSub.fir, superClass, useSiteSession, allowIndirectSubtyping = true)) return true
+        if (isSubclassOf(superOfSub.fir, superclass, useSiteSession, allowIndirectSubtyping = true)) return true
     }
     return false
 }
