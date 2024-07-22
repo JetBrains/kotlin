@@ -87,9 +87,13 @@ abstract class PodBuildTask @Inject constructor(
             "-configuration", podBuildSettings.configuration,
         )
 
-        runCommand(podXcodeBuildCommand, logger) {
-            directory(podsXcodeProjDir.asFile.parentFile)
-            environment() // workaround for https://github.com/gradle/gradle/issues/27346
-        }
+        runCommand(
+            podXcodeBuildCommand,
+            logger,
+            processConfiguration = {
+                directory(podsXcodeProjDir.asFile.parentFile)
+                environment() // workaround for https://github.com/gradle/gradle/issues/27346
+            }
+        )
     }
 }

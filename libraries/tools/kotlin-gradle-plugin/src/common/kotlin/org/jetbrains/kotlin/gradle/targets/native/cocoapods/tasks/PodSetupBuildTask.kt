@@ -51,7 +51,13 @@ abstract class PodSetupBuildTask @Inject constructor(projectLayout: ProjectLayou
             "-sdk", appleTarget.get().sdk,
         )
 
-        val outputText = runCommand(buildSettingsReceivingCommand, logger) { directory(podsXcodeProjDir.parentFile) }
+        val outputText = runCommand(
+            buildSettingsReceivingCommand,
+            logger,
+            processConfiguration = {
+                directory(podsXcodeProjDir.parentFile)
+            }
+        )
 
         val buildSettingsProperties = PodBuildSettingsProperties.readSettingsFromReader(outputText.reader())
         buildSettingsFile.getFile().let { bsf ->

@@ -6,102 +6,158 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.logging.Logger
+import java.io.File
+import java.nio.file.Files
+import java.util.LinkedList
+import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.thread
 
-/**
- * Represents the result of running a process.
- *
- * @property stdOut The standard output of the process.
- * @property stdErr The standard error of the process.
- * @property retCode The return code of the process.
- * @property process The underlying `Process` object.
- */
-data class RunProcessResult(
-    val stdOut: String,
-    val stdErr: String,
-    val retCode: Int,
+
+class RunProcessResult(
+    var output: File,
+    val returnCode: Int,
     val process: Process,
-)
+    private val command: List<String>,
+) {
+    /**
+     * Write the full message to the logger, but trim the exception to prevent KT-66517
+     */
+    fun errorOnNonZeroExitCode(
+        headerMessage: String?,
+        logger: Logger,
+    ) {
+        if (returnCode == 0) return
+        val errorMessage = buildString {
+            headerMessage?.let {
+                logger.error(it)
+                appendLine(it)
+            }
 
-/**
- * Executes a command and returns the input text.
- *
- * @param command the command and its arguments to be executed as a list of strings.
- * @param logger an optional logger to log information about the command execution.
- * @param errorHandler (Optional) A function that handles any errors that occur during the command execution.
- * @param processConfiguration a function to configure the process before execution.
- * @return The input text of the executed command.
- */
-internal fun runCommand(
-    command: List<String>,
-    logger: Logger? = null,
-    errorHandler: ((result: RunProcessResult) -> String?)? = null,
-    processConfiguration: ProcessBuilder.() -> Unit = { },
-): String {
-    val runResult = assembleAndRunProcess(command, logger, processConfiguration)
-    check(runResult.retCode == 0) {
-        errorHandler?.invoke(runResult) ?: createErrorMessage(command, runResult)
+            val commandFailedMessage = "Executing of '${command.joinToString(" ")}' failed with code ${returnCode} and message:\n"
+            logger.error(commandFailedMessage)
+            appendLine(commandFailedMessage)
+
+            val outputLimit = 100
+            var hasOverflown = false
+            val buffer = LinkedList<String>()
+            output.reader().forEachLine { line ->
+                logger.error(line)
+                buffer.addLast(line)
+                if (buffer.size > outputLimit) {
+                    hasOverflown = true
+                    buffer.removeFirst()
+                }
+            }
+            if (hasOverflown) {
+                appendLine("... last ${outputLimit} lines shown, see error log for the full output ...")
+            }
+            buffer.forEach { appendLine(it) }
+        }
+        error(errorMessage)
     }
-
-    return runResult.stdOut
 }
 
-/**
- * Sealed class representing the fallback behavior for a command.
- */
+internal fun runCommand(
+    command: List<String>,
+    logger: Logger,
+    processConfiguration: ProcessBuilder.() -> Unit = { },
+    onStdOutLine: ((line: String) -> Unit)? = null,
+    onStdErrLine: ((line: String) -> Unit)? = null,
+    errorOnNonZeroExitCode: Boolean = true,
+): RunProcessResult {
+    val result = assembleAndRunProcess(command, logger, processConfiguration)
+    if (errorOnNonZeroExitCode && result.returnCode != 0) {
+        result.errorOnNonZeroExitCode(
+            headerMessage = null,
+            logger = logger,
+        )
+    }
+    return result
+}
+
 sealed class CommandFallback {
     data class Action(val fallback: String) : CommandFallback()
     data class Error(val error: String?) : CommandFallback()
 }
 
-/**
- * Executes the specified command with fallback behavior in case of non-zero return code.
- *
- * @param command the command and its arguments to be executed as a list of strings.
- * @param logger an optional logger to log information about the command execution.
- * @param fallback a function that provides the fallback behavior. It takes the return code, output, and process as parameters and returns a [CommandFallback] object.
- * @param processConfiguration a function to configure the process before execution.
- * @return the output of the command if the return code is 0, otherwise the fallback action or error.
- */
 internal fun runCommandWithFallback(
     command: List<String>,
     logger: Logger? = null,
     fallback: (result: RunProcessResult) -> CommandFallback,
     processConfiguration: ProcessBuilder.() -> Unit = { },
-): String {
+) {
     val runResult = assembleAndRunProcess(command, logger, processConfiguration)
-    return if (runResult.retCode != 0) {
+    if (runResult.returnCode != 0) {
         when (val fallbackOption = fallback(runResult)) {
             is CommandFallback.Action -> fallbackOption.fallback
             is CommandFallback.Error -> error(fallbackOption.error ?: createErrorMessage(command, runResult))
         }
-    } else {
-        runResult.stdOut
     }
+}
+
+private enum class StreamMessage {
+    STDOUT,
+    STDERR,
+    STDOUT_EOF,
+    STDERR_EOF
 }
 
 private fun assembleAndRunProcess(
     command: List<String>,
     logger: Logger? = null,
     processConfiguration: ProcessBuilder.() -> Unit = { },
+    onStdOutLine: (line: String) -> Unit = {},
+    onStdErrLine: (line: String) -> Unit = {},
 ): RunProcessResult {
-
     val process = ProcessBuilder(command).apply {
         this.processConfiguration()
     }.start()
+    val temporaryDirectory = Files.createTempDirectory("${process.pid()}").toFile().apply { deleteOnExit() }
 
-    var inputText = ""
-    var errorText = ""
+    logger?.info("Information about \"${command.joinToString(" ")}\" call:\n")
 
+    val outputFile = temporaryDirectory.resolve("output")
+    val queue = LinkedBlockingQueue<Pair<String, StreamMessage>>()
     val inputThread = thread {
-        inputText = process.inputStream.use {
-            it.reader().readText()
+        process.inputStream.use {
+            it.reader().forEachLine { line ->
+                queue.put(Pair(line, StreamMessage.STDOUT))
+            }
         }
+        queue.put(Pair("", StreamMessage.STDOUT_EOF))
+    }
+    val errorThread = thread {
+        process.errorStream.use {
+            it.reader().forEachLine { line ->
+                queue.put(Pair(line, StreamMessage.STDERR))
+            }
+        }
+        queue.put(Pair("", StreamMessage.STDERR_EOF))
     }
 
-    val errorThread = thread {
-        errorText = process.errorStream.use {
-            it.reader().readText()
+    var continueReadingStdout = true
+    var continueReadingStderr = true
+    outputFile.writer().use { writer ->
+        while (continueReadingStdout || continueReadingStderr) {
+            val (line, state) = queue.take()
+            when (state) {
+                StreamMessage.STDOUT_EOF -> {
+                    continueReadingStdout = false
+                }
+                StreamMessage.STDERR_EOF -> {
+                    continueReadingStderr = false
+                }
+                StreamMessage.STDOUT -> {
+                    writer.appendLine(line)
+                    onStdOutLine(line)
+                    logger?.info(line)
+                }
+                StreamMessage.STDERR -> {
+                    writer.appendLine(line)
+                    onStdErrLine(line)
+                    logger?.error(line)
+                }
+            }
         }
     }
 
@@ -109,24 +165,11 @@ private fun assembleAndRunProcess(
     errorThread.join()
 
     val retCode = process.waitFor()
-    logger?.info(
-        """
-            |Information about "${command.joinToString(" ")}" call:
-            |
-            |${inputText}
-        """.trimMargin()
+
+    return RunProcessResult(
+        outputFile,
+        retCode,
+        process,
+        command,
     )
-
-    return RunProcessResult(inputText, errorText, retCode, process)
-}
-
-private fun createErrorMessage(command: List<String>, runResult: RunProcessResult): String {
-    return """
-           |Executing of '${command.joinToString(" ")}' failed with code ${runResult.retCode} and message: 
-           |
-           |${runResult.stdOut}
-           |
-           |${runResult.stdErr}
-           |
-           """.trimMargin()
 }

@@ -42,7 +42,7 @@ abstract class PodInstallTask : AbstractPodInstallTask() {
         val cocoapodsMessages = pods.get().map { MissingCocoapodsMessage(it).missingMessage }
 
         return listOfNotNull(
-            "'pod install' command failed with code ${result.retCode}.",
+            "'pod install' command failed with code ${result.returnCode}.",
             "Error message:",
             result.stdErr.lines().filter { it.isNotBlank() }.joinToString("\n"),
             """

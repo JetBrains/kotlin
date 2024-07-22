@@ -45,7 +45,7 @@ abstract class PodInstallSyntheticTask : AbstractPodInstallTask() {
 
     override fun handleError(result: RunProcessResult): String? {
         var message = """
-            |'pod install' command on the synthetic project failed with return code: ${result.retCode}
+            |'pod install' command on the synthetic project failed with return code: ${result.returnCode}
             |
             |        Error: ${result.stdErr.lines().filter { it.contains("[!]") }.joinToString("\n")}
             |       

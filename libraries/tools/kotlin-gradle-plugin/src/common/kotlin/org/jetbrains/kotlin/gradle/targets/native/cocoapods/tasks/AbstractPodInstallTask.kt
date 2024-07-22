@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 import org.jetbrains.kotlin.gradle.utils.runCommand
 import org.jetbrains.kotlin.gradle.utils.runCommandWithFallback
 import java.io.File
+import java.nio.file.Files
 
 /**
  * The task takes the path to the Podfile and calls `pod install`
@@ -52,7 +53,7 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
 
     @TaskAction
     open fun doPodInstall() {
-        runPodInstall(false)
+        runPodInstall()
 
         with(podsXcodeProjDirProvider.get()) {
             check(exists() && isDirectory) {
@@ -63,28 +64,66 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
 
     private fun podExecutable(): String {
         return when (val podPath = podExecutablePath.orNull?.asFile) {
-            is File -> podPath.absolutePath.ifBlank { runWhichPod() }
-            else -> runWhichPod()
+            is File -> podPath.absolutePath.ifBlank { getPodExecutablePath() }
+            else -> getPodExecutablePath()
         }
     }
 
-    private fun runWhichPod(): String {
-        val checkPodCommand = listOf("which", "pod")
-        val output = runCommand(checkPodCommand, logger, { result ->
-            if (result.retCode == 1) {
-                missingPodsError()
-            } else {
-                sharedHandleError(checkPodCommand, result)
+    private fun getPodExecutablePath(): String {
+        val whichPodCommand = listOf("/usr/bin/which", "pod")
+        val output = mutableListOf<String>()
+        runCommand(
+            whichPodCommand,
+            logger,
+            onStdOutLine = { output.add(it) },
+            captureResult = CaptureCommandResult(
+                temporaryDirectory = Files.createTempDirectory("AbstractPodInstallTask").toFile().apply { deleteOnExit() },
+                onResult = { result ->
+                    if (result.retCode != 0) {
+
+                    }
+                }
+            ) { result ->
+//                if (result.retCode == 1) {
+//                    missingPodsError()
+//                } else {
+//                    sharedHandleError(checkPodCommand, result)
+//                }
             }
-        })
-
-        return output.removingTrailingNewline().ifBlank {
-            throw IllegalStateException(missingPodsError())
-        }
+        )
+        if (output.isEmpty()) throw IllegalStateException(missingPodsError())
+        return output[0]
     }
 
-    private fun runPodInstall(updateRepo: Boolean): String {
-        val podInstallCommand = listOfNotNull(podExecutable(), "install", if (updateRepo) "--repo-update" else null)
+    private fun runPodInstall() {
+        val podInstallCommand = listOf(podExecutable(), "install")
+
+        var isRepoOutOfDate = false
+        val result = runPodInstallCommand(
+            podInstallCommand,
+            onStdOutLine = {
+                if (it.contains("out-of-date source repos which you can update with `pod repo update` or with `pod install --repo-update`")) {
+                    isRepoOutOfDate = true
+                }
+            },
+            errorOnNonZeroExitCode = false
+        )
+
+        if (result.returnCode != 0) {
+            if (isRepoOutOfDate) {
+                logger.info("Retrying \"pod install\" with --repo-update")
+                var errorMessagePrefix =
+                runPodInstallCommand(
+                    podInstallCommand + listOf("--repo-update"),
+                    logger,
+                    onStdOutLine = { line ->
+
+                    }
+                )
+            } else {
+
+            }
+        }
 
         return runCommandWithFallback(podInstallCommand,
                                       logger,
@@ -96,12 +135,24 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
                                               CommandFallback.Error(sharedHandleError(podInstallCommand, result))
                                           }
                                       },
-                                      processConfiguration = {
-                                          directory(workingDir.get())
-                                          // CocoaPods requires to be run with Unicode external encoding
-                                          environment().putIfAbsent("LC_ALL", "en_US.UTF-8")
-                                      })
+                                      )
     }
+
+    private fun runPodInstallCommand(
+        command: List<String>,
+        onStdOutLine: (String) -> Unit,
+        errorOnNonZeroExitCode: Boolean,
+    ): RunProcessResult = runCommand(
+        command,
+        logger,
+        onStdOutLine = onStdOutLine,
+        errorOnNonZeroExitCode = errorOnNonZeroExitCode,
+        processConfiguration = {
+            directory(workingDir.get())
+            // CocoaPods requires to be run with Unicode external encoding
+            environment().putIfAbsent("LC_ALL", "en_US.UTF-8")
+        }
+    )
 
     private fun sharedHandleError(podInstallCommand: List<String>, result: RunProcessResult): String? {
         val command = podInstallCommand.joinToString(" ")
@@ -111,7 +162,7 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
             |'$command' command failed with an exception:
             | stdErr: ${result.stdErr}
             | stdOut: ${result.stdOut}
-            | exitCode: ${result.retCode}
+            | exitCode: ${result.returnCode}
             |        
         """.trimMargin()
 
