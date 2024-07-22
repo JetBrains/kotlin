@@ -3,19 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fir.test.cases.generated.cases.components.typeRelationChecker;
+package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.generated.cases.components.typeRelationChecker;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory;
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.AnalysisApiFirStandaloneModeTestConfiguratorFactory;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassSubtypingTypeRelationTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassIdSubtypingTypeRelationTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -26,16 +26,16 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping")
 @TestDataPath("$PROJECT_ROOT")
-public class FirIdeDependentAnalysisSourceModuleLenientClassSubtypingTypeRelationTestGenerated extends AbstractLenientClassSubtypingTypeRelationTest {
+public class FirStandaloneNormalAnalysisSourceModuleLenientClassIdSubtypingTypeRelationTestGenerated extends AbstractLenientClassIdSubtypingTypeRelationTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
-    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
         FrontendKind.Fir,
         TestModuleKind.Source,
-        AnalysisSessionMode.Dependent,
-        AnalysisApiMode.Ide
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
       )
     );
   }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassSubtypingTypeRelationTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassSymbolSubtypingTypeRelationTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping")
 @TestDataPath("$PROJECT_ROOT")
-public class Fe10IdeNormalAnalysisSourceModuleLenientClassSubtypingTypeRelationTestGenerated extends AbstractLenientClassSubtypingTypeRelationTest {
+public class Fe10IdeNormalAnalysisSourceModuleLenientClassSymbolSubtypingTypeRelationTestGenerated extends AbstractLenientClassSymbolSubtypingTypeRelationTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {

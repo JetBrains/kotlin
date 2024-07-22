@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassSubtypingTypeRelationTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassSymbolSubtypingTypeRelationTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping")
 @TestDataPath("$PROJECT_ROOT")
-public class FirIdeNormalAnalysisScriptSourceModuleNonLenientClassSubtypingTypeRelationTestGenerated extends AbstractNonLenientClassSubtypingTypeRelationTest {
+public class FirIdeDependentAnalysisScriptSourceModuleNonLenientClassSymbolSubtypingTypeRelationTestGenerated extends AbstractNonLenientClassSymbolSubtypingTypeRelationTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
@@ -34,7 +34,7 @@ public class FirIdeNormalAnalysisScriptSourceModuleNonLenientClassSubtypingTypeR
       new AnalysisApiTestConfiguratorFactoryData(
         FrontendKind.Fir,
         TestModuleKind.ScriptSource,
-        AnalysisSessionMode.Normal,
+        AnalysisSessionMode.Dependent,
         AnalysisApiMode.Ide
       )
     );

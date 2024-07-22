@@ -72,8 +72,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassSubtypingTypeRelationTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassSubtypingTypeRelationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassIdSubtypingTypeRelationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractLenientClassSymbolSubtypingTypeRelationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassIdSubtypingTypeRelationTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.AbstractNonLenientClassSymbolSubtypingTypeRelationTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest
@@ -614,11 +616,19 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "subtypingAndEquality")
         }
 
-        test<AbstractNonLenientClassSubtypingTypeRelationTest> {
+        test<AbstractNonLenientClassIdSubtypingTypeRelationTest> {
             model(it, "classSubtyping")
         }
 
-        test<AbstractLenientClassSubtypingTypeRelationTest> {
+        test<AbstractLenientClassIdSubtypingTypeRelationTest> {
+            model(it, "classSubtyping")
+        }
+
+        test<AbstractNonLenientClassSymbolSubtypingTypeRelationTest> {
+            model(it, "classSubtyping")
+        }
+
+        test<AbstractLenientClassSymbolSubtypingTypeRelationTest> {
             model(it, "classSubtyping")
         }
     }
