@@ -327,8 +327,8 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 return property in assignments
             }
 
-            fun add(property: FirProperty, assignment: Assignment) {
-                assignments.getOrPut(property) { mutableSetOf() }.add(assignment)
+            fun add(property: FirProperty, assignment: Assignment): Boolean {
+                return assignments.getOrPut(property) { mutableSetOf() }.add(assignment)
             }
 
             fun copy(): VariableAssignments {
@@ -337,18 +337,19 @@ internal class FirLocalVariableAssignmentAnalyzer {
                 return copy
             }
 
-            fun merge(other: VariableAssignments?) {
-                if (other == null) return
+            fun merge(other: VariableAssignments?): Boolean {
+                if (other == null || other.assignments.isEmpty()) return false
+
+                var modified = false
                 for ((property, values) in other.assignments) {
-                    assignments.getOrPut(property) { mutableSetOf() }.addAll(values)
+                    modified = modified or assignments.getOrPut(property) { mutableSetOf() }.addAll(values)
                 }
+                return modified
             }
 
             fun retain(properties: Set<FirProperty>) {
                 assignments.keys.retainAll(properties)
             }
-
-            fun isEmpty(): Boolean = assignments.isEmpty()
 
             fun getAssignedProperties(): Set<FirPropertySymbol> {
                 return assignments.entries
@@ -507,14 +508,12 @@ internal class FirLocalVariableAssignmentAnalyzer {
             }
 
             private fun MiniFlow.recordAssignment(property: FirProperty, assignment: Assignment) {
-                assignedLater.add(property, assignment)
+                if (!assignedLater.add(property, assignment)) return // Parents do not need to be updated if this flow is not updated.
                 parents.forEach { it.recordAssignment(property, assignment) }
             }
 
             private fun MiniFlow.recordAssignments(properties: VariableAssignments) {
-                if (properties.isEmpty()) return
-
-                assignedLater.merge(properties)
+                if (!assignedLater.merge(properties)) return // Parents do not need to be updated if this flow is not updated.
                 parents.forEach { it.recordAssignments(properties) }
             }
 

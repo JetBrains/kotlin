@@ -39092,6 +39092,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("branchesBeforeAssignment.kt")
+        public void testBranchesBeforeAssignment() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/branchesBeforeAssignment.kt");
+        }
+
+        @Test
         @TestMetadata("capturedByAtLeastOnce.kt")
         public void testCapturedByAtLeastOnce() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/capturedByAtLeastOnce.kt");
