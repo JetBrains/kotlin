@@ -1,8 +1,8 @@
 fun foo1(vararg params: Int) {
-    println(params)
+    params.hashCode()
 }
 
 typealias MyInt = Int
 fun foo2(vararg params: MyInt) {
-    println(params)
+    params.hashCode()
 }
