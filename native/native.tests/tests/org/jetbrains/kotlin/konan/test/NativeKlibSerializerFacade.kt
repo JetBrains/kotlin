@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.Companion.getKlibArtifactFile
 import org.jetbrains.kotlin.utils.metadataVersion
 
-abstract class AbstractNativeKlibBackendFacade(
+abstract class AbstractNativeKlibSerializerFacade(
     testServices: TestServices
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
     final override fun shouldRunAnalysis(module: TestModule): Boolean {
@@ -104,7 +104,7 @@ abstract class AbstractNativeKlibBackendFacade(
 /**
  * The Native KLIB facade suitable for the classic frontend.
  */
-class ClassicNativeKlibBackendFacade(testServices: TestServices) : AbstractNativeKlibBackendFacade(testServices) {
+class ClassicNativeKlibSerializerFacade(testServices: TestServices) : AbstractNativeKlibSerializerFacade(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::LibraryProvider), service(::ModuleDescriptorProvider))
 
@@ -176,7 +176,7 @@ class ClassicNativeKlibBackendFacade(testServices: TestServices) : AbstractNativ
 /**
  * The Native KLIB facade suitable for FIR frontend.
  */
-class FirNativeKlibBackendFacade(testServices: TestServices) : AbstractNativeKlibBackendFacade(testServices) {
+class FirNativeKlibSerializerFacade(testServices: TestServices) : AbstractNativeKlibSerializerFacade(testServices) {
     override fun serialize(
         configuration: CompilerConfiguration,
         dependencies: List<KotlinLibrary>,
