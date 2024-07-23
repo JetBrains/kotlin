@@ -58,6 +58,20 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         addAccessorsToParents(transformer.generatedAccessors)
     }
 
+    /**
+     * Lower a single inline [IrFunction] from an [IrFile] that is not being lowered right now.
+     *
+     * Note: This function is supposed to be used in [InlineFunctionResolver] implementations that allow
+     * deserializing bodiless inline functions and lowering them on demand. Example: [NativeInlineFunctionResolver].
+     *
+     * All the generated accessors are cached. This helps to avoid accidentally generating their duplicates on the next invocation
+     * of [lowerWithoutAddingAccessorsToParents] for another inline function that may also exist in the same [IrFile].
+     *
+     * Note that the generated accessors are not added to their [IrDeclarationContainer]s. This is only possible when lowering the
+     * whole [IrFile] through `lower(IrFile)`.
+     * - It helps to keep the invariant that only the file that is being lowered is modified.
+     * - Only during file-wise lowering it's possible to compute the proper order in which accessors should be placed.
+     */
     fun lowerWithoutAddingAccessorsToParents(irFunction: IrFunction) {
         irFunction.accept(Transformer(irFunction.file), null)
     }
@@ -65,15 +79,15 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
     /**
      * Add accessors to their containers repeating the order of the corresponding target declarations.
      * Example:
-     * ```
-     *   class MyClass
+     * ```kotlin
+     * class MyClass {
      *     // declarations that are used inside inline function:
      *     private val foo
-     *       private get()
-     *       private set(value)
-     *     public val bar:
-     *       public get()
-     *       private set(value)
+     *         private get()
+     *         private set(value)
+     *     public val bar
+     *         public get()
+     *         private set(value)
      *     public fun baz()
      *     private fun qux()
      *     // their accessors in the "proper" order:
@@ -81,6 +95,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
      *     fun access$<set-foo>()
      *     fun access$<set-bar>()
      *     fun access$qux()
+     * }
      * ```
      */
     private fun addAccessorsToParents(generatedAccessors: GeneratedAccessors) {
@@ -139,6 +154,8 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
                 data
             }
 
+            // Wrap it to the stage controller to avoid JS BE failing with not found lowered declaration signature
+            // in `IrDeclaration.signatureForJsIC` cache.
             return declaration.factory.stageController.restrictTo(declaration) {
                 super.visitFunction(declaration, newData)
             }
