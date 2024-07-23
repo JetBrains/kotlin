@@ -344,6 +344,7 @@ class WasmCompiledModuleFragment(
         createMasterInitFunction()
         createStartUnitTestsFunction()
         exports += WasmExport.Function("_initialize", masterInitFunction)
+        exports.removeAll { it.name == "startUnitTests" } // TODO: Remove after bootstrap
         exports += WasmExport.Function("startUnitTests", startUnitTestsFunction)
         createAndExportMemory()
     }
