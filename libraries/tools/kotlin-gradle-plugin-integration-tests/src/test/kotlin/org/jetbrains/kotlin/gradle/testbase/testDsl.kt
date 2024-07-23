@@ -777,8 +777,8 @@ private fun TestProject.agreeToBuildScanService() {
     val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
     settingsFile.append(
         """
-
-        develocity {
+            
+        gradleEnterprise {
             buildScan {
                 termsOfServiceUrl = "https://gradle.com/terms-of-service"
                 termsOfServiceAgree = "yes"
