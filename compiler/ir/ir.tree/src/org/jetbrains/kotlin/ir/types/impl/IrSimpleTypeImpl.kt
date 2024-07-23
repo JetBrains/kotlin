@@ -185,7 +185,7 @@ fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
         type.variance == variance -> type
         type is IrSimpleType -> type.toBuilder().buildTypeProjection(variance)
         type is IrDynamicType -> IrDynamicTypeImpl(type.annotations, variance)
-        type is IrErrorType -> IrErrorTypeImpl(null, type.annotations, variance)
+        type is IrErrorType -> IrErrorTypeImpl(type.originalKotlinType, type.annotations, variance)
         else -> IrTypeProjectionImpl(type, variance)
     }
 
