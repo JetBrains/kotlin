@@ -4034,7 +4034,7 @@ public fun UShortArray.sort(): Unit {
 @ExperimentalUnsignedTypes
 public fun UIntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -4052,7 +4052,7 @@ public fun UIntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @ExperimentalUnsignedTypes
 public fun ULongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -4070,7 +4070,7 @@ public fun ULongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @ExperimentalUnsignedTypes
 public fun UByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -4088,7 +4088,7 @@ public fun UByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @ExperimentalUnsignedTypes
 public fun UShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex) sortArray(this, fromIndex, toIndex)
 }
 
 /**
