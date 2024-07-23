@@ -2,7 +2,6 @@ import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 buildscript {
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -536,7 +535,7 @@ allprojects {
         afterEvaluate {
             configurations.all {
                 // Remove kotlin-compiler from dependencies during Idea import. KTI-1598
-                dependencies.removeIf { (it as? ProjectDependency)?.dependencyProject?.path == ":kotlin-compiler" }.ifTrue {
+                if (dependencies.removeIf { (it as? ProjectDependency)?.dependencyProject?.path == ":kotlin-compiler" }) {
                     logger.warn("Removed :kotlin-compiler project dependency from $this")
                 }
             }
