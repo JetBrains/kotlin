@@ -122,7 +122,7 @@ class PostponedArgumentsAnalyzer(
             (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.let { pclaInferenceSession ->
                 // TODO: Fix variables for context receivers, too (KT-64859)
                 buildMap {
-                    lambda.receiver
+                    lambda.receiverType
                         ?.let { pclaInferenceSession.semiFixCurrentResultIfTypeVariableAndReturnBinding(it, candidate.system) }
                         ?.let(this::plusAssign)
                 }
@@ -133,9 +133,9 @@ class PostponedArgumentsAnalyzer(
 
         fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType
 
-        val receiver = lambda.receiver?.let(::substitute)
-        val contextReceivers = lambda.contextReceivers.map(::substitute)
-        val parameters = lambda.parameters.map(::substitute)
+        val receiver = lambda.receiverType?.let(::substitute)
+        val contextReceivers = lambda.contextReceiverTypes.map(::substitute)
+        val parameters = lambda.parameterTypes.map(::substitute)
         val rawReturnType = lambda.returnType
 
         val expectedTypeForReturnArguments = when {

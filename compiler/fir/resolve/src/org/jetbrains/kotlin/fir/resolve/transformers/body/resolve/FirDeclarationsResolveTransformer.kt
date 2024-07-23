@@ -1162,7 +1162,7 @@ open class FirDeclarationsResolveTransformer(
 
         lambda.replaceReceiverParameter(
             lambda.receiverParameter?.takeIf { it.typeRef !is FirImplicitTypeRef }
-                ?: resolvedLambdaAtom?.receiver?.takeIf {
+                ?: resolvedLambdaAtom?.receiverType?.takeIf {
                     !resolvedLambdaAtom.coerceFirstParameterToExtensionReceiver
                 }?.let { coneKotlinType ->
                     lambda.receiverParameter?.apply {
@@ -1172,7 +1172,7 @@ open class FirDeclarationsResolveTransformer(
 
         lambda.replaceContextReceivers(
             lambda.contextReceivers.takeIf { it.isNotEmpty() }
-                ?: resolvedLambdaAtom?.contextReceivers?.map { receiverType ->
+                ?: resolvedLambdaAtom?.contextReceiverTypes?.map { receiverType ->
                     buildContextReceiver {
                         this.typeRef = buildResolvedTypeRef {
                             coneType = receiverType
@@ -1216,7 +1216,7 @@ open class FirDeclarationsResolveTransformer(
         resolvedLambdaAtom: ConeResolvedLambdaAtom,
         lambda: FirAnonymousFunction,
     ): List<FirValueParameter> {
-        val singleParameterType = resolvedLambdaAtom.parameters.singleOrNull()
+        val singleParameterType = resolvedLambdaAtom.parameterTypes.singleOrNull()
         return when {
             lambda.valueParameters.isEmpty() && singleParameterType != null -> {
                 val name = StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME
@@ -1238,10 +1238,10 @@ open class FirDeclarationsResolveTransformer(
 
             else -> {
                 val parameters = if (resolvedLambdaAtom.coerceFirstParameterToExtensionReceiver) {
-                    val receiver = resolvedLambdaAtom.receiver ?: error("Coercion to an extension function type, but no receiver found")
-                    listOf(receiver) + resolvedLambdaAtom.parameters
+                    val receiver = resolvedLambdaAtom.receiverType ?: error("Coercion to an extension function type, but no receiver found")
+                    listOf(receiver) + resolvedLambdaAtom.parameterTypes
                 } else {
-                    resolvedLambdaAtom.parameters
+                    resolvedLambdaAtom.parameterTypes
                 }
 
                 obtainValueParametersFromExpectedParameterTypes(parameters, lambda)

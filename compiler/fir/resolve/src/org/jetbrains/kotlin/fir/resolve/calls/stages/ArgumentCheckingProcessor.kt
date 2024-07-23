@@ -348,16 +348,16 @@ internal object ArgumentCheckingProcessor {
         candidate.addPostponedAtom(resolvedArgument)
 
         if (expectedType != null) {
-            val parameters = resolvedArgument.parameters
+            val parameters = resolvedArgument.parameterTypes
             val functionTypeKind = context.session.functionTypeService.extractSingleSpecialKindForFunction(anonymousFunction.symbol)
                 ?: resolvedArgument.expectedFunctionTypeKind?.nonReflectKind()
                 ?: FunctionTypeKind.Function
             val lambdaType = createFunctionType(
                 functionTypeKind,
                 parameters,
-                resolvedArgument.receiver,
+                resolvedArgument.receiverType,
                 resolvedArgument.returnType,
-                contextReceivers = resolvedArgument.contextReceivers,
+                contextReceivers = resolvedArgument.contextReceiverTypes,
             )
 
             val position = ConeArgumentConstraintPosition(resolvedArgument.anonymousFunction)
