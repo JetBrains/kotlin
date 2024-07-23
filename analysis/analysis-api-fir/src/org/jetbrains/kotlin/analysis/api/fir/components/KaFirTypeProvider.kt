@@ -297,10 +297,9 @@ internal class KaFirTypeProvider(
         val argumentTypes = (session.typeContext.captureArguments(this, CaptureStatus.FROM_EXPRESSION)?.toList()
             ?: this.typeArguments.mapNotNull { it.type })
 
-        require(typeParameterSymbols.size == argumentTypes.size) {
-            val renderedSymbol = FirRenderer.noAnnotationBodiesAccessorAndArguments().renderElementAsString(symbol.fir)
-            "'$renderedSymbol' expects '${typeParameterSymbols.size}' type arguments " +
-                    "but type '${this.renderForDebugging()}' has ${argumentTypes.size} type arguments."
+        if (typeParameterSymbols.size != argumentTypes.size) {
+            // Should not happen in valid code
+            return emptySequence()
         }
 
         val substitutor = substitutorByMap(typeParameterSymbols.zip(argumentTypes).toMap(), session)
