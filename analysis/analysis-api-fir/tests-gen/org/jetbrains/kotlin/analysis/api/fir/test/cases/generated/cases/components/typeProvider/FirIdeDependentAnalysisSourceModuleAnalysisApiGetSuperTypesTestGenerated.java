@@ -58,6 +58,12 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiGetSuperTypesTestGene
   }
 
   @Test
+  @TestMetadata("callWithMissingTypeArgument.kt")
+  public void testCallWithMissingTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/callWithMissingTypeArgument.kt");
+  }
+
+  @Test
   @TestMetadata("contravariant.kt")
   public void testContravariant() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/contravariant.kt");
@@ -91,6 +97,12 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiGetSuperTypesTestGene
   @TestMetadata("invariant.kt")
   public void testInvariant() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/invariant.kt");
+  }
+
+  @Test
+  @TestMetadata("objectWithTypeParameter.kt")
+  public void testObjectWithTypeParameter() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/superTypes/objectWithTypeParameter.kt");
   }
 
   @Test

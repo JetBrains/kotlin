@@ -58,6 +58,12 @@ public class FirIdeDependentAnalysisSourceModuleDoubleColonReceiverTypeTestGener
   }
 
   @Test
+  @TestMetadata("getClass_typeWithParameter.kt")
+  public void testGetClass_typeWithParameter() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/getClass_typeWithParameter.kt");
+  }
+
+  @Test
   @TestMetadata("getClass_variable.kt")
   public void testGetClass_variable() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/getClass_variable.kt");
@@ -91,6 +97,12 @@ public class FirIdeDependentAnalysisSourceModuleDoubleColonReceiverTypeTestGener
   @TestMetadata("methodReference_typeArgument.kt")
   public void testMethodReference_typeArgument() {
     runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_typeArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("methodReference_typeArgumentMissing.kt")
+  public void testMethodReference_typeArgumentMissing() {
+    runTest("analysis/analysis-api/testData/components/typeInfoProvider/doubleColonReceiverType/methodReference_typeArgumentMissing.kt");
   }
 
   @Test
