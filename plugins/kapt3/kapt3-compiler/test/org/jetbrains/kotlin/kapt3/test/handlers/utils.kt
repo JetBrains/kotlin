@@ -10,13 +10,11 @@ import com.sun.tools.javac.tree.Pretty
 import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.utils.withExtension
-import kotlin.metadata.KmDeclarationContainer
-import kotlin.metadata.KmVersionRequirement
-import kotlin.metadata.hasConstant
-import kotlin.metadata.isConst
+import kotlin.metadata.*
 import kotlin.metadata.jvm.KotlinClassMetadata
 
 fun Assertions.checkTxtAccordingToBackend(module: TestModule, actual: String, fileSuffix: String = "") {
@@ -82,6 +80,10 @@ private fun processMetadata(metadata: KotlinClassMetadata) {
                 if (!property.isConst) {
                     // hasConstant is irrelevant for non-const properties and will be removed in KT-61138.
                     property.hasConstant = false
+                }
+                // K1 uses "<set-?>", K2 uses "value" for default setter parameter name (KT-63984), in reality it doesn't affect anything.
+                if (property.setter?.isNotDefault == false) {
+                    property.setterParameter?.name = SpecialNames.IMPLICIT_SET_PARAMETER.asString()
                 }
             }
         }
