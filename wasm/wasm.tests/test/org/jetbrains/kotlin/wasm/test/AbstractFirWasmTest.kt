@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
-import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibBackendFacade
+import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
@@ -52,7 +52,7 @@ abstract class AbstractFirWasmTest(
         get() = ::Fir2IrResultsConverter
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirWasmKlibBackendFacade
+        get() = ::FirWasmKlibSerializerFacade
 
     override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Wasm>>
         get() = ::WasmBackendFacade

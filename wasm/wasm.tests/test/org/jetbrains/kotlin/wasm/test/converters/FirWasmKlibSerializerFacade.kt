@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
-class FirWasmKlibBackendFacade(
+class FirWasmKlibSerializerFacade(
     testServices: TestServices,
     private val firstTimeCompilation: Boolean
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
@@ -47,7 +47,7 @@ class FirWasmKlibBackendFacade(
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
         require(inputArtifact is IrBackendInput.WasmAfterFrontendBackendInput) {
-            "FirWasmKlibBackendFacade expects IrBackendInput.WasmAfterFrontendBackendInput as input"
+            "FirWasmKlibSerializerFacade expects IrBackendInput.WasmAfterFrontendBackendInput as input"
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
