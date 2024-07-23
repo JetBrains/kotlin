@@ -141,7 +141,7 @@ class FirPCLAInferenceSession(
         val system = (this as? FirResolvable)?.candidate()?.system ?: currentCommonSystem
 
         if (resolutionMode is ResolutionMode.ReceiverResolution) {
-            fixCurrentResultIfTypeVariableAndReturnBinding(resolvedType, system)?.let { additionalBindings += it }
+            semiFixCurrentResultIfTypeVariableAndReturnBinding(resolvedType, system)?.let { additionalBindings += it }
         }
 
         val substitutor = system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor
@@ -153,25 +153,14 @@ class FirPCLAInferenceSession(
     }
 
     override fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? =
-        fixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
+        semiFixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
 
-    fun fixCurrentResultIfTypeVariableAndReturnBinding(
+    fun semiFixCurrentResultIfTypeVariableAndReturnBinding(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
-        return when (type) {
-            is ConeFlexibleType -> fixCurrentResultIfTypeVariableAndReturnBinding(type.lowerBound, myCs)
-            is ConeDefinitelyNotNullType -> fixCurrentResultIfTypeVariableAndReturnBinding(type.original, myCs)
-            is ConeTypeVariableType -> fixCurrentResultForNestedTypeVariable(type, myCs)
-            else -> null
-        }
-    }
-
-    private fun fixCurrentResultForNestedTypeVariable(
-        type: ConeTypeVariableType,
-        myCs: NewConstraintSystemImpl,
-    ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
-        val coneTypeVariableTypeConstructor = type.typeConstructor
+        val coneTypeVariableTypeConstructor = (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeVariableType)?.typeConstructor
+            ?: return null
 
         require(coneTypeVariableTypeConstructor in myCs.allTypeVariables) {
             "$coneTypeVariableTypeConstructor not found"
