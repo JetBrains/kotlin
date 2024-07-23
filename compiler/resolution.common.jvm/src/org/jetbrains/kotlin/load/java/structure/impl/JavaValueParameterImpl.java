@@ -100,6 +100,14 @@ public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
     }
 
     @Override
+    @Nullable
+    public Name nonGeneratedName() {
+        PsiParameter psi = getPsi();
+        if (psi instanceof ClsParameterImpl) return null;
+        return getName();
+    }
+
+    @Override
     @NotNull
     public JavaType getType() {
         return JavaTypeImpl.create(getPsi().getType(), createVariableReturnTypeSource(psiElementSource));

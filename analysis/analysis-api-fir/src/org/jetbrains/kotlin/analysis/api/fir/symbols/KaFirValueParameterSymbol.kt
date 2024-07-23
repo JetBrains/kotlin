@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.compiled.ClsParameterImpl
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.varargElementType
@@ -40,7 +42,13 @@ internal class KaFirValueParameterSymbol(
 ) : KaValueParameterSymbol(), KaFirSymbol<FirValueParameterSymbol> {
     override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
 
-    override val name: Name get() = withValidityAssertion { firSymbol.name }
+    override val name: Name
+        get() = withValidityAssertion {
+            val psi = firSymbol.fir.psi
+            if (psi is ClsParameterImpl) return@withValidityAssertion Name.identifier(psi.name)
+
+            firSymbol.name
+        }
 
     override val isVararg: Boolean get() = withValidityAssertion { firSymbol.isVararg }
 

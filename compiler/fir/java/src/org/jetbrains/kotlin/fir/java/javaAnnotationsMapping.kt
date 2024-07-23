@@ -158,7 +158,7 @@ internal fun JavaValueParameter.toFirValueParameter(
     isFromSource = this@toFirValueParameter.isFromSource
     this.moduleData = moduleData
     containingFunctionSymbol = functionSymbol
-    name = this@toFirValueParameter.name ?: Name.identifier("p$index")
+    name = this@toFirValueParameter.nonGeneratedName() ?: Name.identifier("p$index")
     returnTypeRef = type.toFirJavaTypeRef(session, source)
     isVararg = this@toFirValueParameter.isVararg
     annotationBuilder = { convertAnnotationsToFir(session, source) }

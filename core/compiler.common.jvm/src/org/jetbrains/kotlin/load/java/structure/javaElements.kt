@@ -151,6 +151,8 @@ interface JavaValueParameter : JavaAnnotationOwner {
     val type: JavaType
     val isVararg: Boolean
     val isFromSource: Boolean
+
+    fun nonGeneratedName(): Name? = name
 }
 
 interface JavaRecordComponent : JavaMember {
