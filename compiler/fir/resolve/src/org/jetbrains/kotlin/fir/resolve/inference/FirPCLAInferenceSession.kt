@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.defaultType
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * @see [docs/fir/pcla.md]
@@ -137,14 +137,13 @@ class FirPCLAInferenceSession(
     private fun FirExpression.updateReturnTypeWithCurrentSubstitutor(
         resolutionMode: ResolutionMode,
     ) {
-        val additionalBindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
         val system = (this as? FirResolvable)?.candidate()?.system ?: currentCommonSystem
 
-        if (resolutionMode is ResolutionMode.ReceiverResolution) {
-            semiFixCurrentResultIfTypeVariableAndReturnBinding(resolvedType, system)?.let { additionalBindings += it }
+        val additionalBinding = runIf(resolutionMode is ResolutionMode.ReceiverResolution) {
+            semiFixCurrentResultIfTypeVariableAndReturnBinding(resolvedType, system)
         }
 
-        val substitutor = system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor
+        val substitutor = system.buildCurrentSubstitutor(additionalBinding) as ConeSubstitutor
         val updatedType = substitutor.substituteOrNull(resolvedType)
 
         if (updatedType != null) {
