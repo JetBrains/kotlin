@@ -2437,7 +2437,7 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIn
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (size > 1 ) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2455,7 +2455,7 @@ public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (size > 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2473,7 +2473,7 @@ public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (size > 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2491,7 +2491,7 @@ public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (size > 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2509,7 +2509,7 @@ public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (size > 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2527,7 +2527,7 @@ public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (size > 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2545,7 +2545,7 @@ public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Uni
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (size > 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**

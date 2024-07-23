@@ -1951,6 +1951,40 @@ class ArraysTest {
         assertEquals(Array(0, { "" }).asList(), emptyList<String>())
     }
 
+    @Test fun mergeSortOutOfBounds() {
+        arrayOf<String>().sort()
+        arrayOf<String>().sort(0)
+        arrayOf<String>().sort(0, 0)
+
+        assertFailsWith<IndexOutOfBoundsException> { intArrayOf().sort(5, 5) }
+        assertFailsWith<IndexOutOfBoundsException> { intArrayOf().sort(0, 1) }
+    }
+
+    @Test fun quickSortOutOfBounds() {
+        // quickSort
+        byteArrayOf().sort(0)
+        shortArrayOf().sort(0)
+        longArrayOf().sort(0)
+        charArrayOf().sort(0)
+        floatArrayOf().sort(0)
+        doubleArrayOf().sort(0)
+        // booleanArrayOf().sort(0) // BooleanArray doesn't have sort extension function
+        ubyteArrayOf().sort(0)
+        ushortArrayOf().sort(0)
+        uintArrayOf().sort(0)
+        ulongArrayOf().sort(0)
+
+        intArrayOf().sort()
+        intArrayOf().sort(0)
+        intArrayOf().sort(0, 0)
+        assertFailsWith<IndexOutOfBoundsException> { intArrayOf().sort(5, 5) }
+        assertFailsWith<IndexOutOfBoundsException> { intArrayOf().sort(0, 1) }
+    }
+
+    @Test fun quickSortRange() {
+        intArrayOf().sort(fromIndex = 5, toIndex = 5)
+    }
+
     @Test fun sort() {
         val intArr = intArrayOf(5, 2, 1, 9, 80, Int.MIN_VALUE, Int.MAX_VALUE)
         intArr.sort()
