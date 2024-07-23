@@ -60,6 +60,18 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("js/js.tests/klib-compatibility/tests-gen", "compiler/testData/klib/versionCompatibility") {
+            testClass<AbstractJsKlibCompatibilityNoICTestCase> {
+                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+            testClass<AbstractJsKlibCompatibilityNoICES6TestCase> {
+                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+            testClass<AbstractJsKlibCompatibilityWithICTestCase> {
+                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+        }
+
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
             testClass<AbstractJsIrInvalidationPerFileTest> {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
