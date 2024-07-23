@@ -152,9 +152,9 @@ class ConeResolvedLambdaAtom(
     override val expression: FirAnonymousFunctionExpression,
     expectedType: ConeKotlinType?,
     val expectedFunctionTypeKind: FunctionTypeKind?,
-    val receiver: ConeKotlinType?,
-    val contextReceivers: List<ConeKotlinType>,
-    val parameters: List<ConeKotlinType>,
+    internal val receiverType: ConeKotlinType?,
+    internal val contextReceiverTypes: List<ConeKotlinType>,
+    internal val parameterTypes: List<ConeKotlinType>,
     var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
     val coerceFirstParameterToExtensionReceiver: Boolean,
@@ -174,11 +174,11 @@ class ConeResolvedLambdaAtom(
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {
-            if (receiver == null && contextReceivers.isEmpty()) return parameters
-            return ArrayList<ConeKotlinType>(parameters.size + contextReceivers.size + (if (receiver != null) 1 else 0)).apply {
-                addAll(parameters)
-                addIfNotNull(receiver)
-                addAll(contextReceivers)
+            if (receiverType == null && contextReceiverTypes.isEmpty()) return parameterTypes
+            return ArrayList<ConeKotlinType>(parameterTypes.size + contextReceiverTypes.size + (if (receiverType != null) 1 else 0)).apply {
+                addAll(parameterTypes)
+                addIfNotNull(receiverType)
+                addAll(contextReceiverTypes)
             }
         }
 
