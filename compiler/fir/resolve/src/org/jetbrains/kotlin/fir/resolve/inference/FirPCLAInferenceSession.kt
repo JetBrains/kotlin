@@ -141,7 +141,7 @@ class FirPCLAInferenceSession(
         val system = (this as? FirResolvable)?.candidate()?.system ?: currentCommonSystem
 
         if (resolutionMode is ResolutionMode.ReceiverResolution) {
-            fixCurrentResultIfTypeVariableAndReturnBinding(resolvedType, system)?.let { additionalBindings += it }
+            semiFixCurrentResultIfTypeVariableAndReturnBinding(resolvedType, system)?.let { additionalBindings += it }
         }
 
         val substitutor = system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor
@@ -153,60 +153,50 @@ class FirPCLAInferenceSession(
     }
 
     override fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? =
-        fixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
+        semiFixCurrentResultIfTypeVariableAndReturnBinding(type, currentCommonSystem)?.second
 
-    fun fixCurrentResultIfTypeVariableAndReturnBinding(
+    fun semiFixCurrentResultIfTypeVariableAndReturnBinding(
         type: ConeKotlinType,
         myCs: NewConstraintSystemImpl,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
-        return when (type) {
-            is ConeFlexibleType -> fixCurrentResultIfTypeVariableAndReturnBinding(type.lowerBound, myCs)
-            is ConeDefinitelyNotNullType -> fixCurrentResultIfTypeVariableAndReturnBinding(type.original, myCs)
-            is ConeTypeVariableType -> fixCurrentResultForNestedTypeVariable(type, myCs)
-            else -> null
-        }
-    }
+        return (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeVariableType)?.let {
+            val coneTypeVariableTypeConstructor = it.typeConstructor
 
-    private fun fixCurrentResultForNestedTypeVariable(
-        type: ConeTypeVariableType,
-        myCs: NewConstraintSystemImpl,
-    ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
-        val coneTypeVariableTypeConstructor = type.typeConstructor
-
-        require(coneTypeVariableTypeConstructor in myCs.allTypeVariables) {
-            "$coneTypeVariableTypeConstructor not found"
-        }
-
-        val variableWithConstraints = myCs.notFixedTypeVariables[coneTypeVariableTypeConstructor] ?: return null
-        val c = myCs.getBuilder()
-
-        if (coneTypeVariableTypeConstructor in myCs.outerTypeVariables.orEmpty()) {
-            // For outer TV, we don't allow semi-fixing them (adding the new equality constraints),
-            // but if there's already some proper EQ constraint, it's safe & sound to use it as a representative
-            c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {
-                inferenceComponents.resultTypeResolver.findResultIfThereIsEqualsConstraint(
-                    c,
-                    variableWithConstraints,
-                    isStrictMode = true,
-                ) as ConeKotlinType?
-            }?.let { appropriateResultType ->
-                return Pair(coneTypeVariableTypeConstructor, appropriateResultType)
+            require(coneTypeVariableTypeConstructor in myCs.allTypeVariables) {
+                "$coneTypeVariableTypeConstructor not found"
             }
 
-            return null
+            val variableWithConstraints = myCs.notFixedTypeVariables[coneTypeVariableTypeConstructor] ?: return null
+            val c = myCs.getBuilder()
+
+            if (coneTypeVariableTypeConstructor in myCs.outerTypeVariables.orEmpty()) {
+                // For outer TV, we don't allow semi-fixing them (adding the new equality constraints),
+                // but if there's already some proper EQ constraint, it's safe & sound to use it as a representative
+                c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {
+                    inferenceComponents.resultTypeResolver.findResultIfThereIsEqualsConstraint(
+                        c,
+                        variableWithConstraints,
+                        isStrictMode = true,
+                    ) as ConeKotlinType?
+                }?.let { appropriateResultType ->
+                    return Pair(coneTypeVariableTypeConstructor, appropriateResultType)
+                }
+
+                return null
+            }
+
+            val resultType = c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {
+                inferenceComponents.resultTypeResolver.findResultType(
+                    c,
+                    variableWithConstraints,
+                    TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+                ) as ConeKotlinType
+            } ?: return null
+            val variable = variableWithConstraints.typeVariable
+            c.addEqualityConstraint(variable.defaultType(c), resultType, ConeSemiFixVariableConstraintPosition(variable))
+
+            return Pair(coneTypeVariableTypeConstructor, resultType)
         }
-
-        val resultType = c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {
-            inferenceComponents.resultTypeResolver.findResultType(
-                c,
-                variableWithConstraints,
-                TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-            ) as ConeKotlinType
-        } ?: return null
-        val variable = variableWithConstraints.typeVariable
-        c.addEqualityConstraint(variable.defaultType(c), resultType, ConeSemiFixVariableConstraintPosition(variable))
-
-        return Pair(coneTypeVariableTypeConstructor, resultType)
     }
 
     private fun ConstraintSystemCompletionContext.prepareContextForTypeVariableForSemiFixation(
