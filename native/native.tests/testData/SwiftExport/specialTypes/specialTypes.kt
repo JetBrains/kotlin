@@ -19,3 +19,9 @@ fun isPredefinedBMPString(str: String): Boolean = str == predefinedBMPString
 
 val predefinedUnicodeString = "👋, 🌎"
 fun isPredefinedUnicodeString(str: String): Boolean = str == predefinedUnicodeString
+
+// FILE: data_object.kt
+
+data object DemoDataObject
+
+fun stringDescribingDataObject() = "${DemoDataObject}"

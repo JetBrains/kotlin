@@ -187,6 +187,43 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
     }
 }
 public extension ExportedKotlinPackages.namespace.deeper {
+    public class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
+        public static var shared: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE {
+            get {
+                return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE(__externalRCRef: namespace_deeper_DATA_OBJECT_WITH_PACKAGE_get())
+            }
+        }
+        public var value: Swift.Int32 {
+            get {
+                return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_value_get(self.__externalRCRef())
+            }
+        }
+        public var variable: Swift.Int32 {
+            get {
+                return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_get(self.__externalRCRef())
+            }
+            set {
+                return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__(self.__externalRCRef(), newValue)
+            }
+        }
+        private override init() {
+            fatalError()
+        }
+        public override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+        public func foo() -> Swift.Int32 {
+            return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
+        }
+        public func hashCode() -> Swift.Int32 {
+            return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_hashCode(self.__externalRCRef())
+        }
+        public func toString() -> Swift.String {
+            return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_toString(self.__externalRCRef())
+        }
+    }
     public class Foo : KotlinRuntime.KotlinBase {
         public class INSIDE_CLASS : KotlinRuntime.KotlinBase {
             public class DEEPER_INSIDE_CLASS : KotlinRuntime.KotlinBase {

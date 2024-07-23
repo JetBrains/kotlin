@@ -23,6 +23,15 @@ func testStrings() throws {
     try assertFalse(areStringsTheSame(lhs: string, rhs: string))
 }
 
+func testDataObject() throws {
+    let obj = DemoDataObject.shared
+    let objDescription = obj.description
+
+    try assertEqualStrings(actual: obj.description, expected: stringDescribingDataObject())
+    try assertEqualStrings(actual: "\(obj)", expected: obj.description)
+    try assertEqualStrings(actual: "\(obj)", expected: "DemoDataObject")
+}
+
 func testWeirdStrings() throws {
     let asciiString = "Hello, World!"
     try assertEqualStrings(actual: predefinedASCIIString, expected: asciiString);
@@ -45,6 +54,7 @@ class SpecialTypesTests : TestProvider {
         tests = [
             TestCase(name: "testStrings", method: withAutorelease(testStrings)),
             TestCase(name: "testWeirdStrings", method: withAutorelease(testWeirdStrings)),
+            TestCase(name: "testDataObject", method: withAutorelease(testDataObject)),
         ]
     }
 }

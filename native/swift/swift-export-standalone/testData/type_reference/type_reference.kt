@@ -27,6 +27,9 @@ var var_object: Object_without_package
     get() = TODO()
     set(value) = TODO()
 
+fun recieve_DATA_OBJECT(x: DATA_OBJECT): Unit = TODO()
+fun produce_DATA_OBJECT(): DATA_OBJECT = TODO()
+
 fun recieve_object_wp(arg: Object_with_package): Unit = TODO()
 fun produce_object_wp(): Object_with_package = TODO()
 val val_object_wp: Object_with_package
@@ -93,10 +96,6 @@ open class OPEN_CLASS
 abstract class ABSTRACT_CLASS
 interface INTERFACE
 
-data object DATA_OBJECT {
-    val a: Int = 42
-}
-
 enum class ENUM {
     A,
 }
@@ -119,9 +118,6 @@ fun produce_ABSTRACT_CLASS(): ABSTRACT_CLASS = TODO()
 fun recieve_INTERFACE(x: INTERFACE): Unit = TODO()
 fun produce_INTERFACE(): INTERFACE = TODO()
 
-fun recieve_DATA_OBJECT(x: DATA_OBJECT): Unit = TODO()
-fun produce_DATA_OBJECT(): DATA_OBJECT = TODO()
-
 fun recieve_ENUM(x: ENUM): Unit = TODO()
 fun produce_ENUM(): ENUM = TODO()
 
@@ -135,6 +131,10 @@ class Class_with_package {
 object Object_with_package {
     class INNER_CLASS
     object INNER_OBJECT
+}
+
+data object DATA_OBJECT {
+    val a: Int = 42
 }
 
 // FILE: predefined_type_without_package.kt

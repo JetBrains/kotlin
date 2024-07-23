@@ -215,6 +215,12 @@ public fun __root___combine(arg1: kotlin.native.internal.NativePtr, arg2: kotlin
     combine(__arg1, __arg2, __arg3, __arg4)
 }
 
+@ExportedBridge("__root___produce_DATA_OBJECT")
+public fun __root___produce_DATA_OBJECT(): kotlin.native.internal.NativePtr {
+    val _result = produce_DATA_OBJECT()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___produce_class")
 public fun __root___produce_class(): kotlin.native.internal.NativePtr {
     val _result = produce_class()
@@ -237,6 +243,12 @@ public fun __root___produce_object(): kotlin.native.internal.NativePtr {
 public fun __root___produce_object_wp(): kotlin.native.internal.NativePtr {
     val _result = produce_object_wp()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___recieve_DATA_OBJECT__TypesOfArguments__uintptr_t__")
+public fun __root___recieve_DATA_OBJECT(x: kotlin.native.internal.NativePtr): Unit {
+    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as namespace.deeper.DATA_OBJECT
+    recieve_DATA_OBJECT(__x)
 }
 
 @ExportedBridge("__root___recieve_class__TypesOfArguments__uintptr_t__")
@@ -365,6 +377,33 @@ public fun namespace_deeper_Class_with_package_init_initialize(__kt: kotlin.nati
     kotlin.native.internal.initInstance(____kt, namespace.deeper.Class_with_package())
 }
 
+@ExportedBridge("namespace_deeper_DATA_OBJECT_a_get")
+public fun namespace_deeper_DATA_OBJECT_a_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT
+    val _result = __self.a
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_get")
+public fun namespace_deeper_DATA_OBJECT_get(): kotlin.native.internal.NativePtr {
+    val _result = namespace.deeper.DATA_OBJECT
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_hashCode")
+public fun namespace_deeper_DATA_OBJECT_hashCode(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT
+    val _result = __self.hashCode()
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_toString")
+public fun namespace_deeper_DATA_OBJECT_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT
+    val _result = __self.toString()
+    return _result.objcPtr()
+}
+
 @ExportedBridge("namespace_deeper_Object_with_package_INNER_CLASS_init_allocate")
 public fun namespace_deeper_Object_with_package_INNER_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.Object_with_package.INNER_CLASS>()
@@ -388,3 +427,4 @@ public fun namespace_deeper_Object_with_package_get(): kotlin.native.internal.Na
     val _result = namespace.deeper.Object_with_package
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
+

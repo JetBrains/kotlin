@@ -83,6 +83,20 @@ uintptr_t namespace_NAMESPACED_CLASS_init_allocate();
 
 void namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
 
+int32_t namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo(uintptr_t self);
+
+uintptr_t namespace_deeper_DATA_OBJECT_WITH_PACKAGE_get();
+
+int32_t namespace_deeper_DATA_OBJECT_WITH_PACKAGE_hashCode(uintptr_t self);
+
+NSString * namespace_deeper_DATA_OBJECT_WITH_PACKAGE_toString(uintptr_t self);
+
+int32_t namespace_deeper_DATA_OBJECT_WITH_PACKAGE_value_get(uintptr_t self);
+
+int32_t namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_get(uintptr_t self);
+
+void namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__(uintptr_t self, int32_t newValue);
+
 _Bool namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo(uintptr_t self);
 
 uintptr_t namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate();

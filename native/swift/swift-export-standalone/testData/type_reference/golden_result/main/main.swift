@@ -263,6 +263,9 @@ public func combine(
 ) -> Swift.Void {
     return __root___combine__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef())
 }
+public func produce_DATA_OBJECT() -> ExportedKotlinPackages.namespace.deeper.DATA_OBJECT {
+    return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT(__externalRCRef: __root___produce_DATA_OBJECT())
+}
 public func produce_class() -> main.Class_without_package {
     return main.Class_without_package(__externalRCRef: __root___produce_class())
 }
@@ -274,6 +277,11 @@ public func produce_object() -> main.Object_without_package {
 }
 public func produce_object_wp() -> ExportedKotlinPackages.namespace.deeper.Object_with_package {
     return ExportedKotlinPackages.namespace.deeper.Object_with_package(__externalRCRef: __root___produce_object_wp())
+}
+public func recieve_DATA_OBJECT(
+    x: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT
+) -> Swift.Void {
+    return __root___recieve_DATA_OBJECT__TypesOfArguments__uintptr_t__(x.__externalRCRef())
 }
 public func recieve_class(
     arg: main.Class_without_package
@@ -335,6 +343,32 @@ public extension ExportedKotlinPackages.namespace.deeper {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
+    public class DATA_OBJECT : KotlinRuntime.KotlinBase {
+        public var a: Swift.Int32 {
+            get {
+                return namespace_deeper_DATA_OBJECT_a_get(self.__externalRCRef())
+            }
+        }
+        public static var shared: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT {
+            get {
+                return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT(__externalRCRef: namespace_deeper_DATA_OBJECT_get())
+            }
+        }
+        private override init() {
+            fatalError()
+        }
+        public override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+        public func hashCode() -> Swift.Int32 {
+            return namespace_deeper_DATA_OBJECT_hashCode(self.__externalRCRef())
+        }
+        public func toString() -> Swift.String {
+            return namespace_deeper_DATA_OBJECT_toString(self.__externalRCRef())
+        }
+    }
     public class Object_with_package : KotlinRuntime.KotlinBase {
         public class INNER_CLASS : KotlinRuntime.KotlinBase {
             public override init() {
@@ -385,9 +419,6 @@ public extension ExportedKotlinPackages.ignored {
     public static func produce_DATA_CLASS() -> Swift.Never {
         fatalError()
     }
-    public static func produce_DATA_OBJECT() -> Swift.Never {
-        fatalError()
-    }
     public static func produce_ENUM() -> Swift.Never {
         fatalError()
     }
@@ -414,11 +445,6 @@ public extension ExportedKotlinPackages.ignored {
         fatalError()
     }
     public static func recieve_DATA_CLASS(
-        x: Swift.Never
-    ) -> Swift.Void {
-        fatalError()
-    }
-    public static func recieve_DATA_OBJECT(
         x: Swift.Never
     ) -> Swift.Void {
         fatalError()

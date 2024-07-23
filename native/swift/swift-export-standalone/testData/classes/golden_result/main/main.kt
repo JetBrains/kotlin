@@ -270,6 +270,54 @@ public fun namespace_NAMESPACED_CLASS_init_initialize(__kt: kotlin.native.intern
     kotlin.native.internal.initInstance(____kt, namespace.NAMESPACED_CLASS())
 }
 
+@ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo")
+public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
+    val _result = __self.foo()
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_get")
+public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_get(): kotlin.native.internal.NativePtr {
+    val _result = namespace.deeper.DATA_OBJECT_WITH_PACKAGE
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_hashCode")
+public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_hashCode(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
+    val _result = __self.hashCode()
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_toString")
+public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
+    val _result = __self.toString()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_value_get")
+public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_value_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
+    val _result = __self.value
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_get")
+public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
+    val _result = __self.variable
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__")
+public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_variable_set(self: kotlin.native.internal.NativePtr, newValue: Int): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
+    val __newValue = newValue
+    __self.variable = __newValue
+}
+
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo")
 public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS
