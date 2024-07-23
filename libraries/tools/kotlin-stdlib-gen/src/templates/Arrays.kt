@@ -1332,7 +1332,7 @@ object ArrayOps : TemplateGroupBase() {
             body {
                 """
                 AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-                sortArray(this, fromIndex, toIndex)
+                if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
                 """
             }
             return@builder
@@ -1351,7 +1351,7 @@ object ArrayOps : TemplateGroupBase() {
             body {
                 """
                 AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-                sortArray(this, fromIndex, toIndex)
+                if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
                 """
             }
         }
