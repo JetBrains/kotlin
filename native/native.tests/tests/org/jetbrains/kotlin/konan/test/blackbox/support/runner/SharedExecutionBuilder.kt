@@ -27,7 +27,8 @@ import java.util.concurrent.ConcurrentHashMap
  */
 internal object SharedExecutionBuilder {
     private val executableToSharedRun: ConcurrentHashMap<TestCompilationArtifact.Executable, TestRun> = ConcurrentHashMap()
-    private val testCasesToExecuteSeparately: ConcurrentHashMap<TestExecutable, MutableList<TestCase>> = ConcurrentHashMap()
+    private val testCasesToExecuteSeparately: ConcurrentHashMap<TestCompilationArtifact.Executable, MutableList<TestCase>> =
+        ConcurrentHashMap()
 
     fun buildRunner(settings: Settings, executor: Executor, testRun: TestRun): AbstractRunner<Unit> {
         if (testRun.testCase.kind !in listOf(TestKind.REGULAR, TestKind.STANDALONE)) {
@@ -78,7 +79,7 @@ internal object SharedExecutionBuilder {
     }
 
     private fun Settings.computeSeparateTestCases(testRun: TestRun): MutableList<TestCase> =
-        testCasesToExecuteSeparately.computeIfAbsent(testRun.executable) {
+        testCasesToExecuteSeparately.computeIfAbsent(testRun.executable.executable) {
             val testRunProvider = get<NativeTestInstances<AbstractNativeBlackBoxTest>>().enclosingTestInstance.testRunProvider
             val testCaseGroupId = testRun.testCase.id.testCaseGroupId
 
