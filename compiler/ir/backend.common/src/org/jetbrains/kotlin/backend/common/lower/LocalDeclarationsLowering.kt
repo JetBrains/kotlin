@@ -1102,3 +1102,8 @@ open class LocalDeclarationsLowering(
 
 // Local inner classes capture anything through outer
 internal fun IrClass.isLocalNotInner(): Boolean = visibility == DescriptorVisibilities.LOCAL && !isInner
+
+// TODO (KT-70160): This is used by Anvil compiler plugin, remove after Anvil update.
+@Deprecated("Moved to IR Utils", level = DeprecationLevel.HIDDEN)
+val IrDeclaration.parents: Sequence<IrDeclarationParent>
+    get() = generateSequence(parent) { (it as? IrDeclaration)?.parent }
