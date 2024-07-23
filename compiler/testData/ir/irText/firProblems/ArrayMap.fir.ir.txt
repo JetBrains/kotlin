@@ -54,14 +54,14 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           RETURN type=kotlin.Nothing from='private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:data type:kotlin.Array<kotlin.Any?> visibility:private' type=kotlin.Array<kotlin.Any?> origin=null
               receiver: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.<get-data>' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-data> visibility:private modality:FINAL <> ($this:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>, <set-?>:kotlin.Array<kotlin.Any?>) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-data> visibility:private modality:FINAL <> ($this:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>, value:kotlin.Array<kotlin.Any?>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:data visibility:private modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Array<kotlin.Any?>
+        VALUE_PARAMETER name:value index:0 type:kotlin.Array<kotlin.Any?>
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:data type:kotlin.Array<kotlin.Any?> visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.<set-data>' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-            value: GET_VAR '<set-?>: kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl.<set-data>' type=kotlin.Array<kotlin.Any?> origin=null
+            value: GET_VAR 'value: kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl.<set-data>' type=kotlin.Array<kotlin.Any?> origin=null
     PROPERTY name:size visibility:public modality:OPEN [var]
       overridden:
         public abstract size: kotlin.Int declared in <root>.ArrayMap
@@ -77,14 +77,14 @@ FILE fqName:<root> fileName:/ArrayMap.kt
           RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.ArrayMapImpl'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.<get-size>' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-size> visibility:private modality:OPEN <> ($this:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-size> visibility:private modality:OPEN <> ($this:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl<T of <root>.ArrayMapImpl>
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.<set-size>' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.ArrayMapImpl.<set-size>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.ArrayMapImpl.<set-size>' type=kotlin.Int origin=null
     CLASS CLASS name:Entry modality:FINAL visibility:public [data] superTypes:[kotlin.collections.Map.Entry<kotlin.Int, T of <root>.ArrayMapImpl.Entry>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -331,9 +331,9 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                   $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.ensureCapacity' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
               arg1: GET_VAR 'index: kotlin.Int declared in <root>.ArrayMapImpl.ensureCapacity' type=kotlin.Int origin=null
             then: BLOCK type=kotlin.Unit origin=null
-              CALL 'private final fun <set-data> (<set-?>: kotlin.Array<kotlin.Any?>): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=EQ
+              CALL 'private final fun <set-data> (value: kotlin.Array<kotlin.Any?>): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=EQ
                 $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.ensureCapacity' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                <set-?>: CALL 'public final fun copyOf <T> (newSize: kotlin.Int): kotlin.Array<T of kotlin.collections.copyOf?> declared in kotlin.collections' type=kotlin.Array<kotlin.Any?> origin=null
+                value: CALL 'public final fun copyOf <T> (newSize: kotlin.Int): kotlin.Array<T of kotlin.collections.copyOf?> declared in kotlin.collections' type=kotlin.Array<kotlin.Any?> origin=null
                   <T>: kotlin.Any?
                   $receiver: CALL 'private final fun <get-data> (): kotlin.Array<kotlin.Any?> declared in <root>.ArrayMapImpl' type=kotlin.Array<kotlin.Any?> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.ensureCapacity' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
@@ -404,14 +404,14 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                     RETURN type=kotlin.Nothing from='private final fun <get-index> (): kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>'
                       GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:index type:kotlin.Int visibility:private' type=kotlin.Int origin=null
                         receiver: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.<get-index>' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
-                FUN DEFAULT_PROPERTY_ACCESSOR name:<set-index> visibility:private modality:FINAL <> ($this:<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl>, <set-?>:kotlin.Int) returnType:kotlin.Unit
+                FUN DEFAULT_PROPERTY_ACCESSOR name:<set-index> visibility:private modality:FINAL <> ($this:<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl>, value:kotlin.Int) returnType:kotlin.Unit
                   correspondingProperty: PROPERTY name:index visibility:private modality:FINAL [var]
                   $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl>
-                  VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+                  VALUE_PARAMETER name:value index:0 type:kotlin.Int
                   BLOCK_BODY
                     SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:index type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
                       receiver: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.<set-index>' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
-                      value: GET_VAR '<set-?>: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.<set-index>' type=kotlin.Int origin=null
+                      value: GET_VAR 'value: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.<set-index>' type=kotlin.Int origin=null
               CONSTRUCTOR visibility:public <> () returnType:<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.collections.AbstractIterator'
@@ -460,9 +460,9 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                             VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
                               CALL 'private final fun <get-index> (): kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Int origin=POSTFIX_INCR
                                 $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
-                            CALL 'private final fun <set-index> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=POSTFIX_INCR
+                            CALL 'private final fun <set-index> (value: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=POSTFIX_INCR
                               $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
-                              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                              value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                                 $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
                             GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
                       condition: WHEN type=kotlin.Boolean origin=ANDAND
@@ -524,9 +524,9 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
                   CALL 'public open fun <get-size> (): kotlin.Int declared in <root>.ArrayMapImpl' type=kotlin.Int origin=POSTFIX_DECR
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                CALL 'private open fun <set-size> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=POSTFIX_DECR
+                CALL 'private open fun <set-size> (value: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=POSTFIX_DECR
                   $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.remove' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                  <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+                  value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
                     $this: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
                 GET_VAR 'val tmp_2: kotlin.Int declared in <root>.ArrayMapImpl.remove' type=kotlin.Int origin=null
         CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=EQ
@@ -557,9 +557,9 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                 VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
                   CALL 'public open fun <get-size> (): kotlin.Int declared in <root>.ArrayMapImpl' type=kotlin.Int origin=POSTFIX_INCR
                     $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                CALL 'private open fun <set-size> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=POSTFIX_INCR
+                CALL 'private open fun <set-size> (value: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl' type=kotlin.Unit origin=POSTFIX_INCR
                   $this: GET_VAR '<this>: <root>.ArrayMapImpl<T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.set' type=<root>.ArrayMapImpl<T of <root>.ArrayMapImpl> origin=null
-                  <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                  value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                     $this: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
                 GET_VAR 'val tmp_3: kotlin.Int declared in <root>.ArrayMapImpl.set' type=kotlin.Int origin=null
         CALL 'public final fun set (index: kotlin.Int, value: T of kotlin.Array): kotlin.Unit declared in kotlin.Array' type=kotlin.Unit origin=EQ
@@ -662,14 +662,14 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                     RETURN type=kotlin.Nothing from='private final fun <get-notVisited> (): kotlin.Boolean declared in <root>.OneElementArrayMap.iterator.<no name provided>'
                       GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:notVisited type:kotlin.Boolean visibility:private' type=kotlin.Boolean origin=null
                         receiver: GET_VAR '<this>: <root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator.<no name provided>.<get-notVisited>' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=null
-                FUN DEFAULT_PROPERTY_ACCESSOR name:<set-notVisited> visibility:private modality:FINAL <> ($this:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap>, <set-?>:kotlin.Boolean) returnType:kotlin.Unit
+                FUN DEFAULT_PROPERTY_ACCESSOR name:<set-notVisited> visibility:private modality:FINAL <> ($this:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap>, value:kotlin.Boolean) returnType:kotlin.Unit
                   correspondingProperty: PROPERTY name:notVisited visibility:private modality:FINAL [var]
                   $this: VALUE_PARAMETER name:<this> type:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap>
-                  VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Boolean
+                  VALUE_PARAMETER name:value index:0 type:kotlin.Boolean
                   BLOCK_BODY
                     SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:notVisited type:kotlin.Boolean visibility:private' type=kotlin.Unit origin=null
                       receiver: GET_VAR '<this>: <root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator.<no name provided>.<set-notVisited>' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=null
-                      value: GET_VAR '<set-?>: kotlin.Boolean declared in <root>.OneElementArrayMap.iterator.<no name provided>.<set-notVisited>' type=kotlin.Boolean origin=null
+                      value: GET_VAR 'value: kotlin.Boolean declared in <root>.OneElementArrayMap.iterator.<no name provided>.<set-notVisited>' type=kotlin.Boolean origin=null
               CONSTRUCTOR visibility:public <> () returnType:<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -705,9 +705,9 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                       if: CALL 'private final fun <get-notVisited> (): kotlin.Boolean declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=kotlin.Boolean origin=GET_PROPERTY
                         $this: GET_VAR '<this>: <root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator.<no name provided>.next' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=null
                       then: BLOCK type=kotlin.Unit origin=null
-                        CALL 'private final fun <set-notVisited> (<set-?>: kotlin.Boolean): kotlin.Unit declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=kotlin.Unit origin=EQ
+                        CALL 'private final fun <set-notVisited> (value: kotlin.Boolean): kotlin.Unit declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=kotlin.Unit origin=EQ
                           $this: GET_VAR '<this>: <root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator.<no name provided>.next' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=null
-                          <set-?>: CONST Boolean type=kotlin.Boolean value=false
+                          value: CONST Boolean type=kotlin.Boolean value=false
                         RETURN type=kotlin.Nothing from='public open fun next (): T of <root>.OneElementArrayMap declared in <root>.OneElementArrayMap.iterator.<no name provided>'
                           CALL 'public final fun <get-value> (): T of <root>.OneElementArrayMap declared in <root>.OneElementArrayMap' type=T of <root>.OneElementArrayMap origin=GET_PROPERTY
                             $this: GET_VAR '<this>: <root>.OneElementArrayMap<T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator' type=<root>.OneElementArrayMap<T of <root>.OneElementArrayMap> origin=null

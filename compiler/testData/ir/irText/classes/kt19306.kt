@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // SKIP_KT_DUMP
 // FILE: kt19306_test1.kt
 package test1

@@ -276,14 +276,14 @@ FILE fqName:<root> fileName:/genericDelegatedDeepProperty.kt
           RETURN type=kotlin.Nothing from='public final fun <get-value1> (): T of <root>.Value declared in <root>.Value'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value1 type:T of <root>.Value visibility:private' type=T of <root>.Value origin=null
               receiver: GET_VAR '<this>: <root>.Value<T of <root>.Value, IT of <root>.Value> declared in <root>.Value.<get-value1>' type=<root>.Value<T of <root>.Value, IT of <root>.Value> origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value1> visibility:public modality:FINAL <> ($this:<root>.Value<T of <root>.Value, IT of <root>.Value>, <set-?>:T of <root>.Value) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value1> visibility:public modality:FINAL <> ($this:<root>.Value<T of <root>.Value, IT of <root>.Value>, value:T of <root>.Value) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:value1 visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Value<T of <root>.Value, IT of <root>.Value>
-        VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Value
+        VALUE_PARAMETER name:value index:0 type:T of <root>.Value
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value1 type:T of <root>.Value visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Value<T of <root>.Value, IT of <root>.Value> declared in <root>.Value.<set-value1>' type=<root>.Value<T of <root>.Value, IT of <root>.Value> origin=null
-            value: GET_VAR '<set-?>: T of <root>.Value declared in <root>.Value.<set-value1>' type=T of <root>.Value origin=null
+            value: GET_VAR 'value: T of <root>.Value declared in <root>.Value.<set-value1>' type=T of <root>.Value origin=null
     PROPERTY name:value2 visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:value2 type:IT of <root>.Value visibility:private [final]
         EXPRESSION_BODY

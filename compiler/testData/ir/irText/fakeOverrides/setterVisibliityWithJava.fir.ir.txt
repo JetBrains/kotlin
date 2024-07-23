@@ -95,14 +95,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.Int declared in <root>.KotlinBase'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<get-a>' type=<root>.KotlinBase origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:FINAL <> ($this:<root>.KotlinBase, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinBase
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<set-a>' type=<root>.KotlinBase origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.KotlinBase.<set-a>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.KotlinBase.<set-a>' type=kotlin.Int origin=null
     PROPERTY name:b visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private
         EXPRESSION_BODY
@@ -114,14 +114,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.Int declared in <root>.KotlinBase'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<get-b>' type=<root>.KotlinBase origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:protected modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:protected modality:FINAL <> ($this:<root>.KotlinBase, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinBase
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<set-b>' type=<root>.KotlinBase origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.KotlinBase.<set-b>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.KotlinBase.<set-b>' type=kotlin.Int origin=null
     PROPERTY name:c visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.Int visibility:private
         EXPRESSION_BODY
@@ -133,14 +133,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public final fun <get-c> (): kotlin.Int declared in <root>.KotlinBase'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<get-c>' type=<root>.KotlinBase origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-c> visibility:private modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-c> visibility:private modality:FINAL <> ($this:<root>.KotlinBase, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinBase
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<set-c>' type=<root>.KotlinBase origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.KotlinBase.<set-c>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.KotlinBase.<set-c>' type=kotlin.Int origin=null
     PROPERTY name:d visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private
         EXPRESSION_BODY
@@ -152,14 +152,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public final fun <get-d> (): kotlin.Int declared in <root>.KotlinBase'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<get-d>' type=<root>.KotlinBase origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-d> visibility:internal modality:FINAL <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-d> visibility:internal modality:FINAL <> ($this:<root>.KotlinBase, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:d visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinBase
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<set-d>' type=<root>.KotlinBase origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.KotlinBase.<set-d>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.KotlinBase.<set-d>' type=kotlin.Int origin=null
     PROPERTY name:e visibility:public modality:OPEN [var]
       FIELD PROPERTY_BACKING_FIELD name:e type:kotlin.Int visibility:private
         EXPRESSION_BODY
@@ -171,14 +171,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-e> (): kotlin.Int declared in <root>.KotlinBase'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<get-e>' type=<root>.KotlinBase origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-e> visibility:public modality:OPEN <> ($this:<root>.KotlinBase, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-e> visibility:public modality:OPEN <> ($this:<root>.KotlinBase, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:e visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinBase
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinBase declared in <root>.KotlinBase.<set-e>' type=<root>.KotlinBase origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.KotlinBase.<set-e>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.KotlinBase.<set-e>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinBase [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

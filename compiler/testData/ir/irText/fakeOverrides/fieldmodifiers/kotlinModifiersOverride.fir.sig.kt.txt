@@ -101,7 +101,7 @@ class C : A, Java2 {
     //   Mangled name: C#<set-b>(kotlin.Number){}
     //   Public signature: /C.b.<set-b>|-4740975933989306688[0]
     //   Public signature debug description: <set-b>(kotlin.Number){}
-    /* fake */ override set(<set-?>: Number): Unit
+    /* fake */ override set(value: Number): Unit
 
 }
 
@@ -145,7 +145,7 @@ abstract class D : A, Java3 {
     //   Mangled name: D#<set-b>(kotlin.Number){}
     //   Public signature: /D.b.<set-b>|-4740975933989306688[0]
     //   Public signature debug description: <set-b>(kotlin.Number){}
-    /* fake */ override set(<set-?>: Number): Unit
+    /* fake */ override set(value: Number): Unit
 
 }
 

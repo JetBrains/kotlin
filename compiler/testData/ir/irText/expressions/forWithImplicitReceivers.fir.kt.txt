@@ -24,7 +24,7 @@ interface IReceiver {
   operator fun IntCell.next(): Int {
     return { // BLOCK
       val tmp_0: Int = <this>.<get-value>()
-      <this>.<set-value>(<set-?> = tmp_0.dec())
+      <this>.<set-value>(value = tmp_0.dec())
       tmp_0
     }
   }

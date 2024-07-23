@@ -4,16 +4,16 @@
 
 private var libName: String
     /* TARGET declaration */ private fun <get-libName>(): String
-    /* TARGET declaration */ private fun <set-libName>(<set-?>: String)
+    /* TARGET declaration */ private fun <set-libName>(value: String)
 internal var libNameInlineVar1: String
     internal inline fun <get-libNameInlineVar1>(): String
         /* ACCESSOR use-site */ access$<get-libName>$tFile1Kt()
     internal inline fun <set-libNameInlineVar1>(value: String)
-        /* ACCESSOR use-site */ access$<set-libName>$tFile1Kt(<set-?> = value)
+        /* ACCESSOR use-site */ access$<set-libName>$tFile1Kt(value = value)
 /* ACCESSOR declaration */ public fun access$<get-libName>$tFile1Kt(): String
     /* TARGET use-site */ <get-libName>()
-/* ACCESSOR declaration */ public fun access$<set-libName>$tFile1Kt(<set-?>: String)
-    /* TARGET use-site */ <set-libName>(<set-?> = <set-?>)
+/* ACCESSOR declaration */ public fun access$<set-libName>$tFile1Kt(value: String)
+    /* TARGET use-site */ <set-libName>(value = value)
 
 
 /* MODULE name=<lib2> */
@@ -22,13 +22,13 @@ internal var libNameInlineVar1: String
 
 private var libName: String
     /* TARGET declaration */ private fun <get-libName>(): String
-    /* TARGET declaration */ private fun <set-libName>(<set-?>: String)
+    /* TARGET declaration */ private fun <set-libName>(value: String)
 internal var libNameInlineVar2: String
     internal inline fun <get-libNameInlineVar2>(): String
         /* ACCESSOR use-site */ access$<get-libName>$tFile2Kt()
     internal inline fun <set-libNameInlineVar2>(value: String)
-        /* ACCESSOR use-site */ access$<set-libName>$tFile2Kt(<set-?> = value)
+        /* ACCESSOR use-site */ access$<set-libName>$tFile2Kt(value = value)
 /* ACCESSOR declaration */ public fun access$<get-libName>$tFile2Kt(): String
     /* TARGET use-site */ <get-libName>()
-/* ACCESSOR declaration */ public fun access$<set-libName>$tFile2Kt(<set-?>: String)
-    /* TARGET use-site */ <set-libName>(<set-?> = <set-?>)
+/* ACCESSOR declaration */ public fun access$<set-libName>$tFile2Kt(value: String)
+    /* TARGET use-site */ <set-libName>(value = value)

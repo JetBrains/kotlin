@@ -12,14 +12,14 @@ FILE fqName:<root> fileName:/Derived.kt
           RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.String declared in <root>.Derived'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-a>' type=<root>.Derived origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:kotlin.String) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:FINAL <> ($this:<root>.Derived, value:kotlin.String) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+        VALUE_PARAMETER name:value index:0 type:kotlin.String
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-a>' type=<root>.Derived origin=null
-            value: GET_VAR '<set-?>: kotlin.String declared in <root>.Derived.<set-a>' type=kotlin.String origin=null
+            value: GET_VAR 'value: kotlin.String declared in <root>.Derived.<set-a>' type=kotlin.String origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.BaseJava'
@@ -60,16 +60,16 @@ FILE fqName:<root> fileName:/Derived.kt
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.String origin=null
-                $this: PROPERTY_REFERENCE 'public final a: kotlin.String declared in <root>.Derived' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
+                $this: PROPERTY_REFERENCE 'public final a: kotlin.String declared in <root>.Derived' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (value: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
                   $this: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
               arg1: CONST String type=kotlin.String value="OK"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 declared in kotlin.reflect.KMutableProperty0' type=kotlin.String origin=null
-              $this: PROPERTY_REFERENCE 'public final a: kotlin.String declared in <root>.Derived' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
+              $this: PROPERTY_REFERENCE 'public final a: kotlin.String declared in <root>.Derived' field=null getter='public final fun <get-a> (): kotlin.String declared in <root>.Derived' setter='public final fun <set-a> (value: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
                 $this: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
-      CALL 'public final fun <set-a> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-a> (value: kotlin.String): kotlin.Unit declared in <root>.Derived' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'val d: <root>.Derived declared in <root>.box' type=<root>.Derived origin=null
-        <set-?>: CONST String type=kotlin.String value="12"
+        value: CONST String type=kotlin.String value="12"
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 object Z {
     var counter = 0
     fun foo() {}

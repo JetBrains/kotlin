@@ -48,12 +48,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public abstract fun <get-a> (): kotlin.Int declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
-          public abstract fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
+          public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     PROPERTY name:a visibility:public modality:OPEN [var]
@@ -71,16 +71,16 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.Int declared in <root>.B'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-a>' type=<root>.B origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.B, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.B, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public abstract fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
+          public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.B
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-a>' type=<root>.B origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.B.<set-a>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.B.<set-a>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> (a:kotlin.Int) returnType:<root>.B [primary]
       VALUE_PARAMETER name:a index:0 type:kotlin.Int
       BLOCK_BODY
@@ -144,16 +144,16 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.Int declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-a>' type=<root>.C origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.C, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.C, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public abstract fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
+          public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.C
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-a>' type=<root>.C origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-a>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.C.<set-a>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> (a:kotlin.Int) returnType:<root>.C [primary]
       VALUE_PARAMETER name:a index:0 type:kotlin.Int
       BLOCK_BODY
@@ -389,16 +389,16 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.Int declared in <root>.H'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.H declared in <root>.H.<get-a>' type=<root>.H origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.H, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.H, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.Java4
         $this: VALUE_PARAMETER name:<this> type:<root>.H
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.H declared in <root>.H.<set-a>' type=<root>.H origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.H.<set-a>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.H.<set-a>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> (a:kotlin.Int) returnType:<root>.H [primary]
       VALUE_PARAMETER name:a index:0 type:kotlin.Int
       BLOCK_BODY
@@ -483,12 +483,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public abstract fun <get-a> (): kotlin.Int declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
-          public abstract fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
+          public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
   CLASS CLASS name:J modality:FINAL visibility:public superTypes:[<root>.Java5; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
     CONSTRUCTOR visibility:public <> () returnType:<root>.J [primary]
@@ -538,7 +538,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-a> visibility:public modality:OPEN <> ($this:<root>.J, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public abstract fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
+          public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.J
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
@@ -633,10 +633,10 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
   CLASS INTERFACE name:KotlinInterface2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinInterface2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

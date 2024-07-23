@@ -8,12 +8,12 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-global> (): kotlin.String declared in foo'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:global type:kotlin.String visibility:private [static]' type=kotlin.String origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-global> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-global> visibility:public modality:FINAL <> (value:kotlin.String) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:global visibility:public modality:FINAL [var]
-      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:global type:kotlin.String visibility:private [static]' type=kotlin.Unit origin=null
-          value: GET_VAR '<set-?>: kotlin.String declared in foo.<set-global>' type=kotlin.String origin=null
+          value: GET_VAR 'value: kotlin.String declared in foo.<set-global>' type=kotlin.String origin=null
   CLASS CLASS name:Base2Impl modality:FINAL visibility:public superTypes:[foo.Base2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.Base2Impl
     PROPERTY name:s visibility:public modality:FINAL [val]
@@ -112,8 +112,8 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
         CALL 'public final fun newBase2 (): foo.Base2 declared in foo' type=foo.Base2 origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        CALL 'public final fun <set-global> (<set-?>: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
-          <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+        CALL 'public final fun <set-global> (value: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
+          value: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
             $this: CALL 'public final fun <get-global> (): kotlin.String declared in foo' type=kotlin.String origin=PLUSEQ
             other: CONST String type=kotlin.String value=":Derived"
     CONSTRUCTOR visibility:public <> () returnType:foo.Derived [primary]
@@ -171,8 +171,8 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
         CALL 'public final fun newBase2 (): foo.Base2 declared in foo' type=foo.Base2 origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        CALL 'public final fun <set-global> (<set-?>: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
-          <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+        CALL 'public final fun <set-global> (value: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
+          value: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
             $this: CALL 'public final fun <get-global> (): kotlin.String declared in foo' type=kotlin.String origin=PLUSEQ
             other: CONST String type=kotlin.String value=":Derived"
     CONSTRUCTOR visibility:public <> () returnType:foo.Derived1 [primary]
@@ -230,8 +230,8 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
         CALL 'public final fun newBase2 (): foo.Base2 declared in foo' type=foo.Base2 origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        CALL 'public final fun <set-global> (<set-?>: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
-          <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+        CALL 'public final fun <set-global> (value: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
+          value: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
             $this: CALL 'public final fun <get-global> (): kotlin.String declared in foo' type=kotlin.String origin=PLUSEQ
             other: CONST String type=kotlin.String value=":Derived"
     CONSTRUCTOR visibility:public <> () returnType:foo.Derived2 [primary]
@@ -283,8 +283,8 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.DerivedBase
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        CALL 'public final fun <set-global> (<set-?>: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
-          <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+        CALL 'public final fun <set-global> (value: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
+          value: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
             $this: CALL 'public final fun <get-global> (): kotlin.String declared in foo' type=kotlin.String origin=PLUSEQ
             other: CONST String type=kotlin.String value=":DerivedBase"
     CONSTRUCTOR visibility:public <> () returnType:foo.DerivedBase [primary]
@@ -352,8 +352,8 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
         CONST String type=kotlin.String value="OK"
   FUN name:newBase visibility:public modality:FINAL <> () returnType:foo.Base
     BLOCK_BODY
-      CALL 'public final fun <set-global> (<set-?>: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
-        <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+      CALL 'public final fun <set-global> (value: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
+        value: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
           $this: CALL 'public final fun <get-global> (): kotlin.String declared in foo' type=kotlin.String origin=PLUSEQ
           other: CONST String type=kotlin.String value=":newBase"
       RETURN type=kotlin.Nothing from='public final fun newBase (): foo.Base declared in foo'
@@ -361,8 +361,8 @@ FILE fqName:foo fileName:/delegationEvaluationOrder2.kt
           s: CONST String type=kotlin.String value="test"
   FUN name:newBase2 visibility:public modality:FINAL <> () returnType:foo.Base2
     BLOCK_BODY
-      CALL 'public final fun <set-global> (<set-?>: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
-        <set-?>: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
+      CALL 'public final fun <set-global> (value: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=PLUSEQ
+        value: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUSEQ
           $this: CALL 'public final fun <get-global> (): kotlin.String declared in foo' type=kotlin.String origin=PLUSEQ
           other: CONST String type=kotlin.String value=":newBase2"
       RETURN type=kotlin.Nothing from='public final fun newBase2 (): foo.Base2 declared in foo'

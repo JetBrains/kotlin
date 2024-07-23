@@ -26,12 +26,12 @@ FILE fqName:<root> fileName:/implicitCastToDynamic.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-d2> (): dynamic declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d2 type:dynamic visibility:private [static]' type=dynamic origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-d2> visibility:public modality:FINAL <> (<set-?>:dynamic) returnType:kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-d2> visibility:public modality:FINAL <> (value:dynamic) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:d2 visibility:public modality:FINAL [var]
-      VALUE_PARAMETER name:<set-?> index:0 type:dynamic
+      VALUE_PARAMETER name:value index:0 type:dynamic
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d2 type:dynamic visibility:private [static]' type=kotlin.Unit origin=null
-          value: GET_VAR '<set-?>: dynamic declared in <root>.<set-d2>' type=dynamic origin=null
+          value: GET_VAR 'value: dynamic declared in <root>.<set-d2>' type=dynamic origin=null
   FUN name:test1 visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
     VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
@@ -66,12 +66,12 @@ FILE fqName:<root> fileName:/implicitCastToDynamic.kt
     VALUE_PARAMETER name:s index:1 type:kotlin.String
     VALUE_PARAMETER name:na index:2 type:kotlin.Any?
     BLOCK_BODY
-      CALL 'public final fun <set-d2> (<set-?>: dynamic): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        <set-?>: GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
-      CALL 'public final fun <set-d2> (<set-?>: dynamic): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        <set-?>: GET_VAR 'na: kotlin.Any? declared in <root>.test5' type=kotlin.Any? origin=null
-      CALL 'public final fun <set-d2> (<set-?>: dynamic): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
-        <set-?>: GET_VAR 's: kotlin.String declared in <root>.test5' type=kotlin.String origin=null
+      CALL 'public final fun <set-d2> (value: dynamic): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+        value: GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+      CALL 'public final fun <set-d2> (value: dynamic): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+        value: GET_VAR 'na: kotlin.Any? declared in <root>.test5' type=kotlin.Any? origin=null
+      CALL 'public final fun <set-d2> (value: dynamic): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+        value: GET_VAR 's: kotlin.String declared in <root>.test5' type=kotlin.String origin=null
   FUN name:withDynamic visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY

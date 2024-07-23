@@ -68,7 +68,7 @@ fun test4(x: Ref?) {
     val tmp_4: Ref? = x
     when {
       EQEQ(arg0 = tmp_4, arg1 = null) -> null
-      else -> tmp_4.<set-value>(<set-?> = 0)
+      else -> tmp_4.<set-value>(value = 0)
     }
   } /*~> Unit */
 }

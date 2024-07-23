@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 fun outer() {
     abstract class ALocal {
         abstract fun afun()

@@ -1,3 +1,5 @@
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
+
 interface IBase<A> {
     fun <B> foo(a: A, b: B)
     val <C> C.id: Map<A, C>?

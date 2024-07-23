@@ -1,5 +1,4 @@
 // DUMP_IR
-// FIR_IDENTICAL
 
 abstract class A {
     abstract val x: String

@@ -20,7 +20,7 @@ object Host {
   }
 
   operator fun B.plusAssign(b: B) {
-    <this>.<set-s>(<set-?> = <this>.<get-s>().plus(other = b.<get-s>()))
+    <this>.<set-s>(value = <this>.<get-s>().plus(other = b.<get-s>()))
   }
 
 }
@@ -83,17 +83,17 @@ fun test1(a: IntArray) {
 fun test2() {
   { // BLOCK
     val tmp_4: Int = X1.<get-x1>()
-    X1.<set-x1>(<set-?> = tmp_4.inc())
+    X1.<set-x1>(value = tmp_4.inc())
     tmp_4
   } /*~> Unit */
   { // BLOCK
     val tmp_5: Int = X2.<get-x2>()
-    X2.<set-x2>(<set-?> = tmp_5.inc())
+    X2.<set-x2>(value = tmp_5.inc())
     tmp_5
   } /*~> Unit */
   { // BLOCK
     val tmp_6: Int = X3.<get-x3>()
-    X3.<set-x3>(<set-?> = tmp_6.inc())
+    X3.<set-x3>(value = tmp_6.inc())
     tmp_6
   } /*~> Unit */
 }

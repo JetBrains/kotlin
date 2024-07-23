@@ -12,14 +12,14 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.Int declared in <root>.IntCell'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.IntCell declared in <root>.IntCell.<get-value>' type=<root>.IntCell origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:<root>.IntCell, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:<root>.IntCell, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.IntCell
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.IntCell declared in <root>.IntCell.<set-value>' type=<root>.IntCell origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.IntCell.<set-value>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.IntCell.<set-value>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:<root>.IntCell [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
@@ -78,9 +78,9 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
               CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=POSTFIX_DECR
                 $this: GET_VAR '<this>: <root>.IntCell declared in <root>.IReceiver.next' type=<root>.IntCell origin=null
-            CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IntCell' type=kotlin.Unit origin=POSTFIX_DECR
+            CALL 'public final fun <set-value> (value: kotlin.Int): kotlin.Unit declared in <root>.IntCell' type=kotlin.Unit origin=POSTFIX_DECR
               $this: GET_VAR '<this>: <root>.IntCell declared in <root>.IReceiver.next' type=<root>.IntCell origin=null
-              <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
                 $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.IReceiver.next' type=kotlin.Int origin=null
             GET_VAR 'val tmp_0: kotlin.Int declared in <root>.IReceiver.next' type=kotlin.Int origin=null
   CLASS OBJECT name:FiveTimes modality:FINAL visibility:public superTypes:[kotlin.Any]

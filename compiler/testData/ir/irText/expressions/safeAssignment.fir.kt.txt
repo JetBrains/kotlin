@@ -17,7 +17,7 @@ fun test(nc: C?) {
     val tmp_0: C? = nc
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> tmp_0.<set-x>(<set-?> = 42)
+      else -> tmp_0.<set-x>(value = 42)
     }
   } /*~> Unit */
 }

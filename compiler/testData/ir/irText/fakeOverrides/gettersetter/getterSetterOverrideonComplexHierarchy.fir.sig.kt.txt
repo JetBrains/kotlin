@@ -40,7 +40,7 @@ abstract class A : Java2, Java1, KotlinInterface {
     //   Mangled name: A#<set-b>(kotlin.Boolean){}
     //   Public signature: /A.b.<set-b>|6241447189413274333[0]
     //   Public signature debug description: <set-b>(kotlin.Boolean){}
-    abstract /* fake */ override set(<set-?>: Boolean): Unit
+    abstract /* fake */ override set(value: Boolean): Unit
 
 }
 

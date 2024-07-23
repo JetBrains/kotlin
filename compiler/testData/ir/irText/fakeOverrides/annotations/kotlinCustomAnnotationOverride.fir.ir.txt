@@ -260,16 +260,16 @@ FILE fqName:<root> fileName:/1.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-b> (): kotlin.Int declared in <root>.E'
             CONST Int type=kotlin.Int value=11
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:OPEN <> ($this:<root>.E, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:OPEN <> ($this:<root>.E, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:OPEN [var]
         overridden:
           public open fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.E
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.E declared in <root>.E.<set-b>' type=<root>.E origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.E.<set-b>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.E.<set-b>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Java2'

@@ -43,7 +43,7 @@ class Derived : DerivedBase, Base, Base2 {
   private /* final field */ val $$delegate_0: Base = newBase()
   private /* final field */ val $$delegate_1: Base2 = newBase2()
   init {
-    <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
+    <set-global>(value = <get-global>().plus(other = ":Derived"))
   }
 
   constructor() /* primary */ {
@@ -66,7 +66,7 @@ class Derived1 : DerivedBase, Base, Base2 {
   private /* final field */ val $$delegate_0: Base = newBase()
   private /* final field */ val $$delegate_1: Base2 = newBase2()
   init {
-    <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
+    <set-global>(value = <get-global>().plus(other = ":Derived"))
   }
 
   constructor() /* primary */ {
@@ -89,7 +89,7 @@ class Derived2 : DerivedBase, Base, Base2 {
   private /* final field */ val $$delegate_0: Base = newBase()
   private /* final field */ val $$delegate_1: Base2 = newBase2()
   init {
-    <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
+    <set-global>(value = <get-global>().plus(other = ":Derived"))
   }
 
   constructor() /* primary */ {
@@ -110,7 +110,7 @@ class Derived2 : DerivedBase, Base, Base2 {
 
 open class DerivedBase {
   init {
-    <set-global>(<set-?> = <get-global>().plus(other = ":DerivedBase"))
+    <set-global>(value = <get-global>().plus(other = ":DerivedBase"))
   }
 
   constructor() /* primary */ {
@@ -139,12 +139,12 @@ fun box(): String {
 }
 
 fun newBase(): Base {
-  <set-global>(<set-?> = <get-global>().plus(other = ":newBase"))
+  <set-global>(value = <get-global>().plus(other = ":newBase"))
   return BaseImpl(s = "test")
 }
 
 fun newBase2(): Base2 {
-  <set-global>(<set-?> = <get-global>().plus(other = ":newBase2"))
+  <set-global>(value = <get-global>().plus(other = ":newBase2"))
   return Base2Impl(s = "test")
 }
 

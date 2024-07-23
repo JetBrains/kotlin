@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
 // ISSUE: KT-64466
 
 annotation class Ann

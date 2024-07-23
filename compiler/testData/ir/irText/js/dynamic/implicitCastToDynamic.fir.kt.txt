@@ -31,9 +31,9 @@ fun test4(a: Any, s: String, na: Any?) {
 }
 
 fun test5(a: Any, s: String, na: Any?) {
-  <set-d2>(<set-?> = a)
-  <set-d2>(<set-?> = na)
-  <set-d2>(<set-?> = s)
+  <set-d2>(value = a)
+  <set-d2>(value = na)
+  <set-d2>(value = s)
 }
 
 fun withDynamic(d: dynamic): dynamic {

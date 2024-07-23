@@ -1,0 +1,26 @@
+class Foo<T : Any?> {
+  var x: T
+    field = x
+    get
+    set
+
+  constructor(x: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun <K : Any?> foo(x: MutableList<K>): Foo<K> {
+  return TODO()
+}
+
+fun runMe() {
+  val x: List<String> = buildList<String>(builderAction = local fun MutableList<String>.<anonymous>() {
+    $this$buildList.add(element = "") /*~> Unit */
+    val foo: Foo<String> = foo<String>(x = $this$buildList)
+    foo.<set-x>(value = "")
+  }
+)
+}

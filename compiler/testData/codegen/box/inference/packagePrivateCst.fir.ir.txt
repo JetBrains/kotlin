@@ -8,16 +8,16 @@ FILE fqName:foo fileName:/box.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-temp> (): other.PublicSuper? declared in foo'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:temp type:other.PublicSuper? visibility:private [static]' type=other.PublicSuper? origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-temp> visibility:public modality:FINAL <> (<set-?>:other.PublicSuper?) returnType:kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-temp> visibility:public modality:FINAL <> (value:other.PublicSuper?) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:temp visibility:public modality:FINAL [var]
-      VALUE_PARAMETER name:<set-?> index:0 type:other.PublicSuper?
+      VALUE_PARAMETER name:value index:0 type:other.PublicSuper?
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:temp type:other.PublicSuper? visibility:private [static]' type=kotlin.Unit origin=null
-          value: GET_VAR '<set-?>: other.PublicSuper? declared in foo.<set-temp>' type=other.PublicSuper? origin=null
+          value: GET_VAR 'value: other.PublicSuper? declared in foo.<set-temp>' type=other.PublicSuper? origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      CALL 'public final fun <set-temp> (<set-?>: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
-        <set-?>: WHEN type=other.PublicSuper? origin=IF
+      CALL 'public final fun <set-temp> (value: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
+        value: WHEN type=other.PublicSuper? origin=IF
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CONST String type=kotlin.String value="true"
@@ -26,8 +26,8 @@ FILE fqName:foo fileName:/box.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONSTRUCTOR_CALL 'public constructor <init> () declared in other.BClass' type=other.BClass origin=null
-      CALL 'public final fun <set-temp> (<set-?>: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
-        <set-?>: WHEN type=other.PublicSuper? origin=WHEN
+      CALL 'public final fun <set-temp> (value: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
+        value: WHEN type=other.PublicSuper? origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CONST String type=kotlin.String value="true"
@@ -38,8 +38,8 @@ FILE fqName:foo fileName:/box.kt
             then: CONSTRUCTOR_CALL 'public constructor <init> () declared in other.BClass' type=other.BClass origin=null
       TRY type=kotlin.Unit
         try: BLOCK type=kotlin.Nothing origin=null
-          CALL 'public final fun <set-temp> (<set-?>: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
-            <set-?>: CALL 'public final fun select <T> (vararg t: T of foo.select): T of foo.select declared in foo' type=other.PrivateSuper origin=null
+          CALL 'public final fun <set-temp> (value: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
+            value: CALL 'public final fun select <T> (vararg t: T of foo.select): T of foo.select declared in foo' type=other.PrivateSuper origin=null
               <T>: other.PrivateSuper
               t: VARARG type=kotlin.Array<out other.PrivateSuper> varargElementType=other.PrivateSuper
                 CONSTRUCTOR_CALL 'public constructor <init> () declared in other.AClass' type=other.AClass origin=null

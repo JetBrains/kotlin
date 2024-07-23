@@ -65,7 +65,7 @@ var <T : Any?> T.bar: T
     return <this>
   }
   set(value: T) {
-    <set-recivier>(<set-?> = <this>)
-    <set-value2>(<set-?> = value)
+    <set-recivier>(value = <this>)
+    <set-value2>(value = value)
   }
 

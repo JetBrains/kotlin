@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 @Deprecated("")
 val testVal = 1
 

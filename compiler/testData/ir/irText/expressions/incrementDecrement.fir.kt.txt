@@ -117,13 +117,13 @@ fun testClassPropPostfix() {
   val p1: Int = { // BLOCK
     val tmp_20: C = C()
     val tmp_21: Int = tmp_20.<get-p>()
-    tmp_20.<set-p>(<set-?> = tmp_21.inc())
+    tmp_20.<set-p>(value = tmp_21.inc())
     tmp_21
   }
   val p2: Int = { // BLOCK
     val tmp_22: C = C()
     val tmp_23: Int = tmp_22.<get-p>()
-    tmp_22.<set-p>(<set-?> = tmp_23.dec())
+    tmp_22.<set-p>(value = tmp_23.dec())
     tmp_23
   }
 }
@@ -131,12 +131,12 @@ fun testClassPropPostfix() {
 fun testClassPropPrefix() {
   val p1: Int = { // BLOCK
     val tmp_24: C = C()
-    tmp_24.<set-p>(<set-?> = tmp_24.<get-p>().inc())
+    tmp_24.<set-p>(value = tmp_24.<get-p>().inc())
     tmp_24.<get-p>()
   }
   val p2: Int = { // BLOCK
     val tmp_25: C = C()
-    tmp_25.<set-p>(<set-?> = tmp_25.<get-p>().dec())
+    tmp_25.<set-p>(value = tmp_25.<get-p>().dec())
     tmp_25.<get-p>()
   }
 }
@@ -176,23 +176,23 @@ fun testObjectOperatorPrefix() {
 fun testObjectPropPostfix() {
   val p1: Int = { // BLOCK
     val tmp_36: Int = O.<get-p>()
-    O.<set-p>(<set-?> = tmp_36.inc())
+    O.<set-p>(value = tmp_36.inc())
     tmp_36
   }
   val p2: Int = { // BLOCK
     val tmp_37: Int = O.<get-p>()
-    O.<set-p>(<set-?> = tmp_37.dec())
+    O.<set-p>(value = tmp_37.dec())
     tmp_37
   }
 }
 
 fun testObjectPropPrefix() {
   val p1: Int = { // BLOCK
-    O.<set-p>(<set-?> = O.<get-p>().inc())
+    O.<set-p>(value = O.<get-p>().inc())
     O.<get-p>()
   }
   val p2: Int = { // BLOCK
-    O.<set-p>(<set-?> = O.<get-p>().dec())
+    O.<set-p>(value = O.<get-p>().dec())
     O.<get-p>()
   }
 }
@@ -200,23 +200,23 @@ fun testObjectPropPrefix() {
 fun testPropPostfix() {
   val p1: Int = { // BLOCK
     val tmp_38: Int = <get-p>()
-    <set-p>(<set-?> = tmp_38.inc())
+    <set-p>(value = tmp_38.inc())
     tmp_38
   }
   val p2: Int = { // BLOCK
     val tmp_39: Int = <get-p>()
-    <set-p>(<set-?> = tmp_39.dec())
+    <set-p>(value = tmp_39.dec())
     tmp_39
   }
 }
 
 fun testPropPrefix() {
   val p1: Int = { // BLOCK
-    <set-p>(<set-?> = <get-p>().inc())
+    <set-p>(value = <get-p>().inc())
     <get-p>()
   }
   val p2: Int = { // BLOCK
-    <set-p>(<set-?> = <get-p>().dec())
+    <set-p>(value = <get-p>().dec())
     <get-p>()
   }
 }

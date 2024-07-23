@@ -67,7 +67,7 @@ fun box(): String {
 }
 
 operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
   return when {
     EQEQ(arg0 = index, arg1 = 0) -> <this>.<get-i>()
     else -> -1
@@ -75,12 +75,12 @@ operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int {
 }
 
 operator fun MyContainer.inc($context_receiver_0: Int): MyContainer {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
   return MyContainer(i = <this>.<get-i>().plus(other = 1))
 }
 
 operator fun MyContainer.plusAssign($context_receiver_0: Int, other: MyContainer) {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  <this>.<set-i>(<set-?> = <this>.<get-i>().plus(other = other.<get-i>()))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
+  <this>.<set-i>(value = <this>.<get-i>().plus(other = other.<get-i>()))
 }
 

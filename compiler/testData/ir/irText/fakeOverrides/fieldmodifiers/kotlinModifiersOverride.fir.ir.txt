@@ -10,14 +10,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.Number declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:public' type=kotlin.Number origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-b>' type=<root>.A origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.Number) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:FINAL <> ($this:<root>.A, value:kotlin.Number) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Number
+        VALUE_PARAMETER name:value index:0 type:kotlin.Number
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:public' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-b>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: kotlin.Number declared in <root>.A.<set-b>' type=kotlin.Number origin=null
+            value: GET_VAR 'value: kotlin.Number declared in <root>.A.<set-b>' type=kotlin.Number origin=null
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.Companion
       CONSTRUCTOR visibility:private <> () returnType:<root>.A.Companion [primary]
@@ -128,12 +128,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-b> (): kotlin.Number declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.Number) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:FINAL <> ($this:<root>.A, value:kotlin.Number) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [lateinit,fake_override,var]
         overridden:
-          public final fun <set-b> (<set-?>: kotlin.Number): kotlin.Unit declared in <root>.A
+          public final fun <set-b> (value: kotlin.Number): kotlin.Unit declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Number
+        VALUE_PARAMETER name:value index:0 type:kotlin.Number
   CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -180,13 +180,13 @@ FILE fqName:<root> fileName:/1.kt
           public final fun <get-b> (): kotlin.Number declared in <root>.A
           public abstract fun <get-b> (): kotlin.Number declared in <root>.Java3
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.Number) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:FINAL <> ($this:<root>.A, value:kotlin.Number) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [lateinit,fake_override,var]
         overridden:
-          public final fun <set-b> (<set-?>: kotlin.Number): kotlin.Unit declared in <root>.A
+          public final fun <set-b> (value: kotlin.Number): kotlin.Unit declared in <root>.A
           public abstract fun <set-b> (value: kotlin.Number): kotlin.Unit declared in <root>.Java3
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Number
+        VALUE_PARAMETER name:value index:0 type:kotlin.Number
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinInterface
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -206,18 +206,18 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
     PROPERTY name:b visibility:public modality:ABSTRACT [var]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Number
         correspondingProperty: PROPERTY name:b visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, <set-?>:kotlin.Number) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, value:kotlin.Number) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Number
+        VALUE_PARAMETER name:value index:0 type:kotlin.Number
   FUN name:test visibility:public modality:FINAL <> (b:<root>.B, c:<root>.C, d:<root>.D) returnType:kotlin.Unit
     VALUE_PARAMETER name:b index:0 type:<root>.B
     VALUE_PARAMETER name:c index:1 type:<root>.C
@@ -229,18 +229,18 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-b> (): kotlin.Number declared in <root>.B' type=kotlin.Number origin=GET_PROPERTY
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-      CALL 'public final fun <set-b> (<set-?>: kotlin.Number): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-b> (value: kotlin.Number): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-        <set-?>: CONST Int type=kotlin.Int value=4
+        value: CONST Int type=kotlin.Int value=4
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-b> (): kotlin.Number declared in <root>.C' type=kotlin.Number origin=GET_PROPERTY
           $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       CALL 'public abstract fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
         value: CONST Int type=kotlin.Int value=2
-      CALL 'public final fun <set-b> (<set-?>: kotlin.Number): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=EQ
+      CALL 'public final fun <set-b> (value: kotlin.Number): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
-        <set-?>: CONST Int type=kotlin.Int value=7
+        value: CONST Int type=kotlin.Int value=7
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public abstract fun <get-a> (): kotlin.Int declared in <root>.D' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null

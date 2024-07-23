@@ -80,7 +80,7 @@ public final class k/KotlinParcelable : java/lang/Object, android/os/Parcelable 
 
     public int hashCode()
 
-    public final void setData(int <set-?>)
+    public final void setData(int value)
 
     public java.lang.String toString()
 

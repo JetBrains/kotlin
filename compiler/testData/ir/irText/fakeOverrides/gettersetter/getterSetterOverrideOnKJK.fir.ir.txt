@@ -209,14 +209,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-j> (): kotlin.Int declared in <root>.B'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-j>' type=<root>.B origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-j> visibility:public modality:OPEN <> ($this:<root>.B, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-j> visibility:public modality:OPEN <> ($this:<root>.B, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:j visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.B
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-j>' type=<root>.B origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.B.<set-j>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.B.<set-j>' type=kotlin.Int origin=null
     PROPERTY name:k visibility:public modality:OPEN [var]
       overridden:
         public open k: kotlin.Int declared in <root>.Java1
@@ -754,14 +754,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-b> (): kotlin.Int declared in <root>.KotlinClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<get-b>' type=<root>.KotlinClass origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:OPEN <> ($this:<root>.KotlinClass, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:OPEN <> ($this:<root>.KotlinClass, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-b>' type=<root>.KotlinClass origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.KotlinClass.<set-b>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.KotlinClass.<set-b>' type=kotlin.Int origin=null
     PROPERTY name:d visibility:public modality:OPEN [var]
       FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Int visibility:private
         EXPRESSION_BODY
@@ -894,14 +894,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-k> (): kotlin.Int declared in <root>.KotlinClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<get-k>' type=<root>.KotlinClass origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-k> visibility:protected modality:OPEN <> ($this:<root>.KotlinClass, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-k> visibility:protected modality:OPEN <> ($this:<root>.KotlinClass, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:k visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-k>' type=<root>.KotlinClass origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.KotlinClass.<set-k>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.KotlinClass.<set-k>' type=kotlin.Int origin=null
     PROPERTY name:l visibility:public modality:OPEN [var]
       FIELD PROPERTY_BACKING_FIELD name:l type:kotlin.Boolean visibility:private
         EXPRESSION_BODY
@@ -913,14 +913,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-l> (): kotlin.Boolean declared in <root>.KotlinClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:l type:kotlin.Boolean visibility:private' type=kotlin.Boolean origin=null
               receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<get-l>' type=<root>.KotlinClass origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-l> visibility:public modality:OPEN <> ($this:<root>.KotlinClass, <set-?>:kotlin.Boolean) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-l> visibility:public modality:OPEN <> ($this:<root>.KotlinClass, value:kotlin.Boolean) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:l visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Boolean
+        VALUE_PARAMETER name:value index:0 type:kotlin.Boolean
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:l type:kotlin.Boolean visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-l>' type=<root>.KotlinClass origin=null
-            value: GET_VAR '<set-?>: kotlin.Boolean declared in <root>.KotlinClass.<set-l>' type=kotlin.Boolean origin=null
+            value: GET_VAR 'value: kotlin.Boolean declared in <root>.KotlinClass.<set-l>' type=kotlin.Boolean origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinClass [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

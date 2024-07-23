@@ -16,13 +16,13 @@ class Delegate {
   }
 
   operator fun getValue($context_receiver_0: Int, thisRef: Any?, property: KProperty<*>): String {
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+    <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
     return <this>.<get-delegateValue>()
   }
 
   operator fun setValue($context_receiver_0: Int, thisRef: Any?, property: KProperty<*>, value: String) {
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-    <this>.<set-delegateValue>(<set-?> = value)
+    <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
+    <this>.<set-delegateValue>(value = value)
   }
 
 }

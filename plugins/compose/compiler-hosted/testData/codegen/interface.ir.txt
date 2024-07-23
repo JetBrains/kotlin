@@ -13,14 +13,14 @@ MODULE_FRAGMENT
             RETURN type=kotlin.Nothing from='public final fun <get-userNewsResourceRepository> (): core.data.UserNewsResourceRepository declared in home.MainActivity'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:userNewsResourceRepository type:core.data.UserNewsResourceRepository visibility:public' type=core.data.UserNewsResourceRepository origin=null
                 receiver: GET_VAR '<this>: home.MainActivity declared in home.MainActivity.<get-userNewsResourceRepository>' type=home.MainActivity origin=null
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-userNewsResourceRepository> visibility:public modality:FINAL <> ($this:home.MainActivity, <set-?>:core.data.UserNewsResourceRepository) returnType:kotlin.Unit
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-userNewsResourceRepository> visibility:public modality:FINAL <> ($this:home.MainActivity, value:core.data.UserNewsResourceRepository) returnType:kotlin.Unit
           correspondingProperty: PROPERTY name:userNewsResourceRepository visibility:public modality:FINAL [lateinit,var]
           $this: VALUE_PARAMETER name:<this> type:home.MainActivity
-          VALUE_PARAMETER name:<set-?> index:0 type:core.data.UserNewsResourceRepository
+          VALUE_PARAMETER name:value index:0 type:core.data.UserNewsResourceRepository
           BLOCK_BODY
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:userNewsResourceRepository type:core.data.UserNewsResourceRepository visibility:public' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: home.MainActivity declared in home.MainActivity.<set-userNewsResourceRepository>' type=home.MainActivity origin=null
-              value: GET_VAR '<set-?>: core.data.UserNewsResourceRepository declared in home.MainActivity.<set-userNewsResourceRepository>' type=core.data.UserNewsResourceRepository origin=null
+              value: GET_VAR 'value: core.data.UserNewsResourceRepository declared in home.MainActivity.<set-userNewsResourceRepository>' type=core.data.UserNewsResourceRepository origin=null
       FIELD name:$stable type:kotlin.Int visibility:public [final,static]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=8

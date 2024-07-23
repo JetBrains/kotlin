@@ -4,13 +4,13 @@
 
 private var privateVar: Int
     /* TARGET declaration */ private fun <get-privateVar>(): Int
-    /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+    /* TARGET declaration */ private fun <set-privateVar>(value: Int)
 internal var inlineVar: Int
     internal inline fun <get-inlineVar>(): Int
         /* ACCESSOR use-site */ access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt()
     internal inline fun <set-inlineVar>(value: Int)
-        /* ACCESSOR use-site */ access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt(<set-?> = value)
+        /* ACCESSOR use-site */ access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt(value = value)
 /* ACCESSOR declaration */ public fun access$<get-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt(): Int
     /* TARGET use-site */ <get-privateVar>()
-/* ACCESSOR declaration */ public fun access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt(<set-?>: Int)
-    /* TARGET use-site */ <set-privateVar>(<set-?> = <set-?>)
+/* ACCESSOR declaration */ public fun access$<set-privateVar>$tUsePrivateTopLevelVarFromInternalInlineVarKt(value: Int)
+    /* TARGET use-site */ <set-privateVar>(value = value)

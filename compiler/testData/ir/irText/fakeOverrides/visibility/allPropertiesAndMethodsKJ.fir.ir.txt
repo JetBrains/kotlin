@@ -381,14 +381,14 @@ FILE fqName:<root> fileName:/test.kt
           RETURN type=kotlin.Nothing from='protected final fun <get-j4> (): kotlin.Int declared in <root>.F'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j4 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.F declared in <root>.F.<get-j4>' type=<root>.F origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-j4> visibility:protected modality:FINAL <> ($this:<root>.F, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-j4> visibility:protected modality:FINAL <> ($this:<root>.F, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:j4 visibility:protected modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.F
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j4 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.F declared in <root>.F.<set-j4>' type=<root>.F origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.F.<set-j4>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.F.<set-j4>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J'
@@ -473,14 +473,14 @@ FILE fqName:<root> fileName:/test.kt
           RETURN type=kotlin.Nothing from='internal final fun <get-j4> (): kotlin.Int declared in <root>.G'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j4 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.G declared in <root>.G.<get-j4>' type=<root>.G origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-j4> visibility:internal modality:FINAL <> ($this:<root>.G, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-j4> visibility:internal modality:FINAL <> ($this:<root>.G, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:j4 visibility:internal modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.G
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j4 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.G declared in <root>.G.<set-j4>' type=<root>.G origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.G.<set-j4>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.G.<set-j4>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J'

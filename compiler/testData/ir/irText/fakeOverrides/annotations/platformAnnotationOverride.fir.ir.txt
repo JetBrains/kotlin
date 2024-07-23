@@ -480,7 +480,7 @@ FILE fqName:<root> fileName:/1.kt
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
         overridden:
           public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
-          public abstract fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
+          public abstract fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
         VALUE_PARAMETER name:value index:0 type:kotlin.String
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
@@ -575,7 +575,7 @@ FILE fqName:<root> fileName:/1.kt
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
         overridden:
           public final fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
-          public abstract fun <set-c> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
+          public abstract fun <set-c> (value: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
         VALUE_PARAMETER name:value index:0 type:kotlin.String
   CLASS CLASS name:KotlinClass modality:OPEN visibility:public superTypes:[kotlin.Any]
@@ -606,16 +606,16 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public final fun <get-c> (): kotlin.String declared in <root>.KotlinClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.String visibility:private' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<get-c>' type=<root>.KotlinClass origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-c> visibility:public modality:FINAL <> ($this:<root>.KotlinClass, <set-?>:kotlin.String) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-c> visibility:public modality:FINAL <> ($this:<root>.KotlinClass, value:kotlin.String) returnType:kotlin.Unit
         annotations:
           JvmName(name = "setText")
         correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+        VALUE_PARAMETER name:value index:0 type:kotlin.String
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.String visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-c>' type=<root>.KotlinClass origin=null
-            value: GET_VAR '<set-?>: kotlin.String declared in <root>.KotlinClass.<set-c>' type=kotlin.String origin=null
+            value: GET_VAR 'value: kotlin.String declared in <root>.KotlinClass.<set-c>' type=kotlin.String origin=null
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinClass.Companion
       CONSTRUCTOR visibility:private <> () returnType:<root>.KotlinClass.Companion [primary]
@@ -708,10 +708,10 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.String
         correspondingProperty: PROPERTY name:c visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-c> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, <set-?>:kotlin.String) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-c> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, value:kotlin.String) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:c visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+        VALUE_PARAMETER name:value index:0 type:kotlin.String
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B, c:<root>.C, d:<root>.D, e:<root>.E, f:<root>.F, g:<root>.G, h:<root>.H) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:b index:1 type:<root>.B

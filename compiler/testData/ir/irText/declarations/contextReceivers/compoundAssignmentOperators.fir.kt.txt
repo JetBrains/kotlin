@@ -66,42 +66,42 @@ fun box(): String {
 }
 
 operator fun Result.div($context_receiver_0: Int, other: Result): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
   return Result(i = <this>.<get-i>().div(other = other.<get-i>()))
 }
 
 operator fun Result.divAssign($context_receiver_0: Int, other: Result) {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  <this>.<set-i>(<set-?> = <this>.<get-i>().div(other = other.<get-i>()))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
+  <this>.<set-i>(value = <this>.<get-i>().div(other = other.<get-i>()))
 }
 
 operator fun Result.minus($context_receiver_0: Int, other: Result): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
   return Result(i = <this>.<get-i>().minus(other = other.<get-i>()))
 }
 
 operator fun Result.minusAssign($context_receiver_0: Int, other: Result) {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  <this>.<set-i>(<set-?> = <this>.<get-i>().minus(other = other.<get-i>()))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
+  <this>.<set-i>(value = <this>.<get-i>().minus(other = other.<get-i>()))
 }
 
 operator fun Result.plus($context_receiver_0: Int, other: Result): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
   return Result(i = <this>.<get-i>().plus(other = other.<get-i>()))
 }
 
 operator fun Result.plusAssign($context_receiver_0: Int, other: Result) {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  <this>.<set-i>(<set-?> = <this>.<get-i>().plus(other = other.<get-i>()))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
+  <this>.<set-i>(value = <this>.<get-i>().plus(other = other.<get-i>()))
 }
 
 operator fun Result.times($context_receiver_0: Int, other: Result): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
   return Result(i = <this>.<get-i>().times(other = other.<get-i>()))
 }
 
 operator fun Result.timesAssign($context_receiver_0: Int, other: Result) {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
-  <this>.<set-i>(<set-?> = <this>.<get-i>().times(other = other.<get-i>()))
+  <set-operationScore>(value = <get-operationScore>().plus(other = $context_receiver_0))
+  <this>.<set-i>(value = <this>.<get-i>().times(other = other.<get-i>()))
 }
 

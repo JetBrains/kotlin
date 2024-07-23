@@ -1,0 +1,105 @@
+object Z {
+  var counter: Int
+    field = 0
+    get
+    set
+
+  val aLambda: Function0<Unit>
+    field = local fun <anonymous>() {
+      Z.<set-counter>(value = 1)
+      Z.foo()
+      Z.<set-counter>(value = 1)
+      Z.foo()
+    }
+
+    get
+
+  val anObject: Any
+    field = { // BLOCK
+      local class <no name provided> {
+        init {
+          Z.<set-counter>(value = 1)
+          Z.foo()
+          Z.<set-counter>(value = 1)
+          Z.foo()
+        }
+
+        constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
+        fun test() {
+          Z.<set-counter>(value = 1)
+          Z.foo()
+          Z.<set-counter>(value = 1)
+          Z.foo()
+        }
+
+      }
+
+      <no name provided>()
+    }
+    get
+
+  class Nested {
+    init {
+      Z.<set-counter>(value = 1)
+      Z.foo()
+      Z.<set-counter>(value = 1)
+      Z.foo()
+    }
+
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun test() {
+      Z.<set-counter>(value = 1)
+      Z.foo()
+      Z.<set-counter>(value = 1)
+      Z.foo()
+    }
+
+  }
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun aFun() {
+    withLambda(f = local fun <anonymous>() {
+      Z.<set-counter>(value = 1)
+      Z.foo()
+      Z.<set-counter>(value = 1)
+      Z.foo()
+    }
+)
+  }
+
+  fun bar() {
+    <this>.<set-counter>(value = 1)
+    <this>.foo()
+    Z.<set-counter>(value = 1)
+    Z.foo()
+  }
+
+  fun foo() {
+  }
+
+}
+
+fun Z.test() {
+  <this>.<set-counter>(value = 1)
+  <this>.foo()
+  Z.<set-counter>(value = 1)
+  Z.foo()
+}
+
+fun withLambda(f: Function0<Unit>) {
+}

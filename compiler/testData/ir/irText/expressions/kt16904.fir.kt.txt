@@ -34,7 +34,7 @@ class Test1 : A {
     /* <init>() */
 
     <this>.<get-x>().plusAssign(x = 42)
-    <this>.<set-y>(<set-?> = <this>.<get-y>().plus(other = 42))
+    <this>.<set-y>(value = <this>.<get-y>().plus(other = 42))
   }
 
 }

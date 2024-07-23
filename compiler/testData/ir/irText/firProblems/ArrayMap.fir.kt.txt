@@ -120,7 +120,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   private fun ensureCapacity(index: Int) {
     when {
       lessOrEqual(arg0 = <this>.<get-data>().<get-size>(), arg1 = index) -> { // BLOCK
-        <this>.<set-data>(<set-?> = <this>.<get-data>().copyOf<Any?>(newSize = <this>.<get-data>().<get-size>().times(other = 2)))
+        <this>.<set-data>(value = <this>.<get-data>().copyOf<Any?>(newSize = <this>.<get-data>().<get-size>().times(other = 2)))
       }
     }
   }
@@ -158,7 +158,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
             do// COMPOSITE {
             { // BLOCK
               val tmp_1: Int = <this>.<get-index>()
-              <this>.<set-index>(<set-?> = tmp_1.inc())
+              <this>.<set-index>(value = tmp_1.inc())
               tmp_1
             } /*~> Unit */
             // }            while (when {
@@ -186,7 +186,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null).not() -> { // BLOCK
         val tmp_2: Int = <this>.<get-size>()
-        <this>.<set-size>(<set-?> = tmp_2.dec())
+        <this>.<set-size>(value = tmp_2.dec())
         tmp_2
       } /*~> Unit */
     }
@@ -198,7 +198,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null) -> { // BLOCK
         val tmp_3: Int = <this>.<get-size>()
-        <this>.<set-size>(<set-?> = tmp_3.inc())
+        <this>.<set-size>(value = tmp_3.inc())
         tmp_3
       } /*~> Unit */
     }
@@ -254,7 +254,7 @@ internal class OneElementArrayMap<T : Any> : ArrayMap<T> {
         override operator fun next(): T {
           when {
             <this>.<get-notVisited>() -> { // BLOCK
-              <this>.<set-notVisited>(<set-?> = false)
+              <this>.<set-notVisited>(value = false)
               return <this>.<get-value>()
             }
             else -> { // BLOCK

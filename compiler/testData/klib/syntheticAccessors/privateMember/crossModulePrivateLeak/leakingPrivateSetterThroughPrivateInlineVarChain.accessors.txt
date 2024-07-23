@@ -4,15 +4,15 @@
 
 public class A
     public var privateVar: Int
-        /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+        /* TARGET declaration */ private fun <set-privateVar>(value: Int)
     public var privateInlineVar1: Int
         private inline fun <set-privateInlineVar1>(value: Int)
-            /* TARGET use-site */ <this>.<set-privateVar>(<set-?> = value)
+            /* TARGET use-site */ <this>.<set-privateVar>(value = value)
     private var privateInlineVar2: Int
         private inline fun <set-privateInlineVar2>(value: Int)
-            /* TARGET use-site */ this.<set-privateVar>(<set-?> = value)
+            /* TARGET use-site */ this.<set-privateVar>(value = value)
     internal var inlineVar: Int
         internal inline fun <set-inlineVar>(value: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: A, <set-?>: Int)
-        /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = this, value = value)
+    /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: A, value: Int)
+        /* TARGET use-site */ $this.<set-privateVar>(value = value)

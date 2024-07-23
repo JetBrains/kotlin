@@ -41,9 +41,9 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
       $receiver: VALUE_PARAMETER name:<this> type:<root>.IrTypeParametersContainer
       VALUE_PARAMETER name:other index:0 type:<root>.IrTypeParametersContainer
       BLOCK_BODY
-        CALL 'public abstract fun <set-typeParameters> (<set-?>: kotlin.collections.List<<root>.IrTypeParameter>): kotlin.Unit declared in <root>.IrTypeParametersContainer' type=kotlin.Unit origin=EQ
+        CALL 'public abstract fun <set-typeParameters> (value: kotlin.collections.List<<root>.IrTypeParameter>): kotlin.Unit declared in <root>.IrTypeParametersContainer' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<this>: <root>.IrTypeParametersContainer declared in <root>.DeepCopyIrTreeWithSymbols.copyTypeParametersFrom' type=<root>.IrTypeParametersContainer origin=null
-          <set-?>: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> declared in kotlin.collections' type=kotlin.collections.List<<root>.IrTypeParameter> origin=null
+          value: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> declared in kotlin.collections' type=kotlin.collections.List<<root>.IrTypeParameter> origin=null
             <T>: <root>.IrTypeParameter
             <R>: <root>.IrTypeParameter
             $receiver: CALL 'public abstract fun <get-typeParameters> (): kotlin.collections.List<<root>.IrTypeParameter> declared in <root>.IrTypeParametersContainer' type=kotlin.collections.List<<root>.IrTypeParameter> origin=GET_PROPERTY
@@ -192,10 +192,10 @@ FILE fqName:<root> fileName:/DeepCopyIrTree.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-typeParameters> visibility:public modality:ABSTRACT <> ($this:<root>.IrTypeParametersContainer) returnType:kotlin.collections.List<<root>.IrTypeParameter>
         correspondingProperty: PROPERTY name:typeParameters visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.IrTypeParametersContainer
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-typeParameters> visibility:public modality:ABSTRACT <> ($this:<root>.IrTypeParametersContainer, <set-?>:kotlin.collections.List<<root>.IrTypeParameter>) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-typeParameters> visibility:public modality:ABSTRACT <> ($this:<root>.IrTypeParametersContainer, value:kotlin.collections.List<<root>.IrTypeParameter>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:typeParameters visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.IrTypeParametersContainer
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<<root>.IrTypeParameter>
+        VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<<root>.IrTypeParameter>
   CLASS INTERFACE name:TypeRemapper modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TypeRemapper
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

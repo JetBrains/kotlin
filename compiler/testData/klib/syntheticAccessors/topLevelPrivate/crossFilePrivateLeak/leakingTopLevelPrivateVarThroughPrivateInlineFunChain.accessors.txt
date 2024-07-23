@@ -4,20 +4,20 @@
 
 private var privateVar: Int
     /* TARGET declaration */ private fun <get-privateVar>(): Int
-    /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+    /* TARGET declaration */ private fun <set-privateVar>(value: Int)
 private inline fun privateSetVar1(value: Int)
-    /* TARGET use-site */ <set-privateVar>(<set-?> = value)
+    /* TARGET use-site */ <set-privateVar>(value = value)
 private inline fun privateGetVar1(): Int
     /* TARGET use-site */ <get-privateVar>()
 private inline fun privateSetVar2(value: Int)
-    /* TARGET use-site */ <set-privateVar>(<set-?> = value)
+    /* TARGET use-site */ <set-privateVar>(value = value)
 private inline fun privateGetVar2(): Int
     /* TARGET use-site */ <get-privateVar>()
 internal inline fun internalSetVar(value: Int)
-    /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(value = value)
 internal inline fun internalGetVar(): Int
     /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
-/* ACCESSOR declaration */ public fun access$<set-privateVar>$tAKt(<set-?>: Int)
-    /* TARGET use-site */ <set-privateVar>(<set-?> = <set-?>)
+/* ACCESSOR declaration */ public fun access$<set-privateVar>$tAKt(value: Int)
+    /* TARGET use-site */ <set-privateVar>(value = value)
 /* ACCESSOR declaration */ public fun access$<get-privateVar>$tAKt(): Int
     /* TARGET use-site */ <get-privateVar>()

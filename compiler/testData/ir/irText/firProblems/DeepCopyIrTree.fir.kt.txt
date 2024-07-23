@@ -14,7 +14,7 @@ class DeepCopyIrTreeWithSymbols {
   }
 
   fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
-    <this>.<set-typeParameters>(<set-?> = other.<get-typeParameters>().map<IrTypeParameter, IrTypeParameter>(transform = local fun <anonymous>(it: IrTypeParameter): IrTypeParameter {
+    <this>.<set-typeParameters>(value = other.<get-typeParameters>().map<IrTypeParameter, IrTypeParameter>(transform = local fun <anonymous>(it: IrTypeParameter): IrTypeParameter {
       return <this>.copyTypeParameter(declaration = it)
     }
 ))

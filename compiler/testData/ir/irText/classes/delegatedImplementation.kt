@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
 interface IBase {
     fun foo(x: Int, s: String)
     fun bar(): Int

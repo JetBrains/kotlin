@@ -3,12 +3,12 @@
 /* FILE package=<root> fileName=a.kt */
 
 public var privateSetterVar: Int
-    /* TARGET declaration */ private fun <set-privateSetterVar>(<set-?>: Int)
+    /* TARGET declaration */ private fun <set-privateSetterVar>(value: Int)
 internal inline fun internalSetVar(value: Int)
-    /* ACCESSOR use-site */ access$<set-privateSetterVar>$tAKt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<set-privateSetterVar>$tAKt(value = value)
 private inline fun privateSetVar2(value: Int)
-    /* TARGET use-site */ <set-privateSetterVar>(<set-?> = value)
+    /* TARGET use-site */ <set-privateSetterVar>(value = value)
 private inline fun privateSetVar1(value: Int)
-    /* TARGET use-site */ <set-privateSetterVar>(<set-?> = value)
-/* ACCESSOR declaration */ public fun access$<set-privateSetterVar>$tAKt(<set-?>: Int)
-    /* TARGET use-site */ <set-privateSetterVar>(<set-?> = <set-?>)
+    /* TARGET use-site */ <set-privateSetterVar>(value = value)
+/* ACCESSOR declaration */ public fun access$<set-privateSetterVar>$tAKt(value: Int)
+    /* TARGET use-site */ <set-privateSetterVar>(value = value)

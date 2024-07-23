@@ -11,14 +11,14 @@ FILE fqName:<root> fileName:/candidateSymbol.kt
           RETURN type=kotlin.Nothing from='public final fun <get-fir> (): E of <root>.AbstractFirBasedSymbol declared in <root>.AbstractFirBasedSymbol'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fir type:E of <root>.AbstractFirBasedSymbol visibility:public' type=E of <root>.AbstractFirBasedSymbol origin=null
               receiver: GET_VAR '<this>: <root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> declared in <root>.AbstractFirBasedSymbol.<get-fir>' type=<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fir> visibility:public modality:FINAL <> ($this:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol>, <set-?>:E of <root>.AbstractFirBasedSymbol) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fir> visibility:public modality:FINAL <> ($this:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol>, value:E of <root>.AbstractFirBasedSymbol) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:fir visibility:public modality:FINAL [lateinit,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol>
-        VALUE_PARAMETER name:<set-?> index:0 type:E of <root>.AbstractFirBasedSymbol
+        VALUE_PARAMETER name:value index:0 type:E of <root>.AbstractFirBasedSymbol
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fir type:E of <root>.AbstractFirBasedSymbol visibility:public' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> declared in <root>.AbstractFirBasedSymbol.<set-fir>' type=<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> origin=null
-            value: GET_VAR '<set-?>: E of <root>.AbstractFirBasedSymbol declared in <root>.AbstractFirBasedSymbol.<set-fir>' type=E of <root>.AbstractFirBasedSymbol origin=null
+            value: GET_VAR 'value: E of <root>.AbstractFirBasedSymbol declared in <root>.AbstractFirBasedSymbol.<set-fir>' type=E of <root>.AbstractFirBasedSymbol origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.AbstractFirBasedSymbol<E of <root>.AbstractFirBasedSymbol> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

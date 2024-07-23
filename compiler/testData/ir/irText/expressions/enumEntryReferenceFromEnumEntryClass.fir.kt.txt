@@ -9,7 +9,7 @@ open enum class MyEnum : Enum<MyEnum> {
 
     val aLambda: Function0<Unit>
       field = local fun <anonymous>() {
-        <this>.<set-counter>(<set-?> = 1)
+        <this>.<set-counter>(value = 1)
         <this>.foo()
       }
 
@@ -19,7 +19,7 @@ open enum class MyEnum : Enum<MyEnum> {
       field = { // BLOCK
         local class <no name provided> {
           init {
-            <this>.<set-counter>(<set-?> = 1)
+            <this>.<set-counter>(value = 1)
             <this>.foo()
           }
 
@@ -30,7 +30,7 @@ open enum class MyEnum : Enum<MyEnum> {
           }
 
           fun test() {
-            <this>.<set-counter>(<set-?> = 1)
+            <this>.<set-counter>(value = 1)
             <this>.foo()
           }
 
@@ -47,7 +47,7 @@ open enum class MyEnum : Enum<MyEnum> {
     }
 
     fun bar() {
-      <this>.<set-counter>(<set-?> = 1)
+      <this>.<set-counter>(value = 1)
       <this>.foo()
     }
 

@@ -154,7 +154,7 @@ FILE fqName:<root> fileName:/1.kt
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
           public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
-          public abstract fun <set-a> (<set-?>: kotlin.collections.List<kotlin.Any?>): kotlin.Unit declared in <root>.KotlinInterface
+          public abstract fun <set-a> (value: kotlin.collections.List<kotlin.Any?>): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
         VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
@@ -211,7 +211,7 @@ FILE fqName:<root> fileName:/1.kt
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
           public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
-          public abstract fun <set-a> (<set-?>: kotlin.collections.List<kotlin.Any?>): kotlin.Unit declared in <root>.KotlinInterface
+          public abstract fun <set-a> (value: kotlin.collections.List<kotlin.Any?>): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.D
         VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
         BLOCK_BODY
@@ -487,14 +487,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.collections.List<*> declared in <root>.KotlinClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.collections.List<*> visibility:private' type=kotlin.collections.List<*> origin=null
               receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<get-a>' type=<root>.KotlinClass origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass, <set-?>:kotlin.collections.List<*>) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.KotlinClass, value:kotlin.collections.List<*>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinClass
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<*>
+        VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.collections.List<*> visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.KotlinClass declared in <root>.KotlinClass.<set-a>' type=<root>.KotlinClass origin=null
-            value: GET_VAR '<set-?>: kotlin.collections.List<*> declared in <root>.KotlinClass.<set-a>' type=kotlin.collections.List<*> origin=null
+            value: GET_VAR 'value: kotlin.collections.List<*> declared in <root>.KotlinClass.<set-a>' type=kotlin.collections.List<*> origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.KotlinClass [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -548,10 +548,10 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?>
         correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, <set-?>:kotlin.collections.List<kotlin.Any?>) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, value:kotlin.collections.List<kotlin.Any?>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<kotlin.Any?>
+        VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<kotlin.Any?>
   CLASS INTERFACE name:KotlinInterface2 modality:ABSTRACT visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinInterface2
     FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.Java2) returnType:@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? [fake_override]

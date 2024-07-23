@@ -34,7 +34,7 @@ abstract class A : Java2, Java1, KotlinInterface {
     //   Mangled name: A#<set-a>(kotlin.Int){}
     //   Public signature: /A.a.<set-a>|-6358787123203981221[0]
     //   Public signature debug description: <set-a>(kotlin.Int){}
-    abstract /* fake */ override set(<set-?>: Int): Unit
+    abstract /* fake */ override set(value: Int): Unit
 
 }
 
@@ -322,7 +322,7 @@ abstract class I : Java5, KotlinInterface {
     //   Mangled name: I#<set-a>(kotlin.Int){}
     //   Public signature: /I.a.<set-a>|-6358787123203981221[0]
     //   Public signature debug description: <set-a>(kotlin.Int){}
-    abstract /* fake */ override set(<set-?>: Int): Unit
+    abstract /* fake */ override set(value: Int): Unit
 
 }
 

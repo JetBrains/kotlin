@@ -8,12 +8,12 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-result> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-result> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:result visibility:public modality:FINAL [var]
-      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
-          value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-result>' type=kotlin.Int origin=null
+          value: GET_VAR 'value: kotlin.Int declared in <root>.<set-result>' type=kotlin.Int origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       CALL 'public final fun test (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -42,8 +42,8 @@ FILE fqName:<root> fileName:/noSymbolForIntRangeIterator.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Unit
             VALUE_PARAMETER name:it index:0 type:kotlin.String
             BLOCK_BODY
-              CALL 'public final fun <set-result> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
-                <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+              CALL 'public final fun <set-result> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
+                value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
                   $this: CALL 'public final fun <get-result> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PLUSEQ
                   other: BLOCK type=kotlin.Int origin=ELVIS
                     VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int? [val]

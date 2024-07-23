@@ -18,12 +18,12 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-fn> (): kotlin.Function1<<root>.A, kotlin.Int> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1<<root>.A, kotlin.Int> visibility:private [static]' type=kotlin.Function1<<root>.A, kotlin.Int> origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fn> visibility:public modality:FINAL <> (<set-?>:kotlin.Function1<<root>.A, kotlin.Int>) returnType:kotlin.Unit
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-fn> visibility:public modality:FINAL <> (value:kotlin.Function1<<root>.A, kotlin.Int>) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:fn visibility:public modality:FINAL [var]
-      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Function1<<root>.A, kotlin.Int>
+      VALUE_PARAMETER name:value index:0 type:kotlin.Function1<<root>.A, kotlin.Int>
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1<<root>.A, kotlin.Int> visibility:private [static]' type=kotlin.Unit origin=null
-          value: GET_VAR '<set-?>: kotlin.Function1<<root>.A, kotlin.Int> declared in <root>.<set-fn>' type=kotlin.Function1<<root>.A, kotlin.Int> origin=null
+          value: GET_VAR 'value: kotlin.Function1<<root>.A, kotlin.Int> declared in <root>.<set-fn>' type=kotlin.Function1<<root>.A, kotlin.Int> origin=null
   CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
     PROPERTY name:x visibility:public modality:FINAL [val]

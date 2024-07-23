@@ -106,7 +106,7 @@ class CounterIterator : Iterator<Int> {
     return { // BLOCK
       val tmp_2: Counter = <this>.<get-counter>()
       val tmp_3: Int = tmp_2.<get-i>()
-      tmp_2.<set-i>(<set-?> = tmp_3.inc())
+      tmp_2.<set-i>(value = tmp_3.inc())
       tmp_3
     }
   }

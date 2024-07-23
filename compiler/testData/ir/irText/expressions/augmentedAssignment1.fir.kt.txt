@@ -4,11 +4,11 @@ var p: Int
   set
 
 fun testProperty() {
-  <set-p>(<set-?> = <get-p>().plus(other = 1))
-  <set-p>(<set-?> = <get-p>().minus(other = 2))
-  <set-p>(<set-?> = <get-p>().times(other = 3))
-  <set-p>(<set-?> = <get-p>().div(other = 4))
-  <set-p>(<set-?> = <get-p>().rem(other = 5))
+  <set-p>(value = <get-p>().plus(other = 1))
+  <set-p>(value = <get-p>().minus(other = 2))
+  <set-p>(value = <get-p>().times(other = 3))
+  <set-p>(value = <get-p>().div(other = 4))
+  <set-p>(value = <get-p>().rem(other = 5))
 }
 
 fun testVariable() {

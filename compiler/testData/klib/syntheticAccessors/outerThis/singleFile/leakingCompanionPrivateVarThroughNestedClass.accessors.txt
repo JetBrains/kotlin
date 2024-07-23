@@ -6,13 +6,13 @@ public class Outer
     public companion object Companion
         private var privateVar: Int
             /* TARGET declaration */ private fun <get-privateVar>(): Int
-            /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
+            /* TARGET declaration */ private fun <set-privateVar>(value: Int)
         /* ACCESSOR declaration */ public fun access$<get-privateVar>($this: Companion): Int
             /* TARGET use-site */ $this.<get-privateVar>()
-        /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: Companion, <set-?>: Int)
-            /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
+        /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: Companion, value: Int)
+            /* TARGET use-site */ $this.<set-privateVar>(value = value)
     public class Nested
         internal inline fun customVarGetter(): Int
             /* ACCESSOR use-site */ access$<get-privateVar>($this = Companion)
         internal inline fun customVarSetter(value: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = Companion, <set-?> = value)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = Companion, value = value)

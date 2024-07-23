@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 annotation class AnnParam
 
 @setparam:AnnParam

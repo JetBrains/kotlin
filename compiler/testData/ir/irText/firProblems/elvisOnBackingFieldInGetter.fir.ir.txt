@@ -66,14 +66,14 @@ FILE fqName:<root> fileName:/elvisOnBackingFieldInGetter.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val tmp_0: <root>.ResourceTable? declared in <root>.Test.<get-resourceTable>' type=<root>.ResourceTable? origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-resourceTable> visibility:public modality:FINAL <> ($this:<root>.Test, <set-?>:<root>.ResourceTable?) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-resourceTable> visibility:public modality:FINAL <> ($this:<root>.Test, value:<root>.ResourceTable?) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:resourceTable visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Test
-        VALUE_PARAMETER name:<set-?> index:0 type:<root>.ResourceTable?
+        VALUE_PARAMETER name:value index:0 type:<root>.ResourceTable?
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resourceTable type:<root>.ResourceTable? visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<set-resourceTable>' type=<root>.Test origin=null
-            value: GET_VAR '<set-?>: <root>.ResourceTable? declared in <root>.Test.<set-resourceTable>' type=<root>.ResourceTable? origin=null
+            value: GET_VAR 'value: <root>.ResourceTable? declared in <root>.Test.<set-resourceTable>' type=<root>.ResourceTable? origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

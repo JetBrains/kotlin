@@ -40,22 +40,22 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.Base<T of <root>.Base>) returnType:T of <root>.Base
         correspondingProperty: PROPERTY name:bar visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:ABSTRACT <> ($this:<root>.Base<T of <root>.Base>, <set-?>:T of <root>.Base) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:ABSTRACT <> ($this:<root>.Base<T of <root>.Base>, value:T of <root>.Base) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:bar visibility:public modality:ABSTRACT [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
-        VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Base
+        VALUE_PARAMETER name:value index:0 type:T of <root>.Base
     PROPERTY name:exn visibility:public modality:ABSTRACT [var]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-exn> visibility:public modality:ABSTRACT <Z> ($this:<root>.Base<T of <root>.Base>, $receiver:Z of <root>.Base.<get-exn>) returnType:T of <root>.Base
         correspondingProperty: PROPERTY name:exn visibility:public modality:ABSTRACT [var]
         TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
         $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Base.<get-exn>
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-exn> visibility:public modality:ABSTRACT <Z> ($this:<root>.Base<T of <root>.Base>, $receiver:Z of <root>.Base.<set-exn>, <set-?>:T of <root>.Base) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-exn> visibility:public modality:ABSTRACT <Z> ($this:<root>.Base<T of <root>.Base>, $receiver:Z of <root>.Base.<set-exn>, value:T of <root>.Base) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:exn visibility:public modality:ABSTRACT [var]
         TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
         $receiver: VALUE_PARAMETER name:<this> type:Z of <root>.Base.<set-exn>
-        VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Base
+        VALUE_PARAMETER name:value index:0 type:T of <root>.Base
 Module: m2
 FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
   CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base<T of <root>.Derived1>]
@@ -76,16 +76,16 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): T of <root>.Derived1 declared in <root>.Derived1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:private' type=T of <root>.Derived1 origin=null
               receiver: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<get-bar>' type=<root>.Derived1<T of <root>.Derived1> origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:OPEN <> ($this:<root>.Derived1<T of <root>.Derived1>, <set-?>:T of <root>.Derived1) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:OPEN <> ($this:<root>.Derived1<T of <root>.Derived1>, value:T of <root>.Derived1) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:bar visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-bar> (value: T of <root>.Base): kotlin.Unit declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1<T of <root>.Derived1>
-        VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.Derived1
+        VALUE_PARAMETER name:value index:0 type:T of <root>.Derived1
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:T of <root>.Derived1 visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Derived1<T of <root>.Derived1> declared in <root>.Derived1.<set-bar>' type=<root>.Derived1<T of <root>.Derived1> origin=null
-            value: GET_VAR '<set-?>: T of <root>.Derived1 declared in <root>.Derived1.<set-bar>' type=T of <root>.Derived1 origin=null
+            value: GET_VAR 'value: T of <root>.Derived1 declared in <root>.Derived1.<set-bar>' type=T of <root>.Derived1 origin=null
     CONSTRUCTOR visibility:public <> (x:T of <root>.Derived1) returnType:<root>.Derived1<T of <root>.Derived1> [primary]
       VALUE_PARAMETER name:x index:0 type:T of <root>.Derived1
       BLOCK_BODY

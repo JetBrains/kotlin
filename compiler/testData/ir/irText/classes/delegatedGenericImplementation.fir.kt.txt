@@ -19,8 +19,8 @@ class Test1<E : Any?> : IBase<E> {
     override get(): D? {
       return (<this>.#$$delegate_0, <this>).<get-x><D>()
     }
-    override set(<set-?>: D?) {
-      (<this>.#$$delegate_0, <this>).<set-x><D>(<set-?> = <set-?>)
+    override set(value: D?) {
+      (<this>.#$$delegate_0, <this>).<set-x><D>(value = value)
     }
 
 }
@@ -51,8 +51,8 @@ class Test2 : IBase<String> {
     override get(): D? {
       return (<this>.#$$delegate_0, <this>).<get-x><D>()
     }
-    override set(<set-?>: D?) {
-      (<this>.#$$delegate_0, <this>).<set-x><D>(<set-?> = <set-?>)
+    override set(value: D?) {
+      (<this>.#$$delegate_0, <this>).<set-x><D>(value = value)
     }
 
 }

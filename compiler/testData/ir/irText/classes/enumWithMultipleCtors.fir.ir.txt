@@ -84,12 +84,12 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             overridden:
               public final fun <get-prop3> (): kotlin.String declared in <root>.A
             $this: VALUE_PARAMETER name:<this> type:<root>.A
-          FUN FAKE_OVERRIDE name:<set-prop3> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.String) returnType:kotlin.Unit [fake_override]
+          FUN FAKE_OVERRIDE name:<set-prop3> visibility:public modality:FINAL <> ($this:<root>.A, value:kotlin.String) returnType:kotlin.Unit [fake_override]
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:prop3 visibility:public modality:FINAL [fake_override,var]
             overridden:
-              public final fun <set-prop3> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A
+              public final fun <set-prop3> (value: kotlin.String): kotlin.Unit declared in <root>.A
             $this: VALUE_PARAMETER name:<this> type:<root>.A
-            VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+            VALUE_PARAMETER name:value index:0 type:kotlin.String
     ENUM_ENTRY name:Z
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.A'
@@ -125,14 +125,14 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           RETURN type=kotlin.Nothing from='public final fun <get-prop3> (): kotlin.String declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop3 type:kotlin.String visibility:private' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-prop3>' type=<root>.A origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-prop3> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.String) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-prop3> visibility:public modality:FINAL <> ($this:<root>.A, value:kotlin.String) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:prop3 visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+        VALUE_PARAMETER name:value index:0 type:kotlin.String
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop3 type:kotlin.String visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-prop3>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: kotlin.String declared in <root>.A.<set-prop3>' type=kotlin.String origin=null
+            value: GET_VAR 'value: kotlin.String declared in <root>.A.<set-prop3>' type=kotlin.String origin=null
     CONSTRUCTOR visibility:private <> () returnType:<root>.A
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
@@ -141,9 +141,9 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
           value: CONST String type=kotlin.String value="default"
-        CALL 'public final fun <set-prop3> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
+        CALL 'public final fun <set-prop3> (value: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
-          <set-?>: CONST String type=kotlin.String value="empty"
+          value: CONST String type=kotlin.String value="empty"
     CONSTRUCTOR visibility:private <> (arg:kotlin.String) returnType:<root>.A
       VALUE_PARAMETER name:arg index:0 type:kotlin.String
       BLOCK_BODY
@@ -159,9 +159,9 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (arg: kotlin.String) declared in <root>.A'
           arg: CALL 'public open fun toString (): kotlin.String declared in kotlin.Int' type=kotlin.String origin=null
             $this: GET_VAR 'x: kotlin.Int declared in <root>.A.<init>' type=kotlin.Int origin=null
-        CALL 'public final fun <set-prop3> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
+        CALL 'public final fun <set-prop3> (value: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
-          <set-?>: CONST String type=kotlin.String value="int"
+          value: CONST String type=kotlin.String value="int"
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.A
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF

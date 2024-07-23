@@ -12,14 +12,14 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
           RETURN type=kotlin.Nothing from='public final fun <get-i> (): kotlin.Int declared in <root>.Counter'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Counter declared in <root>.Counter.<get-i>' type=<root>.Counter origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-i> visibility:public modality:FINAL <> ($this:<root>.Counter, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-i> visibility:public modality:FINAL <> ($this:<root>.Counter, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:i visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Counter
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Counter declared in <root>.Counter.<set-i>' type=<root>.Counter origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Counter.<set-i>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.Counter.<set-i>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> (i:kotlin.Int) returnType:<root>.Counter [primary]
       VALUE_PARAMETER name:i index:0 type:kotlin.Int
         EXPRESSION_BODY
@@ -251,9 +251,9 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
             VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
               CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Counter' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'val tmp_2: <root>.Counter declared in <root>.CounterIterator.next' type=<root>.Counter origin=null
-            CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Counter' type=kotlin.Unit origin=POSTFIX_INCR
+            CALL 'public final fun <set-i> (value: kotlin.Int): kotlin.Unit declared in <root>.Counter' type=kotlin.Unit origin=POSTFIX_INCR
               $this: GET_VAR 'val tmp_2: <root>.Counter declared in <root>.CounterIterator.next' type=<root>.Counter origin=null
-              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.CounterIterator.next' type=kotlin.Int origin=null
             GET_VAR 'val tmp_3: kotlin.Int declared in <root>.CounterIterator.next' type=kotlin.Int origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String

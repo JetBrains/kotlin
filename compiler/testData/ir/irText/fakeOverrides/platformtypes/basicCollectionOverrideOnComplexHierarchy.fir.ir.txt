@@ -13,14 +13,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-a> (): java.util.ArrayList<kotlin.Int> declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:java.util.ArrayList<kotlin.Int> visibility:private' type=java.util.ArrayList<kotlin.Int> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-a>' type=<root>.A origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.A, <set-?>:java.util.ArrayList<kotlin.Int>) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.A, value:java.util.ArrayList<kotlin.Int>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:<set-?> index:0 type:java.util.ArrayList<kotlin.Int>
+        VALUE_PARAMETER name:value index:0 type:java.util.ArrayList<kotlin.Int>
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:java.util.ArrayList<kotlin.Int> visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-a>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: java.util.ArrayList<kotlin.Int> declared in <root>.A.<set-a>' type=java.util.ArrayList<kotlin.Int> origin=null
+            value: GET_VAR 'value: java.util.ArrayList<kotlin.Int> declared in <root>.A.<set-a>' type=java.util.ArrayList<kotlin.Int> origin=null
     PROPERTY name:b visibility:public modality:OPEN [var]
       FIELD PROPERTY_BACKING_FIELD name:b type:java.util.HashSet<kotlin.Any?> visibility:private
         EXPRESSION_BODY
@@ -33,14 +33,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-b> (): java.util.HashSet<kotlin.Any?> declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:java.util.HashSet<kotlin.Any?> visibility:private' type=java.util.HashSet<kotlin.Any?> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-b>' type=<root>.A origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:OPEN <> ($this:<root>.A, <set-?>:java.util.HashSet<kotlin.Any?>) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:OPEN <> ($this:<root>.A, value:java.util.HashSet<kotlin.Any?>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:<set-?> index:0 type:java.util.HashSet<kotlin.Any?>
+        VALUE_PARAMETER name:value index:0 type:java.util.HashSet<kotlin.Any?>
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:java.util.HashSet<kotlin.Any?> visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-b>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: java.util.HashSet<kotlin.Any?> declared in <root>.A.<set-b>' type=java.util.HashSet<kotlin.Any?> origin=null
+            value: GET_VAR 'value: java.util.HashSet<kotlin.Any?> declared in <root>.A.<set-b>' type=java.util.HashSet<kotlin.Any?> origin=null
     PROPERTY name:c visibility:public modality:OPEN [var]
       FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.IntArray visibility:private
         EXPRESSION_BODY
@@ -52,14 +52,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-c> (): kotlin.IntArray declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.IntArray visibility:private' type=kotlin.IntArray origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-c>' type=<root>.A origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-c> visibility:public modality:OPEN <> ($this:<root>.A, <set-?>:kotlin.IntArray) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-c> visibility:public modality:OPEN <> ($this:<root>.A, value:kotlin.IntArray) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:c visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.IntArray
+        VALUE_PARAMETER name:value index:0 type:kotlin.IntArray
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.IntArray visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-c>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: kotlin.IntArray declared in <root>.A.<set-c>' type=kotlin.IntArray origin=null
+            value: GET_VAR 'value: kotlin.IntArray declared in <root>.A.<set-c>' type=kotlin.IntArray origin=null
     PROPERTY name:d visibility:public modality:OPEN [var]
       FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Array<out kotlin.String> visibility:private
         EXPRESSION_BODY
@@ -72,14 +72,14 @@ FILE fqName:<root> fileName:/1.kt
           RETURN type=kotlin.Nothing from='public open fun <get-d> (): kotlin.Array<out kotlin.String> declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Array<out kotlin.String> visibility:private' type=kotlin.Array<out kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-d>' type=<root>.A origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-d> visibility:public modality:OPEN <> ($this:<root>.A, <set-?>:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-d> visibility:public modality:OPEN <> ($this:<root>.A, value:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:d visibility:public modality:OPEN [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Array<out kotlin.String>
+        VALUE_PARAMETER name:value index:0 type:kotlin.Array<out kotlin.String>
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Array<out kotlin.String> visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-d>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: kotlin.Array<out kotlin.String> declared in <root>.A.<set-d>' type=kotlin.Array<out kotlin.String> origin=null
+            value: GET_VAR 'value: kotlin.Array<out kotlin.String> declared in <root>.A.<set-d>' type=kotlin.Array<out kotlin.String> origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

@@ -45,14 +45,14 @@ FILE fqName:<root> fileName:/explicitBackingFieldType.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Int type=kotlin.Int value=10
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-invertedTypes> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-invertedTypes> visibility:public modality:FINAL <> ($this:<root>.A, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:invertedTypes visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:invertedTypes type:kotlin.Number visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-invertedTypes>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.A.<set-invertedTypes>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.A.<set-invertedTypes>' type=kotlin.Int origin=null
     PROPERTY name:p visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY

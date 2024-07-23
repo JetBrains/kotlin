@@ -16,12 +16,12 @@ public final class foo/Kotlin$Companion : java/lang/Object {
     public static void getJvmStatic$annotations()
       @Lkotlin/jvm/JvmStatic;([])
 
-    public final void setCompanionVarProperty(java.lang.String <set-?>)
+    public final void setCompanionVarProperty(java.lang.String value)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
-    public final void setJvmStatic(java.lang.String <set-?>)
+    public final void setJvmStatic(java.lang.String value)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
@@ -112,17 +112,17 @@ public final class foo/Kotlin : java/lang/Object {
     public final void setCustomSetter(java.lang.String field)
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
-    public final static void setJvmStatic(java.lang.String <set-?>)
+    public final static void setJvmStatic(java.lang.String value)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
-    public final void setLateinitProp(java.lang.String <set-?>)
+    public final void setLateinitProp(java.lang.String value)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
-    public final void setVarProp(java.lang.String <set-?>)
+    public final void setVarProp(java.lang.String value)
       @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
       @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0

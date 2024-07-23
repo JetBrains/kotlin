@@ -12,14 +12,14 @@ FILE fqName:<root> fileName:/safeCalls.kt
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.Int declared in <root>.Ref'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Ref declared in <root>.Ref.<get-value>' type=<root>.Ref origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:<root>.Ref, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-value> visibility:public modality:FINAL <> ($this:<root>.Ref, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.Ref
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Ref declared in <root>.Ref.<set-value>' type=<root>.Ref origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Ref.<set-value>' type=kotlin.Int origin=null
+            value: GET_VAR 'value: kotlin.Int declared in <root>.Ref.<set-value>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:<root>.Ref [primary]
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
@@ -149,9 +149,9 @@ FILE fqName:<root> fileName:/safeCalls.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Ref' type=kotlin.Unit origin=EQ
+              then: CALL 'public final fun <set-value> (value: kotlin.Int): kotlin.Unit declared in <root>.Ref' type=kotlin.Unit origin=EQ
                 $this: GET_VAR 'val tmp_4: <root>.Ref? declared in <root>.test4' type=<root>.Ref? origin=null
-                <set-?>: CONST Int type=kotlin.Int value=0
+                value: CONST Int type=kotlin.Int value=0
   FUN name:test5 visibility:public modality:FINAL <> ($receiver:<root>.IHost, s:kotlin.String?) returnType:kotlin.Int?
     $receiver: VALUE_PARAMETER name:<this> type:<root>.IHost
     VALUE_PARAMETER name:s index:0 type:kotlin.String?

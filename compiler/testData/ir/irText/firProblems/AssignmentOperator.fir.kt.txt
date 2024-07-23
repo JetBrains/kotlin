@@ -38,65 +38,65 @@ fun <T : Any?> id(t: T): T {
 
 fun runMe() {
   val a: A = A()
-  id<A>(t = a).<set-prop>(<set-?> = 10)
+  id<A>(t = a).<set-prop>(value = 10)
   { // BLOCK
     val tmp_0: A = id<A>(t = a)
-    tmp_0.<set-prop>(<set-?> = tmp_0.<get-prop>().plus(other = 20))
+    tmp_0.<set-prop>(value = tmp_0.<get-prop>().plus(other = 20))
   }
   { // BLOCK
     val tmp_1: A = id<A>(t = a)
-    tmp_1.<set-prop>(<set-?> = tmp_1.<get-prop>().minus(other = 20))
+    tmp_1.<set-prop>(value = tmp_1.<get-prop>().minus(other = 20))
   }
   { // BLOCK
     val tmp_2: A = id<A>(t = a)
-    tmp_2.<set-prop>(<set-?> = tmp_2.<get-prop>().times(other = 2))
+    tmp_2.<set-prop>(value = tmp_2.<get-prop>().times(other = 2))
   }
   { // BLOCK
     val tmp_3: A = id<A>(t = a)
-    tmp_3.<set-prop>(<set-?> = tmp_3.<get-prop>().div(other = 5))
+    tmp_3.<set-prop>(value = tmp_3.<get-prop>().div(other = 5))
   }
   { // BLOCK
     val tmp_4: A = id<A>(t = a)
-    tmp_4.<set-prop>(<set-?> = tmp_4.<get-prop>().rem(other = 3))
+    tmp_4.<set-prop>(value = tmp_4.<get-prop>().rem(other = 3))
   }
   { // BLOCK
     val tmp_5: A = id<A>(t = a)
     val tmp_6: Int = tmp_5.<get-prop>()
-    tmp_5.<set-prop>(<set-?> = tmp_6.inc())
+    tmp_5.<set-prop>(value = tmp_6.inc())
     tmp_6
   } /*~> Unit */
   { // BLOCK
     val tmp_7: A = id<A>(t = a)
     val tmp_8: Int = tmp_7.<get-prop>()
-    tmp_7.<set-prop>(<set-?> = tmp_8.dec())
+    tmp_7.<set-prop>(value = tmp_8.dec())
     tmp_8
   } /*~> Unit */
   { // BLOCK
     val tmp_9: A = id<A>(t = a)
-    tmp_9.<set-prop>(<set-?> = tmp_9.<get-prop>().inc())
+    tmp_9.<set-prop>(value = tmp_9.<get-prop>().inc())
     tmp_9.<get-prop>()
   } /*~> Unit */
   { // BLOCK
     val tmp_10: A = id<A>(t = a)
-    tmp_10.<set-prop>(<set-?> = tmp_10.<get-prop>().dec())
+    tmp_10.<set-prop>(value = tmp_10.<get-prop>().dec())
     tmp_10.<get-prop>()
   } /*~> Unit */
   { // BLOCK
     val tmp_11: Int = B.<get-prop>()
-    B.<set-prop>(<set-?> = tmp_11.inc())
+    B.<set-prop>(value = tmp_11.inc())
     tmp_11
   } /*~> Unit */
   { // BLOCK
     val tmp_12: Int = B.<get-prop>()
-    B.<set-prop>(<set-?> = tmp_12.dec())
+    B.<set-prop>(value = tmp_12.dec())
     tmp_12
   } /*~> Unit */
   { // BLOCK
-    B.<set-prop>(<set-?> = B.<get-prop>().inc())
+    B.<set-prop>(value = B.<get-prop>().inc())
     B.<get-prop>()
   } /*~> Unit */
   { // BLOCK
-    B.<set-prop>(<set-?> = B.<get-prop>().dec())
+    B.<set-prop>(value = B.<get-prop>().dec())
     B.<get-prop>()
   } /*~> Unit */
   id<Array<Int>>(t = <get-array>()).set(index = 0, value = 10)

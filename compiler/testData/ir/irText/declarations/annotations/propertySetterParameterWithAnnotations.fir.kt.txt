@@ -1,0 +1,27 @@
+var p: Int
+  field = 0
+  get
+  set
+
+open annotation class AnnParam : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class C {
+  var p: Int
+    field = p
+    get
+    set
+
+  constructor(p: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

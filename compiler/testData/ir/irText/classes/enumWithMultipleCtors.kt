@@ -1,3 +1,5 @@
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
+
 enum class A {
     X("asd"),
     Y() {
