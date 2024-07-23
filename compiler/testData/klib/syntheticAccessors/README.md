@@ -9,10 +9,11 @@ To ensure that all the needed synthetic accessors are indeed generated, we use t
 - [IrVisibilityChecker](../../../ir/backend.common/src/org/jetbrains/kotlin/backend/common/IrVisibilityChecker.kt).
   It traverses the IR tree and verifies that private and local declarations are never accessed from a file other than
   where they're declared.
-- Simplified (Kotlin-like, no bodies) IR dump after function inlining.
+- [Dumping the list of synthetic accessors](../../../ir/ir.inline/src/org/jetbrains/kotlin/ir/inline/DumpSyntheticAccessors.kt)
+  after generating them.
 
-Tests in this directory include various combinations and corner cases to verify the synthetic accessor generation logic.
-(TODO: add a link to the class responsible for generating such accessors)
+Tests in this directory include various combinations and corner cases to verify the synthetic accessor generation logic in
+[SyntheticAccessorLowering](../../../ir/ir.inline/src/org/jetbrains/kotlin/ir/inline/SyntheticAccessorLowering.kt).
 
 **NOTE:** We only compile these tests up to and including the last IR lowering, which means that we don't run LLVM (on Kotlin/Native)
 and obviously don't run the executable (on Kotlin/Native there is no executable).
