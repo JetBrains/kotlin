@@ -1952,6 +1952,10 @@ class ArraysTest {
     }
 
     @Test fun sort() {
+        intArrayOf().sort(0)
+        intArrayOf().sort()
+        intArrayOf(1).sort(0)
+        intArrayOf(1).sort()
         val intArr = intArrayOf(5, 2, 1, 9, 80, Int.MIN_VALUE, Int.MAX_VALUE)
         intArr.sort()
         assertArrayNotSameButEquals(intArrayOf(Int.MIN_VALUE, 1, 2, 5, 9, 80, Int.MAX_VALUE), intArr)

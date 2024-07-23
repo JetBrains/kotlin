@@ -197,6 +197,7 @@ private fun partition(
 
 private fun quickSort(
         array: IntArray, left: Int, right: Int) {
+    if (left >= right) return
     val index = partition(array, left, right)
     if (left < index - 1)
         quickSort(array, left, index - 1)
