@@ -24,7 +24,6 @@ import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.HttpReportParameters
-import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.plugin.buildEventsListenerRegistry
 import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
@@ -222,7 +222,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 GradleVersion.current().baseVersion == GradleVersion.version("8.0") && buildScanHolder != null
 
             if (!gradle80withBuildScanReport) {
-                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildMetricServiceProvider)
+                project.buildEventsListenerRegistry.onTaskCompletion(buildMetricServiceProvider)
             }
         }
 
@@ -269,7 +269,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 GradleVersion.current().baseVersion < GradleVersion.version("8.1") -> {
                     val buildMetricService = buildMetricServiceProvider.get()
                     buildMetricService.buildReportService.initBuildScanTags(buildScanHolder, buildMetricService.parameters.label.orNull)
-                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
+                    project.buildEventsListenerRegistry.onTaskCompletion(project.provider {
                         OperationCompletionListener { event ->
                             if (event is TaskFinishEvent) {
                                 val buildOperation = buildMetricService.updateBuildOperationRecord(event)

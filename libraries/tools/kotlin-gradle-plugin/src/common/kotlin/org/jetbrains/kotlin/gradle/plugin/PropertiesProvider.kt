@@ -494,6 +494,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val appleAllowEmbedAndSignWithCocoapods: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS) ?: false
 
+    val xcodeErrorPrintingWithConfigurationCache: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_APPLE_XCODE_ERROR_PRINTING_WITH_CONFIGURATION_CACHE) ?: true
+
     val swiftExportEnabled: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_SWIFT_EXPORT_ENABLED) ?: false
 
@@ -673,6 +676,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN = property("kotlin.apple.xcodeCompatibility.nowarn")
         val KOTLIN_APPLE_COCOAPODS_EXECUTABLE = property("kotlin.apple.cocoapods.bin")
         val KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS = property("kotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies")
+        val KOTLIN_APPLE_XCODE_ERROR_PRINTING_WITH_CONFIGURATION_CACHE = property("kotlin.apple.xcodeErrorPrintingWithConfigurationCache")
         val KOTLIN_SWIFT_EXPORT_ENABLED = property("kotlin.swift-export.enabled")
         val KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION = property("kotlin.native.enableKlibsCrossCompilation")
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
