@@ -6,6 +6,7 @@
 import com.gradle.develocity.agent.gradle.test.TestDistributionConfiguration
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.os.OperatingSystem
+import org.gradle.kotlin.dsl.develocity
 
 
 fun Test.configureTestDistribution(configure: TestDistributionConfiguration.() -> Unit = {}) {
@@ -14,7 +15,7 @@ fun Test.configureTestDistribution(configure: TestDistributionConfiguration.() -
         project.findProperty("kotlin.build.test.distribution.enabled")?.toString()?.toBoolean() ?: false
 
     useJUnitPlatform()
-    extensions.configure(TestDistributionConfiguration::class.java) {
+    develocity.testDistribution {
         enabled.set(testDistributionEnabled)
         maxRemoteExecutors.set(20)
         if (isTeamcityBuild) {
@@ -25,6 +26,3 @@ fun Test.configureTestDistribution(configure: TestDistributionConfiguration.() -
         configure()
     }
 }
-
-fun Test.isTestDistributionEnabled(): Boolean =
-    extensions.findByType(TestDistributionConfiguration::class.java)?.enabled?.orNull ?: false
