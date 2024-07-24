@@ -28,7 +28,7 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
 
     abstract override val symbol: IrValueParameterSymbol
 
-    abstract var index: Int
+    abstract val index: Int
 
     abstract var varargElementType: IrType?
 

@@ -219,7 +219,7 @@ object IrTree : AbstractTreeBuilder() {
         +descriptor("ParameterDescriptor")
         +field("isAssignable", boolean, mutable = false)
         +declaredSymbol(valueParameterSymbol)
-        +field("index", int)
+        +field("index", int, mutable = false)
         +field("varargElementType", irTypeType, nullable = true)
         +field("isCrossinline", boolean)
         +field("isNoinline", boolean)
