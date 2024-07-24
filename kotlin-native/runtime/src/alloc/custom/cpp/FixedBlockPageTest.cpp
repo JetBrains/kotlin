@@ -9,11 +9,15 @@
 #include <unordered_set>
 #include <vector>
 
+#include "CustomAllocatorTestSupport.hpp"
+#include "gtest/gtest.h"
+
 #include "Cell.hpp"
 #include "ExtraObjectPage.hpp"
-#include "gtest/gtest.h"
 #include "FixedBlockPage.hpp"
 #include "TypeInfo.h"
+
+using testing::_;
 
 namespace {
 
@@ -163,6 +167,19 @@ TEST(CustomAllocTest, FixedBlockPageRandomExercise) {
         EXPECT_EQ(live.size(), BLOCK_COUNT);
         EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
         page->Destroy();
+    }
+}
+
+TEST(CustomAllocTest, FixedBlockPageSchedulerNotification) {
+    for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
+        kotlin::alloc::test_support::WithSchedulerNotificationHook hookHandle;
+        EXPECT_CALL(hookHandle.hook(), Call(_));
+
+        FixedBlockPage* page = FixedBlockPage::Create(size);
+        while (alloc(page, size)) {}
+        page->Destroy();
+
+        testing::Mock::VerifyAndClearExpectations(&hookHandle.hook());
     }
 }
 

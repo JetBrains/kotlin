@@ -6,11 +6,15 @@
 #include <cstdint>
 #include <random>
 
-#include "ExtraObjectPage.hpp"
+#include "CustomAllocatorTestSupport.hpp"
 #include "gtest/gtest.h"
+
+#include "ExtraObjectPage.hpp"
 #include "NextFitPage.hpp"
 #include "SingleObjectPage.hpp"
 #include "TypeInfo.h"
+
+using testing::_;
 
 namespace {
 
@@ -50,6 +54,13 @@ TEST(CustomAllocTest, SingleObjectPageSweepFullPage) {
     auto gcScope = gcHandle.sweep();
     kotlin::alloc::FinalizerQueue finalizerQueue;
     EXPECT_TRUE(page->SweepAndDestroy(gcScope, finalizerQueue));
+}
+
+TEST(CustomAllocTest, SingleObjectPageSchedulerNotification) {
+    kotlin::alloc::test_support::WithSchedulerNotificationHook hookHandle;
+    EXPECT_CALL(hookHandle.hook(), Call(_));
+    alloc(MIN_BLOCK_SIZE);
+    testing::Mock::VerifyAndClearExpectations(&hookHandle.hook());
 }
 
 #undef MIN_BLOCK_SIZE

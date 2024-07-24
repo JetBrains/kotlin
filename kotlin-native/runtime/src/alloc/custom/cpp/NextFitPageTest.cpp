@@ -6,12 +6,16 @@
 #include <cstdint>
 #include <random>
 
+#include "CustomAllocatorTestSupport.hpp"
+#include "gtest/gtest.h"
+
 #include "Cell.hpp"
 #include "ExtraObjectPage.hpp"
 #include "FixedBlockPage.hpp"
-#include "gtest/gtest.h"
 #include "NextFitPage.hpp"
 #include "TypeInfo.h"
+
+using testing::_;
 
 namespace {
 
@@ -134,6 +138,18 @@ TEST(CustomAllocTest, NextFitPageSweepCoallesce) {
     EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
     EXPECT_TRUE(alloc(page, (NextFitPage::cellCount()-1) - 1));
     page->Destroy();
+}
+
+
+TEST(CustomAllocTest, NextFitPageSchedulerNotification) {
+    kotlin::alloc::test_support::WithSchedulerNotificationHook hookHandle;
+    EXPECT_CALL(hookHandle.hook(), Call(_));
+
+    NextFitPage * page = NextFitPage ::Create(MIN_BLOCK_SIZE);
+    while (alloc(page, MIN_BLOCK_SIZE)) {}
+    page->Destroy();
+
+    testing::Mock::VerifyAndClearExpectations(&hookHandle.hook());
 }
 
 #undef MIN_BLOCK_SIZE
