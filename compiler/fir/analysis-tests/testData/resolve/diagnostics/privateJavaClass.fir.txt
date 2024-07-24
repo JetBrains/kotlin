@@ -1,0 +1,4 @@
+FILE: test.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval d: R|Some.Derived| = Q|Some|.R|/Some.Derived.Derived|()
+    }

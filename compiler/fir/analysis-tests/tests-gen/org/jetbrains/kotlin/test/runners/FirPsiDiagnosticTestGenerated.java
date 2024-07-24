@@ -2020,6 +2020,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       }
 
       @Test
+      @TestMetadata("privateJavaClass.kt")
+      public void testPrivateJavaClass() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/privateJavaClass.kt");
+      }
+
+      @Test
       @TestMetadata("projectionsOnNonClassTypeArguments.kt")
       public void testProjectionsOnNonClassTypeArguments() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/projectionsOnNonClassTypeArguments.kt");
