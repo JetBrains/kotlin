@@ -120,10 +120,6 @@ val konanDataDir: String = System.getProperty("konanDataDirForIntegrationTests")
         .resolve(".kotlin")
         .resolve("konan-for-gradle-tests").absolutePath
 
-val splitGradleIntegrationTestTasks =
-    project.providers.gradleProperty("gradle.integration.tests.split.tasks").orNull?.toBoolean()
-        ?: project.kotlinBuildProperties.isTeamcityBuild
-
 tasks.register<Delete>("cleanTestKitCache") {
     group = "Build"
     description = "Deletes temporary Gradle TestKit cache"
@@ -180,14 +176,6 @@ tasks.register<Task>("createProvisionedOkFiles") {
 
 }
 
-fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(include) {
-    addAll(listOf("*Multiplatform*", "*Mpp*", "*Android*"))
-}
-
-fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
-    addAll(listOf("org.jetbrains.kotlin.gradle.native.*", "*Commonizer*"))
-}
-
 fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
     val kotlinNativeFromMasterEnabled =
         project.kotlinBuildProperties.isKotlinNativeEnabled && project.kotlinBuildProperties.useKotlinNativeLocalDistributionForTests
@@ -214,55 +202,11 @@ fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
     dependsOn(":kotlin-gradle-plugin-integration-tests:createProvisionedOkFiles")
 }
 
-fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
-    if (splitGradleIntegrationTestTasks) {
-        val filter = if (include)
-            filter.includePatterns
-        else
-            filter.excludePatterns
-        filter.patterns()
-    }
-}
-
-fun Test.advanceGradleVersion() {
-    val gradleVersionForTests = "8.9"
-    systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
-}
-
-// additional configuration in tasks.withType<Test> below
-projectTest(
-    "test",
-    jUnitMode = JUnitMode.JUnit5
-) {
-    includeMppAndAndroid(false)
-    includeNative(false)
-}
-
-projectTest(
-    "testAdvanceGradleVersion",
-    jUnitMode = JUnitMode.JUnit5
-) {
-    advanceGradleVersion()
-    includeMppAndAndroid(false)
-    includeNative(false)
-}
-
-if (splitGradleIntegrationTestTasks) {
-
-    projectTest(
-        "testMppAndAndroid",
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        includeMppAndAndroid(true)
-    }
-
-    projectTest(
-        "testAdvanceGradleVersionMppAndAndroid",
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        advanceGradleVersion()
-        includeMppAndAndroid(true)
-    }
+// Disabling test task as it does nothing
+tasks.named("test") {
+    enabled = false
+    group = null
+    description = null
 }
 
 val KGP_TEST_TASKS_GROUP = "Kotlin Gradle Plugin Verification"
@@ -434,12 +378,7 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
 }
 
 tasks.named<Task>("check") {
-    dependsOn("testAdvanceGradleVersion")
     dependsOn(jvmTestsTask, jsTestsTask, nativeTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
-    if (splitGradleIntegrationTestTasks) {
-        dependsOn("testAdvanceGradleVersionMppAndAndroid")
-        dependsOn("testMppAndAndroid")
-    }
 }
 
 tasks.withType<Test> {
