@@ -116,7 +116,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker
         )
 
-    override val logicExpressionCheckers: Set<FirLogicExpressionChecker>
+    override val booleanOperatorExpressionCheckers: Set<FirBooleanOperatorExpressionChecker>
         get() = setOf(
             FirLogicExpressionTypeChecker,
         )

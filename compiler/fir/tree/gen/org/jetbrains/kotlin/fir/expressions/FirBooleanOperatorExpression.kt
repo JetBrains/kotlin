@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.binaryLogicExpression]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.booleanOperatorExpression]
  */
-abstract class FirBinaryLogicExpression : FirExpression() {
+abstract class FirBooleanOperatorExpression : FirExpression() {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
@@ -28,21 +28,21 @@ abstract class FirBinaryLogicExpression : FirExpression() {
     abstract val kind: LogicOperationKind
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitBinaryLogicExpression(this, data)
+        visitor.visitBooleanOperatorExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformBinaryLogicExpression(this, data) as E
+        transformer.transformBooleanOperatorExpression(this, data) as E
 
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBooleanOperatorExpression
 
-    abstract fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBooleanOperatorExpression
 
-    abstract fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBooleanOperatorExpression
 
-    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBooleanOperatorExpression
 }

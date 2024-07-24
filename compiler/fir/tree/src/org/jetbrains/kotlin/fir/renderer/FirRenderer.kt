@@ -1186,10 +1186,10 @@ class FirRenderer(
             visitResolvedQualifier(errorResolvedQualifier)
         }
 
-        override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
-            binaryLogicExpression.leftOperand.accept(this)
-            print(" ${binaryLogicExpression.kind.token} ")
-            binaryLogicExpression.rightOperand.accept(this)
+        override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression) {
+            booleanOperatorExpression.leftOperand.accept(this)
+            print(" ${booleanOperatorExpression.kind.token} ")
+            booleanOperatorExpression.rightOperand.accept(this)
         }
 
         override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {

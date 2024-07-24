@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
+import org.jetbrains.kotlin.fir.expressions.FirBooleanOperatorExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
-internal class FirBinaryLogicExpressionImpl(
+internal class FirBooleanOperatorExpressionImpl(
     override val source: KtSourceElement?,
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
@@ -32,7 +32,7 @@ internal class FirBinaryLogicExpressionImpl(
     override var leftOperand: FirExpression,
     override var rightOperand: FirExpression,
     override val kind: LogicOperationKind,
-) : FirBinaryLogicExpression() {
+) : FirBooleanOperatorExpression() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -40,29 +40,29 @@ internal class FirBinaryLogicExpressionImpl(
         rightOperand.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBooleanOperatorExpressionImpl {
         transformLeftOperand(transformer, data)
         transformRightOperand(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBooleanOperatorExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
+    override fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBooleanOperatorExpressionImpl {
         leftOperand = leftOperand.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
+    override fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBooleanOperatorExpressionImpl {
         rightOperand = rightOperand.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBooleanOperatorExpressionImpl {
         transformAnnotations(transformer, data)
         return this
     }

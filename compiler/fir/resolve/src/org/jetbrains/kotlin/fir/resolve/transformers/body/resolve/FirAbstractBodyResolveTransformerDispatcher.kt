@@ -254,13 +254,13 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         FirExpressionsResolveTransformer::transformCheckNotNullCall,
     )
 
-    override fun transformBinaryLogicExpression(
-        binaryLogicExpression: FirBinaryLogicExpression,
+    override fun transformBooleanOperatorExpression(
+        booleanOperatorExpression: FirBooleanOperatorExpression,
         data: ResolutionMode,
     ): FirStatement = expressionTransformation(
-        binaryLogicExpression,
+        booleanOperatorExpression,
         data,
-        FirExpressionsResolveTransformer::transformBinaryLogicExpression,
+        FirExpressionsResolveTransformer::transformBooleanOperatorExpression,
     )
 
     override fun transformDesugaredAssignmentValueReferenceExpression(

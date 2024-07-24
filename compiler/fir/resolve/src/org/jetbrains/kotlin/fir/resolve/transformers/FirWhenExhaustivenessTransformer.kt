@@ -206,9 +206,9 @@ private sealed class WhenExhaustivenessChecker {
             whenBranch.condition.accept(this, data)
         }
 
-        override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D) {
-            if (binaryLogicExpression.kind == LogicOperationKind.OR) {
-                binaryLogicExpression.acceptChildren(this, data)
+        override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: D) {
+            if (booleanOperatorExpression.kind == LogicOperationKind.OR) {
+                booleanOperatorExpression.acceptChildren(this, data)
             }
         }
     }

@@ -74,13 +74,13 @@ fun ControlFlowGraphBuilder.createLocalFunctionDeclarationNode(fir: FirFunction)
     LocalFunctionDeclarationNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createBooleanOperatorExitNode(
-    fir: FirBinaryLogicExpression,
+    fir: FirBooleanOperatorExpression,
     leftOperandNode: CFGNode<*>,
     rightOperandNode: CFGNode<*>,
 ): BooleanOperatorExitNode =
     BooleanOperatorExitNode(currentGraph, fir, leftOperandNode, rightOperandNode, levelCounter)
 
-fun ControlFlowGraphBuilder.createBooleanOperatorEnterNode(fir: FirBinaryLogicExpression): BooleanOperatorEnterNode =
+fun ControlFlowGraphBuilder.createBooleanOperatorEnterNode(fir: FirBooleanOperatorExpression): BooleanOperatorEnterNode =
     BooleanOperatorEnterNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createWhenBranchConditionEnterNode(fir: FirWhenBranch): WhenBranchConditionEnterNode =
@@ -191,10 +191,10 @@ fun ControlFlowGraphBuilder.createTryExpressionEnterNode(fir: FirTryExpression):
 fun ControlFlowGraphBuilder.createTryExpressionExitNode(fir: FirTryExpression): TryExpressionExitNode =
     TryExpressionExitNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createBooleanOperatorExitLeftOperandNode(fir: FirBinaryLogicExpression): BooleanOperatorExitLeftOperandNode =
+fun ControlFlowGraphBuilder.createBooleanOperatorExitLeftOperandNode(fir: FirBooleanOperatorExpression): BooleanOperatorExitLeftOperandNode =
     BooleanOperatorExitLeftOperandNode(currentGraph, fir, levelCounter)
 
-fun ControlFlowGraphBuilder.createBooleanOperatorEnterRightOperandNode(fir: FirBinaryLogicExpression): BooleanOperatorEnterRightOperandNode =
+fun ControlFlowGraphBuilder.createBooleanOperatorEnterRightOperandNode(fir: FirBooleanOperatorExpression): BooleanOperatorEnterRightOperandNode =
     BooleanOperatorEnterRightOperandNode(currentGraph, fir, levelCounter)
 
 fun ControlFlowGraphBuilder.createExitSafeCallNode(fir: FirSafeCallExpression): ExitSafeCallNode =

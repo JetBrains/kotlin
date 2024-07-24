@@ -110,13 +110,13 @@ class ConeEffectExtractor(
         }
     }
 
-    override fun visitBinaryLogicExpression(
-        binaryLogicExpression: FirBinaryLogicExpression,
+    override fun visitBooleanOperatorExpression(
+        booleanOperatorExpression: FirBooleanOperatorExpression,
         data: Nothing?
     ): ConeContractDescriptionElement {
-        val left = binaryLogicExpression.leftOperand.asContractBooleanExpression()
-        val right = binaryLogicExpression.rightOperand.asContractBooleanExpression()
-        return ConeBinaryLogicExpression(left, right, binaryLogicExpression.kind)
+        val left = booleanOperatorExpression.leftOperand.asContractBooleanExpression()
+        val right = booleanOperatorExpression.rightOperand.asContractBooleanExpression()
+        return ConeBinaryLogicExpression(left, right, booleanOperatorExpression.kind)
     }
 
     override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?): ConeContractDescriptionElement {

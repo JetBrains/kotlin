@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
+import org.jetbrains.kotlin.fir.expressions.FirBooleanOperatorExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirBinaryLogicExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirBooleanOperatorExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
-class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
+class FirBooleanOperatorExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
@@ -31,8 +31,8 @@ class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
     lateinit var rightOperand: FirExpression
     lateinit var kind: LogicOperationKind
 
-    override fun build(): FirBinaryLogicExpression {
-        return FirBinaryLogicExpressionImpl(
+    override fun build(): FirBooleanOperatorExpression {
+        return FirBooleanOperatorExpressionImpl(
             source,
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
@@ -45,9 +45,9 @@ class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildBinaryLogicExpression(init: FirBinaryLogicExpressionBuilder.() -> Unit): FirBinaryLogicExpression {
+inline fun buildBooleanOperatorExpression(init: FirBooleanOperatorExpressionBuilder.() -> Unit): FirBooleanOperatorExpression {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return FirBinaryLogicExpressionBuilder().apply(init).build()
+    return FirBooleanOperatorExpressionBuilder().apply(init).build()
 }

@@ -47,8 +47,8 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: D): R =
         visitBlock(lazyBlock, data)
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): R =
-        visitExpression(binaryLogicExpression, data)
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: D): R =
+        visitExpression(booleanOperatorExpression, data)
 
     override fun <E : FirTargetElement> visitJump(jump: FirJump<E>, data: D): R =
         visitExpression(jump, data)

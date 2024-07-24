@@ -1575,7 +1575,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 }
                 is FirTypeOperatorCall -> generate(expression)
                 is FirEqualityOperatorCall -> generate(expression)
-                is FirBinaryLogicExpression -> generate(expression)
+                is FirBooleanOperatorExpression -> generate(expression)
                 is FirCheckNotNullCall -> generate(expression)
                 is FirElvisExpression -> generate(expression)
                 is FirVarargArgumentsExpression -> generate(expression)
@@ -1632,10 +1632,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generateList(varargArgumentExpression.arguments, separator = ",") { generate(it) }
     }
 
-    private fun FlowContent.generate(binaryLogicExpression: FirBinaryLogicExpression) {
-        generate(binaryLogicExpression.leftOperand)
-        +" ${binaryLogicExpression.kind.token} "
-        generate(binaryLogicExpression.rightOperand)
+    private fun FlowContent.generate(booleanOperatorExpression: FirBooleanOperatorExpression) {
+        generate(booleanOperatorExpression.leftOperand)
+        +" ${booleanOperatorExpression.kind.token} "
+        generate(booleanOperatorExpression.rightOperand)
     }
 
     private fun FlowContent.generate(qualifiedAccessExpression: FirQualifiedAccessExpression, skipReceiver: Boolean = false) {

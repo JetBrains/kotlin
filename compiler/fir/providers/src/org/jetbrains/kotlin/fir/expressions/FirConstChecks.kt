@@ -228,13 +228,13 @@ private class FirConstCheckVisitor(
         return ConstantArgumentKind.VALID_CONST
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?): ConstantArgumentKind {
-        if (!binaryLogicExpression.leftOperand.resolvedType.isBoolean || !binaryLogicExpression.rightOperand.resolvedType.isBoolean) {
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: Nothing?): ConstantArgumentKind {
+        if (!booleanOperatorExpression.leftOperand.resolvedType.isBoolean || !booleanOperatorExpression.rightOperand.resolvedType.isBoolean) {
             return ConstantArgumentKind.NOT_CONST
         }
 
-        binaryLogicExpression.leftOperand.accept(this, data).ifNotValidConst { return it }
-        binaryLogicExpression.rightOperand.accept(this, data).ifNotValidConst { return it }
+        booleanOperatorExpression.leftOperand.accept(this, data).ifNotValidConst { return it }
+        booleanOperatorExpression.rightOperand.accept(this, data).ifNotValidConst { return it }
         return ConstantArgumentKind.VALID_CONST
     }
 

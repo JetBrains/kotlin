@@ -590,20 +590,20 @@ class TryExpressionExitNode(owner: ControlFlowGraph, override val fir: FirTryExp
 
 // ----------------------------------- Boolean operators -----------------------------------
 
-class BooleanOperatorEnterNode(owner: ControlFlowGraph, override val fir: FirBinaryLogicExpression, level: Int) : CFGNode<FirBinaryLogicExpression>(owner, level),
+class BooleanOperatorEnterNode(owner: ControlFlowGraph, override val fir: FirBooleanOperatorExpression, level: Int) : CFGNode<FirBooleanOperatorExpression>(owner, level),
     EnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitBooleanOperatorEnterNode(this, data)
     }
 }
 
-class BooleanOperatorExitLeftOperandNode(owner: ControlFlowGraph, override val fir: FirBinaryLogicExpression, level: Int) : CFGNode<FirBinaryLogicExpression>(owner, level) {
+class BooleanOperatorExitLeftOperandNode(owner: ControlFlowGraph, override val fir: FirBooleanOperatorExpression, level: Int) : CFGNode<FirBooleanOperatorExpression>(owner, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitBooleanOperatorExitLeftOperandNode(this, data)
     }
 }
 
-class BooleanOperatorEnterRightOperandNode(owner: ControlFlowGraph, override val fir: FirBinaryLogicExpression, level: Int) : CFGNode<FirBinaryLogicExpression>(owner, level) {
+class BooleanOperatorEnterRightOperandNode(owner: ControlFlowGraph, override val fir: FirBooleanOperatorExpression, level: Int) : CFGNode<FirBooleanOperatorExpression>(owner, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitBooleanOperatorEnterRightOperandNode(this, data)
     }
@@ -611,11 +611,11 @@ class BooleanOperatorEnterRightOperandNode(owner: ControlFlowGraph, override val
 
 class BooleanOperatorExitNode(
     owner: ControlFlowGraph,
-    override val fir: FirBinaryLogicExpression,
+    override val fir: FirBooleanOperatorExpression,
     val leftOperandNode: CFGNode<*>,
     val rightOperandNode: CFGNode<*>,
     level: Int,
-) : CFGNode<FirBinaryLogicExpression>(owner, level), ExitNodeMarker {
+) : CFGNode<FirBooleanOperatorExpression>(owner, level), ExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitBooleanOperatorExitNode(this, data)
     }

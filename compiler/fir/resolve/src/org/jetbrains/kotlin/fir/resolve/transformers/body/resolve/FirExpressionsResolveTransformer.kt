@@ -1114,16 +1114,16 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return result
     }
 
-    override fun transformBinaryLogicExpression(
-        binaryLogicExpression: FirBinaryLogicExpression,
+    override fun transformBooleanOperatorExpression(
+        booleanOperatorExpression: FirBooleanOperatorExpression,
         data: ResolutionMode,
-    ): FirStatement = whileAnalysing(session, binaryLogicExpression) {
+    ): FirStatement = whileAnalysing(session, booleanOperatorExpression) {
         val booleanType = builtinTypes.booleanType.coneType.toFirResolvedTypeRef()
-        return binaryLogicExpression.also(dataFlowAnalyzer::enterBinaryLogicExpression)
+        return booleanOperatorExpression.also(dataFlowAnalyzer::enterBooleanOperatorExpression)
             .transformLeftOperand(this, ResolutionMode.WithExpectedType(booleanType))
-            .also(dataFlowAnalyzer::exitLeftBinaryLogicExpressionArgument)
+            .also(dataFlowAnalyzer::exitLeftBooleanOperatorExpressionArgument)
             .transformRightOperand(this, ResolutionMode.WithExpectedType(booleanType))
-            .also(dataFlowAnalyzer::exitBinaryLogicExpression)
+            .also(dataFlowAnalyzer::exitBooleanOperatorExpression)
             .transformOtherChildren(transformer, ResolutionMode.WithExpectedType(booleanType))
             .also { it.resultType = booleanType.coneType }
     }

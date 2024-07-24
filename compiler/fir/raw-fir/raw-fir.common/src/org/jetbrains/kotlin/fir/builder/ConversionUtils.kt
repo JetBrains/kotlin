@@ -185,8 +185,8 @@ fun FirExpression.generateNotNullOrOther(
 
 fun FirExpression.generateLazyLogicalOperation(
     other: FirExpression, isAnd: Boolean, baseSource: KtSourceElement?,
-): FirBinaryLogicExpression {
-    return buildBinaryLogicExpression {
+): FirBooleanOperatorExpression {
+    return buildBooleanOperatorExpression {
         source = baseSource
         leftOperand = this@generateLazyLogicalOperation
         rightOperand = other

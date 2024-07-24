@@ -1142,22 +1142,22 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Boolean operators -----------------------------------
 
-    fun enterBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
-        graphBuilder.enterBinaryLogicExpression(binaryLogicExpression).mergeIncomingFlow()
+    fun enterBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression) {
+        graphBuilder.enterBooleanOperatorExpression(booleanOperatorExpression).mergeIncomingFlow()
     }
 
-    fun exitLeftBinaryLogicExpressionArgument(binaryLogicExpression: FirBinaryLogicExpression) {
-        val (leftExitNode, rightEnterNode) = graphBuilder.exitLeftBinaryLogicExpressionArgument(binaryLogicExpression)
+    fun exitLeftBooleanOperatorExpressionArgument(booleanOperatorExpression: FirBooleanOperatorExpression) {
+        val (leftExitNode, rightEnterNode) = graphBuilder.exitLeftBooleanOperatorExpressionArgument(booleanOperatorExpression)
         leftExitNode.mergeIncomingFlow()
         rightEnterNode.mergeIncomingFlow { _, flow ->
-            val leftOperandVariable = flow.getVariableIfUsed(binaryLogicExpression.leftOperand) ?: return@mergeIncomingFlow
-            val saturatingValue = binaryLogicExpression.kind != LogicOperationKind.AND
+            val leftOperandVariable = flow.getVariableIfUsed(booleanOperatorExpression.leftOperand) ?: return@mergeIncomingFlow
+            val saturatingValue = booleanOperatorExpression.kind != LogicOperationKind.AND
             flow.commitOperationStatement(leftOperandVariable eq !saturatingValue)
         }
     }
 
-    fun exitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
-        graphBuilder.exitBinaryLogicExpression(binaryLogicExpression).mergeBooleanLogicOperatorFlow()
+    fun exitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression) {
+        graphBuilder.exitBooleanOperatorExpression(booleanOperatorExpression).mergeBooleanLogicOperatorFlow()
     }
 
     private fun BooleanOperatorExitNode.mergeBooleanLogicOperatorFlow() = mergeIncomingFlow { path, flow ->

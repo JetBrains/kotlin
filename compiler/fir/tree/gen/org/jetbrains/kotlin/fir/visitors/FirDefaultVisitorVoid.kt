@@ -54,8 +54,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitBlock(lazyBlock)
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
-        visitExpression(binaryLogicExpression)
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression) {
+        visitExpression(booleanOperatorExpression)
     }
 
     override fun <E : FirTargetElement> visitJump(jump: FirJump<E>) {

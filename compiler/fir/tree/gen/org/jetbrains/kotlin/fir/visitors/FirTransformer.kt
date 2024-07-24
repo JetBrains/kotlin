@@ -203,12 +203,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformLazyBlock(lazyBlock, data)
     }
 
-    open fun transformBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): FirStatement {
-        return transformElement(binaryLogicExpression, data)
+    open fun transformBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: D): FirStatement {
+        return transformElement(booleanOperatorExpression, data)
     }
 
-    final override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): FirStatement {
-        return transformBinaryLogicExpression(binaryLogicExpression, data)
+    final override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: D): FirStatement {
+        return transformBooleanOperatorExpression(booleanOperatorExpression, data)
     }
 
     open fun transformTargetElement(targetElement: FirTargetElement, data: D): FirTargetElement {

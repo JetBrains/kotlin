@@ -183,7 +183,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(block)
     }
 
-    val binaryLogicExpression: Element by element(Expression) {
+    val booleanOperatorExpression: Element by element(Expression) {
         needTransformOtherChildren()
 
         parent(expression)

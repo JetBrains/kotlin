@@ -122,7 +122,7 @@ fun main(args: Array<String>) {
             alias<FirWhenExpression>("WhenExpressionChecker")
             alias<FirLoop>("LoopExpressionChecker")
             alias<FirLoopJump>("LoopJumpChecker")
-            alias<FirBinaryLogicExpression>("LogicExpressionChecker")
+            alias<FirBooleanOperatorExpression>("BooleanOperatorExpressionChecker")
             alias<FirReturnExpression>("ReturnExpressionChecker")
             alias<FirBlock>("BlockChecker")
             alias<FirAnnotation>("AnnotationChecker")

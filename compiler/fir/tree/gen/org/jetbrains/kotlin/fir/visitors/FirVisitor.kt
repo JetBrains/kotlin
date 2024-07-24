@@ -89,8 +89,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitLazyBlock(lazyBlock: FirLazyBlock, data: D): R =
         visitElement(lazyBlock, data)
 
-    open fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): R =
-        visitElement(binaryLogicExpression, data)
+    open fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: D): R =
+        visitElement(booleanOperatorExpression, data)
 
     open fun visitTargetElement(targetElement: FirTargetElement, data: D): R =
         visitElement(targetElement, data)

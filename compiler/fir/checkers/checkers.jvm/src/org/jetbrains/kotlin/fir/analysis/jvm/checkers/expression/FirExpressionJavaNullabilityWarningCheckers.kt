@@ -115,8 +115,8 @@ object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker
     }
 }
 
-object FirLogicExpressionTypeJavaNullabilityWarningChecker : FirLogicExpressionChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirBinaryLogicExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirLogicExpressionTypeJavaNullabilityWarningChecker : FirBooleanOperatorExpressionChecker(MppCheckerKind.Common) {
+    override fun check(expression: FirBooleanOperatorExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         expression.leftOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
         expression.rightOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
     }

@@ -290,7 +290,7 @@ class FirPCLAInferenceSession(
 
             is FirCall -> argumentList.arguments.all { it.isTrivialArgument() }
 
-            is FirBinaryLogicExpression -> leftOperand.isTrivialArgument() && rightOperand.isTrivialArgument()
+            is FirBooleanOperatorExpression -> leftOperand.isTrivialArgument() && rightOperand.isTrivialArgument()
             is FirComparisonExpression -> compareToCall.isTrivialArgument()
 
             is FirCheckedSafeCallSubject -> originalReceiverRef.value.isTrivialArgument()

@@ -1693,21 +1693,21 @@ class Fir2IrVisitor(
         LogicOperationKind.OR -> IrDynamicOperator.OROR
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Any?): IrElement {
-        return binaryLogicExpression.convertWithOffsets<IrElement> { startOffset, endOffset ->
-            val leftOperand = binaryLogicExpression.leftOperand.accept(this, data) as IrExpression
-            val rightOperand = binaryLogicExpression.rightOperand.accept(this, data) as IrExpression
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: Any?): IrElement {
+        return booleanOperatorExpression.convertWithOffsets<IrElement> { startOffset, endOffset ->
+            val leftOperand = booleanOperatorExpression.leftOperand.accept(this, data) as IrExpression
+            val rightOperand = booleanOperatorExpression.rightOperand.accept(this, data) as IrExpression
             if (leftOperand.type is IrDynamicType) {
                 IrDynamicOperatorExpressionImpl(
                     startOffset,
                     endOffset,
                     builtins.booleanType,
-                    binaryLogicExpression.kind.toIrDynamicOperator(),
+                    booleanOperatorExpression.kind.toIrDynamicOperator(),
                 ).apply {
                     receiver = leftOperand
                     arguments.add(rightOperand)
                 }
-            } else when (binaryLogicExpression.kind) {
+            } else when (booleanOperatorExpression.kind) {
                 LogicOperationKind.AND -> {
                     IrWhenImpl(startOffset, endOffset, builtins.booleanType, IrStatementOrigin.ANDAND).apply {
                         branches.add(IrBranchImpl(leftOperand, rightOperand))

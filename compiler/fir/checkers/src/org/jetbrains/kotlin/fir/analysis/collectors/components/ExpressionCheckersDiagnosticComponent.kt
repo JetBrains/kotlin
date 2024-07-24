@@ -125,8 +125,8 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allLoopExpressionCheckers.check(errorLoop, data)
     }
 
-    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: CheckerContext) {
-        checkers.allLogicExpressionCheckers.check(binaryLogicExpression, data)
+    override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: CheckerContext) {
+        checkers.allBooleanOperatorExpressionCheckers.check(booleanOperatorExpression, data)
     }
 
     override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: CheckerContext) {

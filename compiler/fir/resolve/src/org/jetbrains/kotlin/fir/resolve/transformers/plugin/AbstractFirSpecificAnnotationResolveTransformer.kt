@@ -124,11 +124,11 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             return checkNotNullCall
         }
 
-        override fun transformBinaryLogicExpression(
-            binaryLogicExpression: FirBinaryLogicExpression,
+        override fun transformBooleanOperatorExpression(
+            booleanOperatorExpression: FirBooleanOperatorExpression,
             data: ResolutionMode,
         ): FirStatement {
-            return binaryLogicExpression
+            return booleanOperatorExpression
         }
 
         override fun transformVariableAssignment(

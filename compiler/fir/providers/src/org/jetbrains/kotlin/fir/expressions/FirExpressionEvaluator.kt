@@ -308,19 +308,19 @@ object FirExpressionEvaluator {
             return result.toConstExpression(ConstantValueKind.Boolean, equalityOperatorCall).wrap()
         }
 
-        override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?): FirEvaluatorResult {
-            val left = evaluate(binaryLogicExpression.leftOperand)
-            val right = evaluate(binaryLogicExpression.rightOperand)
+        override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: Nothing?): FirEvaluatorResult {
+            val left = evaluate(booleanOperatorExpression.leftOperand)
+            val right = evaluate(booleanOperatorExpression.rightOperand)
 
             val leftBoolean = left.unwrapOr<FirLiteralExpression> { return it }?.value as? Boolean ?: return NotEvaluated
             val rightBoolean = right.unwrapOr<FirLiteralExpression> { return it }?.value as? Boolean ?: return NotEvaluated
-            val result = when (binaryLogicExpression.kind) {
+            val result = when (booleanOperatorExpression.kind) {
                 LogicOperationKind.AND -> leftBoolean && rightBoolean
                 LogicOperationKind.OR -> leftBoolean || rightBoolean
-                else -> error("Boolean logic expression of a kind \"${binaryLogicExpression.kind}\" is not supported in compile time evaluation")
+                else -> error("Boolean logic expression of a kind \"${booleanOperatorExpression.kind}\" is not supported in compile time evaluation")
             }
 
-            return result.toConstExpression(ConstantValueKind.Boolean, binaryLogicExpression).wrap()
+            return result.toConstExpression(ConstantValueKind.Boolean, booleanOperatorExpression).wrap()
         }
 
         override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Nothing?): FirEvaluatorResult {

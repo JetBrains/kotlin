@@ -203,12 +203,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(lazyBlock)
     }
 
-    final override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?) {
-        visitBinaryLogicExpression(binaryLogicExpression)
+    final override fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression, data: Nothing?) {
+        visitBooleanOperatorExpression(booleanOperatorExpression)
     }
 
-    open fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
-        visitElement(binaryLogicExpression)
+    open fun visitBooleanOperatorExpression(booleanOperatorExpression: FirBooleanOperatorExpression) {
+        visitElement(booleanOperatorExpression)
     }
 
     final override fun visitTargetElement(targetElement: FirTargetElement, data: Nothing?) {
