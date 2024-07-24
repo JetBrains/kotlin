@@ -14,7 +14,7 @@
 # OWNER_LIST: "Kotlin Release"
 # OWNER_LIST: "Kotlin Language Evolution"
 # OWNER_LIST: "Kotlin in Fleet"
-# OWNER_LIST: "Compose Multiplatform"
+# OWNER_LIST: Compose
 # OWNER_LIST: Parcelize
 # OWNER_LIST: Mikhail.Glukhikh Dmitriy.Novozhilov Kirill.Rakhman
 # OWNER_LIST: Yan.Zhulanow
@@ -383,7 +383,7 @@
 /plugins/android-extensions/ "Kotlin Compiler Core"
 /plugins/assign-plugin/ "Kotlin Compiler Core"
 /plugins/atomicfu/ "Kotlin Libraries"
-/plugins/compose/ "Compose Multiplatform"
+/plugins/compose/ Compose
 /plugins/fir-plugin-prototype/ "Kotlin Compiler Core"
 /plugins/imports-dumper/ "Kotlin Compiler Core"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
@@ -421,7 +421,7 @@
 /wasm/ "Kotlin Wasm"
 
 # Generated files (no review required)
-*Generated.java "Kotlin" "Kotlin IDE Analysis Core" "Compose Multiplatform" "Parcelize"
+*Generated.java "Kotlin" "Kotlin IDE Analysis Core" "Compose" "Parcelize"
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"
