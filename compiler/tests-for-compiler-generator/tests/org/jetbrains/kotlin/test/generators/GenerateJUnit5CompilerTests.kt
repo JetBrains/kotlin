@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.generators
 
+import org.jetbrains.kotlin.generators.TestGroup.TestClass
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
@@ -430,6 +431,13 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractFirPsiDiagnosticTest> {
                 model("resolve", pattern = TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
                 model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
+
+                // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
+                // file extension for it.
+                model(
+                    "resolveFreezesIDE",
+                    pattern = """^(.+)\.(nkt)$""",
+                )
             }
 
             testClass<AbstractFirLightTreeDiagnosticsTest> {

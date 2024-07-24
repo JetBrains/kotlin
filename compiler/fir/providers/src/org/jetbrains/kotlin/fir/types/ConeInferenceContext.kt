@@ -347,9 +347,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun CapturedTypeMarker.hasRawSuperType(): Boolean {
         require(this is ConeCapturedType)
-        return constructor.supertypes?.any { superType ->
-            superType.contains { it is ConeKotlinType && it.isRaw() }
-        } == true
+        return constructor.supertypes?.any(ConeKotlinType::isRaw) == true
     }
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
