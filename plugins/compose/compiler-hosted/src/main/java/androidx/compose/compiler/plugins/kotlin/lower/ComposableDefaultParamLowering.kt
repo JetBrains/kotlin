@@ -23,6 +23,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
@@ -38,7 +39,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
+import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -218,22 +222,36 @@ class ComposableDefaultParamLowering(
         )
         wrapper.copyAnnotationsFrom(source)
         wrapper.copyParametersFrom(source)
+
         wrapper.valueParameters.forEach {
             it.defaultValue?.transformChildrenVoid()
         }
+
         // move receiver parameters to value parameters
-        val dispatcherReceiver = wrapper.dispatchReceiverParameter
         var index = wrapper.valueParameters.size
+        val oldDispatcherReceiver = wrapper.dispatchReceiverParameter
+        var dispatcherReceiver = oldDispatcherReceiver
         if (dispatcherReceiver != null) {
-            dispatcherReceiver.index = index++
+            dispatcherReceiver = dispatcherReceiver.copyTo(wrapper, index = index++)
             wrapper.valueParameters += dispatcherReceiver
             wrapper.dispatchReceiverParameter = null
         }
-        val extensionReceiver = wrapper.extensionReceiverParameter
+
+        val oldExtensionReceiver = wrapper.extensionReceiverParameter
+        var extensionReceiver = oldExtensionReceiver
         if (extensionReceiver != null) {
-            extensionReceiver.index = index
+            extensionReceiver = extensionReceiver.copyTo(wrapper, index = index++)
             wrapper.valueParameters += extensionReceiver
             wrapper.extensionReceiverParameter = null
+        }
+
+        wrapper.valueParameters.forEach {
+            it.defaultValue = it.defaultValue?.deepCopyWithSymbols(wrapper)?.apply {
+                transformChildrenVoid(ValueRemapper(buildMap {
+                    if (oldDispatcherReceiver != null) put(oldDispatcherReceiver.symbol, dispatcherReceiver!!.symbol)
+                    if (oldExtensionReceiver != null) put(oldExtensionReceiver.symbol, extensionReceiver!!.symbol)
+                }))
+            }
         }
 
         wrapper.body = DeclarationIrBuilder(
