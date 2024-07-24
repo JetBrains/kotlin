@@ -61,6 +61,13 @@
             </array>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData/box">
+          <value>
+            <array>
+              <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/build/{out,out-min,out-per-module,out-per-module-min}/codegen/serializationBoxIr/plugins/js-plain-objects/compiler-plugin/testData/box/$TEST_DATA_FILE$_v5.js{.map,}" />
+            </array>
+          </value>
+        </entry>
       </map>
     </option>
     <option name="testDataFiles">
