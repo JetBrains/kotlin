@@ -208,6 +208,12 @@ public class Fe10IdeNormalAnalysisSourceModuleNonLenientClassIdSubtypingTypeRela
   }
 
   @Test
+  @TestMetadata("Human_NullableHuman.kt")
+  public void testHuman_NullableHuman() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Human_NullableHuman.kt");
+  }
+
+  @Test
   @TestMetadata("Int_Int.kt")
   public void testInt_Int() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Int_Int.kt");
@@ -292,6 +298,18 @@ public class Fe10IdeNormalAnalysisSourceModuleNonLenientClassIdSubtypingTypeRela
   }
 
   @Test
+  @TestMetadata("List_NullableIterable.kt")
+  public void testList_NullableIterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_NullableIterable.kt");
+  }
+
+  @Test
+  @TestMetadata("List_NullableList.kt")
+  public void testList_NullableList() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_NullableList.kt");
+  }
+
+  @Test
   @TestMetadata("List_Unknown.kt")
   public void testList_Unknown() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_Unknown.kt");
@@ -307,6 +325,42 @@ public class Fe10IdeNormalAnalysisSourceModuleNonLenientClassIdSubtypingTypeRela
   @TestMetadata("NestedListAlias_Iterable.kt")
   public void testNestedListAlias_Iterable() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/NestedListAlias_Iterable.kt");
+  }
+
+  @Test
+  @TestMetadata("NullableHuman_Human.kt")
+  public void testNullableHuman_Human() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/NullableHuman_Human.kt");
+  }
+
+  @Test
+  @TestMetadata("NullableHuman_NullableHuman.kt")
+  public void testNullableHuman_NullableHuman() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/NullableHuman_NullableHuman.kt");
+  }
+
+  @Test
+  @TestMetadata("NullableList_Iterable.kt")
+  public void testNullableList_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/NullableList_Iterable.kt");
+  }
+
+  @Test
+  @TestMetadata("NullableList_List.kt")
+  public void testNullableList_List() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/NullableList_List.kt");
+  }
+
+  @Test
+  @TestMetadata("NullableList_NullableIterable.kt")
+  public void testNullableList_NullableIterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/NullableList_NullableIterable.kt");
+  }
+
+  @Test
+  @TestMetadata("NullableList_NullableList.kt")
+  public void testNullableList_NullableList() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/NullableList_NullableList.kt");
   }
 
   @Test
