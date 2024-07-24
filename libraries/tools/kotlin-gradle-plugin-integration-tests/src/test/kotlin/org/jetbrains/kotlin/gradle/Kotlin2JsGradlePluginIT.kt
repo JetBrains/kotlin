@@ -990,7 +990,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 """
                 |
                 |project.rootProject.extensions.findByType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>()?.apply {
-                |    downloadBaseUrl = "file://${"$"}{projectDir.absolutePath}"
+                |    downloadBaseUrl = projectDir.toURI().toString()
                 |    version = "1.22.22"
                 |}
                 """.trimMargin()
