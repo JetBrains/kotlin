@@ -469,6 +469,15 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                     skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
                     skipTestAllFilesCheck = onlyTypealiases
                 )
+
+                // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
+                // file extension for it.
+                model(
+                    "resolveFreezesIDE",
+                    pattern = """^(.+)\.(nkt)$""",
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
+                )
             }
 
             testClass<AbstractFirPsiDiagnosticTest>(init = model(allowKts = true))
