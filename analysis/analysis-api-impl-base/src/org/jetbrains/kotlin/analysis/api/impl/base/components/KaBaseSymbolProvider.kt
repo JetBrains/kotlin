@@ -42,10 +42,8 @@ abstract class KaBaseSymbolProvider<T : KaSession> : KaSessionComponent<T>(), Ka
                 is KtEnumEntry -> symbol
                 is KtFunctionLiteral -> symbol
                 is KtProperty -> symbol
-                is KtClassOrObject -> {
-                    val literalExpression = (this as? KtObjectDeclaration)?.parent as? KtObjectLiteralExpression
-                    literalExpression?.symbol ?: classSymbol!!
-                }
+                is KtObjectDeclaration -> (parent as? KtObjectLiteralExpression)?.symbol ?: symbol
+                is KtClassOrObject -> classSymbol!!
                 is KtPropertyAccessor -> symbol
                 is KtClassInitializer -> symbol
                 is KtDestructuringDeclarationEntry -> symbol

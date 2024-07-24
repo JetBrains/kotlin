@@ -57,12 +57,12 @@ public interface KaSymbolProvider {
 
     public val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
 
-    /** Returns a symbol for a given [KtClassOrObject]. Returns `null` for `KtEnumEntry` declarations. */
+    /** Returns a symbol for a given [KtClassOrObject]. Returns `null` for [KtEnumEntry] declarations. */
     public val KtClassOrObject.classSymbol: KaClassSymbol?
 
     public val KtObjectDeclaration.symbol: KaClassSymbol
 
-    /** Returns a symbol for a given named [KtClassOrObject]. Returns `null` for `KtEnumEntry` declarations and object literals. */
+    /** Returns a symbol for a given named [KtClassOrObject]. Returns `null` for [KtEnumEntry] declarations and object literals. */
     public val KtClassOrObject.namedClassSymbol: KaNamedClassSymbol?
 
     public val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
@@ -127,7 +127,7 @@ public interface KaSymbolProvider {
     public fun KtScript.getScriptSymbol(): KaScriptSymbol = symbol
 
     /**
-     * Returns [KaPackageSymbol] corresponding to [packageFqName] if corresponding package is exists and visible from current uses-site scope,
+     * Returns [KaPackageSymbol] corresponding to [fqName] if corresponding package exists and visible from current uses-site scope,
      * `null` otherwise
      */
     public fun findPackage(fqName: FqName): KaPackageSymbol?
@@ -136,7 +136,7 @@ public interface KaSymbolProvider {
     public fun getPackageSymbolIfPackageExists(packageFqName: FqName): KaPackageSymbol? = findPackage(packageFqName)
 
     /**
-     * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
+     * @return symbol with specified [classId] or `null` in case such a symbol is not found
      */
     public fun findClass(classId: ClassId): KaClassSymbol?
 
@@ -144,7 +144,7 @@ public interface KaSymbolProvider {
     public fun getClassOrObjectSymbolByClassId(classId: ClassId): KaClassSymbol? = findClass(classId)
 
     /**
-     * @return [KaTypeAliasSymbol] with specified [classId] or `null` in case such symbol is not found
+     * @return [KaTypeAliasSymbol] with specified [classId] or `null` in case such a symbol is not found
      */
     public fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol?
 
@@ -152,7 +152,7 @@ public interface KaSymbolProvider {
     public fun getTypeAliasByClassId(classId: ClassId): KaTypeAliasSymbol? = findTypeAlias(classId)
 
     /**
-     * @return list of top-level functions and properties which are visible from current use-site module
+     * @return list of top-level functions and properties which are visible from the current use-site module
      *
      * @param packageFqName package name in which callable symbols should be declared
      * @param name callable symbol name
