@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // ISSUE: KT-69951
 // MODULE: context
 

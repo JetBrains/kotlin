@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderF
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForScript
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -263,6 +265,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
     }
 
+    @OptIn(DelicateScopeAPI::class)
     private fun resolveCodeFragmentContext(firCodeFragment: FirCodeFragment) {
         val ktCodeFragment = firCodeFragment.psi as? KtCodeFragment
             ?: errorWithAttachment("Code fragment source not found") {
@@ -274,7 +277,10 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
 
         fun FirTowerDataContext.withExtraScopes(): FirTowerDataContext {
             return resolveSession.useSiteFirSession.codeFragmentScopeProvider.getExtraScopes(ktCodeFragment)
-                .fold(this) { context, scope -> context.addLocalScope(scope) }
+                .fold(this) { context, scope ->
+                    val scopeWithProperSession = scope.withReplacedSessionOrNull(resolveTargetSession, resolveTargetScopeSession) ?: scope
+                    context.addLocalScope(scopeWithProperSession)
+                }
         }
 
         val contextPsiElement = ktCodeFragment.context
@@ -291,12 +297,36 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
                     withPsiEntry("contextPsiElement", contextPsiElement)
                 }
 
-            LLFirCodeFragmentContext(elementContext.towerDataContext.withExtraScopes(), elementContext.smartCasts)
+            LLFirCodeFragmentContext(
+                elementContext.towerDataContext.withProperSession(resolveTargetSession, resolveTargetScopeSession)
+                    .withExtraScopes(),
+                elementContext.smartCasts
+            )
         } else {
             val towerDataContext = FirTowerDataContext().withExtraScopes()
             LLFirCodeFragmentContext(towerDataContext, emptyMap())
         }
     }
+
+    @DelicateScopeAPI
+    private fun FirTowerDataContext.withProperSession(session: FirSession, scopeSession: ScopeSession): FirTowerDataContext {
+        return replaceTowerDataElements(
+            towerDataElements.map { it.withProperSession(session, scopeSession) }.toPersistentList(),
+            nonLocalTowerDataElements.map { it.withProperSession(session, scopeSession) }.toPersistentList(),
+        )
+    }
+
+    @DelicateScopeAPI
+    private fun FirTowerDataElement.withProperSession(
+        session: FirSession,
+        scopeSession: ScopeSession
+    ): FirTowerDataElement = FirTowerDataElement(
+        scope?.withReplacedSessionOrNull(session, scopeSession) ?: scope,
+        implicitReceiver?.withReplacedSessionOrNull(session, scopeSession),
+        contextReceiverGroup,
+        isLocal,
+        staticScopeOwnerSymbol
+    )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         // There is no sense to resolve such declarations as they do not have bodies

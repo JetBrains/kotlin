@@ -266,6 +266,19 @@ class FirTowerDataContext private constructor(
             nonLocalTowerDataElements.map { it.createSnapshot(keepMutable) }.toPersistentList()
         )
     }
+
+    fun replaceTowerDataElements(
+        towerDataElements: PersistentList<FirTowerDataElement>,
+        nonLocalTowerDataElements: PersistentList<FirTowerDataElement>,
+    ): FirTowerDataContext {
+        return FirTowerDataContext(
+            towerDataElements,
+            implicitReceiverStack,
+            classesUnderInitialization,
+            localScopes,
+            nonLocalTowerDataElements
+        )
+    }
 }
 
 // Each FirTowerDataElement has exactly one non-null value among values of properties: scope, implicitReceiver and contextReceiverGroup.
