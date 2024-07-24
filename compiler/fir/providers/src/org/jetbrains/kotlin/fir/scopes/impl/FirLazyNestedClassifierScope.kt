@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -16,9 +17,9 @@ import org.jetbrains.kotlin.name.Name
 // but in this case we should make JavaSymbolProvider greedy related to nested classifiers
 // (or make possible to calculate nested classifiers on-the-fly)
 class FirLazyNestedClassifierScope(
+    val session: FirSession,
     val classId: ClassId,
     private val existingNames: List<Name>,
-    private val symbolProvider: FirSymbolProvider
 ) : FirContainingNamesAwareScope() {
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
@@ -28,7 +29,7 @@ class FirLazyNestedClassifierScope(
             return
         }
         val child = classId.createNestedClassId(name)
-        val symbol = symbolProvider.getClassLikeSymbolByClassId(child) ?: return
+        val symbol = session.symbolProvider.getClassLikeSymbolByClassId(child) ?: return
 
         processor(symbol, ConeSubstitutor.Empty)
     }

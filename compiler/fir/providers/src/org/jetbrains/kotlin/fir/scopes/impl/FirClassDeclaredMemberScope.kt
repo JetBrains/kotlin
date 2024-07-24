@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.isEnumEntries
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -20,19 +19,16 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.SmartList
 
 abstract class FirClassDeclaredMemberScope(val classId: ClassId) : FirContainingNamesAwareScope() {
-
     override val scopeOwnerLookupNames: List<String> = SmartList(classId.asFqNameString())
 }
 
 class FirClassDeclaredMemberScopeImpl(
     val useSiteSession: FirSession,
     klass: FirClass,
-    useLazyNestedClassifierScope: Boolean = false,
-    existingNames: List<Name>? = null,
-    symbolProvider: FirSymbolProvider? = null
+    existingNamesForLazyNestedClassifierScope: List<Name>?,
 ) : FirClassDeclaredMemberScope(klass.classId) {
-    private val nestedClassifierScope: FirContainingNamesAwareScope? = if (useLazyNestedClassifierScope) {
-        lazyNestedClassifierScope(klass.symbol.classId, existingNames!!, symbolProvider!!)
+    private val nestedClassifierScope: FirContainingNamesAwareScope? = if (existingNamesForLazyNestedClassifierScope != null) {
+        lazyNestedClassifierScope(useSiteSession, klass.symbol.classId, existingNamesForLazyNestedClassifierScope)
     } else {
         useSiteSession.nestedClassifierScope(klass)
     }

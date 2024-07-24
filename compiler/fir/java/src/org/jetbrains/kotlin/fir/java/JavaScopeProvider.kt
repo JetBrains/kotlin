@@ -78,7 +78,6 @@ object JavaScopeProvider : FirScopeProvider() {
             useSiteSession.declaredMemberScopeWithLazyNestedScope(
                 regularClass,
                 existingNames = regularClass.existingNestedClassifierNames,
-                symbolProvider = useSiteSession.symbolProvider
             )
         } else {
             useSiteSession.declaredMemberScope(regularClass, memberRequiredPhase = null)
@@ -213,9 +212,9 @@ object JavaScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope? {
         return lazyNestedClassifierScope(
+            useSiteSession,
             klass.classId,
-            (klass as FirJavaClass).existingNestedClassifierNames,
-            useSiteSession.symbolProvider
+            (klass as FirJavaClass).existingNestedClassifierNames
         )
     }
 }
