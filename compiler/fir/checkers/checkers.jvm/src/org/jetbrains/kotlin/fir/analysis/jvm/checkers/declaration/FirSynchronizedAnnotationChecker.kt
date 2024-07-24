@@ -41,12 +41,15 @@ object FirSynchronizedAnnotationChecker : FirFunctionChecker(MppCheckerKind.Comm
         }
 
         val containingClass = declaration.getContainingClassSymbol() ?: return
-        if (containingClass.classKind == ClassKind.INTERFACE) {
-            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_INTERFACE, context)
-        } else if (declaration.isAbstract) {
-            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT, context)
-        } else if (containingClass.isInline) {
-            reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS, context)
+        when {
+            containingClass.classKind == ClassKind.INTERFACE ->
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_INTERFACE, context)
+            containingClass.classKind == ClassKind.ANNOTATION_CLASS ->
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_IN_ANNOTATION, context)
+            containingClass.isInline ->
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_VALUE_CLASS, context)
+            declaration.isAbstract ->
+                reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT, context)
         }
     }
 }

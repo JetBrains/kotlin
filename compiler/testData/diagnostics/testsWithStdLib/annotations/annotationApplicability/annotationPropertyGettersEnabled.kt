@@ -1,4 +1,5 @@
-// ISSUE: KT-25861
+// LANGUAGE: +ForbidJvmAnnotationsOnAnnotationParameters
+// ISSUE: KT-70169
 
 annotation class A(
     @get:JvmStatic val x: Int,

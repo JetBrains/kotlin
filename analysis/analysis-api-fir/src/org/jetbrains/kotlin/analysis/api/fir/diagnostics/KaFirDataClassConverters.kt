@@ -5521,6 +5521,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.SYNCHRONIZED_IN_ANNOTATION.errorFactory) { firDiagnostic ->
+        SynchronizedInAnnotationErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.SYNCHRONIZED_IN_ANNOTATION.warningFactory) { firDiagnostic ->
+        SynchronizedInAnnotationWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.SYNCHRONIZED_ON_INLINE) { firDiagnostic ->
         SynchronizedOnInlineImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.jvm
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConcurrentHashMapContains
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSpreadOnSignaturePolymorphicCall
@@ -76,6 +77,7 @@ object FirJvmErrors {
     val STRICTFP_ON_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("STRICTFP_ON_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val SYNCHRONIZED_ON_ABSTRACT: KtDiagnosticFactory0 = KtDiagnosticFactory0("SYNCHRONIZED_ON_ABSTRACT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val SYNCHRONIZED_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("SYNCHRONIZED_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
+    val SYNCHRONIZED_IN_ANNOTATION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("SYNCHRONIZED_IN_ANNOTATION", ForbidJvmAnnotationsOnAnnotationParameters, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val SYNCHRONIZED_ON_INLINE: KtDiagnosticFactory0 = KtDiagnosticFactory0("SYNCHRONIZED_ON_INLINE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val SYNCHRONIZED_ON_VALUE_CLASS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("SYNCHRONIZED_ON_VALUE_CLASS", ProhibitSynchronizationByValueClassesAndPrimitives, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)
     val SYNCHRONIZED_ON_SUSPEND: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("SYNCHRONIZED_ON_SUSPEND", SynchronizedSuspendError, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)

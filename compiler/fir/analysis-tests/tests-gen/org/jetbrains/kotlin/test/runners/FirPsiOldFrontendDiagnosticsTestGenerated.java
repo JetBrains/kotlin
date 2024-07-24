@@ -42194,9 +42194,15 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
-        @TestMetadata("annotationPropertyGetters.kt")
-        public void testAnnotationPropertyGetters() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/annotationPropertyGetters.kt");
+        @TestMetadata("annotationPropertyGettersDisabled.kt")
+        public void testAnnotationPropertyGettersDisabled() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/annotationPropertyGettersDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationPropertyGettersEnabled.kt")
+        public void testAnnotationPropertyGettersEnabled() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/annotationPropertyGettersEnabled.kt");
         }
 
         @Test

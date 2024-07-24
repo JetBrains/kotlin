@@ -4644,6 +4644,16 @@ internal class SynchronizedInInterfaceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.SynchronizedInInterface
 
+internal class SynchronizedInAnnotationErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.SynchronizedInAnnotationError
+
+internal class SynchronizedInAnnotationWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.SynchronizedInAnnotationWarning
+
 internal class SynchronizedOnInlineImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
