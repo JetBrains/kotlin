@@ -819,6 +819,8 @@ internal class TestBundleCompilation(
         add(
             "-produce", "test_bundle",
             "-linker-option", "-F" + settings.get<XCTestRunner>().frameworksPath,
+            // FIXME: KT-70202: new linker fails with SIGBUS
+            "-linker-option", "-ld_classic",
             "-output", expectedArtifact.bundleDir.path,
             "-Xbinary=bundleId=com.jetbrains.kotlin.${expectedArtifact.bundleDir.nameWithoutExtension}"
         )
