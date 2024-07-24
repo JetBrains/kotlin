@@ -53,6 +53,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirSynchronizedAnnotationChecker,
             FirOverloadsChecker,
             FirFunctionJavaNullabilityWarningChecker,
+            FirJvmThrowsChecker,
         )
 
     override val typeParameterCheckers: Set<FirTypeParameterChecker>
