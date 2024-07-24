@@ -529,7 +529,9 @@ class CocoaPodsIT : KGPBaseTest() {
                     cocoapodsPlatform = "iphonesimulator",
                     cocoapodsArchs = "x86_64",
                     cocoapodsConfiguration = "Debug"
-                )
+                ),
+                // KT-55832
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED
             )
             buildAndFail("syncFramework", buildOptions = buildOptions) {
                 assertOutputContains("error: Could not find com.example.unknown:dependency:0.0.1.")
@@ -546,8 +548,10 @@ class CocoaPodsIT : KGPBaseTest() {
                 nativeOptions = this.buildOptions.nativeOptions.copy(
                     cocoapodsPlatform = "iphonesimulator",
                     cocoapodsArchs = "x86_64",
-                    cocoapodsConfiguration = "Debug"
-                )
+                    cocoapodsConfiguration = "Debug",
+                ),
+                // KT-55832
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED
             )
             buildAndFail("syncFramework", buildOptions = buildOptions) {
                 assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Syntax error: Expecting a top level declaration")
@@ -566,7 +570,9 @@ class CocoaPodsIT : KGPBaseTest() {
                     cocoapodsPlatform = "iphonesimulator",
                     cocoapodsArchs = "x86_64",
                     cocoapodsConfiguration = "Debug"
-                )
+                ),
+                // KT-55832
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED
             )
             buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
                 assertOutputContains("e: file:///")
@@ -587,7 +593,9 @@ class CocoaPodsIT : KGPBaseTest() {
                     cocoapodsArchs = "x86_64",
                     cocoapodsConfiguration = "Debug",
                     useXcodeMessageStyle = true
-                )
+                ),
+                // KT-55832
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED
             )
             buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
                 assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Syntax error: Expecting a top level declaration")
@@ -904,7 +912,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 cocoapodsArchs = "x86_64",
                 cocoapodsConfiguration = "Debug"
             ),
-            configurationCache = true
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
         )
 
         nativeProjectWithCocoapodsAndIosAppPodFile(
