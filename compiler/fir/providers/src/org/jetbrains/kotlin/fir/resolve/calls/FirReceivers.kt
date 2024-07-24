@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.smartcastScope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -80,7 +81,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     type: ConeKotlinType,
     val useSiteSession: FirSession,
     protected val scopeSession: ScopeSession,
-    private val mutable: Boolean,
+    protected val mutable: Boolean,
     val contextReceiverNumber: Int = -1,
     private val inaccessibleReceiver: Boolean = false
 ) : ReceiverValue() {
@@ -165,6 +166,9 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     }
 
     abstract fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<S>
+
+    @DelicateScopeAPI
+    abstract fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValue<S>
 }
 
 private fun receiverExpression(
@@ -216,6 +220,11 @@ class ImplicitDispatchReceiverValue(
 
     override val isContextReceiver: Boolean
         get() = false
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitDispatchReceiverValue {
+        return ImplicitDispatchReceiverValue(boundSymbol, type, newSession, newScopeSession, mutable)
+    }
 }
 
 class ImplicitExtensionReceiverValue(
@@ -231,6 +240,11 @@ class ImplicitExtensionReceiverValue(
 
     override val isContextReceiver: Boolean
         get() = false
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitExtensionReceiverValue {
+        return ImplicitExtensionReceiverValue(boundSymbol, type, newSession, newScopeSession, mutable)
+    }
 }
 
 
@@ -247,6 +261,11 @@ class InaccessibleImplicitReceiverValue(
 
     override val isContextReceiver: Boolean
         get() = false
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): InaccessibleImplicitReceiverValue {
+        return InaccessibleImplicitReceiverValue(boundSymbol, type, newSession, newScopeSession, mutable)
+    }
 }
 
 sealed class ContextReceiverValue<S : FirBasedSymbol<*>>(
@@ -279,6 +298,11 @@ class ContextReceiverValueForCallable(
 ) {
     override fun createSnapshot(keepMutable: Boolean): ContextReceiverValue<FirCallableSymbol<*>> =
         ContextReceiverValueForCallable(boundSymbol, type, labelName, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ContextReceiverValueForCallable {
+        return ContextReceiverValueForCallable(boundSymbol, type, labelName, newSession, newScopeSession, mutable, contextReceiverNumber)
+    }
 }
 
 class ContextReceiverValueForClass(
@@ -294,6 +318,11 @@ class ContextReceiverValueForClass(
 ) {
     override fun createSnapshot(keepMutable: Boolean): ContextReceiverValue<FirClassSymbol<*>> =
         ContextReceiverValueForClass(boundSymbol, type, labelName, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ContextReceiverValueForClass {
+        return ContextReceiverValueForClass(boundSymbol, type, labelName, newSession, newScopeSession, mutable, contextReceiverNumber)
+    }
 }
 
 class ImplicitReceiverValueForScript(
@@ -310,4 +339,10 @@ class ImplicitReceiverValueForScript(
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirScriptSymbol> =
         ImplicitReceiverValueForScript(boundSymbol, type, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): ImplicitReceiverValueForScript {
+        return ImplicitReceiverValueForScript(boundSymbol, type, newSession, newScopeSession, mutable, contextReceiverNumber)
+    }
+
 }
