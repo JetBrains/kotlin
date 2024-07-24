@@ -164,6 +164,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("intersectionOverrideFromSourceSession.kt")
+    public void testIntersectionOverrideFromSourceSession() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/intersectionOverrideFromSourceSession.kt");
+    }
+
+    @Test
     @TestMetadata("local.kt")
     public void testLocal() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/local.kt");
