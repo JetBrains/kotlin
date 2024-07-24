@@ -196,7 +196,7 @@ function testImmutableMap() {
 
     assert(mapReadonlyView.has("a"), "Problem with accessing element in map readonly view")
     assert(mapReadonlyView.get("a") == 1, "Problem with accessing element in map readonly view")
-    assert(joinIterator(mapReadonlyView.keys()) == "123", "Unexpected keys() in map readonly view") // FIXME(KT-69928): This should be "abc"
+    assert(joinIterator(mapReadonlyView.keys()) == "abc", "Unexpected keys() in map readonly view")
     assert(joinIterator(mapReadonlyView.values()) == "123", "Unexpected values() in map readonly view")
     assert(joinIterator(mapReadonlyView.entries()) == "a,1b,2c,3", "Unexpected entries() in map readonly view")
     assert(Array.from(mapReadonlyView.keys()).toString() == "", "Unexpected array created from keys() in map readonly view") // FIXME(KT-69928): The array should not be empty
@@ -217,7 +217,7 @@ function testMutableMap() {
 
     assert(mutableMapReadonlyView.has("d"), "Problem with accessing element in mutable map readonly view")
     assert(mutableMapReadonlyView.get("d") == 4, "Problem with accessing element in mutable map readonly view")
-    assert(joinIterator(mutableMapReadonlyView.keys()) == "456", "Unexpected keys() in mutable map readonly view") // FIXME(KT-69928): This should be "def"
+    assert(joinIterator(mutableMapReadonlyView.keys()) == "def", "Unexpected keys() in mutable map readonly view")
     assert(joinIterator(mutableMapReadonlyView.values()) == "456", "Unexpected values() in mutable map readonly view")
     assert(joinIterator(mutableMapReadonlyView.entries()) == "d,4e,5f,6", "Unexpected entries() in mutable map readonly view")
     assert(Array.from(mutableMapReadonlyView.keys()).toString() == "", "Unexpected array created from keys() in mutable map readonly view") // FIXME(KT-69928): The array should not be empty
@@ -237,7 +237,7 @@ function testMutableMap() {
 
     assert(mutableMapView.has("d"), "Problem with accessing element in mutable map view")
     assert(mutableMapView.get("d") == 4, "Problem with accessing element in mutable map view")
-    assert(joinIterator(mutableMapView.keys()) == "456", "Unexpected keys() in mutable map view") // FIXME(KT-69928): This should be "abc"
+    assert(joinIterator(mutableMapView.keys()) == "def", "Unexpected keys() in mutable map view")
     assert(joinIterator(mutableMapView.values()) == "456", "Unexpected values() in mutable map view")
     assert(joinIterator(mutableMapView.entries()) == "d,4e,5f,6", "Unexpected entries() in mutable map view")
     assert(Array.from(mutableMapView.keys()).toString() == "", "Unexpected array created from keys() in mutable map view") // FIXME(KT-69928): The array should not be empty
