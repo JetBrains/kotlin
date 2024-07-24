@@ -544,7 +544,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             "Not a function type or subtype: ${this.renderForDebugging()}"
         }
 
-        val simpleType = fullyExpandedType(session).lowerBoundIfFlexible() as ConeSimpleKotlinType
+        val simpleType = fullyExpandedType(session).lowerBoundIfFlexible() as ConeRigidType
 
         return when {
             simpleType.isSomeFunctionType(session) -> this

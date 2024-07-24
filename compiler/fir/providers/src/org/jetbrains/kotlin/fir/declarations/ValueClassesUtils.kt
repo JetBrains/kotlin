@@ -67,7 +67,7 @@ private fun ConeRigidType.valueClassRepresentationTypeMarkersList(session: FirSe
     symbol.fir.valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
 
     val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null
-    return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeSimpleKotlinType }
+    return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeRigidType }
 }
 
 fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
