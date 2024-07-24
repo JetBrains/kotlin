@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.kotlinNativeDist
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.utils.capitalized
@@ -68,6 +69,13 @@ enabledTargets(platformManager).forEach { target ->
                     "-no-default-libs",
                     "-no-endorsed-libs",
             )
+            if (target.family.isAppleFamily && target.architecture == Architecture.X64) {
+                this.extraOpts.addAll(
+                    providers.gradleProperty("konan.xcodeForSimdOverlay").map {
+                        listOf("-Xxcode-for-vfsoverlay", it)
+                    }.orElse(emptyList())
+                )
+            }
             this.compilerOpts.addAll(
                     "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
             )

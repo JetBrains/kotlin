@@ -151,6 +151,37 @@ open class CInteropArguments(argParser: ArgParser =
 
     val disableExperimentalAnnotation by argParser.option(ArgType.Boolean, "Xdisable-experimental-annotation",
             description = "Don't add @ExperimentalForeignApi to generated Kotlin declarations")
+
+    val xcodeForVfsOverlay by argParser.option(ArgType.String, "Xxcode-for-vfsoverlay",
+            description = "Use headers from this Xcode to overlay on top of headers from the current Xcode")
+
+    val sysrootForVfsOverlay by argParser.option(ArgType.String, "Xsysroot-for-vfsoverlay",
+            description = "Use this sysroot for -Xxcode-for-vfsoverlay instead of computing it using xcrun")
+
+    val headersForVfsOverlay by argParser.option(ArgType.String, "Xheaders-for-vfsoverlay",
+            description = "usr/include relative paths for headers used for -Xxcode-for-vfsoverlay")
+            .multiple().delimiter(" ")
+            .default(
+                    listOf(
+                            // KT-69094
+                            "simd/packed.h",
+                            "simd/types.h",
+                            "simd/quaternion.h",
+                            "simd/matrix_types.h",
+                            "simd/matrix.h",
+                            "simd/conversion.h",
+                            "simd/vector_make.h",
+                            "simd/common.h",
+                            "simd/logic.h",
+                            "simd/simd.h",
+                            "simd/vector_types.h",
+                            "simd/math.h",
+                            "simd/extern.h",
+                            "simd/vector.h",
+                            "simd/geometry.h",
+                            "simd/base.h",
+                    )
+            )
 }
 
 internal fun warn(msg: String) {

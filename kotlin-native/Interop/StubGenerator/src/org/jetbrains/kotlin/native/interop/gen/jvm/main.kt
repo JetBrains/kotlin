@@ -305,7 +305,35 @@ private fun processCLib(
 
     val imports = parseImports(allLibraryDependencies)
 
-    val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
+    val xcodeForVfsOverlay = cinteropArguments.xcodeForVfsOverlay
+    val xcodeForVfsOverlayCompilerArgs = if (xcodeForVfsOverlay != null) {
+        val vfsOverlayTemporaries = Files.createTempDirectory("vfsOverlayHeaders").toFile().also { it.deleteOnExit() }
+        val overridingHeaders = mutableListOf<Pair<File, IncludeRelativePath>>()
+        cinteropArguments.headersForVfsOverlay.forEach { includeRelativePath ->
+            val headerCopyPath = vfsOverlayTemporaries.resolve(File(includeRelativePath).name)
+            val xcodeSysroot = cinteropArguments.sysrootForVfsOverlay?.let { File(it) } ?: sysrootPathFromXcode(
+                    target = tool.target,
+                    xcodePath = File(xcodeForVfsOverlay)
+            )
+            val originalHeaderPath = xcodeSysroot.resolve("usr/include").resolve(includeRelativePath)
+            // Copy headers to prevent clang from failing with -fmodules due to "module was built in directory but now resides in directory"
+            originalHeaderPath.copyTo(headerCopyPath)
+
+            overridingHeaders.add(
+                    Pair(headerCopyPath, includeRelativePath)
+            )
+        }
+
+        prepareVfsOverlayWorkaround(
+            overridingHeaders = overridingHeaders,
+            vfsOverlayTemporaries = vfsOverlayTemporaries,
+            sysroot = tool.sysRoot,
+        )
+    } else {
+        emptyList()
+    }
+
+    val library = buildNativeLibrary(tool, def, cinteropArguments, imports, xcodeForVfsOverlayCompilerArgs)
 
     val plugin = Plugins.plugin(def.config.pluginName)
 
@@ -511,7 +539,8 @@ internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
         arguments: CInteropArguments,
-        imports: Imports
+        imports: Imports,
+        additionalCompilationArgs: List<String>
 ): NativeLibrary {
     val additionalHeaders = (arguments.header).toTypedArray()
     val additionalCompilerOpts = (arguments.compilerOpts +
@@ -523,6 +552,7 @@ internal fun buildNativeLibrary(
         addAll(def.config.compilerOpts)
         addAll(tool.getDefaultCompilerOptsForLanguage(language))
         addAll(additionalCompilerOpts)
+        addAll(additionalCompilationArgs)
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see below)
     }
@@ -596,3 +626,58 @@ fun parseKeyValuePairs(
         null
     }
 }.toMap()
+
+internal typealias IncludeRelativePath = String
+fun prepareVfsOverlayWorkaround(
+        overridingHeaders: List<Pair<File, IncludeRelativePath>>,
+        vfsOverlayTemporaries: File,
+        sysroot: String,
+): List<String> {
+    val contents = overridingHeaders.map {
+        "{ 'external-contents': \"${it.first.path}\", 'name': \"${it.second}\", 'type': 'file' }"
+    }.joinToString(",\n")
+
+    val headers = vfsOverlayTemporaries.resolve("overlay.yaml")
+    headers.writeText(
+            """
+            {
+              'case-sensitive': 'false',
+              'roots': [
+                {
+                  "contents": [
+                    ${contents}
+                  ],
+                  'name': "${sysroot}/usr/include",
+                  'type': 'directory'
+                },
+              ],
+              'version': 0,
+            }
+        """.trimIndent()
+    )
+    return listOf("-ivfsoverlay", headers.path)
+}
+
+private fun sysrootPathFromXcode(
+        target: KonanTarget,
+        xcodePath: File,
+): File {
+    val sdk = when (target) {
+        KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> "macosx"
+        KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.IOS_X64 -> "iphonesimulator"
+        KonanTarget.IOS_ARM64 -> "iphoneos"
+        KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "watchsimulator"
+        KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64 -> "watchos"
+        KonanTarget.TVOS_ARM64 -> "appletvos"
+        KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64 -> "appletvsimulator"
+        else -> throw Exception("Can't dump sdk for: ${target}")
+    }
+    return File(
+        Command(
+            initialCommand = listOf("/usr/bin/xcrun", "--sdk", sdk, "--show-sdk-path"),
+            environmentOverrides = mapOf(
+                "DEVELOPER_DIR" to xcodePath.path,
+            )
+        ).getOutputLines().first()
+    )
+}
