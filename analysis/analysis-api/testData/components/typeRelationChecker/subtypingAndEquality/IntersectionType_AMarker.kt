@@ -18,3 +18,7 @@ val v<caret_type2>2: Marker = First
 // ARE_EQUAL_LENIENT: false
 // IS_SUBTYPE: true
 // IS_SUBTYPE_LENIENT: true
+
+// SUPERCLASS_ID: test/Marker
+// IS_CLASS_SUBTYPE: true
+// IS_CLASS_SUBTYPE_LENIENT: true

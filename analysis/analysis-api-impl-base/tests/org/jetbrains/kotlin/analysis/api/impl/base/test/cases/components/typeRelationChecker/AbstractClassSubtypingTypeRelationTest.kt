@@ -28,14 +28,14 @@ abstract class AbstractClassSubtypingTypeRelationTest : AbstractTypeRelationTest
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
-            useDirectives(SubclassTypeRelationTestDirectives)
+            useDirectives(ClassSubtypingTestDirectives)
         }
     }
 
     override fun KaSession.checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
-        val type = getTypeAtMarker(mainFile, testServices)
+        val type = getTypeAtMarker(mainFile, testServices, caretTag = "type1")
         val classId = ClassId.fromString(
-            testServices.moduleStructure.allDirectives.singleValue(SubclassTypeRelationTestDirectives.CLASS_ID)
+            testServices.moduleStructure.allDirectives.singleValue(ClassSubtypingTestDirectives.SUPERCLASS_ID)
         )
 
         testServices.assertions.assertEquals(
@@ -51,16 +51,16 @@ abstract class AbstractClassSubtypingTypeRelationTest : AbstractTypeRelationTest
     protected abstract fun KaSession.checkIsSubtype(type: KaType, classId: ClassId): Boolean
 }
 
-private object SubclassTypeRelationTestDirectives : SimpleDirectivesContainer() {
-    val CLASS_ID by stringDirective(
+private object ClassSubtypingTestDirectives : SimpleDirectivesContainer() {
+    val SUPERCLASS_ID by stringDirective(
         description = "The superclass ID to check against the specified type."
     )
 
-    val IS_SUBTYPE by stringDirective(
+    val IS_CLASS_SUBTYPE by stringDirective(
         description = "Whether `type` is a subtype of the specified class ID (`true` or `false`).",
     )
 
-    val IS_SUBTYPE_LENIENT by stringDirective(
+    val IS_CLASS_SUBTYPE_LENIENT by stringDirective(
         description = "Whether `type` is a subtype of the specified class ID (`true` or `false`) when using the" +
                 " `${KaSubtypingErrorTypePolicy.LENIENT}` error type policy.",
     )
@@ -71,13 +71,13 @@ abstract class AbstractClassIdSubtypingTypeRelationTest : AbstractClassSubtyping
 }
 
 abstract class AbstractNonLenientClassIdSubtypingTypeRelationTest : AbstractClassIdSubtypingTypeRelationTest() {
-    override val resultDirective get() = SubclassTypeRelationTestDirectives.IS_SUBTYPE
+    override val resultDirective get() = ClassSubtypingTestDirectives.IS_CLASS_SUBTYPE
 
     override val errorTypePolicy: KaSubtypingErrorTypePolicy get() = KaSubtypingErrorTypePolicy.STRICT
 }
 
 abstract class AbstractLenientClassIdSubtypingTypeRelationTest : AbstractClassIdSubtypingTypeRelationTest() {
-    override val resultDirective get() = SubclassTypeRelationTestDirectives.IS_SUBTYPE_LENIENT
+    override val resultDirective get() = ClassSubtypingTestDirectives.IS_CLASS_SUBTYPE_LENIENT
 
     override val errorTypePolicy: KaSubtypingErrorTypePolicy get() = KaSubtypingErrorTypePolicy.LENIENT
 }
@@ -93,13 +93,13 @@ abstract class AbstractClassSymbolSubtypingTypeRelationTest : AbstractClassSubty
 }
 
 abstract class AbstractNonLenientClassSymbolSubtypingTypeRelationTest : AbstractClassSymbolSubtypingTypeRelationTest() {
-    override val resultDirective get() = SubclassTypeRelationTestDirectives.IS_SUBTYPE
+    override val resultDirective get() = ClassSubtypingTestDirectives.IS_CLASS_SUBTYPE
 
     override val errorTypePolicy: KaSubtypingErrorTypePolicy get() = KaSubtypingErrorTypePolicy.STRICT
 }
 
 abstract class AbstractLenientClassSymbolSubtypingTypeRelationTest : AbstractClassSymbolSubtypingTypeRelationTest() {
-    override val resultDirective get() = SubclassTypeRelationTestDirectives.IS_SUBTYPE_LENIENT
+    override val resultDirective get() = ClassSubtypingTestDirectives.IS_CLASS_SUBTYPE_LENIENT
 
     override val errorTypePolicy: KaSubtypingErrorTypePolicy get() = KaSubtypingErrorTypePolicy.LENIENT
 }

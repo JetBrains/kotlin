@@ -41,32 +41,110 @@ public class Fe10IdeNormalAnalysisSourceModuleSubtypingTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("ActualizedSuperclass.kt")
+  public void testActualizedSuperclass() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ActualizedSuperclass.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInSubtypingAndEquality() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
-  @TestMetadata("AnimalHuman.kt")
-  public void testAnimalHuman() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/AnimalHuman.kt");
+  @TestMetadata("AnimalListError_HumanList.kt")
+  public void testAnimalListError_HumanList() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/AnimalListError_HumanList.kt");
   }
 
   @Test
-  @TestMetadata("AnimalHumanError.kt")
-  public void testAnimalHumanError() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/AnimalHumanError.kt");
+  @TestMetadata("AnimalList_HumanList.kt")
+  public void testAnimalList_HumanList() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/AnimalList_HumanList.kt");
   }
 
   @Test
-  @TestMetadata("AnimalHumanList.kt")
-  public void testAnimalHumanList() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/AnimalHumanList.kt");
+  @TestMetadata("Animal_Human.kt")
+  public void testAnimal_Human() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Animal_Human.kt");
   }
 
   @Test
-  @TestMetadata("AnimalHumanListError.kt")
-  public void testAnimalHumanListError() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/AnimalHumanListError.kt");
+  @TestMetadata("Animal_HumanError.kt")
+  public void testAnimal_HumanError() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Animal_HumanError.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_O_A.kt")
+  public void testComplexHierarchy_O_A() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_O_A.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_O_D.kt")
+  public void testComplexHierarchy_O_D() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_O_D.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_O_F.kt")
+  public void testComplexHierarchy_O_F() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_O_F.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_O_NestedA.kt")
+  public void testComplexHierarchy_O_NestedA() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_O_NestedA.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_Y_A.kt")
+  public void testComplexHierarchy_Y_A() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_Y_A.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_Y_D.kt")
+  public void testComplexHierarchy_Y_D() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_Y_D.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_Y_F.kt")
+  public void testComplexHierarchy_Y_F() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_Y_F.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_Y_NestedA.kt")
+  public void testComplexHierarchy_Y_NestedA() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_Y_NestedA.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_Z_A.kt")
+  public void testComplexHierarchy_Z_A() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_Z_A.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_Z_D.kt")
+  public void testComplexHierarchy_Z_D() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_Z_D.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_Z_F.kt")
+  public void testComplexHierarchy_Z_F() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_Z_F.kt");
+  }
+
+  @Test
+  @TestMetadata("ComplexHierarchy_Z_NestedA.kt")
+  public void testComplexHierarchy_Z_NestedA() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ComplexHierarchy_Z_NestedA.kt");
   }
 
   @Test
@@ -76,63 +154,69 @@ public class Fe10IdeNormalAnalysisSourceModuleSubtypingTestGenerated extends Abs
   }
 
   @Test
-  @TestMetadata("HumanAnimal.kt")
-  public void testHumanAnimal() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanAnimal.kt");
+  @TestMetadata("FunctionType_Function.kt")
+  public void testFunctionType_Function() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/FunctionType_Function.kt");
   }
 
   @Test
-  @TestMetadata("HumanAnimalError.kt")
-  public void testHumanAnimalError() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanAnimalError.kt");
+  @TestMetadata("HumanListError_AnimalList.kt")
+  public void testHumanListError_AnimalList() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanListError_AnimalList.kt");
   }
 
   @Test
-  @TestMetadata("HumanAnimalList.kt")
-  public void testHumanAnimalList() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanAnimalList.kt");
+  @TestMetadata("HumanList_AnimalList.kt")
+  public void testHumanList_AnimalList() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanList_AnimalList.kt");
   }
 
   @Test
-  @TestMetadata("HumanAnimalListError.kt")
-  public void testHumanAnimalListError() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanAnimalListError.kt");
+  @TestMetadata("HumanList_HumanList.kt")
+  public void testHumanList_HumanList() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanList_HumanList.kt");
   }
 
   @Test
-  @TestMetadata("HumanHuman.kt")
-  public void testHumanHuman() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanHuman.kt");
+  @TestMetadata("HumanList_HumanListError.kt")
+  public void testHumanList_HumanListError() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanList_HumanListError.kt");
   }
 
   @Test
-  @TestMetadata("HumanHumanError.kt")
-  public void testHumanHumanError() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanHumanError.kt");
+  @TestMetadata("Human_Animal.kt")
+  public void testHuman_Animal() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Human_Animal.kt");
   }
 
   @Test
-  @TestMetadata("HumanHumanList.kt")
-  public void testHumanHumanList() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanHumanList.kt");
+  @TestMetadata("Human_AnimalError.kt")
+  public void testHuman_AnimalError() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Human_AnimalError.kt");
   }
 
   @Test
-  @TestMetadata("HumanHumanListError.kt")
-  public void testHumanHumanListError() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanHumanListError.kt");
+  @TestMetadata("Human_Human.kt")
+  public void testHuman_Human() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Human_Human.kt");
   }
 
   @Test
-  @TestMetadata("IntInt.kt")
-  public void testIntInt() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/IntInt.kt");
+  @TestMetadata("Human_HumanError.kt")
+  public void testHuman_HumanError() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Human_HumanError.kt");
   }
 
   @Test
-  @TestMetadata("IntString.kt")
-  public void testIntString() {
-    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/IntString.kt");
+  @TestMetadata("Int_Int.kt")
+  public void testInt_Int() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Int_Int.kt");
+  }
+
+  @Test
+  @TestMetadata("Int_String.kt")
+  public void testInt_String() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Int_String.kt");
   }
 
   @Test
@@ -148,6 +232,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSubtypingTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("Iterable_List.kt")
+  public void testIterable_List() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Iterable_List.kt");
+  }
+
+  @Test
+  @TestMetadata("ListAlias_Iterable.kt")
+  public void testListAlias_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ListAlias_Iterable.kt");
+  }
+
+  @Test
   @TestMetadata("ListTypeParameterDefinitelyNotNull_Iterable.kt")
   public void testListTypeParameterDefinitelyNotNull_Iterable() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ListTypeParameterDefinitelyNotNull_Iterable.kt");
@@ -160,14 +256,152 @@ public class Fe10IdeNormalAnalysisSourceModuleSubtypingTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("ListTypeParameter_IterableAlias.kt")
+  public void testListTypeParameter_IterableAlias() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ListTypeParameter_IterableAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("List_ActualIterableAlias.kt")
+  public void testList_ActualIterableAlias() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_ActualIterableAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("List_Iterable.kt")
+  public void testList_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_Iterable.kt");
+  }
+
+  @Test
+  @TestMetadata("List_IterableAlias.kt")
+  public void testList_IterableAlias() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_IterableAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("List_List.kt")
+  public void testList_List() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_List.kt");
+  }
+
+  @Test
+  @TestMetadata("List_NestedIterableAlias.kt")
+  public void testList_NestedIterableAlias() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_NestedIterableAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("List_Unknown.kt")
+  public void testList_Unknown() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_Unknown.kt");
+  }
+
+  @Test
+  @TestMetadata("List_UnknownExpansion.kt")
+  public void testList_UnknownExpansion() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/List_UnknownExpansion.kt");
+  }
+
+  @Test
+  @TestMetadata("NestedListAlias_Iterable.kt")
+  public void testNestedListAlias_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/NestedListAlias_Iterable.kt");
+  }
+
+  @Test
   @TestMetadata("StringBuilderTypeAlias.kt")
   public void testStringBuilderTypeAlias() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/StringBuilderTypeAlias.kt");
   }
 
   @Test
+  @TestMetadata("TypeArguments_O_Bar.kt")
+  public void testTypeArguments_O_Bar() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_O_Bar.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_O_Baz.kt")
+  public void testTypeArguments_O_Baz() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_O_Baz.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_O_Foo.kt")
+  public void testTypeArguments_O_Foo() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_O_Foo.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_O_Thing.kt")
+  public void testTypeArguments_O_Thing() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_O_Thing.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_Y_Bar.kt")
+  public void testTypeArguments_Y_Bar() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_Y_Bar.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_Y_Baz.kt")
+  public void testTypeArguments_Y_Baz() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_Y_Baz.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_Y_Foo.kt")
+  public void testTypeArguments_Y_Foo() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_Y_Foo.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_Y_Thing.kt")
+  public void testTypeArguments_Y_Thing() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_Y_Thing.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_Z_Bar.kt")
+  public void testTypeArguments_Z_Bar() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_Z_Bar.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_Z_Baz.kt")
+  public void testTypeArguments_Z_Baz() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_Z_Baz.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_Z_Foo.kt")
+  public void testTypeArguments_Z_Foo() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_Z_Foo.kt");
+  }
+
+  @Test
+  @TestMetadata("TypeArguments_Z_Thing.kt")
+  public void testTypeArguments_Z_Thing() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/TypeArguments_Z_Thing.kt");
+  }
+
+  @Test
   @TestMetadata("UnboundedTypeParameter_Iterable.kt")
   public void testUnboundedTypeParameter_Iterable() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/UnboundedTypeParameter_Iterable.kt");
+  }
+
+  @Test
+  @TestMetadata("Unknown_List.kt")
+  public void testUnknown_List() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Unknown_List.kt");
+  }
+
+  @Test
+  @TestMetadata("Unknown_ListAlias.kt")
+  public void testUnknown_ListAlias() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Unknown_ListAlias.kt");
   }
 }

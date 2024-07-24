@@ -617,19 +617,19 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
 
         test<AbstractNonLenientClassIdSubtypingTypeRelationTest> {
-            model(it, "classSubtyping")
+            model(it, "subtypingAndEquality")
         }
 
         test<AbstractLenientClassIdSubtypingTypeRelationTest> {
-            model(it, "classSubtyping")
+            model(it, "subtypingAndEquality")
         }
 
         test<AbstractNonLenientClassSymbolSubtypingTypeRelationTest> {
-            model(it, "classSubtyping")
+            model(it, "subtypingAndEquality")
         }
 
         test<AbstractLenientClassSymbolSubtypingTypeRelationTest> {
-            model(it, "classSubtyping")
+            model(it, "subtypingAndEquality")
         }
     }
 
