@@ -179,7 +179,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val SKIP_IR_SERIALIZATION by directive(
         description = """
-        Skips IR serialization to Klib, when running tests
+        Skips serializing IR to KLIB when running tests
         """
     )
 

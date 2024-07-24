@@ -1,5 +1,5 @@
 // SKIP_DESERIALIZED_IR_TEXT_DUMP
-// REASON: KT-69587 Multi-module is not deserialized in JS irText
+// REASON: KT-70036 Fix param name in overridden setter
 // MODULE: m1
 // FILE: genericClassInDifferentModule_m1.kt
 
