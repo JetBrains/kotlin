@@ -67,6 +67,12 @@ public class FirJsPlainObjectsIrJsBoxTestGenerated extends AbstractFirJsPlainObj
   }
 
   @Test
+  @TestMetadata("suspendFunction.kt")
+  public void testSuspendFunction() {
+    runTest("plugins/js-plain-objects/compiler-plugin/testData/box/suspendFunction.kt");
+  }
+
+  @Test
   @TestMetadata("with-inheritance.kt")
   public void testWith_inheritance() {
     runTest("plugins/js-plain-objects/compiler-plugin/testData/box/with-inheritance.kt");
