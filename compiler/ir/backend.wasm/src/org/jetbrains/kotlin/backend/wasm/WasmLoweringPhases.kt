@@ -49,6 +49,12 @@ private val generateTests = makeIrModulePhase(
     description = "Generates code to execute kotlin.test cases"
 )
 
+private val generateTestsIC = makeIrModulePhase(
+    ::GenerateWasmTestsIC,
+    name = "GenerateTestsIC",
+    description = "Generates code to execute kotlin.test cases for IC"
+)
+
 private val expectDeclarationsRemovingPhase = makeIrModulePhase(
     ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
@@ -634,7 +640,8 @@ fun getWasmLowerings(
 ): List<SimpleNamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
     validateIrBeforeLowering,
     jsCodeCallsLowering,
-    generateTests,
+    generateTests.takeIf { !isIncremental },
+    generateTestsIC.takeIf { isIncremental },
     excludeDeclarationsFromCodegenPhase,
     expectDeclarationsRemovingPhase,
 

@@ -1,6 +1,6 @@
 fun box(stepId: Int, isWasm: Boolean) = when (stepId) {
         0 -> "OK"
-        1 -> checkLog {
+        1 -> checkLog(wrapInEmptySuite = !isWasm) {
             suite("Test1") {
                 test("foo") {
                     call("before")
@@ -9,7 +9,7 @@ fun box(stepId: Int, isWasm: Boolean) = when (stepId) {
                 }
             }
         }
-        2 -> checkLog {
+        2 -> checkLog(wrapInEmptySuite = !isWasm) {
             suite("Test1") {
                 test("foo") {
                     call("before")
@@ -26,29 +26,24 @@ fun box(stepId: Int, isWasm: Boolean) = when (stepId) {
             }
         }
         3 -> checkLog(wrapInEmptySuite = !isWasm) {
-            val emptySuiteIfNeeded = if (isWasm) emptySuite else doNothing // Current inconsistent between js and wasm for merging suites
-            emptySuiteIfNeeded {
-                suite("Test1") {
-                    test("foo") {
-                        call("before")
-                        call("foo")
-                        call("after")
-                    }
-                    test("withException") {
-                        call("before")
-                        call("withException")
-                        raised("some exception")
-                        call("after")
-                        caught("some exception")
-                    }
+            suite("Test1") {
+                test("foo") {
+                    call("before")
+                    call("foo")
+                    call("after")
+                }
+                test("withException") {
+                    call("before")
+                    call("withException")
+                    raised("some exception")
+                    call("after")
+                    caught("some exception")
                 }
             }
-            emptySuiteIfNeeded {
-                suite("Test2") {
-                    test("foo") {
-                        call("before")
-                        call("foo")
-                    }
+            suite("Test2") {
+                test("foo") {
+                    call("before")
+                    call("foo")
                 }
             }
         }

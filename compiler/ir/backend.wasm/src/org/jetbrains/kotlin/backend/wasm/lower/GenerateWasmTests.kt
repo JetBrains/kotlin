@@ -19,3 +19,13 @@ internal class GenerateWasmTests(private val context: WasmBackendContext) : Modu
         )
     }
 }
+
+internal class GenerateWasmTestsIC(private val context: WasmBackendContext) : ModuleLoweringPass {
+    override fun lower(irModule: IrModuleFragment) {
+        generateJsTests(
+            context = context,
+            moduleFragment = irModule,
+            groupByPackage = false
+        )
+    }
+}
