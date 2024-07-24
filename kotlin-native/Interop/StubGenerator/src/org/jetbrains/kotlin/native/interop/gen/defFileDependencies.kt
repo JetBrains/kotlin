@@ -53,7 +53,6 @@ private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>
                 DefFile(it, tool.substitutions),
                 cinteropArguments,
                 ImportsImpl(emptyMap()),
-                emptyList()
         ).getHeaderPaths()
     }.toList().toMap()
     return SingleTargetDependencyAssigner(libraries)

@@ -305,35 +305,7 @@ private fun processCLib(
 
     val imports = parseImports(allLibraryDependencies)
 
-    val xcodeForVfsOverlay = cinteropArguments.xcodeForVfsOverlay
-    val xcodeForVfsOverlayCompilerArgs = if (xcodeForVfsOverlay != null) {
-        val vfsOverlayTemporaries = Files.createTempDirectory("vfsOverlayHeaders").toFile().also { it.deleteOnExit() }
-        val overridingHeaders = mutableListOf<Pair<File, IncludeRelativePath>>()
-        cinteropArguments.headersForVfsOverlay.forEach { includeRelativePath ->
-            val headerCopyPath = vfsOverlayTemporaries.resolve(File(includeRelativePath).name)
-            val xcodeSysroot = cinteropArguments.sysrootForVfsOverlay?.let { File(it) } ?: sysrootPathFromXcode(
-                    target = tool.target,
-                    xcodePath = File(xcodeForVfsOverlay)
-            )
-            val originalHeaderPath = xcodeSysroot.resolve("usr/include").resolve(includeRelativePath)
-            // Copy headers to prevent clang from failing with -fmodules due to "module was built in directory but now resides in directory"
-            originalHeaderPath.copyTo(headerCopyPath)
-
-            overridingHeaders.add(
-                    Pair(headerCopyPath, includeRelativePath)
-            )
-        }
-
-        prepareVfsOverlayWorkaround(
-            overridingHeaders = overridingHeaders,
-            vfsOverlayTemporaries = vfsOverlayTemporaries,
-            sysroot = tool.sysRoot,
-        )
-    } else {
-        emptyList()
-    }
-
-    val library = buildNativeLibrary(tool, def, cinteropArguments, imports, xcodeForVfsOverlayCompilerArgs)
+    val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
     val plugin = Plugins.plugin(def.config.pluginName)
 
@@ -540,7 +512,6 @@ internal fun buildNativeLibrary(
         def: DefFile,
         arguments: CInteropArguments,
         imports: Imports,
-        additionalCompilationArgs: List<String>
 ): NativeLibrary {
     val additionalHeaders = (arguments.header).toTypedArray()
     val additionalCompilerOpts = (arguments.compilerOpts +
@@ -552,7 +523,7 @@ internal fun buildNativeLibrary(
         addAll(def.config.compilerOpts)
         addAll(tool.getDefaultCompilerOptsForLanguage(language))
         addAll(additionalCompilerOpts)
-        addAll(additionalCompilationArgs)
+        addAll(compilerArgsFromXcodeForVfsOverlay(tool, arguments))
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see below)
     }
@@ -627,6 +598,40 @@ fun parseKeyValuePairs(
     }
 }.toMap()
 
+
+fun compilerArgsFromXcodeForVfsOverlay(
+        tool: ToolConfig,
+        arguments: CInteropArguments,
+): List<String> {
+    val xcodeForVfsOverlay = arguments.xcodeForVfsOverlay
+    if (xcodeForVfsOverlay == null) return emptyList()
+
+    val vfsOverlayTemporaries = Files.createTempDirectory("vfsOverlayHeaders").toFile().also { it.deleteOnExit() }
+    val overridingHeaders = mutableListOf<Pair<File, IncludeRelativePath>>()
+    arguments.headersForVfsOverlay.forEach { includeRelativePath ->
+        val headerCopyPath = vfsOverlayTemporaries.resolve(File(includeRelativePath).name)
+        val xcodeSysroot = arguments.sysrootForVfsOverlay?.let { File(it) } ?: sysrootPathFromXcode(
+                target = tool.target,
+                xcodePath = File(xcodeForVfsOverlay)
+        )
+        val originalHeaderPath = xcodeSysroot.resolve("usr/include").resolve(includeRelativePath)
+        // Copy headers to prevent clang from failing with -fmodules due to "module was built in directory but now resides in directory"
+        originalHeaderPath.copyTo(headerCopyPath)
+        headerCopyPath.deleteOnExit()
+
+        overridingHeaders.add(
+                Pair(headerCopyPath, includeRelativePath)
+        )
+    }
+
+    return prepareVfsOverlayWorkaround(
+            overridingHeaders = overridingHeaders,
+            vfsOverlayTemporaries = vfsOverlayTemporaries,
+            sysroot = tool.sysRoot,
+    )
+}
+
+
 internal typealias IncludeRelativePath = String
 fun prepareVfsOverlayWorkaround(
         overridingHeaders: List<Pair<File, IncludeRelativePath>>,
@@ -655,6 +660,7 @@ fun prepareVfsOverlayWorkaround(
             }
         """.trimIndent()
     )
+    headers.deleteOnExit()
     return listOf("-ivfsoverlay", headers.path)
 }
 
