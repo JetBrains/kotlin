@@ -777,7 +777,7 @@ class Fir2IrVisitor(
         val firScript = firScriptSymbol.fir
         val irScript = declarationStorage.getCachedIrScript(firScript) ?: error("IrScript for ${firScript.name} not found")
         val receiverParameter =
-            irScript.implicitReceiversParameters.find { it.index == calleeReference.contextReceiverNumber } ?: irScript.thisReceiver
+            irScript.implicitReceiversParameters.getOrNull(calleeReference.contextReceiverNumber) ?: irScript.thisReceiver
         if (receiverParameter != null) {
             return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                 IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol)

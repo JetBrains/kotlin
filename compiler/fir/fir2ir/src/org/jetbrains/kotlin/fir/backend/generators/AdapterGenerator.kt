@@ -686,8 +686,8 @@ internal class AdapterGenerator(
             valueArgumentsCount = adapterFunction.valueParameters.size
         )
         irCall.dispatchReceiver = adapterFunction.extensionReceiverParameter!!.toIrGetValue(startOffset, endOffset)
-        for (irAdapterParameter in adapterFunction.valueParameters) {
-            irCall.putValueArgument(irAdapterParameter.index, irAdapterParameter.toIrGetValue(startOffset, endOffset))
+        for ((index, irAdapterParameter) in adapterFunction.valueParameters.withIndex()) {
+            irCall.putValueArgument(index, irAdapterParameter.toIrGetValue(startOffset, endOffset))
         }
         return irCall
     }
