@@ -20,7 +20,7 @@ class JsSetupConfigurationCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
-            configurationCache = true,
+            configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
             configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
         )
 

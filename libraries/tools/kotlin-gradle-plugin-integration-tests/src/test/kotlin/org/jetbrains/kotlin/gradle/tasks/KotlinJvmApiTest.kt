@@ -16,7 +16,7 @@ import kotlin.io.path.writeText
 @DisplayName("JVM API validation")
 class KotlinJvmApiTest : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
-        configurationCache = true
+        configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED
     )
 
     @DisplayName("Kotlin compilation can be set up using APIs")

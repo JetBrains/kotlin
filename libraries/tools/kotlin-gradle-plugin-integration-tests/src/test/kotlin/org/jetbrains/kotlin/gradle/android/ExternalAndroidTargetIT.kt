@@ -105,7 +105,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
             buildJdk = jdkVersion.location,
             localRepoDir = localRepoDir
         ) {
-            build("publish", buildOptions = buildOptions.copy(configurationCache = true)) {
+            build("publish", buildOptions = buildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)) {
                 val pomFile = localRepoDir.resolve("app/app-android/1.0/app-android-1.0.pom")
                 assertFileExists(pomFile)
 

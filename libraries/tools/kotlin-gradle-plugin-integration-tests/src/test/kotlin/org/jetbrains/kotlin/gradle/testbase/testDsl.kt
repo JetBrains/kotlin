@@ -78,7 +78,12 @@ fun KGPBaseTest.project(
         gradleRunner,
         projectName,
         projectPath,
-        buildOptions,
+        buildOptions.copy(
+            configurationCache = overrideConfigurationCacheValueIfNeeded(
+                buildOptions,
+                gradleVersion,
+            ),
+        ),
         gradleVersion,
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
@@ -100,6 +105,32 @@ fun KGPBaseTest.project(
     result.getOrThrow()
     return testProject
 }
+
+private fun overrideConfigurationCacheValueIfNeeded(
+    buildOptions: BuildOptions,
+    gradleVersion: GradleVersion,
+) = when (buildOptions.configurationCache) {
+    BuildOptions.ConfigurationCacheValue.AUTO -> if (
+        shouldTestWithConfigurationCacheByDefault(
+            hostIsMac = HostManager.hostIsMac,
+            gradleVersion = gradleVersion
+        )
+    ) {
+        BuildOptions.ConfigurationCacheValue.ENABLED
+    } else {
+        BuildOptions.ConfigurationCacheValue.AUTO
+    }
+    else -> buildOptions.configurationCache
+}
+
+private fun shouldTestWithConfigurationCacheByDefault(
+    hostIsMac: Boolean,
+    gradleVersion: GradleVersion,
+): Boolean =
+    // For now test with CC by default only on macOS
+    hostIsMac
+            // Test with CC since Gradle 8.0 and higher because since 8.0 Gradle deserializes from CC on the execution
+            && gradleVersion >= GradleVersion.version("8.0")
 
 /**
  * Create a new test project with configuring single native target.
@@ -961,3 +992,9 @@ sealed interface DependencyManagement {
  * Resolves the temporary local repository path for the test with specified Gradle version.
  */
 fun KGPBaseTest.defaultLocalRepo(gradleVersion: GradleVersion) = workingDir.resolve(gradleVersion.version).resolve("repo")
+
+fun enableConfigurationCacheSinceGradle(
+    sinceGradleVersion: String,
+    currentGradleVersion: GradleVersion
+): BuildOptions.ConfigurationCacheValue =
+    if (currentGradleVersion >= GradleVersion.version(sinceGradleVersion)) BuildOptions.ConfigurationCacheValue.ENABLED else BuildOptions.ConfigurationCacheValue.AUTO

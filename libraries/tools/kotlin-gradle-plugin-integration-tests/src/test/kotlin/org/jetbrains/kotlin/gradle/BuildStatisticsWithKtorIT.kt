@@ -236,7 +236,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
     fun testConfigurationCache(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
 
-            val buildOptions = defaultBuildOptions.copy(configurationCache = true)
+            val buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
             project("incrementalMultiproject", gradleVersion) {
                 setProjectForTest(port)
                 build("assemble", buildOptions = buildOptions) {
@@ -305,7 +305,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
     fun testProjectIsolation(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
 
-            val buildOptions = defaultBuildOptions.copy(projectIsolation = true, configurationCache = null)
+            val buildOptions = defaultBuildOptions.copy(projectIsolation = true, configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED)
             project("incrementalMultiproject", gradleVersion) {
                 setProjectForTest(port)
                 build("assemble", "--stacktrace", buildOptions = buildOptions) {

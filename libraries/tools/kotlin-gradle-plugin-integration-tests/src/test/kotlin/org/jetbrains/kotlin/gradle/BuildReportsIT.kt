@@ -354,7 +354,7 @@ class BuildReportsIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
                 projectIsolation = true,
-                configurationCache = null,
+                configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
                 buildReport = listOf(BuildReportType.FILE, BuildReportType.JSON)
             )
         ) {
@@ -663,7 +663,7 @@ class BuildReportsIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
                 projectIsolation = true,
-                configurationCache = null,
+                configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
                 buildReport = listOf(BuildReportType.BUILD_SCAN)
             )
         ) {
