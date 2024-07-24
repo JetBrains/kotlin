@@ -1,3 +1,5 @@
+// ISSUE: KT-66328
+// LANGUAGE: +ProhibitJavaClassInheritingPrivateKotlinClass
 // FILE: J1.java
 
 public class J1 extends K2 {}

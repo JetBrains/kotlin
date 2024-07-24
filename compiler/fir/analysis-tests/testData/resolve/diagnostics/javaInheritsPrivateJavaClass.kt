@@ -1,4 +1,5 @@
 // ISSUE: KT-70157
+// LANGUAGE: +ProhibitJavaClassInheritingPrivateKotlinClass
 // FILE: Some.java
 
 public class Some {

@@ -1960,6 +1960,24 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("javaInheritsPrivateJavaClass.kt")
+      public void testJavaInheritsPrivateJavaClass() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/javaInheritsPrivateJavaClass.kt");
+      }
+
+      @Test
+      @TestMetadata("javaInheritsPrivateKtClassDisabled.kt")
+      public void testJavaInheritsPrivateKtClassDisabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/javaInheritsPrivateKtClassDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("javaInheritsPrivateKtClassEnabled.kt")
+      public void testJavaInheritsPrivateKtClassEnabled() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/javaInheritsPrivateKtClassEnabled.kt");
+      }
+
+      @Test
       @TestMetadata("localAnnotationClass.kt")
       public void testLocalAnnotationClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/localAnnotationClass.kt");
@@ -2011,18 +2029,6 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       @TestMetadata("primaryConstructorRequiredForDataClass.kt")
       public void testPrimaryConstructorRequiredForDataClass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/primaryConstructorRequiredForDataClass.kt");
-      }
-
-      @Test
-      @TestMetadata("privateClass.kt")
-      public void testPrivateClass() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/privateClass.kt");
-      }
-
-      @Test
-      @TestMetadata("privateJavaClass.kt")
-      public void testPrivateJavaClass() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/privateJavaClass.kt");
       }
 
       @Test
