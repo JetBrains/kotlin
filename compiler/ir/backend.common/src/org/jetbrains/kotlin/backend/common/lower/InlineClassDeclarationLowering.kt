@@ -169,9 +169,9 @@ class InlineClassLowering(val context: CommonBackendContext) {
                         // Secondary ctors of inline class must delegate to some other constructors.
                         // Use these delegating call later to initialize this variable.
                         lateinit var thisVar: IrVariable
-                        val parameterMapping = staticMethod.valueParameters.associateBy {
-                            irConstructor.valueParameters[it.index].symbol
-                        }
+                        val parameterMapping = staticMethod.valueParameters.mapIndexed { index, param ->
+                            irConstructor.valueParameters[index].symbol to param
+                        }.toMap()
 
                         (constructorBody as IrBlockBody).statements.forEach { statement ->
                             +statement.transformStatement(object : IrElementTransformerVoid() {
@@ -262,7 +262,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                                     in function.valueParameters -> {
                                         val offset = if (function.extensionReceiverParameter != null) 2 else 1
-                                        staticMethod.valueParameters[valueDeclaration.index + offset]
+                                        val paramIndex = function.valueParameters.indexOf(valueDeclaration)
+                                        staticMethod.valueParameters[paramIndex + offset]
                                     }
 
                                     else -> return expression
@@ -277,7 +278,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                 when (valueDeclaration) {
                                     in function.valueParameters -> {
                                         val offset = if (function.extensionReceiverParameter != null) 2 else 1
-                                        staticMethod.valueParameters[valueDeclaration.index + offset].symbol
+                                        val paramIndex = function.valueParameters.indexOf(valueDeclaration)
+                                        staticMethod.valueParameters[paramIndex + offset].symbol
                                     }
                                     else -> return expression
                                 },

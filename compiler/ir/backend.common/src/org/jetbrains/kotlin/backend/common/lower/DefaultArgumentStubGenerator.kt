@@ -80,8 +80,8 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                 //
                 // works correctly so that `f() { "OK" }` returns "OK" and
                 // `f()` throws a NullPointerException.
-                originalDeclaration.valueParameters.forEach {
-                    variables[it.symbol] = newIrFunction.valueParameters[it.index].symbol
+                originalDeclaration.valueParameters.forEachIndexed { index, param ->
+                    variables[param.symbol] = newIrFunction.valueParameters[index].symbol
                 }
 
                 generateSuperCallHandlerCheckIfNeeded(originalDeclaration, newIrFunction)
