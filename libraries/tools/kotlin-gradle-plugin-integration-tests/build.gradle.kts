@@ -124,7 +124,7 @@ val splitGradleIntegrationTestTasks =
     project.providers.gradleProperty("gradle.integration.tests.split.tasks").orNull?.toBoolean()
         ?: project.kotlinBuildProperties.isTeamcityBuild
 
-val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
+tasks.register<Delete>("cleanTestKitCache") {
     group = "Build"
     description = "Deletes temporary Gradle TestKit cache"
 
