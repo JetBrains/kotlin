@@ -656,17 +656,16 @@ abstract class CompileServiceImplBase(
             } ?: EmptyModulesApiHistory
         }
 
-        val useK2 = LanguageVersion.fromVersionString(k2jvmArgs.languageVersion)?.usesK2 == true
-        // TODO: This should be reverted after implementing of fir-based java tracker (KT-57147).
-        //  See org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt.makeJvmIncrementally
-        val usePreciseJavaTracking = if (useK2) false else incrementalCompilationOptions.usePreciseJavaTracking
+        val verifiedPreciseJavaTracking = k2jvmArgs.disablePreciseJavaTrackingIfK2(
+            usePreciseJavaTrackingByDefault = incrementalCompilationOptions.usePreciseJavaTracking
+        )
 
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
             outputDirs = incrementalCompilationOptions.outputFiles,
-            usePreciseJavaTracking = usePreciseJavaTracking,
+            usePreciseJavaTracking = verifiedPreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
             kotlinSourceFilesExtensions = allKotlinExtensions,
             classpathChanges = incrementalCompilationOptions.classpathChanges,

@@ -91,6 +91,7 @@ private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, 
     }
 
     if (arguments !is K2JVMCompilerArguments) return
+    //coordinated with org.jetbrains.kotlin.incremental.CompilerRunnerUtils.isK1ForcedByKapt
     val isK2 = (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
     val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
     when {
