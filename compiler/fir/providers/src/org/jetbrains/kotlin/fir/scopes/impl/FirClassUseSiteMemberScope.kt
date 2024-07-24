@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirClassUseSiteMemberScope(
-    klass: FirClass,
+    private val klass: FirClass,
     session: FirSession,
     superTypeScopes: List<FirTypeScope>,
     declaredMemberScope: FirContainingNamesAwareScope
@@ -87,5 +88,15 @@ class FirClassUseSiteMemberScope(
 
     override fun toString(): String {
         return "Use site scope of ${ownerClassLookupTag.classId}"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirClassUseSiteMemberScope {
+        return FirClassUseSiteMemberScope(
+            klass,
+            newSession,
+            superTypeScopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: superTypeScopes,
+            declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope
+        )
     }
 }

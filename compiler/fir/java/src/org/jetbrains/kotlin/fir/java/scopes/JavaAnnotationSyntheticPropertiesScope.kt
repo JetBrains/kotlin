@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAccessor
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.nullableModuleData
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirDelegatingTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -24,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 
 class JavaAnnotationSyntheticPropertiesScope(
     private val session: FirSession,
-    owner: FirRegularClassSymbol,
+    private val owner: FirRegularClassSymbol,
     private val delegateScope: JavaClassMembersEnhancementScope
 ) : FirDelegatingTypeScope(delegateScope) {
     private val classId: ClassId = owner.classId
@@ -74,5 +76,12 @@ class JavaAnnotationSyntheticPropertiesScope(
 
     override fun toString(): String {
         return "Java annotation synthetic properties scope for $classId"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): JavaAnnotationSyntheticPropertiesScope {
+        return JavaAnnotationSyntheticPropertiesScope(
+            newSession, owner, delegateScope.withReplacedSessionOrNull(newSession, newScopeSession)
+        )
     }
 }

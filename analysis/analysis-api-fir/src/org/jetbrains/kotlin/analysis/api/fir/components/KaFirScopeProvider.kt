@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
@@ -411,6 +412,17 @@ private class FirTypeScopeWithSyntheticProperties(
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         typeScope.processPropertiesByName(name, processor)
         syntheticPropertiesScope.processPropertiesByName(name, processor)
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirTypeScopeWithSyntheticProperties? {
+        val newTypeScope = typeScope.withReplacedSessionOrNull(newSession, newScopeSession)
+        val newSyntheticPropertiesScope = syntheticPropertiesScope.withReplacedSessionOrNull(newSession, newScopeSession)
+        if (newTypeScope == null && newSyntheticPropertiesScope == null) return null
+        return FirTypeScopeWithSyntheticProperties(
+            newTypeScope ?: typeScope,
+            newSyntheticPropertiesScope ?: syntheticPropertiesScope,
+        )
     }
 }
 

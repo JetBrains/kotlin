@@ -158,6 +158,14 @@ class FirKotlinScopeProvider(
 
         override val scopeOwnerLookupNames: List<String>
             get() = declaredMemberScope.scopeOwnerLookupNames
+
+        @DelicateScopeAPI
+        override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): PlatformDependentFilteringScope {
+            return PlatformDependentFilteringScope(
+                declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
+                newSession
+            )
+        }
     }
 }
 

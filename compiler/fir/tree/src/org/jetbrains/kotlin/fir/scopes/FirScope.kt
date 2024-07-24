@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
+
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+annotation class DelicateScopeAPI
 
 abstract class FirScope {
     open fun processClassifiersByNameWithSubstitution(
@@ -36,6 +41,16 @@ abstract class FirScope {
     open fun mayContainName(name: Name): Boolean = true
 
     open val scopeOwnerLookupNames: List<String> get() = emptyList()
+
+    /**
+     * This function creates a copy of the scope in case if this scope is session-dependant
+     * It shouldn't be used anywhere except Analysis API, as in the compiler there cannot be
+     *   a situation when session `A` may observe the session-dependent scope from session `B`
+     *
+     * @return null if the scope is session-independent
+     */
+    @DelicateScopeAPI
+    abstract fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirScope?
 }
 
 fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableSetOf<FirClassifierSymbol<*>>().apply {

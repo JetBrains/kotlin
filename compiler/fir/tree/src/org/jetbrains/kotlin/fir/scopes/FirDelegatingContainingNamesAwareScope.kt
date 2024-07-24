@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -19,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * [toString] is not delegated by default because the [delegate] is usually not the same kind of scope as this delegating scope.
  */
-abstract class FirDelegatingContainingNamesAwareScope(private val delegate: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
+abstract class FirDelegatingContainingNamesAwareScope(protected val delegate: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
     override fun getCallableNames(): Set<Name> = delegate.getCallableNames()
     override fun getClassifierNames(): Set<Name> = delegate.getClassifierNames()
     override fun mayContainName(name: Name): Boolean = delegate.mayContainName(name)
@@ -49,6 +51,9 @@ abstract class FirDelegatingContainingNamesAwareScope(private val delegate: FirC
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegate.processDeclaredConstructors(processor)
     }
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirContainingNamesAwareScope?
 }
 
 /**
@@ -101,4 +106,7 @@ abstract class FirDelegatingTypeScope(private val delegate: FirTypeScope) : FirT
     ): ProcessorAction {
         return delegate.processDirectOverriddenPropertiesWithBaseScope(propertySymbol, processor)
     }
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirDelegatingTypeScope?
 }

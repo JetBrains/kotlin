@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
@@ -999,5 +1000,15 @@ class JavaClassUseSiteMemberScope(
 
     override fun toString(): String {
         return "Java use site scope of ${ownerClassLookupTag.classId}"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): JavaClassUseSiteMemberScope {
+        return JavaClassUseSiteMemberScope(
+            klass,
+            newSession,
+            superTypeScopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: superTypeScopes,
+            declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope
+        )
     }
 }

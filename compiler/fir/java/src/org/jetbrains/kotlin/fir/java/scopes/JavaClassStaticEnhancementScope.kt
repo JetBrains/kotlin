@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirDelegatingContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class JavaClassStaticEnhancementScope(
     session: FirSession,
-    owner: FirRegularClassSymbol,
+    private val owner: FirRegularClassSymbol,
     private val useSiteStaticScope: JavaClassStaticUseSiteScope,
 ) : FirDelegatingContainingNamesAwareScope(useSiteStaticScope) {
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
@@ -37,6 +39,13 @@ class JavaClassStaticEnhancementScope(
         useSiteStaticScope.processDeclaredConstructors process@{ original ->
             val function = signatureEnhancement.enhancedConstructor(original)
             processor(function)
+        }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): JavaClassStaticEnhancementScope? {
+        return useSiteStaticScope.withReplacedSessionOrNull(newSession, newScopeSession)?.let {
+            JavaClassStaticEnhancementScope(newSession, owner, it)
         }
     }
 }

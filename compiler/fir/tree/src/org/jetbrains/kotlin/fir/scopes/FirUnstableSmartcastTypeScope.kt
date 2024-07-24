@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -117,5 +119,16 @@ class FirUnstableSmartcastTypeScope(
 
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scopes.flatMap { it.scopeOwnerLookupNames }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirUnstableSmartcastTypeScope? {
+        val newSmartcastTypeScope = smartcastScope.withReplacedSessionOrNull(newSession, newScopeSession)
+        val newOriginalScope = originalScope.withReplacedSessionOrNull(newSession, newScopeSession)
+        if (newSmartcastTypeScope == null && newOriginalScope == null) return null
+        return FirUnstableSmartcastTypeScope(
+            newSmartcastTypeScope ?: smartcastScope,
+            newOriginalScope ?: originalScope,
+        )
     }
 }

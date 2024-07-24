@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.ConeSubstitutionScopeKey
 import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -33,7 +36,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 class FirClassSubstitutionScope(
     private val session: FirSession,
     private val useSiteMemberScope: FirTypeScope,
-    key: ScopeSessionKey<*, *>,
+    private val key: ConeSubstitutionScopeKey,
     val substitutor: ConeSubstitutor,
     private val dispatchReceiverTypeForSubstitutedMembers: ConeClassLikeType,
     private val skipPrivateMembers: Boolean,
@@ -358,6 +361,24 @@ class FirClassSubstitutionScope(
 
     override fun toString(): String {
         return "Substitution scope for [$useSiteMemberScope] for type $dispatchReceiverTypeForSubstitutedMembers"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(
+        newSession: FirSession,
+        newScopeSession: ScopeSession
+    ): FirClassSubstitutionScope {
+        return FirClassSubstitutionScope(
+            newSession,
+            useSiteMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: useSiteMemberScope,
+            key,
+            substitutor,
+            dispatchReceiverTypeForSubstitutedMembers,
+            skipPrivateMembers,
+            makeExpect,
+            derivedClassLookupTag,
+            origin
+        )
     }
 }
 

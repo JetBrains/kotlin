@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -16,7 +17,7 @@ class FirTypeIntersectionScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
     private val scopes: List<FirTypeScope>,
-    dispatchReceiverType: ConeSimpleKotlinType,
+    private val dispatchReceiverType: ConeSimpleKotlinType,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
     private val intersectionContext =
         FirTypeIntersectionScopeContext(session, overrideChecker, scopes, dispatchReceiverType, forClassUseSiteScope = false)
@@ -112,6 +113,16 @@ class FirTypeIntersectionScope private constructor(
 
     override fun toString(): String {
         return "Intersection of [${scopes.joinToString(", ")}]"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(
+        newSession: FirSession,
+        newScopeSession: ScopeSession
+    ): FirTypeIntersectionScope {
+        return FirTypeIntersectionScope(
+            newSession, overrideChecker, scopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: scopes, dispatchReceiverType
+        )
     }
 
     companion object {

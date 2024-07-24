@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.withReplacedSessionOrNull
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -52,6 +55,9 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
     override val scopeOwnerLookupNames: List<String> =
         if (klass.isLocal) emptyList()
         else SmartList(klass.classId.asFqNameString())
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirNestedClassifierScope?
 }
 
 class FirNestedClassifierScopeImpl(klass: FirClass, useSiteSession: FirSession) : FirNestedClassifierScope(klass, useSiteSession) {
@@ -74,6 +80,11 @@ class FirNestedClassifierScopeImpl(klass: FirClass, useSiteSession: FirSession) 
     override fun isEmpty(): Boolean = classIndex.isEmpty()
 
     override fun getClassifierNames(): Set<Name> = classIndex.keys
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirNestedClassifierScopeImpl {
+        return FirNestedClassifierScopeImpl(klass, newSession)
+    }
 }
 
 class FirCompositeNestedClassifierScope(
@@ -95,6 +106,12 @@ class FirCompositeNestedClassifierScope(
 
     override fun getClassifierNames(): Set<Name> {
         return scopes.flatMapTo(mutableSetOf()) { it.getClassifierNames() }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirCompositeNestedClassifierScope {
+        val newScopes = scopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: scopes
+        return FirCompositeNestedClassifierScope(newScopes, klass, newSession)
     }
 }
 

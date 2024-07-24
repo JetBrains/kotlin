@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -434,6 +435,17 @@ class JvmMappedScope(
 
     override fun toString(): String {
         return "JVM mapped scope for ${firKotlinClass.classId}"
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): JvmMappedScope {
+        return JvmMappedScope(
+            newSession,
+            firKotlinClass,
+            firJavaClass,
+            declaredMemberScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: declaredMemberScope,
+            javaMappedClassUseSiteScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: javaMappedClassUseSiteScope,
+        )
     }
 }
 

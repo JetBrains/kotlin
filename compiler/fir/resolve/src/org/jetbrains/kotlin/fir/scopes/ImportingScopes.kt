@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private val ALL_IMPORTS = scopeSessionKey<FirFile, ListStorageFirScope>()
 private val DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultStarImportKey, FirSingleLevelDefaultStarImportingScope>()
@@ -125,4 +126,12 @@ internal fun computeImportingScopes(
     }
 }
 
-private class ListStorageFirScope(val result: List<FirScope>) : FirScope()
+private class ListStorageFirScope(val result: List<FirScope>) : FirScope() {
+    /*
+     * such a scope should not be accessible from call-sites
+     */
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirScope? {
+        shouldNotBeCalled()
+    }
+}

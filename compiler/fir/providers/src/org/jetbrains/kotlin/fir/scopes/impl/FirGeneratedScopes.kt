@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.ownerGenerator
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -91,6 +93,11 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
             processor(constructorSymbol)
         }
     }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirGeneratedClassDeclaredMemberScope? {
+        return null
+    }
 }
 
 class FirGeneratedClassNestedClassifierScope private constructor(
@@ -116,7 +123,7 @@ class FirGeneratedClassNestedClassifierScope private constructor(
                 .getClassifierStorage(classSymbol, regularNestedClassifierScope)
                 ?: return null
 
-            return FirGeneratedClassNestedClassifierScope(useSiteSession, classSymbol.fir, storage,)
+            return FirGeneratedClassNestedClassifierScope(useSiteSession, classSymbol.fir, storage)
         }
     }
 
@@ -130,6 +137,11 @@ class FirGeneratedClassNestedClassifierScope private constructor(
 
     override fun getClassifierNames(): Set<Name> {
         return storage.allClassifierNames
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirGeneratedClassNestedClassifierScope? {
+        return null
     }
 }
 

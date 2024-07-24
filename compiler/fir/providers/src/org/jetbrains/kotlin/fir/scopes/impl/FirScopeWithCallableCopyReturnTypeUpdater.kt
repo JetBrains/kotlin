@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirDelegatingTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -68,5 +71,15 @@ class FirScopeWithCallableCopyReturnTypeUpdater(
 
     override fun toString(): String {
         return delegate.toString()
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(
+        newSession: FirSession,
+        newScopeSession: ScopeSession
+    ): FirScopeWithCallableCopyReturnTypeUpdater? {
+        return delegate.withReplacedSessionOrNull(newSession, newScopeSession)?.let {
+            FirScopeWithCallableCopyReturnTypeUpdater(delegate, callableCopyTypeCalculator)
+        }
     }
 }

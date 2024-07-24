@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -66,6 +68,12 @@ class FirCompositeScope(val scopes: Iterable<FirScope>) : FirScope() {
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scopes.flatMap { it.scopeOwnerLookupNames }
     }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirCompositeScope? {
+        val newScopes = scopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: return null
+        return FirCompositeScope(newScopes)
+    }
 }
 
 class FirNameAwareCompositeScope(val scopes: Iterable<FirContainingNamesAwareScope>) : FirContainingNamesAwareScope() {
@@ -100,4 +108,24 @@ class FirNameAwareCompositeScope(val scopes: Iterable<FirContainingNamesAwareSco
     override fun getClassifierNames(): Set<Name> {
         return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
     }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirNameAwareCompositeScope? {
+        val newScopes = scopes.withReplacedSessionOrNull(newSession, newScopeSession) ?: return null
+        return FirNameAwareCompositeScope(newScopes)
+    }
+}
+
+@DelicateScopeAPI
+inline fun <reified S : FirScope> Iterable<S>.withReplacedSessionOrNull(
+    newSession: FirSession,
+    newScopeSession: ScopeSession
+): List<S>? {
+    var wasUpdated = false
+    val newScopes = this.map {
+        it.withReplacedSessionOrNull(newSession, newScopeSession).also { newScope ->
+            wasUpdated = true
+        } as S? ?: it
+    }
+    return if (wasUpdated) newScopes else null
 }

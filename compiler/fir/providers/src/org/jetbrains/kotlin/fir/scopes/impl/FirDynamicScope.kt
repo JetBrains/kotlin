@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -105,6 +106,12 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
         session.dynamicMembersStorage.propertiesCacheByName.getValue(name, null).also {
             processor(it.symbol)
         }
+    }
+
+    @DelicateScopeAPI
+    @OptIn(FirDynamicScopeConstructor::class)
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirDynamicScope {
+        return FirDynamicScope(newSession, newScopeSession)
     }
 }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.defaultImportProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 class FirDefaultSimpleImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    priority: DefaultImportPriority,
+    private val priority: DefaultImportPriority,
     private val excludedImportNames: Set<FqName>,
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
@@ -40,5 +41,10 @@ class FirDefaultSimpleImportingScope(
             }
             ?.groupBy { it.importedName!! }
             ?: emptyMap()
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirDefaultSimpleImportingScope {
+        return FirDefaultSimpleImportingScope(newSession, newScopeSession, priority, excludedImportNames)
     }
 }

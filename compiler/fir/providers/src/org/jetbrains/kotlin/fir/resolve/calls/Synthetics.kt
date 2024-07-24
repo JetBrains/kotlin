@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope.SyntheticGetterCompatibility.*
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -370,6 +371,18 @@ class FirSyntheticPropertiesScope private constructor(
                 return false
             }
         }
+    }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirSyntheticPropertiesScope? {
+        return FirSyntheticPropertiesScope(
+            newSession,
+            baseScope.withReplacedSessionOrNull(newSession, newScopeSession) ?: baseScope,
+            dispatchReceiverType,
+            syntheticNamesProvider,
+            returnTypeCalculator,
+            isSuperCall
+        )
     }
 }
 
