@@ -7,5 +7,5 @@ class Foo<T : List<String>>(t: T) {
 }
 
 // CLASS_ID: test/IterableAlias
-// IS_SUBTYPE: false
-// IS_SUBTYPE_LENIENT: false
+// IS_SUBTYPE: true
+// IS_SUBTYPE_LENIENT: true

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeRelationChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -21,10 +20,13 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.findClassifierAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
+import org.jetbrains.kotlin.types.StarProjectionImpl
 import org.jetbrains.kotlin.types.TypeRefinement
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.IsErrorTypeEqualToAnythingTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
+import org.jetbrains.kotlin.types.lowerIfFlexible
 
 internal class KaFe10TypeRelationChecker(
     override val analysisSessionProvider: () -> KaFe10Session
@@ -41,14 +43,14 @@ internal class KaFe10TypeRelationChecker(
         return getTypeCheckerFor(errorTypePolicy).isSubtypeOf(this.fe10Type, supertype.fe10Type)
     }
 
-    override fun KaClassType.isClassSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+    override fun KaType.isClassSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
         val superclassDescriptor = analysisContext.resolveSession.moduleDescriptor.findClassifierAcrossModuleDependencies(classId)
             ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
 
         return isClassSubtypeOf(superclassDescriptor, errorTypePolicy)
     }
 
-    override fun KaClassType.isClassSubtypeOf(
+    override fun KaType.isClassSubtypeOf(
         symbol: KaClassLikeSymbol,
         errorTypePolicy: KaSubtypingErrorTypePolicy,
     ): Boolean {
@@ -57,7 +59,7 @@ internal class KaFe10TypeRelationChecker(
     }
 
     @OptIn(TypeRefinement::class)
-    private fun KaClassType.isClassSubtypeOf(
+    private fun KaType.isClassSubtypeOf(
         superclassDescriptor: ClassifierDescriptor,
         errorTypePolicy: KaSubtypingErrorTypePolicy,
     ): Boolean {
@@ -67,12 +69,22 @@ internal class KaFe10TypeRelationChecker(
         val typeChecker = analysisContext.resolveSession.kotlinTypeCheckerOfOwnerModule
         val preparedType = typeChecker.kotlinTypePreparator.prepareType(typeChecker.kotlinTypeRefiner.refineType(fe10Type))
 
-        val classDescriptor = preparedType.constructor.declarationDescriptor as? ClassDescriptor ?: return false
+        val classDescriptor = preparedType.lowerIfFlexible().constructor.declarationDescriptor as? ClassDescriptor
 
         val expandedSuperclassDescriptor = when (superclassDescriptor) {
             is ClassDescriptor -> superclassDescriptor
             is TypeAliasDescriptor -> superclassDescriptor.classDescriptor ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
             else -> return false
+        }
+
+        // If the left-hand side is not a class type, we have to fall back to full subtyping. For example, a type parameter
+        // `T : List<String>` would still be a subtype of `Iterable<*>`, as would an intersection type `Interface & List<String>`.
+        if (classDescriptor == null) {
+            val typeParameters = superclassDescriptor.typeConstructor.parameters
+            val projections = typeParameters.map { StarProjectionImpl(it) }
+            val superclassType = TypeUtils.substituteProjectionsForParameters(expandedSuperclassDescriptor, projections)
+
+            return getTypeCheckerFor(errorTypePolicy).isSubtypeOf(fe10Type, superclassType)
         }
 
         return classDescriptor.isSubclassOf(expandedSuperclassDescriptor)

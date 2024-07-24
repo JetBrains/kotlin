@@ -13,5 +13,5 @@ fun <S> intersect(vararg elements: S): S where S : A, S : B = error("")
 fun test() = <expr>intersect(First, Second)</expr>
 
 // CLASS_ID: test/Marker
-// IS_SUBTYPE: false
-// IS_SUBTYPE_LENIENT: false
+// IS_SUBTYPE: true
+// IS_SUBTYPE_LENIENT: true

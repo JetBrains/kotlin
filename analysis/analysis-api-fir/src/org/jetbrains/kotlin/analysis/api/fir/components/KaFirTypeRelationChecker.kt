@@ -14,16 +14,19 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeRelation
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 internal class KaFirTypeRelationChecker(
     override val analysisSessionProvider: () -> KaFirSession
@@ -50,29 +53,50 @@ internal class KaFirTypeRelationChecker(
         )
     }
 
-    override fun KaClassType.isClassSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
+    override fun KaType.isClassSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean {
         val superclassSymbol = analysisSession.firSession.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
 
         return isClassSubtypeOf(superclassSymbol, errorTypePolicy)
     }
 
-    override fun KaClassType.isClassSubtypeOf(symbol: KaClassLikeSymbol, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
+    override fun KaType.isClassSubtypeOf(symbol: KaClassLikeSymbol, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
         isClassSubtypeOf(symbol.firSymbol, errorTypePolicy)
 
-    private fun KaClassType.isClassSubtypeOf(
+    private fun KaType.isClassSubtypeOf(
         superclassSymbol: FirClassLikeSymbol<*>,
         errorTypePolicy: KaSubtypingErrorTypePolicy,
     ): Boolean {
         require(this is KaFirType)
 
+        // We have to prepare the type to e.g. expand type aliases to be in line with `equalTypes` and `isSubtypeOf`.
+        val preparedType = AbstractTypeChecker.prepareType(analysisSession.firSession.typeContext, coneType)
+        checkWithAttachment(
+            preparedType is ConeKotlinType,
+            { "Expected ${ConeKotlinType::class.simpleName}, but got ${preparedType::class.simpleName}." },
+        ) {
+            withEntry("type", preparedType.toString())
+        }
+
+        // See the subtyping rules for flexible types: https://kotlinlang.org/spec/type-system.html#subtyping-for-flexible-types.
+        val classType = preparedType.lowerBoundIfFlexible() as? ConeClassLikeType
+
+        return if (classType != null) {
+            classType.isSubtypeOf(superclassSymbol, errorTypePolicy)
+        } else {
+            // If the left-hand side is not a class-like type, we have to fall back to full subtyping. For example, a type parameter
+            // `T : List<String>` would still be a subtype of `Iterable<*>`, as would an intersection type `Interface & List<String>`.
+            preparedType.isSubtypeOf(superclassSymbol, errorTypePolicy)
+        }
+    }
+
+    private fun ConeClassLikeType.isSubtypeOf(
+        superclassSymbol: FirClassLikeSymbol<*>,
+        errorTypePolicy: KaSubtypingErrorTypePolicy,
+    ): Boolean {
         val useSiteSession = analysisSession.firSession
 
-        // We have to prepare the type to e.g. expand type aliases to be in line with `equalTypes` and `isSubtypeOf`.
-        val preparedType = AbstractTypeChecker.prepareType(useSiteSession.typeContext, coneType)
-        if (preparedType !is ConeClassLikeType) return false
-
-        val classSymbol = preparedType.lookupTag.toRegularClassSymbol(useSiteSession)
+        val classSymbol = lookupTag.toRegularClassSymbol(useSiteSession)
             ?: return errorTypePolicy == KaSubtypingErrorTypePolicy.LENIENT
 
         val expandedSuperclassSymbol = superclassSymbol.fullyExpandedClass(useSiteSession)
@@ -83,6 +107,23 @@ internal class KaFirTypeRelationChecker(
             expandedSuperclassSymbol.fir,
             useSiteSession,
             allowIndirectSubtyping = true,
+        )
+    }
+
+    private fun ConeKotlinType.isSubtypeOf(
+        superclassSymbol: FirClassLikeSymbol<*>,
+        errorTypePolicy: KaSubtypingErrorTypePolicy,
+    ): Boolean {
+        val superclassType = analysisSession.firSession.typeContext.createSimpleType(
+            superclassSymbol.toLookupTag(),
+            superclassSymbol.typeParameterSymbols.map { ConeStarProjection },
+            nullable = true,
+        ) as ConeClassLikeType
+
+        return AbstractTypeChecker.isSubtypeOf(
+            createTypeCheckerContext(errorTypePolicy),
+            this,
+            superclassType,
         )
     }
 }
