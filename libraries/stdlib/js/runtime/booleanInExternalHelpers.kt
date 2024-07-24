@@ -5,8 +5,6 @@
 
 package kotlin.js
 
-import JsError
-
 @JsName("Boolean")
 internal external fun nativeBoolean(obj: Any?): Boolean
 

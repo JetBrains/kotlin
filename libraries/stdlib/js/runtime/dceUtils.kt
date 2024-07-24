@@ -5,8 +5,6 @@
 
 package kotlin.js
 
-import JsError
-
 internal fun unreachableDeclarationLog() {
     console.asDynamic().trace("Unreachable declaration")
 }
