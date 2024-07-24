@@ -319,7 +319,35 @@ private fun processCLib(
 
     val imports = parseImports(allLibraryDependencies)
 
-    val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
+    val xcodeForVfsOverlay = cinteropArguments.xcodeForVfsOverlay
+    val xcodeForVfsOverlayCompilerArgs = if (xcodeForVfsOverlay != null) {
+        val vfsOverlayTemporaries = Files.createTempDirectory("vfsOverlayHeaders").toFile().also { it.deleteOnExit() }
+        val overridingHeaders = mutableListOf<Pair<File, IncludeRelativePath>>()
+        cinteropArguments.headersForVfsOverlay.forEach { includeRelativePath ->
+            val headerCopyPath = vfsOverlayTemporaries.resolve(File(includeRelativePath).name)
+            val xcodeSysroot = cinteropArguments.sysrootForVfsOverlay?.let { File(it) } ?: sysrootPathFromXcode(
+                    target = tool.target,
+                    xcodePath = File(xcodeForVfsOverlay)
+            )
+            val originalHeaderPath = xcodeSysroot.resolve("usr/include").resolve(includeRelativePath)
+            // Copy headers to prevent clang from failing with -fmodules due to "module was built in directory but now resides in directory"
+            originalHeaderPath.copyTo(headerCopyPath)
+
+            overridingHeaders.add(
+                    Pair(headerCopyPath, includeRelativePath)
+            )
+        }
+
+        prepareVfsOverlayWorkaround(
+            overridingHeaders = overridingHeaders,
+            vfsOverlayTemporaries = vfsOverlayTemporaries,
+            sysroot = tool.sysRoot,
+        )
+    } else {
+        emptyList()
+    }
+
+    val library = buildNativeLibrary(tool, def, cinteropArguments, imports, xcodeForVfsOverlayCompilerArgs)
 
     val plugin = Plugins.plugin(def.config.pluginName)
 
