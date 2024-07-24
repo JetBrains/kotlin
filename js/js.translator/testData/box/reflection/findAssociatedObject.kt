@@ -42,6 +42,9 @@ private object I1Impl : I1 {
 @Associated1(I1Impl::class)
 private class I1ImplHolder
 
+@Associated1(I1Impl::class)
+private interface I1ImplInterfaceHolder
+
 private interface I2 {
     fun foo(): Int
 }
@@ -96,6 +99,9 @@ fun box(): String {
     if (Int::class.findAssociatedObject<Associated1>() != null) return "fail 11"
 
     if (10::class.findAssociatedObject<Associated2>() != null) return "fail 12"
+
+    val i3 = I1ImplInterfaceHolder::class.findAssociatedObject<Associated1>() as I1
+    if (i3.foo() != 42) return "fail 13"
 
     return "OK"
 }

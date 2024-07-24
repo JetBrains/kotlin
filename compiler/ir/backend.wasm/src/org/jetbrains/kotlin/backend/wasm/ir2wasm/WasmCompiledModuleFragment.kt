@@ -65,7 +65,7 @@ class WasmCompiledModuleFragment(
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
     private val canonicalFunctionTypes = LinkedHashMap<WasmFunctionType, WasmFunctionType>()
-    private val classIds = mutableMapOf<IdSignature, Int>()
+    private val typeIds = mutableMapOf<IdSignature, Int>()
     private val data = mutableListOf<WasmData>()
     private val exports = mutableListOf<WasmExport<*>>()
     private val fieldInitializerFunction = WasmFunction.Defined("_fieldInitialize", WasmSymbol(parameterlessNoReturnFunctionType))
@@ -376,13 +376,13 @@ class WasmCompiledModuleFragment(
         with(WasmIrExpressionBuilder(tryGetAssociatedObject.instructions)) {
             wasmCompiledFileFragments.forEach { fragment ->
                 for ((klass, associatedObjectsInstanceGetters) in fragment.classAssociatedObjectsInstanceGetters) {
-                    val klassId = classIds[klass]!!
+                    val klassId = typeIds[klass]!!
                     buildGetLocal(WasmLocal(0, "classId", WasmI32, true), serviceCodeLocation)
                     buildConstI32(klassId, serviceCodeLocation)
                     buildInstr(WasmOp.I32_EQ, serviceCodeLocation)
                     buildIf("Class matches")
                     associatedObjectsInstanceGetters.forEach { (obj, getter, isExternal) ->
-                        val keyId = classIds[obj]!!
+                        val keyId = typeIds[obj]!!
                         buildGetLocal(WasmLocal(1, "keyId", WasmI32, true), serviceCodeLocation)
                         buildConstI32(keyId, serviceCodeLocation)
                         buildInstr(WasmOp.I32_EQ, serviceCodeLocation)
@@ -447,7 +447,7 @@ class WasmCompiledModuleFragment(
             fragment.typeInfo.forEach { (referenceKey, typeInfo) ->
                 val instructions = mutableListOf<WasmInstr>()
                 WasmIrExpressionBuilder(instructions).buildConstI32(
-                    classIds.getValue(referenceKey),
+                    typeIds.getValue(referenceKey),
                     SourceLocation.NoLocation("Compile time data per class")
                 )
                 val typeData = WasmData(
@@ -468,8 +468,7 @@ class WasmCompiledModuleFragment(
         bindFileFragments(wasmCompiledFileFragments, { it.globalClassITables.unbound }, { it.globalClassITables.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.functionTypes.unbound }, { it.functionTypes.defined })
         bindUnboundFunctionTypes()
-        bindInterfaceIds()
-        bindClassIds()
+        bindTypeIds()
         bindScratchMemAddr()
         bindStringPoolSymbols()
         bindConstantArrayDataSegmentIds()
@@ -511,26 +510,26 @@ class WasmCompiledModuleFragment(
         }
     }
 
-    private fun bindInterfaceIds() {
-        var interfaceId = 0
-        wasmCompiledFileFragments.forEach { fragment ->
-            fragment.interfaceIds.unbound.values.forEach { wasmSymbol ->
-                wasmSymbol.bind(interfaceId--)
-            }
-        }
-    }
-
-    private fun bindClassIds() {
-        classIds.clear()
+    private fun bindTypeIds() {
+        typeIds.clear()
         currentDataSectionAddress = 0
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.typeInfo.forEach { (referenceKey, dataElement) ->
-                classIds[referenceKey] = currentDataSectionAddress
+                typeIds[referenceKey] = currentDataSectionAddress
                 currentDataSectionAddress += dataElement.sizeInBytes
             }
         }
+
         wasmCompiledFileFragments.forEach { fragment ->
-            bind(fragment.classIds.unbound, classIds)
+            bind(fragment.classIds.unbound, typeIds)
+        }
+
+        var interfaceId = 0
+        wasmCompiledFileFragments.forEach { fragment ->
+            fragment.interfaceIds.unbound.forEach { (signature, symbol) ->
+                val id = typeIds.getOrPut(signature) { interfaceId-- }
+                symbol.bind(id)
+            }
         }
     }
 
