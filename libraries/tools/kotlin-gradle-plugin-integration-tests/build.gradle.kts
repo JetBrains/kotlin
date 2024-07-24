@@ -378,7 +378,16 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
 }
 
 tasks.named<Task>("check") {
-    dependsOn(jvmTestsTask, jsTestsTask, nativeTestsTask, daemonsTestsTask, otherPluginsTestTask, mppTestsTask, androidTestsTask)
+    dependsOn(
+        jvmTestsTask,
+        jsTestsTask,
+        nativeTestsTask,
+        daemonsTestsTask,
+        otherPluginsTestTask,
+        mppTestsTask,
+        androidTestsTask,
+        swiftExportTestsTask,
+    )
 }
 
 tasks.withType<Test> {
