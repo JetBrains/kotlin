@@ -38,8 +38,10 @@ abstract class AbstractTypeRelationTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    protected fun KaSession.getTypeAtCaret(mainFile: KtFile, testServices: TestServices, caretTag: String? = null): KaType {
-        val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(mainFile, caretTag)
+    protected fun KaSession.getTypeAtMarker(mainFile: KtFile, testServices: TestServices, caretTag: String? = null): KaType {
+        val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtElement>(mainFile, caretTag)
+            ?: testServices.expressionMarkerProvider.getSelectedElements(mainFile).singleOrNull()
+
         return when (element) {
             is KtProperty -> element.symbol.returnType
             is KtExpression -> element.expressionType ?: error("Expected the selected expression to have a type.")

@@ -124,9 +124,27 @@ public class FirIdeNormalAnalysisSourceModuleLenientClassIdSubtypingTypeRelation
   }
 
   @Test
+  @TestMetadata("FlexibleList_Iterable.kt")
+  public void testFlexibleList_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/FlexibleList_Iterable.kt");
+  }
+
+  @Test
   @TestMetadata("FunctionType_Function.kt")
   public void testFunctionType_Function() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/FunctionType_Function.kt");
+  }
+
+  @Test
+  @TestMetadata("IntersectionType_AMarker.kt")
+  public void testIntersectionType_AMarker() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/IntersectionType_AMarker.kt");
+  }
+
+  @Test
+  @TestMetadata("IntersectionType_BMarker.kt")
+  public void testIntersectionType_BMarker() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/IntersectionType_BMarker.kt");
   }
 
   @Test
@@ -139,6 +157,24 @@ public class FirIdeNormalAnalysisSourceModuleLenientClassIdSubtypingTypeRelation
   @TestMetadata("ListAlias_Iterable.kt")
   public void testListAlias_Iterable() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/ListAlias_Iterable.kt");
+  }
+
+  @Test
+  @TestMetadata("ListTypeParameterDefinitelyNotNull_Iterable.kt")
+  public void testListTypeParameterDefinitelyNotNull_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/ListTypeParameterDefinitelyNotNull_Iterable.kt");
+  }
+
+  @Test
+  @TestMetadata("ListTypeParameter_Iterable.kt")
+  public void testListTypeParameter_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/ListTypeParameter_Iterable.kt");
+  }
+
+  @Test
+  @TestMetadata("ListTypeParameter_IterableAlias.kt")
+  public void testListTypeParameter_IterableAlias() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/ListTypeParameter_IterableAlias.kt");
   }
 
   @Test
@@ -259,6 +295,12 @@ public class FirIdeNormalAnalysisSourceModuleLenientClassIdSubtypingTypeRelation
   @TestMetadata("TypeArguments_Z_Thing.kt")
   public void testTypeArguments_Z_Thing() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/TypeArguments_Z_Thing.kt");
+  }
+
+  @Test
+  @TestMetadata("UnboundedTypeParameter_Iterable.kt")
+  public void testUnboundedTypeParameter_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/classSubtyping/UnboundedTypeParameter_Iterable.kt");
   }
 
   @Test

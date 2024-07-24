@@ -70,6 +70,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSubtypingTestGenerated exten
   }
 
   @Test
+  @TestMetadata("FlexibleList_Iterable.kt")
+  public void testFlexibleList_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/FlexibleList_Iterable.kt");
+  }
+
+  @Test
   @TestMetadata("HumanAnimal.kt")
   public void testHumanAnimal() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/HumanAnimal.kt");
@@ -130,8 +136,38 @@ public class FirStandaloneNormalAnalysisSourceModuleSubtypingTestGenerated exten
   }
 
   @Test
+  @TestMetadata("IntersectionType_AMarker.kt")
+  public void testIntersectionType_AMarker() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/IntersectionType_AMarker.kt");
+  }
+
+  @Test
+  @TestMetadata("IntersectionType_BMarker.kt")
+  public void testIntersectionType_BMarker() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/IntersectionType_BMarker.kt");
+  }
+
+  @Test
+  @TestMetadata("ListTypeParameterDefinitelyNotNull_Iterable.kt")
+  public void testListTypeParameterDefinitelyNotNull_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ListTypeParameterDefinitelyNotNull_Iterable.kt");
+  }
+
+  @Test
+  @TestMetadata("ListTypeParameter_Iterable.kt")
+  public void testListTypeParameter_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/ListTypeParameter_Iterable.kt");
+  }
+
+  @Test
   @TestMetadata("StringBuilderTypeAlias.kt")
   public void testStringBuilderTypeAlias() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/StringBuilderTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("UnboundedTypeParameter_Iterable.kt")
+  public void testUnboundedTypeParameter_Iterable() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/UnboundedTypeParameter_Iterable.kt");
   }
 }

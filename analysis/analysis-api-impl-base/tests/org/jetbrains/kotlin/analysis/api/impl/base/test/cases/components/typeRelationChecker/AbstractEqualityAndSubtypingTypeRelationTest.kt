@@ -36,8 +36,8 @@ abstract class AbstractEqualityAndSubtypingTypeRelationTest : AbstractTypeRelati
     }
 
     override fun KaSession.checkExpectedResult(expectedResult: Boolean, mainFile: KtFile, testServices: TestServices) {
-        val type1 = getTypeAtCaret(mainFile, testServices, caretTag = "type1")
-        val type2 = getTypeAtCaret(mainFile, testServices, caretTag = "type2")
+        val type1 = getTypeAtMarker(mainFile, testServices, caretTag = "type1")
+        val type2 = getTypeAtMarker(mainFile, testServices, caretTag = "type2")
 
         checkTypes(expectedResult, type1, type2, testServices)
     }
