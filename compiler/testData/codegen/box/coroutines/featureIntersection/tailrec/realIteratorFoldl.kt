@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // DONT_RUN_GENERATED_CODE: JS
+// DISABLE_NATIVE: gcScheduler=AGGRESSIVE
 import helpers.*
 import kotlin.coroutines.*
 
