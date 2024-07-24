@@ -2,9 +2,9 @@
  * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-// May need disabling when gcSchedulerType=aggressive . since it may be too slow
 
 // TARGET_BACKEND: NATIVE
+// DISABLE_NATIVE: gcScheduler=AGGRESSIVE
 // MODULE: cinterop
 // FILE: bitfields.def
 ---
