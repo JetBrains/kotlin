@@ -79,6 +79,12 @@ interface TestVersions {
         AGP_85(AGP.AGP_85, GradleVersion.version(Gradle.G_8_7), GradleVersion.version(Gradle.G_8_9), JavaVersion.VERSION_17),
         AGP_86(AGP.AGP_86, GradleVersion.version(Gradle.G_8_7), GradleVersion.version(Gradle.G_8_9), JavaVersion.VERSION_17),
         ;
+
+        companion object {
+            fun fromVersion(
+                agpVersion: String
+            ): AgpCompatibilityMatrix = AgpCompatibilityMatrix.entries.first { it.version == agpVersion }
+        }
     }
 
     object COCOAPODS {

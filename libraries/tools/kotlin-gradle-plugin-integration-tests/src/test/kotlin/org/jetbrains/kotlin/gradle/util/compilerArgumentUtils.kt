@@ -8,22 +8,13 @@ package org.jetbrains.kotlin.gradle.util
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.gradle.BaseGradleIT
 import kotlin.reflect.KClass
 
 inline fun <reified T : CommonCompilerArguments> BuildResult.parseCompilerArguments(): T {
     return parseCompilerArguments(T::class)
 }
 
-inline fun <reified T : CommonCompilerArguments> BaseGradleIT.CompiledProject.parseCompilerArguments(): T {
-    return parseCompilerArguments(T::class)
-}
-
 fun <T : CommonCompilerArguments> BuildResult.parseCompilerArguments(type: KClass<T>): T {
-    return parseCompilerArgumentsFromBuildOutput(type, output)
-}
-
-fun <T : CommonCompilerArguments> BaseGradleIT.CompiledProject.parseCompilerArguments(type: KClass<T>): T {
     return parseCompilerArgumentsFromBuildOutput(type, output)
 }
 

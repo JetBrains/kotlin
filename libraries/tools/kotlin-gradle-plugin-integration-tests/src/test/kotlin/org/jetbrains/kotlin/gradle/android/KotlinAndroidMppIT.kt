@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
-import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.DisplayName
@@ -856,8 +856,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
         }
 
-        val checkedConsumerAGPVersions = TestVersions.AgpCompatibilityMatrix.entries
-            .filter { agp -> AGPVersion.fromString(agp.version) < AGPVersion.fromString(TestVersions.AGP.MAX_SUPPORTED) }
+        val checkedConsumerAGPVersions = AgpCompatibilityMatrix.entries
+            .filter { agp ->
+                AgpCompatibilityMatrix.fromVersion(agp.version) < AgpCompatibilityMatrix.fromVersion(TestVersions.AGP.MAX_SUPPORTED)
+            }
 
         checkedConsumerAGPVersions.forEach { consumerAgpVersion ->
             println(

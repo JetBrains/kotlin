@@ -259,7 +259,6 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
                 useJUnitPlatform {
                     includeTags(junitTag)
                     excludeTags(*(junitTags - junitTag).toTypedArray())
-                    includeEngines("junit-jupiter")
                 }
             }
         }
@@ -271,7 +270,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
     }
 }
 
-val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
+tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
 
@@ -279,7 +278,6 @@ val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
 
     useJUnitPlatform {
         excludeTags("DaemonsKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -290,7 +288,6 @@ val jvmTestsTask = tasks.register<Test>("kgpJvmTests") {
     useJUnitPlatform {
         includeTags("JvmKGP")
         excludeTags("JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -301,7 +298,6 @@ val swiftExportTestsTask = tasks.register<Test>("kgpSwiftExportTests") {
     useJUnitPlatform {
         includeTags("SwiftExportKGP")
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "NativeKGP")
-        includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -313,7 +309,6 @@ val jsTestsTask = tasks.register<Test>("kgpJsTests") {
     useJUnitPlatform {
         includeTags("JsKGP")
         excludeTags("JvmKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -324,7 +319,6 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
     useJUnitPlatform {
         includeTags("NativeKGP")
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -338,7 +332,6 @@ val daemonsTestsTask = tasks.register<Test>("kgpDaemonTests") {
     useJUnitPlatform {
         includeTags("DaemonsKGP")
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "OtherKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -349,7 +342,6 @@ val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
     useJUnitPlatform {
         includeTags("OtherKGP")
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "MppKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -361,7 +353,6 @@ val mppTestsTask = tasks.register<Test>("kgpMppTests") {
     useJUnitPlatform {
         includeTags("MppKGP")
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "AndroidKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
     applyKotlinNativeFromCurrentBranchIfNeeded()
 }
@@ -373,7 +364,6 @@ val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {
     useJUnitPlatform {
         includeTags("AndroidKGP")
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "SwiftExportKGP")
-        includeEngines("junit-jupiter")
     }
 }
 
@@ -439,22 +429,8 @@ tasks.withType<Test> {
 
     useAndroidSdk()
 
-    val shouldApplyJunitPlatform = name !in setOf(
-        allParallelTestsTask.name,
-        jvmTestsTask.name,
-        jsTestsTask.name,
-        swiftExportTestsTask.name,
-        nativeTestsTask.name,
-        daemonsTestsTask.name,
-        otherPluginsTestTask.name,
-        mppTestsTask.name,
-        androidTestsTask.name
-    )
-    if (shouldApplyJunitPlatform) {
-        maxHeapSize = "512m"
-        useJUnitPlatform {
-            includeEngines("junit-vintage")
-        }
+    useJUnitPlatform {
+        includeEngines("junit-jupiter")
     }
 
     testLogging {

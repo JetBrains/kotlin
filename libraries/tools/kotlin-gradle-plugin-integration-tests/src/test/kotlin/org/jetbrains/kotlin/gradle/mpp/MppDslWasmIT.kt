@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.transformBuildScriptWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 
@@ -20,7 +19,6 @@ class MppDslWasmIT : KGPBaseTest() {
             projectName = "new-mpp-wasm-js",
             gradleVersion = gradleVersion,
         ) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             buildGradleKts.replaceText("<JsEngine>", "d8")
             build("build") {
                 assertTasksExecuted(":compileKotlinJs")
@@ -51,8 +49,7 @@ class MppDslWasmIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
         ) {
             buildGradleKts.modify {
-                transformBuildScriptWithPluginsDsl(it)
-                    .replace("<JsEngine>", engine)
+                it.replace("<JsEngine>", engine)
             }
             buildAndFail(":wasmJs${name}Test") {
                 assertTasksExecuted(":compileKotlinWasmJs")

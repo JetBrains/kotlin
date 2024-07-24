@@ -699,7 +699,7 @@ open class Kapt3IT : Kapt3BaseIT() {
                 //language=Gradle
                 """
                 $it
-                $SYSTEM_LINE_SEPARATOR
+                ${System.lineSeparator()}
                 compileKotlin { kotlinOptions.freeCompilerArgs = ['$arg'] }
                 """.trimIndent()
             }

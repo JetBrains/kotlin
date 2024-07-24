@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.util
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.SYSTEM_LINE_SEPARATOR
 import java.io.File
 
 class ProcessRunResult(
@@ -31,23 +29,20 @@ fun runProcess(
     cmd: List<String>,
     workingDir: File,
     environmentVariables: Map<String, String> = mapOf(),
-    options: BaseGradleIT.BuildOptions? = null,
     redirectErrorStream: Boolean = true,
 ): ProcessRunResult {
     val builder = ProcessBuilder(cmd)
     builder.environment().putAll(environmentVariables)
     builder.directory(workingDir)
-    // redirectErrorStream merges stdout and stderr, so it can be get from process.inputStream
+    // redirectErrorStream merges stdout and stderr, so it can be gotten from process.inputStream
     builder.redirectErrorStream(redirectErrorStream)
 
     val process = builder.start()
-    // important to read inputStream, otherwise the process may hang on some systems
+    // important to read inputStream, otherwise the process may freeze on some systems
     val sb = StringBuilder()
     process.inputStream!!.bufferedReader().forEachLine {
-        if (options?.forceOutputToStdout ?: false) {
-            println(it)
-        }
-        sb.append(it).append(SYSTEM_LINE_SEPARATOR)
+        println(it)
+        sb.append(it).append(System.lineSeparator())
     }
     val stdErr = process.errorStream.bufferedReader().use { it.readText() }
     val exitCode = process.waitFor()

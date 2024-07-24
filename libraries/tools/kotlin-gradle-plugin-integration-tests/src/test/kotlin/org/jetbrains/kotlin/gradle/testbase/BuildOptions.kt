@@ -9,7 +9,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -28,7 +27,7 @@ data class BuildOptions(
     val warningMode: WarningMode = WarningMode.Fail,
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.AUTO,
     val projectIsolation: Boolean = false,
-    val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
+    val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
     val useGradleClasspathSnapshot: Boolean? = null,
@@ -302,6 +301,10 @@ data class BuildOptions(
         nativeOptions.incremental?.let {
             arguments.add("-Pkotlin.incremental.native=${it}")
         }
+    }
+
+    enum class ConfigurationCacheProblems {
+        FAIL, WARN
     }
 }
 

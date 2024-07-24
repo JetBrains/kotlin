@@ -22,8 +22,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasiTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
             build(":wasmWasiTest") {
                 assertTasksExecuted(":kotlinNodeJsSetup")
                 assertTasksExecuted(":compileKotlinWasmWasi")
@@ -62,8 +60,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     fun jsTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-test", gradleVersion) {
             buildGradleKts.modify {
-                transformBuildScriptWithPluginsDsl(it)
-                    .replace("<JsEngine>", "nodejs")
+                it.replace("<JsEngine>", "nodejs")
             }
 
             kotlinSourcesDir("wasmJsTest").resolve("Test.kt").writeText(
@@ -96,8 +93,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasiRun(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
             build(":wasmWasiNodeRun") {
                 assertOutputContains("Hello from Wasi")
             }
@@ -108,7 +103,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasiAndJsTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-js-test", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build("assemble") {
                 assertTasksExecuted(":app:compileKotlinWasmWasi")
@@ -124,7 +118,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasiTargetWithBinaryen(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             buildGradleKts.modify {
                 it.replace("wasmWasi {", "wasmWasi {\napplyBinaryen()\nbinaries.executable()")
             }
@@ -148,7 +141,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun jsTargetWithBinaryen(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             buildGradleKts.modify {
                 it.replace("<JsEngine>", "d8")
             }
@@ -195,7 +187,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun jsTargetWithBrowser(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             buildGradleKts.modify {
                 it.replace("<JsEngine>", "browser")
             }
@@ -216,7 +207,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun jsAndWasiTargetsWithDependencyOnWasiOnlyProject(gradleVersion: GradleVersion) {
         project("wasm-wasi-js-with-wasi-only-dependency", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build("build") {
                 assertTasksExecuted(":lib:compileKotlinWasmWasi")
@@ -230,7 +220,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasiLibrary(gradleVersion: GradleVersion) {
         project("wasm-wasi-library", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build(":build") {
                 assertTasksExecuted(":compileProductionLibraryKotlinWasmWasi")

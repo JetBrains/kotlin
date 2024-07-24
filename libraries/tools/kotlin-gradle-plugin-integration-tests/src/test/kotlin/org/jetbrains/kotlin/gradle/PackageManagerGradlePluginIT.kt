@@ -58,7 +58,6 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     @GradleTestVersions(minVersion = G_7_6)
     fun testPackageLockOsIndependent(gradleVersion: GradleVersion) {
         project("kotlin-js-package-lock-project", gradleVersion) {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build(":kotlinStorePackageLock") {
                 val packageLock = projectPath.resolve(KOTLIN_JS_STORE).resolve(PACKAGE_LOCK)
@@ -149,16 +148,6 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         upgradeTask: String,
         storeTask: String,
     ) {
-        buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-
-        subProject("lib").apply {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-        }
-
-        subProject("base").apply {
-            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-        }
-
         build(upgradeTask) {
             assertTasksExecuted(":base:publicPackageJson")
             assertTasksExecuted(":lib:lib-2:publicPackageJson")

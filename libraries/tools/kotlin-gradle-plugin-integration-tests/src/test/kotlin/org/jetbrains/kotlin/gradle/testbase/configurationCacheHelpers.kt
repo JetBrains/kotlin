@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
 
 /**
  * Tests whether configuration cache for the tasks specified by [buildArguments] works on simple scenario when project is built twice non-incrementally.
@@ -61,4 +61,7 @@ fun BuildResult.assertConfigurationCacheReused() {
 }
 
 val BuildOptions.withConfigurationCache: BuildOptions
-    get() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
+    get() = copy(
+        configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+        configurationCacheProblems = ConfigurationCacheProblems.FAIL
+    )

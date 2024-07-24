@@ -17,18 +17,6 @@ More fine-grained test tasks exist covering different parts of Gradle plugins:
 - `kgpOtherTests` - run all tests for support Gradle plugins, such as kapt, allopen, etc (parallel execution)
 - `kgpAllParallelTests` - run all tests for all platforms except daemons tests (parallel execution)
 
-Also, few deprecated tasks still exist until all tests will be migrated to the new setup:
-- `kgpSimpleTests` - runs all migrated Kotlin Gradle Plugin tests (parallel execution)
-- `test` - runs all tests with the oldest supported Gradle version (sequential execution)
-- `testAdvancedGradleVersion` - runs all tests with the latest supported Gradle version (sequential execution)
-
-The old tests that use the Gradle plugins DSL ([`PluginsDslIT`](../kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt)) 
-also require the Gradle plugin marker artifacts to be installed:
-```shell
-./gradlew :kotlin-gradle-plugin:plugin-marker:install :kotlin-noarg:plugin-marker:install :kotlin-allopen:plugin-marker:install
-./gradlew :kotlin-gradle-plugin-integration-tests:test
-```
-
 If you want to run only one test class, you need to append `--tests` flag with value of test class, which you want to run
 ```shell
 ./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllParallelTests --tests <class-name-with-package>
@@ -190,23 +178,3 @@ pluginManagement {
 }
 ```
 </details>
-
-##### Deprecated tests setup
-
-When you create a new test, figure out which Gradle versions it is supposed to run on. Then, when you instantiate a test project, specify one of:
-
-* `project("someProjectName", GradleVersionRequired.None)` or just `project("someProjectName")` – the test can run on the whole range of the supported Gradle versions;
-* `project("someProjectName", GradleVersionRequired.AtLeast("X.Y"))` – the test is supposed to run on Gradle version `X.Y` and newer (e.g. it tests integration with a Gradle feature that was released in version `X.Y`);
-* `project("someProjectName", GradleVersionRequired.Exact("X.Y"))` – the test is supposed to run only with Gradle version `X.Y` (e.g. it tests a workaround for that version or records some special behavior that is not reproducible with newer versions).
-
-:warning: When your tests target multiple Gradle versions, make sure they pass when run with both tasks `test` and `testAdvanceGradleVersion` (see above). In the IDE, you can modify a test run configuration to use a Gradle task other than `test`.
-
-You can check a Gradle version that the test runs with using [`Project.testGradleVersionAtLeast("X.Y")`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L454) and [`Project.testGradleVersionBelow("X.Y")`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L457).
-
-Since Gradle output layouts differ from version to version, you can access classes and resources output directories using the functions that adapt to the Gradle version that is used for each test:
-
-* [`CompiledProject.kotlinClassesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L459) with optional arguments for subproject and source set, and its Java counterpart [`CompiledProject.javaClassesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L462) (note that Gradle versions below 4.0 use the same directory for both)
-
-* [`Project.resourcesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L444) (with optional arguments for subproject and source set) for the resources directory;
-
-* [`Project.classesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L449), which is a general way to get the output directory for a specific subproject, source set, and language.

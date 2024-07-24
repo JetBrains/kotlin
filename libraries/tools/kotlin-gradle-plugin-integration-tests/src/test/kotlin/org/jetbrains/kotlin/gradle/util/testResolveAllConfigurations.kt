@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.testkit.runner.BuildResult
-import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import java.nio.file.Files
 import kotlin.test.assertTrue

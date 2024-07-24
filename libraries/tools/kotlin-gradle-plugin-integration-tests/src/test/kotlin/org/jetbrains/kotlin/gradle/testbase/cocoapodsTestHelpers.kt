@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
@@ -121,7 +120,7 @@ fun Path.removePod(podName: String) {
     require(begin != -1) {
         """
         Pod doesn't exist in file. File content is:
-        ${text}
+        $text
         """.trimIndent()
     }
     var index = begin + """pod("$podName")""".length - 1
@@ -254,7 +253,7 @@ private fun isCocoapodsInstalled(): Boolean {
             File("."),
         )
         result.isSuccessful
-    } catch (e: IOException) {
+    } catch (_: IOException) {
         false
     }
 }
@@ -262,7 +261,7 @@ private fun isCocoapodsInstalled(): Boolean {
 private fun gem(vararg args: String): String {
     val command = listOf("gem", *args)
     println("Run command: ${command.joinToString(separator = " ")}")
-    val result = runProcess(command, File("."), options = BaseGradleIT.BuildOptions(forceOutputToStdout = true))
+    val result = runProcess(command, File("."))
 
     assertProcessRunResult(result) {
         assertTrue(
