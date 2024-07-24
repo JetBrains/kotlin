@@ -32,6 +32,29 @@ var K2JVMCompilerArguments.classpathAsList: List<File>
         classpath = value.joinToString(separator = File.pathSeparator, transform = { it.absolutePath })
     }
 
+val K2JVMCompilerArguments.isK1ForcedByKapt: Boolean
+    // coordinated with org.jetbrains.kotlin.cli.common.ArgumentsKt.switchToFallbackModeIfNecessary
+    get() {
+        val isK2 = useK2 || (languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
+        val isKaptUsed = pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
+        return isK2 && isKaptUsed && !useKapt4
+    }
+
+fun K2JVMCompilerArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault: Boolean): Boolean {
+    // TODO: This should be removed after implementing of fir-based java tracker (KT-57147).
+    //  See org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt.makeJvmIncrementally
+    val languageVersion = if (isK1ForcedByKapt) {
+        LanguageVersion.KOTLIN_1_9
+    } else if (useK2) {
+        LanguageVersion.KOTLIN_2_0
+        // it's 2.0.20 only logic, because useK2 isn't removed there yet.
+        // fortunately, we don't need to account for tryNext on master, because it doesn't affect the "k2 usage"
+    } else {
+        LanguageVersion.fromVersionString(languageVersion) ?: LanguageVersion.LATEST_STABLE
+    }
+    return !languageVersion.usesK2 && usePreciseJavaTrackingByDefault
+}
+
 @Suppress("unused") // used in Maven compile runner
 fun makeJvmIncrementally(
     cachesDir: File,
@@ -51,9 +74,10 @@ fun makeJvmIncrementally(
 
     withIncrementalCompilation(args) {
         val languageVersion = LanguageVersion.fromVersionString(args.languageVersion) ?: LanguageVersion.LATEST_STABLE
-        val useK2 = languageVersion.usesK2
+        val useK2 = args.useK2 || languageVersion.usesK2
+
         val compiler =
-            if (useK2 && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */)
+            if (useK2 && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
                 IncrementalFirJvmCompilerRunner(
                     cachesDir,
                     buildReporter,
@@ -63,18 +87,20 @@ fun makeJvmIncrementally(
                     kotlinExtensions,
                     ClasspathChanges.ClasspathSnapshotDisabled
                 )
-            else
+            } else {
+                val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
                 IncrementalJvmCompilerRunner(
                     cachesDir,
                     buildReporter,
                     // Use precise setting in case of non-Gradle build
-                    usePreciseJavaTracking = !useK2, // TODO by @Ilya.Chernikov: add fir-based java classes tracker when available and set this to true
+                    usePreciseJavaTracking = verifiedPreciseJavaTracking,
                     buildHistoryFile = buildHistoryFile,
                     outputDirs = null,
                     modulesApiHistory = EmptyModulesApiHistory,
                     kotlinSourceFilesExtensions = kotlinExtensions,
                     classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled
                 )
+            }
         //TODO by @Ilya.Chernikov set properly
         compiler.compile(sourceFiles, args, messageCollector, changedFiles = null)
     }

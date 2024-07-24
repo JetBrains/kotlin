@@ -78,7 +78,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                     )
 
             val compiler =
-                if (k2Mode && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */)
+                if (k2Mode && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
                     IncrementalFirJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,
@@ -89,12 +89,13 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         ClasspathChanges.ClasspathSnapshotDisabled,
                         testLookupTracker
                     )
-                else
+                } else {
+                    val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
                     IncrementalJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,
                         // Use precise setting in case of non-Gradle build
-                        usePreciseJavaTracking = !k2Mode, // TODO by @Ilya.Chernikov: add fir-based java classes tracker when available and set this to true
+                        usePreciseJavaTracking = verifiedPreciseJavaTracking,
                         buildHistoryFile = buildHistoryFile,
                         outputDirs = null,
                         modulesApiHistory = EmptyModulesApiHistory,
@@ -102,6 +103,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         classpathChanges = ClasspathChanges.ClasspathSnapshotDisabled,
                         testLookupTracker = testLookupTracker
                     )
+                }
             //TODO by @Ilya.Chernikov: set properly
             compiler.compile(sourceFiles, args, messageCollector, changedFiles = null)
         }

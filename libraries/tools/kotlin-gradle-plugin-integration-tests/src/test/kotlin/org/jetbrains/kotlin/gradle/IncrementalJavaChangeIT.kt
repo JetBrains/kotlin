@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
@@ -319,6 +321,7 @@ class IncrementalK2JavaChangeOldICIT : IncrementalJavaChangeOldICIT() {
 class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(
     usePreciseJavaTracking = true
 ) {
+    @Disabled("KT-57147")
     @DisplayName("Lib: tracked method signature ABI change")
     @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
@@ -337,6 +340,7 @@ class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(
         }
     }
 
+    @Disabled("KT-57147")
     @DisplayName("Lib: tracked method body non-ABI change")
     @GradleTest
     override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
@@ -460,4 +464,24 @@ abstract class IncrementalCompilationJavaChangesBase(
 
     abstract fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion)
     abstract fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion)
+}
+
+@JvmGradlePluginTests
+class BasicIncrementalJavaInteropIT : KGPBaseTest() {
+
+    @DisplayName("Basic scenario: Kotlin constant tracks a Java constant")
+    @GradleTest
+    fun testKotlinConstantTrackingJavaConstant(gradleVersion: GradleVersion) {
+        project("kt-69042-basic-java-interop", gradleVersion) {
+            build("assemble")
+
+            val javaSource = projectPath.resolve("src/main/java/JavaConstants.java")
+            javaSource.replaceWithVersion("newValue")
+
+            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertTasksExecuted(":compileJava", ":compileKotlin")
+                assertIncrementalCompilation(listOf(kotlinSourcesDir().resolve("usage.kt")).relativizeTo(projectPath))
+            }
+        }
+    }
 }
