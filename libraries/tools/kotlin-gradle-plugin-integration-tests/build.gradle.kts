@@ -120,9 +120,6 @@ val konanDataDir: String = System.getProperty("konanDataDirForIntegrationTests")
         .resolve(".kotlin")
         .resolve("konan-for-gradle-tests").absolutePath
 
-// Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
-val shortenTempRootName = project.providers.systemProperty("os.name").get().contains("Windows")
-
 val splitGradleIntegrationTestTasks =
     project.providers.gradleProperty("gradle.integration.tests.split.tasks").orNull?.toBoolean()
         ?: project.kotlinBuildProperties.isTeamcityBuild
@@ -235,7 +232,6 @@ fun Test.advanceGradleVersion() {
 // additional configuration in tasks.withType<Test> below
 projectTest(
     "test",
-    shortenTempRootName = shortenTempRootName,
     jUnitMode = JUnitMode.JUnit5
 ) {
     includeMppAndAndroid(false)
@@ -244,7 +240,6 @@ projectTest(
 
 projectTest(
     "testAdvanceGradleVersion",
-    shortenTempRootName = shortenTempRootName,
     jUnitMode = JUnitMode.JUnit5
 ) {
     advanceGradleVersion()
@@ -256,7 +251,6 @@ if (splitGradleIntegrationTestTasks) {
 
     projectTest(
         "testMppAndAndroid",
-        shortenTempRootName = shortenTempRootName,
         jUnitMode = JUnitMode.JUnit5
     ) {
         includeMppAndAndroid(true)
@@ -264,7 +258,6 @@ if (splitGradleIntegrationTestTasks) {
 
     projectTest(
         "testAdvanceGradleVersionMppAndAndroid",
-        shortenTempRootName = shortenTempRootName,
         jUnitMode = JUnitMode.JUnit5
     ) {
         advanceGradleVersion()

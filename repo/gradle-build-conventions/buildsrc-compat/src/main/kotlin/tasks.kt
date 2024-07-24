@@ -138,7 +138,6 @@ enum class JUnitMode {
 fun Project.projectTest(
     taskName: String = "test",
     parallel: Boolean = false,
-    shortenTempRootName: Boolean = false,
     jUnitMode: JUnitMode = JUnitMode.JUnit4,
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
@@ -277,7 +276,7 @@ fun Project.projectTest(
                 (teamcity?.get("teamcity.build.tempDir") as? String)
                     ?: System.getProperty("java.io.tmpdir")
             systemTempRoot.let {
-                val prefix = (projectName + "Project_" + taskName + "_").takeUnless { shortenTempRootName }
+                val prefix = "${projectName}Project_${taskName}_"
                 subProjectTempRoot = Files.createTempDirectory(File(systemTempRoot).toPath(), prefix)
                 systemProperty("java.io.tmpdir", subProjectTempRoot.toString())
             }
