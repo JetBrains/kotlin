@@ -23,9 +23,8 @@ import java.io.File
 
 abstract class WasmAbstractInvalidationTest(
     targetBackend: TargetBackend,
-    granularity: JsGenerationGranularity,
     workingDirPath: String,
-) : AbstractInvalidationTest(targetBackend, granularity, workingDirPath) {
+) : AbstractInvalidationTest(targetBackend, workingDirPath) {
 
     override val targetName: String = "wasm"
 

@@ -30,9 +30,9 @@ import java.io.File
 
 abstract class JsAbstractInvalidationTest(
     targetBackend: TargetBackend,
-    granularity: JsGenerationGranularity,
+    private val granularity: JsGenerationGranularity,
     workingDirPath: String
-) : AbstractInvalidationTest(targetBackend, granularity, workingDirPath) {
+) : AbstractInvalidationTest(targetBackend, workingDirPath) {
 
     companion object {
         protected const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib"

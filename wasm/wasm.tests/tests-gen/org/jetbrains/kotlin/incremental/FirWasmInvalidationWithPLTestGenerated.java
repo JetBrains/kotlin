@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/incremental/invalidationWithPL")
 @TestDataPath("$PROJECT_ROOT")
-public class FirWasmInvalidationPerFileWithPLTestGenerated extends AbstractFirWasmInvalidationPerFileWithPLTest {
+public class FirWasmInvalidationWithPLTestGenerated extends AbstractFirWasmInvalidationWithPLTest {
   @Test
   public void testAllFilesPresentInInvalidationWithPL() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidationWithPL"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.WASM, false);

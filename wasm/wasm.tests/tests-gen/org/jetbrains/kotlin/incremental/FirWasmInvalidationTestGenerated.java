@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/incremental/invalidation")
 @TestDataPath("$PROJECT_ROOT")
-public class FirWasmInvalidationPerFileTestGenerated extends AbstractFirWasmInvalidationPerFileTest {
+public class FirWasmInvalidationTestGenerated extends AbstractFirWasmInvalidationTest {
   @Test
   @TestMetadata("addUpdateRemoveDependentFile")
   public void testAddUpdateRemoveDependentFile() {
@@ -33,7 +33,7 @@ public class FirWasmInvalidationPerFileTestGenerated extends AbstractFirWasmInva
 
   @Test
   public void testAllFilesPresentInInvalidation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("abstractClassWithJsExport|classWithJsExport|inlineFunctionAnnotations|interfaceWithJsExport|jsExportWithMultipleFiles|typeScriptExportsPerFile|typeScriptExportsPerModule|fileNameClash|jsCode|jsCodeWithConstString|jsModuleAnnotation|jsModuleAnnotationOnObjectWithUsage|jsName|fileNameCaseClash|jsCodeWithConstStringFromOtherModule|moveExternalDeclarationsBetweenFiles|inlineFunctionCircleUsage|jsExportReexport"), TargetBackend.WASM, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.WASM, false);
   }
 
   @Test

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
@@ -28,16 +27,15 @@ import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
 
-abstract class AbstractFirWasmInvalidationPerFileTest :
-    FirWasmAbstractInvalidationTest(TargetBackend.WASM, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFir/perFile")
+abstract class AbstractFirWasmInvalidationTest :
+    FirWasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFir")
 
-abstract class AbstractFirWasmInvalidationPerFileWithPLTest :
-    FirWasmAbstractInvalidationWithPLTest(JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirWithPL/perFile")
+abstract class AbstractFirWasmInvalidationWithPLTest :
+    FirWasmAbstractInvalidationWithPLTest("incrementalOut/invalidationFirWithPL")
 
-abstract class FirWasmAbstractInvalidationWithPLTest(granularity: JsGenerationGranularity, workingDirPath: String) :
+abstract class FirWasmAbstractInvalidationWithPLTest(workingDirPath: String) :
     FirWasmAbstractInvalidationTest(
         TargetBackend.WASM,
-        granularity,
         workingDirPath
     ) {
     override fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
@@ -49,9 +47,8 @@ abstract class FirWasmAbstractInvalidationWithPLTest(granularity: JsGenerationGr
 
 abstract class FirWasmAbstractInvalidationTest(
     targetBackend: TargetBackend,
-    granularity: JsGenerationGranularity,
     workingDirPath: String
-) : WasmAbstractInvalidationTest(targetBackend, granularity, workingDirPath) {
+) : WasmAbstractInvalidationTest(targetBackend, workingDirPath) {
     private fun getFirInfoFile(defaultInfoFile: File): File {
         val firInfoFileName = "${defaultInfoFile.nameWithoutExtension}.fir.${defaultInfoFile.extension}"
         val firInfoFile = defaultInfoFile.parentFile.resolve(firInfoFileName)
