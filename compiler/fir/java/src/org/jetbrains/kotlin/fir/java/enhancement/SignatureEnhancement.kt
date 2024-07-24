@@ -91,7 +91,10 @@ class FirSignatureEnhancement(
     }
 
     private val privateKtSuperClass: ConeKotlinType? by lazy {
-        owner.symbol.getSuperTypes(session, substituteSuperTypes = false).firstOrNull { it.toSymbol(session)?.fir?.visibility is Visibilities.Private }
+        owner.symbol.getSuperTypes(session, substituteSuperTypes = false).firstOrNull {
+            val fir = it.toSymbol(session)?.fir
+            fir != null && fir.origin !is FirDeclarationOrigin.Java && fir.visibility is Visibilities.Private
+        }
     }
 
     private val enhancementsCache = session.enhancedSymbolStorage.cacheByOwner.getValue(owner.symbol, null)

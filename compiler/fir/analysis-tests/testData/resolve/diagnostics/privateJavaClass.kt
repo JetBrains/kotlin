@@ -10,5 +10,5 @@ public class Some {
 // FILE: test.kt
 
 fun main() {
-    val d = <!JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS!>Some.Derived()<!>
+    val d = Some.Derived()
 }
