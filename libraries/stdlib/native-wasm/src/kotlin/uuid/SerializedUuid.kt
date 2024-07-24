@@ -6,12 +6,5 @@
 package kotlin.uuid
 
 @ExperimentalUuidApi
-internal actual fun secureRandomUuid(): Uuid {
-    val randomBytes = ByteArray(16)
-    js("crypto").getRandomValues(randomBytes)
-    return uuidFromRandomBytes(randomBytes)
-}
-
-@ExperimentalUuidApi
 internal actual fun serializedUuid(uuid: Uuid): Any =
     throw UnsupportedOperationException("Serialization is supported only in Kotlin/JVM")

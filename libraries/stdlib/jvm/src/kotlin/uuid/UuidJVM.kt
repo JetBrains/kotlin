@@ -8,6 +8,7 @@
 
 package kotlin.uuid
 
+import java.io.*
 import java.nio.*
 import java.security.SecureRandom
 
@@ -21,6 +22,36 @@ internal actual fun secureRandomUuid(): Uuid {
     SecureRandomHolder.instance.nextBytes(randomBytes)
     return uuidFromRandomBytes(randomBytes)
 }
+
+@ExperimentalUuidApi
+private class UuidSerialized(
+    var mostSignificantBits: Long,
+    var leastSignificantBits: Long
+) : Externalizable {
+
+    constructor() : this(0L, 0L) // for deserialization
+
+    override fun writeExternal(output: ObjectOutput) {
+        output.writeLong(mostSignificantBits)
+        output.writeLong(leastSignificantBits)
+    }
+
+    override fun readExternal(input: ObjectInput) {
+        mostSignificantBits = input.readLong()
+        leastSignificantBits = input.readLong()
+    }
+
+    private fun readResolve(): Any =
+        Uuid.fromLongs(mostSignificantBits, leastSignificantBits)
+
+    companion object {
+        private const val serialVersionUID: Long = 0L
+    }
+}
+
+@ExperimentalUuidApi
+internal actual fun serializedUuid(uuid: Uuid): Any =
+    UuidSerialized(uuid.mostSignificantBits, uuid.leastSignificantBits)
 
 /**
  * Converts this [java.util.UUID] value to the corresponding [kotlin.uuid.Uuid] value.

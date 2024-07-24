@@ -200,6 +200,8 @@ public class Uuid internal constructor(
         return (x shr 32).toInt() xor x.toInt()
     }
 
+    private fun writeReplace(): Any = serializedUuid(this)
+
     public companion object {
         /**
          * The uuid with all bits set to zero.
@@ -397,6 +399,9 @@ public class Uuid internal constructor(
         }
     }
 }
+
+@ExperimentalUuidApi
+internal expect fun serializedUuid(uuid: Uuid): Any
 
 @ExperimentalUuidApi
 internal expect fun secureRandomUuid(): Uuid
