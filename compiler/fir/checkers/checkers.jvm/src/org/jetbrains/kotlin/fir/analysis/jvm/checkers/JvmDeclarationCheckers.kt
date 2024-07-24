@@ -23,7 +23,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
 
     override val constructorCheckers: Set<FirConstructorChecker>
         get() = setOf(
-            FirJavaClassInheritsKtPrivateClassDeclChecker,
+            FirJavaClassInheritsKtPrivateClassDeclarationChecker,
         )
 
     override val classCheckers: Set<FirClassChecker>

@@ -94,7 +94,7 @@ object FirJvmErrors {
 
     // Super
     val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER: KtDiagnosticFactory0 = KtDiagnosticFactory0("INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class)
-    val JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
+    val JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS: KtDiagnosticFactory2<ClassId, ConeKotlinType> = KtDiagnosticFactory2("JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
     // JVM Records
     val LOCAL_JVM_RECORD: KtDiagnosticFactory0 = KtDiagnosticFactory0("LOCAL_JVM_RECORD", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

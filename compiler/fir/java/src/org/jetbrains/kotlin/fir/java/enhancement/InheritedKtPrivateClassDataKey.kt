@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.fir.java.enhancement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 private object InheritedKtPrivateClassDataKey : FirDeclarationDataKey()
 
 var FirCallableDeclaration.inheritedKtPrivateCls: ConeKotlinType? by FirDeclarationDataRegistry.data(InheritedKtPrivateClassDataKey)
+
+val FirCallableSymbol<*>.inheritedKtPrivateCls: ConeKotlinType?
+    get() = fir.inheritedKtPrivateCls

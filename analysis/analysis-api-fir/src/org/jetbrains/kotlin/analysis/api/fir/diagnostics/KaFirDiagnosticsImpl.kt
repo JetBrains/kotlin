@@ -576,8 +576,8 @@ internal class InterfaceCantCallDefaultMethodViaSuperImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InterfaceCantCallDefaultMethodViaSuper
 
 internal class JavaClassInheritsKtPrivateClassImpl(
-    override val javaClass: KaType,
-    override val privateKotlinClass: KaType,
+    override val javaClassId: ClassId,
+    override val privateKotlinType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JavaClassInheritsKtPrivateClass

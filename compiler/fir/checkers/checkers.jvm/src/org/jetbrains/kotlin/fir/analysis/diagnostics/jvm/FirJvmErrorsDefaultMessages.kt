@@ -378,7 +378,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS,
             "Java class ''{0}'' declaring this callable should not inherit directly or indirectly private Kotlin class ''{1}''.",
-            RENDER_TYPE,
+            TO_STRING,
             RENDER_TYPE
         )
 

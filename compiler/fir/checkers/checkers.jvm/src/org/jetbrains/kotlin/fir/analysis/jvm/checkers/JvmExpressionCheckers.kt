@@ -23,7 +23,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirQualifiedAccessJavaNullabilityWarningChecker,
             FirJvmModuleAccessibilityQualifiedAccessChecker,
             FirJvmInlineTargetQualifiedAccessChecker,
-            FirJavaClassInheritsKtPrivateClassExprChecker,
+            FirJavaClassInheritsKtPrivateClassExpressionChecker,
         )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
