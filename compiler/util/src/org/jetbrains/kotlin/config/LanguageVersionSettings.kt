@@ -345,6 +345,7 @@ enum class LanguageFeature(
     ForbidUsingExpressionTypesWithInaccessibleContent(KOTLIN_2_2, kind = BUG_FIX), // KT-66691
     ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(KOTLIN_2_2, kind = BUG_FIX), // KT-66691, KT-66742
     ReportExposedTypeForMoreCasesOfTypeParameterBounds(KOTLIN_2_2, kind = BUG_FIX), // KT-69653
+    ForbidReifiedTypeParametersOnTypeAliases(KOTLIN_2_2, kind = BUG_FIX), // KT-70163
 
     // End of 2.* language features --------------------------------------------------
 

@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 
 object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
@@ -27,6 +24,10 @@ object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.C
 
         if (forbidReified) {
             reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE, context)
+        }
+
+        if (containingDeclaration is FirTypeAlias) {
+            reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS, context)
         }
     }
 

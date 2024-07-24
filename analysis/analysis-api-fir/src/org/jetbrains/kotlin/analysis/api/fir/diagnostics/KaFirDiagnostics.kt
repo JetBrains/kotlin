@@ -1788,6 +1788,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ReifiedTypeParameterNoInline::class
     }
 
+    interface ReifiedTypeParameterOnAliasError : KaFirDiagnostic<KtTypeParameter> {
+        override val diagnosticClass get() = ReifiedTypeParameterOnAliasError::class
+    }
+
+    interface ReifiedTypeParameterOnAliasWarning : KaFirDiagnostic<KtTypeParameter> {
+        override val diagnosticClass get() = ReifiedTypeParameterOnAliasWarning::class
+    }
+
     interface TypeParametersNotAllowed : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = TypeParametersNotAllowed::class
     }

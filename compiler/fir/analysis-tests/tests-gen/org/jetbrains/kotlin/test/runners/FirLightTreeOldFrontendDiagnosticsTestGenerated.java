@@ -15456,6 +15456,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         public void testReifiedClass() {
           runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/ReifiedClass.kt");
         }
+
+        @Test
+        @TestMetadata("ReifiedTypeAliasDisabled.kt")
+        public void testReifiedTypeAliasDisabled() {
+          runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/ReifiedTypeAliasDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("ReifiedTypeAliasEnabled.kt")
+        public void testReifiedTypeAliasEnabled() {
+          runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/ReifiedTypeAliasEnabled.kt");
+        }
       }
 
       @Nested

@@ -1,0 +1,1 @@
+/ReifiedTypeAliasDisabled.fir.kt:(137,144): warning: Applying reified modifier to a type parameter of a type alias makes no sense. This will become an error in Kotlin 2.2.

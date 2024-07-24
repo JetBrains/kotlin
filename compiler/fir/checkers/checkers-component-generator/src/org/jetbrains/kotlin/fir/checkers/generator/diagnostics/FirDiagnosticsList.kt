@@ -822,6 +822,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val REIFIED_TYPE_PARAMETER_NO_INLINE by error<KtTypeParameter>(PositioningStrategy.REIFIED_MODIFIER)
 
+        val REIFIED_TYPE_PARAMETER_ON_ALIAS by deprecationError<KtTypeParameter>(
+            LanguageFeature.ForbidReifiedTypeParametersOnTypeAliases, PositioningStrategy.REIFIED_MODIFIER
+        )
+
         val TYPE_PARAMETERS_NOT_ALLOWED by error<KtDeclaration>(PositioningStrategy.TYPE_PARAMETERS_LIST)
 
         val TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER by error<KtTypeParameter>()

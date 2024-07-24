@@ -586,6 +586,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_FORB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_ANNOTATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_BOUND
@@ -1582,6 +1583,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds on type alias parameters are prohibited.")
 
         map.put(REIFIED_TYPE_PARAMETER_NO_INLINE, "Only type parameters of inline functions can be reified.")
+
+        map.put(REIFIED_TYPE_PARAMETER_ON_ALIAS, "Applying reified modifier to a type parameter of a type alias makes no sense.")
 
         map.put(TYPE_PARAMETERS_NOT_ALLOWED, "Type parameters are prohibited here.")
 

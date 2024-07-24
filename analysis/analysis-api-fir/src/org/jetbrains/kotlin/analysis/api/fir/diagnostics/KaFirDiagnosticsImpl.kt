@@ -2150,6 +2150,16 @@ internal class ReifiedTypeParameterNoInlineImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtTypeParameter>(firDiagnostic, token), KaFirDiagnostic.ReifiedTypeParameterNoInline
 
+internal class ReifiedTypeParameterOnAliasErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtTypeParameter>(firDiagnostic, token), KaFirDiagnostic.ReifiedTypeParameterOnAliasError
+
+internal class ReifiedTypeParameterOnAliasWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtTypeParameter>(firDiagnostic, token), KaFirDiagnostic.ReifiedTypeParameterOnAliasWarning
+
 internal class TypeParametersNotAllowedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

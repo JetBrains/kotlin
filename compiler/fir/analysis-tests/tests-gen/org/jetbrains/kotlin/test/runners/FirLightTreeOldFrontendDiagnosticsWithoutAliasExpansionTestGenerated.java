@@ -598,6 +598,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
         public void testGenericArrayAsReifiedArgument() {
           runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/GenericArrayAsReifiedArgument.kt");
         }
+
+        @Test
+        @TestMetadata("ReifiedTypeAliasDisabled.kt")
+        public void testReifiedTypeAliasDisabled() {
+          runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/ReifiedTypeAliasDisabled.kt");
+        }
+
+        @Test
+        @TestMetadata("ReifiedTypeAliasEnabled.kt")
+        public void testReifiedTypeAliasEnabled() {
+          runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/ReifiedTypeAliasEnabled.kt");
+        }
       }
     }
 

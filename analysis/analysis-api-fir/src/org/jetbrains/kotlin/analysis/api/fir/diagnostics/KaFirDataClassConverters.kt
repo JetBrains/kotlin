@@ -2520,6 +2520,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS.errorFactory) { firDiagnostic ->
+        ReifiedTypeParameterOnAliasErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS.warningFactory) { firDiagnostic ->
+        ReifiedTypeParameterOnAliasWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TYPE_PARAMETERS_NOT_ALLOWED) { firDiagnostic ->
         TypeParametersNotAllowedImpl(
             firDiagnostic as KtPsiDiagnostic,

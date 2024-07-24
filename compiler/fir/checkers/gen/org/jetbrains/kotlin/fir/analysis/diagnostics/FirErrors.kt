@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.ErrorAboutDataClassCopyVisibilityChange
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingTypesInPrimaryConstructorProperties
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidReifiedTypeParametersOnTypeAliases
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate
 import org.jetbrains.kotlin.config.LanguageFeature.ModifierNonBuiltinSuspendFunError
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitAllMultipleDefaultsInheritedFromSupertypes
@@ -492,6 +493,7 @@ object FirErrors {
     val NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER: KtDiagnosticFactory2<Name, FirBasedSymbol<*>> = KtDiagnosticFactory2("NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtSimpleNameExpression::class)
     val BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED: KtDiagnosticFactory0 = KtDiagnosticFactory0("BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val REIFIED_TYPE_PARAMETER_NO_INLINE: KtDiagnosticFactory0 = KtDiagnosticFactory0("REIFIED_TYPE_PARAMETER_NO_INLINE", ERROR, SourceElementPositioningStrategies.REIFIED_MODIFIER, KtTypeParameter::class)
+    val REIFIED_TYPE_PARAMETER_ON_ALIAS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("REIFIED_TYPE_PARAMETER_ON_ALIAS", ForbidReifiedTypeParametersOnTypeAliases, SourceElementPositioningStrategies.REIFIED_MODIFIER, KtTypeParameter::class)
     val TYPE_PARAMETERS_NOT_ALLOWED: KtDiagnosticFactory0 = KtDiagnosticFactory0("TYPE_PARAMETERS_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST, KtDeclaration::class)
     val TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER: KtDiagnosticFactory0 = KtDiagnosticFactory0("TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtTypeParameter::class)
     val RETURN_TYPE_MISMATCH: KtDiagnosticFactory4<ConeKotlinType, ConeKotlinType, FirFunction, Boolean> = KtDiagnosticFactory4("RETURN_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.WHOLE_ELEMENT, KtExpression::class)
