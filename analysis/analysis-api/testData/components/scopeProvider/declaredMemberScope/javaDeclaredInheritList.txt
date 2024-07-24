@@ -81,7 +81,7 @@ KaNamedFunctionSymbol:
   isExternal: false
   isInfix: false
   isInline: false
-  isOperator: true
+  isOperator: false
   isOverride: false
   isStatic: false
   isSuspend: false

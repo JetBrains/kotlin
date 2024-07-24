@@ -184,7 +184,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
-    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override,operator]
+    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] E of java.util.LinkedList declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
@@ -544,7 +544,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun remove (): kotlin.Int declared in <root>.C'
           CONST Int type=kotlin.Int value=1
-    FUN name:removeAt visibility:public modality:OPEN <> ($this:<root>.C, index:kotlin.Int) returnType:kotlin.Int [operator]
+    FUN name:removeAt visibility:public modality:OPEN <> ($this:<root>.C, index:kotlin.Int) returnType:kotlin.Int
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] E of java.util.LinkedList declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:<root>.C
@@ -747,7 +747,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
-    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override,operator]
+    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] E of java.util.LinkedList declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>

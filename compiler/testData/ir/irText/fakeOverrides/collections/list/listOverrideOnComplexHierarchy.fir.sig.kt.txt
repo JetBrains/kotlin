@@ -252,7 +252,7 @@ abstract class A : LinkedList<Int>, Java2, MutableCollection<Int> {
   //   Mangled name: A#removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
   //   Public signature: /A.removeAt|6480490686215931144[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int
 
   // CHECK JVM_IR:
   //   Mangled name: A#removeFirst(){}kotlin.Int{EnhancedNullability}
@@ -605,7 +605,7 @@ class B : A {
   //   Mangled name: B#removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
   //   Public signature: /B.removeAt|6480490686215931144[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int
 
   // CHECK JVM_IR:
   //   Mangled name: B#removeFirst(){}kotlin.Int{EnhancedNullability}
@@ -976,7 +976,7 @@ abstract class C : LinkedList<Int>, KotlinInterface, MutableCollection<Int> {
   //   Mangled name: C#removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
   //   Public signature: /C.removeAt|6480490686215931144[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int
 
   // CHECK JVM_IR:
   //   Mangled name: C#removeFirst(){}kotlin.Int{EnhancedNullability}
@@ -1329,7 +1329,7 @@ class D : C {
   //   Mangled name: D#removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
   //   Public signature: /D.removeAt|6480490686215931144[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int
 
   // CHECK JVM_IR:
   //   Mangled name: D#removeFirst(){}kotlin.Int{EnhancedNullability}
@@ -2481,7 +2481,7 @@ abstract class J : Java4, Java3 {
   //   Mangled name: J#removeAt(kotlin.Int){}kotlin.Int?{EnhancedNullability}
   //   Public signature: /J.removeAt|-3455962882000909435[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int?{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int?
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int?
 
   // CHECK:
   //   Mangled name: J#removeIf(java.util.function.Predicate<in|kotlin.Int?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean

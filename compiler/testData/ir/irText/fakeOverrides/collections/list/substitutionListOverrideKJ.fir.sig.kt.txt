@@ -246,7 +246,7 @@ class B<T : Any?> : LinkedList<T> {
   //   Mangled name: B#removeAt(kotlin.Int){}1:0{EnhancedNullability}
   //   Public signature: /B.removeAt|-4392435421743503823[0]
   //   Public signature debug description: removeAt(kotlin.Int){}1:0{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability T
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability T
 
   // CHECK JVM_IR:
   //   Mangled name: B#removeFirst(){}1:0{EnhancedNullability}
@@ -701,7 +701,7 @@ class C<T : Any?> : LinkedList<T> {
   //   Mangled name: C#removeAt(kotlin.Int){}1:0
   //   Public signature: /C.removeAt|-5838685616663854072[0]
   //   Public signature debug description: removeAt(kotlin.Int){}1:0
-  override operator fun removeAt(index: Int): T
+  override fun removeAt(index: Int): T
 
   // CHECK:
   //   Mangled name: C{}size
@@ -958,7 +958,7 @@ class D<T : Any?> : LinkedList<T> {
   //   Mangled name: D#removeAt(kotlin.Int){}1:0{EnhancedNullability}
   //   Public signature: /D.removeAt|-4392435421743503823[0]
   //   Public signature debug description: removeAt(kotlin.Int){}1:0{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability T
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability T
 
   // CHECK JVM_IR:
   //   Mangled name: D#removeFirst(){}1:0{EnhancedNullability}

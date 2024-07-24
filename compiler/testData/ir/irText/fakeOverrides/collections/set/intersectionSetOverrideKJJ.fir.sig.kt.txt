@@ -538,7 +538,7 @@ abstract class C : ArrayList<Any>, SortedSet<Any> {
   //   Mangled name: C#removeAt(kotlin.Int){}kotlin.Any{EnhancedNullability}
   //   Public signature: /C.removeAt|-4388969880337749708[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Any{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Any
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Any
 
   // CHECK JVM_IR:
   //   Mangled name: C#removeIf(java.util.function.Predicate<in|kotlin.Any?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean
@@ -648,3 +648,4 @@ abstract class C : ArrayList<Any>, SortedSet<Any> {
 //   Public signature: /test|-4981009800298118531[0]
 //   Public signature debug description: test(A;B;C){}
 fun test(a: A, b: B, c: C): Unit
+

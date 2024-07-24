@@ -144,7 +144,7 @@ class FinalList : SomeList<String> {
   //   Mangled name: FinalList#removeAt(kotlin.Int){}Some<kotlin.String>{EnhancedNullability}
   //   Public signature: /FinalList.removeAt|720917123303312228[0]
   //   Public signature debug description: removeAt(kotlin.Int){}Some<kotlin.String>{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Some<String>
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Some<String>
 
   // CHECK JVM_IR:
   //   Mangled name: FinalList#removeIf(java.util.function.Predicate<in|Some<kotlin.String>{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean
@@ -436,7 +436,7 @@ open class SomeList<T : Any?> : ArrayList<Some<T>>, MyList<T> {
   //   Mangled name: SomeList#removeAt(kotlin.Int){}Some<1:0>{EnhancedNullability}
   //   Public signature: /SomeList.removeAt|1618803614791995920[0]
   //   Public signature debug description: removeAt(kotlin.Int){}Some<1:0>{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Some<T>
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Some<T>
 
   // CHECK JVM_IR:
   //   Mangled name: SomeList#removeIf(java.util.function.Predicate<in|Some<1:0>{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean

@@ -132,7 +132,7 @@ abstract class E : Java1 {
   //   Mangled name: E#removeAt(kotlin.Int){}kotlin.Any?
   //   Public signature: /E.removeAt|-8980852212530989044[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Any?
-  /* fake */ override operator fun removeAt(p0: Int): Any?
+  /* fake */ override fun removeAt(p0: Int): Any?
 
   // CHECK:
   //   Mangled name: E#removeRange(kotlin.Int;kotlin.Int){}

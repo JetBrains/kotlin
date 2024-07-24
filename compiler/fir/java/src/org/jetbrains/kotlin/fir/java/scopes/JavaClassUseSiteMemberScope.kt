@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.withClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -736,9 +737,11 @@ class JavaClassUseSiteMemberScope(
                     symbol = newSymbol
                     dispatchReceiverType = klass.defaultType()
 
-                    // Technically, it should only be an operator if it matches an operator naming convention,
-                    // but always setting it doesn't seem to hurt.
-                    status = original.status.copy(isOperator = true)
+                    status = if (OperatorConventions.isConventionName(naturalName)) {
+                        original.status.copy(isOperator = true)
+                    } else {
+                        original.status
+                    }
                 }
             } else {
                 buildSimpleFunctionCopy(original) {

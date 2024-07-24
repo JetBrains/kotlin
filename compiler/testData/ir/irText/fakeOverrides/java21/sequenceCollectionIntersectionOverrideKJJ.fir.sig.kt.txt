@@ -246,7 +246,7 @@ class A : LinkedList<Int>, SequencedCollection<Int> {
   //   Mangled name: A#removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
   //   Public signature: /A.removeAt|6480490686215931144[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int
 
   // CHECK JVM_IR:
   //   Mangled name: A#removeFirst(){}kotlin.Int{EnhancedNullability}
@@ -617,7 +617,7 @@ class B : LinkedList<Int>, SequencedCollection<Int> {
   //   Mangled name: B#removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
   //   Public signature: /B.removeAt|6480490686215931144[0]
   //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Int{EnhancedNullability}
-  /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability Int
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Int
 
   // CHECK JVM_IR:
   //   Mangled name: B#removeFirst(){}kotlin.Int{EnhancedNullability}

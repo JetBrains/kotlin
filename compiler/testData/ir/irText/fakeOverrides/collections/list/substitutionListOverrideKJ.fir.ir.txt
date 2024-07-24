@@ -185,7 +185,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] T of <root>.B?>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[EnhancedNullability] T of <root>.B>
-    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<T of <root>.B>, p0:kotlin.Int) returnType:@[EnhancedNullability] T of <root>.B [fake_override,operator]
+    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<T of <root>.B>, p0:kotlin.Int) returnType:@[EnhancedNullability] T of <root>.B [fake_override]
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] E of java.util.LinkedList declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<T of <root>.B>
@@ -548,7 +548,7 @@ FILE fqName:<root> fileName:/1.kt
           CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
-    FUN name:removeAt visibility:public modality:OPEN <> ($this:<root>.C<T of <root>.C>, index:kotlin.Int) returnType:T of <root>.C [operator]
+    FUN name:removeAt visibility:public modality:OPEN <> ($this:<root>.C<T of <root>.C>, index:kotlin.Int) returnType:T of <root>.C
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] E of java.util.LinkedList declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.C>
@@ -755,7 +755,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] T of <root>.D?>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.collections.Collection<@[EnhancedNullability] T of <root>.D>
-    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<T of <root>.D>, p0:kotlin.Int) returnType:@[EnhancedNullability] T of <root>.D [fake_override,operator]
+    FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<T of <root>.D>, p0:kotlin.Int) returnType:@[EnhancedNullability] T of <root>.D [fake_override]
       overridden:
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] E of java.util.LinkedList declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<T of <root>.D>
