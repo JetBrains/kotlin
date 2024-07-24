@@ -256,11 +256,25 @@ private fun processCLib(
     val defFile = cinteropArguments.def?.let { File(it) }
     val manifestAddend = additionalArgs.manifest?.let { File(it) }
 
+    val tool = prepareTool(cinteropArguments.target, flavor, runFromDaemon, parseKeyValuePairs(cinteropArguments.overrideKonanProperties), konanDataDir = cinteropArguments.konanDataDir)
+
+    cinteropArguments.createVfsOverlayFromXcodeHeaders?.let { xcodeForVfsOverlay ->
+        val headersCopyDirectory = cinteropArguments.headersCopyDirectoryForVfsOverlay?.let { File(it) }
+        if (headersCopyDirectory == null) cinteropArguments.argParser.printError("Provide a directory where the headers and overlay.yaml from will be stored via -${HEADERS_DIRECTORY_FOR_VFSOVERLAY}")
+        prepareVfsOverlayFromXcodeHeaders(
+            target = tool.target,
+            sysroot = tool.sysRoot,
+            xcodeForVfsOverlay = xcodeForVfsOverlay,
+            headersForVfsOverlay = cinteropArguments.headersForVfsOverlay,
+            sysrootForVfsOverlay = cinteropArguments.sysrootForVfsOverlay,
+            outputDirectory = headersCopyDirectory,
+        )
+        return@withExceptionPrettifier null
+    }
+
     if (defFile == null && cinteropArguments.pkg == null) {
         cinteropArguments.argParser.printError("-def or -pkg should be provided!")
     }
-
-    val tool = prepareTool(cinteropArguments.target, flavor, runFromDaemon, parseKeyValuePairs(cinteropArguments.overrideKonanProperties), konanDataDir = cinteropArguments.konanDataDir)
 
     val def = DefFile(defFile, tool.substitutions)
     val isLinkerOptsSetByUser = (cinteropArguments.linkerOpts.valueOrigin == ArgParser.ValueOrigin.SET_BY_USER) ||
@@ -511,7 +525,7 @@ internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
         arguments: CInteropArguments,
-        imports: Imports
+        imports: Imports,
 ): NativeLibrary {
     val additionalHeaders = (arguments.header).toTypedArray()
     val additionalCompilerOpts = (arguments.compilerOpts +
@@ -596,3 +610,94 @@ fun parseKeyValuePairs(
         null
     }
 }.toMap()
+
+
+fun prepareVfsOverlayFromXcodeHeaders(
+        target: KonanTarget,
+        sysroot: String,
+        xcodeForVfsOverlay: String,
+        headersForVfsOverlay: List<String>,
+        sysrootForVfsOverlay: String?,
+        outputDirectory: File,
+) {
+    outputDirectory.mkdirs()
+
+    val overridingHeaders = mutableListOf<Pair<File, IncludeRelativePath>>()
+    headersForVfsOverlay.forEach { includeRelativePath ->
+        val headerCopyPath = outputDirectory.resolve(File(includeRelativePath).name)
+        val xcodeSysroot = sysrootForVfsOverlay?.let { File(it) } ?: sysrootPathFromXcode(
+                target = target,
+                xcodePath = File(xcodeForVfsOverlay)
+        )
+        val originalHeaderPath = xcodeSysroot.resolve("usr/include").resolve(includeRelativePath)
+        // Copy headers to prevent clang from failing with -fmodules due to "module was built in directory but now resides in directory"
+        originalHeaderPath.copyTo(
+                headerCopyPath,
+                overwrite = true,
+        )
+        overridingHeaders.add(
+                Pair(headerCopyPath, includeRelativePath)
+        )
+    }
+
+    return writeVfsOverlayYaml(
+            overridingHeaders = overridingHeaders,
+            vfsOverlayTemporaries = outputDirectory,
+            sysroot = sysroot,
+    )
+}
+
+
+internal typealias IncludeRelativePath = String
+fun writeVfsOverlayYaml(
+        overridingHeaders: List<Pair<File, IncludeRelativePath>>,
+        vfsOverlayTemporaries: File,
+        sysroot: String,
+) {
+    val contents = overridingHeaders.map {
+        "{ 'external-contents': \"${it.first.path}\", 'name': \"${it.second}\", 'type': 'file' }"
+    }.joinToString(",\n")
+
+    val headers = vfsOverlayTemporaries.resolve("overlay.yaml")
+    headers.writeText(
+            """
+            {
+              'case-sensitive': 'false',
+              'roots': [
+                {
+                  "contents": [
+                    ${contents}
+                  ],
+                  'name': "${sysroot}/usr/include",
+                  'type': 'directory'
+                },
+              ],
+              'version': 0,
+            }
+        """.trimIndent()
+    )
+}
+
+private fun sysrootPathFromXcode(
+        target: KonanTarget,
+        xcodePath: File,
+): File {
+    val sdk = when (target) {
+        KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> "macosx"
+        KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.IOS_X64 -> "iphonesimulator"
+        KonanTarget.IOS_ARM64 -> "iphoneos"
+        KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_SIMULATOR_ARM64 -> "watchsimulator"
+        KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_DEVICE_ARM64 -> "watchos"
+        KonanTarget.TVOS_ARM64 -> "appletvos"
+        KonanTarget.TVOS_X64, KonanTarget.TVOS_SIMULATOR_ARM64 -> "appletvsimulator"
+        else -> throw Exception("Can't dump sdk for: ${target}")
+    }
+    return File(
+        Command(
+            initialCommand = listOf("/usr/bin/xcrun", "--sdk", sdk, "--show-sdk-path"),
+            environmentOverrides = mapOf(
+                "DEVELOPER_DIR" to xcodePath.path,
+            )
+        ).getOutputLines().first()
+    )
+}

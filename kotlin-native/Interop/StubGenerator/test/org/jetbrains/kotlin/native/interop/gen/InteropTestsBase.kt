@@ -55,7 +55,7 @@ abstract class InteropTestsBase {
                 tool,
                 DefFile(defFile, tool.substitutions),
                 cinteropArguments,
-                imports
+                imports,
         )
     }
 

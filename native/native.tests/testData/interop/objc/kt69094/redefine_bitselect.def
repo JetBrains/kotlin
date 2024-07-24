@@ -1,0 +1,6 @@
+language = Objective-C
+---
+typedef __attribute__((__ext_vector_type__(2))) _Float16 simd_half2;
+typedef __attribute__((__ext_vector_type__(2))) short simd_short2;
+static inline __attribute__((__overloadable__)) simd_half2 simd_bitselect(simd_half2 x, simd_half2 y) { return 0; }
+static inline __attribute__((__overloadable__)) simd_short2 simd_bitselect(simd_short2 x, simd_short2 y) { return 0; }

@@ -8,9 +8,11 @@ import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.kotlinNativeDist
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.utils.capitalized
+import org.jetbrains.kotlin.utils.keysToMap
 
 plugins {
     id("base")
@@ -32,6 +34,59 @@ private fun interopTaskName(libName: String, targetName: String) = "compileKonan
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
+}
+
+abstract class SimdOverlayTask @Inject constructor(private val execOperations: ExecOperations) : DefaultTask() {
+    @get:Internal
+    abstract val cinteropPath: Property<File>
+
+    @get:Internal
+    abstract val xcodeForVfsoverlay: Property<String>
+
+    @get:Internal
+    abstract val targetName: Property<String>
+
+    @get:Internal
+    abstract val vfsoverlayCopyDirectory: DirectoryProperty
+
+    @TaskAction
+    fun exec() {
+        this.execOperations.exec {
+            commandLine(
+                    cinteropPath.get().absolutePath,
+                    "-target", targetName.get(),
+                    "-Xcreate-vfsoverlay-from-xcode-headers", xcodeForVfsoverlay.get(),
+                    "-Xheaders-copy-directory-for-vfsoverlay", vfsoverlayCopyDirectory.get().asFile.absolutePath,
+            )
+        }
+    }
+}
+
+val simdOverlayProperty = providers.gradleProperty("konan.xcodeForSimdOverlay")
+val simdOverlayCompilerArgumentPerTarget = KonanTarget.predefinedTargets.values.filter {
+    it.architecture == Architecture.X64 && it.family.isAppleFamily
+}.keysToMap { target ->
+    val vfsoverlayCopyDirectory = layout.buildDirectory.dir("simdVfsoverlay${target.name}")
+    val vfsoverlayYaml = vfsoverlayCopyDirectory.map { it.file("overlay.yaml") }
+
+    val targetName = target.visibleName
+    val cinteropPath = kotlinNativeDist.resolve("bin/cinterop")
+
+    val task = tasks.register(
+            "simdOverlay${target.name}",
+            SimdOverlayTask::class.java,
+    ) {
+        dependsOn(":kotlin-native:${targetName}CrossDist")
+        this.cinteropPath.set(cinteropPath)
+        this.xcodeForVfsoverlay.set(simdOverlayProperty)
+        this.targetName.set(targetName)
+        this.vfsoverlayCopyDirectory.set(vfsoverlayCopyDirectory)
+    }
+    simdOverlayProperty.flatMap { vfsoverlayYaml }.flatMap { vfsoverlayYamlFile ->
+        task.map {
+            listOf("-compiler-option", "-ivfsoverlay", "-compiler-option", vfsoverlayYamlFile.asFile.absolutePath)
+        }
+    }.orElse(emptyList())
 }
 
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
@@ -68,6 +123,9 @@ enabledTargets(platformManager).forEach { target ->
                     "-no-default-libs",
                     "-no-endorsed-libs",
             )
+            simdOverlayCompilerArgumentPerTarget[target]?.let {
+                this.extraOpts.addAll(it)
+            }
             this.compilerOpts.addAll(
                     "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
             )

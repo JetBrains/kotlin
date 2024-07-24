@@ -24,10 +24,14 @@ import java.lang.ProcessBuilder.Redirect
 import java.nio.file.Files
 
 
-open class Command(initialCommand: List<String>, val redirectInputFile: File? = null) {
+open class Command(
+    initialCommand: List<String>,
+    val redirectInputFile: File? = null,
+    val environmentOverrides: Map<String, String> = emptyMap(),
+) {
 
     constructor(tool: String) : this(listOf(tool)) 
-    constructor(vararg command: String) : this(command.toList<String>()) 
+    constructor(vararg command: String) : this(command.toList<String>())
     protected val command = initialCommand.toMutableList()
 
     val argsWithExecutable: List<String> = command
@@ -58,6 +62,7 @@ open class Command(initialCommand: List<String>, val redirectInputFile: File? = 
         stdError = emptyList()
         val builder = ProcessBuilder(command)
 
+        environmentOverrides.forEach { builder.environment()[it.key] = it.value }
         builder.redirectOutput(Redirect.INHERIT)
         if (redirectInputFile == null) {
           builder.redirectInput(Redirect.INHERIT)
@@ -95,6 +100,7 @@ open class Command(initialCommand: List<String>, val redirectInputFile: File? = 
         try {
             val builder = ProcessBuilder(command)
 
+            environmentOverrides.forEach { builder.environment()[it.key] = it.value }
             if (redirectInputFile == null) {
               builder.redirectInput(Redirect.INHERIT)
             } else {

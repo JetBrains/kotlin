@@ -33,6 +33,8 @@ const val DUMP_BRIDGES = "Xdump-bridges"
 const val DISABLE_EXCEPTION_PRETTIFIER = "Xdisable-exception-prettifier"
 const val USER_SETUP_HINT = "Xuser-setup-hint"
 const val KONAN_DATA_DIR = "Xkonan-data-dir"
+const val CREATE_VFSOVERLAY_FROM_XCODE_HEADERS = "Xcreate-vfsoverlay-from-xcode-headers"
+const val HEADERS_DIRECTORY_FOR_VFSOVERLAY = "Xheaders-copy-directory-for-vfsoverlay"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -151,6 +153,40 @@ open class CInteropArguments(argParser: ArgParser =
 
     val disableExperimentalAnnotation by argParser.option(ArgType.Boolean, "Xdisable-experimental-annotation",
             description = "Don't add @ExperimentalForeignApi to generated Kotlin declarations")
+
+    val createVfsOverlayFromXcodeHeaders by argParser.option(ArgType.String, CREATE_VFSOVERLAY_FROM_XCODE_HEADERS,
+            description = "Prepare headers from this Xcode and create overlay.yaml in -${HEADERS_DIRECTORY_FOR_VFSOVERLAY} specified directory, and exit")
+
+    val sysrootForVfsOverlay by argParser.option(ArgType.String, "Xsysroot-for-vfsoverlay",
+            description = "Use this sysroot for -${CREATE_VFSOVERLAY_FROM_XCODE_HEADERS} instead of computing it using xcrun")
+
+    val headersForVfsOverlay by argParser.option(ArgType.String, "Xheaders-for-vfsoverlay",
+            description = "usr/include relative paths for headers used for -${CREATE_VFSOVERLAY_FROM_XCODE_HEADERS}")
+            .multiple().delimiter(" ")
+            .default(
+                    listOf(
+                            // KT-69094
+                            "simd/packed.h",
+                            "simd/types.h",
+                            "simd/quaternion.h",
+                            "simd/matrix_types.h",
+                            "simd/matrix.h",
+                            "simd/conversion.h",
+                            "simd/vector_make.h",
+                            "simd/common.h",
+                            "simd/logic.h",
+                            "simd/simd.h",
+                            "simd/vector_types.h",
+                            "simd/math.h",
+                            "simd/extern.h",
+                            "simd/vector.h",
+                            "simd/geometry.h",
+                            "simd/base.h",
+                    )
+            )
+
+    val headersCopyDirectoryForVfsOverlay by argParser.option(ArgType.String, HEADERS_DIRECTORY_FOR_VFSOVERLAY,
+            description = "This directory will be used to persist a copy of headers used for -${CREATE_VFSOVERLAY_FROM_XCODE_HEADERS}")
 }
 
 internal fun warn(msg: String) {

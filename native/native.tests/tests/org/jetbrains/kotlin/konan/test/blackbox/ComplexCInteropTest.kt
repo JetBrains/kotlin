@@ -533,20 +533,10 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @TestMetadata("kt69094")
     fun testCinteropCatchesSimdFloat16IssuesKT69094() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily && targets.testTarget.architecture == Architecture.X64)
-        val clang = ProcessBuilder(
-            // Use clang version to infer Xcode version because of internal toolchain
-            File((testRunSettings.configurables as AppleConfigurables).absoluteTargetToolchain).resolve("bin/clang").path,
-            "--version",
-        ).start()
-        val output = clang.inputStream.readBytes().decodeToString()
-        assertEquals(0, clang.waitFor(), output)
-        val isXcode16 = output.contains("clang version 16")
-        // Check that we are running with Xcode 16 toolchain because Xcode 15 doesn't use _Float16 and thus doesn't fail
-        Assumptions.assumeTrue(isXcode16)
 
         val cinteropResult = cinteropToLibrary(
             targets,
-            interopObjCDir.resolve("kt69094/simd.def"),
+            interopObjCDir.resolve("kt69094/redefine_bitselect.def"),
             buildDir,
             TestCInteropArgs()
         )
@@ -557,5 +547,64 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             cinteropResult.loggedData.toolOutput,
             CInteropHints.simdFloat16Hint,
         )
+    }
+
+    @Test
+    @TestMetadata("kt69094")
+    fun testXcodeVfsOverlayOverridesHeadersSeenByCinterop() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily && targets.testTarget.architecture == Architecture.X64)
+        skipTestIfNotXcode16()
+
+        val overridingHeader = buildDir.resolve("usr/include/simd/simd.h")
+        overridingHeader.parentFile.mkdirs()
+        overridingHeader.writeText(
+            "#error \"catchme\""
+        )
+
+        val headersCopyDirectory = buildDir.resolve("headersCopyDirectory")
+        // 1. Prepare ivfsoverlay argument via -Xcreate-vfsoverlay-from-xcode-headers
+        cinteropToLibrary(
+            targets,
+            interopObjCDir.resolve("kt69094/simd.def"),
+            buildDir,
+            TestCInteropArgs(
+                "-Xcreate-vfsoverlay-from-xcode-headers", "/var/db/xcode_select_link",
+                "-Xsysroot-for-vfsoverlay", buildDir.path,
+                "-Xheaders-for-vfsoverlay", "simd/simd.h",
+                "-Xheaders-copy-directory-for-vfsoverlay", headersCopyDirectory.path,
+            )
+        ).assertSuccess()
+
+        // 2. Make sure cinterop sees the error coming from the remapped overridingHeader
+        val cinteropResult = cinteropToLibrary(
+            targets,
+            interopObjCDir.resolve("kt69094/simd.def"),
+            buildDir,
+            TestCInteropArgs(
+                "-compiler-option", "-ivfsoverlay",
+                "-compiler-option", headersCopyDirectory.resolve("overlay.yaml").path,
+            )
+        )
+        if (cinteropResult !is TestCompilationResult.CompilationToolFailure) {
+            error("Cinterop result is not a compilation failure: ${cinteropResult}")
+        }
+        assertContains(
+            cinteropResult.loggedData.toolOutput,
+            "catchme",
+            message = cinteropResult.loggedData.toolOutput
+        )
+    }
+
+    private fun skipTestIfNotXcode16() {
+        val clang = ProcessBuilder(
+            // Use clang version to infer Xcode version because of internal toolchain
+            File((testRunSettings.configurables as AppleConfigurables).absoluteTargetToolchain).resolve("bin/clang").path,
+            "--version",
+        ).start()
+        val output = clang.inputStream.readBytes().decodeToString()
+        assertEquals(0, clang.waitFor(), output)
+        // Check that we are running with Xcode 16 toolchain because Xcode 15 doesn't use _Float16/simd and thus doesn't fail
+        val isXcode16 = output.contains("clang version 16")
+        Assumptions.assumeTrue(isXcode16)
     }
 }
