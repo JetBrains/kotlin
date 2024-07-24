@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.formver.conversion.ProgramConverter
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.print
 import org.jetbrains.kotlin.formver.reporting.reportVerifierError
 import org.jetbrains.kotlin.formver.viper.Verifier
+import org.jetbrains.kotlin.formver.viper.mangled
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.formver.viper.ast.unwrapOr
 import org.jetbrains.kotlin.formver.viper.errors.VerifierError

@@ -1,227 +1,220 @@
 /return_break_continue.kt:(23,33): info: Generated Viper text for testReturn:
-method global$fun_testReturn$fun_take$$return$T_Int() returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$testReturn$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  ret$0 := dom$RuntimeType$intToRef(0)
-  goto label$ret$0
-  ret$0 := dom$RuntimeType$intToRef(1)
-  goto label$ret$0
-  label label$ret$0
+  ret$0 := df$rt$intToRef(0)
+  goto lbl$ret$0
+  ret$0 := df$rt$intToRef(1)
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /return_break_continue.kt:(76,90): info: Generated Viper text for returnFromLoop:
-method global$fun_returnFromLoop$fun_take$$return$T_Int()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$returnFromLoop$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var anonymous$0: Ref
-  label label$continue$0
-  anonymous$0 := dom$RuntimeType$boolToRef(true)
-  while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+  var anon$0: Ref
+  label lbl$continue$0
+  anon$0 := df$rt$boolToRef(true)
+  while (df$rt$boolFromRef(anon$0))
+    invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
   {
-    ret$0 := dom$RuntimeType$intToRef(0)
-    goto label$ret$0
-    anonymous$0 := dom$RuntimeType$boolToRef(true)
+    ret$0 := df$rt$intToRef(0)
+    goto lbl$ret$0
+    anon$0 := df$rt$boolToRef(true)
   }
-  label label$break$0
-  ret$0 := dom$RuntimeType$intToRef(1)
-  goto label$ret$0
-  label label$ret$0
+  label lbl$break$0
+  ret$0 := df$rt$intToRef(1)
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /return_break_continue.kt:(162,172): info: Generated Viper text for whileBreak:
-method global$fun_whileBreak$fun_take$T_Boolean$return$T_Int(local$b: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$whileBreak$TF$T$Boolean(p$b: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var local0$i: Ref
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  local0$i := dom$RuntimeType$intToRef(0)
-  label label$continue$0
-  anonymous$0 := local$b
-  while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+  var l0$i: Ref
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  l0$i := df$rt$intToRef(0)
+  label lbl$continue$0
+  anon$0 := p$b
+  while (df$rt$boolFromRef(anon$0))
+    invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
   {
-    local0$i := dom$RuntimeType$intToRef(1)
-    goto label$break$0
-    anonymous$0 := local$b
+    l0$i := df$rt$intToRef(1)
+    goto lbl$break$0
+    anon$0 := p$b
   }
-  label label$break$0
-  ret$0 := local0$i
-  goto label$ret$0
-  label label$ret$0
+  label lbl$break$0
+  ret$0 := l0$i
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /return_break_continue.kt:(276,289): info: Generated Viper text for whileContinue:
-method global$fun_whileContinue$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$whileContinue$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$b: Ref
-  var anonymous$0: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$b := dom$RuntimeType$boolToRef(true)
-  label label$continue$0
-  anonymous$0 := local0$b
-  while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  var l0$b: Ref
+  var anon$0: Ref
+  ret$0 := df$rt$unitValue()
+  l0$b := df$rt$boolToRef(true)
+  label lbl$continue$0
+  anon$0 := l0$b
+  while (df$rt$boolFromRef(anon$0))
+    invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
   {
-    local0$b := dom$RuntimeType$boolToRef(false)
-    goto label$continue$0
-    anonymous$0 := local0$b
+    l0$b := df$rt$boolToRef(false)
+    goto lbl$continue$0
+    anon$0 := l0$b
   }
-  label label$break$0
-  label label$ret$0
+  label lbl$break$0
+  label lbl$ret$0
 }
 
 /return_break_continue.kt:(375,386): info: Generated Viper text for whileNested:
-method global$fun_whileNested$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$whileNested$TF$T$Boolean(p$b: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$continue$0
-  anonymous$0 := local$b
-  while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  ret$0 := df$rt$unitValue()
+  label lbl$continue$0
+  anon$0 := p$b
+  while (df$rt$boolFromRef(anon$0))
+    invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
   {
-    var anonymous$1: Ref
-    var anonymous$2: Ref
-    label label$continue$1
-    anonymous$1 := local$b
-    while (dom$RuntimeType$boolFromRef(anonymous$1))
-      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    var anon$1: Ref
+    var anon$2: Ref
+    label lbl$continue$1
+    anon$1 := p$b
+    while (df$rt$boolFromRef(anon$1))
+      invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
     {
-      goto label$break$1
-      anonymous$1 := local$b
+      goto lbl$break$1
+      anon$1 := p$b
     }
-    label label$break$1
-    goto label$continue$0
-    label label$continue$2
-    anonymous$2 := local$b
-    while (dom$RuntimeType$boolFromRef(anonymous$2))
-      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    label lbl$break$1
+    goto lbl$continue$0
+    label lbl$continue$2
+    anon$2 := p$b
+    while (df$rt$boolFromRef(anon$2))
+      invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
     {
-      goto label$continue$2
-      anonymous$2 := local$b
+      goto lbl$continue$2
+      anon$2 := p$b
     }
-    label label$break$2
-    goto label$break$0
-    anonymous$0 := local$b
+    label lbl$break$2
+    goto lbl$break$0
+    anon$0 := p$b
   }
-  label label$break$0
-  label label$ret$0
+  label lbl$break$0
+  label lbl$ret$0
 }
 
 /return_break_continue.kt:(556,569): info: Generated Viper text for labelledBreak:
-method global$fun_labelledBreak$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$labelledBreak$TF$T$Boolean(p$b: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$continue$0
-  anonymous$0 := local$b
-  while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  ret$0 := df$rt$unitValue()
+  label lbl$continue$0
+  anon$0 := p$b
+  while (df$rt$boolFromRef(anon$0))
+    invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
   {
-    var anonymous$1: Ref
-    label label$continue$1
-    anonymous$1 := local$b
-    while (dom$RuntimeType$boolFromRef(anonymous$1))
-      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    var anon$1: Ref
+    label lbl$continue$1
+    anon$1 := p$b
+    while (df$rt$boolFromRef(anon$1))
+      invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
     {
-      goto label$break$0
-      goto label$break$1
-      goto label$break$1
-      anonymous$1 := local$b
+      goto lbl$break$0
+      goto lbl$break$1
+      goto lbl$break$1
+      anon$1 := p$b
     }
-    label label$break$1
-    goto label$break$0
-    goto label$break$0
-    anonymous$0 := local$b
+    label lbl$break$1
+    goto lbl$break$0
+    goto lbl$break$0
+    anon$0 := p$b
   }
-  label label$break$0
-  label label$ret$0
+  label lbl$break$0
+  label lbl$ret$0
 }
 
 /return_break_continue.kt:(754,770): info: Generated Viper text for labelledContinue:
-method global$fun_labelledContinue$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$labelledContinue$TF$T$Boolean(p$b: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$continue$0
-  anonymous$0 := local$b
-  while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  ret$0 := df$rt$unitValue()
+  label lbl$continue$0
+  anon$0 := p$b
+  while (df$rt$boolFromRef(anon$0))
+    invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
   {
-    var anonymous$1: Ref
-    label label$continue$1
-    anonymous$1 := local$b
-    while (dom$RuntimeType$boolFromRef(anonymous$1))
-      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    var anon$1: Ref
+    label lbl$continue$1
+    anon$1 := p$b
+    while (df$rt$boolFromRef(anon$1))
+      invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
     {
-      goto label$continue$0
-      goto label$continue$1
-      goto label$continue$1
-      anonymous$1 := local$b
+      goto lbl$continue$0
+      goto lbl$continue$1
+      goto lbl$continue$1
+      anon$1 := p$b
     }
-    label label$break$1
-    goto label$continue$0
-    goto label$continue$0
-    anonymous$0 := local$b
+    label lbl$break$1
+    goto lbl$continue$0
+    goto lbl$continue$0
+    anon$0 := p$b
   }
-  label label$break$0
-  label label$ret$0
+  label lbl$break$0
+  label lbl$ret$0
 }
 
 /return_break_continue.kt:(970,992): info: Generated Viper text for labelledWhileShadowing:
-method global$fun_labelledWhileShadowing$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$labelledWhileShadowing$TF$T$Boolean(p$b: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$continue$0
-  anonymous$0 := local$b
-  while (dom$RuntimeType$boolFromRef(anonymous$0))
-    invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  ret$0 := df$rt$unitValue()
+  label lbl$continue$0
+  anon$0 := p$b
+  while (df$rt$boolFromRef(anon$0))
+    invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
   {
-    var anonymous$1: Ref
-    var anonymous$2: Ref
-    label label$continue$1
-    anonymous$1 := local$b
-    while (dom$RuntimeType$boolFromRef(anonymous$1))
-      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    var anon$1: Ref
+    var anon$2: Ref
+    label lbl$continue$1
+    anon$1 := p$b
+    while (df$rt$boolFromRef(anon$1))
+      invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
     {
-      goto label$break$1
-      goto label$continue$1
-      anonymous$1 := local$b
+      goto lbl$break$1
+      goto lbl$continue$1
+      anon$1 := p$b
     }
-    label label$break$1
-    label label$continue$2
-    anonymous$2 := local$b
-    while (dom$RuntimeType$boolFromRef(anonymous$2))
-      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    label lbl$break$1
+    label lbl$continue$2
+    anon$2 := p$b
+    while (df$rt$boolFromRef(anon$2))
+      invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
     {
-      goto label$break$2
-      goto label$continue$2
-      anonymous$2 := local$b
+      goto lbl$break$2
+      goto lbl$continue$2
+      anon$2 := p$b
     }
-    label label$break$2
-    goto label$break$0
-    goto label$continue$0
-    anonymous$0 := local$b
+    label lbl$break$2
+    goto lbl$break$0
+    goto lbl$continue$0
+    anon$0 := p$b
   }
-  label label$break$0
-  label label$ret$0
+  label lbl$break$0
+  label lbl$ret$0
 }

@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
-import org.jetbrains.kotlin.formver.names.ClassScope
-import org.jetbrains.kotlin.formver.names.ScopedKotlinName
-import org.jetbrains.kotlin.formver.names.SimpleKotlinName
-import org.jetbrains.kotlin.formver.names.classNameIfAny
+import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Predicate
+import org.jetbrains.kotlin.formver.viper.mangled
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 class ClassEmbeddingDetails(val type: ClassTypeEmbedding, val isInterface: Boolean) : TypeInvariantHolder {
@@ -40,7 +38,7 @@ class ClassEmbeddingDetails(val type: ClassTypeEmbedding, val isInterface: Boole
     fun initFields(newFields: Map<SimpleKotlinName, FieldEmbedding>) {
         check(_fields == null) { "Fields of ${type.className} are already initialised." }
         _fields = newFields
-        _sharedPredicate = ClassPredicateBuilder.build(this, type.name) {
+        _sharedPredicate = ClassPredicateBuilder.build(this, sharedPredicateName) {
             forEachField {
                 if (isAlwaysReadable) {
                     addAccessPermissions(PermExp.WildcardPerm())
@@ -75,9 +73,8 @@ class ClassEmbeddingDetails(val type: ClassTypeEmbedding, val isInterface: Boole
         }
     }
 
-    private val uniquePredicateName = object : MangledName {
-        override val mangled: String = "Unique\$T_class_${type.className.mangled}"
-    }
+    private val sharedPredicateName = ScopedKotlinName(type.className.asScope(), PredicateKotlinName("shared"))
+    private val uniquePredicateName = ScopedKotlinName(type.className.asScope(), PredicateKotlinName("unique"))
 
     /**
      * Find an embedding of a backing field by this name amongst the ancestors of this type.
@@ -97,7 +94,7 @@ class ClassEmbeddingDetails(val type: ClassTypeEmbedding, val isInterface: Boole
 
     // Note: this function will replace accessInvariants when nested unfold will be implemented
     override fun sharedPredicateAccessInvariant() =
-        PredicateAccessTypeInvariantEmbedding(type.name, PermExp.WildcardPerm())
+        PredicateAccessTypeInvariantEmbedding(sharedPredicateName, PermExp.WildcardPerm())
 
     override fun uniquePredicateAccessInvariant() =
         PredicateAccessTypeInvariantEmbedding(uniquePredicateName, PermExp.FullPerm())

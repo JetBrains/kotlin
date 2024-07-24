@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.formver.viper.MangledName
  */
 data class Var(val name: String, val type: Type) {
     val mangledName = object : MangledName {
-        override val mangled: String = name
+        override val mangledBaseName: String = name
     }
 
     fun use(): Exp.LocalVar = Exp.LocalVar(mangledName, type)

@@ -25,11 +25,6 @@ class ScopedKotlinNameBuilder {
         scope = PackageScope(FqName.fromSegments(packageName))
     }
 
-    fun globalScope() {
-        require (scope != null) { "Global scope cannot be top-level" }
-        scope = GlobalScope(scope!!)
-    }
-
     fun classScope(className: ClassKotlinName) {
         require (scope != null) { "Class scope cannot be top-level" }
         scope = ClassScope(scope!!, className)

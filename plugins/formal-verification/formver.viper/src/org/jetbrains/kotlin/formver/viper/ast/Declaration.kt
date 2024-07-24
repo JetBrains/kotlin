@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.formver.viper.ast
 
-import org.jetbrains.kotlin.formver.viper.IntoSilver
-import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.toScalaSeq
-import org.jetbrains.kotlin.formver.viper.toSilver
+import org.jetbrains.kotlin.formver.viper.*
 
 sealed interface Declaration : IntoSilver<viper.silver.ast.Declaration> {
     data class LocalVarDecl(

@@ -40,7 +40,6 @@ object KotlinContractFunction : SpecialKotlinFunction {
 
     private val contractBuilderTypeName = buildName {
         packageScope(packageName)
-        globalScope()
         ClassKotlinName(listOf("ContractBuilder"))
     }
     private val contractBuilderType = ClassTypeEmbedding(contractBuilderTypeName)

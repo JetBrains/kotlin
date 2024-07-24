@@ -1,98 +1,92 @@
 /setters.kt:(103,127): info: Generated Viper text for testPrimitiveFieldSetter:
-field public$backing_field_a: Ref
+field bf$public$a: Ref
 
-method global$fun_testPrimitiveFieldSetter$fun_take$T_class_global$class_PrimitiveField$return$T_Unit(local$pf: Ref)
+method f$testPrimitiveFieldSetter$TF$T$c$PrimitiveField(p$pf: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$pf), dom$RuntimeType$T_class_global$class_PrimitiveField())
-  inhale acc(T_class_global$class_PrimitiveField(local$pf), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  inhale acc(local$pf.public$backing_field_a, write)
-  local$pf.public$backing_field_a := dom$RuntimeType$intToRef(0)
-  exhale acc(local$pf.public$backing_field_a, write)
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$pf), df$rt$T$c$PrimitiveField())
+  inhale acc(p$c$PrimitiveField$shared(p$pf), wildcard)
+  ret$0 := df$rt$unitValue()
+  inhale acc(p$pf.bf$public$a, write)
+  p$pf.bf$public$a := df$rt$intToRef(0)
+  exhale acc(p$pf.bf$public$a, write)
+  label lbl$ret$0
 }
 
 /setters.kt:(170,194): info: Generated Viper text for testReferenceFieldSetter:
-field public$backing_field_a: Ref
+field bf$public$a: Ref
 
-field public$backing_field_pf: Ref
+field bf$public$pf: Ref
 
-method class_PrimitiveField$constructor$fun_take$T_Int$return$T_class_global$class_PrimitiveField(local$a: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_PrimitiveField())
-  ensures acc(T_class_global$class_PrimitiveField(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_PrimitiveField(ret), write)
+method con$c$PrimitiveField$T$Int(p$a: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$PrimitiveField())
+  ensures acc(p$c$PrimitiveField$shared(ret), wildcard)
+  ensures acc(p$c$PrimitiveField$unique(ret), write)
 
 
-method global$fun_testReferenceFieldSetter$fun_take$T_class_global$class_ReferenceField$return$T_Unit(local$rf: Ref)
+method f$testReferenceFieldSetter$TF$T$c$ReferenceField(p$rf: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rf), dom$RuntimeType$T_class_global$class_ReferenceField())
-  inhale acc(T_class_global$class_ReferenceField(local$rf), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  anonymous$0 := class_PrimitiveField$constructor$fun_take$T_Int$return$T_class_global$class_PrimitiveField(dom$RuntimeType$intToRef(0))
-  inhale acc(local$rf.public$backing_field_pf, write)
-  local$rf.public$backing_field_pf := anonymous$0
-  exhale acc(local$rf.public$backing_field_pf, write)
-  label label$ret$0
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$rf), df$rt$T$c$ReferenceField())
+  inhale acc(p$c$ReferenceField$shared(p$rf), wildcard)
+  ret$0 := df$rt$unitValue()
+  anon$0 := con$c$PrimitiveField$T$Int(df$rt$intToRef(0))
+  inhale acc(p$rf.bf$public$pf, write)
+  p$rf.bf$public$pf := anon$0
+  exhale acc(p$rf.bf$public$pf, write)
+  label lbl$ret$0
 }
 
 /setters.kt:(427,454): info: Generated Viper text for testPrimitivePropertySetter:
-method global$fun_testPrimitivePropertySetter$fun_take$T_class_global$class_PrimitiveProperty$return$T_Unit(local$pp: Ref)
+method f$testPrimitivePropertySetter$TF$T$c$PrimitiveProperty(p$pp: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$pp), dom$RuntimeType$T_class_global$class_PrimitiveProperty())
-  inhale acc(T_class_global$class_PrimitiveProperty(local$pp), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  anonymous$0 := public$property_setter_aProp(local$pp, dom$RuntimeType$intToRef(0))
-  label label$ret$0
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$pp), df$rt$T$c$PrimitiveProperty())
+  inhale acc(p$c$PrimitiveProperty$shared(p$pp), wildcard)
+  ret$0 := df$rt$unitValue()
+  anon$0 := ps$public$aProp(p$pp, df$rt$intToRef(0))
+  label lbl$ret$0
 }
 
-method public$property_getter_aProp(this: Ref) returns (ret: Ref)
+method pg$public$aProp(this: Ref) returns (ret: Ref)
 
 
-method public$property_setter_aProp(this: Ref, value: Ref)
-  returns (ret: Ref)
+method ps$public$aProp(this: Ref, value: Ref) returns (ret: Ref)
 
 
 /setters.kt:(504,531): info: Generated Viper text for testReferencePropertySetter:
-method class_PrimitiveProperty$constructor$fun_take$$return$T_class_global$class_PrimitiveProperty()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_PrimitiveProperty())
-  ensures acc(T_class_global$class_PrimitiveProperty(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_PrimitiveProperty(ret), write)
+method con$c$PrimitiveProperty$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$PrimitiveProperty())
+  ensures acc(p$c$PrimitiveProperty$shared(ret), wildcard)
+  ensures acc(p$c$PrimitiveProperty$unique(ret), write)
 
 
-method global$fun_testReferencePropertySetter$fun_take$T_class_global$class_ReferenceProperty$return$T_Unit(local$rp: Ref)
+method f$testReferencePropertySetter$TF$T$c$ReferenceProperty(p$rp: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rp), dom$RuntimeType$T_class_global$class_ReferenceProperty())
-  inhale acc(T_class_global$class_ReferenceProperty(local$rp), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  anonymous$1 := class_PrimitiveProperty$constructor$fun_take$$return$T_class_global$class_PrimitiveProperty()
-  anonymous$0 := public$property_setter_ppProp(local$rp, anonymous$1)
-  label label$ret$0
+  var anon$0: Ref
+  var anon$1: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$rp), df$rt$T$c$ReferenceProperty())
+  inhale acc(p$c$ReferenceProperty$shared(p$rp), wildcard)
+  ret$0 := df$rt$unitValue()
+  anon$1 := con$c$PrimitiveProperty$()
+  anon$0 := ps$public$ppProp(p$rp, anon$1)
+  label lbl$ret$0
 }
 
-method public$property_getter_aProp(this: Ref) returns (ret: Ref)
+method pg$public$aProp(this: Ref) returns (ret: Ref)
 
 
-method public$property_getter_ppProp(this: Ref) returns (ret: Ref)
+method pg$public$ppProp(this: Ref) returns (ret: Ref)
 
 
-method public$property_setter_aProp(this: Ref, value: Ref)
-  returns (ret: Ref)
+method ps$public$aProp(this: Ref, value: Ref) returns (ret: Ref)
 
 
-method public$property_setter_ppProp(this: Ref, value: Ref)
-  returns (ret: Ref)
-
+method ps$public$ppProp(this: Ref, value: Ref) returns (ret: Ref)

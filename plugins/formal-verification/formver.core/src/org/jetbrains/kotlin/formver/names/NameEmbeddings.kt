@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.formver.conversion.ProgramConversionContext
+import org.jetbrains.kotlin.formver.embeddings.ClassTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -24,10 +25,7 @@ fun ClassId.embedLocalName(): ClassKotlinName = ClassKotlinName(relativeClassNam
 
 fun ScopedKotlinNameBuilder.embedScope(id: CallableId) {
     packageScope(id.packageName)
-    when (val classId = id.classId) {
-        null -> globalScope()
-        else -> classScope(classId.embedLocalName())
-    }
+    id.classId?.let { classScope(it.embedLocalName()) }
 }
 
 fun ScopedKotlinNameBuilder.embedScope(id: ClassId) {
@@ -37,7 +35,6 @@ fun ScopedKotlinNameBuilder.embedScope(id: ClassId) {
 
 fun ClassId.embedName(): ScopedKotlinName = buildName {
     packageScope(packageFqName)
-    globalScope()
     embedLocalName()
 }
 

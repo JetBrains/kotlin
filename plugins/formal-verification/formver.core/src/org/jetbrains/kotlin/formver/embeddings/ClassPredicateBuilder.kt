@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.formver.embeddings
 import org.jetbrains.kotlin.formver.conversion.AccessPolicy
 import org.jetbrains.kotlin.formver.embeddings.expression.*
 import org.jetbrains.kotlin.formver.linearization.pureToViper
-import org.jetbrains.kotlin.formver.names.ClassPredicateSubjectName
+import org.jetbrains.kotlin.formver.names.ThisReceiverName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Predicate
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class ClassPredicateBuilder private constructor(private val details: ClassEmbeddingDetails) {
-    private val subject = PlaceholderVariableEmbedding(ClassPredicateSubjectName, details.type)
+    private val subject = PlaceholderVariableEmbedding(ThisReceiverName, details.type)
     private val body = mutableListOf<ExpEmbedding>()
 
     companion object {

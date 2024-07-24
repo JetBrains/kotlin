@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.formver.viper.ast
 
-import org.jetbrains.kotlin.formver.viper.IntoSilver
-import org.jetbrains.kotlin.formver.viper.emptySeq
-import org.jetbrains.kotlin.formver.viper.toScalaSeq
-import org.jetbrains.kotlin.formver.viper.toSilver
+import org.jetbrains.kotlin.formver.viper.*
 
 data class Program(
     val domains: List<Domain>,

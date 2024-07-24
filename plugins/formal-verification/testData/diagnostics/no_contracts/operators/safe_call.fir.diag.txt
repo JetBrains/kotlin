@@ -1,127 +1,120 @@
 /safe_call.kt:(142,154): info: Generated Viper text for testSafeCall:
-field public$backing_field_x: Ref
+field bf$public$x: Ref
 
-method class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(this: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+method f$c$Foo$f$TF$T$c$Foo(this: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_testSafeCall$fun_take$NT_class_global$class_Foo$return$NT_Unit(local$foo: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$unitType()))
+method f$testSafeCall$TF$c$Foo(p$foo: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$unitType()))
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
-  inhale local$foo != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Foo(local$foo), wildcard)
-  if (local$foo != dom$RuntimeType$nullValue()) {
-    var anonymous$0: Ref
-    anonymous$0 := class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(local$foo)
-    ret$0 := anonymous$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$nullable(df$rt$T$c$Foo()))
+  inhale p$foo != df$rt$nullValue() ==>
+    acc(p$c$Foo$shared(p$foo), wildcard)
+  if (p$foo != df$rt$nullValue()) {
+    var anon$0: Ref
+    anon$0 := f$c$Foo$f$TF$T$c$Foo(p$foo)
+    ret$0 := anon$0
   } else {
-    ret$0 := dom$RuntimeType$nullValue()}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$nullValue()}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /safe_call.kt:(217,240): info: Generated Viper text for testSafeCallNonNullable:
-field public$backing_field_x: Ref
+field bf$public$x: Ref
 
-method class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(this: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+method f$c$Foo$f$TF$T$c$Foo(this: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_testSafeCallNonNullable$fun_take$T_class_global$class_Foo$return$NT_Unit(local$foo: Ref)
+method f$testSafeCallNonNullable$TF$T$c$Foo(p$foo: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$unitType()))
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$unitType()))
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
-  inhale acc(T_class_global$class_Foo(local$foo), wildcard)
-  if (local$foo != dom$RuntimeType$nullValue()) {
-    var anonymous$0: Ref
-    anonymous$0 := class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(local$foo)
-    ret$0 := anonymous$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$T$c$Foo())
+  inhale acc(p$c$Foo$shared(p$foo), wildcard)
+  if (p$foo != df$rt$nullValue()) {
+    var anon$0: Ref
+    anon$0 := f$c$Foo$f$TF$T$c$Foo(p$foo)
+    ret$0 := anon$0
   } else {
-    ret$0 := dom$RuntimeType$nullValue()}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$nullValue()}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /safe_call.kt:(267,287): info: Generated Viper text for testSafeCallProperty:
-field public$backing_field_x: Ref
+field bf$public$x: Ref
 
-method global$fun_testSafeCallProperty$fun_take$NT_class_global$class_Foo$return$NT_Int(local$foo: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+method f$testSafeCallProperty$TF$c$Foo(p$foo: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$intType()))
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
-  inhale local$foo != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Foo(local$foo), wildcard)
-  if (local$foo != dom$RuntimeType$nullValue()) {
-    var anonymous$0: Ref
-    unfold acc(T_class_global$class_Foo(local$foo), wildcard)
-    anonymous$0 := local$foo.public$backing_field_x
-    ret$0 := anonymous$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$nullable(df$rt$T$c$Foo()))
+  inhale p$foo != df$rt$nullValue() ==>
+    acc(p$c$Foo$shared(p$foo), wildcard)
+  if (p$foo != df$rt$nullValue()) {
+    var anon$0: Ref
+    unfold acc(p$c$Foo$shared(p$foo), wildcard)
+    anon$0 := p$foo.bf$public$x
+    ret$0 := anon$0
   } else {
-    ret$0 := dom$RuntimeType$nullValue()}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$nullValue()}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /safe_call.kt:(354,385): info: Generated Viper text for testSafeCallPropertyNonNullable:
-field public$backing_field_x: Ref
+field bf$public$x: Ref
 
-method global$fun_testSafeCallPropertyNonNullable$fun_take$T_class_global$class_Foo$return$NT_Int(local$foo: Ref)
+method f$testSafeCallPropertyNonNullable$TF$T$c$Foo(p$foo: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$intType()))
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
-  inhale acc(T_class_global$class_Foo(local$foo), wildcard)
-  if (local$foo != dom$RuntimeType$nullValue()) {
-    var anonymous$0: Ref
-    unfold acc(T_class_global$class_Foo(local$foo), wildcard)
-    anonymous$0 := local$foo.public$backing_field_x
-    ret$0 := anonymous$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$T$c$Foo())
+  inhale acc(p$c$Foo$shared(p$foo), wildcard)
+  if (p$foo != df$rt$nullValue()) {
+    var anon$0: Ref
+    unfold acc(p$c$Foo$shared(p$foo), wildcard)
+    anon$0 := p$foo.bf$public$x
+    ret$0 := anon$0
   } else {
-    ret$0 := dom$RuntimeType$nullValue()}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$nullValue()}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /safe_call.kt:(493,506): info: Generated Viper text for safeCallChain:
-field public$backing_field_v: Ref
+field bf$public$v: Ref
 
-method class_Rec$fun_nullable$fun_take$T_class_global$class_Rec$return$NT_class_global$class_Rec(this: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Rec()))
-  ensures ret != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Rec(ret), wildcard)
+method f$c$Rec$nullable$TF$T$c$Rec(this: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$nullable(df$rt$T$c$Rec()))
+  ensures ret != df$rt$nullValue() ==> acc(p$c$Rec$shared(ret), wildcard)
 
 
-method global$fun_safeCallChain$fun_take$NT_class_global$class_Rec$return$NT_Int(local$rec: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+method f$safeCallChain$TF$c$Rec(p$rec: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$intType()))
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rec), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Rec()))
-  inhale local$rec != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Rec(local$rec), wildcard)
-  if (local$rec != dom$RuntimeType$nullValue()) {
-    anonymous$1 := class_Rec$fun_nullable$fun_take$T_class_global$class_Rec$return$NT_class_global$class_Rec(local$rec)
+  var anon$0: Ref
+  var anon$1: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$rec), df$rt$nullable(df$rt$T$c$Rec()))
+  inhale p$rec != df$rt$nullValue() ==>
+    acc(p$c$Rec$shared(p$rec), wildcard)
+  if (p$rec != df$rt$nullValue()) {
+    anon$1 := f$c$Rec$nullable$TF$T$c$Rec(p$rec)
   } else {
-    anonymous$1 := dom$RuntimeType$nullValue()}
-  if (anonymous$1 != dom$RuntimeType$nullValue()) {
-    anonymous$0 := class_Rec$fun_nullable$fun_take$T_class_global$class_Rec$return$NT_class_global$class_Rec(anonymous$1)
+    anon$1 := df$rt$nullValue()}
+  if (anon$1 != df$rt$nullValue()) {
+    anon$0 := f$c$Rec$nullable$TF$T$c$Rec(anon$1)
   } else {
-    anonymous$0 := dom$RuntimeType$nullValue()}
-  if (anonymous$0 != dom$RuntimeType$nullValue()) {
-    var anonymous$2: Ref
-    unfold acc(T_class_global$class_Rec(anonymous$0), wildcard)
-    anonymous$2 := anonymous$0.public$backing_field_v
-    ret$0 := anonymous$2
+    anon$0 := df$rt$nullValue()}
+  if (anon$0 != df$rt$nullValue()) {
+    var anon$2: Ref
+    unfold acc(p$c$Rec$shared(anon$0), wildcard)
+    anon$2 := anon$0.bf$public$v
+    ret$0 := anon$2
   } else {
-    ret$0 := dom$RuntimeType$nullValue()}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$nullValue()}
+  goto lbl$ret$0
+  label lbl$ret$0
 }

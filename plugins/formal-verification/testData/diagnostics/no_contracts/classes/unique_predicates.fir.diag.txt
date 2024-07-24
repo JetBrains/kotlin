@@ -1,199 +1,181 @@
 /unique_predicates.kt:(269,283): info: Generated Viper text for unique_foo_arg:
-field public$backing_field_w: Ref
+field bf$public$w: Ref
 
-field public$backing_field_x: Ref
+field bf$public$x: Ref
 
-field public$backing_field_y: Ref
+field bf$public$y: Ref
 
-field public$backing_field_z: Ref
+field bf$public$z: Ref
 
-predicate T_class_global$class_Foo(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_w, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_w),
-  dom$RuntimeType$intType()) &&
-  acc(special$class$predicate$subject.public$backing_field_y, wildcard) &&
-  acc(T_class_global$class_T(special$class$predicate$subject.public$backing_field_y), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_y),
-  dom$RuntimeType$T_class_global$class_T()) &&
-  acc(T_class_global$class_S(special$class$predicate$subject), wildcard)
+predicate p$c$Foo$shared(this: Ref) {
+  acc(this.bf$public$w, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$w), df$rt$intType()) &&
+  acc(this.bf$public$y, wildcard) &&
+  acc(p$c$T$shared(this.bf$public$y), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$y), df$rt$T$c$T()) &&
+  acc(p$c$S$shared(this), wildcard)
 }
 
-predicate T_class_global$class_S(special$class$predicate$subject: Ref) {
+predicate p$c$Foo$unique(this: Ref) {
+  acc(this.bf$public$w, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$w), df$rt$intType()) &&
+  acc(this.bf$public$x, write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$intType()) &&
+  acc(this.bf$public$y, wildcard) &&
+  acc(p$c$T$shared(this.bf$public$y), wildcard) &&
+  acc(p$c$T$unique(this.bf$public$y), write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$y), df$rt$T$c$T()) &&
+  acc(this.bf$public$z, write) &&
+  acc(p$c$T$shared(this.bf$public$z), wildcard) &&
+  acc(p$c$T$unique(this.bf$public$z), write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$z), df$rt$T$c$T()) &&
+  acc(p$c$S$unique(this), write)
+}
+
+predicate p$c$S$shared(this: Ref) {
   true
 }
 
-predicate T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$S$unique(this: Ref) {
   true
 }
 
-predicate Unique$T_class_global$class_Foo(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_w, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_w),
-  dom$RuntimeType$intType()) &&
-  acc(special$class$predicate$subject.public$backing_field_x, write) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
-  dom$RuntimeType$intType()) &&
-  acc(special$class$predicate$subject.public$backing_field_y, wildcard) &&
-  acc(T_class_global$class_T(special$class$predicate$subject.public$backing_field_y), wildcard) &&
-  acc(Unique$T_class_global$class_T(special$class$predicate$subject.public$backing_field_y), write) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_y),
-  dom$RuntimeType$T_class_global$class_T()) &&
-  acc(special$class$predicate$subject.public$backing_field_z, write) &&
-  acc(T_class_global$class_T(special$class$predicate$subject.public$backing_field_z), wildcard) &&
-  acc(Unique$T_class_global$class_T(special$class$predicate$subject.public$backing_field_z), write) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_z),
-  dom$RuntimeType$T_class_global$class_T()) &&
-  acc(Unique$T_class_global$class_S(special$class$predicate$subject), write)
-}
-
-predicate Unique$T_class_global$class_S(special$class$predicate$subject: Ref) {
+predicate p$c$T$shared(this: Ref) {
   true
 }
 
-predicate Unique$T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$unique(this: Ref) {
   true
 }
 
-method global$fun_unique_foo_arg$fun_take$T_class_global$class_Foo$return$T_Unit(local$foo: Ref)
-  returns (ret$0: Ref)
-  requires acc(Unique$T_class_global$class_Foo(local$foo), write)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$unique_foo_arg$TF$T$c$Foo(p$foo: Ref) returns (ret$0: Ref)
+  requires acc(p$c$Foo$unique(p$foo), write)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
-  inhale acc(T_class_global$class_Foo(local$foo), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$T$c$Foo())
+  inhale acc(p$c$Foo$shared(p$foo), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /unique_predicates.kt:(310,329): info: Generated Viper text for nullable_unique_arg:
-predicate T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$shared(this: Ref) {
   true
 }
 
-predicate Unique$T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$unique(this: Ref) {
   true
 }
 
-method global$fun_nullable_unique_arg$fun_take$NT_class_global$class_T$return$T_Unit(local$t: Ref)
-  returns (ret$0: Ref)
-  requires local$t != dom$RuntimeType$nullValue() ==>
-    acc(Unique$T_class_global$class_T(local$t), write)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$nullable_unique_arg$TF$c$T(p$t: Ref) returns (ret$0: Ref)
+  requires p$t != df$rt$nullValue() ==> acc(p$c$T$unique(p$t), write)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$t), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_T()))
-  inhale local$t != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_T(local$t), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$t), df$rt$nullable(df$rt$T$c$T()))
+  inhale p$t != df$rt$nullValue() ==> acc(p$c$T$shared(p$t), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /unique_predicates.kt:(353,372): info: Generated Viper text for borrowed_unique_arg:
-predicate T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$shared(this: Ref) {
   true
 }
 
-predicate Unique$T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$unique(this: Ref) {
   true
 }
 
-method global$fun_borrowed_unique_arg$fun_take$T_class_global$class_T$return$T_Unit(local$t: Ref)
-  returns (ret$0: Ref)
-  requires acc(Unique$T_class_global$class_T(local$t), write)
-  ensures acc(Unique$T_class_global$class_T(local$t), write)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$borrowed_unique_arg$TF$T$c$T(p$t: Ref) returns (ret$0: Ref)
+  requires acc(p$c$T$unique(p$t), write)
+  ensures acc(p$c$T$unique(p$t), write)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$t), dom$RuntimeType$T_class_global$class_T())
-  inhale acc(T_class_global$class_T(local$t), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$t), df$rt$T$c$T())
+  inhale acc(p$c$T$shared(p$t), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /unique_predicates.kt:(424,439): info: Generated Viper text for unique_receiver:
-predicate T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$shared(this: Ref) {
   true
 }
 
-predicate Unique$T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$unique(this: Ref) {
   true
 }
 
-method global$fun_unique_receiver$fun_take$T_class_global$class_T$return$T_Unit(this: Ref)
-  returns (ret$0: Ref)
-  requires acc(Unique$T_class_global$class_T(this), write)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$unique_receiver$TF$T$c$T(this: Ref) returns (ret$0: Ref)
+  requires acc(p$c$T$unique(this), write)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_T())
-  inhale acc(T_class_global$class_T(this), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(this), df$rt$T$c$T())
+  inhale acc(p$c$T$shared(this), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /unique_predicates.kt:(488,512): info: Generated Viper text for borrowed_unique_receiver:
-predicate T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$shared(this: Ref) {
   true
 }
 
-predicate Unique$T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$unique(this: Ref) {
   true
 }
 
-method global$fun_borrowed_unique_receiver$fun_take$T_class_global$class_T$return$T_Unit(this: Ref)
-  returns (ret$0: Ref)
-  requires acc(Unique$T_class_global$class_T(this), write)
-  ensures acc(Unique$T_class_global$class_T(this), write)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$borrowed_unique_receiver$TF$T$c$T(this: Ref) returns (ret$0: Ref)
+  requires acc(p$c$T$unique(this), write)
+  ensures acc(p$c$T$unique(this), write)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_T())
-  inhale acc(T_class_global$class_T(this), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(this), df$rt$T$c$T())
+  inhale acc(p$c$T$shared(this), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /unique_predicates.kt:(531,544): info: Generated Viper text for unique_result:
-predicate T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$shared(this: Ref) {
   true
 }
 
-predicate Unique$T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$unique(this: Ref) {
   true
 }
 
-method class_T$constructor$fun_take$$return$T_class_global$class_T()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_T())
-  ensures acc(T_class_global$class_T(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_T(ret), write)
+method con$c$T$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$T())
+  ensures acc(p$c$T$shared(ret), wildcard)
+  ensures acc(p$c$T$unique(ret), write)
 
 
-method global$fun_unique_result$fun_take$$return$T_class_global$class_T()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$T_class_global$class_T())
-  ensures acc(T_class_global$class_T(ret$0), wildcard)
-  ensures acc(Unique$T_class_global$class_T(ret$0), write)
+method f$unique_result$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$T$c$T())
+  ensures acc(p$c$T$shared(ret$0), wildcard)
+  ensures acc(p$c$T$unique(ret$0), write)
 {
-  ret$0 := class_T$constructor$fun_take$$return$T_class_global$class_T()
-  goto label$ret$0
-  label label$ret$0
+  ret$0 := con$c$T$()
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /unique_predicates.kt:(579,601): info: Generated Viper text for unique_nullable_result:
-predicate T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$shared(this: Ref) {
   true
 }
 
-predicate Unique$T_class_global$class_T(special$class$predicate$subject: Ref) {
+predicate p$c$T$unique(this: Ref) {
   true
 }
 
-method global$fun_unique_nullable_result$fun_take$$return$NT_class_global$class_T()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_T()))
-  ensures ret$0 != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_T(ret$0), wildcard)
-  ensures ret$0 != dom$RuntimeType$nullValue() ==>
-    acc(Unique$T_class_global$class_T(ret$0), write)
+method f$unique_nullable_result$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$T$c$T()))
+  ensures ret$0 != df$rt$nullValue() ==> acc(p$c$T$shared(ret$0), wildcard)
+  ensures ret$0 != df$rt$nullValue() ==> acc(p$c$T$unique(ret$0), write)
 {
-  ret$0 := dom$RuntimeType$nullValue()
-  goto label$ret$0
-  label label$ret$0
+  ret$0 := df$rt$nullValue()
+  goto lbl$ret$0
+  label lbl$ret$0
 }

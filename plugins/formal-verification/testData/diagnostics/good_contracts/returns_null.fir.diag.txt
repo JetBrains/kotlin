@@ -1,83 +1,73 @@
 /returns_null.kt:(121,140): info: Generated Viper text for simple_returns_null:
-method global$fun_simple_returns_null$fun_take$NT_Int$return$NT_Int(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  ensures ret$0 == dom$RuntimeType$nullValue()
-  ensures ret$0 != dom$RuntimeType$nullValue() ==> false
+method f$simple_returns_null$TF$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$intType()))
+  ensures ret$0 == df$rt$nullValue()
+  ensures ret$0 != df$rt$nullValue() ==> false
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  ret$0 := dom$RuntimeType$nullValue()
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$intType()))
+  ret$0 := df$rt$nullValue()
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /returns_null.kt:(300,320): info: Generated Viper text for returns_null_implies:
-method global$fun_returns_null_implies$fun_take$NT_Boolean$return$NT_Boolean(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$boolType()))
-  ensures ret$0 == dom$RuntimeType$nullValue() ==>
-    local$x == dom$RuntimeType$nullValue()
-  ensures ret$0 != dom$RuntimeType$nullValue() ==>
-    local$x != dom$RuntimeType$nullValue()
+method f$returns_null_implies$TF$Boolean(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$boolType()))
+  ensures ret$0 == df$rt$nullValue() ==> p$x == df$rt$nullValue()
+  ensures ret$0 != df$rt$nullValue() ==> p$x != df$rt$nullValue()
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$boolType()))
-  ret$0 := local$x
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$boolType()))
+  ret$0 := p$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /returns_null.kt:(511,531): info: Generated Viper text for returns_null_with_if:
-method global$fun_returns_null_with_if$fun_take$NT_Int$NT_Int$NT_Int$return$NT_Int(local$x: Ref,
-  local$y: Ref, local$z: Ref)
+method f$returns_null_with_if$TF$Int$Int$Int(p$x: Ref, p$y: Ref, p$z: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  ensures ret$0 == dom$RuntimeType$nullValue() ==>
-    local$x == dom$RuntimeType$nullValue() &&
-    local$y == dom$RuntimeType$nullValue() ||
-    local$z == dom$RuntimeType$nullValue()
-  ensures ret$0 != dom$RuntimeType$nullValue() ==>
-    local$x != dom$RuntimeType$nullValue() ||
-    local$y != dom$RuntimeType$nullValue()
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$intType()))
+  ensures ret$0 == df$rt$nullValue() ==>
+    p$x == df$rt$nullValue() && p$y == df$rt$nullValue() ||
+    p$z == df$rt$nullValue()
+  ensures ret$0 != df$rt$nullValue() ==>
+    p$x != df$rt$nullValue() || p$y != df$rt$nullValue()
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$z), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  if (local$x == dom$RuntimeType$nullValue()) {
-    ret$0 := local$y
-    goto label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$intType()))
+  inhale df$rt$isSubtype(df$rt$typeOf(p$y), df$rt$nullable(df$rt$intType()))
+  inhale df$rt$isSubtype(df$rt$typeOf(p$z), df$rt$nullable(df$rt$intType()))
+  if (p$x == df$rt$nullValue()) {
+    ret$0 := p$y
+    goto lbl$ret$0
   } else {
-    ret$0 := local$z
-    goto label$ret$0
+    ret$0 := p$z
+    goto lbl$ret$0
   }
-  label label$ret$0
+  label lbl$ret$0
 }
 
 /returns_null.kt:(833,862): info: Generated Viper text for non_nullable_returns_not_null:
-method global$fun_non_nullable_returns_not_null$fun_take$T_Int$return$T_Int(local$x: Ref)
+method f$non_nullable_returns_not_null$TF$T$Int(p$x: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
-  ensures ret$0 != dom$RuntimeType$nullValue()
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
+  ensures ret$0 != df$rt$nullValue()
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  ret$0 := local$x
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  ret$0 := p$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /returns_null.kt:(981,1010): info: Generated Viper text for non_nullable_compared_to_null:
-method global$fun_non_nullable_compared_to_null$fun_take$T_Int$T_Int$return$T_Int(local$x: Ref,
-  local$y: Ref)
+method f$non_nullable_compared_to_null$TF$T$Int$T$Int(p$x: Ref, p$y: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
-  ensures true ==>
-    local$y == dom$RuntimeType$nullValue() ||
-    local$x != dom$RuntimeType$nullValue()
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
+  ensures true ==> p$y == df$rt$nullValue() || p$x != df$rt$nullValue()
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$intType())
-  ret$0 := local$x
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$y), df$rt$intType())
+  ret$0 := p$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /returns_null.kt:(1076,1085): warning: Condition is always 'false'.

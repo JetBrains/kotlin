@@ -1,119 +1,119 @@
 /field_getters.kt:(70,94): info: Generated Viper text for testPrimitiveFieldGetter:
-field public$backing_field_a: Ref
+field bf$public$a: Ref
 
-field public$backing_field_b: Ref
+field bf$public$b: Ref
 
-method global$fun_testPrimitiveFieldGetter$fun_take$T_class_global$class_PrimitiveFields$return$T_Unit(local$pf: Ref)
+method f$testPrimitiveFieldGetter$TF$T$c$PrimitiveFields(p$pf: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$a: Ref
-  var local0$b: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$pf), dom$RuntimeType$T_class_global$class_PrimitiveFields())
-  inhale acc(T_class_global$class_PrimitiveFields(local$pf), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  unfold acc(T_class_global$class_PrimitiveFields(local$pf), wildcard)
-  local0$a := local$pf.public$backing_field_a
-  inhale acc(local$pf.public$backing_field_b, write)
-  local0$b := local$pf.public$backing_field_b
-  exhale acc(local$pf.public$backing_field_b, write)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$b), dom$RuntimeType$intType())
-  label label$ret$0
+  var l0$a: Ref
+  var l0$b: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$pf), df$rt$T$c$PrimitiveFields())
+  inhale acc(p$c$PrimitiveFields$shared(p$pf), wildcard)
+  ret$0 := df$rt$unitValue()
+  unfold acc(p$c$PrimitiveFields$shared(p$pf), wildcard)
+  l0$a := p$pf.bf$public$a
+  inhale acc(p$pf.bf$public$b, write)
+  l0$b := p$pf.bf$public$b
+  exhale acc(p$pf.bf$public$b, write)
+  inhale df$rt$isSubtype(df$rt$typeOf(l0$b), df$rt$intType())
+  label lbl$ret$0
 }
 
 /field_getters.kt:(230,254): info: Generated Viper text for testReferenceFieldGetter:
-field public$backing_field_a: Ref
+field bf$public$a: Ref
 
-field public$backing_field_b: Ref
+field bf$public$b: Ref
 
-field public$backing_field_f: Ref
+field bf$public$f: Ref
 
-field public$backing_field_g: Ref
+field bf$public$g: Ref
 
-method global$fun_testReferenceFieldGetter$fun_take$T_class_global$class_ReferenceFields$return$T_Unit(local$rf: Ref)
+method f$testReferenceFieldGetter$TF$T$c$ReferenceFields(p$rf: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$f: Ref
-  var local0$g: Ref
-  var local0$fa: Ref
-  var local0$fb: Ref
-  var local0$ga: Ref
-  var local0$gb: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rf), dom$RuntimeType$T_class_global$class_ReferenceFields())
-  inhale acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  unfold acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
-  local0$f := local$rf.public$backing_field_f
-  inhale acc(local$rf.public$backing_field_g, write)
-  local0$g := local$rf.public$backing_field_g
-  exhale acc(local$rf.public$backing_field_g, write)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$g), dom$RuntimeType$T_class_global$class_PrimitiveFields())
-  inhale acc(T_class_global$class_PrimitiveFields(local0$g), wildcard)
-  unfold acc(T_class_global$class_PrimitiveFields(local0$f), wildcard)
-  local0$fa := local0$f.public$backing_field_a
-  inhale acc(local0$f.public$backing_field_b, write)
-  local0$fb := local0$f.public$backing_field_b
-  exhale acc(local0$f.public$backing_field_b, write)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fb), dom$RuntimeType$intType())
-  unfold acc(T_class_global$class_PrimitiveFields(local0$g), wildcard)
-  local0$ga := local0$g.public$backing_field_a
-  inhale acc(local0$g.public$backing_field_b, write)
-  local0$gb := local0$g.public$backing_field_b
-  exhale acc(local0$g.public$backing_field_b, write)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$gb), dom$RuntimeType$intType())
-  label label$ret$0
+  var l0$f: Ref
+  var l0$g: Ref
+  var l0$fa: Ref
+  var l0$fb: Ref
+  var l0$ga: Ref
+  var l0$gb: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$rf), df$rt$T$c$ReferenceFields())
+  inhale acc(p$c$ReferenceFields$shared(p$rf), wildcard)
+  ret$0 := df$rt$unitValue()
+  unfold acc(p$c$ReferenceFields$shared(p$rf), wildcard)
+  l0$f := p$rf.bf$public$f
+  inhale acc(p$rf.bf$public$g, write)
+  l0$g := p$rf.bf$public$g
+  exhale acc(p$rf.bf$public$g, write)
+  inhale df$rt$isSubtype(df$rt$typeOf(l0$g), df$rt$T$c$PrimitiveFields())
+  inhale acc(p$c$PrimitiveFields$shared(l0$g), wildcard)
+  unfold acc(p$c$PrimitiveFields$shared(l0$f), wildcard)
+  l0$fa := l0$f.bf$public$a
+  inhale acc(l0$f.bf$public$b, write)
+  l0$fb := l0$f.bf$public$b
+  exhale acc(l0$f.bf$public$b, write)
+  inhale df$rt$isSubtype(df$rt$typeOf(l0$fb), df$rt$intType())
+  unfold acc(p$c$PrimitiveFields$shared(l0$g), wildcard)
+  l0$ga := l0$g.bf$public$a
+  inhale acc(l0$g.bf$public$b, write)
+  l0$gb := l0$g.bf$public$b
+  exhale acc(l0$g.bf$public$b, write)
+  inhale df$rt$isSubtype(df$rt$typeOf(l0$gb), df$rt$intType())
+  label lbl$ret$0
 }
 
 /field_getters.kt:(387,411): info: Generated Viper text for testCascadingFieldGetter:
-field public$backing_field_a: Ref
+field bf$public$a: Ref
 
-field public$backing_field_b: Ref
+field bf$public$b: Ref
 
-field public$backing_field_f: Ref
+field bf$public$f: Ref
 
-field public$backing_field_g: Ref
+field bf$public$g: Ref
 
-method global$fun_testCascadingFieldGetter$fun_take$T_class_global$class_ReferenceFields$return$T_Unit(local$rf: Ref)
+method f$testCascadingFieldGetter$TF$T$c$ReferenceFields(p$rf: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$fa: Ref
-  var anonymous$0: Ref
-  var local0$fb: Ref
-  var anonymous$1: Ref
-  var local0$ga: Ref
-  var anonymous$2: Ref
-  var local0$gb: Ref
-  var anonymous$3: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rf), dom$RuntimeType$T_class_global$class_ReferenceFields())
-  inhale acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  unfold acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
-  anonymous$0 := local$rf.public$backing_field_f
-  unfold acc(T_class_global$class_PrimitiveFields(anonymous$0), wildcard)
-  local0$fa := anonymous$0.public$backing_field_a
-  unfold acc(T_class_global$class_ReferenceFields(local$rf), wildcard)
-  anonymous$1 := local$rf.public$backing_field_f
-  inhale acc(anonymous$1.public$backing_field_b, write)
-  local0$fb := anonymous$1.public$backing_field_b
-  exhale acc(anonymous$1.public$backing_field_b, write)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fb), dom$RuntimeType$intType())
-  inhale acc(local$rf.public$backing_field_g, write)
-  anonymous$2 := local$rf.public$backing_field_g
-  exhale acc(local$rf.public$backing_field_g, write)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$T_class_global$class_PrimitiveFields())
-  inhale acc(T_class_global$class_PrimitiveFields(anonymous$2), wildcard)
-  unfold acc(T_class_global$class_PrimitiveFields(anonymous$2), wildcard)
-  local0$ga := anonymous$2.public$backing_field_a
-  inhale acc(local$rf.public$backing_field_g, write)
-  anonymous$3 := local$rf.public$backing_field_g
-  exhale acc(local$rf.public$backing_field_g, write)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$3), dom$RuntimeType$T_class_global$class_PrimitiveFields())
-  inhale acc(T_class_global$class_PrimitiveFields(anonymous$3), wildcard)
-  inhale acc(anonymous$3.public$backing_field_b, write)
-  local0$gb := anonymous$3.public$backing_field_b
-  exhale acc(anonymous$3.public$backing_field_b, write)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$gb), dom$RuntimeType$intType())
-  label label$ret$0
+  var l0$fa: Ref
+  var anon$0: Ref
+  var l0$fb: Ref
+  var anon$1: Ref
+  var l0$ga: Ref
+  var anon$2: Ref
+  var l0$gb: Ref
+  var anon$3: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$rf), df$rt$T$c$ReferenceFields())
+  inhale acc(p$c$ReferenceFields$shared(p$rf), wildcard)
+  ret$0 := df$rt$unitValue()
+  unfold acc(p$c$ReferenceFields$shared(p$rf), wildcard)
+  anon$0 := p$rf.bf$public$f
+  unfold acc(p$c$PrimitiveFields$shared(anon$0), wildcard)
+  l0$fa := anon$0.bf$public$a
+  unfold acc(p$c$ReferenceFields$shared(p$rf), wildcard)
+  anon$1 := p$rf.bf$public$f
+  inhale acc(anon$1.bf$public$b, write)
+  l0$fb := anon$1.bf$public$b
+  exhale acc(anon$1.bf$public$b, write)
+  inhale df$rt$isSubtype(df$rt$typeOf(l0$fb), df$rt$intType())
+  inhale acc(p$rf.bf$public$g, write)
+  anon$2 := p$rf.bf$public$g
+  exhale acc(p$rf.bf$public$g, write)
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$2), df$rt$T$c$PrimitiveFields())
+  inhale acc(p$c$PrimitiveFields$shared(anon$2), wildcard)
+  unfold acc(p$c$PrimitiveFields$shared(anon$2), wildcard)
+  l0$ga := anon$2.bf$public$a
+  inhale acc(p$rf.bf$public$g, write)
+  anon$3 := p$rf.bf$public$g
+  exhale acc(p$rf.bf$public$g, write)
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$3), df$rt$T$c$PrimitiveFields())
+  inhale acc(p$c$PrimitiveFields$shared(anon$3), wildcard)
+  inhale acc(anon$3.bf$public$b, write)
+  l0$gb := anon$3.bf$public$b
+  exhale acc(anon$3.bf$public$b, write)
+  inhale df$rt$isSubtype(df$rt$typeOf(l0$gb), df$rt$intType())
+  label lbl$ret$0
 }

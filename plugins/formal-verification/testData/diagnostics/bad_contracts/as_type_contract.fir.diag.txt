@@ -1,30 +1,29 @@
 /as_type_contract.kt:(150,154): info: Generated Viper text for getX:
-field public$backing_field_x: Ref
+field bf$public$x: Ref
 
-method global$fun_getX$fun_take$T_Any$return$NT_Int(local$a: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  ensures ret$0 != dom$RuntimeType$nullValue() ==>
-    !dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$T_class_global$class_IntHolder())
+method f$getX$TF$T$Any(p$a: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$intType()))
+  ensures ret$0 != df$rt$nullValue() ==>
+    !df$rt$isSubtype(df$rt$typeOf(p$a), df$rt$T$c$IntHolder())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$anyType())
-  if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$T_class_global$class_IntHolder())) {
-    anonymous$0 := local$a
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$a), df$rt$anyType())
+  if (df$rt$isSubtype(df$rt$typeOf(p$a), df$rt$T$c$IntHolder())) {
+    anon$0 := p$a
   } else {
-    anonymous$0 := dom$RuntimeType$nullValue()}
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_IntHolder()))
-  inhale anonymous$0 != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_IntHolder(anonymous$0), wildcard)
-  if (anonymous$0 != dom$RuntimeType$nullValue()) {
-    var anonymous$1: Ref
-    unfold acc(T_class_global$class_IntHolder(anonymous$0), wildcard)
-    anonymous$1 := anonymous$0.public$backing_field_x
-    ret$0 := anonymous$1
+    anon$0 := df$rt$nullValue()}
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$nullable(df$rt$T$c$IntHolder()))
+  inhale anon$0 != df$rt$nullValue() ==>
+    acc(p$c$IntHolder$shared(anon$0), wildcard)
+  if (anon$0 != df$rt$nullValue()) {
+    var anon$1: Ref
+    unfold acc(p$c$IntHolder$shared(anon$0), wildcard)
+    anon$1 := anon$0.bf$public$x
+    ret$0 := anon$1
   } else {
-    ret$0 := dom$RuntimeType$nullValue()}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$nullValue()}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /as_type_contract.kt:(194,236): warning: Cannot verify that if a non-null value is returned then a !is IntHolder.

@@ -1,21 +1,19 @@
 /any.kt:(23,40): info: Generated Viper text for anyArgumentReturn:
-method global$fun_anyArgumentReturn$fun_take$T_Any$return$T_Any(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$anyType())
+method f$anyArgumentReturn$TF$T$Any(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$anyType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$anyType())
-  ret$0 := local$x
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$anyType())
+  ret$0 := p$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /any.kt:(76,83): info: Generated Viper text for anyCast:
-method global$fun_anyCast$fun_take$T_Int$return$T_Any(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$anyType())
+method f$anyCast$TF$T$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$anyType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  ret$0 := local$x
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  ret$0 := p$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }

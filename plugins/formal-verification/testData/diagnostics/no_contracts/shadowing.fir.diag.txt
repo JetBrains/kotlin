@@ -1,74 +1,71 @@
 /shadowing.kt:(23,34): info: Generated Viper text for shadowLocal:
-method global$fun_shadowLocal$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$shadowLocal$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$foo: Ref
-  var local0$x: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$x := dom$RuntimeType$intToRef(0)
-  if (dom$RuntimeType$intFromRef(local0$x) == 0) {
-    var local2$x: Ref
-    local0$foo := local0$x
-    local2$x := dom$RuntimeType$intToRef(1)
-    local0$foo := local2$x
+  var l0$foo: Ref
+  var l0$x: Ref
+  ret$0 := df$rt$unitValue()
+  l0$x := df$rt$intToRef(0)
+  if (df$rt$intFromRef(l0$x) == 0) {
+    var l2$x: Ref
+    l0$foo := l0$x
+    l2$x := df$rt$intToRef(1)
+    l0$foo := l2$x
   } else {
-    var local3$x: Ref
-    local0$foo := local0$x
-    local3$x := dom$RuntimeType$intToRef(2)
-    local0$foo := local3$x
+    var l3$x: Ref
+    l0$foo := l0$x
+    l3$x := df$rt$intToRef(2)
+    l0$foo := l3$x
   }
-  local0$foo := local0$x
-  label label$ret$0
+  l0$foo := l0$x
+  label lbl$ret$0
 }
 
 /shadowing.kt:(232,243): info: Generated Viper text for shadowParam:
-method global$fun_shadowParam$fun_take$T_Int$return$T_Unit(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$shadowParam$TF$T$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$foo: Ref
-  var local0$x: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$foo := local$x
-  local0$x := dom$RuntimeType$intToRef(0)
-  local0$foo := local0$x
-  label label$ret$0
+  var l0$foo: Ref
+  var l0$x: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  ret$0 := df$rt$unitValue()
+  l0$foo := p$x
+  l0$x := df$rt$intToRef(0)
+  l0$foo := l0$x
+  label lbl$ret$0
 }
 
 /shadowing.kt:(322,334): info: Generated Viper text for shadowNested:
-method global$fun_shadowNested$fun_take$T_Int$return$T_Unit(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$shadowNested$TF$T$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$foo: Ref
-  var local0$x: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$foo := local$x
-  local0$x := dom$RuntimeType$intToRef(0)
-  local0$foo := local0$x
+  var l0$foo: Ref
+  var l0$x: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  ret$0 := df$rt$unitValue()
+  l0$foo := p$x
+  l0$x := df$rt$intToRef(0)
+  l0$foo := l0$x
   if (true) {
-    var local2$x: Ref
-    var anonymous$0: Ref
-    local0$foo := local0$x
-    local2$x := dom$RuntimeType$intToRef(1)
-    local0$foo := local2$x
-    label label$continue$0
-    anonymous$0 := dom$RuntimeType$boolToRef(true)
-    while (dom$RuntimeType$boolFromRef(anonymous$0))
-      invariant dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+    var l2$x: Ref
+    var anon$0: Ref
+    l0$foo := l0$x
+    l2$x := df$rt$intToRef(1)
+    l0$foo := l2$x
+    label lbl$continue$0
+    anon$0 := df$rt$boolToRef(true)
+    while (df$rt$boolFromRef(anon$0))
+      invariant df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
     {
-      var local3$x: Ref
-      local0$foo := local2$x
-      local3$x := dom$RuntimeType$intToRef(2)
-      local0$foo := local3$x
-      anonymous$0 := dom$RuntimeType$boolToRef(true)
+      var l3$x: Ref
+      l0$foo := l2$x
+      l3$x := df$rt$intToRef(2)
+      l0$foo := l3$x
+      anon$0 := df$rt$boolToRef(true)
     }
-    label label$break$0
-    local0$foo := local2$x
+    label lbl$break$0
+    l0$foo := l2$x
   }
-  local0$foo := local0$x
-  label label$ret$0
+  l0$foo := l0$x
+  label lbl$ret$0
 }

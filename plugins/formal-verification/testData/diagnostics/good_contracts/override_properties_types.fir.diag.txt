@@ -1,69 +1,59 @@
 /override_properties_types.kt:(520,530): info: Generated Viper text for extractInt:
-field public$backing_field_field: Ref
+field bf$public$field: Ref
 
-method global$fun_extractInt$fun_take$T_class_global$class_Base$T_Boolean$return$NT_Int(local$base: Ref,
-  local$returnNull: Ref)
+method f$extractInt$TF$T$c$Base$T$Boolean(p$base: Ref, p$returnNull: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  ensures ret$0 == dom$RuntimeType$nullValue() ==>
-    dom$RuntimeType$boolFromRef(local$returnNull)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$intType()))
+  ensures ret$0 == df$rt$nullValue() ==> df$rt$boolFromRef(p$returnNull)
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$base), dom$RuntimeType$T_class_global$class_Base())
-  inhale acc(T_class_global$class_Base(local$base), wildcard)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$returnNull),
-    dom$RuntimeType$boolType())
-  if (dom$RuntimeType$boolFromRef(local$returnNull)) {
-    var anonymous$0: Ref
-    anonymous$0 := dom$RuntimeType$nullValue()
-    ret$0 := anonymous$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$Base())
+  inhale acc(p$c$Base$shared(p$base), wildcard)
+  inhale df$rt$isSubtype(df$rt$typeOf(p$returnNull), df$rt$boolType())
+  if (df$rt$boolFromRef(p$returnNull)) {
+    var anon$0: Ref
+    anon$0 := df$rt$nullValue()
+    ret$0 := anon$0
   } else {
-    var anonymous$1: Ref
-    if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$base), dom$RuntimeType$T_class_global$class_OpenClassOpenFieldVarDerived())) {
-      var anonymous$2: Ref
-      var anonymous$3: Ref
-      anonymous$3 := local$base
-      inhale acc(T_class_global$class_OpenClassOpenFieldVarDerived(anonymous$3), wildcard)
-      anonymous$2 := public$property_getter_field(anonymous$3)
-      anonymous$1 := anonymous$2
-      inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1),
-        dom$RuntimeType$intType())
-    } elseif (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$base),
-    dom$RuntimeType$T_class_global$class_FinalClassOpenFieldVarDerived())) {
-      var anonymous$4: Ref
-      anonymous$4 := local$base
-      inhale acc(T_class_global$class_FinalClassOpenFieldVarDerived(anonymous$4), wildcard)
-      inhale acc(anonymous$4.public$backing_field_field, write)
-      anonymous$1 := anonymous$4.public$backing_field_field
-      exhale acc(anonymous$4.public$backing_field_field, write)
-      inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1),
-        dom$RuntimeType$intType())
-    } elseif (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$base),
-    dom$RuntimeType$T_class_global$class_FinalClassFinalFieldValDerived())) {
-      var anonymous$5: Ref
-      anonymous$5 := local$base
-      inhale acc(T_class_global$class_FinalClassFinalFieldValDerived(anonymous$5), wildcard)
-      unfold acc(T_class_global$class_FinalClassFinalFieldValDerived(anonymous$5), wildcard)
-      anonymous$1 := anonymous$5.public$backing_field_field
-    } elseif (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$base),
-    dom$RuntimeType$T_class_global$class_OpenClassFinalFieldVarDerived())) {
-      var anonymous$6: Ref
-      anonymous$6 := local$base
-      inhale acc(T_class_global$class_OpenClassFinalFieldVarDerived(anonymous$6), wildcard)
-      inhale acc(anonymous$6.public$backing_field_field, write)
-      anonymous$1 := anonymous$6.public$backing_field_field
-      exhale acc(anonymous$6.public$backing_field_field, write)
-      inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1),
-        dom$RuntimeType$intType())
+    var anon$1: Ref
+    if (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$OpenClassOpenFieldVarDerived())) {
+      var anon$2: Ref
+      var anon$3: Ref
+      anon$3 := p$base
+      inhale acc(p$c$OpenClassOpenFieldVarDerived$shared(anon$3), wildcard)
+      anon$2 := pg$public$field(anon$3)
+      anon$1 := anon$2
+      inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
+    } elseif (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$FinalClassOpenFieldVarDerived())) {
+      var anon$4: Ref
+      anon$4 := p$base
+      inhale acc(p$c$FinalClassOpenFieldVarDerived$shared(anon$4), wildcard)
+      inhale acc(anon$4.bf$public$field, write)
+      anon$1 := anon$4.bf$public$field
+      exhale acc(anon$4.bf$public$field, write)
+      inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
+    } elseif (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$FinalClassFinalFieldValDerived())) {
+      var anon$5: Ref
+      anon$5 := p$base
+      inhale acc(p$c$FinalClassFinalFieldValDerived$shared(anon$5), wildcard)
+      unfold acc(p$c$FinalClassFinalFieldValDerived$shared(anon$5), wildcard)
+      anon$1 := anon$5.bf$public$field
+    } elseif (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$OpenClassFinalFieldVarDerived())) {
+      var anon$6: Ref
+      anon$6 := p$base
+      inhale acc(p$c$OpenClassFinalFieldVarDerived$shared(anon$6), wildcard)
+      inhale acc(anon$6.bf$public$field, write)
+      anon$1 := anon$6.bf$public$field
+      exhale acc(anon$6.bf$public$field, write)
+      inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
     } else {
-      anonymous$1 := dom$RuntimeType$intToRef(0)}
-    ret$0 := anonymous$1
+      anon$1 := df$rt$intToRef(0)}
+    ret$0 := anon$1
   }
-  goto label$ret$0
-  label label$ret$0
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method public$property_getter_field(this: Ref) returns (ret: Ref)
+method pg$public$field(this: Ref) returns (ret: Ref)
 
 
-method public$property_setter_field(this: Ref, value: Ref)
-  returns (ret: Ref)
+method ps$public$field(this: Ref, value: Ref) returns (ret: Ref)

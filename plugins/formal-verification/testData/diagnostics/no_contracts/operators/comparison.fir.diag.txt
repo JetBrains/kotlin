@@ -1,50 +1,44 @@
 /comparison.kt:(23,27): info: Generated Viper text for less:
-method global$fun_less$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref, local$y: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+method f$less$TF$T$Int$T$Int(p$x: Ref, p$y: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$intType())
-  ret$0 := special$ltInts(local$x, local$y)
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$y), df$rt$intType())
+  ret$0 := sp$ltInts(p$x, p$y)
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /comparison.kt:(79,88): info: Generated Viper text for lessEqual:
-method global$fun_lessEqual$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
-  local$y: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+method f$lessEqual$TF$T$Int$T$Int(p$x: Ref, p$y: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$intType())
-  ret$0 := special$leInts(local$x, local$y)
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$y), df$rt$intType())
+  ret$0 := sp$leInts(p$x, p$y)
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /comparison.kt:(141,148): info: Generated Viper text for greater:
-method global$fun_greater$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
-  local$y: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+method f$greater$TF$T$Int$T$Int(p$x: Ref, p$y: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$intType())
-  ret$0 := special$gtInts(local$x, local$y)
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$y), df$rt$intType())
+  ret$0 := sp$gtInts(p$x, p$y)
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /comparison.kt:(200,212): info: Generated Viper text for greaterEqual:
-method global$fun_greaterEqual$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
-  local$y: Ref)
+method f$greaterEqual$TF$T$Int$T$Int(p$x: Ref, p$y: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$intType())
-  ret$0 := special$geInts(local$x, local$y)
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$y), df$rt$intType())
+  ret$0 := sp$geInts(p$x, p$y)
+  goto lbl$ret$0
+  label lbl$ret$0
 }

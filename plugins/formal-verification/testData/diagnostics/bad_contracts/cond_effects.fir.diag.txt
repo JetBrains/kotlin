@@ -1,98 +1,92 @@
 /cond_effects.kt:(121,146): info: Generated Viper text for compoundConditionalEffect:
-method global$fun_compoundConditionalEffect$fun_take$T_Boolean$return$T_Unit(local$b: Ref)
+method f$compoundConditionalEffect$TF$T$Boolean(p$b: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
-  ensures true ==> dom$RuntimeType$boolFromRef(local$b) && false
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
+  ensures true ==> df$rt$boolFromRef(p$b) && false
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /cond_effects.kt:(190,220): warning: Cannot verify that if the function returns then (b && false).
 
 /cond_effects.kt:(271,287): info: Generated Viper text for mayReturnNonNull:
-method global$fun_mayReturnNonNull$fun_take$NT_Any$return$NT_Any(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
-  ensures ret$0 == dom$RuntimeType$nullValue() ==>
-    dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
+method f$mayReturnNonNull$TF$Any(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$anyType()))
+  ensures ret$0 == df$rt$nullValue() ==>
+    df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
-  ret$0 := local$x
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$anyType()))
+  ret$0 := p$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /cond_effects.kt:(328,360): warning: Cannot verify that if a null value is returned then x is Int.
 
 /cond_effects.kt:(424,437): info: Generated Viper text for mayReturnNull:
-method global$fun_mayReturnNull$fun_take$NT_Any$return$NT_Any(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
-  ensures ret$0 != dom$RuntimeType$nullValue() ==>
-    dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
+method f$mayReturnNull$TF$Any(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$anyType()))
+  ensures ret$0 != df$rt$nullValue() ==>
+    df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
-  ret$0 := local$x
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$anyType()))
+  ret$0 := p$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /cond_effects.kt:(478,513): warning: Cannot verify that if a non-null value is returned then x is Int.
 
 /cond_effects.kt:(723,741): info: Generated Viper text for isNullOrEmptyWrong:
-method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean(local$seq: Ref)
+method f$isNullOrEmptyWrong$TF$c$pkg$kotlin$CharSequence(p$seq: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
-  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==>
-    local$seq != dom$RuntimeType$nullValue()
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
+  ensures df$rt$boolFromRef(ret$0) == false ==> p$seq != df$rt$nullValue()
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$seq), dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$global$class_CharSequence()))
-  inhale local$seq != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
-  if (!(local$seq == dom$RuntimeType$nullValue())) {
-    var anonymous$0: Ref
-    var anonymous$1: Ref
-    anonymous$1 := public$property_getter_length(local$seq)
-    anonymous$0 := anonymous$1
-    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
-    ret$0 := special$notBool(dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(anonymous$0) ==
-      0))
+  inhale df$rt$isSubtype(df$rt$typeOf(p$seq), df$rt$nullable(df$rt$T$c$pkg$kotlin$CharSequence()))
+  inhale p$seq != df$rt$nullValue() ==>
+    acc(p$pkg$kotlin$c$CharSequence$shared(p$seq), wildcard)
+  if (!(p$seq == df$rt$nullValue())) {
+    var anon$0: Ref
+    var anon$1: Ref
+    anon$1 := pg$public$length(p$seq)
+    anon$0 := anon$1
+    inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())
+    ret$0 := sp$notBool(df$rt$boolToRef(df$rt$intFromRef(anon$0) == 0))
   } else {
-    ret$0 := dom$RuntimeType$boolToRef(false)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$boolToRef(false)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method public$property_getter_length(this: Ref) returns (ret: Ref)
+method pg$public$length(this: Ref) returns (ret: Ref)
 
 
 /cond_effects.kt:(796,832): warning: Cannot verify that if a false value is returned then seq != null.
 
 /cond_effects.kt:(925,942): info: Generated Viper text for recursiveContract:
-field public$backing_field_length: Ref
+field bf$public$length: Ref
 
-method global$fun_recursiveContract$fun_take$T_Int$NT_Any$return$T_Boolean(local$n: Ref,
-  local$x: Ref)
+method f$recursiveContract$TF$T$Int$Any(p$n: Ref, p$x: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
-  ensures dom$RuntimeType$boolFromRef(ret$0) == true ==>
-    dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_pkg$kotlin$global$class_String())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
+  ensures df$rt$boolFromRef(ret$0) == true ==>
+    df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$T$c$pkg$kotlin$String())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$n), dom$RuntimeType$intType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
-  if (dom$RuntimeType$intFromRef(local$n) == 0) {
-    ret$0 := dom$RuntimeType$boolToRef(dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x),
-      dom$RuntimeType$intType()))
+  inhale df$rt$isSubtype(df$rt$typeOf(p$n), df$rt$intType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$anyType()))
+  if (df$rt$intFromRef(p$n) == 0) {
+    ret$0 := df$rt$boolToRef(df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType()))
   } else {
-    ret$0 := global$fun_recursiveContract$fun_take$T_Int$NT_Any$return$T_Boolean(special$minusInts(local$n,
-      dom$RuntimeType$intToRef(1)), local$x)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := f$recursiveContract$TF$T$Int$Any(sp$minusInts(p$n, df$rt$intToRef(1)),
+      p$x)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method public$property_getter_length(this: Ref) returns (ret: Ref)
+method pg$public$length(this: Ref) returns (ret: Ref)
 
 
 /cond_effects.kt:(994,1029): warning: Cannot verify that if a true value is returned then x is String.

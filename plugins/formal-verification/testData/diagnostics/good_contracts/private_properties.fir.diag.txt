@@ -1,105 +1,96 @@
 /private_properties.kt:(195,210): info: Generated Viper text for getBooleanField:
-method class_A$fun_getBooleanField$fun_take$T_class_global$class_A$return$T_Boolean(this: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+method f$c$A$getBooleanField$TF$T$c$A(this: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_A())
-  inhale acc(T_class_global$class_A(this), wildcard)
-  anonymous$0 := class_A$private$property_getter_field(this)
-  ret$0 := anonymous$0
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
-  goto label$ret$0
-  label label$ret$0
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(this), df$rt$T$c$A())
+  inhale acc(p$c$A$shared(this), wildcard)
+  anon$0 := pg$c$A$private$field(this)
+  ret$0 := anon$0
+  inhale df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method class_A$private$property_getter_field(this: Ref) returns (ret: Ref)
+method pg$c$A$private$field(this: Ref) returns (ret: Ref)
 
 
-method class_A$private$property_setter_field(this: Ref, value: Ref)
-  returns (ret: Ref)
+method ps$c$A$private$field(this: Ref, value: Ref) returns (ret: Ref)
 
 
 /private_properties.kt:(289,303): info: Generated Viper text for getStringField:
-field class_B$private$backing_field_field: Ref
+field bf$c$B$private$field: Ref
 
-field public$backing_field_length: Ref
+field bf$public$length: Ref
 
-method class_A$private$property_getter_field(this: Ref) returns (ret: Ref)
-
-
-method class_A$private$property_setter_field(this: Ref, value: Ref)
-  returns (ret: Ref)
-
-
-method class_B$fun_getStringField$fun_take$T_class_global$class_B$return$T_class_pkg$kotlin$global$class_String(this: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$T_class_pkg$kotlin$global$class_String())
-  ensures acc(T_class_pkg$kotlin$global$class_String(ret$0), wildcard)
+method f$c$B$getStringField$TF$T$c$B(this: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$T$c$pkg$kotlin$String())
+  ensures acc(p$pkg$kotlin$c$String$shared(ret$0), wildcard)
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_B())
-  inhale acc(T_class_global$class_B(this), wildcard)
-  unfold acc(T_class_global$class_B(this), wildcard)
-  ret$0 := this.class_B$private$backing_field_field
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(this), df$rt$T$c$B())
+  inhale acc(p$c$B$shared(this), wildcard)
+  unfold acc(p$c$B$shared(this), wildcard)
+  ret$0 := this.bf$c$B$private$field
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method public$property_getter_length(this: Ref) returns (ret: Ref)
+method pg$c$A$private$field(this: Ref) returns (ret: Ref)
+
+
+method pg$public$length(this: Ref) returns (ret: Ref)
+
+
+method ps$c$A$private$field(this: Ref, value: Ref) returns (ret: Ref)
 
 
 /private_properties.kt:(471,484): info: Generated Viper text for extractPublic:
-field class_B$private$backing_field_field: Ref
+field bf$c$B$private$field: Ref
 
-field public$backing_field_field: Ref
+field bf$public$field: Ref
 
-field public$backing_field_length: Ref
+field bf$public$length: Ref
 
-method class_A$private$property_getter_field(this: Ref) returns (ret: Ref)
-
-
-method class_A$private$property_setter_field(this: Ref, value: Ref)
-  returns (ret: Ref)
-
-
-method class_C$constructor$fun_take$$return$T_class_global$class_C()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_C())
-  ensures acc(T_class_global$class_C(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_C(ret), write)
+method con$c$C$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$C())
+  ensures acc(p$c$C$shared(ret), wildcard)
+  ensures acc(p$c$C$unique(ret), write)
 
 
-method class_D$constructor$fun_take$$return$T_class_global$class_D()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_D())
-  ensures acc(T_class_global$class_D(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_D(ret), write)
+method con$c$D$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$D())
+  ensures acc(p$c$D$shared(ret), wildcard)
+  ensures acc(p$c$D$unique(ret), write)
 
 
-method global$fun_extractPublic$fun_take$$return$T_Boolean()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
-  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==> false
+method f$extractPublic$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
+  ensures df$rt$boolFromRef(ret$0) == false ==> false
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  anonymous$1 := class_C$constructor$fun_take$$return$T_class_global$class_C()
-  inhale acc(anonymous$1.public$backing_field_field, write)
-  anonymous$0 := anonymous$1.public$backing_field_field
-  exhale acc(anonymous$1.public$backing_field_field, write)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
-  if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())) {
-    var anonymous$2: Ref
-    var anonymous$3: Ref
-    anonymous$3 := class_D$constructor$fun_take$$return$T_class_global$class_D()
-    unfold acc(T_class_global$class_D(anonymous$3), wildcard)
-    anonymous$2 := anonymous$3.public$backing_field_field
-    ret$0 := dom$RuntimeType$boolToRef(dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2),
-      dom$RuntimeType$intType()))
+  var anon$0: Ref
+  var anon$1: Ref
+  anon$1 := con$c$C$()
+  inhale acc(anon$1.bf$public$field, write)
+  anon$0 := anon$1.bf$public$field
+  exhale acc(anon$1.bf$public$field, write)
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())
+  if (df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())) {
+    var anon$2: Ref
+    var anon$3: Ref
+    anon$3 := con$c$D$()
+    unfold acc(p$c$D$shared(anon$3), wildcard)
+    anon$2 := anon$3.bf$public$field
+    ret$0 := df$rt$boolToRef(df$rt$isSubtype(df$rt$typeOf(anon$2), df$rt$intType()))
   } else {
-    ret$0 := dom$RuntimeType$boolToRef(false)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$boolToRef(false)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method public$property_getter_length(this: Ref) returns (ret: Ref)
+method pg$c$A$private$field(this: Ref) returns (ret: Ref)
+
+
+method pg$public$length(this: Ref) returns (ret: Ref)
+
+
+method ps$c$A$private$field(this: Ref, value: Ref) returns (ret: Ref)

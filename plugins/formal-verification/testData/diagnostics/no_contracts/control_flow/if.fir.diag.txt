@@ -1,57 +1,54 @@
 /if.kt:(23,31): info: Generated Viper text for simpleIf:
-method global$fun_simpleIf$fun_take$$return$T_Int() returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$simpleIf$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
   if (true) {
-    ret$0 := dom$RuntimeType$intToRef(0)
-    goto label$ret$0
+    ret$0 := df$rt$intToRef(0)
+    goto lbl$ret$0
   } else {
-    ret$0 := dom$RuntimeType$intToRef(1)
-    goto label$ret$0
+    ret$0 := df$rt$intToRef(1)
+    goto lbl$ret$0
   }
-  label label$ret$0
+  label lbl$ret$0
 }
 
 /if.kt:(116,129): info: Generated Viper text for ifOnParameter:
-method global$fun_ifOnParameter$fun_take$T_Boolean$return$T_Int(local$b: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$ifOnParameter$TF$T$Boolean(p$b: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  if (dom$RuntimeType$boolFromRef(local$b)) {
-    ret$0 := dom$RuntimeType$intToRef(0)
-    goto label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  if (df$rt$boolFromRef(p$b)) {
+    ret$0 := df$rt$intToRef(0)
+    goto lbl$ret$0
   } else {
-    ret$0 := dom$RuntimeType$intToRef(1)
-    goto label$ret$0
+    ret$0 := df$rt$intToRef(1)
+    goto lbl$ret$0
   }
-  label label$ret$0
+  label lbl$ret$0
 }
 
 /if.kt:(221,235): info: Generated Viper text for ifAsExpression:
-method global$fun_ifAsExpression$fun_take$$return$T_Boolean()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+method f$ifAsExpression$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
 {
-  var local0$b: Ref
-  local0$b := dom$RuntimeType$boolToRef(false)
-  if (dom$RuntimeType$boolFromRef(local0$b)) {
-    var anonymous$0: Ref
-    anonymous$0 := global$fun_simpleIf$fun_take$$return$T_Int()
-    ret$0 := dom$RuntimeType$boolToRef(false)
+  var l0$b: Ref
+  l0$b := df$rt$boolToRef(false)
+  if (df$rt$boolFromRef(l0$b)) {
+    var anon$0: Ref
+    anon$0 := f$simpleIf$TF$()
+    ret$0 := df$rt$boolToRef(false)
   } else {
-    var anonymous$1: Ref
-    anonymous$1 := global$fun_ifOnParameter$fun_take$T_Boolean$return$T_Int(local0$b)
-    ret$0 := dom$RuntimeType$boolToRef(true)
+    var anon$1: Ref
+    anon$1 := f$ifOnParameter$TF$T$Boolean(l0$b)
+    ret$0 := df$rt$boolToRef(true)
   }
-  goto label$ret$0
-  label label$ret$0
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method global$fun_ifOnParameter$fun_take$T_Boolean$return$T_Int(local$b: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method f$ifOnParameter$TF$T$Boolean(p$b: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$intType())
 
 
-method global$fun_simpleIf$fun_take$$return$T_Int() returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method f$simpleIf$TF$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$intType())

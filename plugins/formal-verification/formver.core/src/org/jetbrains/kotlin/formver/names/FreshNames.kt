@@ -17,47 +17,46 @@ import org.jetbrains.kotlin.formver.viper.MangledName
  * e.g. storage for the result of subexpressions.
  */
 data class AnonymousName(val n: Int) : MangledName {
-    override val mangled: String
-        get() = "anonymous\$$n"
+    override val mangledType: String
+        get() = "anon"
+    override val mangledBaseName: String
+        get() = n.toString()
 }
 
 /**
  * Name for return variable that should *only* be used in signatures of methods without a body.
  */
 data object PlaceholderReturnVariableName : MangledName {
-    override val mangled: String
+    override val mangledBaseName: String
         get() = "ret"
 }
 
 data class ReturnVariableName(val n: Int) : MangledName {
-    override val mangled: String
-        get() = "ret\$$n"
+    override val mangledType: String
+        get() = "ret"
+    override val mangledBaseName: String
+        get() = n.toString()
 }
 
 data object ThisReceiverName : MangledName {
-    override val mangled: String
+    override val mangledBaseName: String
         get() = "this"
 }
 
 data object SetterValueName : MangledName {
-    override val mangled = "value"
+    override val mangledBaseName: String
+        get() = "value"
 }
 
-abstract class SpecialNameBase(name: String) : MangledName {
-    override val mangled: String = "special\$$name"
+data class SpecialName(override val mangledBaseName: String) : MangledName {
+    override val mangledType: String
+        get() = "sp"
 }
 
-data class SpecialName(val name: String) : SpecialNameBase(name)
-data object GetterFunctionSubjectName : SpecialNameBase("get\$function\$subject")
-data object ClassPredicateSubjectName : SpecialNameBase("class\$predicate\$subject")
-
-data class GetterFunctionName(val className: MangledName, val fieldName: MangledName) : MangledName {
-    override val mangled: String
-        get() = "${className.mangled}\$get\$${fieldName.mangled}"
-}
-
-abstract class NumberedLabelName(kind: String, n: Int) : MangledName {
-    override val mangled = "label\$$kind\$$n"
+abstract class NumberedLabelName(override val mangledScope: String, n: Int) : MangledName {
+    override val mangledType: String
+        get() = "lbl"
+    override val mangledBaseName: String = n.toString()
 }
 
 data class ReturnLabelName(val scopeDepth: Int) : NumberedLabelName("ret", scopeDepth)
@@ -65,3 +64,8 @@ data class BreakLabelName(val n: Int) : NumberedLabelName("break", n)
 data class ContinueLabelName(val n: Int) : NumberedLabelName("continue", n)
 data class CatchLabelName(val n: Int) : NumberedLabelName("catch", n)
 data class TryExitLabelName(val n: Int) : NumberedLabelName("try_exit", n)
+
+data class TypeName(override val mangledBaseName: String) : MangledName {
+    override val mangledType: String
+        get() = "T"
+}

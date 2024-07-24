@@ -12,5 +12,12 @@ package org.jetbrains.kotlin.formver.viper
  * approach makes it easier to see where they came from during debugging.
  */
 interface MangledName {
-    val mangled: String
+    val mangledType: String?
+        get() = null
+    val mangledScope: String?
+        get() = null
+    val mangledBaseName: String
 }
+
+val MangledName.mangled: String
+    get() = listOfNotNull(mangledType, mangledScope, mangledBaseName).joinToString("$")

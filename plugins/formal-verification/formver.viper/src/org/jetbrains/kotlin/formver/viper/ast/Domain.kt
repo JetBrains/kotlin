@@ -13,13 +13,16 @@ import viper.silver.ast.NamedDomainAxiom
  * We also convert domain names and their function and axiom names as
  * they have to be globally unique as well.
  */
-data class DomainName(val name: String) : MangledName {
-    // Info: Can't use 'domain' as prefix as Viper recognizes it as a keyword
-    override val mangled: String = "dom\$$name"
+data class DomainName(override val mangledBaseName: String) : MangledName {
+    override val mangledType: String
+        get() = "d"
 }
 
-data class DomainFuncName(val domainName: DomainName, val funcName: String) : MangledName {
-    override val mangled: String = "${domainName.mangled}\$${funcName}"
+data class DomainFuncName(val domainName: DomainName, override val mangledBaseName: String) : MangledName {
+    override val mangledType: String
+        get() = "df"
+    override val mangledScope: String
+        get() = domainName.mangledBaseName
 }
 
 /** Represents the name of a possible anonymous axiom.
@@ -31,8 +34,10 @@ sealed interface OptionalDomainAxiomLabel {
     val domainName: DomainName
 }
 
-data class NamedDomainAxiomLabel(override val domainName: DomainName, val axiomName: String) : OptionalDomainAxiomLabel, MangledName {
-    override val mangled: String = "${domainName.mangled}\$${axiomName}"
+data class NamedDomainAxiomLabel(override val domainName: DomainName, override val mangledBaseName: String) :
+    OptionalDomainAxiomLabel, MangledName {
+    override val mangledScope: String
+        get() = domainName.mangledBaseName
 }
 
 data class AnonymousDomainAxiomLabel(override val domainName: DomainName) : OptionalDomainAxiomLabel

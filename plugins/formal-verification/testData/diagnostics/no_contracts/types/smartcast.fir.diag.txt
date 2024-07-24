@@ -1,43 +1,40 @@
 /smartcast.kt:(23,38): info: Generated Viper text for smartcastReturn:
-method global$fun_smartcastReturn$fun_take$NT_Int$return$T_Int(local$n: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$smartcastReturn$TF$Int(p$n: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$n), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  if (!(local$n == dom$RuntimeType$nullValue())) {
-    ret$0 := local$n
+  inhale df$rt$isSubtype(df$rt$typeOf(p$n), df$rt$nullable(df$rt$intType()))
+  if (!(p$n == df$rt$nullValue())) {
+    ret$0 := p$n
   } else {
-    ret$0 := dom$RuntimeType$intToRef(0)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$intToRef(0)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /smartcast.kt:(88,106): info: Generated Viper text for isNullOrEmptyWrong:
-method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean(local$seq: Ref)
+method f$isNullOrEmptyWrong$TF$c$pkg$kotlin$CharSequence(p$seq: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$seq), dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$global$class_CharSequence()))
-  inhale local$seq != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
-  if (local$seq == dom$RuntimeType$nullValue()) {
-    var anonymous$0: Ref
-    if (local$seq != dom$RuntimeType$nullValue()) {
-      var anonymous$1: Ref
-      var anonymous$2: Ref
-      anonymous$2 := public$property_getter_length(local$seq)
-      anonymous$1 := anonymous$2
-      inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1),
-        dom$RuntimeType$intType())
-      anonymous$0 := anonymous$1
+  inhale df$rt$isSubtype(df$rt$typeOf(p$seq), df$rt$nullable(df$rt$T$c$pkg$kotlin$CharSequence()))
+  inhale p$seq != df$rt$nullValue() ==>
+    acc(p$pkg$kotlin$c$CharSequence$shared(p$seq), wildcard)
+  if (p$seq == df$rt$nullValue()) {
+    var anon$0: Ref
+    if (p$seq != df$rt$nullValue()) {
+      var anon$1: Ref
+      var anon$2: Ref
+      anon$2 := pg$public$length(p$seq)
+      anon$1 := anon$2
+      inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
+      anon$0 := anon$1
     } else {
-      anonymous$0 := dom$RuntimeType$nullValue()}
-    ret$0 := dom$RuntimeType$boolToRef(anonymous$0 ==
-      dom$RuntimeType$intToRef(0))
+      anon$0 := df$rt$nullValue()}
+    ret$0 := df$rt$boolToRef(anon$0 == df$rt$intToRef(0))
   } else {
-    ret$0 := dom$RuntimeType$boolToRef(false)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$boolToRef(false)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method public$property_getter_length(this: Ref) returns (ret: Ref)
+method pg$public$length(this: Ref) returns (ret: Ref)

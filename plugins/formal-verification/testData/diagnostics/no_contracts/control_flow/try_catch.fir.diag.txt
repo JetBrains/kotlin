@@ -1,257 +1,246 @@
 /try_catch.kt:(158,166): info: Generated Viper text for tryCatch:
-method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+method f$call$TF$T$Int(p$x: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_tryCatch$fun_take$$return$T_Unit() returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$tryCatch$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  var anonymous$2: Ref
-  var anonymous$3: Ref
-  var local2$e: Ref
-  var anonymous$4: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  if (dom$RuntimeType$boolFromRef(anonymous$0)) {
-    goto label$catch$0
+  var anon$0: Ref
+  var anon$1: Ref
+  var anon$2: Ref
+  var anon$3: Ref
+  var l2$e: Ref
+  var anon$4: Ref
+  ret$0 := df$rt$unitValue()
+  if (df$rt$boolFromRef(anon$0)) {
+    goto lbl$catch$0
   }
-  anonymous$1 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(0))
-  anonymous$2 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(1))
-  if (dom$RuntimeType$boolFromRef(anonymous$3)) {
-    goto label$catch$0
+  anon$1 := f$call$TF$T$Int(df$rt$intToRef(0))
+  anon$2 := f$call$TF$T$Int(df$rt$intToRef(1))
+  if (df$rt$boolFromRef(anon$3)) {
+    goto lbl$catch$0
   }
-  goto label$try_exit$0
-  label label$catch$0
-  anonymous$4 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(2))
-  goto label$try_exit$0
-  label label$try_exit$0
-  label label$ret$0
+  goto lbl$try_exit$0
+  label lbl$catch$0
+  anon$4 := f$call$TF$T$Int(df$rt$intToRef(2))
+  goto lbl$try_exit$0
+  label lbl$try_exit$0
+  label lbl$ret$0
 }
 
-method public$property_getter_cause(this: Ref) returns (ret: Ref)
+method pg$public$cause(this: Ref) returns (ret: Ref)
 
 
-method public$property_getter_message(this: Ref) returns (ret: Ref)
+method pg$public$message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(271,285): info: Generated Viper text for nestedTryCatch:
-method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+method f$call$TF$T$Int(p$x: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_nestedTryCatch$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$nestedTryCatch$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  var anonymous$2: Ref
-  var anonymous$3: Ref
-  var anonymous$4: Ref
-  var local3$e: Ref
-  var anonymous$5: Ref
-  var anonymous$6: Ref
-  var local4$e: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  if (dom$RuntimeType$boolFromRef(anonymous$0)) {
-    goto label$catch$0
+  var anon$0: Ref
+  var anon$1: Ref
+  var anon$2: Ref
+  var anon$3: Ref
+  var anon$4: Ref
+  var l3$e: Ref
+  var anon$5: Ref
+  var anon$6: Ref
+  var l4$e: Ref
+  ret$0 := df$rt$unitValue()
+  if (df$rt$boolFromRef(anon$0)) {
+    goto lbl$catch$0
   }
-  anonymous$1 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(0))
-  if (dom$RuntimeType$boolFromRef(anonymous$2)) {
-    goto label$catch$1
+  anon$1 := f$call$TF$T$Int(df$rt$intToRef(0))
+  if (df$rt$boolFromRef(anon$2)) {
+    goto lbl$catch$1
   }
-  anonymous$3 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(1))
-  if (dom$RuntimeType$boolFromRef(anonymous$4)) {
-    goto label$catch$1
+  anon$3 := f$call$TF$T$Int(df$rt$intToRef(1))
+  if (df$rt$boolFromRef(anon$4)) {
+    goto lbl$catch$1
   }
-  goto label$try_exit$1
-  label label$catch$1
-  anonymous$5 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(2))
-  goto label$try_exit$1
-  label label$try_exit$1
-  if (dom$RuntimeType$boolFromRef(anonymous$6)) {
-    goto label$catch$0
+  goto lbl$try_exit$1
+  label lbl$catch$1
+  anon$5 := f$call$TF$T$Int(df$rt$intToRef(2))
+  goto lbl$try_exit$1
+  label lbl$try_exit$1
+  if (df$rt$boolFromRef(anon$6)) {
+    goto lbl$catch$0
   }
-  goto label$try_exit$0
-  label label$catch$0
-  goto label$try_exit$0
-  label label$try_exit$0
-  label label$ret$0
+  goto lbl$try_exit$0
+  label lbl$catch$0
+  goto lbl$try_exit$0
+  label lbl$try_exit$0
+  label lbl$ret$0
 }
 
-method public$property_getter_cause(this: Ref) returns (ret: Ref)
+method pg$public$cause(this: Ref) returns (ret: Ref)
 
 
-method public$property_getter_message(this: Ref) returns (ret: Ref)
+method pg$public$message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(574,592): info: Generated Viper text for tryCatchWithInline:
-method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+method f$call$TF$T$Int(p$x: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_tryCatchWithInline$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$tryCatchWithInline$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
+  var anon$0: Ref
   var ret$1: Ref
-  var anonymous$1: Ref
-  var anonymous$2: Ref
-  var anonymous$3: Ref
-  var local3$e: Ref
-  var anonymous$4: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  if (dom$RuntimeType$boolFromRef(anonymous$0)) {
-    goto label$catch$0
+  var anon$1: Ref
+  var anon$2: Ref
+  var anon$3: Ref
+  var l3$e: Ref
+  var anon$4: Ref
+  ret$0 := df$rt$unitValue()
+  if (df$rt$boolFromRef(anon$0)) {
+    goto lbl$catch$0
   }
-  anonymous$1 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(0))
-  anonymous$2 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(1))
-  label label$ret$1
-  if (dom$RuntimeType$boolFromRef(anonymous$3)) {
-    goto label$catch$0
+  anon$1 := f$call$TF$T$Int(df$rt$intToRef(0))
+  anon$2 := f$call$TF$T$Int(df$rt$intToRef(1))
+  label lbl$ret$1
+  if (df$rt$boolFromRef(anon$3)) {
+    goto lbl$catch$0
   }
-  goto label$try_exit$0
-  label label$catch$0
-  anonymous$4 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(2))
-  goto label$try_exit$0
-  label label$try_exit$0
-  label label$ret$0
+  goto lbl$try_exit$0
+  label lbl$catch$0
+  anon$4 := f$call$TF$T$Int(df$rt$intToRef(2))
+  goto lbl$try_exit$0
+  label lbl$try_exit$0
+  label lbl$ret$0
 }
 
-method public$property_getter_cause(this: Ref) returns (ret: Ref)
+method pg$public$cause(this: Ref) returns (ret: Ref)
 
 
-method public$property_getter_message(this: Ref) returns (ret: Ref)
+method pg$public$message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(685,702): info: Generated Viper text for tryCatchShadowing:
-method global$fun_tryCatchShadowing$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$tryCatchShadowing$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$x: Ref
-  var anonymous$0: Ref
-  var local1$x: Ref
-  var anonymous$1: Ref
-  var local2$e: Ref
-  var local2$x: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$x := dom$RuntimeType$intToRef(0)
-  if (dom$RuntimeType$boolFromRef(anonymous$0)) {
-    goto label$catch$0
+  var l0$x: Ref
+  var anon$0: Ref
+  var l1$x: Ref
+  var anon$1: Ref
+  var l2$e: Ref
+  var l2$x: Ref
+  ret$0 := df$rt$unitValue()
+  l0$x := df$rt$intToRef(0)
+  if (df$rt$boolFromRef(anon$0)) {
+    goto lbl$catch$0
   }
-  local1$x := dom$RuntimeType$intToRef(1)
-  if (dom$RuntimeType$boolFromRef(anonymous$1)) {
-    goto label$catch$0
+  l1$x := df$rt$intToRef(1)
+  if (df$rt$boolFromRef(anon$1)) {
+    goto lbl$catch$0
   }
-  goto label$try_exit$0
-  label label$catch$0
-  local2$x := dom$RuntimeType$intToRef(2)
-  goto label$try_exit$0
-  label label$try_exit$0
-  label label$ret$0
+  goto lbl$try_exit$0
+  label lbl$catch$0
+  l2$x := df$rt$intToRef(2)
+  goto lbl$try_exit$0
+  label lbl$try_exit$0
+  label lbl$ret$0
 }
 
-method public$property_getter_cause(this: Ref) returns (ret: Ref)
+method pg$public$cause(this: Ref) returns (ret: Ref)
 
 
-method public$property_getter_message(this: Ref) returns (ret: Ref)
+method pg$public$message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(813,828): info: Generated Viper text for multipleCatches:
-method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+method f$call$TF$T$Int(p$x: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_multipleCatches$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$multipleCatches$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  var anonymous$2: Ref
-  var anonymous$3: Ref
-  var anonymous$4: Ref
-  var anonymous$5: Ref
-  var local2$e: Ref
-  var anonymous$6: Ref
-  var local3$e: Ref
-  var anonymous$7: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  if (dom$RuntimeType$boolFromRef(anonymous$0)) {
-    goto label$catch$0
+  var anon$0: Ref
+  var anon$1: Ref
+  var anon$2: Ref
+  var anon$3: Ref
+  var anon$4: Ref
+  var anon$5: Ref
+  var l2$e: Ref
+  var anon$6: Ref
+  var l3$e: Ref
+  var anon$7: Ref
+  ret$0 := df$rt$unitValue()
+  if (df$rt$boolFromRef(anon$0)) {
+    goto lbl$catch$0
   }
-  if (dom$RuntimeType$boolFromRef(anonymous$1)) {
-    goto label$catch$1
+  if (df$rt$boolFromRef(anon$1)) {
+    goto lbl$catch$1
   }
-  anonymous$2 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(0))
-  anonymous$3 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(1))
-  if (dom$RuntimeType$boolFromRef(anonymous$4)) {
-    goto label$catch$0
+  anon$2 := f$call$TF$T$Int(df$rt$intToRef(0))
+  anon$3 := f$call$TF$T$Int(df$rt$intToRef(1))
+  if (df$rt$boolFromRef(anon$4)) {
+    goto lbl$catch$0
   }
-  if (dom$RuntimeType$boolFromRef(anonymous$5)) {
-    goto label$catch$1
+  if (df$rt$boolFromRef(anon$5)) {
+    goto lbl$catch$1
   }
-  goto label$try_exit$0
-  label label$catch$0
-  anonymous$6 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(2))
-  goto label$try_exit$0
-  label label$catch$1
-  anonymous$7 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(3))
-  goto label$try_exit$0
-  label label$try_exit$0
-  label label$ret$0
+  goto lbl$try_exit$0
+  label lbl$catch$0
+  anon$6 := f$call$TF$T$Int(df$rt$intToRef(2))
+  goto lbl$try_exit$0
+  label lbl$catch$1
+  anon$7 := f$call$TF$T$Int(df$rt$intToRef(3))
+  goto lbl$try_exit$0
+  label lbl$try_exit$0
+  label lbl$ret$0
 }
 
-method public$property_getter_cause(this: Ref) returns (ret: Ref)
+method pg$public$cause(this: Ref) returns (ret: Ref)
 
 
-method public$property_getter_message(this: Ref) returns (ret: Ref)
+method pg$public$message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(1044,1056): info: Generated Viper text for useException:
-method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+method f$call$TF$T$Int(p$x: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_ignore$fun_take$T_class_pkg$java$lang$global$class_Exception$return$T_Unit(local$e: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+method f$ignore$TF$T$c$pkg$java_lang$Exception(p$e: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_useException$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$useException$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  var anonymous$2: Ref
-  var local2$e: Ref
-  var anonymous$3: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  if (dom$RuntimeType$boolFromRef(anonymous$0)) {
-    goto label$catch$0
+  var anon$0: Ref
+  var anon$1: Ref
+  var anon$2: Ref
+  var l2$e: Ref
+  var anon$3: Ref
+  ret$0 := df$rt$unitValue()
+  if (df$rt$boolFromRef(anon$0)) {
+    goto lbl$catch$0
   }
-  anonymous$1 := global$fun_call$fun_take$T_Int$return$T_Unit(dom$RuntimeType$intToRef(0))
-  if (dom$RuntimeType$boolFromRef(anonymous$2)) {
-    goto label$catch$0
+  anon$1 := f$call$TF$T$Int(df$rt$intToRef(0))
+  if (df$rt$boolFromRef(anon$2)) {
+    goto lbl$catch$0
   }
-  goto label$try_exit$0
-  label label$catch$0
-  anonymous$3 := global$fun_ignore$fun_take$T_class_pkg$java$lang$global$class_Exception$return$T_Unit(local2$e)
-  goto label$try_exit$0
-  label label$try_exit$0
-  label label$ret$0
+  goto lbl$try_exit$0
+  label lbl$catch$0
+  anon$3 := f$ignore$TF$T$c$pkg$java_lang$Exception(l2$e)
+  goto lbl$try_exit$0
+  label lbl$try_exit$0
+  label lbl$ret$0
 }
 
-method public$property_getter_cause(this: Ref) returns (ret: Ref)
+method pg$public$cause(this: Ref) returns (ret: Ref)
 
 
-method public$property_getter_message(this: Ref) returns (ret: Ref)
+method pg$public$message(this: Ref) returns (ret: Ref)

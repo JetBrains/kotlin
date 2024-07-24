@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.formver.domains
 import org.jetbrains.kotlin.formver.embeddings.ClassTypeEmbedding
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
+import org.jetbrains.kotlin.formver.viper.mangled
 
 
-const val RUNTIME_TYPE_DOMAIN_NAME = "RuntimeType"
+const val RUNTIME_TYPE_DOMAIN_NAME = "rt"
 
 
 /**

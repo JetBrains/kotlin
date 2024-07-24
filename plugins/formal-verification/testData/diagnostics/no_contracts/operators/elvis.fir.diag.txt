@@ -1,59 +1,54 @@
 /elvis.kt:(121,134): info: Generated Viper text for elvisOperator:
-method global$fun_elvisOperator$fun_take$NT_Int$return$T_Int(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$elvisOperator$TF$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  if (local$x != dom$RuntimeType$nullValue()) {
-    ret$0 := local$x
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$intType()))
+  if (p$x != df$rt$nullValue()) {
+    ret$0 := p$x
   } else {
-    ret$0 := dom$RuntimeType$intToRef(3)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$intToRef(3)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /elvis.kt:(176,196): info: Generated Viper text for elvisOperatorComplex:
-method global$fun_elvisOperator$fun_take$NT_Int$return$T_Int(local$x: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method f$elvisOperator$TF$Int(p$x: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$intType())
 
 
-method global$fun_elvisOperatorComplex$fun_take$NT_Int$return$T_Int(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$elvisOperatorComplex$TF$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  anonymous$0 := global$fun_id$fun_take$NT_Int$return$NT_Int(local$x)
-  if (anonymous$0 != dom$RuntimeType$nullValue()) {
-    ret$0 := anonymous$0
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$intType()))
+  anon$0 := f$id$TF$Int(p$x)
+  if (anon$0 != df$rt$nullValue()) {
+    ret$0 := anon$0
   } else {
-    ret$0 := global$fun_elvisOperator$fun_take$NT_Int$return$T_Int(dom$RuntimeType$intToRef(2))}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := f$elvisOperator$TF$Int(df$rt$intToRef(2))}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method global$fun_id$fun_take$NT_Int$return$NT_Int(local$x: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+method f$id$TF$Int(p$x: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$nullable(df$rt$intType()))
 
 
 /elvis.kt:(257,276): info: Generated Viper text for elvisOperatorReturn:
-method global$fun_elvisOperatorReturn$fun_take$NT_Int$return$T_Int(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$elvisOperatorReturn$TF$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var local0$y: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  if (local$x != dom$RuntimeType$nullValue()) {
-    local0$y := local$x
+  var l0$y: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$intType()))
+  if (p$x != df$rt$nullValue()) {
+    l0$y := p$x
   } else {
-    var anonymous$0: Ref
-    ret$0 := dom$RuntimeType$intToRef(0)
-    goto label$ret$0
-    local0$y := anonymous$0
+    var anon$0: Ref
+    ret$0 := df$rt$intToRef(0)
+    goto lbl$ret$0
+    l0$y := anon$0
   }
-  ret$0 := local0$y
-  goto label$ret$0
-  label label$ret$0
+  ret$0 := l0$y
+  goto lbl$ret$0
+  label lbl$ret$0
 }

@@ -1,193 +1,179 @@
 /predicates.kt:(203,213): info: Generated Viper text for useClasses:
-field public$backing_field_a: Ref
+field bf$public$a: Ref
 
-field public$backing_field_b: Ref
+field bf$public$b: Ref
 
-field public$backing_field_next: Ref
+field bf$public$next: Ref
 
-field public$backing_field_pf: Ref
+field bf$public$pf: Ref
 
-predicate T_class_global$class_Baz(special$class$predicate$subject: Ref) {
+predicate p$c$Baz$shared(this: Ref) {
   true
 }
 
-predicate T_class_global$class_PrimitiveFields(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
-  dom$RuntimeType$intType())
-}
-
-predicate T_class_global$class_Recursive(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_next, wildcard) &&
-  (special$class$predicate$subject.public$backing_field_next !=
-  dom$RuntimeType$nullValue() ==>
-  acc(T_class_global$class_Recursive(special$class$predicate$subject.public$backing_field_next), wildcard)) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_next),
-  dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Recursive()))
-}
-
-predicate T_class_global$class_ReferenceField(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_pf, wildcard) &&
-  acc(T_class_global$class_PrimitiveFields(special$class$predicate$subject.public$backing_field_pf), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_pf),
-  dom$RuntimeType$T_class_global$class_PrimitiveFields()) &&
-  acc(T_class_global$class_Baz(special$class$predicate$subject), wildcard)
-}
-
-predicate Unique$T_class_global$class_Baz(special$class$predicate$subject: Ref) {
+predicate p$c$Baz$unique(this: Ref) {
   true
 }
 
-predicate Unique$T_class_global$class_PrimitiveFields(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
-  dom$RuntimeType$intType()) &&
-  acc(special$class$predicate$subject.public$backing_field_b, write) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
-  dom$RuntimeType$intType())
+predicate p$c$PrimitiveFields$shared(this: Ref) {
+  acc(this.bf$public$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
 }
 
-predicate Unique$T_class_global$class_Recursive(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_next, wildcard) &&
-  (special$class$predicate$subject.public$backing_field_next !=
-  dom$RuntimeType$nullValue() ==>
-  acc(T_class_global$class_Recursive(special$class$predicate$subject.public$backing_field_next), wildcard)) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_next),
-  dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Recursive()))
+predicate p$c$PrimitiveFields$unique(this: Ref) {
+  acc(this.bf$public$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType()) &&
+  acc(this.bf$public$b, write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType())
 }
 
-predicate Unique$T_class_global$class_ReferenceField(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_pf, wildcard) &&
-  acc(T_class_global$class_PrimitiveFields(special$class$predicate$subject.public$backing_field_pf), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_pf),
-  dom$RuntimeType$T_class_global$class_PrimitiveFields()) &&
-  acc(Unique$T_class_global$class_Baz(special$class$predicate$subject), write)
+predicate p$c$Recursive$shared(this: Ref) {
+  acc(this.bf$public$next, wildcard) &&
+  (this.bf$public$next != df$rt$nullValue() ==>
+  acc(p$c$Recursive$shared(this.bf$public$next), wildcard)) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$next), df$rt$nullable(df$rt$T$c$Recursive()))
 }
 
-method global$fun_useClasses$fun_take$T_class_global$class_ReferenceField$T_class_global$class_Recursive$return$T_Unit(local$rf: Ref,
-  local$rec: Ref)
+predicate p$c$Recursive$unique(this: Ref) {
+  acc(this.bf$public$next, wildcard) &&
+  (this.bf$public$next != df$rt$nullValue() ==>
+  acc(p$c$Recursive$shared(this.bf$public$next), wildcard)) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$next), df$rt$nullable(df$rt$T$c$Recursive()))
+}
+
+predicate p$c$ReferenceField$shared(this: Ref) {
+  acc(this.bf$public$pf, wildcard) &&
+  acc(p$c$PrimitiveFields$shared(this.bf$public$pf), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$pf), df$rt$T$c$PrimitiveFields()) &&
+  acc(p$c$Baz$shared(this), wildcard)
+}
+
+predicate p$c$ReferenceField$unique(this: Ref) {
+  acc(this.bf$public$pf, wildcard) &&
+  acc(p$c$PrimitiveFields$shared(this.bf$public$pf), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$pf), df$rt$T$c$PrimitiveFields()) &&
+  acc(p$c$Baz$unique(this), write)
+}
+
+method f$useClasses$TF$T$c$ReferenceField$T$c$Recursive(p$rf: Ref, p$rec: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rf), dom$RuntimeType$T_class_global$class_ReferenceField())
-  inhale acc(T_class_global$class_ReferenceField(local$rf), wildcard)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$rec), dom$RuntimeType$T_class_global$class_Recursive())
-  inhale acc(T_class_global$class_Recursive(local$rec), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$rf), df$rt$T$c$ReferenceField())
+  inhale acc(p$c$ReferenceField$shared(p$rf), wildcard)
+  inhale df$rt$isSubtype(df$rt$typeOf(p$rec), df$rt$T$c$Recursive())
+  inhale acc(p$c$Recursive$shared(p$rec), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /predicates.kt:(354,374): info: Generated Viper text for threeLayersHierarchy:
-field public$backing_field_x: Ref
+field bf$public$x: Ref
 
-field public$backing_field_y: Ref
+field bf$public$y: Ref
 
-predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
-  dom$RuntimeType$intType())
+predicate p$c$A$shared(this: Ref) {
+  acc(this.bf$public$x, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$intType())
 }
 
-predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
-  acc(T_class_global$class_A(special$class$predicate$subject), wildcard)
+predicate p$c$A$unique(this: Ref) {
+  acc(this.bf$public$x, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$intType()) &&
+  acc(this.bf$public$y, write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$public$y), df$rt$intType())
 }
 
-predicate T_class_global$class_C(special$class$predicate$subject: Ref) {
-  acc(T_class_global$class_B(special$class$predicate$subject), wildcard)
+predicate p$c$B$shared(this: Ref) {
+  acc(p$c$A$shared(this), wildcard)
 }
 
-predicate Unique$T_class_global$class_A(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
-  dom$RuntimeType$intType()) &&
-  acc(special$class$predicate$subject.public$backing_field_y, write) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_y),
-  dom$RuntimeType$intType())
+predicate p$c$B$unique(this: Ref) {
+  acc(p$c$A$unique(this), write)
 }
 
-predicate Unique$T_class_global$class_B(special$class$predicate$subject: Ref) {
-  acc(Unique$T_class_global$class_A(special$class$predicate$subject), write)
+predicate p$c$C$shared(this: Ref) {
+  acc(p$c$B$shared(this), wildcard)
 }
 
-predicate Unique$T_class_global$class_C(special$class$predicate$subject: Ref) {
-  acc(Unique$T_class_global$class_B(special$class$predicate$subject), write)
+predicate p$c$C$unique(this: Ref) {
+  acc(p$c$B$unique(this), write)
 }
 
-method global$fun_threeLayersHierarchy$fun_take$T_class_global$class_C$return$T_Unit(local$c: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$threeLayersHierarchy$TF$T$c$C(p$c: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$T_class_global$class_C())
-  inhale acc(T_class_global$class_C(local$c), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$c), df$rt$T$c$C())
+  inhale acc(p$c$C$shared(p$c), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /predicates.kt:(390,403): info: Generated Viper text for listHierarchy:
-field special$size: Ref
+field sp$size: Ref
 
-predicate T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), wildcard)
+predicate p$pkg$kotlin_collections$c$Collection$shared(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$Iterable$shared(this), wildcard)
 }
 
-predicate T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject: Ref) {
+predicate p$pkg$kotlin_collections$c$Collection$unique(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$Iterable$unique(this), write)
+}
+
+predicate p$pkg$kotlin_collections$c$Iterable$shared(this: Ref) {
   true
 }
 
-predicate T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), wildcard)
-}
-
-predicate T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), wildcard) &&
-  acc(T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject), wildcard)
-}
-
-predicate T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), wildcard)
-}
-
-predicate T_class_pkg$kotlin$collections$global$class_MutableList(special$class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject), wildcard) &&
-  acc(T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject), wildcard)
-}
-
-predicate Unique$T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject: Ref) {
-  acc(Unique$T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), write)
-}
-
-predicate Unique$T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject: Ref) {
+predicate p$pkg$kotlin_collections$c$Iterable$unique(this: Ref) {
   true
 }
 
-predicate Unique$T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject: Ref) {
-  acc(Unique$T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), write)
+predicate p$pkg$kotlin_collections$c$List$shared(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$Collection$shared(this), wildcard)
 }
 
-predicate Unique$T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject: Ref) {
-  acc(Unique$T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), write) &&
-  acc(Unique$T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject), write)
+predicate p$pkg$kotlin_collections$c$List$unique(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$Collection$unique(this), write)
 }
 
-predicate Unique$T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject: Ref) {
-  acc(Unique$T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), write)
+predicate p$pkg$kotlin_collections$c$MutableCollection$shared(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$Collection$shared(this), wildcard) &&
+  acc(p$pkg$kotlin_collections$c$MutableIterable$shared(this), wildcard)
 }
 
-predicate Unique$T_class_pkg$kotlin$collections$global$class_MutableList(special$class$predicate$subject: Ref) {
-  acc(Unique$T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject), write) &&
-  acc(Unique$T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject), write)
+predicate p$pkg$kotlin_collections$c$MutableCollection$unique(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$Collection$unique(this), write) &&
+  acc(p$pkg$kotlin_collections$c$MutableIterable$unique(this), write)
 }
 
-method global$fun_listHierarchy$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$xs: Ref)
+predicate p$pkg$kotlin_collections$c$MutableIterable$shared(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$Iterable$shared(this), wildcard)
+}
+
+predicate p$pkg$kotlin_collections$c$MutableIterable$unique(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$Iterable$unique(this), write)
+}
+
+predicate p$pkg$kotlin_collections$c$MutableList$shared(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$List$shared(this), wildcard) &&
+  acc(p$pkg$kotlin_collections$c$MutableCollection$shared(this), wildcard)
+}
+
+predicate p$pkg$kotlin_collections$c$MutableList$unique(this: Ref) {
+  acc(p$pkg$kotlin_collections$c$List$unique(this), write) &&
+  acc(p$pkg$kotlin_collections$c$MutableCollection$unique(this), write)
+}
+
+method f$listHierarchy$TF$T$c$pkg$kotlin_collections$MutableList(p$xs: Ref)
   returns (ret$0: Ref)
-  requires acc(local$xs.special$size, write)
-  requires dom$RuntimeType$intFromRef(local$xs.special$size) >= 0
-  ensures acc(local$xs.special$size, write)
-  ensures dom$RuntimeType$intFromRef(local$xs.special$size) >= 0
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  requires acc(p$xs.sp$size, write)
+  requires df$rt$intFromRef(p$xs.sp$size) >= 0
+  ensures acc(p$xs.sp$size, write)
+  ensures df$rt$intFromRef(p$xs.sp$size) >= 0
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$xs), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_MutableList())
-  inhale acc(T_class_pkg$kotlin$collections$global$class_MutableList(local$xs), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$xs), df$rt$T$c$pkg$kotlin_collections$MutableList())
+  inhale acc(p$pkg$kotlin_collections$c$MutableList$shared(p$xs), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }

@@ -1,229 +1,216 @@
 /multiple_interfaces.kt:(826,831): info: Generated Viper text for take1:
-method global$fun_take1$fun_take$T_class_global$class_InterfaceWithImplementation1$return$T_Unit(local$obj: Ref)
+method f$take1$TF$T$c$InterfaceWithImplementation1(p$obj: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$T_class_global$class_InterfaceWithImplementation1())
-  inhale acc(T_class_global$class_InterfaceWithImplementation1(local$obj), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  anonymous$1 := public$property_getter_field(local$obj)
-  anonymous$0 := anonymous$1
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
-  label label$ret$0
+  var anon$0: Ref
+  var anon$1: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$obj), df$rt$T$c$InterfaceWithImplementation1())
+  inhale acc(p$c$InterfaceWithImplementation1$shared(p$obj), wildcard)
+  ret$0 := df$rt$unitValue()
+  anon$1 := pg$public$field(p$obj)
+  anon$0 := anon$1
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())
+  label lbl$ret$0
 }
 
-method public$property_getter_field(this: Ref) returns (ret: Ref)
+method pg$public$field(this: Ref) returns (ret: Ref)
 
 
 /multiple_interfaces.kt:(890,895): info: Generated Viper text for take2:
-method global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local$obj: Ref)
+method f$take2$TF$T$c$InterfaceWithoutImplementation2(p$obj: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$T_class_global$class_InterfaceWithoutImplementation2())
-  inhale acc(T_class_global$class_InterfaceWithoutImplementation2(local$obj), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  anonymous$1 := public$property_getter_field(local$obj)
-  anonymous$0 := anonymous$1
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
-  label label$ret$0
+  var anon$0: Ref
+  var anon$1: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$obj), df$rt$T$c$InterfaceWithoutImplementation2())
+  inhale acc(p$c$InterfaceWithoutImplementation2$shared(p$obj), wildcard)
+  ret$0 := df$rt$unitValue()
+  anon$1 := pg$public$field(p$obj)
+  anon$0 := anon$1
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())
+  label lbl$ret$0
 }
 
-method public$property_getter_field(this: Ref) returns (ret: Ref)
+method pg$public$field(this: Ref) returns (ret: Ref)
 
 
 /multiple_interfaces.kt:(957,962): info: Generated Viper text for take3:
-field public$backing_field_field: Ref
+field bf$public$field: Ref
 
-method global$fun_take3$fun_take$T_class_global$class_AbstractWithFinalImplementation3$return$T_Unit(local$obj: Ref)
+method f$take3$TF$T$c$AbstractWithFinalImplementation3(p$obj: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$T_class_global$class_AbstractWithFinalImplementation3())
-  inhale acc(T_class_global$class_AbstractWithFinalImplementation3(local$obj), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$obj), df$rt$T$c$AbstractWithFinalImplementation3())
+  inhale acc(p$c$AbstractWithFinalImplementation3$shared(p$obj), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /multiple_interfaces.kt:(1025,1030): info: Generated Viper text for take4:
-method global$fun_take4$fun_take$T_class_global$class_AbstractWithOpenImplementation4$return$T_Unit(local$obj: Ref)
+method f$take4$TF$T$c$AbstractWithOpenImplementation4(p$obj: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$T_class_global$class_AbstractWithOpenImplementation4())
-  inhale acc(T_class_global$class_AbstractWithOpenImplementation4(local$obj), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  anonymous$1 := public$property_getter_field(local$obj)
-  anonymous$0 := anonymous$1
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
-  label label$ret$0
+  var anon$0: Ref
+  var anon$1: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$obj), df$rt$T$c$AbstractWithOpenImplementation4())
+  inhale acc(p$c$AbstractWithOpenImplementation4$shared(p$obj), wildcard)
+  ret$0 := df$rt$unitValue()
+  anon$1 := pg$public$field(p$obj)
+  anon$0 := anon$1
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())
+  label lbl$ret$0
 }
 
-method public$property_getter_field(this: Ref) returns (ret: Ref)
+method pg$public$field(this: Ref) returns (ret: Ref)
 
 
 /multiple_interfaces.kt:(1728,1739): info: Generated Viper text for createImpls:
-field public$backing_field_field: Ref
+field bf$public$field: Ref
 
-method class_Impl12$constructor$fun_take$$return$T_class_global$class_Impl12()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl12())
-  ensures acc(T_class_global$class_Impl12(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_Impl12(ret), write)
-
-
-method class_Impl14$constructor$fun_take$$return$T_class_global$class_Impl14()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl14())
-  ensures acc(T_class_global$class_Impl14(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_Impl14(ret), write)
+method con$c$Impl12$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Impl12())
+  ensures acc(p$c$Impl12$shared(ret), wildcard)
+  ensures acc(p$c$Impl12$unique(ret), write)
 
 
-method class_Impl23$constructor$fun_take$$return$T_class_global$class_Impl23()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl23())
-  ensures acc(T_class_global$class_Impl23(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_Impl23(ret), write)
+method con$c$Impl14$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Impl14())
+  ensures acc(p$c$Impl14$shared(ret), wildcard)
+  ensures acc(p$c$Impl14$unique(ret), write)
 
 
-method class_Impl24$constructor$fun_take$$return$T_class_global$class_Impl24()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl24())
-  ensures acc(T_class_global$class_Impl24(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_Impl24(ret), write)
+method con$c$Impl23$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Impl23())
+  ensures acc(p$c$Impl23$shared(ret), wildcard)
+  ensures acc(p$c$Impl23$unique(ret), write)
 
 
-method class_Impl3$constructor$fun_take$$return$T_class_global$class_Impl3()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl3())
-  ensures acc(T_class_global$class_Impl3(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_Impl3(ret), write)
+method con$c$Impl24$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Impl24())
+  ensures acc(p$c$Impl24$shared(ret), wildcard)
+  ensures acc(p$c$Impl24$unique(ret), write)
 
 
-method global$fun_create6$fun_take$$return$T_class_global$class_InheritingInterfaceWithoutImplementation6()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_InheritingInterfaceWithoutImplementation6())
-  ensures acc(T_class_global$class_InheritingInterfaceWithoutImplementation6(ret), wildcard)
+method con$c$Impl3$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Impl3())
+  ensures acc(p$c$Impl3$shared(ret), wildcard)
+  ensures acc(p$c$Impl3$unique(ret), write)
 
 
-method global$fun_createImpls$fun_take$$return$T_Boolean()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
-  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==> false
+method f$create6$TF$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$InheritingInterfaceWithoutImplementation6())
+  ensures acc(p$c$InheritingInterfaceWithoutImplementation6$shared(ret), wildcard)
+
+
+method f$createImpls$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
+  ensures df$rt$boolFromRef(ret$0) == false ==> false
 {
-  var local0$impl12: Ref
-  var local0$start12: Ref
-  var anonymous$0: Ref
-  var anonymous$1: Ref
-  var anonymous$2: Ref
-  var local0$impl23: Ref
-  var local0$start23: Ref
-  var anonymous$3: Ref
-  var anonymous$4: Ref
-  var anonymous$5: Ref
-  var local0$impl3: Ref
-  var local0$start3: Ref
-  var anonymous$6: Ref
-  var anonymous$7: Ref
-  var local0$impl24: Ref
-  var local0$start24: Ref
-  var anonymous$8: Ref
-  var anonymous$9: Ref
-  var anonymous$10: Ref
-  var anonymous$11: Ref
-  var local0$impl14: Ref
-  var local0$start14: Ref
-  var anonymous$12: Ref
-  var anonymous$13: Ref
-  var anonymous$14: Ref
-  var local0$impl6: Ref
-  var local0$start6: Ref
-  var anonymous$15: Ref
-  var anonymous$16: Ref
-  var anonymous$17: Ref
-  local0$impl12 := class_Impl12$constructor$fun_take$$return$T_class_global$class_Impl12()
-  unfold acc(T_class_global$class_Impl12(local0$impl12), wildcard)
-  anonymous$0 := local0$impl12.public$backing_field_field
-  local0$start12 := special$minusInts(special$plusInts(anonymous$0, dom$RuntimeType$intToRef(1)),
-    dom$RuntimeType$intToRef(1))
-  anonymous$1 := global$fun_take1$fun_take$T_class_global$class_InterfaceWithImplementation1$return$T_Unit(local0$impl12)
-  anonymous$2 := global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local0$impl12)
-  local0$impl23 := class_Impl23$constructor$fun_take$$return$T_class_global$class_Impl23()
-  unfold acc(T_class_global$class_Impl23(local0$impl23), wildcard)
-  unfold acc(T_class_global$class_AbstractWithFinalImplementation3(local0$impl23), wildcard)
-  anonymous$3 := local0$impl23.public$backing_field_field
-  local0$start23 := special$minusInts(special$plusInts(anonymous$3, dom$RuntimeType$intToRef(1)),
-    dom$RuntimeType$intToRef(1))
-  anonymous$4 := global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local0$impl23)
-  anonymous$5 := global$fun_take3$fun_take$T_class_global$class_AbstractWithFinalImplementation3$return$T_Unit(local0$impl23)
-  local0$impl3 := class_Impl3$constructor$fun_take$$return$T_class_global$class_Impl3()
-  unfold acc(T_class_global$class_Impl3(local0$impl3), wildcard)
-  unfold acc(T_class_global$class_AbstractWithFinalImplementation3(local0$impl3), wildcard)
-  anonymous$6 := local0$impl3.public$backing_field_field
-  local0$start3 := special$minusInts(special$plusInts(anonymous$6, dom$RuntimeType$intToRef(1)),
-    dom$RuntimeType$intToRef(1))
-  anonymous$7 := global$fun_take3$fun_take$T_class_global$class_AbstractWithFinalImplementation3$return$T_Unit(local0$impl3)
-  local0$impl24 := class_Impl24$constructor$fun_take$$return$T_class_global$class_Impl24()
-  anonymous$9 := public$property_getter_field(local0$impl24)
-  anonymous$8 := anonymous$9
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$8), dom$RuntimeType$intType())
-  local0$start24 := special$minusInts(special$plusInts(anonymous$8, dom$RuntimeType$intToRef(1)),
-    dom$RuntimeType$intToRef(1))
-  anonymous$10 := global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local0$impl24)
-  anonymous$11 := global$fun_take4$fun_take$T_class_global$class_AbstractWithOpenImplementation4$return$T_Unit(local0$impl24)
-  local0$impl14 := class_Impl14$constructor$fun_take$$return$T_class_global$class_Impl14()
-  unfold acc(T_class_global$class_Impl14(local0$impl14), wildcard)
-  anonymous$12 := local0$impl14.public$backing_field_field
-  local0$start14 := special$minusInts(special$plusInts(anonymous$12, dom$RuntimeType$intToRef(1)),
-    dom$RuntimeType$intToRef(1))
-  anonymous$13 := global$fun_take1$fun_take$T_class_global$class_InterfaceWithImplementation1$return$T_Unit(local0$impl14)
-  anonymous$14 := global$fun_take4$fun_take$T_class_global$class_AbstractWithOpenImplementation4$return$T_Unit(local0$impl14)
-  local0$impl6 := global$fun_create6$fun_take$$return$T_class_global$class_InheritingInterfaceWithoutImplementation6()
-  anonymous$16 := public$property_getter_field(local0$impl6)
-  anonymous$15 := anonymous$16
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$15), dom$RuntimeType$intType())
-  local0$start6 := special$minusInts(special$plusInts(anonymous$15, dom$RuntimeType$intToRef(1)),
-    dom$RuntimeType$intToRef(1))
+  var l0$impl12: Ref
+  var l0$start12: Ref
+  var anon$0: Ref
+  var anon$1: Ref
+  var anon$2: Ref
+  var l0$impl23: Ref
+  var l0$start23: Ref
+  var anon$3: Ref
+  var anon$4: Ref
+  var anon$5: Ref
+  var l0$impl3: Ref
+  var l0$start3: Ref
+  var anon$6: Ref
+  var anon$7: Ref
+  var l0$impl24: Ref
+  var l0$start24: Ref
+  var anon$8: Ref
+  var anon$9: Ref
+  var anon$10: Ref
+  var anon$11: Ref
+  var l0$impl14: Ref
+  var l0$start14: Ref
+  var anon$12: Ref
+  var anon$13: Ref
+  var anon$14: Ref
+  var l0$impl6: Ref
+  var l0$start6: Ref
+  var anon$15: Ref
+  var anon$16: Ref
+  var anon$17: Ref
+  l0$impl12 := con$c$Impl12$()
+  unfold acc(p$c$Impl12$shared(l0$impl12), wildcard)
+  anon$0 := l0$impl12.bf$public$field
+  l0$start12 := sp$minusInts(sp$plusInts(anon$0, df$rt$intToRef(1)), df$rt$intToRef(1))
+  anon$1 := f$take1$TF$T$c$InterfaceWithImplementation1(l0$impl12)
+  anon$2 := f$take2$TF$T$c$InterfaceWithoutImplementation2(l0$impl12)
+  l0$impl23 := con$c$Impl23$()
+  unfold acc(p$c$Impl23$shared(l0$impl23), wildcard)
+  unfold acc(p$c$AbstractWithFinalImplementation3$shared(l0$impl23), wildcard)
+  anon$3 := l0$impl23.bf$public$field
+  l0$start23 := sp$minusInts(sp$plusInts(anon$3, df$rt$intToRef(1)), df$rt$intToRef(1))
+  anon$4 := f$take2$TF$T$c$InterfaceWithoutImplementation2(l0$impl23)
+  anon$5 := f$take3$TF$T$c$AbstractWithFinalImplementation3(l0$impl23)
+  l0$impl3 := con$c$Impl3$()
+  unfold acc(p$c$Impl3$shared(l0$impl3), wildcard)
+  unfold acc(p$c$AbstractWithFinalImplementation3$shared(l0$impl3), wildcard)
+  anon$6 := l0$impl3.bf$public$field
+  l0$start3 := sp$minusInts(sp$plusInts(anon$6, df$rt$intToRef(1)), df$rt$intToRef(1))
+  anon$7 := f$take3$TF$T$c$AbstractWithFinalImplementation3(l0$impl3)
+  l0$impl24 := con$c$Impl24$()
+  anon$9 := pg$public$field(l0$impl24)
+  anon$8 := anon$9
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$8), df$rt$intType())
+  l0$start24 := sp$minusInts(sp$plusInts(anon$8, df$rt$intToRef(1)), df$rt$intToRef(1))
+  anon$10 := f$take2$TF$T$c$InterfaceWithoutImplementation2(l0$impl24)
+  anon$11 := f$take4$TF$T$c$AbstractWithOpenImplementation4(l0$impl24)
+  l0$impl14 := con$c$Impl14$()
+  unfold acc(p$c$Impl14$shared(l0$impl14), wildcard)
+  anon$12 := l0$impl14.bf$public$field
+  l0$start14 := sp$minusInts(sp$plusInts(anon$12, df$rt$intToRef(1)), df$rt$intToRef(1))
+  anon$13 := f$take1$TF$T$c$InterfaceWithImplementation1(l0$impl14)
+  anon$14 := f$take4$TF$T$c$AbstractWithOpenImplementation4(l0$impl14)
+  l0$impl6 := f$create6$TF$()
+  anon$16 := pg$public$field(l0$impl6)
+  anon$15 := anon$16
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$15), df$rt$intType())
+  l0$start6 := sp$minusInts(sp$plusInts(anon$15, df$rt$intToRef(1)), df$rt$intToRef(1))
   if (true) {
-    var anonymous$18: Ref
-    unfold acc(T_class_global$class_Impl14(local0$impl14), wildcard)
-    anonymous$18 := local0$impl14.public$backing_field_field
-    anonymous$17 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local0$start14) ==
-      dom$RuntimeType$intFromRef(anonymous$18))
+    var anon$18: Ref
+    unfold acc(p$c$Impl14$shared(l0$impl14), wildcard)
+    anon$18 := l0$impl14.bf$public$field
+    anon$17 := df$rt$boolToRef(df$rt$intFromRef(l0$start14) ==
+      df$rt$intFromRef(anon$18))
   } else {
-    anonymous$17 := dom$RuntimeType$boolToRef(false)}
-  if (dom$RuntimeType$boolFromRef(anonymous$17)) {
-    ret$0 := dom$RuntimeType$boolToRef(true)
+    anon$17 := df$rt$boolToRef(false)}
+  if (df$rt$boolFromRef(anon$17)) {
+    ret$0 := df$rt$boolToRef(true)
   } else {
-    ret$0 := dom$RuntimeType$boolToRef(false)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$boolToRef(false)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method global$fun_take1$fun_take$T_class_global$class_InterfaceWithImplementation1$return$T_Unit(local$obj: Ref)
+method f$take1$TF$T$c$InterfaceWithImplementation1(p$obj: Ref)
   returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local$obj: Ref)
+method f$take2$TF$T$c$InterfaceWithoutImplementation2(p$obj: Ref)
   returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_take3$fun_take$T_class_global$class_AbstractWithFinalImplementation3$return$T_Unit(local$obj: Ref)
+method f$take3$TF$T$c$AbstractWithFinalImplementation3(p$obj: Ref)
   returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method global$fun_take4$fun_take$T_class_global$class_AbstractWithOpenImplementation4$return$T_Unit(local$obj: Ref)
+method f$take4$TF$T$c$AbstractWithOpenImplementation4(p$obj: Ref)
   returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$unitType())
 
 
-method public$property_getter_field(this: Ref) returns (ret: Ref)
+method pg$public$field(this: Ref) returns (ret: Ref)

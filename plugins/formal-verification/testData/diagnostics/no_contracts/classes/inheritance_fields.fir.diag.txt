@@ -1,121 +1,112 @@
 /inheritance_fields.kt:(227,234): info: Generated Viper text for createB:
-field public$backing_field_fieldNotOverride: Ref
+field bf$public$fieldNotOverride: Ref
 
-method class_B$constructor$fun_take$T_class_global$class_FieldB$return$T_class_global$class_B(local$fieldOverride: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_B())
-  ensures acc(T_class_global$class_B(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_B(ret), write)
-
-
-method class_FieldB$constructor$fun_take$$return$T_class_global$class_FieldB()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_FieldB())
-  ensures acc(T_class_global$class_FieldB(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_FieldB(ret), write)
+method con$c$B$T$c$FieldB(p$fieldOverride: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$B())
+  ensures acc(p$c$B$shared(ret), wildcard)
+  ensures acc(p$c$B$unique(ret), write)
 
 
-method global$fun_createB$fun_take$$return$T_Unit() returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method con$c$FieldB$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$FieldB())
+  ensures acc(p$c$FieldB$shared(ret), wildcard)
+  ensures acc(p$c$FieldB$unique(ret), write)
+
+
+method f$createB$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$fieldB: Ref
-  var local0$b: Ref
-  var local0$fieldOverride: Ref
-  var anonymous$0: Ref
-  var local0$fieldNotOverride: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$fieldB := class_FieldB$constructor$fun_take$$return$T_class_global$class_FieldB()
-  local0$b := class_B$constructor$fun_take$T_class_global$class_FieldB$return$T_class_global$class_B(local0$fieldB)
-  anonymous$0 := public$property_getter_fieldOverride(local0$b)
-  local0$fieldOverride := anonymous$0
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fieldOverride),
-    dom$RuntimeType$T_class_global$class_FieldB())
-  inhale acc(T_class_global$class_FieldB(local0$fieldOverride), wildcard)
-  unfold acc(T_class_global$class_B(local0$b), wildcard)
-  unfold acc(T_class_global$class_A(local0$b), wildcard)
-  local0$fieldNotOverride := local0$b.public$backing_field_fieldNotOverride
-  label label$ret$0
+  var l0$fieldB: Ref
+  var l0$b: Ref
+  var l0$fieldOverride: Ref
+  var anon$0: Ref
+  var l0$fieldNotOverride: Ref
+  ret$0 := df$rt$unitValue()
+  l0$fieldB := con$c$FieldB$()
+  l0$b := con$c$B$T$c$FieldB(l0$fieldB)
+  anon$0 := pg$public$fieldOverride(l0$b)
+  l0$fieldOverride := anon$0
+  inhale df$rt$isSubtype(df$rt$typeOf(l0$fieldOverride), df$rt$T$c$FieldB())
+  inhale acc(p$c$FieldB$shared(l0$fieldOverride), wildcard)
+  unfold acc(p$c$B$shared(l0$b), wildcard)
+  unfold acc(p$c$A$shared(l0$b), wildcard)
+  l0$fieldNotOverride := l0$b.bf$public$fieldNotOverride
+  label lbl$ret$0
 }
 
-method public$property_getter_fieldOverride(this: Ref) returns (ret: Ref)
+method pg$public$fieldOverride(this: Ref) returns (ret: Ref)
 
 
 /inheritance_fields.kt:(699,715): info: Generated Viper text for createBFsAndNoBF:
-field public$backing_field_x: Ref
+field bf$public$x: Ref
 
-method class_FirstBackingFieldClass$constructor$fun_take$$return$T_class_global$class_FirstBackingFieldClass()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_FirstBackingFieldClass())
-  ensures acc(T_class_global$class_FirstBackingFieldClass(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_FirstBackingFieldClass(ret), write)
-
-
-method class_NoBackingFieldClass$constructor$fun_take$$return$T_class_global$class_NoBackingFieldClass()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_NoBackingFieldClass())
-  ensures acc(T_class_global$class_NoBackingFieldClass(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_NoBackingFieldClass(ret), write)
+method con$c$FirstBackingFieldClass$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$FirstBackingFieldClass())
+  ensures acc(p$c$FirstBackingFieldClass$shared(ret), wildcard)
+  ensures acc(p$c$FirstBackingFieldClass$unique(ret), write)
 
 
-method class_SecondBackingFieldClass$constructor$fun_take$T_Int$return$T_class_global$class_SecondBackingFieldClass(local$x: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_SecondBackingFieldClass())
-  ensures acc(T_class_global$class_SecondBackingFieldClass(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_SecondBackingFieldClass(ret), write)
-  ensures (unfolding acc(T_class_global$class_SecondBackingFieldClass(ret), wildcard) in
-      dom$RuntimeType$intFromRef(ret.public$backing_field_x) ==
-      dom$RuntimeType$intFromRef(local$x))
+method con$c$NoBackingFieldClass$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$NoBackingFieldClass())
+  ensures acc(p$c$NoBackingFieldClass$shared(ret), wildcard)
+  ensures acc(p$c$NoBackingFieldClass$unique(ret), write)
 
 
-method global$fun_createBFsAndNoBF$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method con$c$SecondBackingFieldClass$T$Int(p$x: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$SecondBackingFieldClass())
+  ensures acc(p$c$SecondBackingFieldClass$shared(ret), wildcard)
+  ensures acc(p$c$SecondBackingFieldClass$unique(ret), write)
+  ensures (unfolding acc(p$c$SecondBackingFieldClass$shared(ret), wildcard) in
+      df$rt$intFromRef(ret.bf$public$x) == df$rt$intFromRef(p$x))
+
+
+method f$createBFsAndNoBF$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$fbf: Ref
-  var local0$fbfx: Ref
-  var anonymous$0: Ref
-  var local0$nbf: Ref
-  var local0$nbfx: Ref
-  var anonymous$1: Ref
-  var local0$sbf: Ref
-  var local0$sbfx: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$fbf := class_FirstBackingFieldClass$constructor$fun_take$$return$T_class_global$class_FirstBackingFieldClass()
-  anonymous$0 := public$property_getter_x(local0$fbf)
-  local0$fbfx := anonymous$0
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fbfx), dom$RuntimeType$intType())
-  local0$nbf := class_NoBackingFieldClass$constructor$fun_take$$return$T_class_global$class_NoBackingFieldClass()
-  anonymous$1 := public$property_getter_x(local0$nbf)
-  local0$nbfx := anonymous$1
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$nbfx), dom$RuntimeType$intType())
-  local0$sbf := class_SecondBackingFieldClass$constructor$fun_take$T_Int$return$T_class_global$class_SecondBackingFieldClass(dom$RuntimeType$intToRef(10))
-  unfold acc(T_class_global$class_SecondBackingFieldClass(local0$sbf), wildcard)
-  local0$sbfx := local0$sbf.public$backing_field_x
-  label label$ret$0
+  var l0$fbf: Ref
+  var l0$fbfx: Ref
+  var anon$0: Ref
+  var l0$nbf: Ref
+  var l0$nbfx: Ref
+  var anon$1: Ref
+  var l0$sbf: Ref
+  var l0$sbfx: Ref
+  ret$0 := df$rt$unitValue()
+  l0$fbf := con$c$FirstBackingFieldClass$()
+  anon$0 := pg$public$x(l0$fbf)
+  l0$fbfx := anon$0
+  inhale df$rt$isSubtype(df$rt$typeOf(l0$fbfx), df$rt$intType())
+  l0$nbf := con$c$NoBackingFieldClass$()
+  anon$1 := pg$public$x(l0$nbf)
+  l0$nbfx := anon$1
+  inhale df$rt$isSubtype(df$rt$typeOf(l0$nbfx), df$rt$intType())
+  l0$sbf := con$c$SecondBackingFieldClass$T$Int(df$rt$intToRef(10))
+  unfold acc(p$c$SecondBackingFieldClass$shared(l0$sbf), wildcard)
+  l0$sbfx := l0$sbf.bf$public$x
+  label lbl$ret$0
 }
 
-method public$property_getter_x(this: Ref) returns (ret: Ref)
+method pg$public$x(this: Ref) returns (ret: Ref)
 
 
 /inheritance_fields.kt:(1038,1045): info: Generated Viper text for createY:
-field public$backing_field_a: Ref
+field bf$public$a: Ref
 
-method class_Y$constructor$fun_take$T_Int$return$T_class_global$class_Y(local$a: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Y())
-  ensures acc(T_class_global$class_Y(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_Y(ret), write)
+method con$c$Y$T$Int(p$a: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Y())
+  ensures acc(p$c$Y$shared(ret), wildcard)
+  ensures acc(p$c$Y$unique(ret), write)
 
 
-method global$fun_createY$fun_take$$return$T_Unit() returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$createY$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$y: Ref
-  var local0$ya: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$y := class_Y$constructor$fun_take$T_Int$return$T_class_global$class_Y(dom$RuntimeType$intToRef(10))
-  unfold acc(T_class_global$class_Y(local0$y), wildcard)
-  unfold acc(T_class_global$class_X(local0$y), wildcard)
-  local0$ya := local0$y.public$backing_field_a
-  label label$ret$0
+  var l0$y: Ref
+  var l0$ya: Ref
+  ret$0 := df$rt$unitValue()
+  l0$y := con$c$Y$T$Int(df$rt$intToRef(10))
+  unfold acc(p$c$Y$shared(l0$y), wildcard)
+  unfold acc(p$c$X$shared(l0$y), wildcard)
+  l0$ya := l0$y.bf$public$a
+  label lbl$ret$0
 }

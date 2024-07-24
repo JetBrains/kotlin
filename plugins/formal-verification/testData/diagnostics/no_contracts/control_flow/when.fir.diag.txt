@@ -1,233 +1,218 @@
 /when.kt:(23,33): info: Generated Viper text for returnWhen:
-method global$fun_returnWhen$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Ref,
-  local$b: Ref, local$c: Ref)
+method f$returnWhen$TF$T$Boolean$T$Boolean$T$Boolean(p$a: Ref, p$b: Ref, p$c: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$boolType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$boolType())
-  if (dom$RuntimeType$boolFromRef(local$a)) {
-    ret$0 := dom$RuntimeType$intToRef(0)
-  } elseif (dom$RuntimeType$boolFromRef(local$b)) {
-    ret$0 := dom$RuntimeType$intToRef(1)
-  } elseif (dom$RuntimeType$boolFromRef(local$c)) {
-    ret$0 := dom$RuntimeType$intToRef(2)
+  inhale df$rt$isSubtype(df$rt$typeOf(p$a), df$rt$boolType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$c), df$rt$boolType())
+  if (df$rt$boolFromRef(p$a)) {
+    ret$0 := df$rt$intToRef(0)
+  } elseif (df$rt$boolFromRef(p$b)) {
+    ret$0 := df$rt$intToRef(1)
+  } elseif (df$rt$boolFromRef(p$c)) {
+    ret$0 := df$rt$intToRef(2)
   } else {
-    ret$0 := dom$RuntimeType$intToRef(3)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$intToRef(3)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(171,181): info: Generated Viper text for whenReturn:
-method global$fun_whenReturn$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Ref,
-  local$b: Ref, local$c: Ref)
+method f$whenReturn$TF$T$Boolean$T$Boolean$T$Boolean(p$a: Ref, p$b: Ref, p$c: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$boolType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$boolType())
-  if (dom$RuntimeType$boolFromRef(local$a)) {
-    ret$0 := dom$RuntimeType$intToRef(0)
-    goto label$ret$0
-  } elseif (dom$RuntimeType$boolFromRef(local$b)) {
-    ret$0 := dom$RuntimeType$intToRef(1)
-    goto label$ret$0
-  } elseif (dom$RuntimeType$boolFromRef(local$c)) {
-    ret$0 := dom$RuntimeType$intToRef(2)
-    goto label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$a), df$rt$boolType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$c), df$rt$boolType())
+  if (df$rt$boolFromRef(p$a)) {
+    ret$0 := df$rt$intToRef(0)
+    goto lbl$ret$0
+  } elseif (df$rt$boolFromRef(p$b)) {
+    ret$0 := df$rt$intToRef(1)
+    goto lbl$ret$0
+  } elseif (df$rt$boolFromRef(p$c)) {
+    ret$0 := df$rt$intToRef(2)
+    goto lbl$ret$0
   } else {
-    ret$0 := dom$RuntimeType$intToRef(3)
-    goto label$ret$0
+    ret$0 := df$rt$intToRef(3)
+    goto lbl$ret$0
   }
-  label label$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(340,356): info: Generated Viper text for singleBranchWhen:
-method global$fun_singleBranchWhen$fun_take$T_Boolean$return$T_Int(local$a: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$singleBranchWhen$TF$T$Boolean(p$a: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var local0$x: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$boolType())
-  local0$x := dom$RuntimeType$intToRef(1)
-  if (dom$RuntimeType$boolFromRef(local$a)) {
-    local0$x := dom$RuntimeType$intToRef(2)
+  var l0$x: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$a), df$rt$boolType())
+  l0$x := df$rt$intToRef(1)
+  if (df$rt$boolFromRef(p$a)) {
+    l0$x := df$rt$intToRef(2)
   }
-  ret$0 := local0$x
-  goto label$ret$0
-  label label$ret$0
+  ret$0 := l0$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(446,456): info: Generated Viper text for noElseWhen:
-method global$fun_noElseWhen$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Ref,
-  local$b: Ref, local$c: Ref)
+method f$noElseWhen$TF$T$Boolean$T$Boolean$T$Boolean(p$a: Ref, p$b: Ref, p$c: Ref)
   returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var local0$y: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$a), dom$RuntimeType$boolType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$boolType())
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$boolType())
-  local0$y := dom$RuntimeType$intToRef(0)
-  if (dom$RuntimeType$boolFromRef(local$a)) {
-    local0$y := dom$RuntimeType$intToRef(1)
-  } elseif (dom$RuntimeType$boolFromRef(local$b)) {
-    local0$y := dom$RuntimeType$intToRef(2)
-  } elseif (dom$RuntimeType$boolFromRef(local$c)) {
-    local0$y := dom$RuntimeType$intToRef(3)
+  var l0$y: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$a), df$rt$boolType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$b), df$rt$boolType())
+  inhale df$rt$isSubtype(df$rt$typeOf(p$c), df$rt$boolType())
+  l0$y := df$rt$intToRef(0)
+  if (df$rt$boolFromRef(p$a)) {
+    l0$y := df$rt$intToRef(1)
+  } elseif (df$rt$boolFromRef(p$b)) {
+    l0$y := df$rt$intToRef(2)
+  } elseif (df$rt$boolFromRef(p$c)) {
+    l0$y := df$rt$intToRef(3)
   }
-  ret$0 := local0$y
-  goto label$ret$0
-  label label$ret$0
+  ret$0 := l0$y
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(608,626): info: Generated Viper text for whenWithSubjectVar:
-method global$fun_whenWithSubjectVar$fun_take$T_Int$return$T_Int(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$whenWithSubjectVar$TF$T$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  anonymous$0 := local$x
-  if (dom$RuntimeType$intFromRef(anonymous$0) == 1) {
-    ret$0 := dom$RuntimeType$intToRef(2)
-  } elseif (dom$RuntimeType$intFromRef(anonymous$0) == 2) {
-    ret$0 := dom$RuntimeType$intToRef(3)
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  anon$0 := p$x
+  if (df$rt$intFromRef(anon$0) == 1) {
+    ret$0 := df$rt$intToRef(2)
+  } elseif (df$rt$intFromRef(anon$0) == 2) {
+    ret$0 := df$rt$intToRef(3)
   } else {
-    ret$0 := dom$RuntimeType$intToRef(42)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$intToRef(42)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(726,745): info: Generated Viper text for whenWithSubjectCall:
-method global$fun_whenWithSubjectCall$fun_take$T_Int$return$T_Int(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$whenWithSubjectCall$TF$T$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  anonymous$0 := global$fun_whenWithSubjectVar$fun_take$T_Int$return$T_Int(local$x)
-  if (dom$RuntimeType$intFromRef(anonymous$0) == 1) {
-    ret$0 := dom$RuntimeType$intToRef(2)
-  } elseif (dom$RuntimeType$intFromRef(anonymous$0) == 2) {
-    ret$0 := dom$RuntimeType$intToRef(3)
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  anon$0 := f$whenWithSubjectVar$TF$T$Int(p$x)
+  if (df$rt$intFromRef(anon$0) == 1) {
+    ret$0 := df$rt$intToRef(2)
+  } elseif (df$rt$intFromRef(anon$0) == 2) {
+    ret$0 := df$rt$intToRef(3)
   } else {
-    var anonymous$1: Ref
-    anonymous$1 := global$fun_whenWithSubjectVar$fun_take$T_Int$return$T_Int(dom$RuntimeType$intToRef(0))
-    if (dom$RuntimeType$intFromRef(anonymous$1) == 3) {
-      ret$0 := dom$RuntimeType$intToRef(4)
-    } elseif (dom$RuntimeType$intFromRef(anonymous$1) == 4) {
-      ret$0 := dom$RuntimeType$intToRef(5)
+    var anon$1: Ref
+    anon$1 := f$whenWithSubjectVar$TF$T$Int(df$rt$intToRef(0))
+    if (df$rt$intFromRef(anon$1) == 3) {
+      ret$0 := df$rt$intToRef(4)
+    } elseif (df$rt$intFromRef(anon$1) == 4) {
+      ret$0 := df$rt$intToRef(5)
     } else {
-      ret$0 := dom$RuntimeType$intToRef(42)}
+      ret$0 := df$rt$intToRef(42)}
   }
-  goto label$ret$0
-  label label$ret$0
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method global$fun_whenWithSubjectVar$fun_take$T_Int$return$T_Int(local$x: Ref)
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method f$whenWithSubjectVar$TF$T$Int(p$x: Ref) returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$intType())
 
 
 /when.kt:(963,972): info: Generated Viper text for emptyWhen:
-method global$fun_emptyWhen$fun_take$$return$T_Int() returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$emptyWhen$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  ret$0 := dom$RuntimeType$intToRef(1)
-  goto label$ret$0
-  label label$ret$0
+  ret$0 := df$rt$intToRef(1)
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(1015,1027): info: Generated Viper text for unusedResult:
-method global$fun_unusedResult$fun_take$$return$T_Int()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$unusedResult$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var local0$x: Ref
-  local0$x := dom$RuntimeType$intToRef(0)
-  ret$0 := local0$x
-  goto label$ret$0
-  label label$ret$0
+  var l0$x: Ref
+  l0$x := df$rt$intToRef(0)
+  ret$0 := l0$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(1221,1227): info: Generated Viper text for whenIs:
-method global$fun_whenIs$fun_take$T_class_global$class_Foo$return$T_Boolean(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+method f$whenIs$TF$T$c$Foo(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_global$class_Foo())
-  inhale acc(T_class_global$class_Foo(local$x), wildcard)
-  anonymous$0 := local$x
-  if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$T_class_global$class_Bar())) {
-    ret$0 := dom$RuntimeType$boolToRef(true)
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$T$c$Foo())
+  inhale acc(p$c$Foo$shared(p$x), wildcard)
+  anon$0 := p$x
+  if (df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$T$c$Bar())) {
+    ret$0 := df$rt$boolToRef(true)
   } else {
-    ret$0 := dom$RuntimeType$boolToRef(false)}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := df$rt$boolToRef(false)}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(1301,1315): info: Generated Viper text for whenSubjectVal:
-method global$fun_whenSubjectVal$fun_take$$return$T_Int()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
+method f$whenSubjectVal$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
-  var local1$x: Ref
-  local1$x := dom$RuntimeType$intToRef(0)
-  if (dom$RuntimeType$intFromRef(local1$x) == 1) {
-    ret$0 := dom$RuntimeType$intToRef(1)
+  var l1$x: Ref
+  l1$x := df$rt$intToRef(0)
+  if (df$rt$intFromRef(l1$x) == 1) {
+    ret$0 := df$rt$intToRef(1)
   } else {
-    ret$0 := local1$x}
-  goto label$ret$0
-  label label$ret$0
+    ret$0 := l1$x}
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(1392,1412): info: Generated Viper text for whenSubjectValNested:
-method global$fun_whenSubjectValNested$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$whenSubjectValNested$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local1$x: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  local1$x := dom$RuntimeType$intToRef(1)
-  if (dom$RuntimeType$intFromRef(local1$x) == 0) {
+  var l1$x: Ref
+  ret$0 := df$rt$unitValue()
+  l1$x := df$rt$intToRef(1)
+  if (df$rt$intFromRef(l1$x) == 0) {
   } else {
-    var anonymous$0: Ref
-    var local3$y: Ref
-    local3$y := dom$RuntimeType$intToRef(1)
-    if (dom$RuntimeType$intFromRef(local3$y) == 1) {
-      anonymous$0 := dom$RuntimeType$intToRef(1)
+    var anon$0: Ref
+    var l3$y: Ref
+    l3$y := df$rt$intToRef(1)
+    if (df$rt$intFromRef(l3$y) == 1) {
+      anon$0 := df$rt$intToRef(1)
     } else {
-      var local6$z: Ref
-      local6$z := dom$RuntimeType$intToRef(1)
-      if (dom$RuntimeType$intFromRef(local6$z) ==
-      dom$RuntimeType$intFromRef(local3$y)) {
-        anonymous$0 := dom$RuntimeType$intToRef(2)
-      } elseif (dom$RuntimeType$intFromRef(local6$z) ==
-      dom$RuntimeType$intFromRef(local1$x) + 1) {
-        anonymous$0 := dom$RuntimeType$intToRef(3)
+      var l6$z: Ref
+      l6$z := df$rt$intToRef(1)
+      if (df$rt$intFromRef(l6$z) == df$rt$intFromRef(l3$y)) {
+        anon$0 := df$rt$intToRef(2)
+      } elseif (df$rt$intFromRef(l6$z) == df$rt$intFromRef(l1$x) + 1) {
+        anon$0 := df$rt$intToRef(3)
       } else {
-        anonymous$0 := dom$RuntimeType$intToRef(4)}
+        anon$0 := df$rt$intToRef(4)}
     }
-    if (dom$RuntimeType$intFromRef(local1$x) ==
-    dom$RuntimeType$intFromRef(anonymous$0)) {
+    if (df$rt$intFromRef(l1$x) == df$rt$intFromRef(anon$0)) {
     }
   }
-  label label$ret$0
+  label lbl$ret$0
 }
 
 /when.kt:(1674,1697): info: Generated Viper text for whenSubjectVarShadowing:
-method global$fun_whenSubjectVarShadowing$fun_take$$return$T_Unit()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$whenSubjectVarShadowing$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$x: Ref
-  var local1$x: Ref
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$x := dom$RuntimeType$intToRef(0)
-  local1$x := dom$RuntimeType$intToRef(1)
-  label label$ret$0
+  var l0$x: Ref
+  var l1$x: Ref
+  ret$0 := df$rt$unitValue()
+  l0$x := df$rt$intToRef(0)
+  l1$x := df$rt$intToRef(1)
+  label lbl$ret$0
 }

@@ -1,27 +1,25 @@
 /returns_null.kt:(121,146): info: Generated Viper text for returns_null_unverifiable:
-method global$fun_returns_null_unverifiable$fun_take$NT_Int$return$NT_Int(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
+method f$returns_null_unverifiable$TF$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$intType()))
   ensures true ==> false
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
-  ret$0 := dom$RuntimeType$nullValue()
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$intType()))
+  ret$0 := df$rt$nullValue()
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /returns_null.kt:(187,210): warning: Cannot verify that if the function returns then false.
 
 /returns_null.kt:(277,302): info: Generated Viper text for non_nullable_returns_null:
-method global$fun_non_nullable_returns_null$fun_take$T_Int$return$T_Int(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
-  ensures ret$0 == dom$RuntimeType$nullValue()
+method f$non_nullable_returns_null$TF$T$Int(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
+  ensures ret$0 == df$rt$nullValue()
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
-  ret$0 := local$x
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$intType())
+  ret$0 := p$x
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /returns_null.kt:(341,354): warning: Function may return a non-null value.

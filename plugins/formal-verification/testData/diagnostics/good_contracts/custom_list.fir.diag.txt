@@ -1,97 +1,87 @@
 /custom_list.kt:(168,171): info: Generated Viper text for get:
-field class_CustomList$private$backing_field_value: Ref
+field bf$c$CustomList$private$value: Ref
 
-field special$size: Ref
+field sp$size: Ref
 
-method class_CustomList$fun_get$fun_take$T_class_global$class_CustomList$T_Int$return$T_Int(this: Ref,
-  local$index: Ref)
+method f$c$CustomList$get$TF$T$c$CustomList$T$Int(this: Ref, p$index: Ref)
   returns (ret$0: Ref)
-  requires acc(this.special$size, write)
-  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
-  requires dom$RuntimeType$intFromRef(local$index) >= 0
-  requires dom$RuntimeType$intFromRef(this.special$size) >
-    dom$RuntimeType$intFromRef(local$index)
-  ensures acc(this.special$size, write)
-  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
-  ensures dom$RuntimeType$intFromRef(this.special$size) ==
-    old(dom$RuntimeType$intFromRef(this.special$size))
+  requires acc(this.sp$size, write)
+  requires df$rt$intFromRef(this.sp$size) >= 0
+  requires df$rt$intFromRef(p$index) >= 0
+  requires df$rt$intFromRef(this.sp$size) > df$rt$intFromRef(p$index)
+  ensures acc(this.sp$size, write)
+  ensures df$rt$intFromRef(this.sp$size) >= 0
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
+  ensures df$rt$intFromRef(this.sp$size) ==
+    old(df$rt$intFromRef(this.sp$size))
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_CustomList())
-  inhale acc(T_class_global$class_CustomList(this), wildcard)
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$index), dom$RuntimeType$intType())
-  unfold acc(T_class_global$class_CustomList(this), wildcard)
-  ret$0 := this.class_CustomList$private$backing_field_value
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(this), df$rt$T$c$CustomList())
+  inhale acc(p$c$CustomList$shared(this), wildcard)
+  inhale df$rt$isSubtype(df$rt$typeOf(p$index), df$rt$intType())
+  unfold acc(p$c$CustomList$shared(this), wildcard)
+  ret$0 := this.bf$c$CustomList$private$value
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /custom_list.kt:(248,252): info: Generated Viper text for test:
-field class_CustomList$private$backing_field_value: Ref
+field bf$c$CustomList$private$value: Ref
 
-field special$size: Ref
+field sp$size: Ref
 
-method class_CustomList$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_CustomList(local$size: Ref,
-  local$value: Ref)
+method con$c$CustomList$T$Int$T$Int(p$size: Ref, p$value: Ref)
   returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_CustomList())
-  ensures acc(ret.special$size, write)
-  ensures dom$RuntimeType$intFromRef(ret.special$size) >= 0
-  ensures acc(T_class_global$class_CustomList(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_CustomList(ret), write)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$CustomList())
+  ensures acc(ret.sp$size, write)
+  ensures df$rt$intFromRef(ret.sp$size) >= 0
+  ensures acc(p$c$CustomList$shared(ret), wildcard)
+  ensures acc(p$c$CustomList$unique(ret), write)
 
 
-method class_CustomList$fun_get$fun_take$T_class_global$class_CustomList$T_Int$return$T_Int(this: Ref,
-  local$index: Ref)
+method f$c$CustomList$get$TF$T$c$CustomList$T$Int(this: Ref, p$index: Ref)
   returns (ret: Ref)
-  requires acc(this.special$size, write)
-  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
-  requires dom$RuntimeType$intFromRef(local$index) >= 0
-  requires dom$RuntimeType$intFromRef(this.special$size) >
-    dom$RuntimeType$intFromRef(local$index)
-  ensures acc(this.special$size, write)
-  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
-  ensures dom$RuntimeType$intFromRef(this.special$size) ==
-    old(dom$RuntimeType$intFromRef(this.special$size))
+  requires acc(this.sp$size, write)
+  requires df$rt$intFromRef(this.sp$size) >= 0
+  requires df$rt$intFromRef(p$index) >= 0
+  requires df$rt$intFromRef(this.sp$size) > df$rt$intFromRef(p$index)
+  ensures acc(this.sp$size, write)
+  ensures df$rt$intFromRef(this.sp$size) >= 0
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$intType())
+  ensures df$rt$intFromRef(this.sp$size) ==
+    old(df$rt$intFromRef(this.sp$size))
 
 
-method class_CustomList$fun_isEmpty$fun_take$T_class_global$class_CustomList$return$T_Boolean(this: Ref)
+method f$c$CustomList$isEmpty$TF$T$c$CustomList(this: Ref)
   returns (ret: Ref)
-  requires acc(this.special$size, write)
-  requires dom$RuntimeType$intFromRef(this.special$size) >= 0
-  ensures acc(this.special$size, write)
-  ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
-  ensures dom$RuntimeType$intFromRef(this.special$size) ==
-    old(dom$RuntimeType$intFromRef(this.special$size))
-  ensures dom$RuntimeType$boolFromRef(ret) ==>
-    dom$RuntimeType$intFromRef(this.special$size) == 0
-  ensures !dom$RuntimeType$boolFromRef(ret) ==>
-    dom$RuntimeType$intFromRef(this.special$size) > 0
+  requires acc(this.sp$size, write)
+  requires df$rt$intFromRef(this.sp$size) >= 0
+  ensures acc(this.sp$size, write)
+  ensures df$rt$intFromRef(this.sp$size) >= 0
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$boolType())
+  ensures df$rt$intFromRef(this.sp$size) ==
+    old(df$rt$intFromRef(this.sp$size))
+  ensures df$rt$boolFromRef(ret) ==> df$rt$intFromRef(this.sp$size) == 0
+  ensures !df$rt$boolFromRef(ret) ==> df$rt$intFromRef(this.sp$size) > 0
 
 
-method global$fun_test$fun_take$T_Int$return$T_Unit(local$n: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$test$TF$T$Int(p$n: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
-  var local0$customList: Ref
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$n), dom$RuntimeType$intType())
-  ret$0 := dom$RuntimeType$unitValue()
-  local0$customList := class_CustomList$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_CustomList(local$n,
-    dom$RuntimeType$intToRef(0))
-  anonymous$0 := class_CustomList$fun_isEmpty$fun_take$T_class_global$class_CustomList$return$T_Boolean(local0$customList)
-  if (!dom$RuntimeType$boolFromRef(anonymous$0)) {
-    var anonymous$1: Ref
-    var anonymous$2: Ref
-    var anonymous$3: Ref
-    anonymous$2 := local0$customList.special$size
-    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
-    anonymous$1 := class_CustomList$fun_get$fun_take$T_class_global$class_CustomList$T_Int$return$T_Int(local0$customList,
-      special$minusInts(anonymous$2, dom$RuntimeType$intToRef(1)))
-    anonymous$3 := class_CustomList$fun_get$fun_take$T_class_global$class_CustomList$T_Int$return$T_Int(local0$customList,
-      dom$RuntimeType$intToRef(0))
+  var l0$customList: Ref
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$n), df$rt$intType())
+  ret$0 := df$rt$unitValue()
+  l0$customList := con$c$CustomList$T$Int$T$Int(p$n, df$rt$intToRef(0))
+  anon$0 := f$c$CustomList$isEmpty$TF$T$c$CustomList(l0$customList)
+  if (!df$rt$boolFromRef(anon$0)) {
+    var anon$1: Ref
+    var anon$2: Ref
+    var anon$3: Ref
+    anon$2 := l0$customList.sp$size
+    inhale df$rt$isSubtype(df$rt$typeOf(anon$2), df$rt$intType())
+    anon$1 := f$c$CustomList$get$TF$T$c$CustomList$T$Int(l0$customList, sp$minusInts(anon$2,
+      df$rt$intToRef(1)))
+    anon$3 := f$c$CustomList$get$TF$T$c$CustomList$T$Int(l0$customList, df$rt$intToRef(0))
   }
-  label label$ret$0
+  label lbl$ret$0
 }

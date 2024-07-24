@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.formver.embeddings.expression.debug.TreeView
 import org.jetbrains.kotlin.formver.names.AnonymousName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
+import org.jetbrains.kotlin.formver.viper.mangled
 
 sealed interface VariableEmbedding : PureExpEmbedding, PropertyAccessEmbedding {
     val name: MangledName

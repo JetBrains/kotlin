@@ -1,110 +1,99 @@
 /is_type_contract.kt:(157,165): info: Generated Viper text for isString:
-field public$backing_field_length: Ref
+field bf$public$length: Ref
 
-method global$fun_isString$fun_take$NT_Any$return$T_Boolean(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
-  ensures dom$RuntimeType$boolFromRef(ret$0) == true ==>
-    dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_pkg$kotlin$global$class_String())
+method f$isString$TF$Any(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
+  ensures df$rt$boolFromRef(ret$0) == true ==>
+    df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$T$c$pkg$kotlin$String())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
-  ret$0 := dom$RuntimeType$boolToRef(dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x),
-    dom$RuntimeType$T_class_pkg$kotlin$global$class_String()))
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$anyType()))
+  ret$0 := df$rt$boolToRef(df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$T$c$pkg$kotlin$String()))
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method public$property_getter_length(this: Ref) returns (ret: Ref)
+method pg$public$length(this: Ref) returns (ret: Ref)
 
 
 /is_type_contract.kt:(509,517): info: Generated Viper text for isString:
-field public$backing_field_length: Ref
+field bf$public$length: Ref
 
-method global$fun_isString$fun_take$T_Any$return$T_Boolean(local$obj: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
-  ensures dom$RuntimeType$boolFromRef(ret$0) == true ==>
-    dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$T_class_pkg$kotlin$global$class_String())
+method f$isString$TF$T$Any(p$obj: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
+  ensures df$rt$boolFromRef(ret$0) == true ==>
+    df$rt$isSubtype(df$rt$typeOf(p$obj), df$rt$T$c$pkg$kotlin$String())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$anyType())
-  ret$0 := dom$RuntimeType$boolToRef(dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj),
-    dom$RuntimeType$T_class_pkg$kotlin$global$class_String()))
-  goto label$ret$0
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$obj), df$rt$anyType())
+  ret$0 := df$rt$boolToRef(df$rt$isSubtype(df$rt$typeOf(p$obj), df$rt$T$c$pkg$kotlin$String()))
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
-method public$property_getter_length(this: Ref) returns (ret: Ref)
+method pg$public$length(this: Ref) returns (ret: Ref)
 
 
 /is_type_contract.kt:(675,692): info: Generated Viper text for subtypeTransitive:
-method global$fun_subtypeTransitive$fun_take$T_Unit$return$T_Unit(local$x: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+method f$subtypeTransitive$TF$T$Unit(p$x: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
   ensures true ==>
-    dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$anyType()))
+    df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$nullable(df$rt$anyType()))
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$unitType())
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$unitType())
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /is_type_contract.kt:(870,891): info: Generated Viper text for constructorReturnType:
-field public$backing_field_bar: Ref
+field bf$public$bar: Ref
 
-method class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
-  returns (ret: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
-  ensures acc(T_class_global$class_Foo(ret), wildcard)
-  ensures acc(Unique$T_class_global$class_Foo(ret), write)
+method con$c$Foo$() returns (ret: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Foo())
+  ensures acc(p$c$Foo$shared(ret), wildcard)
+  ensures acc(p$c$Foo$unique(ret), write)
 
 
-method global$fun_constructorReturnType$fun_take$$return$T_Boolean()
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
-  ensures dom$RuntimeType$boolFromRef(ret$0) == true
+method f$constructorReturnType$TF$() returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
+  ensures df$rt$boolFromRef(ret$0) == true
 {
-  var anonymous$0: Ref
-  anonymous$0 := class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
-  ret$0 := dom$RuntimeType$boolToRef(dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0),
-    dom$RuntimeType$T_class_global$class_Foo()))
-  goto label$ret$0
-  label label$ret$0
+  var anon$0: Ref
+  anon$0 := con$c$Foo$()
+  ret$0 := df$rt$boolToRef(df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$T$c$Foo()))
+  goto lbl$ret$0
+  label lbl$ret$0
 }
 
 /is_type_contract.kt:(1016,1032): info: Generated Viper text for subtypeSuperType:
-field public$backing_field_bar: Ref
+field bf$public$bar: Ref
 
-method global$fun_subtypeSuperType$fun_take$T_class_global$class_Bar$return$T_Unit(local$bar: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
-  ensures true ==>
-    dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Foo())
+method f$subtypeSuperType$TF$T$c$Bar(p$bar: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
+  ensures true ==> df$rt$isSubtype(df$rt$typeOf(p$bar), df$rt$T$c$Foo())
 {
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Bar())
-  inhale acc(T_class_global$class_Bar(local$bar), wildcard)
-  ret$0 := dom$RuntimeType$unitValue()
-  label label$ret$0
+  inhale df$rt$isSubtype(df$rt$typeOf(p$bar), df$rt$T$c$Bar())
+  inhale acc(p$c$Bar$shared(p$bar), wildcard)
+  ret$0 := df$rt$unitValue()
+  label lbl$ret$0
 }
 
 /is_type_contract.kt:(1149,1160): info: Generated Viper text for typeOfField:
-field public$backing_field_bar: Ref
+field bf$public$bar: Ref
 
-method global$fun_typeOfField$fun_take$T_class_global$class_Foo$return$T_Boolean(local$foo: Ref)
-  returns (ret$0: Ref)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
-  ensures dom$RuntimeType$boolFromRef(ret$0) == true
+method f$typeOfField$TF$T$c$Foo(p$foo: Ref) returns (ret$0: Ref)
+  ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
+  ensures df$rt$boolFromRef(ret$0) == true
 {
-  var anonymous$0: Ref
-  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
-  inhale acc(T_class_global$class_Foo(local$foo), wildcard)
-  unfold acc(T_class_global$class_Foo(local$foo), wildcard)
-  anonymous$0 := local$foo.public$backing_field_bar
-  if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$T_class_global$class_Bar())) {
-    ret$0 := dom$RuntimeType$boolToRef(true)
-    goto label$ret$0
+  var anon$0: Ref
+  inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$T$c$Foo())
+  inhale acc(p$c$Foo$shared(p$foo), wildcard)
+  unfold acc(p$c$Foo$shared(p$foo), wildcard)
+  anon$0 := p$foo.bf$public$bar
+  if (df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$T$c$Bar())) {
+    ret$0 := df$rt$boolToRef(true)
+    goto lbl$ret$0
   } else {
-    ret$0 := dom$RuntimeType$boolToRef(false)
-    goto label$ret$0
+    ret$0 := df$rt$boolToRef(false)
+    goto lbl$ret$0
   }
-  label label$ret$0
+  label lbl$ret$0
 }
