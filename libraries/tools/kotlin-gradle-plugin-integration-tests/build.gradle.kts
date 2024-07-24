@@ -1,5 +1,4 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.nio.file.Paths
 
 plugins {
@@ -9,9 +8,16 @@ plugins {
 
 testsJar()
 
-kotlin.sourceSets.all {
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi")
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            listOf(
+                "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
+                "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
+                "kotlin.io.path.ExperimentalPathApi",
+            )
+        )
+    }
 }
 
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
@@ -120,10 +126,6 @@ val shortenTempRootName = project.providers.systemProperty("os.name").get().cont
 val splitGradleIntegrationTestTasks =
     project.providers.gradleProperty("gradle.integration.tests.split.tasks").orNull?.toBoolean()
         ?: project.kotlinBuildProperties.isTeamcityBuild
-
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.optIn.add("kotlin.io.path.ExperimentalPathApi")
-}
 
 val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
     group = "Build"
