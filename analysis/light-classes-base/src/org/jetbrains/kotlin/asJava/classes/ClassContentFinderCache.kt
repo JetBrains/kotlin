@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
  *
  * @see com.intellij.psi.impl.source.ClassInnerStuffCache
  */
-class ClassInnerStuffCache(
+class ClassContentFinderCache(
     private val extensibleClass: PsiExtensibleClass,
     private val modificationTrackers: List<ModificationTracker>,
 ) {

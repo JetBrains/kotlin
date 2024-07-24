@@ -57,8 +57,8 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
         manager = manager,
     )
 
-    override fun modificationTrackerForClassInnerStuff(): List<ModificationTracker> {
-        return classOrObjectDeclaration?.modificationTrackerForClassInnerStuff() ?: super.modificationTrackerForClassInnerStuff()
+    override fun contentModificationTrackers(): List<ModificationTracker> {
+        return classOrObjectDeclaration?.contentModificationTrackers() ?: super.contentModificationTrackers()
     }
 
     override val kotlinOrigin: KtClassOrObject? get() = classOrObjectDeclaration

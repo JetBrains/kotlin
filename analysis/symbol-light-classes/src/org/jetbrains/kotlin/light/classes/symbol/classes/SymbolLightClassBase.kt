@@ -36,16 +36,14 @@ import javax.swing.Icon
 internal abstract class SymbolLightClassBase protected constructor(val ktModule: KaModule, manager: PsiManager) :
     LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
 
-    private val myInnersCache by lazyPub {
-        ClassInnerStuffCache(
+    private val contentFinderCache by lazyPub {
+        ClassContentFinderCache(
             extensibleClass = this,
-            modificationTrackers = modificationTrackerForClassInnerStuff(),
+            modificationTrackers = contentModificationTrackers(),
         )
     }
 
-    protected open fun modificationTrackerForClassInnerStuff(): List<ModificationTracker> {
-        return listOf(project.createProjectWideOutOfBlockModificationTracker())
-    }
+    open fun contentModificationTrackers(): List<ModificationTracker> = listOf(project.createProjectWideOutOfBlockModificationTracker())
 
     override fun getFields(): Array<PsiField> = ownFields.toArrayIfNotEmptyOrDefault(PsiField.EMPTY_ARRAY)
 
@@ -61,11 +59,20 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
 
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClassImplUtil.getAllInnerClasses(this)
 
-    override fun findFieldByName(name: String, checkBases: Boolean) = myInnersCache.findFieldByName(name, checkBases)
+    override fun findFieldByName(
+        name: String,
+        checkBases: Boolean,
+    ) = contentFinderCache.findFieldByName(name, checkBases)
 
-    override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
+    override fun findMethodsByName(
+        name: String,
+        checkBases: Boolean,
+    ): Array<PsiMethod> = contentFinderCache.findMethodsByName(name, checkBases)
 
-    override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
+    override fun findInnerClassByName(
+        name: String,
+        checkBases: Boolean,
+    ): PsiClass? = contentFinderCache.findInnerClassByName(name, checkBases)
 
     abstract override fun getOwnFields(): List<PsiField>
     abstract override fun getOwnMethods(): List<PsiMethod>

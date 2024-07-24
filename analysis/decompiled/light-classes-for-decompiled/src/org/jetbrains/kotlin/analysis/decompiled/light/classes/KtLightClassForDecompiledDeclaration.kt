@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMember
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.classes.ClassInnerStuffCache
+import org.jetbrains.kotlin.asJava.classes.ClassContentFinderCache
 import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
 import org.jetbrains.kotlin.asJava.classes.getEnumValueOfPsiMethod
 import org.jetbrains.kotlin.asJava.classes.getEnumValuesPsiMethod
@@ -49,8 +49,8 @@ open class KtLightClassForDecompiledDeclaration(
     protected val file: KtClsFile,
     kotlinOrigin: KtClassOrObject?
 ) : KtLightClassForDecompiledDeclarationBase(clsDelegate, clsParent, kotlinOrigin) {
-    private val myInnersCache by lazyPub {
-        ClassInnerStuffCache(
+    private val contentFinderCache by lazyPub {
+        ClassContentFinderCache(
             extensibleClass = this,
             modificationTrackers = listOf(KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker),
         )
@@ -60,9 +60,22 @@ open class KtLightClassForDecompiledDeclaration(
     override fun getMethods(): Array<PsiMethod> = ownMethods.toArrayIfNotEmptyOrDefault(PsiMethod.EMPTY_ARRAY)
     override fun getConstructors(): Array<PsiMethod> = ownConstructors.let { if (it.isEmpty()) it else it.clone() }
     override fun getInnerClasses(): Array<PsiClass> = ownInnerClasses.toArrayIfNotEmptyOrDefault(PsiClass.EMPTY_ARRAY)
-    override fun findFieldByName(name: String, checkBases: Boolean): PsiField? = myInnersCache.findFieldByName(name, checkBases)
-    override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
-    override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
+
+    override fun findFieldByName(
+        name: String,
+        checkBases: Boolean,
+    ): PsiField? = contentFinderCache.findFieldByName(name, checkBases)
+
+    override fun findMethodsByName(
+        name: String,
+        checkBases: Boolean,
+    ): Array<PsiMethod> = contentFinderCache.findMethodsByName(name, checkBases)
+
+    override fun findInnerClassByName(
+        name: String,
+        checkBases: Boolean,
+    ): PsiClass? = contentFinderCache.findInnerClassByName(name, checkBases)
+
     override fun hasModifierProperty(name: String): Boolean = clsDelegate.hasModifierProperty(name)
 
     override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? =

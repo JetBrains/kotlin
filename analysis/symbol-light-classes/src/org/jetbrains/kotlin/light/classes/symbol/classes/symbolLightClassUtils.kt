@@ -70,7 +70,7 @@ internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule:
     else -> SymbolLightClassForClassOrObject(ktClassOrObject, ktModule)
 }
 
-internal fun KtClassOrObject.modificationTrackerForClassInnerStuff(): List<ModificationTracker> {
+internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTracker> {
     val outOfBlockTracker = project.createProjectWideOutOfBlockModificationTracker()
     return if (isLocal) {
         val file = containingKtFile
