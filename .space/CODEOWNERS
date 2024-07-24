@@ -4,7 +4,7 @@
 # Directive UNKNOWN specifies that path is unclaimed
 # Ownership must be exhaustive modulo UNKNOWN
 
-# OWNER_LIST: Kotlin
+# OWNER_LIST: "OpenSource Ecosystem / Kotlin"
 # OWNER_LIST: "Kotlin Libraries"
 # OWNER_LIST: "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 # OWNER_LIST: "Kotlin Compiler Core"
@@ -31,7 +31,7 @@
 # OWNER_LIST: A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev Filipp.Zhinkin
 
 # Fallback rule, must always be top
-* Kotlin
+* "OpenSource Ecosystem / Kotlin"
 
 /.idea/ "Kotlin Build Infrastructure"
 /.idea/kotlinTestDataPluginTestDataPaths.xml Dmitriy.Novozhilov Kirill.Rakhman Sergej.Jaskiewicz
