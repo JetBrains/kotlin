@@ -1,5 +1,5 @@
 /custom_list.kt:(168,171): info: Generated Viper text for get:
-field class_CustomList_private$backing_field_value: Ref
+field class_CustomList$private$backing_field_value: Ref
 
 field special$size: Ref
 
@@ -21,13 +21,13 @@ method class_CustomList$fun_get$fun_take$T_class_global$class_CustomList$T_Int$r
   inhale acc(T_class_global$class_CustomList(this), wildcard)
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$index), dom$RuntimeType$intType())
   unfold acc(T_class_global$class_CustomList(this), wildcard)
-  ret$0 := this.class_CustomList_private$backing_field_value
+  ret$0 := this.class_CustomList$private$backing_field_value
   goto label$ret$0
   label label$ret$0
 }
 
 /custom_list.kt:(248,252): info: Generated Viper text for test:
-field class_CustomList_private$backing_field_value: Ref
+field class_CustomList$private$backing_field_value: Ref
 
 field special$size: Ref
 

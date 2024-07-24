@@ -6,29 +6,29 @@ method class_A$fun_getBooleanField$fun_take$T_class_global$class_A$return$T_Bool
   var anonymous$0: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_A())
   inhale acc(T_class_global$class_A(this), wildcard)
-  anonymous$0 := class_A_private$property_getter_field(this)
+  anonymous$0 := class_A$private$property_getter_field(this)
   ret$0 := anonymous$0
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   goto label$ret$0
   label label$ret$0
 }
 
-method class_A_private$property_getter_field(this: Ref) returns (ret: Ref)
+method class_A$private$property_getter_field(this: Ref) returns (ret: Ref)
 
 
-method class_A_private$property_setter_field(this: Ref, value: Ref)
+method class_A$private$property_setter_field(this: Ref, value: Ref)
   returns (ret: Ref)
 
 
 /private_properties.kt:(289,303): info: Generated Viper text for getStringField:
-field class_B_private$backing_field_field: Ref
+field class_B$private$backing_field_field: Ref
 
 field public$backing_field_length: Ref
 
-method class_A_private$property_getter_field(this: Ref) returns (ret: Ref)
+method class_A$private$property_getter_field(this: Ref) returns (ret: Ref)
 
 
-method class_A_private$property_setter_field(this: Ref, value: Ref)
+method class_A$private$property_setter_field(this: Ref, value: Ref)
   returns (ret: Ref)
 
 
@@ -40,7 +40,7 @@ method class_B$fun_getStringField$fun_take$T_class_global$class_B$return$T_class
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_B())
   inhale acc(T_class_global$class_B(this), wildcard)
   unfold acc(T_class_global$class_B(this), wildcard)
-  ret$0 := this.class_B_private$backing_field_field
+  ret$0 := this.class_B$private$backing_field_field
   goto label$ret$0
   label label$ret$0
 }
@@ -49,16 +49,16 @@ method public$property_getter_length(this: Ref) returns (ret: Ref)
 
 
 /private_properties.kt:(471,484): info: Generated Viper text for extractPublic:
-field class_B_private$backing_field_field: Ref
+field class_B$private$backing_field_field: Ref
 
 field public$backing_field_field: Ref
 
 field public$backing_field_length: Ref
 
-method class_A_private$property_getter_field(this: Ref) returns (ret: Ref)
+method class_A$private$property_getter_field(this: Ref) returns (ret: Ref)
 
 
-method class_A_private$property_setter_field(this: Ref, value: Ref)
+method class_A$private$property_setter_field(this: Ref, value: Ref)
   returns (ret: Ref)
 
 

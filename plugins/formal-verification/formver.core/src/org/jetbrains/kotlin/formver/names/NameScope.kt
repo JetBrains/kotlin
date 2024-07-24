@@ -7,51 +7,87 @@ package org.jetbrains.kotlin.formver.names
 
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-sealed interface NameScope : MangledName
+sealed interface NameScope {
+    val parent: NameScope?
+    val mangledScopeName: String?
 
-sealed interface PackagePrefixScope : NameScope {
-    val packageName: FqName
-    val suffix: String
-    override val mangled: String
-        get() = if (packageName.isRoot) {
-            suffix
-        } else {
-            "pkg\$${packageName.asViperString()}\$$suffix"
-        }
+    // Determines whether the parent should be part of the name.
+    // This is a hack required by how we deal with public names.
+    // We use only accessible scopes when generating the names, but all scopes when doing lookups
+    // for things like package and class names.
+    val parentAccessible: Boolean
+        get() = true
 }
 
-data class GlobalScope(override val packageName: FqName) : PackagePrefixScope {
-    override val suffix = "global"
+// Includes the scope itself.
+val NameScope.parentScopes: Sequence<NameScope>
+    get() = sequence {
+        if (parentAccessible) parent?.parentScopes?.let { yieldAll(it) }
+        yield(this@parentScopes)
+    }
 
-    constructor(segments: List<String>) : this(FqName.fromSegments(segments))
+val NameScope.allParentScopes: Sequence<NameScope>
+    get() = sequence {
+        parent?.parentScopes?.let { yieldAll(it) }
+        yield(this@allParentScopes)
+    }
+
+val NameScope.fullMangledName: String?
+    get() {
+        val scopes = parentScopes.mapNotNull { it.mangledScopeName }.toList()
+        return if (scopes.isEmpty()) null else scopes.joinToString("$")
+    }
+
+val NameScope.packageNameIfAny: FqName?
+    get() = allParentScopes.filterIsInstance<PackageScope>().lastOrNull()?.packageName
+
+val NameScope.classNameIfAny: ClassKotlinName?
+    get() = allParentScopes.filterIsInstance<ClassScope>().lastOrNull()?.className
+
+data class PackageScope(val packageName: FqName) : NameScope {
+    override val parent = null
+
+    override val mangledScopeName: String?
+        get() = packageName.isRoot.ifFalse { "pkg\$${packageName.asViperString()}" }
 }
 
-sealed interface ClassScope : PackagePrefixScope {
-    val className: ClassKotlinName
+// This is really just package scope, here for backwards compatibility.
+data class GlobalScope(override val parent: NameScope) : NameScope {
+    override val mangledScopeName: String
+        get() = "global"
 }
 
-data class DefaultClassScope(override val packageName: FqName, override val className: ClassKotlinName, ) : ClassScope {
-    override val suffix = className.mangled
+data class ClassScope(override val parent: NameScope, val className: ClassKotlinName) : NameScope {
+    override val mangledScopeName: String
+        get() = className.mangled
 }
 
 /**
  * We do not want to mangle field names with class and package, hence introducing
  * this special `NameScope`. Note that it still needs package and class for other purposes.
  */
-data class PublicClassScope(override val packageName: FqName, override val className: ClassKotlinName) : ClassScope {
-    override val suffix = className.mangled + "_public"
-    override val mangled = "public"
+data class PublicScope(override val parent: NameScope) : NameScope {
+    override val mangledScopeName: String
+        get() = "public"
+    override val parentAccessible: Boolean
+        get() = false
 }
 
-data class PrivateClassScope(override val packageName: FqName, override val className: ClassKotlinName) : ClassScope {
-    override val suffix = className.mangled + "_private"
+data class PrivateScope(override val parent: NameScope) : NameScope {
+    override val mangledScopeName: String
+        get() = "private"
 }
 
 data object ParameterScope : NameScope {
-    override val mangled = "local"
+    override val parent: NameScope? = null
+    override val mangledScopeName: String
+        get() = "local"
 }
 
 data class LocalScope(val level: Int) : NameScope {
-    override val mangled = "local$level"
+    override val parent: NameScope? = null
+    override val mangledScopeName = "local$level"
 }

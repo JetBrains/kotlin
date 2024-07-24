@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.expression.*
-import org.jetbrains.kotlin.formver.names.ClassKotlinName
-import org.jetbrains.kotlin.formver.names.GlobalScope
-import org.jetbrains.kotlin.formver.names.ScopedKotlinName
-import org.jetbrains.kotlin.formver.names.embedFunctionName
+import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
@@ -41,8 +38,12 @@ object KotlinContractFunction : SpecialKotlinFunction {
     override val packageName: List<String> = listOf("kotlin", "contracts")
     override val name: String = "contract"
 
-    private val contractBuilderType =
-        ClassTypeEmbedding(ScopedKotlinName(GlobalScope(packageName), ClassKotlinName(listOf("ContractBuilder"))))
+    private val contractBuilderTypeName = buildName {
+        packageScope(packageName)
+        globalScope()
+        ClassKotlinName(listOf("ContractBuilder"))
+    }
+    private val contractBuilderType = ClassTypeEmbedding(contractBuilderTypeName)
     override val receiverType: TypeEmbedding? = null
     override val paramTypes: List<TypeEmbedding> =
         listOf(FunctionTypeEmbedding(CallableSignatureData(contractBuilderType, listOf(), UnitTypeEmbedding)))

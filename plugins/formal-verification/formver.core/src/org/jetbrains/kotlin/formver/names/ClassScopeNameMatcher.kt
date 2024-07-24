@@ -21,7 +21,7 @@ internal sealed class NameMatcher(val name: MangledName) {
     }
 
     protected val scopedName = name as? ScopedKotlinName
-    protected val packageName = (scopedName?.scope as? PackagePrefixScope)?.packageName
+    protected val packageName = scopedName?.scope?.packageNameIfAny
     protected abstract val className: ClassKotlinName?
 
     inline fun ifPackageName(vararg segments: String, action: NameMatcher.() -> Unit) {

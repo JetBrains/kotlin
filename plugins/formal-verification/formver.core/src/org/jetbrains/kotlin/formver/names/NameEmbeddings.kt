@@ -20,27 +20,44 @@ import org.jetbrains.kotlin.name.Name
  * If there is a risk of collision, add a prefix.
  */
 
+fun ClassId.embedLocalName(): ClassKotlinName = ClassKotlinName(relativeClassName)
 
-fun CallableId.embedScopeName(): NameScope =
-    when (val id = this.classId) {
-        null -> GlobalScope(packageName)
-        else -> DefaultClassScope(packageName, ClassKotlinName(id.relativeClassName))
+fun ScopedKotlinNameBuilder.embedScope(id: CallableId) {
+    packageScope(id.packageName)
+    when (val classId = id.classId) {
+        null -> globalScope()
+        else -> classScope(classId.embedLocalName())
     }
+}
 
-fun ClassId.embedName(): ScopedKotlinName = ScopedKotlinName(GlobalScope(packageFqName), ClassKotlinName(relativeClassName))
-fun CallableId.embedExtensionGetterName(type: TypeEmbedding): ScopedKotlinName =
-    ScopedKotlinName(embedScopeName(), ExtensionGetterKotlinName(callableName, type))
+fun ScopedKotlinNameBuilder.embedScope(id: ClassId) {
+    packageScope(id.packageFqName)
+    classScope(id.embedLocalName())
+}
 
-fun CallableId.embedExtensionSetterName(type: TypeEmbedding): ScopedKotlinName =
-    ScopedKotlinName(embedScopeName(), ExtensionSetterKotlinName(callableName, type))
+fun ClassId.embedName(): ScopedKotlinName = buildName {
+    packageScope(packageFqName)
+    globalScope()
+    embedLocalName()
+}
+
+fun CallableId.embedExtensionGetterName(type: TypeEmbedding): ScopedKotlinName = buildName {
+    embedScope(this@embedExtensionGetterName)
+    ExtensionGetterKotlinName(callableName, type)
+}
+
+fun CallableId.embedExtensionSetterName(type: TypeEmbedding): ScopedKotlinName = buildName {
+    embedScope(this@embedExtensionSetterName)
+    ExtensionSetterKotlinName(callableName, type)
+}
 
 private fun CallableId.embedMemberPropertyNameBase(isPrivate: Boolean, withAction: (Name) -> KotlinName): ScopedKotlinName {
     val id = classId ?: error("Embedding non-member property $callableName as a member.")
-    val className = ClassKotlinName(id.relativeClassName)
-    val scope =
-        if (isPrivate) PrivateClassScope(packageName, className)
-        else PublicClassScope(packageName, className)
-    return ScopedKotlinName(scope, withAction(callableName))
+    return buildName {
+        embedScope(id)
+        if (isPrivate) privateScope() else publicScope()
+        withAction(callableName)
+    }
 }
 
 fun CallableId.embedMemberPropertyName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::PropertyKotlinName)
@@ -49,13 +66,22 @@ fun CallableId.embedMemberSetterName(isPrivate: Boolean) = embedMemberPropertyNa
 fun CallableId.embedMemberBackingFieldName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::BackingFieldKotlinName)
 
 fun CallableId.embedUnscopedPropertyName(): SimpleKotlinName = SimpleKotlinName(callableName)
-fun CallableId.embedFunctionName(type: TypeEmbedding): ScopedKotlinName =
-    ScopedKotlinName(embedScopeName(), FunctionKotlinName(callableName, type))
+fun CallableId.embedFunctionName(type: TypeEmbedding): ScopedKotlinName = buildName {
+    embedScope(this@embedFunctionName)
+    FunctionKotlinName(callableName, type)
+}
 
-fun Name.embedScopedLocalName(scope: Int) = ScopedKotlinName(LocalScope(scope), SimpleKotlinName(this))
-fun Name.embedParameterName() = ScopedKotlinName(ParameterScope, SimpleKotlinName(this))
+fun Name.embedScopedLocalName(scope: Int) = buildName {
+    localScope(scope)
+    SimpleKotlinName(this@embedScopedLocalName)
+}
 
-fun FirValueParameterSymbol.embedName(): ScopedKotlinName = ScopedKotlinName(ParameterScope, SimpleKotlinName(name))
+fun Name.embedParameterName() = buildName {
+    parameterScope()
+    SimpleKotlinName(this@embedParameterName)
+}
+
+fun FirValueParameterSymbol.embedName(): ScopedKotlinName = name.embedParameterName()
 
 fun FirPropertySymbol.embedGetterName(ctx: ProgramConversionContext): ScopedKotlinName = when (isExtension) {
     true -> callableId.embedExtensionGetterName(ctx.embedType(getterSymbol!!))
@@ -71,8 +97,10 @@ fun FirPropertySymbol.embedMemberPropertyName() = callableId.embedMemberProperty
     Visibilities.isPrivate(this.visibility)
 )
 
-fun FirConstructorSymbol.embedName(ctx: ProgramConversionContext): ScopedKotlinName =
-    ScopedKotlinName(callableId.embedScopeName(), ConstructorKotlinName(ctx.embedType(this)))
+fun FirConstructorSymbol.embedName(ctx: ProgramConversionContext): ScopedKotlinName = buildName {
+    embedScope(callableId)
+    ConstructorKotlinName(ctx.embedType(this@embedName))
+}
 
 fun FirFunctionSymbol<*>.embedName(ctx: ProgramConversionContext): ScopedKotlinName = when (this) {
     is FirPropertyAccessorSymbol -> if (isGetter) propertySymbol.embedGetterName(ctx) else propertySymbol.embedSetterName(ctx)
