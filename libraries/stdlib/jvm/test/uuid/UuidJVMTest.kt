@@ -133,6 +133,13 @@ class UuidJVMTest {
     }
 
     @Test
+    fun testHashCode() {
+        assertEquals(uuid.hashCode(), uuid.toJavaUuid().hashCode())
+        assertEquals(Uuid.NIL.hashCode(), JavaUUID(0, 0).hashCode())
+        assertEquals(Uuid.fromLongs(-1, -1).hashCode(), JavaUUID(-1, -1).hashCode())
+    }
+
+    @Test
     fun serialize() {
         fun testSerializable(uuid: Uuid) {
             val result = serializeAndDeserialize(uuid)
