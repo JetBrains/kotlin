@@ -93,8 +93,8 @@ digraph complex_kt {
                                     38 [label="Access variable R|<local>/closeException|"];
                                     39 [label="Function call arguments exit"];
                                 }
-                                40 [label="Function call enter: R|<local>/cause|.R|kotlin/Throwable.addSuppressed|(...)"];
-                                41 [label="Function call exit: R|<local>/cause|.R|kotlin/Throwable.addSuppressed|(...)" style="filled" fillcolor=yellow];
+                                40 [label="Function call enter: R|<local>/cause|.R|kotlin/addSuppressed|(...)"];
+                                41 [label="Function call exit: R|<local>/cause|.R|kotlin/addSuppressed|(...)" style="filled" fillcolor=yellow];
                                 42 [label="Exit block"];
                             }
                             43 [label="Catch exit"];
@@ -138,7 +138,7 @@ digraph complex_kt {
             this@R|/closeFinally|.R|/AutoCloseable.close|()
         }
         catch (closeException: R|kotlin/Throwable|) {
-            R|<local>/cause|.R|kotlin/Throwable.addSuppressed|(R|<local>/closeException|)
+            R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)
         }
 
     }
