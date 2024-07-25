@@ -70,6 +70,17 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - sameFunctionNameInDifferentClass`() {
+        doTest(headersTestDataDir.resolve("sameFunctionNameInDifferentClass"))
+    }
+
+    @Test
+    @TodoAnalysisApi
+    fun `test - sameFunctionNameInDifferentInterface`() {
+        doTest(headersTestDataDir.resolve("sameFunctionNameInDifferentInterface"))
+    }
+
+    @Test
     fun `test - nestedClass`() {
         doTest(headersTestDataDir.resolve("nestedClass"))
     }
