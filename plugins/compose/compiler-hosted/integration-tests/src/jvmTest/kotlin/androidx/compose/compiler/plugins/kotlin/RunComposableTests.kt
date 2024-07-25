@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.cli.common.setupLanguageVersionSettings
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import kotlin.test.Ignore
 
+@Ignore // The tests cannot be run against jvmstubs
 class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         setupLanguageVersionSettings(K2JVMCompilerArguments().apply {

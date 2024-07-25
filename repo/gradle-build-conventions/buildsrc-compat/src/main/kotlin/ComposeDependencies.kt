@@ -13,7 +13,6 @@ private val Project.versionCatalog: VersionCatalog
     get() = project.extensions.getByType(VersionCatalogsExtension::class.java).find("libs").get()
 private fun Project.composeStableVersion() = versionCatalog.findVersion("compose.stable").get().requiredVersion
 private fun Project.composeSnapshotVersion() = versionCatalog.findVersion("compose.snapshot.version").get().requiredVersion
-private fun Project.composeSnapshotId() = versionCatalog.findVersion("compose.snapshot.id").get().requiredVersion
 
 val Project.androidXMavenLocalPath: String?
     get() = kotlinBuildProperties.getOrNull("compose.aosp.root")?.toString()
@@ -30,6 +29,8 @@ fun RepositoryHandler.androidxSnapshotRepo(composeSnapshotId: String) {
     }.apply {
         content {
             includeGroup("androidx.compose.runtime")
+            includeGroup("androidx.collection")
+            includeGroup("androidx.annotation")
         }
     }
 }

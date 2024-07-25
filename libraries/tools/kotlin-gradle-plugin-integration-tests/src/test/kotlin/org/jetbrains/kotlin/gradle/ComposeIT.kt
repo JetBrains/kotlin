@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -331,6 +332,7 @@ class ComposeIT : KGPBaseTest() {
 
     @DisplayName("Run Compose compiler with the latest runtime")
     @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.MAX_SUPPORTED)
     @OtherGradlePluginTests
     @TestMetadata("AndroidSimpleApp")
     fun testComposePluginWithRuntimeLatest(
