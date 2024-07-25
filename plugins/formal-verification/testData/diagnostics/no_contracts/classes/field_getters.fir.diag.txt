@@ -1,7 +1,7 @@
 /field_getters.kt:(70,94): info: Generated Viper text for testPrimitiveFieldGetter:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
 method f$testPrimitiveFieldGetter$TF$T$c$PrimitiveFields(p$pf: Ref)
   returns (ret$0: Ref)
@@ -13,22 +13,22 @@ method f$testPrimitiveFieldGetter$TF$T$c$PrimitiveFields(p$pf: Ref)
   inhale acc(p$c$PrimitiveFields$shared(p$pf), wildcard)
   ret$0 := df$rt$unitValue()
   unfold acc(p$c$PrimitiveFields$shared(p$pf), wildcard)
-  l0$a := p$pf.bf$public$a
-  inhale acc(p$pf.bf$public$b, write)
-  l0$b := p$pf.bf$public$b
-  exhale acc(p$pf.bf$public$b, write)
+  l0$a := p$pf.bf$a
+  inhale acc(p$pf.bf$b, write)
+  l0$b := p$pf.bf$b
+  exhale acc(p$pf.bf$b, write)
   inhale df$rt$isSubtype(df$rt$typeOf(l0$b), df$rt$intType())
   label lbl$ret$0
 }
 
 /field_getters.kt:(230,254): info: Generated Viper text for testReferenceFieldGetter:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
-field bf$public$f: Ref
+field bf$f: Ref
 
-field bf$public$g: Ref
+field bf$g: Ref
 
 method f$testReferenceFieldGetter$TF$T$c$ReferenceFields(p$rf: Ref)
   returns (ret$0: Ref)
@@ -44,35 +44,35 @@ method f$testReferenceFieldGetter$TF$T$c$ReferenceFields(p$rf: Ref)
   inhale acc(p$c$ReferenceFields$shared(p$rf), wildcard)
   ret$0 := df$rt$unitValue()
   unfold acc(p$c$ReferenceFields$shared(p$rf), wildcard)
-  l0$f := p$rf.bf$public$f
-  inhale acc(p$rf.bf$public$g, write)
-  l0$g := p$rf.bf$public$g
-  exhale acc(p$rf.bf$public$g, write)
+  l0$f := p$rf.bf$f
+  inhale acc(p$rf.bf$g, write)
+  l0$g := p$rf.bf$g
+  exhale acc(p$rf.bf$g, write)
   inhale df$rt$isSubtype(df$rt$typeOf(l0$g), df$rt$T$c$PrimitiveFields())
   inhale acc(p$c$PrimitiveFields$shared(l0$g), wildcard)
   unfold acc(p$c$PrimitiveFields$shared(l0$f), wildcard)
-  l0$fa := l0$f.bf$public$a
-  inhale acc(l0$f.bf$public$b, write)
-  l0$fb := l0$f.bf$public$b
-  exhale acc(l0$f.bf$public$b, write)
+  l0$fa := l0$f.bf$a
+  inhale acc(l0$f.bf$b, write)
+  l0$fb := l0$f.bf$b
+  exhale acc(l0$f.bf$b, write)
   inhale df$rt$isSubtype(df$rt$typeOf(l0$fb), df$rt$intType())
   unfold acc(p$c$PrimitiveFields$shared(l0$g), wildcard)
-  l0$ga := l0$g.bf$public$a
-  inhale acc(l0$g.bf$public$b, write)
-  l0$gb := l0$g.bf$public$b
-  exhale acc(l0$g.bf$public$b, write)
+  l0$ga := l0$g.bf$a
+  inhale acc(l0$g.bf$b, write)
+  l0$gb := l0$g.bf$b
+  exhale acc(l0$g.bf$b, write)
   inhale df$rt$isSubtype(df$rt$typeOf(l0$gb), df$rt$intType())
   label lbl$ret$0
 }
 
 /field_getters.kt:(387,411): info: Generated Viper text for testCascadingFieldGetter:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
-field bf$public$f: Ref
+field bf$f: Ref
 
-field bf$public$g: Ref
+field bf$g: Ref
 
 method f$testCascadingFieldGetter$TF$T$c$ReferenceFields(p$rf: Ref)
   returns (ret$0: Ref)
@@ -90,30 +90,30 @@ method f$testCascadingFieldGetter$TF$T$c$ReferenceFields(p$rf: Ref)
   inhale acc(p$c$ReferenceFields$shared(p$rf), wildcard)
   ret$0 := df$rt$unitValue()
   unfold acc(p$c$ReferenceFields$shared(p$rf), wildcard)
-  anon$0 := p$rf.bf$public$f
+  anon$0 := p$rf.bf$f
   unfold acc(p$c$PrimitiveFields$shared(anon$0), wildcard)
-  l0$fa := anon$0.bf$public$a
+  l0$fa := anon$0.bf$a
   unfold acc(p$c$ReferenceFields$shared(p$rf), wildcard)
-  anon$1 := p$rf.bf$public$f
-  inhale acc(anon$1.bf$public$b, write)
-  l0$fb := anon$1.bf$public$b
-  exhale acc(anon$1.bf$public$b, write)
+  anon$1 := p$rf.bf$f
+  inhale acc(anon$1.bf$b, write)
+  l0$fb := anon$1.bf$b
+  exhale acc(anon$1.bf$b, write)
   inhale df$rt$isSubtype(df$rt$typeOf(l0$fb), df$rt$intType())
-  inhale acc(p$rf.bf$public$g, write)
-  anon$2 := p$rf.bf$public$g
-  exhale acc(p$rf.bf$public$g, write)
+  inhale acc(p$rf.bf$g, write)
+  anon$2 := p$rf.bf$g
+  exhale acc(p$rf.bf$g, write)
   inhale df$rt$isSubtype(df$rt$typeOf(anon$2), df$rt$T$c$PrimitiveFields())
   inhale acc(p$c$PrimitiveFields$shared(anon$2), wildcard)
   unfold acc(p$c$PrimitiveFields$shared(anon$2), wildcard)
-  l0$ga := anon$2.bf$public$a
-  inhale acc(p$rf.bf$public$g, write)
-  anon$3 := p$rf.bf$public$g
-  exhale acc(p$rf.bf$public$g, write)
+  l0$ga := anon$2.bf$a
+  inhale acc(p$rf.bf$g, write)
+  anon$3 := p$rf.bf$g
+  exhale acc(p$rf.bf$g, write)
   inhale df$rt$isSubtype(df$rt$typeOf(anon$3), df$rt$T$c$PrimitiveFields())
   inhale acc(p$c$PrimitiveFields$shared(anon$3), wildcard)
-  inhale acc(anon$3.bf$public$b, write)
-  l0$gb := anon$3.bf$public$b
-  exhale acc(anon$3.bf$public$b, write)
+  inhale acc(anon$3.bf$b, write)
+  l0$gb := anon$3.bf$b
+  exhale acc(anon$3.bf$b, write)
   inhale df$rt$isSubtype(df$rt$typeOf(l0$gb), df$rt$intType())
   label lbl$ret$0
 }

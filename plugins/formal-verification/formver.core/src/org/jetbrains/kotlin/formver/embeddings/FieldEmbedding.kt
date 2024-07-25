@@ -27,6 +27,8 @@ interface FieldEmbedding {
     // If true, it is necessary to unfold the predicate of the receiver before accessing the field
     val unfoldToAccess: Boolean
         get() = false
+    val containingClass: ClassTypeEmbedding?
+        get() = null
     val includeInShortDump: Boolean
     val symbol: FirPropertySymbol?
         get() = null
@@ -53,6 +55,7 @@ class UserFieldEmbedding(
     override val type: TypeEmbedding,
     override val symbol: FirPropertySymbol,
     override val isUnique: Boolean,
+    override val containingClass: ClassTypeEmbedding,
 ) : FieldEmbedding {
     override val viperType = Type.Ref
     override val accessPolicy: AccessPolicy = if (symbol.isVal) AccessPolicy.ALWAYS_READABLE else AccessPolicy.ALWAYS_INHALE_EXHALE

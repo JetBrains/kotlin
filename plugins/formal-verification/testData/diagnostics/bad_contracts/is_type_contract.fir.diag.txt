@@ -1,5 +1,5 @@
 /is_type_contract.kt:(151,172): info: Generated Viper text for unverifiableTypeCheck:
-field bf$public$length: Ref
+field bf$length: Ref
 
 method f$unverifiableTypeCheck$TF$Int(p$x: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())

@@ -1,5 +1,5 @@
 /exp_side_effects.kt:(185,189): info: Generated Viper text for test:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method f$getFoo$TF$() returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Foo())
@@ -22,13 +22,13 @@ method f$test$TF$() returns (ret$0: Ref)
   ret$0 := df$rt$unitValue()
   anon$0 := f$getFoo$TF$()
   anon$1 := f$sideEffect$TF$()
-  inhale acc(anon$0.bf$public$x, write)
-  anon$0.bf$public$x := anon$1
-  exhale acc(anon$0.bf$public$x, write)
+  inhale acc(anon$0.bf$x, write)
+  anon$0.bf$x := anon$1
+  exhale acc(anon$0.bf$x, write)
   anon$3 := f$getFoo$TF$()
-  inhale acc(anon$3.bf$public$x, write)
-  anon$2 := anon$3.bf$public$x
-  exhale acc(anon$3.bf$public$x, write)
+  inhale acc(anon$3.bf$x, write)
+  anon$2 := anon$3.bf$x
+  exhale acc(anon$3.bf$x, write)
   inhale df$rt$isSubtype(df$rt$typeOf(anon$2), df$rt$intType())
   anon$4 := f$sideEffect$TF$()
   l0$y := sp$plusInts(anon$2, anon$4)

@@ -1,5 +1,5 @@
 /override_properties_types.kt:(520,530): info: Generated Viper text for extractInt:
-field bf$public$field: Ref
+field bf$field: Ref
 
 method f$extractInt$TF$T$c$Base$T$Boolean(p$base: Ref, p$returnNull: Ref)
   returns (ret$0: Ref)
@@ -27,23 +27,23 @@ method f$extractInt$TF$T$c$Base$T$Boolean(p$base: Ref, p$returnNull: Ref)
       var anon$4: Ref
       anon$4 := p$base
       inhale acc(p$c$FinalClassOpenFieldVarDerived$shared(anon$4), wildcard)
-      inhale acc(anon$4.bf$public$field, write)
-      anon$1 := anon$4.bf$public$field
-      exhale acc(anon$4.bf$public$field, write)
+      inhale acc(anon$4.bf$field, write)
+      anon$1 := anon$4.bf$field
+      exhale acc(anon$4.bf$field, write)
       inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
     } elseif (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$FinalClassFinalFieldValDerived())) {
       var anon$5: Ref
       anon$5 := p$base
       inhale acc(p$c$FinalClassFinalFieldValDerived$shared(anon$5), wildcard)
       unfold acc(p$c$FinalClassFinalFieldValDerived$shared(anon$5), wildcard)
-      anon$1 := anon$5.bf$public$field
+      anon$1 := anon$5.bf$field
     } elseif (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$OpenClassFinalFieldVarDerived())) {
       var anon$6: Ref
       anon$6 := p$base
       inhale acc(p$c$OpenClassFinalFieldVarDerived$shared(anon$6), wildcard)
-      inhale acc(anon$6.bf$public$field, write)
-      anon$1 := anon$6.bf$public$field
-      exhale acc(anon$6.bf$public$field, write)
+      inhale acc(anon$6.bf$field, write)
+      anon$1 := anon$6.bf$field
+      exhale acc(anon$6.bf$field, write)
       inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
     } else {
       anon$1 := df$rt$intToRef(0)}

@@ -40,7 +40,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private val methods: MutableMap<MangledName, FunctionEmbedding> = SpecialKotlinFunctions.byName.toMutableMap()
     private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
     private val properties: MutableMap<MangledName, PropertyEmbedding> = mutableMapOf()
-    private val fields: MutableMap<MangledName, FieldEmbedding> = mutableMapOf()
+    private val fields: MutableSet<FieldEmbedding> = mutableSetOf()
 
     // Cast is valid since we check that values are not null. We specify the type for `filterValues` explicitly to ensure there's no
     // loss of type information earlier.
@@ -65,7 +65,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             // We need to deduplicate fields since public fields with the same name are represented differently
             // at `FieldEmbedding` level but map to the same Viper.
             fields = SpecialFields.all.map { it.toViper() } +
-                    fields.values.distinctBy { it.name.mangled }.map { it.toViper() },
+                    fields.distinctBy { it.name.mangled }.map { it.toViper() },
             functions = SpecialFunctions.all,
             methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.distinctBy { it.name.mangled },
             predicates = classes.values.flatMap { listOf(it.details.sharedPredicate, it.details.uniquePredicate) }
@@ -314,7 +314,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 scopedName,
                 embedType(symbol.resolvedReturnType),
                 symbol,
-                symbol.isUnique(session)
+                symbol.isUnique(session),
+                embedding,
             )
         }
         return backingField?.let { unscopedName to it }
@@ -329,7 +330,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private fun processProperty(symbol: FirPropertySymbol, embedding: ClassEmbeddingDetails) {
         val unscopedName = symbol.callableId.embedUnscopedPropertyName()
         val backingField = embedding.findField(unscopedName)
-        backingField?.let { fields.put(it.name, it) }
+        backingField?.let { fields.add(it) }
         properties[symbol.embedMemberPropertyName()] = embedProperty(symbol, backingField)
     }
 

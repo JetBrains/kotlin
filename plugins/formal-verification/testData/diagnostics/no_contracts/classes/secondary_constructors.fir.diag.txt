@@ -1,5 +1,5 @@
 /secondary_constructors.kt:(249,271): info: Generated Viper text for onlySecondConstructors:
-field bf$public$a: Ref
+field bf$a: Ref
 
 method con$c$NoPrimaryConstructor$T$Boolean(p$b: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$NoPrimaryConstructor())
@@ -25,7 +25,7 @@ method f$onlySecondConstructors$TF$() returns (ret$0: Ref)
 }
 
 /secondary_constructors.kt:(365,392): info: Generated Viper text for primaryAndSecondConstructor:
-field bf$public$a: Ref
+field bf$a: Ref
 
 method con$c$BothConstructors$T$Boolean(p$b: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$BothConstructors())
@@ -38,7 +38,7 @@ method con$c$BothConstructors$T$Int(p$a: Ref) returns (ret: Ref)
   ensures acc(p$c$BothConstructors$shared(ret), wildcard)
   ensures acc(p$c$BothConstructors$unique(ret), write)
   ensures (unfolding acc(p$c$BothConstructors$shared(ret), wildcard) in
-      df$rt$intFromRef(ret.bf$public$a) == df$rt$intFromRef(p$a))
+      df$rt$intFromRef(ret.bf$a) == df$rt$intFromRef(p$a))
 
 
 method f$primaryAndSecondConstructor$TF$() returns (ret$0: Ref)

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.formver.conversion.ProgramConversionContext
-import org.jetbrains.kotlin.formver.embeddings.ClassTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -48,19 +47,28 @@ fun CallableId.embedExtensionSetterName(type: TypeEmbedding): ScopedKotlinName =
     ExtensionSetterKotlinName(callableName, type)
 }
 
-private fun CallableId.embedMemberPropertyNameBase(isPrivate: Boolean, withAction: (Name) -> KotlinName): ScopedKotlinName {
+private fun CallableId.embedMemberPropertyNameBase(scopePolicy: MemberEmbeddingPolicy, withAction: (Name) -> KotlinName): ScopedKotlinName {
     val id = classId ?: error("Embedding non-member property $callableName as a member.")
     return buildName {
-        embedScope(id)
-        if (isPrivate) privateScope() else publicScope()
+        if (scopePolicy.isScoped) {
+            embedScope(id)
+        }
+        when (scopePolicy) {
+            MemberEmbeddingPolicy.PUBLIC -> publicScope()
+            MemberEmbeddingPolicy.PRIVATE -> privateScope()
+            MemberEmbeddingPolicy.UNSCOPED -> fakeScope()
+        }
         withAction(callableName)
     }
 }
 
-fun CallableId.embedMemberPropertyName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::PropertyKotlinName)
-fun CallableId.embedMemberGetterName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::GetterKotlinName)
-fun CallableId.embedMemberSetterName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::SetterKotlinName)
-fun CallableId.embedMemberBackingFieldName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::BackingFieldKotlinName)
+fun CallableId.embedMemberPropertyName(isPrivate: Boolean) =
+    embedMemberPropertyNameBase(alwaysScopedPolicy(isPrivate), ::PropertyKotlinName)
+
+fun CallableId.embedMemberGetterName(isPrivate: Boolean) = embedMemberPropertyNameBase(alwaysScopedPolicy(isPrivate), ::GetterKotlinName)
+fun CallableId.embedMemberSetterName(isPrivate: Boolean) = embedMemberPropertyNameBase(alwaysScopedPolicy(isPrivate), ::SetterKotlinName)
+fun CallableId.embedMemberBackingFieldName(isPrivate: Boolean) =
+    embedMemberPropertyNameBase(onlyPrivateScopedPolicy(isPrivate), ::BackingFieldKotlinName)
 
 fun CallableId.embedUnscopedPropertyName(): SimpleKotlinName = SimpleKotlinName(callableName)
 fun CallableId.embedFunctionName(type: TypeEmbedding): ScopedKotlinName = buildName {

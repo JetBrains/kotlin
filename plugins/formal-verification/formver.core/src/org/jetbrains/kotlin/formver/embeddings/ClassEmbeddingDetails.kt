@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.names.*
-import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Predicate
-import org.jetbrains.kotlin.formver.viper.mangled
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 class ClassEmbeddingDetails(val type: ClassTypeEmbedding, val isInterface: Boolean) : TypeInvariantHolder {
@@ -100,16 +98,16 @@ class ClassEmbeddingDetails(val type: ClassTypeEmbedding, val isInterface: Boole
         PredicateAccessTypeInvariantEmbedding(uniquePredicateName, PermExp.FullPerm())
 
     // Returns the sequence of classes in a hierarchy that need to be unfolded in order to access the given field
-    fun hierarchyUnfoldPath(fieldName: ScopedKotlinName): Sequence<ClassTypeEmbedding> = sequence {
-        val className = fieldName.scope.classNameIfAny
-        require(className != null) { "Cannot find hierarchy unfold path of a field with no class scope" }
-        if (className == type.className.name) {
+    fun hierarchyUnfoldPath(field: FieldEmbedding): Sequence<ClassTypeEmbedding> = sequence {
+        val className = field.containingClass?.className
+        require(className != null) { "Cannot find hierarchy unfold path of a field with no class information" }
+        if (className == type.className) {
             yield(this@ClassEmbeddingDetails.type)
         } else {
             val sup = superTypes.firstOrNull { it is ClassTypeEmbedding && !it.details.isInterface }
             if (sup is ClassTypeEmbedding) {
                 yield(this@ClassEmbeddingDetails.type)
-                yieldAll(sup.details.hierarchyUnfoldPath(fieldName))
+                yieldAll(sup.details.hierarchyUnfoldPath(field))
             } else {
                 throw IllegalArgumentException("Reached top of the hierarchy without finding the field")
             }

@@ -444,7 +444,7 @@ method f$complexScenario$TF$T$Boolean(p$arg: Ref) returns (ret$0: Ref)
 }
 
 /custom_run_functions.kt:(3305,3320): info: Generated Viper text for testCustomClass:
-field bf$public$member: Ref
+field bf$member: Ref
 
 method con$c$CustomClass$() returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$CustomClass())
@@ -467,7 +467,7 @@ method f$testCustomClass$TF$() returns (ret$0: Ref)
   var ret$4: Ref
   l0$custom := con$c$CustomClass$()
   unfold acc(p$c$CustomClass$shared(l0$custom), wildcard)
-  ret$2 := l0$custom.bf$public$member
+  ret$2 := l0$custom.bf$member
   goto lbl$ret$2
   label lbl$ret$2
   anon$1 := ret$2
@@ -476,7 +476,7 @@ method f$testCustomClass$TF$() returns (ret$0: Ref)
   label lbl$ret$1
   anon$0 := ret$1
   unfold acc(p$c$CustomClass$shared(l0$custom), wildcard)
-  ret$4 := l0$custom.bf$public$member
+  ret$4 := l0$custom.bf$member
   goto lbl$ret$4
   label lbl$ret$4
   anon$3 := ret$4

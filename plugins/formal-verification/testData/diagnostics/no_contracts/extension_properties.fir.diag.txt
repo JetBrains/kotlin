@@ -42,7 +42,7 @@ method f$extensionSetterProperty$TF$() returns (ret$0: Ref)
 }
 
 /extension_properties.kt:(414,453): info: Generated Viper text for extensionGetterPropertyUserDefinedClass:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method eg$pfValProp$TF$T$c$PrimitiveField(this: Ref) returns (ret: Ref)
 
@@ -63,7 +63,7 @@ method f$extensionGetterPropertyUserDefinedClass$TF$T$c$PrimitiveField(p$pf: Ref
 }
 
 /extension_properties.kt:(508,547): info: Generated Viper text for extensionSetterPropertyUserDefinedClass:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method eg$pfVarProp$TF$T$c$PrimitiveField(this: Ref) returns (ret: Ref)
 

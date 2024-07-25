@@ -32,7 +32,7 @@ method f$safeAsOperator$TF$T$c$Foo(p$foo: Ref) returns (ret$0: Ref)
 }
 
 /as_type_contract.kt:(504,508): info: Generated Viper text for getX:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method f$getX$TF$T$Any(p$a: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$intType()))
@@ -53,7 +53,7 @@ method f$getX$TF$T$Any(p$a: Ref) returns (ret$0: Ref)
   if (anon$0 != df$rt$nullValue()) {
     var anon$1: Ref
     unfold acc(p$c$IntHolder$shared(anon$0), wildcard)
-    anon$1 := anon$0.bf$public$x
+    anon$1 := anon$0.bf$x
     ret$0 := anon$1
   } else {
     ret$0 := df$rt$nullValue()}

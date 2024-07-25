@@ -84,3 +84,11 @@ data class LocalScope(val level: Int) : NameScope {
     override val parent: NameScope? = null
     override val mangledScopeName = "l$level"
 }
+
+/**
+ * Scope to use in cases when we need a scoped name, but don't actually want to introduce one.
+ */
+data object FakeScope : NameScope {
+    override val parent: NameScope? = null
+    override val mangledScopeName: String? = null
+}

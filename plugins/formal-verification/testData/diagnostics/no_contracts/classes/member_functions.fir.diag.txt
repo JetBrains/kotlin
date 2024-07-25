@@ -1,5 +1,5 @@
 /member_functions.kt:(51,60): info: Generated Viper text for memberFun:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method f$c$Foo$memberFun$TF$T$c$Foo(this: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
@@ -7,13 +7,13 @@ method f$c$Foo$memberFun$TF$T$c$Foo(this: Ref) returns (ret$0: Ref)
   inhale df$rt$isSubtype(df$rt$typeOf(this), df$rt$T$c$Foo())
   inhale acc(p$c$Foo$shared(this), wildcard)
   unfold acc(p$c$Foo$shared(this), wildcard)
-  ret$0 := this.bf$public$x
+  ret$0 := this.bf$x
   goto lbl$ret$0
   label lbl$ret$0
 }
 
 /member_functions.kt:(102,115): info: Generated Viper text for callMemberFun:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method f$c$Foo$callMemberFun$TF$T$c$Foo(this: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
@@ -31,7 +31,7 @@ method f$c$Foo$memberFun$TF$T$c$Foo(this: Ref) returns (ret: Ref)
 
 
 /member_functions.kt:(155,166): info: Generated Viper text for siblingCall:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method f$c$Foo$memberFun$TF$T$c$Foo(this: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$intType())
@@ -52,7 +52,7 @@ method f$c$Foo$siblingCall$TF$T$c$Foo$T$c$Foo(this: Ref, p$other: Ref)
 }
 
 /member_functions.kt:(220,238): info: Generated Viper text for outerMemberFunCall:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method f$c$Foo$memberFun$TF$T$c$Foo(this: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$intType())

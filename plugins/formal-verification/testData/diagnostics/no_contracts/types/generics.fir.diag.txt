@@ -1,5 +1,5 @@
 /generics.kt:(52,65): info: Generated Viper text for genericMethod:
-field bf$public$t: Ref
+field bf$t: Ref
 
 method f$c$Box$genericMethod$TF$T$c$Box$Any(this: Ref, p$x: Ref)
   returns (ret$0: Ref)
@@ -14,7 +14,7 @@ method f$c$Box$genericMethod$TF$T$c$Box$Any(this: Ref, p$x: Ref)
 }
 
 /generics.kt:(107,116): info: Generated Viper text for createBox:
-field bf$public$t: Ref
+field bf$t: Ref
 
 method con$c$Box$Any(p$t: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Box())
@@ -31,16 +31,16 @@ method f$createBox$TF$() returns (ret$0: Ref)
   var l0$intBox: Ref
   var anon$1: Ref
   l0$boolBox := con$c$Box$Any(df$rt$boolToRef(true))
-  inhale acc(l0$boolBox.bf$public$t, write)
-  anon$0 := l0$boolBox.bf$public$t
-  exhale acc(l0$boolBox.bf$public$t, write)
+  inhale acc(l0$boolBox.bf$t, write)
+  anon$0 := l0$boolBox.bf$t
+  exhale acc(l0$boolBox.bf$t, write)
   inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$nullable(df$rt$anyType()))
   l0$b := anon$0
   inhale df$rt$isSubtype(df$rt$typeOf(l0$b), df$rt$boolType())
   l0$intBox := con$c$Box$Any(df$rt$intToRef(2))
-  inhale acc(l0$intBox.bf$public$t, write)
-  anon$1 := l0$intBox.bf$public$t
-  exhale acc(l0$intBox.bf$public$t, write)
+  inhale acc(l0$intBox.bf$t, write)
+  anon$1 := l0$intBox.bf$t
+  exhale acc(l0$intBox.bf$t, write)
   inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$nullable(df$rt$anyType()))
   ret$0 := anon$1
   inhale df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
@@ -49,7 +49,7 @@ method f$createBox$TF$() returns (ret$0: Ref)
 }
 
 /generics.kt:(227,242): info: Generated Viper text for setGenericField:
-field bf$public$t: Ref
+field bf$t: Ref
 
 method con$c$Box$Any(p$t: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Box())
@@ -63,9 +63,9 @@ method f$setGenericField$TF$() returns (ret$0: Ref)
   var l0$box: Ref
   ret$0 := df$rt$unitValue()
   l0$box := con$c$Box$Any(df$rt$intToRef(3))
-  inhale acc(l0$box.bf$public$t, write)
-  l0$box.bf$public$t := df$rt$intToRef(5)
-  exhale acc(l0$box.bf$public$t, write)
+  inhale acc(l0$box.bf$t, write)
+  l0$box.bf$t := df$rt$intToRef(5)
+  exhale acc(l0$box.bf$t, write)
   label lbl$ret$0
 }
 
@@ -96,7 +96,7 @@ method f$genericFun$TF$Any(p$t: Ref) returns (ret: Ref)
 
 
 /generics.kt:(375,395): info: Generated Viper text for genericAsIfCondition:
-field bf$public$t: Ref
+field bf$t: Ref
 
 method f$genericAsIfCondition$TF$T$c$Box(p$box: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
@@ -105,9 +105,9 @@ method f$genericAsIfCondition$TF$T$c$Box(p$box: Ref) returns (ret$0: Ref)
   var anon$1: Ref
   inhale df$rt$isSubtype(df$rt$typeOf(p$box), df$rt$T$c$Box())
   inhale acc(p$c$Box$shared(p$box), wildcard)
-  inhale acc(p$box.bf$public$t, write)
-  anon$1 := p$box.bf$public$t
-  exhale acc(p$box.bf$public$t, write)
+  inhale acc(p$box.bf$t, write)
+  anon$1 := p$box.bf$t
+  exhale acc(p$box.bf$t, write)
   inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$nullable(df$rt$anyType()))
   anon$0 := anon$1
   inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$boolType())

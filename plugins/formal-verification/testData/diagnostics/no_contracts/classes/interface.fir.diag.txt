@@ -32,14 +32,14 @@ method ps$public$varProp(this: Ref, value: Ref) returns (ret: Ref)
 
 
 /interface.kt:(348,358): info: Generated Viper text for createImpl:
-field bf$public$number: Ref
+field bf$number: Ref
 
 method con$c$Impl$T$Int(p$number: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Impl())
   ensures acc(p$c$Impl$shared(ret), wildcard)
   ensures acc(p$c$Impl$unique(ret), write)
   ensures (unfolding acc(p$c$Impl$shared(ret), wildcard) in
-      df$rt$intFromRef(ret.bf$public$number) == df$rt$intFromRef(p$number))
+      df$rt$intFromRef(ret.bf$number) == df$rt$intFromRef(p$number))
 
 
 method f$createImpl$TF$() returns (ret$0: Ref)
@@ -50,7 +50,7 @@ method f$createImpl$TF$() returns (ret$0: Ref)
   ret$0 := df$rt$unitValue()
   l0$impl := con$c$Impl$T$Int(df$rt$intToRef(-1))
   unfold acc(p$c$Impl$shared(l0$impl), wildcard)
-  l0$implField := l0$impl.bf$public$number
+  l0$implField := l0$impl.bf$number
   label lbl$ret$0
 }
 

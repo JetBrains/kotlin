@@ -1,5 +1,5 @@
 /setters.kt:(103,127): info: Generated Viper text for testPrimitiveFieldSetter:
-field bf$public$a: Ref
+field bf$a: Ref
 
 method f$testPrimitiveFieldSetter$TF$T$c$PrimitiveField(p$pf: Ref)
   returns (ret$0: Ref)
@@ -8,16 +8,16 @@ method f$testPrimitiveFieldSetter$TF$T$c$PrimitiveField(p$pf: Ref)
   inhale df$rt$isSubtype(df$rt$typeOf(p$pf), df$rt$T$c$PrimitiveField())
   inhale acc(p$c$PrimitiveField$shared(p$pf), wildcard)
   ret$0 := df$rt$unitValue()
-  inhale acc(p$pf.bf$public$a, write)
-  p$pf.bf$public$a := df$rt$intToRef(0)
-  exhale acc(p$pf.bf$public$a, write)
+  inhale acc(p$pf.bf$a, write)
+  p$pf.bf$a := df$rt$intToRef(0)
+  exhale acc(p$pf.bf$a, write)
   label lbl$ret$0
 }
 
 /setters.kt:(170,194): info: Generated Viper text for testReferenceFieldSetter:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$pf: Ref
+field bf$pf: Ref
 
 method con$c$PrimitiveField$T$Int(p$a: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$PrimitiveField())
@@ -34,9 +34,9 @@ method f$testReferenceFieldSetter$TF$T$c$ReferenceField(p$rf: Ref)
   inhale acc(p$c$ReferenceField$shared(p$rf), wildcard)
   ret$0 := df$rt$unitValue()
   anon$0 := con$c$PrimitiveField$T$Int(df$rt$intToRef(0))
-  inhale acc(p$rf.bf$public$pf, write)
-  p$rf.bf$public$pf := anon$0
-  exhale acc(p$rf.bf$public$pf, write)
+  inhale acc(p$rf.bf$pf, write)
+  p$rf.bf$pf := anon$0
+  exhale acc(p$rf.bf$pf, write)
   label lbl$ret$0
 }
 

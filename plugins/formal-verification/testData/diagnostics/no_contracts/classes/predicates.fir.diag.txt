@@ -1,11 +1,11 @@
 /predicates.kt:(203,213): info: Generated Viper text for useClasses:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
-field bf$public$next: Ref
+field bf$next: Ref
 
-field bf$public$pf: Ref
+field bf$pf: Ref
 
 predicate p$c$Baz$shared(this: Ref) {
   true
@@ -16,42 +16,42 @@ predicate p$c$Baz$unique(this: Ref) {
 }
 
 predicate p$c$PrimitiveFields$shared(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$PrimitiveFields$unique(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType()) &&
-  acc(this.bf$public$b, write) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType()) &&
+  acc(this.bf$b, write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType())
 }
 
 predicate p$c$Recursive$shared(this: Ref) {
-  acc(this.bf$public$next, wildcard) &&
-  (this.bf$public$next != df$rt$nullValue() ==>
-  acc(p$c$Recursive$shared(this.bf$public$next), wildcard)) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$next), df$rt$nullable(df$rt$T$c$Recursive()))
+  acc(this.bf$next, wildcard) &&
+  (this.bf$next != df$rt$nullValue() ==>
+  acc(p$c$Recursive$shared(this.bf$next), wildcard)) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$next), df$rt$nullable(df$rt$T$c$Recursive()))
 }
 
 predicate p$c$Recursive$unique(this: Ref) {
-  acc(this.bf$public$next, wildcard) &&
-  (this.bf$public$next != df$rt$nullValue() ==>
-  acc(p$c$Recursive$shared(this.bf$public$next), wildcard)) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$next), df$rt$nullable(df$rt$T$c$Recursive()))
+  acc(this.bf$next, wildcard) &&
+  (this.bf$next != df$rt$nullValue() ==>
+  acc(p$c$Recursive$shared(this.bf$next), wildcard)) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$next), df$rt$nullable(df$rt$T$c$Recursive()))
 }
 
 predicate p$c$ReferenceField$shared(this: Ref) {
-  acc(this.bf$public$pf, wildcard) &&
-  acc(p$c$PrimitiveFields$shared(this.bf$public$pf), wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$pf), df$rt$T$c$PrimitiveFields()) &&
+  acc(this.bf$pf, wildcard) &&
+  acc(p$c$PrimitiveFields$shared(this.bf$pf), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$pf), df$rt$T$c$PrimitiveFields()) &&
   acc(p$c$Baz$shared(this), wildcard)
 }
 
 predicate p$c$ReferenceField$unique(this: Ref) {
-  acc(this.bf$public$pf, wildcard) &&
-  acc(p$c$PrimitiveFields$shared(this.bf$public$pf), wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$pf), df$rt$T$c$PrimitiveFields()) &&
+  acc(this.bf$pf, wildcard) &&
+  acc(p$c$PrimitiveFields$shared(this.bf$pf), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$pf), df$rt$T$c$PrimitiveFields()) &&
   acc(p$c$Baz$unique(this), write)
 }
 
@@ -68,20 +68,20 @@ method f$useClasses$TF$T$c$ReferenceField$T$c$Recursive(p$rf: Ref, p$rec: Ref)
 }
 
 /predicates.kt:(354,374): info: Generated Viper text for threeLayersHierarchy:
-field bf$public$x: Ref
+field bf$x: Ref
 
-field bf$public$y: Ref
+field bf$y: Ref
 
 predicate p$c$A$shared(this: Ref) {
-  acc(this.bf$public$x, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$intType())
+  acc(this.bf$x, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$intType())
 }
 
 predicate p$c$A$unique(this: Ref) {
-  acc(this.bf$public$x, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$intType()) &&
-  acc(this.bf$public$y, write) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$y), df$rt$intType())
+  acc(this.bf$x, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$intType()) &&
+  acc(this.bf$y, write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$y), df$rt$intType())
 }
 
 predicate p$c$B$shared(this: Ref) {

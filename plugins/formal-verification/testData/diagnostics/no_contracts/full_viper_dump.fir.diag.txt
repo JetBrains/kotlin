@@ -188,7 +188,7 @@ domain d$rt  {
   }
 }
 
-field bf$public$x: Ref
+field bf$x: Ref
 
 function sp$andBools(arg1: Ref, arg2: Ref): Ref
   ensures df$rt$isSubtype(df$rt$typeOf(result), df$rt$boolType())
@@ -270,13 +270,13 @@ function sp$timesInts(arg1: Ref, arg2: Ref): Ref
 
 
 predicate p$c$Foo$shared(this: Ref) {
-  acc(this.bf$public$x, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$intType())
+  acc(this.bf$x, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$intType())
 }
 
 predicate p$c$Foo$unique(this: Ref) {
-  acc(this.bf$public$x, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$intType())
+  acc(this.bf$x, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$intType())
 }
 
 method con$c$Foo$T$Int(p$x: Ref) returns (ret: Ref)
@@ -284,7 +284,7 @@ method con$c$Foo$T$Int(p$x: Ref) returns (ret: Ref)
   ensures acc(p$c$Foo$shared(ret), wildcard)
   ensures acc(p$c$Foo$unique(ret), write)
   ensures (unfolding acc(p$c$Foo$shared(ret), wildcard) in
-      df$rt$intFromRef(ret.bf$public$x) == df$rt$intFromRef(p$x))
+      df$rt$intFromRef(ret.bf$x) == df$rt$intFromRef(p$x))
 
 
 method f$f$TF$() returns (ret$0: Ref)

@@ -1,49 +1,47 @@
 /predicates_access.kt:(249,272): info: Generated Viper text for accessSuperTypeProperty:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
-field bf$public$x: Ref
+field bf$x: Ref
 
-field bf$public$y: Ref
+field bf$y: Ref
 
 predicate p$c$A$shared(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$A$unique(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$B$shared(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$shared(this), wildcard)
 }
 
 predicate p$c$B$unique(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$unique(this), write)
 }
 
 predicate p$c$C$shared(this: Ref) {
-  acc(this.bf$public$x, wildcard) &&
-  acc(p$c$A$shared(this.bf$public$x), wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$T$c$A()) &&
+  acc(this.bf$x, wildcard) && acc(p$c$A$shared(this.bf$x), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$T$c$A()) &&
   acc(p$c$D$shared(this), wildcard) &&
   acc(p$c$B$shared(this), wildcard)
 }
 
 predicate p$c$C$unique(this: Ref) {
-  acc(this.bf$public$x, wildcard) &&
-  acc(p$c$A$shared(this.bf$public$x), wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$T$c$A()) &&
-  acc(this.bf$public$y, write) &&
-  acc(p$c$A$shared(this.bf$public$y), wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$y), df$rt$T$c$A()) &&
+  acc(this.bf$x, wildcard) && acc(p$c$A$shared(this.bf$x), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$T$c$A()) &&
+  acc(this.bf$y, write) &&
+  acc(p$c$A$shared(this.bf$y), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$y), df$rt$T$c$A()) &&
   acc(p$c$D$unique(this), write) &&
   acc(p$c$B$unique(this), write)
 }
@@ -66,7 +64,7 @@ method f$accessSuperTypeProperty$TF$T$c$C(p$c: Ref) returns (ret$0: Ref)
   unfold acc(p$c$C$shared(p$c), wildcard)
   unfold acc(p$c$B$shared(p$c), wildcard)
   unfold acc(p$c$A$shared(p$c), wildcard)
-  l0$temp := p$c.bf$public$a
+  l0$temp := p$c.bf$a
   label lbl$ret$0
 }
 
@@ -74,51 +72,49 @@ method pg$public$d(this: Ref) returns (ret: Ref)
 
 
 /predicates_access.kt:(306,318): info: Generated Viper text for accessNested:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
-field bf$public$x: Ref
+field bf$x: Ref
 
-field bf$public$y: Ref
+field bf$y: Ref
 
 predicate p$c$A$shared(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$A$unique(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$B$shared(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$shared(this), wildcard)
 }
 
 predicate p$c$B$unique(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$unique(this), write)
 }
 
 predicate p$c$C$shared(this: Ref) {
-  acc(this.bf$public$x, wildcard) &&
-  acc(p$c$A$shared(this.bf$public$x), wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$T$c$A()) &&
+  acc(this.bf$x, wildcard) && acc(p$c$A$shared(this.bf$x), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$T$c$A()) &&
   acc(p$c$D$shared(this), wildcard) &&
   acc(p$c$B$shared(this), wildcard)
 }
 
 predicate p$c$C$unique(this: Ref) {
-  acc(this.bf$public$x, wildcard) &&
-  acc(p$c$A$shared(this.bf$public$x), wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$T$c$A()) &&
-  acc(this.bf$public$y, write) &&
-  acc(p$c$A$shared(this.bf$public$y), wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$y), df$rt$T$c$A()) &&
+  acc(this.bf$x, wildcard) && acc(p$c$A$shared(this.bf$x), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$T$c$A()) &&
+  acc(this.bf$y, write) &&
+  acc(p$c$A$shared(this.bf$y), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$y), df$rt$T$c$A()) &&
   acc(p$c$D$unique(this), write) &&
   acc(p$c$B$unique(this), write)
 }
@@ -140,9 +136,9 @@ method f$accessNested$TF$T$c$C(p$c: Ref) returns (ret$0: Ref)
   inhale acc(p$c$C$shared(p$c), wildcard)
   ret$0 := df$rt$unitValue()
   unfold acc(p$c$C$shared(p$c), wildcard)
-  anon$0 := p$c.bf$public$x
+  anon$0 := p$c.bf$x
   unfold acc(p$c$A$shared(anon$0), wildcard)
-  l0$temp := anon$0.bf$public$a
+  l0$temp := anon$0.bf$a
   label lbl$ret$0
 }
 
@@ -150,16 +146,16 @@ method pg$public$d(this: Ref) returns (ret: Ref)
 
 
 /predicates_access.kt:(354,368): info: Generated Viper text for accessNullable:
-field bf$public$a: Ref
+field bf$a: Ref
 
 predicate p$c$A$shared(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$A$unique(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 method f$accessNullable$TF$c$A(p$x: Ref) returns (ret$0: Ref)
@@ -171,35 +167,35 @@ method f$accessNullable$TF$c$A(p$x: Ref) returns (ret$0: Ref)
   ret$0 := df$rt$unitValue()
   if (!(p$x == df$rt$nullValue())) {
     unfold acc(p$c$A$shared(p$x), wildcard)
-    l0$n := p$x.bf$public$a
+    l0$n := p$x.bf$a
   }
   label lbl$ret$0
 }
 
 /predicates_access.kt:(442,452): info: Generated Viper text for accessCast:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
 predicate p$c$A$shared(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$A$unique(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$B$shared(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$shared(this), wildcard)
 }
 
 predicate p$c$B$unique(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$unique(this), write)
 }
 
@@ -215,34 +211,34 @@ method f$accessCast$TF$T$c$A(p$x: Ref) returns (ret$0: Ref)
   inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$T$c$B())
   inhale acc(p$c$B$shared(anon$0), wildcard)
   unfold acc(p$c$B$shared(anon$0), wildcard)
-  l0$n := anon$0.bf$public$b
+  l0$n := anon$0.bf$b
   label lbl$ret$0
 }
 
 /predicates_access.kt:(501,515): info: Generated Viper text for accessSafeCast:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
 predicate p$c$A$shared(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$A$unique(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$B$shared(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$shared(this), wildcard)
 }
 
 predicate p$c$B$unique(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$unique(this), write)
 }
 
@@ -263,35 +259,35 @@ method f$accessSafeCast$TF$T$c$A(p$x: Ref) returns (ret$0: Ref)
   inhale l0$y != df$rt$nullValue() ==> acc(p$c$B$shared(l0$y), wildcard)
   if (!(l0$y == df$rt$nullValue())) {
     unfold acc(p$c$B$shared(l0$y), wildcard)
-    l0$n := l0$y.bf$public$b
+    l0$n := l0$y.bf$b
   }
   label lbl$ret$0
 }
 
 /predicates_access.kt:(612,627): info: Generated Viper text for accessSmartCast:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
 predicate p$c$A$shared(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$A$unique(this: Ref) {
-  acc(this.bf$public$a, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$a), df$rt$intType())
+  acc(this.bf$a, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$a), df$rt$intType())
 }
 
 predicate p$c$B$shared(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$shared(this), wildcard)
 }
 
 predicate p$c$B$unique(this: Ref) {
-  acc(this.bf$public$b, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$b), df$rt$intType()) &&
+  acc(this.bf$b, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$intType()) &&
   acc(p$c$A$unique(this), write)
 }
 
@@ -308,7 +304,7 @@ method f$accessSmartCast$TF$T$c$A(p$x: Ref) returns (ret$0: Ref)
     anon$0 := p$x
     inhale acc(p$c$B$shared(anon$0), wildcard)
     unfold acc(p$c$B$shared(anon$0), wildcard)
-    l0$n := anon$0.bf$public$b
+    l0$n := anon$0.bf$b
   }
   label lbl$ret$0
 }

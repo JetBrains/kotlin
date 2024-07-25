@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.formver.embeddings.expression.debug.*
 import org.jetbrains.kotlin.formver.linearization.InhaleExhaleStmtModifier
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.linearization.pureToViper
-import org.jetbrains.kotlin.formver.names.ScopedKotlinName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
@@ -376,7 +375,7 @@ data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding) : 
     }
 
     private fun unfoldHierarchy(receiverWrapper: ExpEmbedding, ctx: LinearizationContext) {
-        val hierarchyPath = (receiver.type as? ClassTypeEmbedding)?.details?.hierarchyUnfoldPath(field.name as ScopedKotlinName)
+        val hierarchyPath = (receiver.type as? ClassTypeEmbedding)?.details?.hierarchyUnfoldPath(field)
         hierarchyPath?.forEach { classType ->
             val predAcc = classType.sharedPredicateAccessInvariant().fillHole(receiverWrapper)
                 .pureToViper(toBuiltin = true, ctx.source) as? Exp.PredicateAccess

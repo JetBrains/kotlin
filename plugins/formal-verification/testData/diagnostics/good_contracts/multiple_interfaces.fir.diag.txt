@@ -37,7 +37,7 @@ method pg$public$field(this: Ref) returns (ret: Ref)
 
 
 /multiple_interfaces.kt:(957,962): info: Generated Viper text for take3:
-field bf$public$field: Ref
+field bf$field: Ref
 
 method f$take3$TF$T$c$AbstractWithFinalImplementation3(p$obj: Ref)
   returns (ret$0: Ref)
@@ -69,7 +69,7 @@ method pg$public$field(this: Ref) returns (ret: Ref)
 
 
 /multiple_interfaces.kt:(1728,1739): info: Generated Viper text for createImpls:
-field bf$public$field: Ref
+field bf$field: Ref
 
 method con$c$Impl12$() returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Impl12())
@@ -142,21 +142,21 @@ method f$createImpls$TF$() returns (ret$0: Ref)
   var anon$17: Ref
   l0$impl12 := con$c$Impl12$()
   unfold acc(p$c$Impl12$shared(l0$impl12), wildcard)
-  anon$0 := l0$impl12.bf$public$field
+  anon$0 := l0$impl12.bf$field
   l0$start12 := sp$minusInts(sp$plusInts(anon$0, df$rt$intToRef(1)), df$rt$intToRef(1))
   anon$1 := f$take1$TF$T$c$InterfaceWithImplementation1(l0$impl12)
   anon$2 := f$take2$TF$T$c$InterfaceWithoutImplementation2(l0$impl12)
   l0$impl23 := con$c$Impl23$()
   unfold acc(p$c$Impl23$shared(l0$impl23), wildcard)
   unfold acc(p$c$AbstractWithFinalImplementation3$shared(l0$impl23), wildcard)
-  anon$3 := l0$impl23.bf$public$field
+  anon$3 := l0$impl23.bf$field
   l0$start23 := sp$minusInts(sp$plusInts(anon$3, df$rt$intToRef(1)), df$rt$intToRef(1))
   anon$4 := f$take2$TF$T$c$InterfaceWithoutImplementation2(l0$impl23)
   anon$5 := f$take3$TF$T$c$AbstractWithFinalImplementation3(l0$impl23)
   l0$impl3 := con$c$Impl3$()
   unfold acc(p$c$Impl3$shared(l0$impl3), wildcard)
   unfold acc(p$c$AbstractWithFinalImplementation3$shared(l0$impl3), wildcard)
-  anon$6 := l0$impl3.bf$public$field
+  anon$6 := l0$impl3.bf$field
   l0$start3 := sp$minusInts(sp$plusInts(anon$6, df$rt$intToRef(1)), df$rt$intToRef(1))
   anon$7 := f$take3$TF$T$c$AbstractWithFinalImplementation3(l0$impl3)
   l0$impl24 := con$c$Impl24$()
@@ -168,7 +168,7 @@ method f$createImpls$TF$() returns (ret$0: Ref)
   anon$11 := f$take4$TF$T$c$AbstractWithOpenImplementation4(l0$impl24)
   l0$impl14 := con$c$Impl14$()
   unfold acc(p$c$Impl14$shared(l0$impl14), wildcard)
-  anon$12 := l0$impl14.bf$public$field
+  anon$12 := l0$impl14.bf$field
   l0$start14 := sp$minusInts(sp$plusInts(anon$12, df$rt$intToRef(1)), df$rt$intToRef(1))
   anon$13 := f$take1$TF$T$c$InterfaceWithImplementation1(l0$impl14)
   anon$14 := f$take4$TF$T$c$AbstractWithOpenImplementation4(l0$impl14)
@@ -180,7 +180,7 @@ method f$createImpls$TF$() returns (ret$0: Ref)
   if (true) {
     var anon$18: Ref
     unfold acc(p$c$Impl14$shared(l0$impl14), wildcard)
-    anon$18 := l0$impl14.bf$public$field
+    anon$18 := l0$impl14.bf$field
     anon$17 := df$rt$boolToRef(df$rt$intFromRef(l0$start14) ==
       df$rt$intFromRef(anon$18))
   } else {

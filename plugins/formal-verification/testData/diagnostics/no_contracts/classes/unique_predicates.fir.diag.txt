@@ -1,34 +1,34 @@
 /unique_predicates.kt:(269,283): info: Generated Viper text for unique_foo_arg:
-field bf$public$w: Ref
+field bf$w: Ref
 
-field bf$public$x: Ref
+field bf$x: Ref
 
-field bf$public$y: Ref
+field bf$y: Ref
 
-field bf$public$z: Ref
+field bf$z: Ref
 
 predicate p$c$Foo$shared(this: Ref) {
-  acc(this.bf$public$w, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$w), df$rt$intType()) &&
-  acc(this.bf$public$y, wildcard) &&
-  acc(p$c$T$shared(this.bf$public$y), wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$y), df$rt$T$c$T()) &&
+  acc(this.bf$w, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$w), df$rt$intType()) &&
+  acc(this.bf$y, wildcard) &&
+  acc(p$c$T$shared(this.bf$y), wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$y), df$rt$T$c$T()) &&
   acc(p$c$S$shared(this), wildcard)
 }
 
 predicate p$c$Foo$unique(this: Ref) {
-  acc(this.bf$public$w, wildcard) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$w), df$rt$intType()) &&
-  acc(this.bf$public$x, write) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$x), df$rt$intType()) &&
-  acc(this.bf$public$y, wildcard) &&
-  acc(p$c$T$shared(this.bf$public$y), wildcard) &&
-  acc(p$c$T$unique(this.bf$public$y), write) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$y), df$rt$T$c$T()) &&
-  acc(this.bf$public$z, write) &&
-  acc(p$c$T$shared(this.bf$public$z), wildcard) &&
-  acc(p$c$T$unique(this.bf$public$z), write) &&
-  df$rt$isSubtype(df$rt$typeOf(this.bf$public$z), df$rt$T$c$T()) &&
+  acc(this.bf$w, wildcard) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$w), df$rt$intType()) &&
+  acc(this.bf$x, write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$intType()) &&
+  acc(this.bf$y, wildcard) &&
+  acc(p$c$T$shared(this.bf$y), wildcard) &&
+  acc(p$c$T$unique(this.bf$y), write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$y), df$rt$T$c$T()) &&
+  acc(this.bf$z, write) &&
+  acc(p$c$T$shared(this.bf$z), wildcard) &&
+  acc(p$c$T$unique(this.bf$z), write) &&
+  df$rt$isSubtype(df$rt$typeOf(this.bf$z), df$rt$T$c$T()) &&
   acc(p$c$S$unique(this), write)
 }
 

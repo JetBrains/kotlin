@@ -67,7 +67,7 @@ method pg$public$length(this: Ref) returns (ret: Ref)
 /cond_effects.kt:(796,832): warning: Cannot verify that if a false value is returned then seq != null.
 
 /cond_effects.kt:(925,942): info: Generated Viper text for recursiveContract:
-field bf$public$length: Ref
+field bf$length: Ref
 
 method f$recursiveContract$TF$T$Int$Any(p$n: Ref, p$x: Ref)
   returns (ret$0: Ref)

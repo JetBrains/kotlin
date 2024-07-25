@@ -1,7 +1,7 @@
 /backing_field_getters.kt:(178,188): info: Generated Viper text for cascadeGet:
-field bf$public$y: Ref
+field bf$y: Ref
 
-field bf$public$z: Ref
+field bf$z: Ref
 
 method f$cascadeGet$TF$T$c$X(p$x: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$T$c$Z())
@@ -12,17 +12,17 @@ method f$cascadeGet$TF$T$c$X(p$x: Ref) returns (ret$0: Ref)
   inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$T$c$X())
   inhale acc(p$c$X$shared(p$x), wildcard)
   unfold acc(p$c$X$shared(p$x), wildcard)
-  anon$0 := p$x.bf$public$y
+  anon$0 := p$x.bf$y
   unfold acc(p$c$Y$shared(anon$0), wildcard)
-  ret$0 := anon$0.bf$public$z
+  ret$0 := anon$0.bf$z
   goto lbl$ret$0
   label lbl$ret$0
 }
 
 /backing_field_getters.kt:(300,321): info: Generated Viper text for receiverNotNullProved:
-field bf$public$y: Ref
+field bf$y: Ref
 
-field bf$public$z: Ref
+field bf$z: Ref
 
 method f$receiverNotNullProved$TF$c$X(p$x: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
@@ -34,7 +34,7 @@ method f$receiverNotNullProved$TF$c$X(p$x: Ref) returns (ret$0: Ref)
   if (p$x != df$rt$nullValue()) {
     var anon$1: Ref
     unfold acc(p$c$X$shared(p$x), wildcard)
-    anon$1 := p$x.bf$public$y
+    anon$1 := p$x.bf$y
     anon$0 := anon$1
   } else {
     anon$0 := df$rt$nullValue()}
@@ -44,9 +44,9 @@ method f$receiverNotNullProved$TF$c$X(p$x: Ref) returns (ret$0: Ref)
 }
 
 /backing_field_getters.kt:(560,578): info: Generated Viper text for cascadeNullableGet:
-field bf$public$y: Ref
+field bf$y: Ref
 
-field bf$public$z: Ref
+field bf$z: Ref
 
 method f$cascadeNullableGet$TF$c$NullableX(p$x: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$T$c$Z()))
@@ -59,12 +59,12 @@ method f$cascadeNullableGet$TF$c$NullableX(p$x: Ref) returns (ret$0: Ref)
     acc(p$c$NullableX$shared(p$x), wildcard)
   if (p$x != df$rt$nullValue()) {
     unfold acc(p$c$NullableX$shared(p$x), wildcard)
-    anon$0 := p$x.bf$public$y
+    anon$0 := p$x.bf$y
   } else {
     anon$0 := df$rt$nullValue()}
   if (anon$0 != df$rt$nullValue()) {
     unfold acc(p$c$NullableY$shared(anon$0), wildcard)
-    ret$0 := anon$0.bf$public$z
+    ret$0 := anon$0.bf$z
   } else {
     ret$0 := df$rt$nullValue()}
   goto lbl$ret$0
@@ -72,9 +72,9 @@ method f$cascadeNullableGet$TF$c$NullableX(p$x: Ref) returns (ret$0: Ref)
 }
 
 /backing_field_getters.kt:(729,756): info: Generated Viper text for cascadeNullableSmartcastGet:
-field bf$public$y: Ref
+field bf$y: Ref
 
-field bf$public$z: Ref
+field bf$z: Ref
 
 method f$cascadeNullableSmartcastGet$TF$c$NullableX(p$x: Ref)
   returns (ret$0: Ref)
@@ -92,7 +92,7 @@ method f$cascadeNullableSmartcastGet$TF$c$NullableX(p$x: Ref)
   } else {
     var anon$1: Ref
     unfold acc(p$c$NullableX$shared(p$x), wildcard)
-    anon$1 := p$x.bf$public$y
+    anon$1 := p$x.bf$y
     if (anon$1 == df$rt$nullValue()) {
       var anon$2: Ref
       anon$2 := df$rt$nullValue()
@@ -100,9 +100,9 @@ method f$cascadeNullableSmartcastGet$TF$c$NullableX(p$x: Ref)
     } else {
       var anon$3: Ref
       unfold acc(p$c$NullableX$shared(p$x), wildcard)
-      anon$3 := p$x.bf$public$y
+      anon$3 := p$x.bf$y
       unfold acc(p$c$NullableY$shared(anon$3), wildcard)
-      ret$0 := anon$3.bf$public$z
+      ret$0 := anon$3.bf$z
     }
   }
   goto lbl$ret$0
@@ -110,7 +110,7 @@ method f$cascadeNullableSmartcastGet$TF$c$NullableX(p$x: Ref)
 }
 
 /backing_field_getters.kt:(987,1017): info: Generated Viper text for nullableReceiverNotNullSafeGet:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method con$c$Baz$() returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Baz())
@@ -130,7 +130,7 @@ method f$nullableReceiverNotNullSafeGet$TF$() returns (ret$0: Ref)
   if (l0$f != df$rt$nullValue()) {
     var anon$2: Ref
     unfold acc(p$c$Baz$shared(l0$f), wildcard)
-    anon$2 := l0$f.bf$public$x
+    anon$2 := l0$f.bf$x
     anon$1 := anon$2
   } else {
     anon$1 := df$rt$nullValue()}
@@ -140,7 +140,7 @@ method f$nullableReceiverNotNullSafeGet$TF$() returns (ret$0: Ref)
 }
 
 /backing_field_getters.kt:(1167,1194): info: Generated Viper text for nullableReceiverNullSafeGet:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method f$nullableReceiverNullSafeGet$TF$() returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$boolType())
@@ -152,7 +152,7 @@ method f$nullableReceiverNullSafeGet$TF$() returns (ret$0: Ref)
   if (l0$f != df$rt$nullValue()) {
     var anon$1: Ref
     unfold acc(p$c$Baz$shared(l0$f), wildcard)
-    anon$1 := l0$f.bf$public$x
+    anon$1 := l0$f.bf$x
     anon$0 := anon$1
   } else {
     anon$0 := df$rt$nullValue()}
@@ -162,7 +162,7 @@ method f$nullableReceiverNullSafeGet$TF$() returns (ret$0: Ref)
 }
 
 /backing_field_getters.kt:(1377,1403): info: Generated Viper text for nonNullableReceiverSafeGet:
-field bf$public$x: Ref
+field bf$x: Ref
 
 method con$c$Baz$() returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Baz())
@@ -180,7 +180,7 @@ method f$nonNullableReceiverSafeGet$TF$() returns (ret$0: Ref)
   if (l0$f != df$rt$nullValue()) {
     var anon$1: Ref
     unfold acc(p$c$Baz$shared(l0$f), wildcard)
-    anon$1 := l0$f.bf$public$x
+    anon$1 := l0$f.bf$x
     anon$0 := anon$1
   } else {
     anon$0 := df$rt$nullValue()}
@@ -190,19 +190,19 @@ method f$nonNullableReceiverSafeGet$TF$() returns (ret$0: Ref)
 }
 
 /backing_field_getters.kt:(1681,1693): info: Generated Viper text for checkPrimary:
-field bf$public$x: Ref
+field bf$x: Ref
 
-field bf$public$y: Ref
+field bf$y: Ref
 
-field bf$public$z: Ref
+field bf$z: Ref
 
 method con$c$ClassI$T$Int$T$Int(p$x: Ref, p$y: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$ClassI())
   ensures acc(p$c$ClassI$shared(ret), wildcard)
   ensures acc(p$c$ClassI$unique(ret), write)
   ensures (unfolding acc(p$c$ClassI$shared(ret), wildcard) in
-      df$rt$intFromRef(ret.bf$public$x) == df$rt$intFromRef(p$x) &&
-      df$rt$intFromRef(ret.bf$public$y) == df$rt$intFromRef(p$y))
+      df$rt$intFromRef(ret.bf$x) == df$rt$intFromRef(p$x) &&
+      df$rt$intFromRef(ret.bf$y) == df$rt$intFromRef(p$y))
 
 
 method con$c$ClassII$T$c$Z(p$z: Ref) returns (ret: Ref)
@@ -210,7 +210,7 @@ method con$c$ClassII$T$c$Z(p$z: Ref) returns (ret: Ref)
   ensures acc(p$c$ClassII$shared(ret), wildcard)
   ensures acc(p$c$ClassII$unique(ret), write)
   ensures (unfolding acc(p$c$ClassII$shared(ret), wildcard) in
-      ret.bf$public$z == p$z)
+      ret.bf$z == p$z)
 
 
 method con$c$Z$() returns (ret: Ref)
@@ -237,9 +237,9 @@ method f$checkPrimary$TF$T$Int$T$Int(p$x: Ref, p$y: Ref)
     var anon$1: Ref
     var anon$2: Ref
     unfold acc(p$c$ClassI$shared(l0$classI), wildcard)
-    anon$1 := l0$classI.bf$public$x
+    anon$1 := l0$classI.bf$x
     unfold acc(p$c$ClassI$shared(l0$classI), wildcard)
-    anon$2 := l0$classI.bf$public$y
+    anon$2 := l0$classI.bf$y
     anon$0 := df$rt$boolToRef(df$rt$intFromRef(anon$1) ==
       df$rt$intFromRef(anon$2))
   }
@@ -248,7 +248,7 @@ method f$checkPrimary$TF$T$Int$T$Int(p$x: Ref, p$y: Ref)
     var anon$4: Ref
     anon$4 := con$c$ClassII$T$c$Z(l0$z)
     unfold acc(p$c$ClassII$shared(anon$4), wildcard)
-    anon$3 := anon$4.bf$public$z
+    anon$3 := anon$4.bf$z
     ret$0 := df$rt$boolToRef(anon$3 == l0$z)
   } else {
     ret$0 := df$rt$boolToRef(false)}

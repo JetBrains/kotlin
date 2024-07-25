@@ -46,8 +46,13 @@ class ScopedKotlinNameBuilder {
     }
 
     fun localScope(level: Int) {
-        require (scope == null) { "Local scope cannot be nested." }
+        require(scope == null) { "Local scope cannot be nested." }
         scope = LocalScope(level)
+    }
+
+    fun fakeScope() {
+        require(scope == null) { "Fake scope cannot be nested." }
+        scope = FakeScope
     }
 }
 

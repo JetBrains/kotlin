@@ -17,7 +17,6 @@ class BackingFieldGetter(val field: FieldEmbedding) : GetterEmbedding {
             FieldAccess(receiver, field).withAccessAndProvenInvariants()
         }
     }
-
 }
 
 class BackingFieldSetter(val field: FieldEmbedding) : SetterEmbedding {

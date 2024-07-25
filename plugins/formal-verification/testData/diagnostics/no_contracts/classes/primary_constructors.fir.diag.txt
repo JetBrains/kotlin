@@ -1,7 +1,7 @@
 /primary_constructors.kt:(70,91): info: Generated Viper text for createPrimitiveFields:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$b: Ref
+field bf$b: Ref
 
 method con$c$PrimitiveFields$T$Int$T$Int(p$a: Ref, p$b: Ref)
   returns (ret: Ref)
@@ -9,8 +9,8 @@ method con$c$PrimitiveFields$T$Int$T$Int(p$a: Ref, p$b: Ref)
   ensures acc(p$c$PrimitiveFields$shared(ret), wildcard)
   ensures acc(p$c$PrimitiveFields$unique(ret), write)
   ensures (unfolding acc(p$c$PrimitiveFields$shared(ret), wildcard) in
-      df$rt$intFromRef(ret.bf$public$a) == df$rt$intFromRef(p$a) &&
-      df$rt$intFromRef(ret.bf$public$b) == df$rt$intFromRef(p$b))
+      df$rt$intFromRef(ret.bf$a) == df$rt$intFromRef(p$a) &&
+      df$rt$intFromRef(ret.bf$b) == df$rt$intFromRef(p$b))
 
 
 method f$createPrimitiveFields$TF$() returns (ret$0: Ref)
@@ -23,14 +23,14 @@ method f$createPrimitiveFields$TF$() returns (ret$0: Ref)
 }
 
 /primary_constructors.kt:(178,193): info: Generated Viper text for createRecursive:
-field bf$public$a: Ref
+field bf$a: Ref
 
 method con$c$Recursive$c$Recursive(p$a: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$Recursive())
   ensures acc(p$c$Recursive$shared(ret), wildcard)
   ensures acc(p$c$Recursive$unique(ret), write)
   ensures (unfolding acc(p$c$Recursive$shared(ret), wildcard) in
-      ret.bf$public$a == p$a)
+      ret.bf$a == p$a)
 
 
 method f$createRecursive$TF$() returns (ret$0: Ref)
@@ -43,16 +43,16 @@ method f$createRecursive$TF$() returns (ret$0: Ref)
 }
 
 /primary_constructors.kt:(279,296): info: Generated Viper text for createFieldInBody:
-field bf$public$a: Ref
+field bf$a: Ref
 
-field bf$public$c: Ref
+field bf$c: Ref
 
 method con$c$FieldInBody$T$Int(p$c: Ref) returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$FieldInBody())
   ensures acc(p$c$FieldInBody$shared(ret), wildcard)
   ensures acc(p$c$FieldInBody$unique(ret), write)
   ensures (unfolding acc(p$c$FieldInBody$shared(ret), wildcard) in
-      df$rt$intFromRef(ret.bf$public$c) == df$rt$intFromRef(p$c))
+      df$rt$intFromRef(ret.bf$c) == df$rt$intFromRef(p$c))
 
 
 method f$createFieldInBody$TF$() returns (ret$0: Ref)

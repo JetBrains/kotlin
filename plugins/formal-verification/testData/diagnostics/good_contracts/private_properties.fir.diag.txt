@@ -21,7 +21,7 @@ method ps$c$A$private$field(this: Ref, value: Ref) returns (ret: Ref)
 /private_properties.kt:(289,303): info: Generated Viper text for getStringField:
 field bf$c$B$private$field: Ref
 
-field bf$public$length: Ref
+field bf$length: Ref
 
 method f$c$B$getStringField$TF$T$c$B(this: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$T$c$pkg$kotlin$String())
@@ -47,9 +47,9 @@ method ps$c$A$private$field(this: Ref, value: Ref) returns (ret: Ref)
 /private_properties.kt:(471,484): info: Generated Viper text for extractPublic:
 field bf$c$B$private$field: Ref
 
-field bf$public$field: Ref
+field bf$field: Ref
 
-field bf$public$length: Ref
+field bf$length: Ref
 
 method con$c$C$() returns (ret: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret), df$rt$T$c$C())
@@ -70,16 +70,16 @@ method f$extractPublic$TF$() returns (ret$0: Ref)
   var anon$0: Ref
   var anon$1: Ref
   anon$1 := con$c$C$()
-  inhale acc(anon$1.bf$public$field, write)
-  anon$0 := anon$1.bf$public$field
-  exhale acc(anon$1.bf$public$field, write)
+  inhale acc(anon$1.bf$field, write)
+  anon$0 := anon$1.bf$field
+  exhale acc(anon$1.bf$field, write)
   inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())
   if (df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())) {
     var anon$2: Ref
     var anon$3: Ref
     anon$3 := con$c$D$()
     unfold acc(p$c$D$shared(anon$3), wildcard)
-    anon$2 := anon$3.bf$public$field
+    anon$2 := anon$3.bf$field
     ret$0 := df$rt$boolToRef(df$rt$isSubtype(df$rt$typeOf(anon$2), df$rt$intType()))
   } else {
     ret$0 := df$rt$boolToRef(false)}
