@@ -15,43 +15,29 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
-import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
-import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
-import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
-import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
+import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.util.addChild
-import org.jetbrains.kotlin.sir.util.isValidSwiftIdentifier
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
 
 internal class SwiftModuleBuildResults(
-    val mainModule: SirModule,
-    val moduleForPackageEnums: SirModule,
+    val module: SirModule,
+    val packages: Set<FqName>,
 )
 
-internal fun buildSwiftModule(
-    input: InputModule,
-    dependencies: Set<InputModule>,
-    moduleForPackages: SirModule?,
+internal fun ModuleWithScopeProvider.initializeSirModule(
     config: SwiftExportConfig,
-    unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
+    moduleProvider: SirModuleProvider,
 ): SwiftModuleBuildResults {
-    val (useSiteModule, mainModule, scopeProvider) =
-        createModuleWithScopeProviderFromBinary(config.distribution, input, dependencies)
-    val moduleProvider = when (config.multipleModulesHandlingStrategy) {
-        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> SirOneToOneModuleProvider()
-        MultipleModulesHandlingStrategy.IntoSingleModule -> SirSingleModuleProvider(swiftModuleName = input.name)
-    }
     val moduleForPackageEnums = when (config.multipleModulesHandlingStrategy) {
-        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> moduleForPackages
-            ?: error("moduleForPackages on runSwiftExport were nil, while the config is OneToOneModuleMapping. Please provide moduleForPackages")
+        MultipleModulesHandlingStrategy.OneToOneModuleMapping -> buildModule { name = config.moduleForPackagesName }
         MultipleModulesHandlingStrategy.IntoSingleModule -> with(moduleProvider) { mainModule.sirModule() }
     }
     val sirSession = StandaloneSirSession(
@@ -60,23 +46,35 @@ internal fun buildSwiftModule(
         errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
         unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
         moduleForPackageEnums = moduleForPackageEnums,
-        unsupportedDeclarationReporter = unsupportedDeclarationReporter,
-        moduleProviderBuilder = { moduleProvider },
-        targetPackageFqName = config.settings[SwiftExportConfig.ROOT_PACKAGE]?.let { packageName ->
-            packageName.takeIf { FqNameUnsafe.isValid(it) }?.let { FqName(it) }
-                ?.takeIf { it.pathSegments().all { it.toString().isValidSwiftIdentifier() } }
-                ?: null.also {
-                    config.logger.report(
-                        SwiftExportLogger.Severity.Warning,
-                        "'$packageName' is not a valid name for ${SwiftExportConfig.ROOT_PACKAGE} and will be ignored"
-                    )
-                }
-        },
+        unsupportedDeclarationReporter = config.unsupportedDeclarationReporter,
+        moduleProvider = moduleProvider,
+        targetPackageFqName = config.targetPackageFqName,
     )
-    analyze(useSiteModule) {
-        with(sirSession) {
-            scopeProvider(this@analyze).flatMap { scope ->
-                scope.extractDeclarations(this@analyze)
+
+    // this lines produce critical side effect
+    // This will traverse every top level declaration of a given provider
+    // This in turn inits every root declaration that will be consumed down the pipe by swift export
+    traverseTopLevelDeclarationsInScopes(sirSession, scopeProvider)
+
+    return with(moduleProvider) {
+        SwiftModuleBuildResults(
+            module = mainModule.sirModule(),
+            packages = if (config.multipleModulesHandlingStrategy == MultipleModulesHandlingStrategy.OneToOneModuleMapping)
+                sirSession.enumGenerator.collectedPackages
+            else
+                emptySet()
+        )
+    }
+}
+
+private fun traverseTopLevelDeclarationsInScopes(
+    sirSession: StandaloneSirSession,
+    scopeProvider: KaSession.() -> List<KaScope>,
+) {
+    with(sirSession) {
+        analyze(useSiteModule) {
+            scopeProvider().flatMap { scope ->
+                scope.extractDeclarations(useSiteSession)
             }.forEach { topLevelDeclaration ->
                 val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
                     ?: error("top level declaration can contain only module or extension to package as a parent")
@@ -84,8 +82,6 @@ internal fun buildSwiftModule(
             }
         }
     }
-    val mainSirModule = with(moduleProvider) { mainModule.sirModule() }
-    return SwiftModuleBuildResults(mainSirModule, moduleForPackageEnums)
 }
 
 /**
@@ -96,14 +92,13 @@ internal fun buildSwiftModule(
  * without root source module (yet?).
  * [scopeProvider] provides declarations that should be worked with.
  */
-private data class ModuleWithScopeProvider(
+internal data class ModuleWithScopeProvider(
     val useSiteModule: KaModule,
     val mainModule: KaModule,
-    val scopeProvider: (KaSession) -> List<KaScope>,
+    val scopeProvider: KaSession.() -> List<KaScope>,
 )
 
-private fun createModuleWithScopeProviderFromBinary(
-    kotlinDistribution: Distribution,
+internal fun createModuleWithScopeProviderFromBinary(
     input: InputModule,
     dependencies: Set<InputModule>,
 ): ModuleWithScopeProvider {
@@ -115,7 +110,7 @@ private fun createModuleWithScopeProviderFromBinary(
 
             val stdlib = addModule(
                 buildKtLibraryModule {
-                    addBinaryRoot(Path(kotlinDistribution.stdlib))
+                    addBinaryRoot(Path(input.config.distribution.stdlib))
                     platform = NativePlatforms.unspecifiedNativePlatform
                     libraryName = "stdlib"
                 }
@@ -136,8 +131,8 @@ private fun createModuleWithScopeProviderFromBinary(
             )
         }
     }
-    return ModuleWithScopeProvider(fakeSourceModule, binaryModule) { analysisSession ->
-        listOf(KlibScope(binaryModule, analysisSession))
+    return ModuleWithScopeProvider(fakeSourceModule, binaryModule) {
+        listOf(KlibScope(binaryModule, useSiteSession))
     }
 }
 

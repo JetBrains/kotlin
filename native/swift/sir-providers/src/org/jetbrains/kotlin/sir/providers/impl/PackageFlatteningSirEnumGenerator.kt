@@ -28,4 +28,7 @@ public class PackageFlatteningSirEnumGenerator(
                 with(sirSession) { it.trampolineDeclarations().forEach { moduleForTrampolines.addChild { it } } }
             }
         }
+
+    override val collectedPackages: Set<FqName>
+        get() = enumGenerator.collectedPackages
 }

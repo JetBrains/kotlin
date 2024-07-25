@@ -34,6 +34,8 @@ public interface SirSession :
     public val sirSession: SirSession
         get() = this
 
+    public val enumGenerator: SirEnumGenerator
+
     public val declarationNamer: SirDeclarationNamer
     public val declarationProvider: SirDeclarationProvider
     public val parentProvider: SirParentProvider
@@ -81,6 +83,7 @@ public interface SirSession :
  */
 public interface SirEnumGenerator {
     public fun FqName.sirPackageEnum(): SirEnum
+    public val collectedPackages: Set<FqName>
 }
 
 /**

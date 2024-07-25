@@ -20,6 +20,9 @@ public class SirEnumGeneratorImpl(
 
     private val createdEnums: MutableMap<FqName, SirEnum> = mutableMapOf()
 
+    override val collectedPackages: Set<FqName>
+        get() = createdEnums.keys
+
     override fun FqName.sirPackageEnum(): SirEnum {
         require(!this.isRoot)
 

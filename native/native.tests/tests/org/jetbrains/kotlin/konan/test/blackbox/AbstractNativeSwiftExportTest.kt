@@ -79,7 +79,7 @@ abstract class AbstractNativeSwiftExportTest {
         }
 
         // run swift export
-        val swiftExportOutputs = runSwiftExport(
+        val swiftExportOutputs: Set<SwiftExportModule> = runSwiftExport(
             input
         ).getOrThrow()
 
@@ -110,6 +110,7 @@ abstract class AbstractNativeSwiftExportTest {
             it.compile(
                 compiledKotlinLibrary = kotlinBinaryLibrary,
                 testPathFull,
+                swiftExportOutputs
             )
         }
 
@@ -153,10 +154,11 @@ abstract class AbstractNativeSwiftExportTest {
     private fun SwiftExportModule.compile(
         compiledKotlinLibrary: TestCompilationArtifact.BinaryLibrary,
         testPathFull: File,
+        allModules: Set<SwiftExportModule>,
     ): Set<TestCompilationArtifact.Swift.Module> {
-        val deps = resolvedDependencies.flatMapToSet { it.compile(compiledKotlinLibrary, testPathFull) }
+        val deps = resolvedDependencies(allModules).flatMapToSet { it.compile(compiledKotlinLibrary, testPathFull, allModules) }
         val compiledSwiftModule = when (this) {
-            is SwiftExportModule.BridgesToKotlin -> compile(compiledKotlinLibrary, testPathFull)
+            is SwiftExportModule.BridgesToKotlin -> compile(compiledKotlinLibrary, testPathFull, allModules)
             is SwiftExportModule.SwiftOnly -> compile(compiledKotlinLibrary, testPathFull)
         }
         return deps + compiledSwiftModule
@@ -183,8 +185,9 @@ abstract class AbstractNativeSwiftExportTest {
     private fun SwiftExportModule.BridgesToKotlin.compile(
         compiledKotlinLibrary: TestCompilationArtifact.BinaryLibrary,
         testPathFull: File,
+        allModules: Set<SwiftExportModule>,
     ): Set<TestCompilationArtifact.Swift.Module> {
-        val deps = resolvedDependencies.flatMapToSet { it.compile(compiledKotlinLibrary, testPathFull) }
+        val deps = resolvedDependencies(allModules).flatMapToSet { it.compile(compiledKotlinLibrary, testPathFull, allModules) }
         val compiledSwiftModule = compiledSwiftCache.computeIfAbsent(this) {
             it as SwiftExportModule.BridgesToKotlin
             val swiftModuleDir = buildDir(testPathFull.name).resolve("SwiftModules").also { it.mkdirs() }
@@ -306,5 +309,6 @@ private fun modulemapFileToSwiftCompilerOptionsIfNeeded(modulemap: File?) = modu
     )
 } ?: emptyList()
 
-private val SwiftExportModule.resolvedDependencies: List<SwiftExportModule>
-    get() = dependencies.map(SwiftExportModule.Reference::module)
+private fun SwiftExportModule.resolvedDependencies(allModules: Set<SwiftExportModule>): List<SwiftExportModule> = dependencies.map { dep ->
+    allModules.firstOrNull { it.name == dep.name } ?: error("Module ${this.name} requested non-existing dependency ${dep.name}")
+}

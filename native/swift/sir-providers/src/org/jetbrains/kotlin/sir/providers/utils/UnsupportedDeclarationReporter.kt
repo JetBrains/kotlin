@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.name
 
 public interface UnsupportedDeclarationReporter {
+    public val messages: List<String>
     public fun report(symbol: KaDeclarationSymbol, reason: String)
 }
 
@@ -18,7 +19,7 @@ public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReport
 
     private val _messages: MutableList<String> = mutableListOf()
 
-    public val messages: List<String>
+    public override val messages: List<String>
         get() = _messages.toList()
 
     override fun report(symbol: KaDeclarationSymbol, reason: String) {
@@ -32,5 +33,6 @@ public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReport
 }
 
 public object SilentUnsupportedDeclarationReporter : UnsupportedDeclarationReporter {
+    public override val messages: List<String> = emptyList()
     override fun report(symbol: KaDeclarationSymbol, reason: String) {}
 }
