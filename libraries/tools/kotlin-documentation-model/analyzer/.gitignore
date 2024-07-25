@@ -38,3 +38,6 @@ android.local.properties
 
 core/out/
 runners/**/out/
+
+**/node_modules
+**/build
