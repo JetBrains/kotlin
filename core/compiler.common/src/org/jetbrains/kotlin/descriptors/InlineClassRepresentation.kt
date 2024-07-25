@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
-class InlineClassRepresentation<Type : SimpleTypeMarker> constructor(
+class InlineClassRepresentation<Type : RigidTypeMarker> constructor(
     val underlyingPropertyName: Name,
     val underlyingType: Type,
 ) : ValueClassRepresentation<Type>() {

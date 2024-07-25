@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.CaptureStatus
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 @ThreadSafeMutableState
@@ -86,7 +86,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSess
     }
 
     private fun computeSupertypePolicyAndPutInMap(
-        supertype: SimpleTypeMarker,
+        supertype: RigidTypeMarker,
         resultingMap: MutableMap<ConeClassLikeLookupTag, MutableList<ConeClassLikeType>>,
         state: TypeCheckerState
     ): TypeCheckerState.SupertypesPolicy {

@@ -22,7 +22,7 @@ abstract class TypeCheckerStateForConstraintSystem(
 ) {
     abstract val isInferenceCompatibilityEnabled: Boolean
 
-    abstract fun isMyTypeVariable(type: SimpleTypeMarker): Boolean
+    abstract fun isMyTypeVariable(type: RigidTypeMarker): Boolean
 
     // super and sub type isSingleClassifierType
     abstract fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker)
@@ -35,12 +35,12 @@ abstract class TypeCheckerStateForConstraintSystem(
 
     abstract fun addEqualityConstraint(typeVariable: TypeConstructorMarker, type: KotlinTypeMarker)
 
-    override fun getLowerCapturedTypePolicy(subType: SimpleTypeMarker, superType: CapturedTypeMarker): LowerCapturedTypePolicy =
+    override fun getLowerCapturedTypePolicy(subType: RigidTypeMarker, superType: CapturedTypeMarker): LowerCapturedTypePolicy =
         with(extensionTypeContext) {
             return when {
                 isMyTypeVariable(subType) -> {
                     val projection = superType.typeConstructorProjection()
-                    val type = projection.getType().asSimpleType()
+                    val type = projection.getType().asRigidType()
                     if (projection.getVariance() == TypeVariance.IN && type != null && isMyTypeVariable(type)) {
                         LowerCapturedTypePolicy.CHECK_ONLY_LOWER
                     } else {
@@ -86,7 +86,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     }
 
     private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? = with(extensionTypeContext) {
-        val simpleType = type.asSimpleType()
+        val simpleType = type.asRigidType()
         val typeMarker = simpleType?.originalIfDefinitelyNotNullable()?.asCapturedType() ?: return null
 
         val projection = typeMarker.typeConstructorProjection()
@@ -144,15 +144,15 @@ abstract class TypeCheckerStateForConstraintSystem(
     private fun extractTypeVariableForSubtype(subType: KotlinTypeMarker, superType: KotlinTypeMarker): KotlinTypeMarker? =
         with(extensionTypeContext) {
 
-            val typeMarker = subType.asSimpleType()?.originalIfDefinitelyNotNullable()?.asCapturedType() ?: return null
+            val typeMarker = subType.asRigidType()?.originalIfDefinitelyNotNullable()?.asCapturedType() ?: return null
 
             val projection = typeMarker.typeConstructorProjection()
             if (projection.isStarProjection()) return null
             if (projection.getVariance() == TypeVariance.IN) {
-                val type = projection.getType().asSimpleType() ?: return null
+                val type = projection.getType().asRigidType() ?: return null
                 if (isMyTypeVariable(type)) {
                     simplifyLowerConstraint(type, superType)
-                    if (isMyTypeVariable(superType.asSimpleType() ?: return null)) {
+                    if (isMyTypeVariable(superType.asRigidType() ?: return null)) {
                         addLowerConstraint(superType.typeConstructor(), nullableAnyType())
                     }
                 }
@@ -162,8 +162,8 @@ abstract class TypeCheckerStateForConstraintSystem(
             return if (projection.getVariance() == TypeVariance.OUT) {
                 val type = projection.getType()
                 when {
-                    type is SimpleTypeMarker && isMyTypeVariable(type) -> type.asSimpleType()
-                    type is FlexibleTypeMarker && isMyTypeVariable(type.lowerBound()) -> type.asFlexibleType()?.lowerBound()
+                    type is RigidTypeMarker && isMyTypeVariable(type) -> type
+                    type is FlexibleTypeMarker && isMyTypeVariable(type.lowerBound()) -> type.lowerBound()
                     else -> null
                 }
             } else null
@@ -220,7 +220,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     ): Boolean = with(extensionTypeContext) {
         val subTypeConstructor = subType.typeConstructor()
         val lowerConstraint = when (typeVariable) {
-            is SimpleTypeMarker ->
+            is RigidTypeMarker ->
                 when {
                     // Foo? (any type which cannot be used as dispatch receiver because of nullability) <: T & Any => ERROR (for K2 only)
                     isK2 && typeVariable.isDefinitelyNotNullType() && !subTypeConstructor.isTypeVariable() &&
@@ -262,12 +262,12 @@ abstract class TypeCheckerStateForConstraintSystem(
                 assertFlexibleTypeVariable(typeVariable)
 
                 when (subType) {
-                    is SimpleTypeMarker ->
+                    is RigidTypeMarker ->
                         when {
                             useRefinedBoundsForTypeVariableInFlexiblePosition() ->
                                 // Foo <: T! -- (Foo!! .. Foo) <: T
                                 createFlexibleType(
-                                    subType.makeSimpleTypeDefinitelyNotNullOrNotNull(),
+                                    subType.makeRigidTypeDefinitelyNotNullOrNotNull(),
                                     subType.withNullability(true)
                                 )
                             // In K1 (FE1.0), there is an obsolete behavior
@@ -281,13 +281,13 @@ abstract class TypeCheckerStateForConstraintSystem(
                             useRefinedBoundsForTypeVariableInFlexiblePosition() ->
                                 // (Foo..Bar) <: T! -- (Foo!! .. Bar?) <: T
                                 createFlexibleType(
-                                    subType.lowerBound().makeSimpleTypeDefinitelyNotNullOrNotNull(),
+                                    subType.lowerBound().makeRigidTypeDefinitelyNotNullOrNotNull(),
                                     subType.upperBound().withNullability(true)
                                 )
                             else ->
                                 // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
                                 createFlexibleType(
-                                    subType.lowerBound().makeSimpleTypeDefinitelyNotNullOrNotNull(),
+                                    subType.lowerBound().makeRigidTypeDefinitelyNotNullOrNotNull(),
                                     subType.upperBound()
                                 )
                         }
@@ -321,7 +321,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         val simplifiedSuperType = when {
             typeVariable.isFlexible() && useRefinedBoundsForTypeVariableInFlexiblePosition() ->
                 createFlexibleType(
-                    superType.lowerBoundIfFlexible().makeSimpleTypeDefinitelyNotNullOrNotNull(),
+                    superType.lowerBoundIfFlexible().makeRigidTypeDefinitelyNotNullOrNotNull(),
                     superType.upperBoundIfFlexible().withNullability(true)
                 )
 
@@ -329,7 +329,7 @@ abstract class TypeCheckerStateForConstraintSystem(
                 superType.withNullability(true)
             }
 
-            typeVariable.isFlexible() && superType is SimpleTypeMarker ->
+            typeVariable.isFlexible() && superType is RigidTypeMarker ->
                 createFlexibleType(superType, superType.withNullability(true))
 
             else -> superType
@@ -399,11 +399,11 @@ abstract class TypeCheckerStateForConstraintSystem(
 
     private fun assertInputTypes(subType: KotlinTypeMarker, superType: KotlinTypeMarker) = with(typeSystemContext) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
-        fun correctSubType(subType: SimpleTypeMarker) =
+        fun correctSubType(subType: RigidTypeMarker) =
             subType.isSingleClassifierType() || subType.typeConstructor()
                 .isIntersection() || isMyTypeVariable(subType) || subType.isError() || subType.isIntegerLiteralType()
 
-        fun correctSuperType(superType: SimpleTypeMarker) =
+        fun correctSuperType(superType: RigidTypeMarker) =
             superType.isSingleClassifierType() || superType.typeConstructor()
                 .isIntersection() || isMyTypeVariable(superType) || superType.isError() || superType.isIntegerLiteralType()
 
@@ -415,14 +415,14 @@ abstract class TypeCheckerStateForConstraintSystem(
         }
     }
 
-    private inline fun KotlinTypeMarker.bothBounds(f: (SimpleTypeMarker) -> Boolean) = when (this) {
-        is SimpleTypeMarker -> f(this)
+    private inline fun KotlinTypeMarker.bothBounds(f: (RigidTypeMarker) -> Boolean) = when (this) {
+        is RigidTypeMarker -> f(this)
         is FlexibleTypeMarker -> with(typeSystemContext) { f(lowerBound()) && f(upperBound()) }
         else -> error("sealed")
     }
 
-    private inline fun KotlinTypeMarker.anyBound(f: (SimpleTypeMarker) -> Boolean) = when (this) {
-        is SimpleTypeMarker -> f(this)
+    private inline fun KotlinTypeMarker.anyBound(f: (RigidTypeMarker) -> Boolean) = when (this) {
+        is RigidTypeMarker -> f(this)
         is FlexibleTypeMarker -> with(typeSystemContext) { f(lowerBound()) || f(upperBound()) }
         else -> error("sealed")
     }

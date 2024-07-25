@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 class ConeIntegerLiteralConstantTypeImpl(
     value: Long,
@@ -126,7 +125,7 @@ class ConeIntegerConstantOperatorTypeImpl(
  * If it returns null then CST will be found by regular rules using real supertypes
  *   of integer literal types
  */
-fun ConeIntegerLiteralType.Companion.findCommonSuperType(types: Collection<SimpleTypeMarker>): SimpleTypeMarker? {
+fun ConeIntegerLiteralType.Companion.findCommonSuperType(types: Collection<RigidTypeMarker>): RigidTypeMarker? {
     return ConeIntegerLiteralTypeExtensions.findCommonSuperType(types)
 }
 
@@ -168,13 +167,13 @@ private object ConeIntegerLiteralTypeExtensions {
     }
 
 
-    fun findCommonSuperType(types: Collection<SimpleTypeMarker>): SimpleTypeMarker? {
+    fun findCommonSuperType(types: Collection<RigidTypeMarker>): RigidTypeMarker? {
         if (types.isEmpty()) return null
         @Suppress("UNCHECKED_CAST")
-        return types.reduce { left: SimpleTypeMarker?, right: SimpleTypeMarker? -> commonSuperType(left, right) }
+        return types.reduce { left: RigidTypeMarker?, right: RigidTypeMarker? -> commonSuperType(left, right) }
     }
 
-    private fun commonSuperType(left: SimpleTypeMarker?, right: SimpleTypeMarker?): SimpleTypeMarker? {
+    private fun commonSuperType(left: RigidTypeMarker?, right: RigidTypeMarker?): RigidTypeMarker? {
         if (left == null || right == null) return null
 
         return when {
@@ -198,8 +197,8 @@ private object ConeIntegerLiteralTypeExtensions {
 
     private fun commonSuperTypeBetweenIntegerTypeAndRegularType(
         integerLiteralType: ConeIntegerLiteralType,
-        regularType: SimpleTypeMarker
-    ): SimpleTypeMarker? {
+        regularType: RigidTypeMarker
+    ): RigidTypeMarker? {
         return when (regularType) {
             in integerLiteralType.possibleTypes -> regularType
             else -> null

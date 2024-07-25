@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.AbstractTypeMapper
 import org.jetbrains.kotlin.types.TypeMappingContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContextForTypeMapping
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Type
@@ -261,12 +261,12 @@ private class IrTypeCheckerContextForTypeMapping(
         return this is IrScriptSymbol
     }
 
-    override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
+    override fun RigidTypeMarker.isSuspendFunction(): Boolean {
         if (this !is IrSimpleType) return false
         return isSuspendFunctionImpl()
     }
 
-    override fun SimpleTypeMarker.isKClass(): Boolean {
+    override fun RigidTypeMarker.isKClass(): Boolean {
         require(this is IrSimpleType)
         return isKClassImpl()
     }

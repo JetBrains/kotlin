@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 
 object AbstractStrictEqualityTypeChecker {
@@ -24,20 +24,20 @@ object AbstractStrictEqualityTypeChecker {
     private fun TypeSystemContext.strictEqualTypesInternal(a: KotlinTypeMarker, b: KotlinTypeMarker): Boolean {
         if (a === b) return true
 
-        val simpleA = a.asSimpleType()
-        val simpleB = b.asSimpleType()
-        if (simpleA != null && simpleB != null) return strictEqualSimpleTypes(simpleA, simpleB)
+        val simpleA = a.asRigidType()
+        val simpleB = b.asRigidType()
+        if (simpleA != null && simpleB != null) return strictEqualRigidTypes(simpleA, simpleB)
 
         val flexibleA = a.asFlexibleType()
         val flexibleB = b.asFlexibleType()
         if (flexibleA != null && flexibleB != null) {
-            return strictEqualSimpleTypes(flexibleA.lowerBound(), flexibleB.lowerBound()) &&
-                    strictEqualSimpleTypes(flexibleA.upperBound(), flexibleB.upperBound())
+            return strictEqualRigidTypes(flexibleA.lowerBound(), flexibleB.lowerBound()) &&
+                    strictEqualRigidTypes(flexibleA.upperBound(), flexibleB.upperBound())
         }
         return false
     }
 
-    private fun TypeSystemContext.strictEqualSimpleTypes(a: SimpleTypeMarker, b: SimpleTypeMarker): Boolean {
+    private fun TypeSystemContext.strictEqualRigidTypes(a: RigidTypeMarker, b: RigidTypeMarker): Boolean {
         if (a.argumentsCount() != b.argumentsCount()
             || a.isMarkedNullable() != b.isMarkedNullable()
             || (a.asDefinitelyNotNullType() == null) != (b.asDefinitelyNotNullType() == null)

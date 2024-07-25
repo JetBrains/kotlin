@@ -15,21 +15,20 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.ir.types.isMarkedNullable as irIsMarkedNullable
 
 class JvmIrTypeSystemContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemContext {
     override fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker? =
         (this as IrType).asJvmFlexibleType(irBuiltIns, JvmIrSpecialAnnotationSymbolProvider)
 
-    override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
+    override fun FlexibleTypeMarker.upperBound(): IrSimpleType {
         return when (this) {
             is IrJvmFlexibleType -> this.upperBound
             else -> error("Unexpected flexible type ${this::class.java.simpleName}: $this")
         }
     }
 
-    override fun FlexibleTypeMarker.lowerBound(): SimpleTypeMarker {
+    override fun FlexibleTypeMarker.lowerBound(): IrSimpleType {
         return when (this) {
             is IrJvmFlexibleType -> this.lowerBound
             else -> error("Unexpected flexible type ${this::class.java.simpleName}: $this")

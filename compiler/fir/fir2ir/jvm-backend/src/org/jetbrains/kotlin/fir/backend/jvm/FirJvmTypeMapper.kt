@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.TypeMappingContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContextForTypeMapping
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -266,12 +266,12 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
 
     override fun TypeConstructorMarker.isScript(): Boolean = false
 
-    override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
+    override fun RigidTypeMarker.isSuspendFunction(): Boolean {
         require(this is ConeRigidType)
         return isSuspendOrKSuspendFunctionType(session)
     }
 
-    override fun SimpleTypeMarker.isKClass(): Boolean {
+    override fun RigidTypeMarker.isKClass(): Boolean {
         require(this is ConeRigidType)
         return isKClassType()
     }

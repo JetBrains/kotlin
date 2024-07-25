@@ -101,7 +101,7 @@ internal object EmptyIntersectionTypeChecker {
         return possibleEmptyIntersectionKind
     }
 
-    private fun SimpleTypeMarker.isSubtypeOfIgnoringArguments(
+    private fun RigidTypeMarker.isSubtypeOfIgnoringArguments(
         typeCheckerState: TypeCheckerState,
         otherConstructorMarker: TypeConstructorMarker
     ): Boolean = AbstractTypeChecker.findCorrespondingSupertypes(

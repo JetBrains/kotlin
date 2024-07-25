@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 open class JvmTypeSpecificityComparator(open val context: TypeSystemInferenceExtensionContext) : TypeSpecificityComparator {
 
     override fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean = with(context) {
-        val simpleGeneral = general.asSimpleType()
+        val simpleGeneral = general.asRigidType()
         if (!specific.isFlexible() || simpleGeneral == null) return false
 
         // general is inflexible
@@ -22,7 +22,9 @@ open class JvmTypeSpecificityComparator(open val context: TypeSystemInferenceExt
         //    foo(int) and foo(Integer)
         // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
         // so, for such cases, we discriminate Integer in favour of int
-        if (!simpleGeneral.isPrimitiveType() || !flexibility.lowerBound().isPrimitiveType()) {
+        if (!simpleGeneral.originalIfDefinitelyNotNullable().isPrimitiveType() ||
+            !flexibility.lowerBound().originalIfDefinitelyNotNullable().isPrimitiveType()
+        ) {
             return false
         }
 

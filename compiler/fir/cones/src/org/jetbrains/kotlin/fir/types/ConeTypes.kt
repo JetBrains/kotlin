@@ -42,10 +42,8 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
  * - it has one related constructor. [ConeIntersectionType] is currently an exception, see [KT-70049](https://youtrack.jetbrains.com/issue/KT-70049).
  * - it can require unwrapping
  *
- * [ConeRigidType] currently doesn't have a marker counterpart and inherit [SimpleTypeMarker] directly.
- * See [KT-70014](https://youtrack.jetbrains.com/issue/KT-70014).
  */
-sealed class ConeRigidType : ConeKotlinType(), SimpleTypeMarker
+sealed class ConeRigidType : ConeKotlinType(), RigidTypeMarker
 
 /**
  * Normally should represent a type with one related constructor that does not require unwrapping.

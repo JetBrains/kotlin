@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.inlineClassUnderlyingType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
-fun <T : SimpleTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
+fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
     nameResolver: NameResolver,
     typeTable: TypeTable,
     typeDeserializer: (ProtoBuf.Type) -> T,

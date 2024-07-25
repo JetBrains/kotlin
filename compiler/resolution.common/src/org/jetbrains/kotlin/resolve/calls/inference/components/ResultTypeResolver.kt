@@ -272,9 +272,9 @@ class ResultTypeResolver(
      */
     private fun KotlinTypeMarker?.makeFlexibleIfNecessary(c: Context, constraints: List<Constraint>) = with(c) {
         when (val type = this@makeFlexibleIfNecessary) {
-            is SimpleTypeMarker -> {
+            is RigidTypeMarker -> {
                 if (constraints.any { it.type.typeConstructor().isTypeVariable() && it.type.hasFlexibleNullability() }) {
-                    createFlexibleType(type.makeSimpleTypeDefinitelyNotNullOrNotNull(), type.withNullability(true))
+                    createFlexibleType(type.makeRigidTypeDefinitelyNotNullOrNotNull(), type.withNullability(true))
                 } else type
             }
             else -> type
@@ -369,9 +369,9 @@ class ResultTypeResolver(
             val types = sinkIntegerLiteralTypes(lowerConstraintTypes)
             var commonSuperType = computeCommonSuperType(types)
 
-            if (commonSuperType.contains { it.asSimpleType()?.isStubTypeForVariableInSubtyping() == true }) {
+            if (commonSuperType.contains { it.asRigidType()?.isStubTypeForVariableInSubtyping() == true }) {
                 val typesWithoutStubs = types.filter { lowerType ->
-                    !lowerType.contains { it.asSimpleType()?.isStubTypeForVariableInSubtyping() == true }
+                    !lowerType.contains { it.asRigidType()?.isStubTypeForVariableInSubtyping() == true }
                 }
 
                 when {
@@ -438,7 +438,7 @@ class ResultTypeResolver(
     private fun Context.sinkIntegerLiteralTypes(types: List<KotlinTypeMarker>): List<KotlinTypeMarker> {
         return types.sortedBy { type ->
 
-            val containsILT = type.contains { it.asSimpleType()?.isIntegerLiteralType() ?: false }
+            val containsILT = type.contains { it.asRigidType()?.isIntegerLiteralType() ?: false }
             if (containsILT) 1 else 0
         }
     }

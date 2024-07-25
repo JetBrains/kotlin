@@ -284,7 +284,7 @@ fun TypeSystemInferenceExtensionContext.extractProjectionsForAllCapturedTypes(ba
             addAll(extractProjectionsForAllCapturedTypes(flexibleType.upperBound()))
         }
     }
-    val simpleBaseType = baseType.asSimpleType()?.originalIfDefinitelyNotNullable()
+    val simpleBaseType = baseType.asRigidType()?.originalIfDefinitelyNotNullable()
 
     return buildSet {
         val projectionType = if (simpleBaseType is CapturedTypeMarker) {

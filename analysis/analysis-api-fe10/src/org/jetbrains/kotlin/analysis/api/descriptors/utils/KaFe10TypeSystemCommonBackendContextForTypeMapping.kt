@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.types.error.ErrorTypeConstructor
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
@@ -58,13 +59,13 @@ internal class KaFe10TypeSystemCommonBackendContextForTypeMapping(
         return declarationDescriptor is ScriptDescriptor
     }
 
-    override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
+    override fun RigidTypeMarker.isSuspendFunction(): Boolean {
         require(this is SimpleType)
         val declaration = constructor.declarationDescriptor
         return declaration is FunctionClassDescriptor && declaration.functionTypeKind.isSuspendOrKSuspendFunction
     }
 
-    override fun SimpleTypeMarker.isKClass(): Boolean {
+    override fun RigidTypeMarker.isKClass(): Boolean {
         require(this is SimpleType)
         return constructor.declarationDescriptor == builtIns.kClass
     }
