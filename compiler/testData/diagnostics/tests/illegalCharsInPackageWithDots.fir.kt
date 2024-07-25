@@ -1,7 +1,7 @@
 // ISSUE: KT-69475
 
 // FILE: A.kt
-package nest.`a bc.d e`.vest
+package <!INVALID_CHARACTERS!>nest.`a bc.d e`.vest<!>
 
 fun test() {}
 

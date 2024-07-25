@@ -166,13 +166,46 @@ class LightTreeRawFirDeclarationBuilder(
         packageNode.forEachChildren {
             when (it.tokenType) {
                 //TODO separate logic for both expression types
-                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> packageName = FqName(it.getAsStringWithoutBacktick())
+                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> packageName = parsePackageName(it)
             }
         }
         return buildPackageDirective {
             packageFqName = packageName
             source = packageNode.toFirSourceElement()
         }
+    }
+
+    private fun parsePackageName(node: LighterASTNode): FqName {
+        var packageName: FqName = FqName.ROOT
+        val parts = parsePackageParts(node)
+
+        for (part in parts) {
+            packageName = packageName.child(Name.identifier(part))
+        }
+
+        return packageName
+    }
+
+    private fun parsePackageParts(node: LighterASTNode): List<String> {
+        fun parse(node: LighterASTNode): MutableList<String> {
+            if (node.tokenType == DOT_QUALIFIED_EXPRESSION) {
+                val children = node.getChildren(tree)
+
+                if (children.size == 3) {
+                    return parse(children.first()).apply {
+                        add(children.last().getAsStringWithoutBacktick())
+                    }
+                }
+            }
+
+            if (node.tokenType == REFERENCE_EXPRESSION) {
+                return mutableListOf(node.getAsStringWithoutBacktick())
+            }
+
+            return mutableListOf()
+        }
+
+        return parse(node)
     }
 
     private fun convertImportAlias(importAlias: LighterASTNode): Pair<String, KtSourceElement>? {

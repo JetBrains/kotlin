@@ -38,11 +38,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
@@ -1190,8 +1186,8 @@ open class PsiRawFirBuilder(
 
         override fun visitKtFile(file: KtFile, data: FirElement?): FirElement {
             context.packageFqName = when (mode) {
-                BodyBuildingMode.NORMAL -> file.packageFqNameByTree
-                BodyBuildingMode.LAZY_BODIES -> file.packageFqName
+                BodyBuildingMode.NORMAL -> file.properPackageFqName
+                BodyBuildingMode.LAZY_BODIES -> file.stub?.getPackageFqName() ?: file.properPackageFqName
             }
             return buildFile {
                 source = file.toFirSourceElement()
@@ -1252,6 +1248,20 @@ open class PsiRawFirBuilder(
                     }
                 }
             }
+        }
+
+        private val KtFile.properPackageFqName: FqName
+            get() = packageDirective?.let(::parsePackageName) ?: FqName.ROOT
+
+        private fun parsePackageName(node: KtPackageDirective): FqName {
+            var packageName: FqName = FqName.ROOT
+            val parts = node.getPackageNames()
+
+            for (part in parts) {
+                packageName = packageName.child(Name.identifier(part.getReferencedName()))
+            }
+
+            return packageName
         }
 
         protected fun configureScriptDestructuringDeclarationEntry(declaration: FirVariable, container: FirVariable) {
