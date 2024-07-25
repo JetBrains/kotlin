@@ -39,9 +39,9 @@ CustomAllocator::~CustomAllocator() {
 
 ALWAYS_INLINE ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
-    auto descriptor = HeapObject::make_descriptor(typeInfo);
+    auto descriptor = CustomHeapObject::descriptorFrom(typeInfo);
     auto& heapObject = *descriptor.construct(Allocate(descriptor.size()));
-    ObjHeader* object = heapObject.header(descriptor).object();
+    ObjHeader* object = heapObject.object();
     if (typeInfo->flags_ & TF_HAS_FINALIZER) {
         auto* extraObject = CreateExtraObjectDataForObject(object, typeInfo);
         object->typeInfoOrMeta_ = reinterpret_cast<TypeInfo*>(extraObject);
@@ -56,9 +56,9 @@ ALWAYS_INLINE ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo)
 ALWAYS_INLINE ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
     CustomAllocDebug("CustomAllocator@%p::CreateArray(%d)", this ,count);
     RuntimeAssert(typeInfo->IsArray(), "Must be an array");
-    auto descriptor = HeapArray::make_descriptor(typeInfo, count);
+    auto descriptor = CustomHeapArray::descriptorFrom(typeInfo, count);
     auto& heapArray = *descriptor.construct(Allocate(descriptor.size()));
-    ArrayHeader* array = heapArray.header(descriptor).array();
+    ArrayHeader* array = heapArray.array();
     array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
     array->count_ = count;
     return array;
@@ -83,13 +83,7 @@ void CustomAllocator::PrepareForGC() noexcept {
 
 // static
 size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
-    RuntimeAssert(object->heap(), "Object must be a heap object");
-    const auto* typeInfo = object->type_info();
-    if (typeInfo->IsArray()) {
-        return HeapArray::make_descriptor(typeInfo, object->array()->count_).size();
-    } else {
-        return HeapObject::make_descriptor(typeInfo).size();
-    }
+    return CustomHeapObject::from(object).size();
 }
 
 ALWAYS_INLINE uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {

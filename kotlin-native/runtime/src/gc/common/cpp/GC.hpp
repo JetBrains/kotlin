@@ -13,6 +13,7 @@
 #include "GCScheduler.hpp"
 #include "ReferenceOps.hpp"
 #include "RunLoopFinalizerProcessor.hpp"
+#include "TypeLayout.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {

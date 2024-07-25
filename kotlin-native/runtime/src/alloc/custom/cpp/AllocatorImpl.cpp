@@ -56,11 +56,11 @@ void alloc::initObjectPool() noexcept {}
 void alloc::compactObjectPoolInCurrentThread() noexcept {}
 
 gc::GC::ObjectData& alloc::objectDataForObject(ObjHeader* object) noexcept {
-    return HeapObjHeader::from(object).objectData();
+    return CustomHeapObject::from(object).heapHeader();
 }
 
 ObjHeader* alloc::objectForObjectData(gc::GC::ObjectData& objectData) noexcept {
-    return HeapObjHeader::from(objectData).object();
+    return CustomHeapObject::from(objectData).object();
 }
 
 size_t alloc::allocatedHeapSize(ObjHeader* object) noexcept {

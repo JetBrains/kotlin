@@ -14,6 +14,7 @@
 
 #include "Alignment.hpp"
 #include "FinalizerHooks.hpp"
+#include "HeapObject.hpp"
 #include "Memory.h"
 #include "concurrent/Mutex.hpp"
 #include "Porting.h"
@@ -455,82 +456,17 @@ class ObjectFactory : private Pinned {
     using Allocator = typename Traits::Allocator;
     using ObjectData = typename Traits::ObjectData;
 
-    struct HeapObjHeader {
-        using descriptor = type_layout::Composite<HeapObjHeader, ObjectData, ObjHeader>;
-
-        static HeapObjHeader& from(ObjectData& objectData) noexcept { return *descriptor().template fromField<0>(&objectData); }
-
-        static HeapObjHeader& from(ObjHeader* object) noexcept { return *descriptor().template fromField<1>(object); }
-
-        ObjectData& objectData() noexcept { return *descriptor().template field<0>(this).second; }
-
-        ObjHeader* object() noexcept { return descriptor().template field<1>(this).second; }
-
-    private:
-        HeapObjHeader() = delete;
-        ~HeapObjHeader() = delete;
-    };
-
-    struct HeapObject {
-        using descriptor = type_layout::Composite<HeapObject, HeapObjHeader, ObjectBody>;
-
-        static descriptor make_descriptor(const TypeInfo* typeInfo) noexcept {
-            return descriptor{{}, type_layout::descriptor_t<ObjectBody>{typeInfo}};
-        }
-
-        HeapObjHeader& header(descriptor descriptor) noexcept { return *descriptor.template field<0>(this).second; }
-
-    private:
-        HeapObject() = delete;
-        ~HeapObject() = delete;
-    };
-
-    // Needs to be kept compatible with `HeapObjHeader` just like `ArrayHeader` is compatible
-    // with `ObjHeader`: the former can always be casted to the other.
-    struct HeapArrayHeader {
-        using descriptor = type_layout::Composite<HeapArrayHeader, ObjectData, ArrayHeader>;
-
-        static HeapArrayHeader& from(ObjectData& objectData) noexcept { return *descriptor().template fromField<0>(&objectData); }
-
-        static HeapArrayHeader& from(ArrayHeader* array) noexcept { return *descriptor().template fromField<1>(array); }
-
-        ObjectData& objectData() noexcept { return *descriptor().template field<0>(this).second; }
-
-        ArrayHeader* array() noexcept { return descriptor().template field<1>(this).second; }
-
-    private:
-        HeapArrayHeader() = delete;
-        ~HeapArrayHeader() = delete;
-    };
-
-    struct HeapArray {
-        using descriptor = type_layout::Composite<HeapArray, HeapArrayHeader, ArrayBody>;
-
-        static descriptor make_descriptor(const TypeInfo* typeInfo, uint32_t size) noexcept {
-            return descriptor{{}, type_layout::descriptor_t<ArrayBody>{typeInfo, size}};
-        }
-
-        HeapArrayHeader& header(descriptor descriptor) noexcept { return *descriptor.template field<0>(this).second; }
-
-    private:
-        HeapArray() = delete;
-        ~HeapArray() = delete;
-    };
+    using HeapObject = alloc::HeapObject<ObjectData>;
+    using HeapArray = alloc::HeapArray<ObjectData>;
 
     // Only used for already allocated objects. Cannot overflow size_t.
     static size_t GetDataSizeForAllocated(ObjHeader* object) noexcept {
-        RuntimeAssert(object->heap(), "Object must be a heap object");
-        const auto* typeInfo = object->type_info();
-        if (typeInfo->IsArray()) {
-            return HeapArray::make_descriptor(typeInfo, object->array()->count_).size();
-        } else {
-            return HeapObject::make_descriptor(typeInfo).size();
-        }
+        return HeapObject::from(object).size();
     }
 
     struct DataSizeProvider {
         static size_t GetDataSize(uint8_t* data) noexcept {
-            return GetDataSizeForAllocated(reinterpret_cast<HeapObjHeader*>(data)->object());
+            return GetDataSizeForAllocated(reinterpret_cast<HeapObject*>(data)->object());
         }
     };
 
@@ -543,23 +479,23 @@ public:
 
         static NodeRef From(ObjHeader* object) noexcept {
             RuntimeAssert(object->heap(), "Must be a heap object");
-            return NodeRef(Storage::Node::FromData(reinterpret_cast<uint8_t*>(&HeapObjHeader::from(object))));
+            return NodeRef(Storage::Node::FromData(reinterpret_cast<uint8_t*>(&HeapObject::from(object))));
         }
 
         static NodeRef From(ArrayHeader* array) noexcept {
             RuntimeAssert(array->obj()->heap(), "Must be a heap object");
-            return NodeRef(Storage::Node::FromData(reinterpret_cast<uint8_t*>(&HeapArrayHeader::from(array))));
+            return NodeRef(Storage::Node::FromData(reinterpret_cast<uint8_t*>(&HeapArray::from(array))));
         }
 
         static NodeRef From(ObjectData& objectData) noexcept {
-            return NodeRef(Storage::Node::FromData(reinterpret_cast<uint8_t*>(&HeapObjHeader::from(objectData))));
+            return NodeRef(Storage::Node::FromData(reinterpret_cast<uint8_t*>(&HeapObject::from(objectData))));
         }
 
         NodeRef* operator->() noexcept { return this; }
 
-        ObjectData& ObjectData() noexcept { return reinterpret_cast<HeapObjHeader*>(node_.Data())->objectData(); }
+        ObjectData& ObjectData() noexcept { return reinterpret_cast<HeapObject*>(node_.Data())->heapHeader(); }
 
-        ObjHeader* GetObjHeader() noexcept { return reinterpret_cast<HeapObjHeader*>(node_.Data())->object(); }
+        ObjHeader* GetObjHeader() noexcept { return reinterpret_cast<HeapObject*>(node_.Data())->object(); }
 
         bool operator==(const NodeRef& rhs) const noexcept { return &node_ == &rhs.node_; }
 
@@ -596,9 +532,9 @@ public:
 
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept {
             RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
-            auto descriptor = HeapObject::make_descriptor(typeInfo);
+            auto descriptor = HeapObject::descriptorFrom(typeInfo);
             auto& heapObject = *descriptor.construct(producer_.Insert(descriptor.size()).Data());
-            ObjHeader* object = heapObject.header(descriptor).object();
+            ObjHeader* object = heapObject.object();
             object->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
             // TODO: Consider supporting TF_IMMUTABLE: mark instance as frozen upon creation.
             return object;
@@ -606,9 +542,9 @@ public:
 
         ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
             RuntimeAssert(typeInfo->IsArray(), "Must be an array");
-            auto descriptor = HeapArray::make_descriptor(typeInfo, count);
+            auto descriptor = HeapArray::descriptorFrom(typeInfo, count);
             auto& heapArray = *descriptor.construct(producer_.Insert(descriptor.size()).Data());
-            ArrayHeader* array = heapArray.header(descriptor).array();
+            ArrayHeader* array = heapArray.array();
             array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
             array->count_ = count;
             // TODO: Consider supporting TF_IMMUTABLE: mark instance as frozen upon creation.
