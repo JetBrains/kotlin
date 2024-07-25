@@ -376,6 +376,8 @@ object IrTree : AbstractTreeBuilder() {
         +declaredSymbol(returnTargetSymbol)
     }
     val function: Element by sealedElement(Declaration) {
+        doPrint = false
+
         parent(declarationBase)
         parent(possiblyExternalDeclaration)
         parent(declarationWithVisibility)
@@ -638,6 +640,7 @@ object IrTree : AbstractTreeBuilder() {
         //diff: no accept
     }
     val memberAccessExpression: Element by element(Expression) {
+        doPrint = false
         nameInVisitorMethod = "MemberAccess"
         transformerReturnType = rootElement
         val s = +param("S", IrSymbolTree.rootElement)
@@ -653,65 +656,6 @@ object IrTree : AbstractTreeBuilder() {
         }
         +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array) {
             visibility = Visibility.PROTECTED
-        }
-
-        generationCallback = {
-            addImport(ArbitraryImportable(Packages.exprs, "checkArgumentSlotAccess"))
-            val indexParam = FunctionParameter("index", StandardTypes.int)
-            val valueArgumentParam = FunctionParameter("valueArgument", expression.copy(nullable = true))
-            val typeArgumentParam = FunctionParameter("type", irTypeType.copy(nullable = true))
-
-            fun printSizeProperty(listName: String) {
-                println()
-                println("val ", listName, "Count: Int")
-                withIndent {
-                    println("get() = ", listName, ".size")
-                }
-            }
-
-            printSizeProperty("valueArguments")
-            printSizeProperty("typeArguments")
-
-            fun printFunction(
-                name: String,
-                additionalParameter: FunctionParameter?,
-                returnType: TypeRefWithNullability,
-                vararg statements: String,
-            ) {
-                println()
-                printFunctionWithBlockBody(name, listOf(indexParam) + listOfNotNull(additionalParameter), returnType) {
-                    statements.forEach { println(it) }
-                }
-            }
-
-            printFunction(
-                "getValueArgument",
-                null,
-                expression.copy(nullable = true),
-                "checkArgumentSlotAccess(\"value\", index, valueArguments.size)",
-                "return valueArguments[index]",
-            )
-            printFunction(
-                "getTypeArgument",
-                null,
-                irTypeType.copy(nullable = true),
-                "checkArgumentSlotAccess(\"type\", index, typeArguments.size)",
-                "return typeArguments[index]",
-            )
-            printFunction(
-                "putValueArgument",
-                valueArgumentParam,
-                StandardTypes.unit,
-                "checkArgumentSlotAccess(\"value\", index, valueArguments.size)",
-                "valueArguments[index] = valueArgument",
-            )
-            printFunction(
-                "putTypeArgument",
-                typeArgumentParam,
-                StandardTypes.unit,
-                "checkArgumentSlotAccess(\"type\", index, typeArguments.size)",
-                "typeArguments[index] = type",
-            )
         }
     }
     val functionAccessExpression: Element by sealedElement(Expression) {
