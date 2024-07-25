@@ -302,6 +302,8 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
         if (!classSymbol.hasSerializableOrMetaAnnotation(session)) return false
 
+        checkCompanionOfSerializableClass(classSymbol, reporter)
+
         if (classSymbol.isAnonymousObjectOrInsideIt(this)) {
             reporter.reportOn(classSymbol.serializableOrMetaAnnotationSource(session), FirSerializationErrors.ANONYMOUS_OBJECTS_NOT_SUPPORTED, this)
             return false
@@ -358,60 +360,6 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         }
 
         return true
-    }
-
-    private fun CheckerContext.checkCompanionSerializerDependency(
-        classSymbol: FirClassSymbol<*>,
-        reporter: DiagnosticReporter,
-    ) {
-        if (classSymbol !is FirRegularClassSymbol) return
-        val companionObjectSymbol = classSymbol.companionObjectSymbol ?: return
-        val serializerForInCompanion = companionObjectSymbol.getSerializerForClass(session)?.toRegularClassSymbol(session) ?: return
-        val serializableWith: ConeKotlinType? = classSymbol.getSerializableWith(session)
-        val context = this@checkCompanionSerializerDependency
-        return if (classSymbol.hasSerializableOrMetaAnnotationWithoutArgs(session)) {
-            if (serializerForInCompanion.classId == classSymbol.classId) {
-                // @Serializable class Foo / @Serializer(Foo::class) companion object — prohibited due to problems with recursive resolve
-                reporter.reportOn(
-                    classSymbol.serializableOrMetaAnnotationSource(session),
-                    FirSerializationErrors.COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED,
-                    classSymbol,
-                    context
-                )
-            } else {
-                // @Serializable class Foo / @Serializer(Bar::class) companion object — prohibited as vague and confusing
-                val source = companionObjectSymbol.getSerializerAnnotation(session)?.source
-                reporter.reportOn(
-                    source,
-                    FirSerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS,
-                    classSymbol.defaultType(),
-                    serializerForInCompanion.defaultType(),
-                    context
-                )
-            }
-        } else if (serializableWith != null) {
-            if (serializableWith.classId == companionObjectSymbol.classId && serializerForInCompanion.classId == classSymbol.classId) {
-                // @Serializable(Foo.Companion) class Foo / @Serializer(Foo::class) companion object — the only case that is allowed
-            } else {
-                // @Serializable(anySer) class Foo / @Serializer(anyOtherClass) companion object — prohibited as vague and confusing
-                reporter.reportOn(
-                    companionObjectSymbol.getSerializerAnnotation(session)?.source,
-                    FirSerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS,
-                    classSymbol.defaultType(),
-                    serializerForInCompanion.defaultType(),
-                    context
-                )
-            }
-        } else {
-            // (regular) class Foo / @Serializer(something) companion object - not recommended
-            reporter.reportOn(
-                companionObjectSymbol.getSerializerAnnotation(session)?.source,
-                FirSerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS,
-                classSymbol.defaultType(),
-                serializerForInCompanion.defaultType(),
-                context
-            )
-        }
     }
 
     private fun CheckerContext.checkClassWithCustomSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {

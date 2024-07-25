@@ -177,6 +177,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("serializableCompanionOfSerializable.kt")
+    public void testSerializableCompanionOfSerializable() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/serializableCompanionOfSerializable.kt");
+    }
+
+    @Test
     @TestMetadata("SerializableEnums.kt")
     public void testSerializableEnums() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializableEnums.kt");

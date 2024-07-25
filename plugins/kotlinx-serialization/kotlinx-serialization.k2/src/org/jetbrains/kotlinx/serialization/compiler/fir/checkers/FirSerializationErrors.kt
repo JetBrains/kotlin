@@ -26,6 +26,8 @@ object FirSerializationErrors {
     val COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS by warning2<PsiElement, ConeKotlinType, ConeKotlinType>()
 
+    val COMPANION_OBJECT_IS_SERIALIZABLE_INSIDE_SERIALIZABLE_CLASS by warning1<PsiElement, FirRegularClassSymbol>()
+
     val SERIALIZABLE_ANNOTATION_IGNORED by error0<KtAnnotationEntry>()
     val NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR by error0<KtAnnotationEntry>()
     val PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY by error0<KtAnnotationEntry>()

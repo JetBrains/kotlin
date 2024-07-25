@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isEnum
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
@@ -265,6 +264,8 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
 
         if (!descriptor.hasSerializableOrMetaAnnotation) return false
 
+        checkCompanionOfSerializableClass(descriptor, trace)
+
         if (!serializationPluginEnabledOn(descriptor)) {
             trace.reportOnSerializableOrMetaAnnotation(descriptor, SerializationErrors.PLUGIN_IS_NOT_ENABLED)
             return false
@@ -317,53 +318,6 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             }
         }
         return true
-    }
-
-    private fun checkCompanionSerializerDependency(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
-        val companionObjectDescriptor = descriptor.companionObjectDescriptor ?: return
-        val serializerForInCompanion = companionObjectDescriptor.serializerForClass ?: return
-        val serializerAnnotationSource =
-            companionObjectDescriptor.findAnnotationDeclaration(SerializationAnnotations.serializerAnnotationFqName)
-        val serializableWith = descriptor.serializableWith
-        if (descriptor.hasSerializableOrMetaAnnotationWithoutArgs) {
-            if (serializerForInCompanion == descriptor.defaultType) {
-                // @Serializable class Foo / @Serializer(Foo::class) companion object — prohibited due to problems with recursive resolve
-                descriptor.onSerializableOrMetaAnnotation {
-                    trace.report(SerializationErrors.COMPANION_OBJECT_AS_CUSTOM_SERIALIZER_DEPRECATED.on(it, descriptor))
-                }
-            } else {
-                // @Serializable class Foo / @Serializer(Bar::class) companion object — prohibited as vague and confusing
-                trace.report(
-                    SerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS.on(
-                        serializerAnnotationSource ?: declaration,
-                        descriptor.defaultType,
-                        serializerForInCompanion
-                    )
-                )
-            }
-        } else if (serializableWith != null) {
-            if (serializableWith == companionObjectDescriptor.defaultType && serializerForInCompanion == descriptor.defaultType) {
-                // @Serializable(Foo.Companion) class Foo / @Serializer(Foo::class) companion object — the only case that is allowed
-            } else {
-                // @Serializable(anySer) class Foo / @Serializer(anyOtherClass) companion object — prohibited as vague and confusing
-                trace.report(
-                    SerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_OTHER_SERIALIZABLE_CLASS.on(
-                        serializerAnnotationSource ?: declaration,
-                        descriptor.defaultType,
-                        serializerForInCompanion
-                    )
-                )
-            }
-        } else {
-            // (regular) class Foo / @Serializer(something) companion object - not recommended
-            trace.report(
-                SerializationErrors.COMPANION_OBJECT_SERIALIZER_INSIDE_NON_SERIALIZABLE_CLASS.on(
-                    serializerAnnotationSource ?: declaration,
-                    descriptor.defaultType,
-                    serializerForInCompanion
-                )
-            )
-        }
     }
 
     private fun checkClassWithCustomSerializer(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {
@@ -711,18 +665,18 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 SerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE.on(element ?: fallbackElement, serializerType, classType),
             )
     }
+}
 
-    private inline fun ClassDescriptor.onSerializableOrMetaAnnotation(report: (KtAnnotationEntry) -> Unit) {
-        findSerializableOrMetaAnnotationDeclaration()?.let(report)
-    }
+internal inline fun ClassDescriptor.onSerializableOrMetaAnnotation(report: (KtAnnotationEntry) -> Unit) {
+    findSerializableOrMetaAnnotationDeclaration()?.let(report)
+}
 
-    private fun BindingTrace.reportOnSerializableOrMetaAnnotation(
-        descriptor: ClassDescriptor,
-        error: DiagnosticFactory0<in KtAnnotationEntry>
-    ) {
-        descriptor.onSerializableOrMetaAnnotation { e ->
-            report(error.on(e))
-        }
+internal fun BindingTrace.reportOnSerializableOrMetaAnnotation(
+    descriptor: ClassDescriptor,
+    error: DiagnosticFactory0<in KtAnnotationEntry>
+) {
+    descriptor.onSerializableOrMetaAnnotation { e ->
+        report(error.on(e))
     }
 }
 
