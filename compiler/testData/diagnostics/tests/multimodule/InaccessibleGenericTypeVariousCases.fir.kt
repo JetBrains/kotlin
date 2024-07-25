@@ -34,10 +34,10 @@ fun test() {
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedGeneric<!>()
 
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedConcrete<!>(<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>())
-    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedGeneric<!>(<!ARGUMENT_TYPE_MISMATCH!><!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>()<!>)
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>consumeBoxedGeneric<!>(<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedGeneric<!>())
 
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedConcrete<!>().<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>useBoxedConcreteAsExtensionReceiver<!>()
-    <!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>useBoxedGenericAsExtensionReceiver<!>()
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>produceBoxedGeneric<!>().<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>useBoxedGenericAsExtensionReceiver<!>()
 
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedConcreteParameter<!> { arg -> }
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>withBoxedGenericParameter<!> { arg -> }
