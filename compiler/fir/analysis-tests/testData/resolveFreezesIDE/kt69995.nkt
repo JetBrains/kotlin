@@ -1,4 +1,5 @@
 // ISSUE: KT-69995
+// LANGUAGE: +AvoidApproximationOfRecursiveCapturedTypesWithNoReason
 
 // FILE: Adder.java
 public abstract class Adder<
