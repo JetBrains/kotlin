@@ -8,5 +8,5 @@ class AllCollection<T> {
 
 fun main(c: AllCollection<Any?>) {
     // KT-49620
-    c.<!OVERLOAD_RESOLUTION_AMBIGUITY!>addAll<!>(arrayOf(""), values2 = arrayOf(""))
+    c.addAll(arrayOf(""), values2 = arrayOf(""))
 }

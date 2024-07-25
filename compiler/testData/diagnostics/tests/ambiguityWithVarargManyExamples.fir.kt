@@ -22,7 +22,7 @@ fun main() {
     foo(*intArrayOf(1, 2)).fooVararg
     foo(1, 2).fooVararg
 
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>(bar = intArrayOf(1, 2)).barIntArray
+    bar(bar = intArrayOf(1, 2)).barIntArray
     bar(bar = *intArrayOf(1, 2)).barVararg
     bar(intArrayOf(1, 2)).barIntArray
     bar(*intArrayOf(1, 2)).barVararg
