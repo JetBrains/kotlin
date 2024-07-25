@@ -1,5 +1,4 @@
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
-// RENDER_DIAGNOSTICS_FULL_TEXT
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
 // ISSUE: KT-57014, KT-66730
 // FULL_JDK
 // JVM_TARGET: 1.8
@@ -33,34 +32,34 @@ typealias StringAlias = String
 
 fun main() {
     Supplier<String> {
-        returnNullableString()
+        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
     }
 
     Supplier<StringAlias> {
-        returnNullableString()
+        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
     }
 
     Supplier<String> {
-        TestValueProvider.getNullableString()
+        <!ARGUMENT_TYPE_MISMATCH!>TestValueProvider.getNullableString()<!>
     }
 
     val sam: Supplier<String> = Supplier{
-        <!TYPE_MISMATCH!>TestValueProvider.getNullableString()<!>
+        <!ARGUMENT_TYPE_MISMATCH!>TestValueProvider.getNullableString()<!>
     }
 
     Supplier<String> {
         val x = 1
-        when(x) {
+        <!ARGUMENT_TYPE_MISMATCH!>when(x) {
             1 -> returnNullableString()
             else -> ""
-        }
+        }<!>
     }
 
     Supplier<String> {
-        if (true) return@Supplier returnNullableString()
-        run { return@Supplier returnNullableString() }
+        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
+        run { return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!> }
         try {
-            if (true) return@Supplier returnNullableString()
+            if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
             2
         } finally {
             Unit
@@ -85,39 +84,39 @@ fun main() {
     }
 
     val sam3: Supplier<String> = Supplier{
-        <!TYPE_MISMATCH!>returnNullableString()<!>
+        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
     }
 
     Supplier<String>(
         fun(): String {
-            if (true) return <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
+            if (true) return <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }
     )
 
     val sam4: Supplier<String> = Supplier {
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun(): String {
-            if (true) return <!TYPE_MISMATCH!>returnNullableString()<!>
+        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String {
+            if (true) return <!RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }<!>
     }
 
     Supplier<String>(
-        <!TYPE_MISMATCH!>fun(): String? {
-            if (true) return returnNullableString()
+        fun(): String? {
+            if (true) return <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
-        }<!>
+        }
     )
 
     val sam5: Supplier<String> = Supplier {
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun(): String? {
+        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String? {
             if (true) return returnNullableString()
             return ""
         }<!>
     }
 
     Supplier<String> {
-        if (true) return@Supplier returnNullableString()
+        if (true) return@Supplier <!ARGUMENT_TYPE_MISMATCH!>returnNullableString()<!>
         ""
     }
 
@@ -165,25 +164,25 @@ import java.util.function.Supplier
 
 fun scopes () {
     Supplier<String> {
-        <!TYPE_MISMATCH!>run {
+        <!ARGUMENT_TYPE_MISMATCH!>run {
             returnNullableString()
         }<!>
     }
 
     Supplier<String> {
-        <!TYPE_MISMATCH!>run {
-            return@run <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
+        <!ARGUMENT_TYPE_MISMATCH!>run {
+            return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
         }<!>
     }
 
     Supplier<String> {
-        <!TYPE_MISMATCH!>run run@ {
-            return@run <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
+        <!ARGUMENT_TYPE_MISMATCH!>run run@ {
+            return@run <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
         }<!>
     }
 
     Supplier<String> lambda@ {
-        <!TYPE_MISMATCH!>run {
+        <!ARGUMENT_TYPE_MISMATCH!>run {
             return@lambda returnNullableString()
         }<!>
     }
@@ -191,13 +190,13 @@ fun scopes () {
 
 fun <T: Number> test1(x: T) {
     Supplier<T> {
-        x.foo()
+        <!ARGUMENT_TYPE_MISMATCH!>x.foo()<!>
     }
 }
 
 fun <T> test2(x: T) where T: Any?, T: Comparable<T> {
     Supplier<T> {
-        x.foo()
+        <!ARGUMENT_TYPE_MISMATCH!>x.foo()<!>
     }
 }
 
@@ -207,6 +206,6 @@ fun <T> T.foo2(): T? = null!!
 
 fun test()  {
     Supplier<String> {
-        returnNullableString().foo2()
+        <!ARGUMENT_TYPE_MISMATCH!>returnNullableString().foo2()<!>
     }
 }

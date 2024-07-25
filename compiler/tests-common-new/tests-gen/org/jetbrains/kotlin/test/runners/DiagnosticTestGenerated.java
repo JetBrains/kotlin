@@ -35147,6 +35147,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("samConversionToGenericWrongNullabilityForbidden.kt")
+      public void testSamConversionToGenericWrongNullabilityForbidden() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullabilityForbidden.kt");
+      }
+
+      @Test
       @TestMetadata("samConversionWithCallableReference.kt")
       public void testSamConversionWithCallableReference() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithCallableReference.kt");

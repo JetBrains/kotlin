@@ -1,5 +1,4 @@
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
-// RENDER_DIAGNOSTICS_FULL_TEXT
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
 // ISSUE: KT-57014, KT-66730
 // FULL_JDK
 // JVM_TARGET: 1.8

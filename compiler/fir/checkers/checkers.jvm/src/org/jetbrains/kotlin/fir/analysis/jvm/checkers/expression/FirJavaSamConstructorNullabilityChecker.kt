@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getReturnedExpressions
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -25,7 +26,11 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) return
+        val languageVersionSettings = context.session.languageVersionSettings
+        if (languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) return
+        val reportError = languageVersionSettings.supportsFeature(
+            LanguageFeature.ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
+        )
 
         val calleeReference = expression.calleeReference
         if (calleeReference.isError()) return
@@ -46,13 +51,24 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
         for (returnedExpression in lambda.anonymousFunction.getReturnedExpressions()) {
             val returnedExpressionType = returnedExpression.resolvedType
             if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, returnedExpressionType, expectedReturnType)) {
-                reporter.reportOn(
-                    returnedExpression.source,
-                    FirJvmErrors.TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES,
-                    expectedReturnType,
-                    returnedExpressionType,
-                    context,
-                )
+                if (reportError) {
+                    reporter.reportOn(
+                        returnedExpression.source,
+                        FirErrors.ARGUMENT_TYPE_MISMATCH,
+                        expectedReturnType,
+                        returnedExpressionType,
+                        true,
+                        context,
+                    )
+                } else {
+                    reporter.reportOn(
+                        returnedExpression.source,
+                        FirJvmErrors.TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES,
+                        expectedReturnType,
+                        returnedExpressionType,
+                        context,
+                    )
+                }
             }
         }
     }

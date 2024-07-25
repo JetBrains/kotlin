@@ -1,4 +1,5 @@
 // LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// ISSUE: KT-67651
 // FULL_JDK
 
 // FILE: JavaBox.java
@@ -14,11 +15,11 @@ import java.util.function.Supplier
 
 fun test(){
     Supplier<String> {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>JavaBox(null).a<!>
+        <!ARGUMENT_TYPE_MISMATCH!>JavaBox(null).a<!>
     }
 
     val sam : Supplier<String> = Supplier {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>JavaBox(null).a<!>
+        <!ARGUMENT_TYPE_MISMATCH!>JavaBox(null).a<!>
     }
 
     val sam2 = object : Supplier<String> {

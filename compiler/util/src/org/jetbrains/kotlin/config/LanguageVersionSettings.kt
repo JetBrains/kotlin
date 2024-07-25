@@ -336,6 +336,7 @@ enum class LanguageFeature(
     ProhibitSynchronizationByValueClassesAndPrimitives(KOTLIN_2_1, kind = OTHER), // KT-67791
     AllowSuperCallToJavaInterface(KOTLIN_2_1, kind = OTHER), // KT-69729
     ProhibitJavaClassInheritingPrivateKotlinClass(KOTLIN_2_1, kind = OTHER), // KT-66328
+    ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces(KOTLIN_2_1, kind = BUG_FIX), // KT-57014
 
     // 2.2
 
