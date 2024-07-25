@@ -23,8 +23,10 @@ public actual inline fun assert(value: Boolean) {
  */
 @ExperimentalNativeApi
 public actual inline fun assert(value: Boolean, lazyMessage: () -> Any) {
-    if (!value) {
-        val message = lazyMessage()
-        throw AssertionError(message)
+    if (isAssertionThrowingErrorEnabled()) {
+        if (!value) {
+            val message = lazyMessage()
+            throw AssertionError(message)
+        }
     }
 }

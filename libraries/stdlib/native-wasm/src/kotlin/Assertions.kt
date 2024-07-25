@@ -14,3 +14,9 @@ internal expect fun assert(value: Boolean)
  * Throws an [AssertionError] calculated by [lazyMessage] if the [value] is false.
  */
 internal expect fun assert(value: Boolean, lazyMessage: () -> Any)
+
+@PublishedApi
+internal fun isAssertionThrowingErrorEnabled(): Boolean = throw NotImplementedError("Implemented as intrinsic")
+
+@PublishedApi
+internal fun isAssertionArgumentEvaluationEnabled(): Boolean = throw NotImplementedError("Implemented as intrinsic")

@@ -9377,6 +9377,12 @@ final fun kotlin.math/truncate(kotlin/Double): kotlin/Double // kotlin.math/trun
 final fun kotlin.math/truncate(kotlin/Float): kotlin/Float // kotlin.math/truncate|truncate(kotlin.Float){}[0]
 
 // Targets: [native, wasmJs, wasmWasi]
+final fun kotlin/isAssertionArgumentEvaluationEnabled(): kotlin/Boolean // kotlin/isAssertionArgumentEvaluationEnabled|isAssertionArgumentEvaluationEnabled(){}[0]
+
+// Targets: [native, wasmJs, wasmWasi]
+final fun kotlin/isAssertionThrowingErrorEnabled(): kotlin/Boolean // kotlin/isAssertionThrowingErrorEnabled|isAssertionThrowingErrorEnabled(){}[0]
+
+// Targets: [native, wasmJs, wasmWasi]
 final inline fun (kotlin.text/StringBuilder).kotlin.text/deleteCharAt(kotlin/Int): kotlin.text/StringBuilder // kotlin.text/deleteCharAt|deleteCharAt@kotlin.text.StringBuilder(kotlin.Int){}[0]
 
 // Targets: [native, wasmJs, wasmWasi]
