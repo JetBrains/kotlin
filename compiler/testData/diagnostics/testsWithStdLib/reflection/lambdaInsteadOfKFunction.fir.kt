@@ -4,5 +4,5 @@
 import kotlin.reflect.KFunction0
 
 fun compose(): KFunction0<String> {
-    return { "" }
+    return <!RETURN_TYPE_MISMATCH!>{ "" }<!>
 }

@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -242,7 +243,13 @@ fun FirAnonymousFunction.constructFunctionTypeRef(session: FirSession, kind: Fun
             FunctionTypeKind.Function
         }
     }
-    val type = constructFunctionType(kindFromDeclaration ?: kind)
+
+    /**
+     * For lambdas, we drop reflect kinds here as lambda itself always has a non-reflect type
+     * For anonymous functions, this is handled in [org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType],
+     * see calculation of actualFunctionKind there.
+     */
+    val type = constructFunctionType(kindFromDeclaration ?: kind?.applyIf(isLambda) { nonReflectKind() })
     val source = this@constructFunctionTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
     return if (diagnostic == null) {
         buildResolvedTypeRef {
