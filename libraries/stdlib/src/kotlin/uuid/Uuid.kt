@@ -36,7 +36,7 @@ import kotlin.internal.InlineOnly
  * @sample samples.uuid.Uuids.random
  */
 @SinceKotlin("2.0")
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 public class Uuid internal constructor(
     @PublishedApi internal val mostSignificantBits: Long,
     @PublishedApi internal val leastSignificantBits: Long
@@ -290,6 +290,7 @@ public class Uuid internal constructor(
          * @see Uuid.toString
          * @sample samples.uuid.Uuids.parse
          */
+        @OptIn(ExperimentalStdlibApi::class)
         public fun parse(uuidString: String): Uuid {
             require(uuidString.length == 36) { "Expected a 36-char string in the standard uuid format." }
 
@@ -324,6 +325,7 @@ public class Uuid internal constructor(
          * @see Uuid.toHexString
          * @sample samples.uuid.Uuids.parseHex
          */
+        @OptIn(ExperimentalStdlibApi::class)
         public fun parseHex(hexString: String): Uuid {
             require(hexString.length == 32) { "Expected a 32-char hexadecimal string." }
 
@@ -396,10 +398,10 @@ public class Uuid internal constructor(
     }
 }
 
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 internal expect fun secureRandomUuid(): Uuid
 
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 internal fun uuidFromRandomBytes(randomBytes: ByteArray): Uuid {
     randomBytes[6] = (randomBytes[6].toInt() and 0x0f).toByte() /* clear version        */
     randomBytes[6] = (randomBytes[6].toInt() or 0x40).toByte()  /* set to version 4     */
@@ -419,7 +421,7 @@ private fun ByteArray.toLong(startIndex: Int): Long {
             (this[startIndex + 7].toLong() and 0xFF)
 }
 
-@ExperimentalStdlibApi
+@OptIn(ExperimentalStdlibApi::class)
 private fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, count: Int) {
     var long = this
     var dstIndex = dstOffset + 2 * count

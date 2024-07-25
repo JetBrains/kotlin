@@ -10,7 +10,7 @@ private external object crypto {
     fun randomUUID(): String
 }
 
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 internal actual fun secureRandomUuid(): Uuid {
     val uuidString = crypto.randomUUID()
     return Uuid.parse(uuidString)

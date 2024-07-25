@@ -15,7 +15,7 @@ private object SecureRandomHolder {
     val instance = SecureRandom()
 }
 
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 internal actual fun secureRandomUuid(): Uuid {
     val randomBytes = ByteArray(Uuid.SIZE_BYTES)
     SecureRandomHolder.instance.nextBytes(randomBytes)
@@ -32,7 +32,7 @@ internal actual fun secureRandomUuid(): Uuid {
  * @sample samples.uuid.Uuids.toKotlinUuid
  */
 @SinceKotlin("2.0")
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 @Suppress("NOTHING_TO_INLINE")
 public inline fun java.util.UUID.toKotlinUuid(): Uuid =
     Uuid.fromLongs(mostSignificantBits, leastSignificantBits)
@@ -46,7 +46,7 @@ public inline fun java.util.UUID.toKotlinUuid(): Uuid =
  * @sample samples.uuid.Uuids.toJavaUuid
  */
 @SinceKotlin("2.0")
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Uuid.toJavaUuid(): java.util.UUID = toLongs { mostSignificantBits, leastSignificantBits ->
     java.util.UUID(mostSignificantBits, leastSignificantBits)
@@ -77,7 +77,7 @@ public inline fun Uuid.toJavaUuid(): java.util.UUID = toLongs { mostSignificantB
  * @sample samples.uuid.Uuids.byteBufferGet
  */
 @SinceKotlin("2.0")
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 public fun ByteBuffer.getUuid(): Uuid {
     if (position() + 15 >= limit()) {
         throw BufferUnderflowException() // otherwise a partial read could occur
@@ -120,7 +120,7 @@ public fun ByteBuffer.getUuid(): Uuid {
  * @sample samples.uuid.Uuids.byteBufferGetByIndex
  */
 @SinceKotlin("2.0")
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 public fun ByteBuffer.getUuid(index: Int): Uuid {
     if (index < 0) {
         throw IndexOutOfBoundsException("Negative index: $index")
@@ -161,7 +161,7 @@ public fun ByteBuffer.getUuid(index: Int): Uuid {
  * @sample samples.uuid.Uuids.byteBufferPut
  */
 @SinceKotlin("2.0")
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 public fun ByteBuffer.putUuid(uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb ->
     if (position() + 15 >= limit()) {
         throw BufferOverflowException() // otherwise a partial write could occur
@@ -206,7 +206,7 @@ public fun ByteBuffer.putUuid(uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb 
  * @sample samples.uuid.Uuids.byteBufferPutAtIndex
  */
 @SinceKotlin("2.0")
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 public fun ByteBuffer.putUuid(index: Int, uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb ->
     if (index < 0) {
         throw IndexOutOfBoundsException("Negative index: $index")
