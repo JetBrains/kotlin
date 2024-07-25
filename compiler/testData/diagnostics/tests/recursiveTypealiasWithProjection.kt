@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-67983
 
 // FILE: Crashing.kt

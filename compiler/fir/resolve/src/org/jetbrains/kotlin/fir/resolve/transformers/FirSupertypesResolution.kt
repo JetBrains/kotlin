@@ -572,15 +572,14 @@ open class FirSupertypeResolverVisitor(
             val resolvedTypeRef = transformer.transformTypeRef(expandedTypeRef, scope)
 
             if (resolveRecursively) {
-                fun visitNestedTypeAliases(type: TypeArgumentMarker) {
-                    if (type is ConeClassLikeType) {
-                        val symbol = type.lookupTag.toSymbol(session)
-                        if (symbol is FirTypeAliasSymbol) {
-                            visitTypeAlias(symbol.fir, null)
-                        } else if (symbol is FirClassLikeSymbol) {
-                            for (typeArgument in type.typeArguments) {
-                                visitNestedTypeAliases(typeArgument)
-                            }
+                fun visitNestedTypeAliases(type: ConeTypeProjection) {
+                    val typeToCheck = type.type as? ConeClassLikeType ?: return
+                    val symbol = typeToCheck.lookupTag.toSymbol(session)
+                    if (symbol is FirTypeAliasSymbol) {
+                        visitTypeAlias(symbol.fir, null)
+                    } else if (symbol is FirClassLikeSymbol) {
+                        for (typeArgument in typeToCheck.typeArguments) {
+                            visitNestedTypeAliases(typeArgument)
                         }
                     }
                 }
@@ -775,13 +774,12 @@ open class SupertypeComputationSession {
                         if (type in visitedTypes) return
                         visitedTypes += type
                         for (typeArgument in type.typeArguments) {
-                            if (typeArgument is ConeClassLikeType) {
-                                checkIsInLoop(
-                                    typeArgument.lookupTag.toSymbol(session)?.fir,
-                                    wasSubtypingInvolved, areTypeArgumentsCurrentlyInvolved,
-                                )
-                                checkTypeArgumentsRecursively(typeArgument, visitedTypes)
-                            }
+                            val typeToCheck = typeArgument.type as? ConeClassLikeType ?: continue
+                            checkIsInLoop(
+                                typeToCheck.lookupTag.toSymbol(session)?.fir,
+                                wasSubtypingInvolved, areTypeArgumentsCurrentlyInvolved,
+                            )
+                            checkTypeArgumentsRecursively(typeToCheck, visitedTypes)
                         }
                     }
 
