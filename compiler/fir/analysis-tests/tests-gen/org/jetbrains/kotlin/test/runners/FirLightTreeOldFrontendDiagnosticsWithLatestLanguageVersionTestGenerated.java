@@ -82,6 +82,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Test
+    @TestMetadata("ambiguityWithVararg.kt")
+    public void testAmbiguityWithVararg() {
+      runTest("compiler/testData/diagnostics/tests/ambiguityWithVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguityWithVarargManyExamples.kt")
+    public void testAmbiguityWithVarargManyExamples() {
+      runTest("compiler/testData/diagnostics/tests/ambiguityWithVarargManyExamples.kt");
+    }
+
+    @Test
     @TestMetadata("ambiguousLabelInExtensionFunctionWithOuterClass.kt")
     public void testAmbiguousLabelInExtensionFunctionWithOuterClass() {
       runTest("compiler/testData/diagnostics/tests/ambiguousLabelInExtensionFunctionWithOuterClass.kt");
