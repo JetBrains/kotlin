@@ -224,9 +224,6 @@ class WasmSymbols(
     val intToLong = getInternalFunction("wasm_i64_extend_i32_s")
 
     val rangeCheck = getInternalFunction("rangeCheck")
-    val assertFuncs = findFunctions(kotlinTopLevelPackage.memberScope, Name.identifier("assert")).map {
-        symbolTable.descriptorExtension.referenceSimpleFunction(it)
-    }
 
     val getBoxedBoolean: IrSimpleFunctionSymbol = getInternalFunction("getBoxedBoolean")
     val boxBoolean: IrSimpleFunctionSymbol = getInternalFunction("boxBoolean")

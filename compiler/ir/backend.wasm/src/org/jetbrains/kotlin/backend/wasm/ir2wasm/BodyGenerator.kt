@@ -649,7 +649,7 @@ class BodyGenerator(
             }
         }
         if (!backendContext.configuration.getNotNull(WasmConfigurationKeys.WASM_ENABLE_ASSERTS)) {
-            if (call.symbol in wasmSymbols.assertFuncs) {
+            if (call.symbol in wasmSymbols.asserts) {
                 body.buildGetUnit()
                 return
             }
