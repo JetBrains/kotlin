@@ -1,0 +1,19 @@
+MODULE app
+	CLASS test/C$annotationImpl$kotlin_Metadata$0.class
+		K1
+			---
+		K2
+			<init>(I[I[I[Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V [public]
+		K1
+			<init>([I[Ljava/lang/String;[Ljava/lang/String;ILjava/lang/String;I[ILjava/lang/String;)V [public]
+		K2
+			---
+	CLASS test/C$annotationImpl$kotlin_Deprecated$0.class
+		K1
+			---
+		K2
+			<init>(Ljava/lang/String;Lkotlin/ReplaceWith;Lkotlin/DeprecationLevel;)V [public]
+		K1
+			<init>(Lkotlin/DeprecationLevel;Ljava/lang/String;Lkotlin/ReplaceWith;)V [public]
+		K2
+			---
