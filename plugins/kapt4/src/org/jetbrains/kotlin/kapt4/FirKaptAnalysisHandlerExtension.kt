@@ -94,6 +94,7 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
         val updatedConfiguration = configuration.copy().apply {
             put(JVMConfigurationKeys.SKIP_BODIES, true)
+            put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES))
         }
 
         val groupedSources: GroupedKtSources = collectSources(updatedConfiguration, project, messageCollector)
