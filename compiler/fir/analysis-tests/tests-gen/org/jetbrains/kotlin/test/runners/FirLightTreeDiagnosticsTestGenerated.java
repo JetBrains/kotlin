@@ -7545,5 +7545,11 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
     public void testKt69995() {
       runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/kt69995.nkt");
     }
+
+    @Test
+    @TestMetadata("manyCapturedTypes.nkt")
+    public void testManyCapturedTypes() {
+      runTest("compiler/fir/analysis-tests/testData/resolveFreezesIDE/manyCapturedTypes.nkt");
+    }
   }
 }

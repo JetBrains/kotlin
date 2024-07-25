@@ -34,10 +34,10 @@ fun test() {
     <!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>()
 
     <!MISSING_DEPENDENCY_CLASS!>consumeBoxedConcrete<!>(<!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>())
-    <!MISSING_DEPENDENCY_CLASS!>consumeBoxedGeneric<!>(<!ARGUMENT_TYPE_MISMATCH!><!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>()<!>)
+    <!MISSING_DEPENDENCY_CLASS!>consumeBoxedGeneric<!>(<!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>())
 
     <!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>().<!MISSING_DEPENDENCY_CLASS!>useBoxedConcreteAsExtensionReceiver<!>()
-    <!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>useBoxedGenericAsExtensionReceiver<!>()
+    <!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>().<!MISSING_DEPENDENCY_CLASS!>useBoxedGenericAsExtensionReceiver<!>()
 
     <!MISSING_DEPENDENCY_CLASS!>withBoxedConcreteParameter<!> { arg -> }
     <!MISSING_DEPENDENCY_CLASS!>withBoxedGenericParameter<!> { arg -> }

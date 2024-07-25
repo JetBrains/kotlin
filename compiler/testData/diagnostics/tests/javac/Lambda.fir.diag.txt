@@ -1,14 +1,20 @@
 /Call.kt:(232,241): warning: Cannot access class 'com.result.B' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
+/Call.kt:(232,241): warning: Cannot access class 'com.result.C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
 /Call.kt:(232,241): warning: Cannot access class 'com.result.A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
 /Call.kt:(244,252): warning: Cannot access class 'com.result.A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
 /Call.kt:(244,252): warning: Cannot access class 'com.result.B' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
+/Call.kt:(244,252): warning: Cannot access class 'com.result.C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
 /Call.kt:(253,262): error: Cannot access class 'com.result.B'. Check your module classpath for missing or conflicting dependencies.
 
 /Call.kt:(271,280): warning: Cannot access class 'com.result.B' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
+/Call.kt:(271,280): warning: Cannot access class 'com.result.C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
 /Call.kt:(271,280): warning: Cannot access class 'com.result.A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
@@ -16,13 +22,23 @@
 
 /Call.kt:(283,291): warning: Cannot access class 'com.result.B' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
+/Call.kt:(283,291): warning: Cannot access class 'com.result.C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
 /Call.kt:(294,296): error: Cannot access class 'com.result.B'. Check your module classpath for missing or conflicting dependencies.
 
 /Call.kt:(316,334): warning: Cannot access class 'com.result.Owner.Nested.VeryNested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
+/Call.kt:(316,334): warning: Cannot access class 'com.result.A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
+/Call.kt:(316,334): warning: Cannot access class 'com.result.C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
 /Call.kt:(316,334): warning: Cannot access class 'com.result.Owner.Nested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
 /Call.kt:(337,345): warning: Cannot access class 'com.result.Owner.Nested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
+/Call.kt:(337,345): warning: Cannot access class 'com.result.C' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
+/Call.kt:(337,345): warning: Cannot access class 'com.result.A' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
 /Call.kt:(337,345): warning: Cannot access class 'com.result.Owner.Nested.VeryNested' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
 
