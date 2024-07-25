@@ -928,7 +928,8 @@ class CallAndReferenceGenerator(
                 // See KT-58294
                 valueArgumentsCount = firConstructorSymbol.valueParameterSymbols.size,
                 typeArgumentsCount = fullyExpandedConstructorSymbol.typeParameterSymbols.size,
-                constructorTypeArgumentsCount = 0
+                constructorTypeArgumentsCount = 0,
+                source = FirAnnotationSourceElement(annotation),
             )
         }
         return visitor.withAnnotationMode {
