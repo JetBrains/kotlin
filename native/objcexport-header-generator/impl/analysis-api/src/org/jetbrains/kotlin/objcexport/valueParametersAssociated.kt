@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridge
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridgeValueParameter
 import org.jetbrains.kotlin.name.Name
@@ -120,6 +121,7 @@ data class KtObjCParameterData(
  * 3. property extension of inner class
  * 4. function extension of [isMappedObjCType], i.e. fun String.foo()
  * 5. function extension of [Nothing], i.e. fun Nothing.foo()
+ * 5. function extension of `Interface`, i.e. fun Foo.foo() where Foo is Interface
  *
  * Members with non null [objCReceiverType] will have name `receiver`:
  * ```objective-c
@@ -138,10 +140,11 @@ internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol?): KaType? {
         @Suppress("DEPRECATION")
         symbol.dispatchReceiverType
     } else if (symbol.isExtension) {
-        val receiverParameterType = symbol.receiverParameter?.returnType
-        if (isMappedObjCType(receiverParameterType)) receiverParameterType
-        else if ((symbol.containingDeclaration as? KaNamedClassSymbol)?.isInner == true) receiverParameterType
-        else if (receiverParameterType != null && isObjCNothing(receiverParameterType)) return receiverParameterType
+        val receiverType = symbol.receiverParameter?.returnType
+        if (isMappedObjCType(receiverType)) receiverType
+        else if ((symbol.containingDeclaration as? KaNamedClassSymbol)?.isInner == true) receiverType
+        else if (receiverType != null && isObjCNothing(receiverType)) return receiverType
+        else if (receiverType != null && (receiverType.symbol as? KaNamedClassSymbol)?.classKind == KaClassKind.INTERFACE) return receiverType
         else null
     } else if (symbol is KaPropertyGetterSymbol || symbol is KaPropertySetterSymbol) {
         val property = symbol.containingDeclaration as KaPropertySymbol

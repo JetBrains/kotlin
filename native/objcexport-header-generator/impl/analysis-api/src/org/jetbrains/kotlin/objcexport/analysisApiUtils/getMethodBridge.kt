@@ -58,7 +58,7 @@ internal fun ObjCExportContext.getFunctionMethodBridge(symbol: KaFunctionSymbol)
 internal fun KaSession.getBridgeReceiverType(symbol: KaCallableSymbol): MethodBridgeReceiver {
     return if (isArrayConstructor(symbol)) {
         MethodBridgeReceiver.Factory
-    } else if (!symbol.isConstructor && isTopLevel(symbol) && !symbol.isExtension) {
+    } else if (!symbol.isConstructor && isTopLevel(symbol)) {
         MethodBridgeReceiver.Static
     } else {
         MethodBridgeReceiver.Instance
