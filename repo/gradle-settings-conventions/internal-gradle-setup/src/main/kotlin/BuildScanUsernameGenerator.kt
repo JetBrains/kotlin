@@ -5,14 +5,10 @@
 
 package org.jetbrains.kotlin.build
 
-import java.security.MessageDigest
-
 internal class BuildScanUsernameGenerator : SyntheticPropertiesGenerator {
     private fun calculateUsernameHash(salt: String): String {
         val username = System.getProperty("user.name")
-        val messageDigest = MessageDigest.getInstance("SHA-256")
-        val hash = messageDigest.digest((salt + username).toByteArray(Charsets.UTF_8))
-        return hash.fold("") { str, it -> str + "%02x".format(it) }
+        return calculateSha256ForString(salt + username)
     }
 
     override fun generate(setupFile: SetupFile): Map<String, String> {

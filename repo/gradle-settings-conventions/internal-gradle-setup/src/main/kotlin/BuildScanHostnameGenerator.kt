@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.build
 
 import org.gradle.api.logging.Logging
 import java.net.InetAddress
-import java.security.MessageDigest
 
 internal class BuildScanHostnameGenerator : SyntheticPropertiesGenerator {
     private val log = Logging.getLogger(javaClass)
@@ -15,9 +14,7 @@ internal class BuildScanHostnameGenerator : SyntheticPropertiesGenerator {
     private fun calculateHostnameHash(salt: String): String {
         val hostname = System.getProperty("kotlin.build.hostname.for.tests") ?: InetAddress.getLocalHost().hostName
         log.debug("The hostname used for calculating a hash is $hostname")
-        val messageDigest = MessageDigest.getInstance("SHA-256")
-        val hash = messageDigest.digest((salt + hostname).toByteArray(Charsets.UTF_8))
-        return hash.fold("") { str, it -> str + "%02x".format(it) }
+        return calculateSha256ForString(salt + hostname)
     }
 
     override fun generate(setupFile: SetupFile): Map<String, String> {
