@@ -51,7 +51,7 @@ internal class KaFe10SymbolProvider(
     override val KtNamedFunction.symbol: KaFunctionSymbol
         get() = withValidityAssertion {
             return if (hasBody() && (funKeyword == null || nameIdentifier == null)) {
-                anonymousSymbol
+                KaFe10PsiAnonymousFunctionSymbol(this, analysisContext)
             } else {
                 KaFe10PsiNamedFunctionSymbol(this, analysisContext)
             }
@@ -68,9 +68,6 @@ internal class KaFe10SymbolProvider(
 
     override val KtEnumEntry.symbol: KaEnumEntrySymbol
         get() = withValidityAssertion { KaFe10PsiEnumEntrySymbol(this, analysisContext) }
-
-    override val KtNamedFunction.anonymousSymbol: KaAnonymousFunctionSymbol
-        get() = withValidityAssertion { KaFe10PsiAnonymousFunctionSymbol(this, analysisContext) }
 
     override val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
         get() = withValidityAssertion { KaFe10PsiLiteralAnonymousFunctionSymbol(this, analysisContext) }
