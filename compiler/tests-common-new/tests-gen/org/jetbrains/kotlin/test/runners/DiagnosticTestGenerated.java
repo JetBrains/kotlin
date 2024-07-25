@@ -48873,6 +48873,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("lambdaInsteadOfKFunction.kt")
+      public void testLambdaInsteadOfKFunction() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/lambdaInsteadOfKFunction.kt");
+      }
+
+      @Test
       @TestMetadata("noReflectionInClassPath.kt")
       public void testNoReflectionInClassPath() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/reflection/noReflectionInClassPath.kt");
