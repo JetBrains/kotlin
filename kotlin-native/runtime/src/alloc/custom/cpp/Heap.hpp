@@ -52,18 +52,18 @@ public:
         for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
             fixedBlockPages_[blockSize].TraversePages([process](auto *page) {
                 page->TraverseAllocatedBlocks([process](auto *block) {
-                    process(reinterpret_cast<HeapObjHeader*>(block)->object());
+                    process(reinterpret_cast<CustomHeapObject*>(block)->object());
                 });
             });
         }
         nextFitPages_.TraversePages([process](auto *page) {
             page->TraverseAllocatedBlocks([process](auto *block) {
-                process(reinterpret_cast<HeapObjHeader*>(block)->object());
+                process(reinterpret_cast<CustomHeapObject*>(block)->object());
             });
         });
         singleObjectPages_.TraversePages([process](auto *page) {
             page->TraverseAllocatedBlocks([process](auto *block) {
-                process(reinterpret_cast<HeapObjHeader*>(block)->object());
+                process(reinterpret_cast<CustomHeapObject*>(block)->object());
             });
         });
     }

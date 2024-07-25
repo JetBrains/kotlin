@@ -28,7 +28,7 @@ SingleObjectPage::SingleObjectPage(AllocationSize objectSize) noexcept {
 }
 
 void SingleObjectPage::Destroy() noexcept {
-    auto* object = reinterpret_cast<kotlin::alloc::HeapObjHeader*>(data_)->object();
+    auto* object = reinterpret_cast<CustomHeapObject*>(data_)->object();
     auto objectSize = AllocationSize::bytesAtLeast(CustomAllocator::GetAllocatedHeapSize(object));
 
     auto& heap = mm::GlobalData::Instance().allocator().impl().heap();

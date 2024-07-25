@@ -28,9 +28,9 @@ void mark(void* obj) {
 }
 
 size_t installType(uint8_t* obj, TypeInfo* typeInfo) {
-    auto descriptor = kotlin::alloc::HeapObject::make_descriptor(typeInfo);
+    auto descriptor = kotlin::alloc::CustomHeapObject::descriptorFrom(typeInfo);
     auto& heapObject = *descriptor.construct(obj);
-    ObjHeader* object = heapObject.header(descriptor).object();
+    ObjHeader* object = heapObject.object();
     object->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
     return descriptor.size();
 }
