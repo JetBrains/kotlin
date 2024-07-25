@@ -1,9 +1,12 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.build.androidsdkprovisioner.AndroidSdkProvisionerExtension
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("gradle-plugin-common-configuration")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("android-sdk-provisioner")
 }
 
 repositories {
@@ -335,6 +338,10 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
     }
 
+    val acceptLicensesTask = with(androidSdkProvisioner) {
+        registerAcceptLicensesTask()
+    }
+
     tasks.withType<Test>().configureEach {
         if (!name.startsWith("functional")) return@configureEach
 
@@ -347,8 +354,10 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             languageVersion.set(JavaLanguageVersion.of(11))
         })
         dependsOnKotlinGradlePluginInstall()
-        useAndroidSdk()
-        acceptAndroidSdkLicenses()
+        androidSdkProvisioner {
+            provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
+            dependsOn(acceptLicensesTask)
+        }
         maxParallelForks = 8
 
         testLogging {

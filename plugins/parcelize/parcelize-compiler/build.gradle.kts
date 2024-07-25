@@ -1,8 +1,11 @@
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+
 description = "Parcelize compiler plugin"
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("android-sdk-provisioner")
 }
 
 val robolectricClasspath by configurations.creating
@@ -102,7 +105,9 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(prepareRobolectricDependencies)
     dependsOn(":dist")
     workingDir = rootDir
-    useAndroidJar()
+    androidSdkProvisioner {
+        provideToThisTaskAsSystemProperty(ProvisioningType.PLATFORM_JAR)
+    }
 
     val parcelizeRuntimeForTestsConf: FileCollection = parcelizeRuntimeForTests
     val robolectricClasspathConf: FileCollection = robolectricClasspath

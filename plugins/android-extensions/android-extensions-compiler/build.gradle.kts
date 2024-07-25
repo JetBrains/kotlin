@@ -1,9 +1,11 @@
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 
 description = "Kotlin Android Extensions Compiler"
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("android-sdk-provisioner")
 }
 
 val robolectricClasspath by configurations.creating
@@ -82,7 +84,9 @@ projectTest {
     dependsOn(":dist")
 
     workingDir = rootDir
-    useAndroidJar()
+    androidSdkProvisioner {
+        provideToThisTaskAsSystemProperty(ProvisioningType.PLATFORM_JAR)
+    }
 
     val androidExtensionsRuntimeProvider = project.provider {
         androidExtensionsRuntimeForTests.asPath

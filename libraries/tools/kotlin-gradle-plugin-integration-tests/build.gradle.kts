@@ -1,9 +1,11 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import java.nio.file.Paths
 
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
+    id("android-sdk-provisioner")
 }
 
 testsJar()
@@ -419,7 +421,9 @@ tasks.withType<Test> {
         }
     }
 
-    useAndroidSdk()
+    androidSdkProvisioner {
+        provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
+    }
 
     useJUnitPlatform {
         includeEngines("junit-jupiter")
