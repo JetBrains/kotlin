@@ -65,6 +65,7 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
                         "$KAPT3_STUBS_PATH/bar/B.java",
                         "$KAPT3_STUBS_PATH/baz/UtilKt.java",
                         "$KAPT3_STUBS_PATH/foo/A.java",
+                        "$KAPT3_STUBS_PATH/jvmName/Math.java",
                         "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
                     ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
                     getProcessedSources(output)
@@ -83,6 +84,7 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
                         "$KAPT3_STUBS_PATH/bar/B.java",
                         "$KAPT3_STUBS_PATH/baz/UtilKt.java",
                         "$KAPT3_STUBS_PATH/foo/A.java",
+                        "$KAPT3_STUBS_PATH/jvmName/Math.java",
                         "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
                     ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
                     getProcessedSources(output)
@@ -106,6 +108,7 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
                         "$KAPT3_STUBS_PATH/bar/B.java",
                         "$KAPT3_STUBS_PATH/baz/UtilKt.java",
                         "$KAPT3_STUBS_PATH/foo/A.java",
+                        "$KAPT3_STUBS_PATH/jvmName/Math.java",
                         "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
                     ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
                     getProcessedSources(output)
