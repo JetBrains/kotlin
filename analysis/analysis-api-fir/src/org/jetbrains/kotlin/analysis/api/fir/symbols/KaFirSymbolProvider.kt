@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.getModule
-import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKaSymbolProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 internal class KaFirSymbolProvider(
     override val analysisSessionProvider: () -> KaFirSession,
     private val firSymbolProvider: FirSymbolProvider,
-) : AbstractKaSymbolProvider<KaFirSession>(), KaFirSessionComponent {
+) : KaBaseSymbolProvider<KaFirSession>(), KaFirSessionComponent {
     override val KtParameter.symbol: KaVariableSymbol
         get() = withValidityAssertion {
             return when {

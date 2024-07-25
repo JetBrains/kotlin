@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 
 @KaImplementationDetail
-abstract class AbstractKaSymbolProvider<T : KaSession> : KaSessionComponent<T>(), KaSymbolProvider {
+abstract class KaBaseSymbolProvider<T : KaSession> : KaSessionComponent<T>(), KaSymbolProvider {
     override val KtDeclaration.symbol: KaDeclarationSymbol
         get() = withValidityAssertion {
             when (this) {
