@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
@@ -501,10 +504,15 @@ class ConeOverloadConflictResolver(
         )
     }
 
-    private fun FirValueParameter.argumentType(): ConeKotlinType {
+    private fun FirValueParameter.argumentType(argument: ConeResolutionAtom): ConeKotlinType {
         val type = returnTypeRef.coneType
-        if (isVararg) return type.arrayElementType()!!
-        return type
+        val isPassedAsNamedArgument = argument.expression is FirNamedArgumentExpression // Both spread and non-spread
+        val isPassedAsSpreadArgument = argument.expression is FirSpreadArgumentExpression
+
+        return when {
+            isVararg && !isPassedAsNamedArgument && !isPassedAsSpreadArgument -> type.arrayElementType()!!
+            else -> type
+        }
     }
 
     private fun computeSignatureTypes(
@@ -524,16 +532,16 @@ class ConeOverloadConflictResolver(
             } else {
                 called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType.prepareType(session, call)) }
                 if (call.argumentMappingInitialized) {
-                    call.argumentMapping.mapTo(this) { (_, parameter) ->
-                        parameter.toTypeWithConversion(session, call)
+                    call.argumentMapping.mapTo(this) { (argument, parameter) ->
+                        parameter.toTypeWithConversion(argument, session, call)
                     }
                 }
             }
         }
     }
 
-    private fun FirValueParameter.toTypeWithConversion(session: FirSession, call: Candidate): TypeWithConversion {
-        val argumentType = argumentType().prepareType(session, call)
+    private fun FirValueParameter.toTypeWithConversion(argument: ConeResolutionAtom, session: FirSession, call: Candidate): TypeWithConversion {
+        val argumentType = argumentType(argument).prepareType(session, call)
         val functionTypeForSam = toFunctionTypeForSamOrNull(call)
         return if (functionTypeForSam == null) {
             TypeWithConversion(argumentType)
