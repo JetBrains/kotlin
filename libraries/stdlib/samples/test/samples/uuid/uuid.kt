@@ -8,6 +8,7 @@ package samples.uuid
 import samples.*
 import kotlin.uuid.*
 
+@OptIn(ExperimentalUuidApi::class)
 class Uuids {
 
     @Sample

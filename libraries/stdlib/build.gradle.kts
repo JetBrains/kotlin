@@ -70,6 +70,7 @@ val commonTestOptIns = listOf(
     "kotlin.ExperimentalUnsignedTypes",
     "kotlin.ExperimentalStdlibApi",
     "kotlin.io.encoding.ExperimentalEncodingApi",
+    "kotlin.uuid.ExperimentalUuidApi",
 )
 
 kotlin {

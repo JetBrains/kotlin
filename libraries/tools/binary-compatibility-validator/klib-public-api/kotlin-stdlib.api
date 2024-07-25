@@ -151,6 +151,10 @@ open annotation class kotlin.time/ExperimentalTime : kotlin/Annotation { // kotl
     constructor <init>() // kotlin.time/ExperimentalTime.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.uuid/ExperimentalUuidApi : kotlin/Annotation { // kotlin.uuid/ExperimentalUuidApi|null[0]
+    constructor <init>() // kotlin.uuid/ExperimentalUuidApi.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin/BuilderInference : kotlin/Annotation { // kotlin/BuilderInference|null[0]
     constructor <init>() // kotlin/BuilderInference.<init>|<init>(){}[0]
 }

@@ -10,7 +10,7 @@ import kotlin.native.internal.GCUnsafeCall
 @GCUnsafeCall("Kotlin_Uuid_getRandomBytes")
 private external fun getRandomBytes(byteArray: ByteArray, size: Int): Unit
 
-@ExperimentalStdlibApi
+@ExperimentalUuidApi
 internal actual fun secureRandomUuid(): Uuid {
     val randomBytes = ByteArray(Uuid.SIZE_BYTES)
     getRandomBytes(randomBytes, randomBytes.size)
