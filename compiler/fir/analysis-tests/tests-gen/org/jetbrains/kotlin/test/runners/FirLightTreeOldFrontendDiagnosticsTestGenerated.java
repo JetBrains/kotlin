@@ -7807,6 +7807,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("lambdaCaptureUninitializedProperty.kt")
+      public void testLambdaCaptureUninitializedProperty() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureUninitializedProperty.kt");
+      }
+
+      @Test
       @TestMetadata("localClasses.kt")
       public void testLocalClasses() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/localClasses.kt");

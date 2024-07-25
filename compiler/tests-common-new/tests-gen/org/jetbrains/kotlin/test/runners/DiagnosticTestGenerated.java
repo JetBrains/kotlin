@@ -7813,6 +7813,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("lambdaCaptureUninitializedProperty.kt")
+      public void testLambdaCaptureUninitializedProperty() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/lambdaCaptureUninitializedProperty.kt");
+      }
+
+      @Test
       @TestMetadata("localClasses.kt")
       public void testLocalClasses() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/localClasses.kt");
