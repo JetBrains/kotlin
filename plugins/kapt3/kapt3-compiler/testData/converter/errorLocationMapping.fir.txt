@@ -1,0 +1,312 @@
+import kotlin.reflect.KClass;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/reflect/KClass;)V
+ *   public constructor(a: kotlin/reflect/KClass<kotlin/Any>)
+ *
+ *   // getter: a()Ljava/lang/Class;
+ *   public final val a: kotlin/reflect/KClass<kotlin/Any>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface Anno {
+
+    public abstract java.lang.Class<java.lang.Object> a();
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+@Anno(a = ABC.class)
+/**
+ * public final class ErrorInAnnotation : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrorInAnnotation {
+
+    public ErrorInAnnotation() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+/**
+ * public final class ErrorInConstructorParameter : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;Lerror/NonExistentClass;Ljava/util/List;)V
+ *   public constructor(a: kotlin/String, b: error/NonExistentClass, c: kotlin/collections/List<error/NonExistentClass>)
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // getter: getA()Ljava/lang/String;
+ *   public final val a: kotlin/String
+ *     public final get
+ *
+ *   // field: b:Lerror/NonExistentClass;
+ *   // getter: getB()Lerror/NonExistentClass;
+ *   public final val b: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: c:Ljava/util/List;
+ *   // getter: getC()Ljava/util/List;
+ *   public final val c: kotlin/collections/List<error/NonExistentClass>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrorInConstructorParameter {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+    @org.jetbrains.annotations.NotNull()
+    private final ABC b = null;
+    @org.jetbrains.annotations.NotNull()
+    private final List<ABC> c = null;
+
+    public ErrorInConstructorParameter(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    ABC b, @org.jetbrains.annotations.NotNull()
+    List<ABC> c) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC getB() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final List<ABC> getC() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+/**
+ * public final class ErrorInDeclarations : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: f1(Ljava/lang/String;Lerror/NonExistentClass;)V
+ *   public final fun f1(a: kotlin/String, b: error/NonExistentClass): kotlin/Unit
+ *
+ *   // signature: f2()V
+ *   public final fun <T#0 (* T *) : kotlin/String> f2(): kotlin/Unit
+ *
+ *   // signature: f3()V
+ *   public final fun <T#0 (* T *) : error/NonExistentClass> f3(): kotlin/Unit
+ *
+ *   // signature: f4()Lerror/NonExistentClass;
+ *   public final fun f4(): error/NonExistentClass
+ *
+ *   // signature: f5(Lerror/NonExistentClass;Ljava/lang/String;)V
+ *   public final fun f5(a: error/NonExistentClass, b: kotlin/String (* = ... *)): kotlin/Unit
+ *
+ *   // signature: overloads(Lerror/NonExistentClass;)V
+ *   public final fun overloads(a: error/NonExistentClass): kotlin/Unit
+ *
+ *   // signature: overloads(Ljava/lang/String;)V
+ *   public final fun overloads(a: kotlin/String): kotlin/Unit
+ *
+ *   // field: p1:Ljava/lang/String;
+ *   // getter: getP1()Ljava/lang/String;
+ *   // setter: setP1(Ljava/lang/String;)V
+ *   public final lateinit var p1: kotlin/String
+ *     public final get
+ *     public final set
+ *
+ *   // field: p2:Lerror/NonExistentClass;
+ *   // getter: getP2()Lerror/NonExistentClass;
+ *   // setter: setP2(Lerror/NonExistentClass;)V
+ *   public final lateinit var p2: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: p3:Lerror/NonExistentClass;
+ *   // getter: getP3()Lerror/NonExistentClass;
+ *   // setter: setP3(Lerror/NonExistentClass;)V
+ *   public final lateinit var p3: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrorInDeclarations {
+    public java.lang.String p1;
+    public ABC p2;
+    public BCD<String> p3;
+    @org.jetbrains.annotations.NotNull()
+    public static final ErrorInDeclarations.Companion Companion = null;
+
+    public ErrorInDeclarations() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getP1() {
+        return null;
+    }
+
+    public final void setP1(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC getP2() {
+        return null;
+    }
+
+    public final void setP2(@org.jetbrains.annotations.NotNull()
+    ABC p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final BCD<String> getP3() {
+        return null;
+    }
+
+    public final void setP3(@org.jetbrains.annotations.NotNull()
+    BCD<String> p0) {
+    }
+
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+    }
+
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    ABC a) {
+    }
+
+    public final void f1(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    ABC<List<String>> b) {
+    }
+
+    public final <T extends java.lang.String>void f2() {
+    }
+
+    public final <T extends error.NonExistentClass>void f3() {
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final ABC f4() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public final void f5(@org.jetbrains.annotations.NotNull()
+    ABC a) {
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    public final void f5(@org.jetbrains.annotations.NotNull()
+    ABC a, @org.jetbrains.annotations.NotNull()
+    java.lang.String b) {
+    }
+
+    @kotlin.jvm.JvmStatic()
+    public static final void f6(@org.jetbrains.annotations.NotNull()
+    ABC a) {
+    }
+
+    /**
+     * public final companion object ErrorInDeclarations.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // signature: f6(Lerror/NonExistentClass;)V
+     *   public final fun f6(a: error/NonExistentClass): kotlin/Unit
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @kotlin.jvm.JvmStatic()
+        public final void f6(@org.jetbrains.annotations.NotNull()
+        ABC a) {
+        }
+    }
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+/**
+ * public final class ErrorInSupertype : error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrorInSupertype implements ABC {
+
+    public ErrorInSupertype() {
+    }
+}
+
+////////////////////
+
+
+import kotlin.reflect.KClass;
+
+/**
+ * public final class ErrorInSupertype2 : error/NonExistentClass {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ErrorInSupertype2 extends ABC<String> {
+
+    public ErrorInSupertype2() {
+    }
+}

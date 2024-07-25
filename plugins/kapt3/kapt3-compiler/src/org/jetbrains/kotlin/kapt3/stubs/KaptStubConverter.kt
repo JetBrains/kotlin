@@ -1346,10 +1346,10 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         val values = when {
             firArgMapping.isNotEmpty() -> {
-                constantValues.mapNotNull { (parameterName, argumentValue) ->
-                    val name = Name.identifier(parameterName)
-                    val firArg = firArgMapping[name]
-                    convertAnnotationArgumentWithNameFir(containingClass, argumentValue, firArg, parameterName)
+                val allParameterNames = firArgMapping.keys.mapTo(mutableSetOf()) { it.asString() } + constantValues.keys
+                allParameterNames.mapNotNull { name ->
+                    val firArg = firArgMapping[Name.identifier(name)]
+                    convertAnnotationArgumentWithNameFir(containingClass, constantValues[name], firArg, name)
                 }
             }
             argMapping.isNotEmpty() -> {
@@ -1381,6 +1381,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
             is FirVarargArgumentsExpression -> {
                 convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments)
+            }
+            is FirGetClassCall -> {
+                convertFirGetClassCall(value)
             }
             else -> {
                 convertLiteralExpression(containingClass, constantValue)
