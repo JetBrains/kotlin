@@ -988,11 +988,8 @@ object LightTreePositioningStrategies {
                 return super.mark(node, startOffset, endOffset - 1, tree)
             }
             if (node.tokenType == KtNodeTypes.PACKAGE_DIRECTIVE) {
-                val referenceExpression = tree.findLastDescendant(node) {
-                    it.tokenType == KtNodeTypes.REFERENCE_EXPRESSION
-                }
-                if (referenceExpression != null) {
-                    return markElement(referenceExpression, startOffset, endOffset, tree, node)
+                node.getChildren(tree).lastOrNull()?.let {
+                    return markElement(it, startOffset, endOffset, tree, node)
                 }
             }
             return DEFAULT.mark(node, startOffset, endOffset, tree)

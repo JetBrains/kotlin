@@ -38,7 +38,7 @@ class FqNameUnsafe {
     }
 
     private fun compute() {
-        val lastDot = fqName.lastIndexOf('.')
+        val lastDot = indexOfLastDotWithBackticksSupport(fqName)
         if (lastDot >= 0) {
             shortName = Name.guessByFirstCharacter(fqName.substring(lastDot + 1))
             parent = FqNameUnsafe(fqName.substring(0, lastDot))
@@ -46,6 +46,23 @@ class FqNameUnsafe {
             shortName = Name.guessByFirstCharacter(fqName)
             parent = FqName.ROOT.toUnsafe()
         }
+    }
+
+    private fun indexOfLastDotWithBackticksSupport(fqName: String): Int {
+        var index = fqName.length - 1
+        var isBacktick = false
+
+        while (index >= 0) {
+            when (fqName[index]) {
+                '.' if !isBacktick -> return index
+                '`' -> isBacktick = !isBacktick
+                '\\' -> index--
+            }
+
+            index--
+        }
+
+        return -1
     }
 
     fun asString(): String {
@@ -101,8 +118,32 @@ class FqNameUnsafe {
         }
     }
 
+    /**
+     * Consider using [properPathSegments].
+     */
     fun pathSegments(): List<Name> {
         return if (isRoot) emptyList() else SPLIT_BY_DOTS.split(fqName).map(Name::guessByFirstCharacter)
+    }
+
+    /**
+     * Returns path segments (`[a,b,c]` for `a.b.c`), but unlike [pathSegments],
+     * gathers information from [parent] and [shortName].
+     * This allows handling fqName parts containing dots as part of their name.
+     *
+     * The original function is left intact to avoid introducing possible unexpected behavior changes in K1.
+     */
+    fun properPathSegments(): List<Name> {
+        fun collectSegmentsOf(fqName: FqNameUnsafe): MutableList<Name> {
+            if (fqName.isRoot) {
+                return ArrayList()
+            }
+
+            val parentSegments = collectSegmentsOf(fqName.parent())
+            parentSegments.add(fqName.shortName())
+            return parentSegments
+        }
+
+        return collectSegmentsOf(this)
     }
 
     fun startsWith(segment: Name): Boolean {
