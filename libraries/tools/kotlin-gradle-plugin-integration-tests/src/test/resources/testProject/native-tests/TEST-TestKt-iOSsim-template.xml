@@ -2,16 +2,16 @@
 <results>
   <testsuite name="org.foo.test.TestKt" tests="4" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
     <properties/>
-    <testcase name="fooTest[ios]" classname="org.foo.test.TestKt" time="..."/>
-    <testcase name="barTest[ios]" classname="org.foo.test.TestKt" time="..."/>
-    <testcase name="barfooTest[ios]" classname="org.foo.test.TestKt" time="..."/>
-    <testcase name="fail[ios]" classname="org.foo.test.TestKt" time="...">
+    <testcase name="fooTest[<target>]" classname="org.foo.test.TestKt" time="..."/>
+    <testcase name="barTest[<target>]" classname="org.foo.test.TestKt" time="..."/>
+    <testcase name="barfooTest[<target>]" classname="org.foo.test.TestKt" time="..."/>
+    <testcase name="fail[<target>]" classname="org.foo.test.TestKt" time="...">
       <failure message="..." type="kotlin.IllegalStateException">...</failure>
     </testcase>
     <system-out><![CDATA[Foo call
 Bar call
 42
-]]></system-out>
+Invalid connection: com.apple.coresymbolicationd]]></system-out>
     <system-err><![CDATA[]]></system-err>
   </testsuite>
 </results>
