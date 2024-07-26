@@ -34,10 +34,6 @@ import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker {
-    override fun toString(): String = reason
-}
-
 interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext {
     val session: FirSession
 
@@ -234,7 +230,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeTypeParameterLookupTag,
             is ConeCapturedTypeConstructor,
-            is ErrorTypeConstructor,
             is ConeTypeVariableTypeConstructor,
             is ConeIntersectionType -> 0
             is ConeClassLikeLookupTag -> {
@@ -274,7 +269,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     fun TypeConstructorMarker.toClassLikeSymbol(): FirClassLikeSymbol<*>? = (this as? ConeClassLikeLookupTag)?.toSymbol(session)
 
     override fun TypeConstructorMarker.supertypes(): Collection<ConeKotlinType> {
-        if (this is ErrorTypeConstructor) return emptyList()
         return when (this) {
             is ConeStubTypeConstructor -> listOf(session.builtinTypes.nullableAnyType.coneType)
             is ConeTypeVariableTypeConstructor -> emptyList()
@@ -341,7 +335,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
-        if (c1 is ErrorTypeConstructor || c2 is ErrorTypeConstructor) return false
         return c1 == c2
     }
 
@@ -352,7 +345,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
             is ConeStubTypeConstructor,
             is ConeCapturedTypeConstructor,
-            is ErrorTypeConstructor,
             is ConeTypeVariableTypeConstructor,
             is ConeIntegerLiteralType,
             is ConeIntersectionType -> false
@@ -596,7 +588,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isError(): Boolean {
-        return this is ErrorTypeConstructor
+        return false
     }
 
     private fun TypeConstructorMarker.unknownConstructorError(): Nothing {

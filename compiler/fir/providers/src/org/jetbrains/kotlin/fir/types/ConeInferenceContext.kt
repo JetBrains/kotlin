@@ -419,7 +419,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
-        if (this is ErrorTypeConstructor) return createErrorType(reason, delegatedType = null)
         if (this is ConeClassLikeLookupTag) return createErrorType("Not found classifier: $classId", delegatedType = null)
         return createErrorType("Unknown reason", delegatedType = null)
     }
