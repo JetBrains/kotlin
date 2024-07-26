@@ -209,7 +209,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TBarBazCl implements Bar, Baz, Cl {
+public final class TBarBazCl extends Cl implements Bar, Baz {
 
     public TBarBazCl() {
     }
@@ -229,7 +229,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TClBarBaz implements Cl, Bar, Baz {
+public final class TClBarBaz extends Cl implements Bar, Baz {
 
     public TClBarBaz() {
         super();
@@ -255,7 +255,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TFooBar extends Foo implements Bar, Intf {
+public final class TFooBar extends Foo implements Intf, Bar {
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
@@ -444,7 +444,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, Intf {
+public final class TxFooxBarxBaz extends x.Foo implements Intf, x.Bar, x.Baz {
 
     public TxFooxBarxBaz() {
     }
