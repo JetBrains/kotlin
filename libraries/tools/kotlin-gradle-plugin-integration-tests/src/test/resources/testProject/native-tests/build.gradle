@@ -50,13 +50,9 @@ configure([hostTest, iosTest, iosArm64Test]){
     }
 }
 
-task checkGetters {
-    doLast {
-        configure([kotlin.targets.host]) {
-            println("Get test: ${binaries.getTest(DEBUG).outputFile.name}")
-            println("Find test: ${binaries.findTest(DEBUG).outputFile.name}")
-            println("Get test: ${binaries.getTest("another", DEBUG).outputFile.name}")
-            println("Find test: ${binaries.findTest("another", DEBUG).outputFile.name}")
-        }
-    }
+configure([kotlin.targets.host]) {
+    println("Get test: ${binaries.getTest(DEBUG).outputFile.name}")
+    println("Find test: ${binaries.findTest(DEBUG).outputFile.name}")
+    println("Get test: ${binaries.getTest("another", DEBUG).outputFile.name}")
+    println("Find test: ${binaries.findTest("another", DEBUG).outputFile.name}")
 }
