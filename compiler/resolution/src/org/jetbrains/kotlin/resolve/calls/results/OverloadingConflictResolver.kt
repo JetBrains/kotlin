@@ -227,6 +227,7 @@ open class OverloadingConflictResolver<C : Any>(
             createFlatSignature(candidateCall)
         }
 
+        // This list may be empty, and this is expected.
         val bestCandidatesByParameterTypes = conflictingCandidates.filter { candidate ->
             cancellationChecker.check()
             isMostSpecific(candidate, conflictingCandidates) { call1, call2 ->
@@ -353,6 +354,7 @@ open class OverloadingConflictResolver<C : Any>(
 
         }
 
+        // It's expected that this function returns `false` for unrelated types like `Int` and `IntArray`.
         private fun isNonSubtypeEquallyOrMoreSpecific(
             specific: KotlinType,
             general: KotlinType,
