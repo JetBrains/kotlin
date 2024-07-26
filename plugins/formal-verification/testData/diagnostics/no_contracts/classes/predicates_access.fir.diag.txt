@@ -203,15 +203,13 @@ method f$accessCast$TF$T$c$A(p$x: Ref) returns (ret$0: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$unitType())
 {
   var l0$n: Ref
-  var anon$0: Ref
   inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$T$c$A())
   inhale acc(p$c$A$shared(p$x), wildcard)
   ret$0 := df$rt$unitValue()
-  anon$0 := p$x
-  inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$T$c$B())
-  inhale acc(p$c$B$shared(anon$0), wildcard)
-  unfold acc(p$c$B$shared(anon$0), wildcard)
-  l0$n := anon$0.bf$b
+  inhale df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$T$c$B())
+  inhale acc(p$c$B$shared(p$x), wildcard)
+  unfold acc(p$c$B$shared(p$x), wildcard)
+  l0$n := p$x.bf$b
   label lbl$ret$0
 }
 
@@ -300,11 +298,9 @@ method f$accessSmartCast$TF$T$c$A(p$x: Ref) returns (ret$0: Ref)
   ret$0 := df$rt$unitValue()
   l0$n := df$rt$intToRef(0)
   if (df$rt$isSubtype(df$rt$typeOf(p$x), df$rt$T$c$B())) {
-    var anon$0: Ref
-    anon$0 := p$x
-    inhale acc(p$c$B$shared(anon$0), wildcard)
-    unfold acc(p$c$B$shared(anon$0), wildcard)
-    l0$n := anon$0.bf$b
+    inhale acc(p$c$B$shared(p$x), wildcard)
+    unfold acc(p$c$B$shared(p$x), wildcard)
+    l0$n := p$x.bf$b
   }
   label lbl$ret$0
 }

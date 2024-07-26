@@ -95,3 +95,6 @@ class FirVariableEmbedding(
  * This can still correspond to an earlier variable, but it no longer carries any interesting information.
  */
 class LinearizationVariableEmbedding(override val name: MangledName, override val type: TypeEmbedding) : VariableEmbedding
+
+val ExpEmbedding.underlyingVariable
+    get() = this.ignoringCastsAndMetaNodes() as? VariableEmbedding

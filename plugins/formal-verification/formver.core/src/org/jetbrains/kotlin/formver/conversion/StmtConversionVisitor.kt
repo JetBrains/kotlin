@@ -263,7 +263,9 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
             exp.withType(newType)
         } else {
             // TODO: when there is a cast from B to A, only inhale invariants of A - invariants of B
-            exp.withType(newType).withAccessInvariants()
+            exp.withNewTypeInvariants(newType) {
+                access = true
+            }
         }
     }
 
@@ -296,8 +298,14 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         return when (typeOperatorCall.operation) {
             FirOperation.IS -> Is(argument, conversionType)
             FirOperation.NOT_IS -> Not(Is(argument, conversionType))
-            FirOperation.AS -> Cast(argument, conversionType).withAccessAndProvenInvariants()
-            FirOperation.SAFE_AS -> SafeCast(argument, conversionType).withAccessAndProvenInvariants()
+            FirOperation.AS -> Cast(argument, conversionType).withInvariants {
+                proven = true
+                access = true
+            }
+            FirOperation.SAFE_AS -> SafeCast(argument, conversionType).withInvariants{
+                proven = true
+                access = true
+            }
             else -> handleUnimplementedElement("Can't embed type operator ${typeOperatorCall.operation}.", data)
         }
     }

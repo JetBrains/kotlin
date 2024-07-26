@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.formver.embeddings.expression.debug.debugTreeView
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.withDesignation
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.linearization.pureToViper
+import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 data class Is(override val inner: ExpEmbedding, val comparisonType: TypeEmbedding, override val sourceRole: SourceRole? = null) :
     UnaryDirectResultExpEmbedding {
@@ -79,24 +81,12 @@ data class SafeCast(val exp: ExpEmbedding, val targetType: TypeEmbedding) : Stor
         get() = listOf(targetType.debugTreeView.withDesignation("type"))
 }
 
-/**
- * Augment this expression with all invariants of a certain kind that we know about the type.
- *
- * This may require storing the result in a variable, if it is not already a variable. The `simplified` property allows
- * unwrapping this type when this can be avoided.
- */
-abstract class InhaleInvariants(val exp: ExpEmbedding) : StoredResultExpEmbedding, DefaultDebugTreeViewImplementation {
-    // Get the relevant invariants for `type`
-    abstract val invariants: List<TypeInvariantEmbedding>
+interface InhaleInvariants: ExpEmbedding, DefaultDebugTreeViewImplementation {
+    val invariants: List<TypeInvariantEmbedding>
+    val exp: ExpEmbedding
 
-    override val type: TypeEmbedding = exp.type
-
-    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
-        exp.toViperStoringIn(result, ctx)
-        for (invariant in invariants.fillHoles(result)) {
-            ctx.addStatement { Stmt.Inhale(invariant.pureToViper(toBuiltin = true, ctx.source), ctx.source.asPosition) }
-        }
-    }
+    override val type: TypeEmbedding
+        get() = exp.type
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
         get() = listOf(exp)
@@ -109,27 +99,67 @@ abstract class InhaleInvariants(val exp: ExpEmbedding) : StoredResultExpEmbeddin
         else this
 }
 
-class InhaleProven(exp: ExpEmbedding) : InhaleInvariants(exp) {
-    override val invariants: List<TypeInvariantEmbedding>
-        get() = listOf(type.subTypeInvariant())
+/**
+ * Augment this expression with all invariants of a certain kind that we know about the type.
+ *
+ * This may require storing the result in a variable, if it is not already a variable. The `simplified` property allows
+ * unwrapping this type when this can be avoided.
+ */
+private data class InhaleInvariantsForExp(override val exp: ExpEmbedding, override val invariants: List<TypeInvariantEmbedding>) :
+    StoredResultExpEmbedding, InhaleInvariants {
+
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
+        exp.toViperStoringIn(result, ctx)
+        for (invariant in invariants.fillHoles(result)) {
+            ctx.addStatement { Stmt.Inhale(invariant.pureToViper(toBuiltin = true, ctx.source), ctx.source.asPosition) }
+        }
+    }
 }
 
-fun ExpEmbedding.withProvenInvariants(): ExpEmbedding = InhaleProven(this).simplified
+private data class InhaleInvariantsForVariable(
+    override val exp: ExpEmbedding,
+    override val invariants: List<TypeInvariantEmbedding>,
+) :
+    InhaleInvariants, OnlyToViperExpEmbedding {
 
-class InhaleAccess(exp: ExpEmbedding) : InhaleInvariants(exp) {
-    override val invariants: List<TypeInvariantEmbedding>
-        get() = type.accessInvariants() + listOfNotNull(type.sharedPredicateAccessInvariant())
+    override fun toViper(ctx: LinearizationContext): Exp {
+        val variable = exp.underlyingVariable ?: error("Use of InhaleInvariantsForVariable for non-variable")
+        for (invariant in invariants.fillHoles(variable)) {
+            ctx.addStatement { Stmt.Inhale(invariant.pureToViper(toBuiltin = true, ctx.source), ctx.source.asPosition) }
+        }
+
+        // thanks to the fact we return `exp` here we're not losing types in `ExpEmbedding`
+        return exp.toViper(ctx)
+    }
 }
 
-fun ExpEmbedding.withAccessInvariants(): ExpEmbedding = InhaleAccess(this).simplified
+class InhaleInvariantsBuilder(val exp: ExpEmbedding) {
 
-class InhaleAccessAndProven(exp: ExpEmbedding) : InhaleInvariants(exp) {
-    override val invariants: List<TypeInvariantEmbedding>
-        get() = type.accessInvariants() + listOfNotNull(type.subTypeInvariant(), type.sharedPredicateAccessInvariant())
+    val invariants = mutableListOf<TypeInvariantEmbedding>()
+
+    fun complete(): ExpEmbedding {
+        if (proven) invariants.add(exp.type.subTypeInvariant())
+        if (access) {
+            invariants.addAll(exp.type.accessInvariants())
+            invariants.addIfNotNull(exp.type.sharedPredicateAccessInvariant())
+        }
+        return when (exp.underlyingVariable) {
+            null -> InhaleInvariantsForExp(exp, invariants)
+            else -> InhaleInvariantsForVariable(exp, invariants)
+        }.simplified
+    }
+
+    var proven: Boolean = false
+
+    var access: Boolean = false
 }
 
-fun ExpEmbedding.withAccessAndProvenInvariants(): ExpEmbedding = InhaleAccessAndProven(this).simplified
+inline fun ExpEmbedding.withInvariants(block: InhaleInvariantsBuilder.() -> Unit): ExpEmbedding {
+    val builder = InhaleInvariantsBuilder(this)
+    builder.block()
+    return builder.complete()
+}
 
-fun ExpEmbedding.withNewTypeAccessAndProvenInvariants(newType: TypeEmbedding): ExpEmbedding =
-    if (this.type == newType) this
-    else InhaleAccessAndProven(this.withType(newType)).simplified
+inline fun ExpEmbedding.withNewTypeInvariants(newType: TypeEmbedding, block: InhaleInvariantsBuilder.() -> Unit) =
+    if (this.type == newType) this else withType(newType).withInvariants(block)
+

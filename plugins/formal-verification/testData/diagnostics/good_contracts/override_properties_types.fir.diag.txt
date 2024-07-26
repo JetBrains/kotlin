@@ -17,33 +17,25 @@ method f$extractInt$TF$T$c$Base$T$Boolean(p$base: Ref, p$returnNull: Ref)
     var anon$1: Ref
     if (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$OpenClassOpenFieldVarDerived())) {
       var anon$2: Ref
-      var anon$3: Ref
-      anon$3 := p$base
-      inhale acc(p$c$OpenClassOpenFieldVarDerived$shared(anon$3), wildcard)
-      anon$2 := pg$public$field(anon$3)
+      inhale acc(p$c$OpenClassOpenFieldVarDerived$shared(p$base), wildcard)
+      anon$2 := pg$public$field(p$base)
       anon$1 := anon$2
       inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
     } elseif (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$FinalClassOpenFieldVarDerived())) {
-      var anon$4: Ref
-      anon$4 := p$base
-      inhale acc(p$c$FinalClassOpenFieldVarDerived$shared(anon$4), wildcard)
-      inhale acc(anon$4.bf$field, write)
-      anon$1 := anon$4.bf$field
-      exhale acc(anon$4.bf$field, write)
+      inhale acc(p$c$FinalClassOpenFieldVarDerived$shared(p$base), wildcard)
+      inhale acc(p$base.bf$field, write)
+      anon$1 := p$base.bf$field
+      exhale acc(p$base.bf$field, write)
       inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
     } elseif (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$FinalClassFinalFieldValDerived())) {
-      var anon$5: Ref
-      anon$5 := p$base
-      inhale acc(p$c$FinalClassFinalFieldValDerived$shared(anon$5), wildcard)
-      unfold acc(p$c$FinalClassFinalFieldValDerived$shared(anon$5), wildcard)
-      anon$1 := anon$5.bf$field
+      inhale acc(p$c$FinalClassFinalFieldValDerived$shared(p$base), wildcard)
+      unfold acc(p$c$FinalClassFinalFieldValDerived$shared(p$base), wildcard)
+      anon$1 := p$base.bf$field
     } elseif (df$rt$isSubtype(df$rt$typeOf(p$base), df$rt$T$c$OpenClassFinalFieldVarDerived())) {
-      var anon$6: Ref
-      anon$6 := p$base
-      inhale acc(p$c$OpenClassFinalFieldVarDerived$shared(anon$6), wildcard)
-      inhale acc(anon$6.bf$field, write)
-      anon$1 := anon$6.bf$field
-      exhale acc(anon$6.bf$field, write)
+      inhale acc(p$c$OpenClassFinalFieldVarDerived$shared(p$base), wildcard)
+      inhale acc(p$base.bf$field, write)
+      anon$1 := p$base.bf$field
+      exhale acc(p$base.bf$field, write)
       inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
     } else {
       anon$1 := df$rt$intToRef(0)}

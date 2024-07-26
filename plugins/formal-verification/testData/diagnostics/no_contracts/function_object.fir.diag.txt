@@ -13,11 +13,9 @@ method f$functionObjectCall$TF$TF$T$Boolean$T$Int(p$g: Ref)
   ensures df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$intType())
 {
   var anon$0: Ref
-  var anon$1: Ref
   inhale df$rt$isSubtype(df$rt$typeOf(p$g), df$rt$functionType())
-  anon$1 := anon$0
-  inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
-  ret$0 := anon$1
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())
+  ret$0 := anon$0
   goto lbl$ret$0
   label lbl$ret$0
 }
@@ -30,18 +28,12 @@ method f$functionObjectNestedCall$TF$TF$T$Int$TF$T$Boolean(p$f: Ref, p$g: Ref)
   var anon$0: Ref
   var anon$1: Ref
   var anon$2: Ref
-  var anon$3: Ref
-  var anon$4: Ref
-  var anon$5: Ref
   inhale df$rt$isSubtype(df$rt$typeOf(p$f), df$rt$functionType())
   inhale df$rt$isSubtype(df$rt$typeOf(p$g), df$rt$functionType())
-  anon$3 := anon$2
-  inhale df$rt$isSubtype(df$rt$typeOf(anon$3), df$rt$intType())
-  anon$4 := anon$1
-  inhale df$rt$isSubtype(df$rt$typeOf(anon$4), df$rt$intType())
-  anon$5 := anon$0
-  inhale df$rt$isSubtype(df$rt$typeOf(anon$5), df$rt$intType())
-  ret$0 := anon$5
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$2), df$rt$intType())
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$0), df$rt$intType())
+  ret$0 := anon$0
   goto lbl$ret$0
   label lbl$ret$0
 }

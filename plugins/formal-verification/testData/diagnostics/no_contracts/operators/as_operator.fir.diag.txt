@@ -5,9 +5,9 @@ method f$testAs$TF$T$c$Foo(p$foo: Ref) returns (ret$0: Ref)
 {
   inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$T$c$Foo())
   inhale acc(p$c$Foo$shared(p$foo), wildcard)
+  inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$T$c$Bar())
+  inhale acc(p$c$Bar$shared(p$foo), wildcard)
   ret$0 := p$foo
-  inhale df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$T$c$Bar())
-  inhale acc(p$c$Bar$shared(ret$0), wildcard)
   goto lbl$ret$0
   label lbl$ret$0
 }
@@ -21,10 +21,10 @@ method f$testNullableAs$TF$c$Foo(p$foo: Ref) returns (ret$0: Ref)
   inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$nullable(df$rt$T$c$Foo()))
   inhale p$foo != df$rt$nullValue() ==>
     acc(p$c$Foo$shared(p$foo), wildcard)
+  inhale df$rt$isSubtype(df$rt$typeOf(p$foo), df$rt$nullable(df$rt$T$c$Bar()))
+  inhale p$foo != df$rt$nullValue() ==>
+    acc(p$c$Bar$shared(p$foo), wildcard)
   ret$0 := p$foo
-  inhale df$rt$isSubtype(df$rt$typeOf(ret$0), df$rt$nullable(df$rt$T$c$Bar()))
-  inhale ret$0 != df$rt$nullValue() ==>
-    acc(p$c$Bar$shared(ret$0), wildcard)
   goto lbl$ret$0
   label lbl$ret$0
 }

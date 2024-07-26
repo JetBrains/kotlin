@@ -6,12 +6,10 @@ method f$captureArg$TF$TF$T$Int(p$g: Ref) returns (ret$0: Ref)
   var ret$2: Ref
   var anon$0: Ref
   var anon$1: Ref
-  var anon$2: Ref
   inhale df$rt$isSubtype(df$rt$typeOf(p$g), df$rt$functionType())
   anon$0 := df$rt$intToRef(0)
-  anon$2 := anon$1
-  inhale df$rt$isSubtype(df$rt$typeOf(anon$2), df$rt$intType())
-  ret$2 := anon$2
+  inhale df$rt$isSubtype(df$rt$typeOf(anon$1), df$rt$intType())
+  ret$2 := anon$1
   goto lbl$ret$2
   label lbl$ret$2
   ret$1 := ret$2
