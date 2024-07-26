@@ -8,7 +8,7 @@
 import kotlin.concurrent.Volatile
 import kotlin.properties.Delegates
 
-class ConcurrentVolatile {
+class ConcurrentVolatile(<!VOLATILE_ON_VALUE!>@Volatile<!> val s: Int) {
     <!VOLATILE_ON_VALUE!>@Volatile<!> val x = 0
     // ok
     @Volatile var y = 1

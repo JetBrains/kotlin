@@ -2,8 +2,9 @@
 package
 
 public final class ConcurrentVolatile {
-    public constructor ConcurrentVolatile()
+    public constructor ConcurrentVolatile(/*0*/ s: kotlin.Int)
     @field:kotlin.concurrent.Volatile public final var noBacking: kotlin.String
+    @field:kotlin.concurrent.Volatile public final val s: kotlin.Int
     @field:kotlin.concurrent.Volatile public final val w: kotlin.Int = 2
     @field:kotlin.concurrent.Volatile public final val x: kotlin.Int = 0
     @field:kotlin.concurrent.Volatile public final var y: kotlin.Int
