@@ -23683,6 +23683,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("genericFunAndClassNullabilityInconsistency.kt")
+      public void testGenericFunAndClassNullabilityInconsistency() {
+        runTest("compiler/testData/diagnostics/tests/j+k/genericFunAndClassNullabilityInconsistency.kt");
+      }
+
+      @Test
+      @TestMetadata("genericFunAndClassNullabilityInconsistencyDnnRepresentation.kt")
+      public void testGenericFunAndClassNullabilityInconsistencyDnnRepresentation() {
+        runTest("compiler/testData/diagnostics/tests/j+k/genericFunAndClassNullabilityInconsistencyDnnRepresentation.kt");
+      }
+
+      @Test
       @TestMetadata("GenericsInSupertypes.kt")
       public void testGenericsInSupertypes() {
         runTest("compiler/testData/diagnostics/tests/j+k/GenericsInSupertypes.kt");
