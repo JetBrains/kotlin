@@ -4877,6 +4877,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("delegationToTypeParameter.kt")
+      public void testDelegationToTypeParameter() {
+        runTest("compiler/testData/codegen/box/classDelegation/delegationToTypeParameter.kt");
+      }
+
+      @Test
       @TestMetadata("generic.kt")
       public void testGeneric() {
         runTest("compiler/testData/codegen/box/classDelegation/generic.kt");
