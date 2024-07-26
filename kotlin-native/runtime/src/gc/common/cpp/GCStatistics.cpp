@@ -127,8 +127,9 @@ struct GCInfo {
 
 GCInfo last;
 GCInfo current;
-// This lock can be got by thread in runnable state making parallel mark, so
-kotlin::SpinLock<kotlin::MutexThreadStateHandling::kIgnore> lock;
+// This lock can be obtained by a thread in a runnable state which participates in parallel mark.
+// Thread state switches are undesirable during parallel mark.
+kotlin::SpinLock lock;
 
 GCInfo* statByEpoch(uint64_t epoch) {
     if (current.epoch == epoch) return &current;

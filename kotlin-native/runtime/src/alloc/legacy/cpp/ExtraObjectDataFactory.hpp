@@ -15,7 +15,7 @@ namespace kotlin::alloc {
 
 // Registry for extra data, attached to some kotlin objects: weak refs, associated objects, ...
 class ExtraObjectDataFactory : Pinned {
-    using Mutex = SpinLock<MutexThreadStateHandling::kIgnore>;
+    using Mutex = SpinLock;
     using Queue = MultiSourceQueue<mm::ExtraObjectData, Mutex, ObjectPoolAllocator<mm::ExtraObjectData>>;
 public:
     class ThreadQueue : public Queue::Producer {

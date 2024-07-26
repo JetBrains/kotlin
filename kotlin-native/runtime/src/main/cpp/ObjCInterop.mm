@@ -198,7 +198,7 @@ static void AddMethods(Class clazz, const struct ObjCMethodDescription* methods,
   }
 }
 
-static kotlin::SpinLock<kotlin::MutexThreadStateHandling::kSwitchIfRegistered> classCreationMutex;
+static kotlin::ThreadStateAware<kotlin::SpinLock> classCreationMutex;
 static int anonymousClassNextId = 0;
 
 NO_EXTERNAL_CALLS_CHECK static Class allocateClass(const KotlinObjCClassInfo* info) {

@@ -48,7 +48,7 @@ private:
     size_t maxSize_;
 
     // TODO: Consider replacing mutex + global set with thread local sets sychronized on STW.
-    SpinLock<MutexThreadStateHandling::kIgnore> mutex_;
+    SpinLock mutex_;
     std::unordered_set<SafePointID> metSafePoints_;
 };
 

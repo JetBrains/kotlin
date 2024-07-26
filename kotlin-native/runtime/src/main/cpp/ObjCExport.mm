@@ -913,7 +913,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
   return result;
 }
 
-static kotlin::SpinLock<kotlin::MutexThreadStateHandling::kSwitchIfRegistered> typeInfoCreationMutex;
+static kotlin::ThreadStateAware<kotlin::SpinLock> typeInfoCreationMutex;
 
 static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
   const TypeInfo* result = Kotlin_ObjCExport_getAssociatedTypeInfo(clazz);
@@ -947,7 +947,7 @@ const TypeInfo* Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(Class clazz
   return createTypeInfo(clazz, superType, fieldsInfo);
 }
 
-static kotlin::SpinLock<kotlin::MutexThreadStateHandling::kSwitchIfRegistered> classCreationMutex;
+static kotlin::ThreadStateAware<kotlin::SpinLock> classCreationMutex;
 static int anonymousClassNextId = 0;
 
 static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) {

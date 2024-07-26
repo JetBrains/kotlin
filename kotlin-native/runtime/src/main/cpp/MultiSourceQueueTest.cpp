@@ -32,7 +32,7 @@ std::vector<T> Collect(MultiSourceQueue<T, Mutex>& queue) {
 
 } // namespace
 
-using IntQueue = MultiSourceQueue<int, SpinLock<MutexThreadStateHandling::kIgnore>>;
+using IntQueue = MultiSourceQueue<int, SpinLock>;
 
 TEST(MultiSourceQueueTest, Insert) {
     IntQueue queue;
@@ -320,7 +320,7 @@ TEST(MultiSourceQueueTest, CustomAllocator) {
     testing::StrictMock<test_support::SpyAllocatorCore> allocatorCore;
     auto allocator = test_support::MakeAllocator<int>(allocatorCore);
 
-    using Queue = MultiSourceQueue<int, SpinLock<MutexThreadStateHandling::kIgnore>, decltype(allocator)>;
+    using Queue = MultiSourceQueue<int, SpinLock, decltype(allocator)>;
     Queue queue(allocator);
     Queue::Producer producer1(queue);
     Queue::Producer producer2(queue);
