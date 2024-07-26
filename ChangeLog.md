@@ -1,3 +1,86 @@
+## 2.0.20-RC
+
+### Analysis. API
+
+- [`KT-69630`](https://youtrack.jetbrains.com/issue/KT-69630) KAPT User project builds with KAPT4 enabled fail with Metaspace overflow
+
+### Backend. Wasm
+
+- [`KT-69876`](https://youtrack.jetbrains.com/issue/KT-69876) K2 Compile exception: Only IrBlockBody together with kotlinx serialization
+- [`KT-69529`](https://youtrack.jetbrains.com/issue/KT-69529) compileProductionExecutableKotlinWasmJs FAILED: No such value argument slot in IrConstructorCallImpl: 1 (total=1)
+- [`KT-68088`](https://youtrack.jetbrains.com/issue/KT-68088) Wasm: "UNREACHABLE executed at Precompute.cpp:838" running gradle task wasmJsBrowserDistribution for compose multiplatform on Windows
+
+### Compiler
+
+- [`KT-69494`](https://youtrack.jetbrains.com/issue/KT-69494) StackOverflowError in CfgTraverserKt.getPreviousCfgNodes
+- [`KT-69723`](https://youtrack.jetbrains.com/issue/KT-69723) K2: code analysis taking too long
+- [`KT-56880`](https://youtrack.jetbrains.com/issue/KT-56880) K2. Conflicting overloads for main() isn't shown when language version is set to 2.0
+- [`KT-69170`](https://youtrack.jetbrains.com/issue/KT-69170) K2: "Unresolved reference" caused by generics and fun interfaces
+- [`KT-70039`](https://youtrack.jetbrains.com/issue/KT-70039) K2: inconsistent stability of vals of captured receivers
+- [`KT-68996`](https://youtrack.jetbrains.com/issue/KT-68996) K2: "Not enough information to infer type argument" caused by typealias annotation with fixed generic argument
+- [`KT-68889`](https://youtrack.jetbrains.com/issue/KT-68889) K2: type variable should not be fixed
+- [`KT-15388`](https://youtrack.jetbrains.com/issue/KT-15388) Forbid delegated property to have external getter/setter
+
+### Compose compiler
+
+- [`b/351858979`](https://issuetracker.google.com/issues/351858979) Fix stability inferencing of interfaces on incremental compilation
+- [`b/346821372`](https://issuetracker.google.com/issues/346821372) [Compose] Fix code generation for group optimization
+
+### JavaScript
+
+- [`KT-69353`](https://youtrack.jetbrains.com/issue/KT-69353) KJS / d.ts: Kotlin does not export base collection classes along with their mutable collection counterparts
+
+### Libraries
+
+- [`KT-68025`](https://youtrack.jetbrains.com/issue/KT-68025) Improve documentation for Hex
+
+### Native. Build Infrastructure
+
+- [`KT-69781`](https://youtrack.jetbrains.com/issue/KT-69781) Kotlin/Native performance tests fail to compile with bitcode
+
+### Native. C and ObjC Import
+
+- [`KT-69094`](https://youtrack.jetbrains.com/issue/KT-69094) LLVM 11 clang: cinterops fail with "_Float16 is not supported on this target"
+
+### Native. Platform Libraries
+
+- [`KT-69382`](https://youtrack.jetbrains.com/issue/KT-69382) LLVM 11 clang: symbol not found when running the linker
+
+### Native. Runtime
+
+- [`KT-68928`](https://youtrack.jetbrains.com/issue/KT-68928) EXC_BREAKPOINT: BUG IN CLIENT OF LIBPLATFORM: Trying to recursively lock an os_unfair_lock
+
+### Tools. CLI
+
+- [`KT-69792`](https://youtrack.jetbrains.com/issue/KT-69792) Add the possibility to disable fast jar fs in K2
+
+### Tools. Gradle
+
+- [`KT-69809`](https://youtrack.jetbrains.com/issue/KT-69809) Compose Gradle Plugin: AGP doesn't override configuration properties like traceMarkersEnabled
+- [`KT-68843`](https://youtrack.jetbrains.com/issue/KT-68843) Gradle: Kotlin plugin changes source set 'main' to 'null/main'
+- [`KT-69837`](https://youtrack.jetbrains.com/issue/KT-69837) Deprecation warning for file-based IC is issued when the property is set to true, altering the intended meaning of the message
+
+### Tools. Gradle. JS
+
+- [`KT-69805`](https://youtrack.jetbrains.com/issue/KT-69805) YarnSetupTask  does not work for custom downloadBaseUrl
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-69311`](https://youtrack.jetbrains.com/issue/KT-69311) runDebugExecutable task fails with "this.compilation" is null with enabled configuration cache
+
+### Tools. Gradle. Native
+
+- [`KT-69918`](https://youtrack.jetbrains.com/issue/KT-69918) java.lang.NullPointerException: Cannot invoke "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation.getTarget()" because "this.compilation" is null
+
+### Tools. Incremental Compile
+
+- [`KT-69042`](https://youtrack.jetbrains.com/issue/KT-69042) K2: changing a Java constant won't cause Kotlin usages to recompile
+
+### Tools. JPS
+
+- [`KT-69204`](https://youtrack.jetbrains.com/issue/KT-69204) Generate lookups in dumb mode for compatibility with ref index
+
+
 ## 2.0.20-Beta2
 
 ### Analysis. API
