@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
  * Generates synthetic accessor functions for private declarations that are referenced from non-private inline functions,
@@ -54,7 +53,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
 
     override fun lower(irFile: IrFile) {
         val transformer = Transformer(irFile)
-        irFile.transformChildrenVoid(transformer)
+        irFile.transformChildren(transformer, null)
 
         addAccessorsToParents(transformer.generatedAccessors)
     }
@@ -123,36 +122,31 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         parent.declarations += remainingAccessors // unexpected, but...
     }
 
-    private inner class Transformer(irFile: IrFile) : IrElementTransformerVoid() {
+    private class TransformerData(/* to be used later */ @Suppress("unused") val currentInlineFunction: IrFunction)
+
+    private inner class Transformer(irFile: IrFile) : IrElementTransformer<TransformerData?> {
         val generatedAccessors = irFile.generatedAccessors ?: GeneratedAccessors().also { irFile.generatedAccessors = it }
 
-        private var currentInlineFunction: IrFunction? = null
+        override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
+            val newData = if (declaration.isInline) {
+                if (!declaration.isConsideredAsPrivateForInlining()) {
+                    // By the time this lowering is executed, there must be no private inline functions, however, there are exceptions, for example,
+                    // suspendCoroutineUninterceptedOrReturn, which are somewhat magical.
+                    // If we encounter one, just ignore it.
+                    TransformerData(declaration)
+                } else null
+            } else {
+                data
+            }
 
-        override fun visitFunction(declaration: IrFunction): IrStatement {
-            val previousInlineFunction = currentInlineFunction
-            try {
-                currentInlineFunction = if (declaration.isInline) {
-                    declaration.takeIf {
-                        // By the time this lowering is executed, there must be no private inline functions, however, there are exceptions, for example,
-                        // suspendCoroutineUninterceptedOrReturn, which are somewhat magical.
-                        // If we encounter one, just ignore it.
-                        !declaration.isConsideredAsPrivateForInlining()
-                    }
-                } else {
-                    previousInlineFunction
-                }
-
-                return declaration.factory.stageController.restrictTo(declaration) {
-                    super.visitFunction(declaration)
-                }
-            } finally {
-                currentInlineFunction = previousInlineFunction
+            return declaration.factory.stageController.restrictTo(declaration) {
+                super.visitFunction(declaration, newData)
             }
         }
 
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-            if (currentInlineFunction == null /*|| !insideBody*/ || !expression.symbol.owner.isAbiPrivate)
-                return super.visitFunctionAccess(expression)
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: TransformerData?): IrElement {
+            if (data == null /*|| !insideBody*/ || !expression.symbol.owner.isAbiPrivate)
+                return super.visitFunctionAccess(expression, data)
 
             // TODO(KT-69527): Set the proper visibility for the accessor (the max visibility of all the inline functions that reference it)
             val accessor = accessorGenerator.getSyntheticFunctionAccessor(expression, null)
@@ -160,7 +154,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
 
             generatedAccessors += GeneratedAccessor(accessor, expression.symbol)
 
-            return super.visitFunctionAccess(accessorExpression)
+            return super.visitFunctionAccess(accessorExpression, data)
         }
     }
 
