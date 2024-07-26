@@ -8928,6 +8928,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("InlineReturn.kt")
+        public void testInlineReturn() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/InlineReturn.kt");
+        }
+
+        @Test
         @TestMetadata("kt3444_ReturnFromLocalFunctions.kt")
         public void testKt3444_ReturnFromLocalFunctions() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/kt3444_ReturnFromLocalFunctions.kt");
