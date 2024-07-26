@@ -36,7 +36,7 @@ class ConeTypeVariableType(
 class ConeTypeVariableTypeConstructor(
     val debugName: String,
     val originalTypeParameter: TypeParameterMarker?
-) : TypeVariableTypeConstructorMarker {
+) : TypeVariableTypeConstructorMarker, ConeTypeConstructorMarker {
     val name: Name get() = Name.identifier(debugName)
 
     var isContainedInInvariantOrContravariantPositions: Boolean = false
@@ -55,7 +55,7 @@ data class ConeStubTypeConstructor(
     val variable: ConeTypeVariable,
     val isTypeVariableInSubtyping: Boolean,
     val isForFixation: Boolean = false,
-) : TypeConstructorMarker {
+) : ConeTypeConstructorMarker {
     override fun toString(): String {
         return "Stub(${variable.typeConstructor.debugName})"
     }

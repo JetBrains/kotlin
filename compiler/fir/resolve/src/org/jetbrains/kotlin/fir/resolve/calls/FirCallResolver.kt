@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressions
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.doesResolutionResultOverrideOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase

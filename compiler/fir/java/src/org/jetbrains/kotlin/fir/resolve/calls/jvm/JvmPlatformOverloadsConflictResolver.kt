@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 
 class JvmPlatformOverloadsConflictResolver(private val session: FirSession) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(

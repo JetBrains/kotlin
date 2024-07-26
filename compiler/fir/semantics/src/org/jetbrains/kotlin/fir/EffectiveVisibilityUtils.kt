@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirLookupTagEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithCallableCopyReturnTypeUp
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.impl.dynamicMembersStorage
 import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOperatorType
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*

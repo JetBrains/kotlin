@@ -1,13 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.symbols
+package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 /**
  * The main purpose of the lookup tag is to provide a reference to concrete classifier that
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
  *
  * See `/docs/fir/k2_kmp.md`
  */
-abstract class ConeClassifierLookupTag : TypeConstructorMarker {
+abstract class ConeClassifierLookupTag : ConeTypeConstructorMarker {
     abstract val name: Name
 
     override fun toString(): String {
@@ -28,7 +27,7 @@ abstract class ConeClassifierLookupTag : TypeConstructorMarker {
 }
 
 /**
- * @see ConeClassifierLookupTag
+ * @see org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
  */
 abstract class ConeClassLikeLookupTag : ConeClassifierLookupTag() {
     abstract val classId: ClassId
@@ -36,4 +35,3 @@ abstract class ConeClassLikeLookupTag : ConeClassifierLookupTag() {
     override val name: Name
         get() = classId.shortClassName
 }
-

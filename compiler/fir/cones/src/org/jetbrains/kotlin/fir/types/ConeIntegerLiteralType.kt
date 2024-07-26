@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-
 sealed class ConeIntegerLiteralType(
     val isUnsigned: Boolean,
     final override val nullability: ConeNullability
-) : ConeSimpleKotlinType(), TypeConstructorMarker {
+) : ConeSimpleKotlinType(), ConeTypeConstructorMarker {
     abstract val possibleTypes: Collection<ConeClassLikeType>
     abstract val supertypes: List<ConeClassLikeType>
 

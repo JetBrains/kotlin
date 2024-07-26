@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -70,6 +69,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         isExtensionFunction: Boolean,
         attributes: List<AnnotationMarker>?
     ): SimpleTypeMarker {
+        require(constructor is ConeTypeConstructorMarker)
         val attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, MutableList<ConeAttribute<*>>>(mutableListOf())
         val coneAttributes: ConeAttributes = if (isExtensionFunction) {
             require(constructor is ConeClassLikeLookupTag)
@@ -106,7 +106,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                     constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
                 )
             }
-            else -> error("!")
+            is ConeCapturedTypeConstructor,
+            is ConeIntegerLiteralType,
+            is ConeStubTypeConstructor,
+            is ConeTypeVariableTypeConstructor,
+                -> error("Unsupported type constructor: ${constructor::class}")
+            is ConeClassifierLookupTag
+                -> error("Unexpected /* sealed */ ConeClassifierLookupTag inheritor: ${constructor::class}")
         }
     }
 
@@ -418,7 +424,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return withAttributes(attributes.remove(CompilerConeAttributes.Exact))
     }
 
-    override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
+    override fun TypeConstructorMarker.toErrorType(): ConeErrorType {
         if (this is ConeClassLikeLookupTag) return createErrorType("Not found classifier: $classId", delegatedType = null)
         return createErrorType("Unknown reason", delegatedType = null)
     }

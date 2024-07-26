@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
+import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -111,6 +110,7 @@ open class ConeTypeRenderer(
     }
 
     open fun renderConstructor(constructor: TypeConstructorMarker) {
+        require(constructor is ConeTypeConstructorMarker)
         when (constructor) {
             is ConeTypeVariableTypeConstructor -> {
                 builder.append("TypeVariable(")

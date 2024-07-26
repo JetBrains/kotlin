@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.*
@@ -138,11 +136,13 @@ fun ConeKotlinType.unwrapToSimpleTypeUsingLowerBound(): ConeSimpleKotlinType {
     return lowerBoundIfFlexible().unwrapDefinitelyNotNull()
 }
 
+sealed interface ConeTypeConstructorMarker : TypeConstructorMarker
+
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
     var supertypes: List<ConeKotlinType>? = null,
     val typeParameterMarker: TypeParameterMarker? = null
-) : CapturedTypeConstructorMarker
+) : CapturedTypeConstructorMarker, ConeTypeConstructorMarker
 
 data class ConeCapturedType(
     val captureStatus: CaptureStatus,
@@ -253,7 +253,7 @@ class ConeRawType private constructor(
 class ConeIntersectionType(
     val intersectedTypes: Collection<ConeKotlinType>,
     val upperBoundForApproximation: ConeKotlinType? = null,
-) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker {
+) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker, ConeTypeConstructorMarker {
     // TODO: consider inheriting directly from ConeKotlinType (KT-70049)
 
     override val nullability: ConeNullability

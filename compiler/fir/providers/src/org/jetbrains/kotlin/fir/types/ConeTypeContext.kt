@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -227,22 +225,22 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.parametersCount(): Int {
+        require(this is ConeTypeConstructorMarker)
         return when (this) {
-            is ConeTypeParameterLookupTag,
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionType -> 0
-            is ConeClassLikeLookupTag -> {
+            is ConeIntersectionType
+                -> 0
+            is ConeClassifierLookupTag -> {
                 when (val symbol = toSymbol(session)) {
                     is FirAnonymousObjectSymbol -> symbol.fir.typeParameters.size
                     is FirRegularClassSymbol -> symbol.fir.typeParameters.size
                     is FirTypeAliasSymbol -> symbol.fir.typeParameters.size
-                    else -> 0
+                    is FirTypeParameterSymbol, null -> 0
                 }
             }
             is ConeIntegerLiteralType -> 0
             is ConeStubTypeConstructor -> 0
-            else -> unknownConstructorError()
         }
     }
 
@@ -269,21 +267,21 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     fun TypeConstructorMarker.toClassLikeSymbol(): FirClassLikeSymbol<*>? = (this as? ConeClassLikeLookupTag)?.toSymbol(session)
 
     override fun TypeConstructorMarker.supertypes(): Collection<ConeKotlinType> {
+        require(this is ConeTypeConstructorMarker)
         return when (this) {
             is ConeStubTypeConstructor -> listOf(session.builtinTypes.nullableAnyType.coneType)
             is ConeTypeVariableTypeConstructor -> emptyList()
-            is ConeTypeParameterLookupTag -> bounds().map { it.coneType }
-            is ConeClassLikeLookupTag -> {
-                when (val symbol = toClassLikeSymbol().also { it?.lazyResolveToPhase(FirResolvePhase.TYPES) }) {
+            is ConeClassifierLookupTag -> {
+                when (val symbol = toSymbol(session).also { it?.lazyResolveToPhase(FirResolvePhase.TYPES) }) {
+                    is FirTypeParameterSymbol -> symbol.resolvedBounds.map { it.coneType }
                     is FirClassSymbol<*> -> symbol.fir.superConeTypes
                     is FirTypeAliasSymbol -> listOfNotNull(symbol.fir.expandedConeType)
-                    else -> listOf(session.builtinTypes.anyType.coneType)
+                    null -> listOf(session.builtinTypes.anyType.coneType)
                 }
             }
             is ConeCapturedTypeConstructor -> supertypes.orEmpty()
             is ConeIntersectionType -> intersectedTypes
             is ConeIntegerLiteralType -> supertypes
-            else -> unknownConstructorError()
         }
     }
 
@@ -339,17 +337,16 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isDenotable(): Boolean {
+        require(this is ConeTypeConstructorMarker)
         return when (this) {
-            is ConeClassLikeLookupTag,
-            is ConeTypeParameterLookupTag -> true
+            is ConeClassifierLookupTag -> true
 
             is ConeStubTypeConstructor,
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
             is ConeIntegerLiteralType,
-            is ConeIntersectionType -> false
-
-            else -> unknownConstructorError()
+            is ConeIntersectionType,
+                -> false
         }
     }
 
@@ -398,16 +395,19 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun SimpleTypeMarker.isSingleClassifierType(): Boolean {
         if (isError()) return false
-        if (this is ConeCapturedType) return true
-        if (this is ConeTypeVariableType) return false
-        if (this is ConeIntersectionType) return false
-        if (this is ConeIntegerLiteralType) return true
-        if (this is ConeStubType) return true
-        if (this is ConeDefinitelyNotNullType) return true
-        require(this is ConeLookupTagBasedType)
-        val typeConstructor = this.typeConstructor()
-        return typeConstructor is ConeClassLikeLookupTag ||
-                typeConstructor is ConeTypeParameterLookupTag
+        require(this is ConeRigidType)
+        return when (this) {
+            is ConeCapturedType -> true
+            is ConeTypeVariableType -> false
+            is ConeIntersectionType -> false
+            is ConeIntegerLiteralType -> true
+            is ConeStubType -> true
+            is ConeDefinitelyNotNullType -> true
+            is ConeLookupTagBasedType -> {
+                val typeConstructor = this.typeConstructor()
+                return typeConstructor is ConeClassifierLookupTag
+            }
+        }
     }
 
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean {
@@ -589,13 +589,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isError(): Boolean {
         return false
-    }
-
-    private fun TypeConstructorMarker.unknownConstructorError(): Nothing {
-        errorWithAttachment("Unknown type constructor: ${this::class.java}") {
-            withEntry("constructor", this@unknownConstructorError) { it.toString() }
-            withFirLookupTagEntry("constructorAsLookupTag", this@unknownConstructorError as? ConeClassifierLookupTag)
-        }
     }
 
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy {
