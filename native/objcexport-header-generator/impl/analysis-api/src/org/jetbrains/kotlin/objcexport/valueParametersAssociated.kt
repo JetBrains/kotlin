@@ -141,11 +141,8 @@ internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol?): KaType? {
         symbol.dispatchReceiverType
     } else if (symbol.isExtension) {
         val receiverType = symbol.receiverParameter?.returnType
-        if (isMappedObjCType(receiverType)) receiverType
-        else if ((symbol.containingDeclaration as? KaNamedClassSymbol)?.isInner == true) receiverType
-        else if (receiverType != null && isObjCNothing(receiverType)) return receiverType
-        else if (receiverType != null && (receiverType.symbol as? KaNamedClassSymbol)?.classKind == KaClassKind.INTERFACE) return receiverType
-        else null
+        if (isObjCNothing(receiverType)) receiverType
+        else if (getClassIfCategory(symbol) == null) receiverType else null
     } else if (symbol is KaPropertyGetterSymbol || symbol is KaPropertySetterSymbol) {
         val property = symbol.containingDeclaration as KaPropertySymbol
         val isExtension = property.isExtension
