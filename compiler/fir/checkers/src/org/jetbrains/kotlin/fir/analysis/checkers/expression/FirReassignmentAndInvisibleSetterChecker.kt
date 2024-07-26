@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 
 object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -48,7 +50,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
     ) {
         fun shouldInvisibleSetterBeReported(symbol: FirPropertySymbol): Boolean {
             @OptIn(SymbolInternals::class)
-            val setterFir = symbol.setterSymbol?.fir ?: symbol.originalForSubstitutionOverride?.setterSymbol?.fir
+            val setterFir = symbol.unwrapFakeOverrides().setterSymbol?.fir
             if (setterFir != null) {
                 return !context.session.visibilityChecker.isVisible(
                     setterFir,

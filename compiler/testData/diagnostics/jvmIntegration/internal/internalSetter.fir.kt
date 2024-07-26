@@ -35,7 +35,7 @@ class D<T> : GenericBase<T>(), Other<T>
 // MODULE: main(lib)
 fun test() {
     A().<!INVISIBLE_SETTER!>v<!> = 4
-    B<Int>().v = 4
+    B<Int>().<!INVISIBLE_SETTER!>v<!> = 4
     C().<!INVISIBLE_SETTER!>v<!> = 4
-    D<Int>().v = 4
+    D<Int>().<!INVISIBLE_SETTER!>v<!> = 4
 }
