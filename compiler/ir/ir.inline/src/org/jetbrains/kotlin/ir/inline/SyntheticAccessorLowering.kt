@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
@@ -134,7 +135,14 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
             }
         }
 
-        parent.declarations += remainingAccessors // unexpected, but...
+        if (remainingAccessors.isNotEmpty()) {
+            irError(
+                "There are ${remainingAccessors.size} synthetic accessors in file ${remainingAccessors.first().file.fileEntry.name}" +
+                        " that have been generated but it's not possible to compute the proper order for them"
+            ) {
+                remainingAccessors.forEachIndexed { index, accessor -> withIrEntry("accessor$index", accessor) }
+            }
+        }
     }
 
     private class TransformerData(/* to be used later */ @Suppress("unused") val currentInlineFunction: IrFunction)
