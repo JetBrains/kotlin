@@ -8,6 +8,6 @@ annotation class A(
     <!OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:JvmOverloads<!> val v: Int,
     <!THROWS_IN_ANNOTATION_WARNING!>@get:Throws(Exception::class)<!> val w: Int,
     @JvmField val r: Int,
-    @Volatile val s: Int,
+    <!VOLATILE_ON_VALUE!>@Volatile<!> val s: Int,
     @Transient val t: Int,
 )
