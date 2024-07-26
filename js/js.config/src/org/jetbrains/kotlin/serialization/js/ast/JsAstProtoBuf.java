@@ -8761,6 +8761,15 @@ public final class JsAstProtoBuf {
      * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Function.Modifier modifier = 5;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Function.Modifier getModifier(int index);
+
+    /**
+     * <code>optional bool is_es6_arrow = 6 [default = false];</code>
+     */
+    boolean hasIsEs6Arrow();
+    /**
+     * <code>optional bool is_es6_arrow = 6 [default = false];</code>
+     */
+    boolean getIsEs6Arrow();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Function}
@@ -8876,6 +8885,11 @@ public final class JsAstProtoBuf {
                 }
               }
               input.popLimit(oldLimit);
+              break;
+            }
+            case 48: {
+              bitField0_ |= 0x00000008;
+              isEs6Arrow_ = input.readBool();
               break;
             }
           }
@@ -9093,12 +9107,28 @@ public final class JsAstProtoBuf {
       return modifier_.get(index);
     }
 
+    public static final int IS_ES6_ARROW_FIELD_NUMBER = 6;
+    private boolean isEs6Arrow_;
+    /**
+     * <code>optional bool is_es6_arrow = 6 [default = false];</code>
+     */
+    public boolean hasIsEs6Arrow() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional bool is_es6_arrow = 6 [default = false];</code>
+     */
+    public boolean getIsEs6Arrow() {
+      return isEs6Arrow_;
+    }
+
     private void initFields() {
       parameter_ = java.util.Collections.emptyList();
       nameId_ = 0;
       body_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.getDefaultInstance();
       local_ = false;
       modifier_ = java.util.Collections.emptyList();
+      isEs6Arrow_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -9142,6 +9172,9 @@ public final class JsAstProtoBuf {
       for (int i = 0; i < modifier_.size(); i++) {
         output.writeEnum(5, modifier_.get(i).getNumber());
       }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeBool(6, isEs6Arrow_);
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -9175,6 +9208,10 @@ public final class JsAstProtoBuf {
         }
         size += dataSize;
         size += 1 * modifier_.size();
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBoolSize(6, isEs6Arrow_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -9280,6 +9317,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000008);
         modifier_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
+        isEs6Arrow_ = false;
+        bitField0_ = (bitField0_ & ~0x00000020);
         return this;
       }
 
@@ -9325,6 +9364,10 @@ public final class JsAstProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000010);
         }
         result.modifier_ = modifier_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.isEs6Arrow_ = isEs6Arrow_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -9359,6 +9402,9 @@ public final class JsAstProtoBuf {
             modifier_.addAll(other.modifier_);
           }
           
+        }
+        if (other.hasIsEs6Arrow()) {
+          setIsEs6Arrow(other.getIsEs6Arrow());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -9719,6 +9765,38 @@ public final class JsAstProtoBuf {
       public Builder clearModifier() {
         modifier_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000010);
+        
+        return this;
+      }
+
+      private boolean isEs6Arrow_ ;
+      /**
+       * <code>optional bool is_es6_arrow = 6 [default = false];</code>
+       */
+      public boolean hasIsEs6Arrow() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional bool is_es6_arrow = 6 [default = false];</code>
+       */
+      public boolean getIsEs6Arrow() {
+        return isEs6Arrow_;
+      }
+      /**
+       * <code>optional bool is_es6_arrow = 6 [default = false];</code>
+       */
+      public Builder setIsEs6Arrow(boolean value) {
+        bitField0_ |= 0x00000020;
+        isEs6Arrow_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional bool is_es6_arrow = 6 [default = false];</code>
+       */
+      public Builder clearIsEs6Arrow() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        isEs6Arrow_ = false;
         
         return this;
       }

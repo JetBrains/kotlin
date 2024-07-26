@@ -6,14 +6,12 @@ package org.jetbrains.kotlin.js.backend;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import kotlin.text.StringsKt;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.backend.ast.JsDoubleLiteral;
-import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar;
 import org.jetbrains.kotlin.js.common.IdentifierPolicyKt;
 import org.jetbrains.kotlin.js.util.TextOutput;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -681,12 +679,27 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     public void visitFunction(@NotNull JsFunction x) {
         printCommentsBeforeNode(x);
 
-        p.print(CHARS_FUNCTION);
-        space();
-
-        printFunction(x);
+        if (x.isEs6Arrow()) {
+            printEs6Arrow(x);
+        } else {
+            p.print(CHARS_FUNCTION);
+            space();
+            printFunction(x);
+        }
 
         printCommentsAfterNode(x);
+    }
+
+    private void printFunctionParameterList(@NotNull List<JsParameter> parameters) {
+        leftParen();
+        boolean notFirst = false;
+        sourceLocationConsumer.pushSourceInfo(null);
+        for (JsParameter param : parameters) {
+            notFirst = sepCommaOptSpace(notFirst);
+            accept(param);
+        }
+        sourceLocationConsumer.popSourceInfo();
+        rightParen();
     }
 
     // [static?] [get|set?] name(<params>) { <body> }
@@ -713,15 +726,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         pushSourceInfo(x.getSource());
-        leftParen();
-        boolean notFirst = false;
-        sourceLocationConsumer.pushSourceInfo(null);
-        for (JsParameter param : x.getParameters()) {
-            notFirst = sepCommaOptSpace(notFirst);
-            accept(param);
-        }
-        sourceLocationConsumer.popSourceInfo();
-        rightParen();
+        printFunctionParameterList(x.getParameters());
         space();
 
         lineBreakAfterBlock = false;
@@ -732,6 +737,32 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         popSourceInfo();
 
+        needSemi = true;
+    }
+
+    // (<params>) => { <body> }
+    private void printEs6Arrow(@NotNull JsFunction x) {
+        pushSourceInfo(x.getSource());
+        printFunctionParameterList(x.getParameters());
+        spaceOpt();
+        arrow();
+        spaceOpt();
+        JsBlock body = x.getBody();
+        if (body.getStatements().size() == 1) {
+            JsStatement singleStatement = body.getStatements().get(0);
+            if (singleStatement instanceof JsReturn) {
+                JsReturn jsReturn = (JsReturn) singleStatement;
+                jsReturn.getExpression().accept(this);
+                return;
+            }
+        }
+        lineBreakAfterBlock = false;
+
+        sourceLocationConsumer.pushSourceInfo(null);
+        printJsBlock(body, true, x.getBody().getSource());
+        sourceLocationConsumer.popSourceInfo();
+
+        popSourceInfo();
         needSemi = true;
     }
 
@@ -1585,6 +1616,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     private void assignment() {
         p.print('=');
+    }
+
+    private void arrow() {
+        p.print("=>");
     }
 
     private void blockClose() {

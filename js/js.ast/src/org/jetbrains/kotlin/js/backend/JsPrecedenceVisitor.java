@@ -72,7 +72,11 @@ class JsPrecedenceVisitor extends JsVisitor {
 
     @Override
     public void visitFunction(@NotNull JsFunction x) {
-        answer = 17; // primary
+        if (x.isEs6Arrow()) {
+            answer = 2;
+        } else {
+            answer = 17; // primary
+        }
     }
 
     @Override

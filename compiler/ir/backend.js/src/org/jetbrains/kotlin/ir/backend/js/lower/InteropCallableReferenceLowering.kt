@@ -93,7 +93,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 JsStatementOrigins.CALLABLE_REFERENCE_CREATE
             )
 
-            // TODO: If we generate arrow functions instead of anonymous functions, there's no need for jsBind
+            // TODO(KT-70283): If we generate arrow functions instead of anonymous functions, there's no need for jsBind
             // TODO: Do we need to set proper offsets?
             if (capturedDispatchReceiver != null)
                 return IrCallImpl(

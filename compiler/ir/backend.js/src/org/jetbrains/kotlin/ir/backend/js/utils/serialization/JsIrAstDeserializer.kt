@@ -410,6 +410,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             readRepeated { modifiers += jsFunctionModifiersValues[readInt()] }
             ifTrue { name = nameTable[readInt()] }
             isLocal = readBoolean()
+            isEs6Arrow = readBoolean()
         }
     }
 

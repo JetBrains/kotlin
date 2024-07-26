@@ -117,6 +117,7 @@ message Function {
     required Statement body = 3;
     optional bool local = 4 [default = false];
     repeated Modifier modifier = 5;
+    optional bool is_es6_arrow = 6 [default = false];
 
     enum Modifier {
         STATIC = 1;
