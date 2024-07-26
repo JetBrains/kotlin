@@ -72,15 +72,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                     },
                     syntheticFunctionInterfaceProvider,
                     runUnless(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-                        FirBuiltinsSymbolProvider(
-                            session,
-                            FirClasspathBuiltinSymbolProvider(
-                                session,
-                                builtinsModuleData,
-                                kotlinScopeProvider
-                            ) { projectEnvironment.getKotlinClassFinder(librariesScope).findBuiltInsData(it) },
-                            FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
-                        )
+                        FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
                     },
                     FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
