@@ -7,4 +7,7 @@ annotation class A(
     <!SYNCHRONIZED_IN_ANNOTATION_ERROR!>@get:Synchronized<!> val z: Int,
     <!OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:JvmOverloads<!> val v: Int,
     <!THROWS_IN_ANNOTATION_ERROR!>@get:Throws(Exception::class)<!> val w: Int,
+    @JvmField val r: Int,
+    @Volatile val s: Int,
+    @Transient val t: Int,
 )
