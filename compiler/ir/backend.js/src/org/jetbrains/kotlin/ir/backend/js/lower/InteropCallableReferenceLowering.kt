@@ -314,6 +314,27 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             }
         }
 
+        private fun IrSimpleFunction.hasEs6UnsafeSuperCalls(): Boolean {
+            if (!context.es6mode) return false
+            var result = false
+            body?.acceptChildrenVoid(
+                object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitCall(expression: IrCall) {
+                        if (expression.superQualifierSymbol != null) {
+                            result = true
+                        } else {
+                            expression.acceptChildrenVoid(this)
+                        }
+                    }
+                }
+            )
+            return result
+        }
+
         private fun replaceWithFactory(lambdaClass: IrClass): List<IrDeclaration> {
             val lambdaInfo = LambdaInfo(lambdaClass)
 
@@ -331,6 +352,9 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     // In-line anonymous functions that capture variables declared in loops are dangerous.
                     // See https://stackoverflow.com/questions/750486/javascript-closure-inside-loops-simple-practical-example
                     && !closureUsageAnalyser.lambdaCapturesVariablesDeclaredInLoops(lambdaClass)
+                    // If the lambda body contains `super`-qualified calls, don't inline, since anonymous functions cannot contain
+                    // `super` calls in ES6; only direct class members.
+                    && !lambdaInfo.invokeFun.hasEs6UnsafeSuperCalls()
                 ) {
                     // If possible, generate anonymous functions in-line instead of factories of anonymous functions.
                     buildFunctionExpression(ctorToFunctionExpressionMap, lambdaInfo)
