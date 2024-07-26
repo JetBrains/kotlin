@@ -411,8 +411,10 @@ object NewCommonSuperTypeCalculator {
         if (parameter.getVariance() == TypeVariance.IN)
             return false // arguments for contravariant parameters are intersected, recursion should not be possible
 
-        val originalTypesSet = originalTypesForCst.mapTo(mutableSetOf()) { it.lowerBoundIfFlexible().originalIfDefinitelyNotNullable() }
-        val typeArgumentsTypeSet = typeArgumentsForSuperConstructorParameter.mapTo(mutableSetOf()) { it.getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable() }
+        val originalTypesSet = originalTypesForCst.mapTo(mutableSetOf()) { it.originalIfDefinitelyNotNullable() }
+        val typeArgumentsTypeSet = typeArgumentsForSuperConstructorParameter.mapTo(mutableSetOf()) {
+            it.getType().lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
+        }
 
         if (originalTypesSet.size != typeArgumentsTypeSet.size)
             return false
@@ -449,10 +451,10 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun TypeSystemCommonSuperTypesContext.isCapturedStarProjection(type: SimpleTypeMarker): Boolean =
-        type.originalIfDefinitelyNotNullable().asCapturedType()?.typeConstructor()?.projection()?.isStarProjection() == true
+        type.asCapturedType()?.typeConstructor()?.projection()?.isStarProjection() == true
 
     private fun TypeSystemCommonSuperTypesContext.supertypesIfCapturedStarProjection(type: SimpleTypeMarker): Collection<KotlinTypeMarker>? {
-        val constructor = type.originalIfDefinitelyNotNullable().asCapturedType()?.typeConstructor() ?: return null
+        val constructor = type.asCapturedType()?.typeConstructor() ?: return null
         return if (constructor.projection().isStarProjection())
             constructor.supertypes()
         else null
