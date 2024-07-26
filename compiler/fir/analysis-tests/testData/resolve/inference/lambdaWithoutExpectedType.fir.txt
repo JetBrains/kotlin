@@ -47,13 +47,13 @@ FILE: lambdaWithoutExpectedType.kt
     public abstract interface XdIssueFolder : R|kotlin/Any| {
     }
     public final fun test(): R|kotlin/Unit| {
-        lval array: R|kotlin/Array<kotlin/Any>| = R|kotlin/arrayOf|<R|kotlin/Any|>(vararg(String(Project), arrayOf@fun <anonymous>(): R|XdProject?| <inline=Unknown>  {
+        lval array: R|kotlin/Array<kotlin/Any>| = R|kotlin/arrayOf|<R|kotlin/Any|>(vararg(String(Project), arrayOf@fun <anonymous>(): R|XdProject?| <inline=NoInline>  {
             ^ Q|XdProject|.R|/filter|<R|XdProject|>(<L> = filter@fun R|FilteringContext|.<anonymous>(it: R|XdProject|): R|XdSearchingNode| <inline=NoInline>  {
                 ^ (this@R|special/anonymous|, R|<local>/it|.R|/XdProject.name|).R|/FilteringContext.eq|<R|kotlin/String|>(String(foo))
             }
             ).R|/firstOrNull|<R|XdProject|>()
         }
-        , arrayOf@fun <anonymous>(<unused var>: R|XdIssue|, <unused var>: R|XdIssueFolder|): R|kotlin/Unit| <inline=Unknown>  {
+        , arrayOf@fun <anonymous>(<unused var>: R|XdIssue|, <unused var>: R|XdIssueFolder|): R|kotlin/Unit| <inline=NoInline>  {
             ^@arrayOf Unit
         }
         ))

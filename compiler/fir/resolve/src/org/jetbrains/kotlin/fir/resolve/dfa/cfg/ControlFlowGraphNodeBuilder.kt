@@ -215,6 +215,9 @@ fun ControlFlowGraphBuilder.createSplitPostponedLambdasNode(
 fun ControlFlowGraphBuilder.createMergePostponedLambdaExitsNode(fir: FirElement): MergePostponedLambdaExitsNode =
     MergePostponedLambdaExitsNode(currentGraph, fir, levelCounter)
 
+fun ControlFlowGraphBuilder.createAnonymousFunctionCaptureNode(fir: FirAnonymousFunctionExpression): AnonymousFunctionCaptureNode =
+    AnonymousFunctionCaptureNode(currentGraph, fir, levelCounter)
+
 fun ControlFlowGraphBuilder.createAnonymousFunctionExpressionNode(fir: FirAnonymousFunctionExpression): AnonymousFunctionExpressionNode =
     AnonymousFunctionExpressionNode(currentGraph, fir, levelCounter)
 

@@ -54,11 +54,15 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitAnonymousFunctionCaptureNode(node: AnonymousFunctionCaptureNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     open fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode, data: D): R {
         return visitNode(node, data)
     }
 
-     // ----------------------------------- Files ------------------------------------------
+    // ----------------------------------- Files ------------------------------------------
 
     open fun visitFileEnterNode(node: FileEnterNode, data: D): R {
         return visitNode(node, data)

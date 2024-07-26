@@ -268,6 +268,13 @@ class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: F
     }
 }
 
+class AnonymousFunctionCaptureNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int) :
+    CFGNode<FirAnonymousFunctionExpression>(owner, level) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitAnonymousFunctionCaptureNode(this, data)
+    }
+}
+
 class AnonymousFunctionExpressionNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunctionExpression, level: Int) : CFGNodeWithSubgraphs<FirAnonymousFunctionExpression>(owner, level) {
     override val subGraphs: List<ControlFlowGraph>
         get() = listOfNotNull(fir.anonymousFunction.controlFlowGraphReference?.controlFlowGraph)

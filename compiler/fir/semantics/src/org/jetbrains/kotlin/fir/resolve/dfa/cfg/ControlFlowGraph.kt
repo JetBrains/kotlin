@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
     @set:CfgInternals
@@ -108,6 +109,10 @@ object UncaughtExceptionPath : EdgeLabel {
 
 object PostponedPath : EdgeLabel {
     override val label: String get() = "Postponed"
+}
+
+data object CapturedByValue : EdgeLabel {
+    override val label: String get() = "CapturedByValue"
 }
 
 enum class EdgeKind(

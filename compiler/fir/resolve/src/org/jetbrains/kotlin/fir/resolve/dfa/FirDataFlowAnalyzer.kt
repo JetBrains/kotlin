@@ -228,7 +228,9 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Anonymous function -----------------------------------
 
     fun enterAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
-        graphBuilder.enterAnonymousFunctionExpression(anonymousFunctionExpression)?.mergeIncomingFlow()
+        val (expressionNode, captureNode) = graphBuilder.enterAnonymousFunctionExpression(anonymousFunctionExpression)
+        captureNode?.mergeIncomingFlow()
+        expressionNode?.mergeIncomingFlow()
     }
 
     // ----------------------------------- Files ------------------------------------------
