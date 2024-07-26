@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -147,3 +148,6 @@ fun IrFunction.getAdapteeFromAdaptedForReferenceFunction() : IrFunction? {
 }
 
 fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == true
+
+fun syntheticBodyIsNotSupported(declaration: IrDeclaration): Nothing =
+    compilationException("${IrSyntheticBody::class.java.simpleName} is not supported here", declaration)

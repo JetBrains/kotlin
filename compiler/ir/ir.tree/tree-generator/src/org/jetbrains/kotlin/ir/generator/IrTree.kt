@@ -611,7 +611,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +listField("statements", statement, mutability = MutableList)
     }
-    val body: Element by element(Expression) {
+    val body: Element by sealedElement(Expression) {
         needTransformMethod()
         visitorParameterName = "body"
         transformByChildren = true

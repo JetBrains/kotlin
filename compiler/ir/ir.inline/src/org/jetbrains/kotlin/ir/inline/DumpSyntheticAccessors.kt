@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
@@ -93,16 +94,19 @@ class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass
         }
 
     private inline fun <reified E : IrExpression> IrFunction.getSingleExpression(): E {
-        val body = body ?: error("${id()} has no body")
+        val body = body ?: compilationException("${id()} has no body", this)
         val expression = when (body) {
             is IrExpressionBody -> body.expression
             is IrBlockBody -> body.statements.singleOrNull() as? IrExpression
-                ?: error("${id()} is expected to have exactly the single expression in block body\n${body.render()}")
-            else -> error("${id()} has unexpected type of body\n${body.render()}")
+                ?: compilationException("${id()} is expected to have exactly the single expression in block body", this)
+            is IrSyntheticBody -> syntheticBodyIsNotSupported(this)
         }
 
         if (expression !is E)
-            error("${id()} is expected to have expression of type ${E::class.simpleName} but has ${expression::class.simpleName}")
+            compilationException(
+                "${id()} is expected to have expression of type ${E::class.simpleName} but has ${expression::class.simpleName}",
+                this,
+            )
 
         return expression
     }

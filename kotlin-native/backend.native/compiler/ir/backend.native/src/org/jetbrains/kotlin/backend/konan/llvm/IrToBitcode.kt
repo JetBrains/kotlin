@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_DEFAULT_ARGUMENTS
@@ -864,9 +865,8 @@ internal class CodeGeneratorVisitor(
                             }
                             when (body) {
                                 is IrBlockBody -> body.statements.forEach { generateStatement(it) }
-                                is IrExpressionBody -> error("IrExpressionBody should've been lowered")
-                                is IrSyntheticBody -> throw AssertionError("Synthetic body ${body.kind} has not been lowered")
-                                else -> TODO(ir2string(body))
+                                is IrExpressionBody -> compilationException("IrExpressionBody should've been lowered", declaration)
+                                is IrSyntheticBody -> compilationException("Synthetic body ${body.kind} has not been lowered", declaration)
                             }
                         }
                     }
