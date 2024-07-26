@@ -7,10 +7,17 @@ package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.formver.conversion.AccessPolicy
-import org.jetbrains.kotlin.formver.embeddings.expression.*
-import org.jetbrains.kotlin.formver.names.*
+import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.FieldAccess
+import org.jetbrains.kotlin.formver.embeddings.expression.GeCmp
+import org.jetbrains.kotlin.formver.embeddings.expression.IntLit
+import org.jetbrains.kotlin.formver.names.NameMatcher
+import org.jetbrains.kotlin.formver.names.ScopedKotlinName
+import org.jetbrains.kotlin.formver.names.SpecialName
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.*
+import org.jetbrains.kotlin.formver.viper.ast.Field
+import org.jetbrains.kotlin.formver.viper.ast.PermExp
+import org.jetbrains.kotlin.formver.viper.ast.Type
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 /**
@@ -67,7 +74,7 @@ class UserFieldEmbedding(
 
 object ListSizeFieldEmbedding : FieldEmbedding {
     override val name = SpecialName("size")
-    override val type = IntTypeEmbedding
+    override val type = buildType { int() }
     override val viperType = Type.Ref
     override val accessPolicy = AccessPolicy.ALWAYS_WRITEABLE
     override val includeInShortDump: Boolean = true

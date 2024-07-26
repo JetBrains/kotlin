@@ -78,8 +78,6 @@ data object AnyTypeEmbedding : TypeEmbedding {
     override val name = TypeName("Any")
 }
 
-data object NullableAnyTypeEmbedding : TypeEmbedding by NullableTypeEmbedding(AnyTypeEmbedding)
-
 data object IntTypeEmbedding : TypeEmbedding {
     override val runtimeType = RuntimeTypeDomain.intType()
     override val name = TypeName("Int")
@@ -89,7 +87,6 @@ data object BooleanTypeEmbedding : TypeEmbedding {
     override val runtimeType = RuntimeTypeDomain.boolType()
     override val name = TypeName("Boolean")
 }
-
 
 data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding {
     override val runtimeType = RuntimeTypeDomain.nullable(elementType.runtimeType)

@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.embeddings.NullableAnyTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.UnitTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.expression.*
+import org.jetbrains.kotlin.formver.embeddings.buildType
+import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.FirVariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.PlaceholderVariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.nullableAny
 import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.names.SetterValueName
 import org.jetbrains.kotlin.formver.names.ThisReceiverName
@@ -47,7 +50,7 @@ abstract class PropertyAccessorFunctionSignature(
     override fun getPreconditions(returnVariable: VariableEmbedding) = emptyList<ExpEmbedding>()
     override fun getPostconditions(returnVariable: VariableEmbedding) = emptyList<ExpEmbedding>()
     override val receiver: VariableEmbedding
-        get() = PlaceholderVariableEmbedding(ThisReceiverName, NullableAnyTypeEmbedding)
+        get() = PlaceholderVariableEmbedding(ThisReceiverName, buildType { nullableAny() })
     override val declarationSource: KtSourceElement? = symbol.source
 }
 
@@ -55,15 +58,15 @@ class GetterFunctionSignature(name: MangledName, symbol: FirPropertySymbol) :
     PropertyAccessorFunctionSignature(name, symbol) {
 
     override val params = emptyList<FirVariableEmbedding>()
-    override val returnType: TypeEmbedding = NullableAnyTypeEmbedding
+    override val returnType: TypeEmbedding = buildType { nullableAny() }
 }
 
 class SetterFunctionSignature(name: MangledName, symbol: FirPropertySymbol) :
     PropertyAccessorFunctionSignature(name, symbol) {
     override val params = listOf(
-        FirVariableEmbedding(SetterValueName, NullableAnyTypeEmbedding, symbol)
+        FirVariableEmbedding(SetterValueName, buildType { nullableAny() }, symbol)
     )
-    override val returnType: TypeEmbedding = UnitTypeEmbedding
+    override val returnType: TypeEmbedding = buildType { unit() }
 }
 
 

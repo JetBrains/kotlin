@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.formver.linearization
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.formver.embeddings.PretypeBuilder
+import org.jetbrains.kotlin.formver.embeddings.TypeBuilder
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.buildType
 import org.jetbrains.kotlin.formver.embeddings.expression.AnonymousVariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Declaration
 import org.jetbrains.kotlin.formver.viper.ast.Label
@@ -32,6 +35,9 @@ interface LinearizationContext {
 
     fun addModifier(mod: StmtModifier)
 }
+
+fun LinearizationContext.freshAnonVar(init: TypeBuilder.() -> PretypeBuilder): AnonymousVariableEmbedding =
+    freshAnonVar(buildType(init))
 
 fun LinearizationContext.addLabel(label: Label) {
     addDeclaration(label.toDecl())

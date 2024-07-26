@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.formver.embeddings.expression
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
-import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.SourceRole
+import org.jetbrains.kotlin.formver.embeddings.asInfo
+import org.jetbrains.kotlin.formver.embeddings.buildType
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.PlaintextLeaf
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.TreeView
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
@@ -23,7 +25,7 @@ data object UnitLit : UnitResultExpEmbedding {
 }
 
 data class IntLit(val value: Int) : PureExpEmbedding {
-    override val type = IntTypeEmbedding
+    override val type = buildType { int() }
     override fun toViper(source: KtSourceElement?): Exp =
         RuntimeTypeDomain.intInjection.toRef(
             Exp.IntLit(value, source.asPosition, sourceRole.asInfo),
@@ -39,7 +41,7 @@ data class IntLit(val value: Int) : PureExpEmbedding {
 }
 
 data class BooleanLit(val value: Boolean, override val sourceRole: SourceRole? = null) : PureExpEmbedding {
-    override val type = BooleanTypeEmbedding
+    override val type = buildType { boolean() }
     override fun toViper(source: KtSourceElement?): Exp =
         RuntimeTypeDomain.boolInjection.toRef(
             Exp.BoolLit(value, source.asPosition, sourceRole.asInfo),
@@ -55,7 +57,7 @@ data class BooleanLit(val value: Boolean, override val sourceRole: SourceRole? =
 }
 
 data object NullLit : PureExpEmbedding {
-    override val type = NullableTypeEmbedding(NothingTypeEmbedding)
+    override val type = buildType { isNullable = true; nothing() }
     override fun toViper(source: KtSourceElement?): Exp =
         RuntimeTypeDomain.nullValue(pos = source.asPosition)
 

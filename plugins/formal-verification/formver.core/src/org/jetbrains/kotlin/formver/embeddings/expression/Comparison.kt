@@ -8,16 +8,18 @@ package org.jetbrains.kotlin.formver.embeddings.expression
 import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.InjectionImageFunction
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
-import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.SourceRole
+import org.jetbrains.kotlin.formver.embeddings.asInfo
+import org.jetbrains.kotlin.formver.embeddings.buildType
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
-import org.jetbrains.kotlin.formver.viper.ast.Operator
 import org.jetbrains.kotlin.formver.viper.ast.EqAny
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.NeAny
+import org.jetbrains.kotlin.formver.viper.ast.Operator
 
 sealed interface AnyComparisonExpression : BinaryDirectResultExpEmbedding {
     override val type
-        get() = BooleanTypeEmbedding
+        get() = buildType { boolean() }
 
     val comparisonOperation: Operator
 
@@ -47,7 +49,7 @@ sealed interface AnyComparisonExpression : BinaryDirectResultExpEmbedding {
 
 sealed interface IntComparisonExpression : OperationBaseExpEmbedding {
     override val type
-        get() = BooleanTypeEmbedding
+        get() = buildType { boolean() }
 }
 
 data class LtCmp(

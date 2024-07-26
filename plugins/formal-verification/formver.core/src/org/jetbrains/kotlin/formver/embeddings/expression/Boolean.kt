@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
-import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.SourceRole
+import org.jetbrains.kotlin.formver.embeddings.asInfo
+import org.jetbrains.kotlin.formver.embeddings.buildType
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 
 sealed interface BinaryBooleanExpression : OperationBaseExpEmbedding {
     override val type
-        get() = BooleanTypeEmbedding
+        get() = buildType { boolean() }
 }
 
 data class And(
@@ -45,7 +47,7 @@ data class Not(
     override val inner: ExpEmbedding,
     override val sourceRole: SourceRole? = null
 ) : UnaryDirectResultExpEmbedding {
-    override val type = BooleanTypeEmbedding
+    override val type = buildType { boolean() }
     override fun toViper(ctx: LinearizationContext) =
         RuntimeTypeDomain.notBool(inner.toViper(ctx), pos = ctx.source.asPosition, info = sourceRole.asInfo)
 

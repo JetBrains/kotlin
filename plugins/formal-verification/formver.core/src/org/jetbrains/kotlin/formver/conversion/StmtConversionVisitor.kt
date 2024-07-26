@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
-import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.buildType
 import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.callables.insertCall
 import org.jetbrains.kotlin.formver.embeddings.expression.*
@@ -99,7 +99,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         return if (branch.condition is FirElseIfTrueCondition) {
             data.withNewScope { convert(branch.result) }
         } else {
-            val cond = data.convert(branch.condition).withType(BooleanTypeEmbedding)
+            val cond = data.convert(branch.condition).withType { boolean() }
             val thenExp = data.withNewScope { convert(branch.result) }
             val elseExp = convertWhenBranches(whenBranches, type, data)
             If(cond, thenExp, elseExp, type)
@@ -211,7 +211,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext): ExpEmbedding {
-        val condition = data.convert(whileLoop.condition).withType(BooleanTypeEmbedding)
+        val condition = data.convert(whileLoop.condition).withType { boolean() }
         val returnTarget = data.defaultResolvedReturnTarget
         val invariants = when (val sig = data.signature) {
             is FullNamedFunctionSignature -> sig.getPostconditions(returnTarget.variable)
@@ -274,8 +274,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         val left = data.convert(binaryLogicExpression.leftOperand)
         val right = data.convert(binaryLogicExpression.rightOperand)
         return when (binaryLogicExpression.kind) {
-            LogicOperationKind.AND -> If(left, right, BooleanLit(false), BooleanTypeEmbedding)
-            LogicOperationKind.OR -> If(left, BooleanLit(true), right, BooleanTypeEmbedding)
+            LogicOperationKind.AND -> If(left, right, BooleanLit(false), buildType { boolean() })
+            LogicOperationKind.OR -> If(left, BooleanLit(true), right, buildType { boolean() })
         }
     }
 

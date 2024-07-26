@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.embeddings.NothingTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.buildType
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
@@ -23,7 +23,7 @@ data class ExpWrapper(val value: Exp, override val type: TypeEmbedding) : PureEx
 }
 
 data object ErrorExp : NoResultExpEmbedding, DefaultDebugTreeViewImplementation {
-    override val type: TypeEmbedding = NothingTypeEmbedding
+    override val type: TypeEmbedding = buildType { nothing() }
     override fun toViperUnusedResult(ctx: LinearizationContext) {
         ctx.addStatement { Stmt.Inhale(Exp.BoolLit(false, ctx.source.asPosition), ctx.source.asPosition) }
     }

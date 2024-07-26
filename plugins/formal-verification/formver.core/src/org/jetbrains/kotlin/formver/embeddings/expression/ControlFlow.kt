@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.ClassTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.asInfo
+import org.jetbrains.kotlin.formver.embeddings.buildType
 import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.callables.toMethodCall
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.*
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.linearization.addLabel
+import org.jetbrains.kotlin.formver.linearization.freshAnonVar
 import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Label
@@ -23,7 +27,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Stmt
 data class Block(val exps: List<ExpEmbedding>) : OptionalResultExpEmbedding {
     constructor (vararg exps: ExpEmbedding) : this(exps.toList())
 
-    override val type: TypeEmbedding = exps.lastOrNull()?.type ?: UnitTypeEmbedding
+    override val type: TypeEmbedding = exps.lastOrNull()?.type ?: buildType { unit() }
 
     override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
         if (exps.isEmpty()) return
@@ -60,12 +64,12 @@ data class While(
     val continueLabel: Label,
     val invariants: List<ExpEmbedding>,
 ) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
-    override val type: TypeEmbedding = UnitTypeEmbedding
+    override val type: TypeEmbedding = buildType { unit() }
 
     override fun toViperSideEffects(ctx: LinearizationContext) {
         ctx.addLabel(continueLabel)
         ctx.addStatement {
-            val condVar = ctx.freshAnonVar(BooleanTypeEmbedding)
+            val condVar = ctx.freshAnonVar { boolean() }
             condition.toViperStoringIn(condVar, ctx)
             val bodyBlock = ctx.asBlock {
                 body.toViperUnusedResult(this)
@@ -93,7 +97,7 @@ data class While(
 }
 
 data class Goto(val target: Label) : NoResultExpEmbedding, DefaultDebugTreeViewImplementation {
-    override val type: TypeEmbedding = NothingTypeEmbedding
+    override val type: TypeEmbedding = buildType { nothing() }
     override fun toViperUnusedResult(ctx: LinearizationContext) {
         ctx.addStatement { target.toGoto(ctx.source.asPosition) }
     }
@@ -138,7 +142,7 @@ data class GotoChainNode(val label: Label?, val exp: ExpEmbedding, val next: Lab
 data class NonDeterministically(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperSideEffects(ctx: LinearizationContext) {
         ctx.addStatement {
-            val choice = ctx.freshAnonVar(BooleanTypeEmbedding)
+            val choice = ctx.freshAnonVar { boolean() }
             val expViper = ctx.asBlock { exp.toViper(this) }
             Stmt.If(choice.toViperBuiltinType(ctx), expViper, Stmt.Seqn(), ctx.source.asPosition)
         }

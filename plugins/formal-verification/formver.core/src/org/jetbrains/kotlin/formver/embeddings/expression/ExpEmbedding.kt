@@ -237,7 +237,7 @@ sealed interface StoredResultExpEmbedding : BaseStoredResultExpEmbedding, Defaul
  */
 sealed interface NoResultExpEmbedding : DefaultMaybeStoringInExpEmbedding, DefaultToBuiltinExpEmbedding {
     override val type: TypeEmbedding
-        get() = NothingTypeEmbedding
+        get() = buildType { nothing() }
 
     // Result ignored, since it is never used.
     override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
@@ -317,7 +317,7 @@ sealed interface PassthroughExpEmbedding : ExpEmbedding {
  */
 sealed interface UnitResultExpEmbedding : OnlyToViperExpEmbedding {
     override val type: TypeEmbedding
-        get() = UnitTypeEmbedding
+        get() = buildType { unit() }
 
     override fun toViper(ctx: LinearizationContext): Exp {
         toViperSideEffects(ctx)
@@ -414,7 +414,7 @@ data class FieldModification(val receiver: ExpEmbedding, val field: FieldEmbeddi
 data class FieldAccessPermissions(override val inner: ExpEmbedding, val field: FieldEmbedding, val perm: PermExp) :
     OnlyToBuiltinTypeExpEmbedding, UnaryDirectResultExpEmbedding {
     // We consider access permissions to have type Boolean, though this is a bit questionable.
-    override val type: TypeEmbedding = BooleanTypeEmbedding
+    override val type: TypeEmbedding = buildType { boolean() }
 
     override fun toViperBuiltinType(ctx: LinearizationContext): Exp =
         inner.toViper(ctx).fieldAccessPredicate(field.toViper(), perm, ctx.source.asPosition)
@@ -427,7 +427,7 @@ data class FieldAccessPermissions(override val inner: ExpEmbedding, val field: F
 // Ideally we would use the predicate, but due to the possibility of recursion this is inconvenient at present.
 data class PredicateAccessPermissions(val predicateName: MangledName, val args: List<ExpEmbedding>, val perm: PermExp) :
     OnlyToBuiltinTypeExpEmbedding {
-    override val type: TypeEmbedding = BooleanTypeEmbedding
+    override val type: TypeEmbedding = buildType { boolean() }
     override fun toViperBuiltinType(ctx: LinearizationContext): Exp =
         Exp.PredicateAccess(predicateName, args.map { it.toViper(ctx) }, perm, ctx.source.asPosition)
 
@@ -460,7 +460,7 @@ data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpE
 
 data class Declare(val variable: VariableEmbedding, val initializer: ExpEmbedding?) : UnitResultExpEmbedding,
     DefaultDebugTreeViewImplementation {
-    override val type: TypeEmbedding = UnitTypeEmbedding
+    override val type: TypeEmbedding = buildType { unit() }
 
     override fun toViperSideEffects(ctx: LinearizationContext) {
         ctx.addDeclaration(variable.toLocalVarDecl(ctx.source.asPosition))

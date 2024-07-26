@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
 data class Is(override val inner: ExpEmbedding, val comparisonType: TypeEmbedding, override val sourceRole: SourceRole? = null) :
     UnaryDirectResultExpEmbedding {
-    override val type = BooleanTypeEmbedding
+    override val type = buildType { boolean() }
 
     override fun toViper(ctx: LinearizationContext) =
         RuntimeTypeDomain.boolInjection.toRef(
@@ -51,6 +51,8 @@ data class Cast(override val inner: ExpEmbedding, override val type: TypeEmbeddi
 }
 
 fun ExpEmbedding.withType(newType: TypeEmbedding): ExpEmbedding = if (type == newType) this else Cast(this, newType)
+
+fun ExpEmbedding.withType(init: TypeBuilder.() -> PretypeBuilder): ExpEmbedding = withType(buildType(init))
 
 
 /**

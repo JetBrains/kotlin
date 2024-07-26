@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.formver.embeddings.expression
 
-import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.domains.InjectionImageFunction
 import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
-import org.jetbrains.kotlin.formver.embeddings.IntTypeEmbedding
-import org.jetbrains.kotlin.formver.linearization.LinearizationContext
+import org.jetbrains.kotlin.formver.embeddings.buildType
 
 sealed interface IntArithmeticExpression : OperationBaseExpEmbedding {
     override val type
-        get() = IntTypeEmbedding
+        get() = buildType { int() }
 }
 
 data class Add(
