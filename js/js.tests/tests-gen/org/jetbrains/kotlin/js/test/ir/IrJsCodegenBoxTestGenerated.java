@@ -36853,6 +36853,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
+    @Test
+    @TestMetadata("associatedObjectNested.kt")
+    public void testAssociatedObjectNested() {
+      runTest("compiler/testData/codegen/box/reflection/associatedObjectNested.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
     @TestDataPath("$PROJECT_ROOT")

@@ -37373,6 +37373,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
     }
 
+    @Test
+    @TestMetadata("associatedObjectNested.kt")
+    public void testAssociatedObjectNested() {
+      runTest("compiler/testData/codegen/box/reflection/associatedObjectNested.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
     @TestDataPath("$PROJECT_ROOT")

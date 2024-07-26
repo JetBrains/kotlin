@@ -37511,6 +37511,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
     }
 
+    @Test
+    @TestMetadata("associatedObjectNested.kt")
+    public void testAssociatedObjectNested() {
+      runTest("compiler/testData/codegen/box/reflection/associatedObjectNested.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
     @TestDataPath("$PROJECT_ROOT")

@@ -49721,6 +49721,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("associatedObjectNested.kt")
+    public void testAssociatedObjectNested() {
+      runTest("compiler/testData/codegen/box/reflection/associatedObjectNested.kt");
+    }
+
+    @Test
     @TestMetadata("jvmKPackageCaching.kt")
     public void testJvmKPackageCaching() {
       runTest("compiler/testData/codegen/box/reflection/jvmKPackageCaching.kt");
