@@ -22,7 +22,9 @@ configureDokkaPublication(
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-annotations"))
-    commonApi(project(":native:kotlin-native-utils")) // TODO: consider removing in KT-70247
+    commonApi(project(":native:kotlin-native-utils")) { // TODO: consider removing in KT-70247
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-util-klib")
+    }
     commonApi(project(":kotlin-tooling-core"))
 
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
