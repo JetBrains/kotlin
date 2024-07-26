@@ -591,6 +591,12 @@ private val assertsRemovalPhase = createFileLoweringPhase(
         description = "Asserts removal"
 )
 
+private val assertionWrapperPhase = createFileLoweringPhase(
+        lowering = ::NativeAssertionWrapperLowering,
+        name = "AssertionWrapperLowering",
+        description = "Wraps call to `assert(...) {...}` into if statement"
+)
+
 private val constEvaluationPhase = createFileLoweringPhase(
         lowering = { context: Context ->
             val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
@@ -602,6 +608,7 @@ private val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
+        assertionWrapperPhase,
         lateinitPhase,
         sharedVariablesPhase,
         outerThisSpecialAccessorInInlineFunctionsPhase,

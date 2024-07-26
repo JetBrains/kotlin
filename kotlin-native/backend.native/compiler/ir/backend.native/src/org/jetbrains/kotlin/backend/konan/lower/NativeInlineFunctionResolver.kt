@@ -87,6 +87,8 @@ internal class NativeInlineFunctionResolver(
 
         val experimentalDoubleInlining = context.config.configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING)
 
+        NativeAssertionWrapperLowering(context).lower(function)
+
         NullableFieldsForLateinitCreationLowering(context).lowerWithLocalDeclarations(function)
         NullableFieldsDeclarationLowering(context).lowerWithLocalDeclarations(function)
         LateinitUsageLowering(context).lower(body, function)
