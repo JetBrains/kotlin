@@ -55,8 +55,8 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
 
     private fun checkFirAndLatestLVTestData(latestLVTestData: File, directives: RegisteredDirectives) {
         val firTestData = when {
-            TEST_ALONGSIDE_K1_TESTDATA in directives || FIR_IDENTICAL in directives -> latestLVTestData.originalTestDataFile
-            else -> latestLVTestData.firTestDataFile
+            TEST_ALONGSIDE_K1_TESTDATA in directives && FIR_IDENTICAL !in directives -> latestLVTestData.firTestDataFile
+            else -> latestLVTestData.originalTestDataFile
         }
         checkTwoFiles(firTestData, latestLVTestData, "Original and Latest Stable LV testdata aren't identical. ")
     }

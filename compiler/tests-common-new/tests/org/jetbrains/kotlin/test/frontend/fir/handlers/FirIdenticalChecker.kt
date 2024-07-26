@@ -54,8 +54,8 @@ class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdentica
         if (!testDataFile.isLatestLVTestData) return
         val directives = testServices.moduleStructure.allDirectives
         val (originalFile, additionalFile) = when {
-            TEST_ALONGSIDE_K1_TESTDATA in directives || FIR_IDENTICAL in directives -> testDataFile.originalTestDataFile to null
-            else -> testDataFile.firTestDataFile to testDataFile.originalTestDataFile
+            TEST_ALONGSIDE_K1_TESTDATA in directives && FIR_IDENTICAL !in directives -> testDataFile.firTestDataFile to testDataFile.originalTestDataFile
+            else -> testDataFile.originalTestDataFile to null
         }
         val helper = Helper(originalFile)
         if (helper.contentsAreEquals(originalFile, testDataFile)) {
