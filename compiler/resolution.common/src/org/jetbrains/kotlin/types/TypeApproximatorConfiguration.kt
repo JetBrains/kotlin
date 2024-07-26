@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.types.model.*
 
 open class TypeApproximatorConfiguration {
     enum class IntersectionStrategy {
@@ -149,7 +149,7 @@ open class TypeApproximatorConfiguration {
         }
     }
 
-    object TypeArgumentApproximation : AbstractCapturedTypesApproximation(null) {
+    object TypeArgumentApproximationAfterCompletionInK2 : AbstractCapturedTypesApproximation(null) {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
