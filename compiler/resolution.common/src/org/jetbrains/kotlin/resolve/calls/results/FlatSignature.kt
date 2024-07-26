@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
 
 interface SpecificityComparisonCallbacks {
-    fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
+    fun isNonSubtypeEquallyOrMoreSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
 }
 
 object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
-    override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean =
+    override fun isNonSubtypeEquallyOrMoreSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean =
         false
 }
 
@@ -62,7 +62,7 @@ interface SimpleConstraintSystem {
     val context: TypeSystemInferenceExtensionContext
 }
 
-private fun <T> SimpleConstraintSystem.isValueParameterTypeNotLessSpecific(
+private fun <T> SimpleConstraintSystem.isValueParameterTypeEquallyOrMoreSpecific(
     specific: FlatSignature<T>,
     general: FlatSignature<T>,
     callbacks: SpecificityComparisonCallbacks,
@@ -93,7 +93,7 @@ private fun <T> SimpleConstraintSystem.isValueParameterTypeNotLessSpecific(
 
         if (typeParameters.isEmpty() || !generalType.dependsOnTypeParameters(context, typeParameters)) {
             if (!AbstractTypeChecker.isSubtypeOf(context, specificType, generalType)) {
-                if (!callbacks.isNonSubtypeNotLessSpecific(specificType, generalType)) {
+                if (!callbacks.isNonSubtypeEquallyOrMoreSpecific(specificType, generalType)) {
                     return false
                 }
             }
@@ -116,7 +116,7 @@ private fun <T> SimpleConstraintSystem.isValueParameterTypeNotLessSpecific(
     return true
 }
 
-fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
+fun <T> SimpleConstraintSystem.isSignatureEquallyOrMoreSpecific(
     specific: FlatSignature<T>,
     general: FlatSignature<T>,
     callbacks: SpecificityComparisonCallbacks,
@@ -128,11 +128,11 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
     if (specific.valueParameterTypes.size - specific.contextReceiverCount != general.valueParameterTypes.size - general.contextReceiverCount)
         return false
 
-    if (!isValueParameterTypeNotLessSpecific(specific, general, callbacks, specificityComparator) { it?.resultType }) {
+    if (!isValueParameterTypeEquallyOrMoreSpecific(specific, general, callbacks, specificityComparator) { it?.resultType }) {
         return false
     }
 
-    if (useOriginalSamTypes && !isValueParameterTypeNotLessSpecific(
+    if (useOriginalSamTypes && !isValueParameterTypeEquallyOrMoreSpecific(
             specific, general, callbacks, specificityComparator
         ) { it?.originalTypeIfWasConverted }
     ) {

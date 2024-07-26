@@ -20,13 +20,13 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
         val sigA = createSignature(a)
         val sigB = createSignature(b)
 
-        return !(isNotLessSpecific(sigA, sigB) && isNotLessSpecific(sigB, sigA))
+        return !(isEquallyOrMoreSpecific(sigA, sigB) && isEquallyOrMoreSpecific(sigB, sigA))
     }
 
-    private fun isNotLessSpecific(
+    private fun isEquallyOrMoreSpecific(
         sigA: FlatSignature<FirCallableSymbol<*>>,
         sigB: FlatSignature<FirCallableSymbol<*>>,
-    ): Boolean = createEmptyConstraintSystem().isSignatureNotLessSpecific(
+    ): Boolean = createEmptyConstraintSystem().isSignatureEquallyOrMoreSpecific(
         sigA,
         sigB,
         OverloadabilitySpecificityCallbacks,
