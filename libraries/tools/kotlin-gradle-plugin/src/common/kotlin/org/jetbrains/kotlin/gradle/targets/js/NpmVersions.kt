@@ -12,18 +12,18 @@ import java.io.Serializable
  */
 // DO NOT MODIFY DIRECTLY! Use org.jetbrains.kotlin.generators.gradle.targets.js.MainKt
 class NpmVersions : Serializable {
-    val webpack = NpmPackageVersion("webpack", "5.91.0")
+    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "4.15.2")
+    val webpack = NpmPackageVersion("webpack", "5.93.0")
     val webpackCli = NpmPackageVersion("webpack-cli", "5.1.4")
-    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "5.0.4")
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "5.0.0")
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.21")
-    val cssLoader = NpmPackageVersion("css-loader", "6.10.0")
-    val styleLoader = NpmPackageVersion("style-loader", "3.3.4")
-    val sassLoader = NpmPackageVersion("sass-loader", "14.1.1")
-    val sass = NpmPackageVersion("sass", "1.72.0")
+    val cssLoader = NpmPackageVersion("css-loader", "7.1.2")
+    val styleLoader = NpmPackageVersion("style-loader", "4.0.0")
+    val sassLoader = NpmPackageVersion("sass-loader", "14.2.1")
+    val sass = NpmPackageVersion("sass", "1.77.8")
     val toStringLoader = NpmPackageVersion("to-string-loader", "1.2.0")
-    val miniCssExtractPlugin = NpmPackageVersion("mini-css-extract-plugin", "2.8.1")
-    val mocha = NpmPackageVersion("mocha", "10.3.0")
+    val miniCssExtractPlugin = NpmPackageVersion("mini-css-extract-plugin", "2.9.0")
+    val mocha = NpmPackageVersion("mocha", "10.7.0")
     val karma = NpmPackageVersion("karma", "6.4.3")
     val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.2.0")
     val karmaPhantomjsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
@@ -34,7 +34,7 @@ class NpmVersions : Serializable {
     val karmaMocha = NpmPackageVersion("karma-mocha", "2.0.1")
     val karmaWebpack = NpmPackageVersion("karma-webpack", "5.0.1")
     val karmaSourcemapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.4.0")
-    val typescript = NpmPackageVersion("typescript", "5.4.3")
+    val typescript = NpmPackageVersion("typescript", "5.5.4")
 
     val kotlinJsTestRunner = KotlinGradleNpmPackage("test-js-runner")
 }
