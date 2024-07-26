@@ -234,7 +234,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("cli/jvm/sourceFilesAndDirectories", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
-                model("cli/js-dce", extension = "args", testMethod = "doJsDceTest", recursive = false)
                 model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
             }
 

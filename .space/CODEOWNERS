@@ -119,7 +119,6 @@
 /compiler/testData/classpathOrder/ "Kotlin JVM"
 /compiler/testData/cli/ "Kotlin Compiler Core"
 /compiler/testData/cli/js/ "Kotlin Common Backend" "Kotlin Compiler Core"
-/compiler/testData/cli/js-dce/ "Kotlin Common Backend" "Kotlin Compiler Core"
 /compiler/testData/cli/jvm/ "Kotlin JVM" "Kotlin Compiler Core"
 /compiler/testData/cli/metadata/ "Kotlin Compiler Core"
 /compiler/testData/codegen/asmLike/ "Kotlin JVM"
