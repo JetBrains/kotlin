@@ -618,10 +618,10 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         jsFuns = deserializeJsFuns(),
         jsModuleImports = deserializeJsModuleImports(),
         exports = deserializeExports(),
-        scratchMemAddr = deserializeScratchMemAddr(),
-        stringPoolSize = deserializeStringPoolSize(),
-        throwableTagIndex = deserializeThrowableTagIndex(),
-        jsExceptionTagIndex = deserializeJsExceptionTagIndex(),
+        scratchMemAddr = deserializeNullableIntSymbol(),
+        stringPoolSize = deserializeNullableIntSymbol(),
+        throwableTagIndex = deserializeNullableIntSymbol(),
+        jsExceptionTagIndex = deserializeNullableIntSymbol(),
         fieldInitializers = deserializeFieldInitializers(),
         mainFunctionWrappers = deserializeMainFunctionWrappers(),
         testFun = deserializeTestFun(),
@@ -653,10 +653,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeJsFuns() = deserializeList(::deserializeJsCodeSnippet)
     private fun deserializeJsModuleImports() = deserializeSet(::deserializeString)
     private fun deserializeExports() = deserializeList(::deserializeExport)
-    private fun deserializeScratchMemAddr() = deserializeSymbol(::deserializeInt)
-    private fun deserializeStringPoolSize() = deserializeSymbol(::deserializeInt)
-    private fun deserializeThrowableTagIndex() = deserializeSymbol(::deserializeInt)
-    private fun deserializeJsExceptionTagIndex() = deserializeSymbol(::deserializeInt)
+    private fun deserializeNullableIntSymbol() = deserializeNullable { deserializeSymbol(::deserializeInt) }
     private fun deserializeFieldInitializers(): MutableList<FieldInitializer> = deserializeList(::deserializeFieldInitializer)
     private fun deserializeMainFunctionWrappers() = deserializeList(::deserializeIdSignature)
     private fun deserializeTestFun() = deserializeNullable(::deserializeIdSignature)

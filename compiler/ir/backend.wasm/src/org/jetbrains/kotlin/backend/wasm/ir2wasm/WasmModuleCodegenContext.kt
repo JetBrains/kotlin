@@ -132,15 +132,19 @@ class WasmFileCodegenContext(
 
     val scratchMemAddr: WasmSymbol<Int>
         get() = wasmFileFragment.scratchMemAddr
+            ?: WasmSymbol<Int>().also { wasmFileFragment.scratchMemAddr = it }
 
     val stringPoolSize: WasmSymbol<Int>
         get() = wasmFileFragment.stringPoolSize
+            ?: WasmSymbol<Int>().also { wasmFileFragment.stringPoolSize = it }
 
     val throwableTagIndex: WasmSymbol<Int>
         get() = wasmFileFragment.throwableTagIndex
+            ?: WasmSymbol<Int>().also { wasmFileFragment.throwableTagIndex = it }
 
     val jsExceptionTagIndex: WasmSymbol<Int>
         get() = wasmFileFragment.jsExceptionTagIndex
+            ?: WasmSymbol<Int>().also { wasmFileFragment.jsExceptionTagIndex = it }
 
     fun addFieldInitializer(irField: IrFieldSymbol, instructions: List<WasmInstr>, isObjectInstanceField: Boolean) {
         wasmFileFragment.fieldInitializers.add(FieldInitializer(irField.getReferenceKey(), instructions, isObjectInstanceField))
