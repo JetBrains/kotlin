@@ -457,17 +457,6 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
 }
 
 internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType): ConeKotlinType? {
-    if (type is ConeCapturedType) {
-        return type.substitute { captureFromExpressionInternal(it) }
-    }
-
-    if (type is ConeDefinitelyNotNullType) {
-        return captureFromExpressionInternal(type.original)?.makeConeTypeDefinitelyNotNullOrNotNull(this)
-    }
-
-    if (type !is ConeIntersectionType && type !is ConeFlexibleType) {
-        return captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
-    }
     /*
      * We capture arguments in the intersection types in specific way:
      *  1) Firstly, we create captured arguments for all type arguments grouped by a type constructor* and a type argument's type.
@@ -478,7 +467,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
      *        Example: MutableList<*>..List<*>? -> MutableList<Captured1(*)>..List<Captured2(*)>?, Captured1(*) and Captured2(*) are the same.
      *  2) Secondly, we replace type arguments with captured arguments by given a type constructor and type arguments.
      */
-    val capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
+    var capturedArgumentsByComponents: List<CapturedArguments> = emptyList()
 
     // We reuse `TypeToCapture` for some types, suitability to reuse defines by `isSuitableForType`
     fun findCorrespondingCapturedArgumentsForType(type: ConeKotlinType) =
@@ -499,7 +488,10 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
     }
 
     return when (type) {
+        is ConeCapturedType -> type.substitute { captureFromExpressionInternal(it) }
+        is ConeDefinitelyNotNullType -> captureFromExpressionInternal(type.original)?.makeConeTypeDefinitelyNotNullOrNotNull(this)
         is ConeFlexibleType -> {
+            capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
             // Flexible types can either have projections in both bounds or just the upper bound (raw types and arrays).
             // Since the scope of flexible types is built from the lower bound, we don't gain any safety from only capturing the
             // upper bound.
@@ -516,11 +508,14 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
 
             ConeFlexibleType(lowerIntersectedType.coneLowerBoundIfFlexible(), upperIntersectedType.coneUpperBoundIfFlexible())
         }
-
-        is ConeRigidType -> {
+        is ConeIntersectionType -> {
+            capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
             intersectTypes(
                 replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type) ?: return null
             ).withNullability(type.isNullableType()) as ConeKotlinType
+        }
+        is ConeSimpleKotlinType -> {
+            captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
         }
     }
 }
