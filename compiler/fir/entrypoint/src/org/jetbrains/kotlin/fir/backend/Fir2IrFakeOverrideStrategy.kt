@@ -160,15 +160,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
         val delegateField = delegateFieldSymbol.owner
 
-        fun IrType.extractClassSymbol(): IrClassSymbol {
-            return when (val classifier = this.classifierOrFail) {
-                is IrClassSymbol -> classifier
-                is IrTypeParameterSymbol -> classifier.owner.superTypes.first().extractClassSymbol()
-                else -> shouldNotBeCalled()
-            }
-        }
-
-        val classOfDelegateField = delegateField.type.extractClassSymbol()
+        val classOfDelegateField = delegateField.type.unwrapTypeParameterType().classOrFail
 
         when (overridableMember) {
             is IrSimpleFunction -> overridableMember.updateDeclarationHeader()
@@ -474,13 +466,15 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
         val typeParametersOfClassOfDelegateField = classSymbolOfDelegateField.owner.typeParameters.map { it.symbol }
 
+        val typeOfDelegatedField = delegateField.type.unwrapTypeParameterType() as IrSimpleType
+
         /**
          * Type of delegate field may be a local class that captures type parameters of outer function, so we need to take only first
          *   arguments, which correspond to type parameters of actual class declaration
          */
         val substitutor = IrTypeSubstitutor(
             typeParametersOfClassOfDelegateField,
-            (delegateField.type as IrSimpleType).arguments.take(typeParametersOfClassOfDelegateField.size),
+            typeOfDelegatedField.arguments.take(typeParametersOfClassOfDelegateField.size),
             allowEmptySubstitution = true
         )
         return DelegatedFunctionBodyInfo(
@@ -488,6 +482,15 @@ class Fir2IrDelegatedMembersGenerationStrategy(
             substitutor = substitutor,
             delegatingToMethodOfSupertype = false
         )
+    }
+
+    private fun IrType.unwrapTypeParameterType(): IrType {
+        return when (val classifier = this.classifierOrFail) {
+            is IrClassSymbol -> this
+            // It's impossible to write `by` and `where` clauses at the same time, so there can't be multiple bounds
+            is IrTypeParameterSymbol -> classifier.owner.superTypes.first().unwrapTypeParameterType()
+            is IrScriptSymbol -> shouldNotBeCalled()
+        }
     }
 }
 
