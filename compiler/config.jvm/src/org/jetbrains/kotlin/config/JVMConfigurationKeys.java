@@ -159,4 +159,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> USE_INLINE_SCOPES_NUMBERS =
             CompilerConfigurationKey.create("Use inline scopes numbers for inline marker variables");
+
+    public static final CompilerConfigurationKey<Boolean> SKIP_BODIES =
+            CompilerConfigurationKey.create("Enable internal mode which causes FIR2IR to skip function bodies, used in KAPT");
 }
