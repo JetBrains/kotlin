@@ -40,7 +40,7 @@ public data class SwiftExportConfig(
     val logger: SwiftExportLogger = createDummyLogger(),
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
-    val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
+    val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.SpecialType,
     val multipleModulesHandlingStrategy: MultipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.OneToOneModuleMapping,
     val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
     val moduleForPackagesName: String = "ExportedKotlinPackages",

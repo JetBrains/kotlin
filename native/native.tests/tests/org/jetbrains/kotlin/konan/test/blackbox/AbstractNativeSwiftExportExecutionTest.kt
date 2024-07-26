@@ -52,7 +52,6 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
                 SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
                 SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
             ),
-            unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType,
             logger = createDummyLogger(),
             outputPath = exportResultsPath
         )
