@@ -538,7 +538,12 @@ class FirCallCompletionResultsWriterTransformer(
         return buildSamConversionExpression {
             expression = this@wrapInSamExpression
             coneTypeOrNull = expectedArgumentType.withNullability(resolvedType.nullability, session.typeContext)
-                .let { typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.TypeArgumentApproximation) ?: it }
+                .let {
+                    typeApproximator.approximateToSuperType(
+                        it,
+                        TypeApproximatorConfiguration.TypeArgumentApproximationAfterCompletionInK2
+                    ) ?: it
+                }
             source = this@wrapInSamExpression.source?.fakeElement(KtFakeSourceElementKind.SamConversion)
         }
     }
@@ -906,7 +911,7 @@ class FirCallCompletionResultsWriterTransformer(
             val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
             finallySubstituteOrSelf(substitution).let { substitutedType ->
                 typeApproximator.approximateToSuperType(
-                    substitutedType, TypeApproximatorConfiguration.TypeArgumentApproximation,
+                    substitutedType, TypeApproximatorConfiguration.TypeArgumentApproximationAfterCompletionInK2,
                 ) ?: substitutedType
             }
         }
