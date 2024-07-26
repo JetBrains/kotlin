@@ -1,5 +1,14 @@
+@kotlin.RequiresOptIn(level = Level.ERROR)
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
+@kotlin.annotation.MustBeDocumented
 @kotlin.SinceKotlin(version = "2.0")
-@kotlin.ExperimentalStdlibApi
+public final annotation class ExperimentalUuidApi : kotlin.Annotation {
+    public constructor ExperimentalUuidApi()
+}
+
+@kotlin.SinceKotlin(version = "2.0")
+@kotlin.uuid.ExperimentalUuidApi
 public final class Uuid : kotlin.io.Serializable {
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
