@@ -116,6 +116,12 @@ public class FirLightTreeJvmIntegrationDiagnosticTestGenerated extends AbstractF
     public void testInternalFromFriendModule() {
       runTest("compiler/testData/diagnostics/jvmIntegration/internal/internalFromFriendModule.kt");
     }
+
+    @Test
+    @TestMetadata("internalSetter.kt")
+    public void testInternalSetter() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/internal/internalSetter.kt");
+    }
   }
 
   @Nested
