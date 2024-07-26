@@ -382,6 +382,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       }
 
       @Test
+      @TestMetadata("leakingPrivateMethodFromDefaultArguments.kt")
+      public void testLeakingPrivateMethodFromDefaultArguments() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodFromDefaultArguments.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateMethodFromLocalLambdaInsideInternalInline.kt")
       public void testLeakingPrivateMethodFromLocalLambdaInsideInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodFromLocalLambdaInsideInternalInline.kt");
@@ -643,6 +649,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       }
 
       @Test
+      @TestMetadata("leakingPrivateMethodFromDefaultArguments.kt")
+      public void testLeakingPrivateMethodFromDefaultArguments() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodFromDefaultArguments.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateMethodFromLocalLambdaInsideInternalInline.kt")
       public void testLeakingPrivateMethodFromLocalLambdaInsideInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodFromLocalLambdaInsideInternalInline.kt");
@@ -856,6 +868,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       }
 
       @Test
+      @TestMetadata("usePrivateMethodFromDefaultArguments.kt")
+      public void testUsePrivateMethodFromDefaultArguments() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromDefaultArguments.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateMethodFromInternalInline.kt")
       public void testUsePrivateMethodFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromInternalInline.kt");
@@ -1003,6 +1021,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       @TestMetadata("leakingPrivateTopLevelFun.kt")
       public void testLeakingPrivateTopLevelFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelFun.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateTopLevelFunFromDefaultArguments.kt")
+      public void testLeakingPrivateTopLevelFunFromDefaultArguments() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelFunFromDefaultArguments.kt");
       }
 
       @Test
@@ -1171,6 +1195,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       }
 
       @Test
+      @TestMetadata("leakingPrivateTopLevelFunFromDefaultArguments.kt")
+      public void testLeakingPrivateTopLevelFunFromDefaultArguments() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelFunFromDefaultArguments.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelFunFromLambdaInsideInternalInline.kt")
       public void testLeakingPrivateTopLevelFunFromLambdaInsideInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelFunFromLambdaInsideInternalInline.kt");
@@ -1297,6 +1327,12 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeK
       @TestMetadata("usePrivateTopLevelExtensionFunFromInternalInline.kt")
       public void testUsePrivateTopLevelExtensionFunFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelExtensionFunFromInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelFunFromDefaultArguments.kt")
+      public void testUsePrivateTopLevelFunFromDefaultArguments() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromDefaultArguments.kt");
       }
 
       @Test

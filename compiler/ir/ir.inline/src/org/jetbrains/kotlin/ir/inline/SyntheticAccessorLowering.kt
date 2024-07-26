@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGen
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.irAttribute
@@ -128,7 +127,6 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         val generatedAccessors = irFile.generatedAccessors ?: GeneratedAccessors().also { irFile.generatedAccessors = it }
 
         private var currentInlineFunction: IrFunction? = null
-        private var insideBody = false
 
         override fun visitFunction(declaration: IrFunction): IrStatement {
             val previousInlineFunction = currentInlineFunction
@@ -152,18 +150,8 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
             }
         }
 
-        override fun visitBody(body: IrBody): IrBody {
-            val previousInsideBody = insideBody
-            try {
-                insideBody = true
-                return super.visitBody(body)
-            } finally {
-                insideBody = previousInsideBody
-            }
-        }
-
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-            if (currentInlineFunction == null || !insideBody || !expression.symbol.owner.isAbiPrivate)
+            if (currentInlineFunction == null /*|| !insideBody*/ || !expression.symbol.owner.isAbiPrivate)
                 return super.visitFunctionAccess(expression)
 
             // TODO(KT-69527): Set the proper visibility for the accessor (the max visibility of all the inline functions that reference it)

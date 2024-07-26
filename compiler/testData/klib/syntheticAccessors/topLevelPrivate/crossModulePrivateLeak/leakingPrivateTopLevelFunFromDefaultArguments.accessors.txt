@@ -1,0 +1,16 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=a.kt */
+
+internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
+    oo: String
+        /* ACCESSOR use-site */ access$o$tAKt()
+    kk: Function0<String>
+        local fun <anonymous>(): String
+            /* ACCESSOR use-site */ access$k$tAKt()
+/* TARGET declaration */ private fun o(): String
+/* TARGET declaration */ private fun k(): String
+/* ACCESSOR declaration */ public fun access$o$tAKt(): String
+    /* TARGET use-site */ o()
+/* ACCESSOR declaration */ public fun access$k$tAKt(): String
+    /* TARGET use-site */ k()
