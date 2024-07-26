@@ -22,8 +22,6 @@ using namespace kotlin;
 
 namespace {
 
-[[clang::no_destroy]] std::mutex gcMutex;
-
 template <typename Body>
 ScopedThread createGCThread(const char* name, Body&& body) {
     return ScopedThread(ScopedThread::attributes().name(name), [name, body] {
@@ -128,7 +126,8 @@ void gc::ConcurrentMarkAndSweep::mainGCThreadBody() {
 }
 
 void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
-    std::unique_lock mainGCLock(gcMutex);
+    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
+
     auto gcHandle = GCHandle::create(epoch);
 
     markDispatcher_.beginMarkingEpoch(gcHandle);

@@ -22,8 +22,6 @@ using namespace kotlin;
 
 namespace {
 
-[[clang::no_destroy]] std::mutex gcMutex;
-
 template<typename Body>
 ScopedThread createGCThread(const char* name, Body&& body) {
     return ScopedThread(ScopedThread::attributes().name(name), [name, body] {
@@ -142,7 +140,8 @@ void gc::ParallelMarkConcurrentSweep::auxiliaryGCThreadBody() {
 }
 
 void gc::ParallelMarkConcurrentSweep::PerformFullGC(int64_t epoch) noexcept {
-    std::unique_lock mainGCLock(gcMutex);
+    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
+
     auto gcHandle = GCHandle::create(epoch);
 
     markDispatcher_.beginMarkingEpoch(gcHandle);
@@ -226,7 +225,7 @@ void gc::ParallelMarkConcurrentSweep::reconfigure(std::size_t maxParallelism, bo
         RuntimeCheck(auxGCThreads == 0, "Auxiliary GC threads must not be created with gcMarkSingleThread");
         return;
     }
-    std::unique_lock mainGCLock(gcMutex);
+    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
     markDispatcher_.reset(maxParallelism, mutatorsCooperate, [this] { auxThreads_.clear(); });
     for (std::size_t i = 0; i < auxGCThreads; ++i) {
         auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
