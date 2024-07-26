@@ -47,7 +47,9 @@ abstract class FirScope {
      * It shouldn't be used anywhere except Analysis API, as in the compiler there cannot be
      *   a situation when session `A` may observe the session-dependent scope from session `B`
      *
-     * @return null if the scope is session-independent
+     * @return null if the scope is session-independent, otherwise the created copy
+     *
+     * Note that this function doesn't check that [newSession] is actually different from the one stored in scope
      */
     @DelicateScopeAPI
     abstract fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirScope?

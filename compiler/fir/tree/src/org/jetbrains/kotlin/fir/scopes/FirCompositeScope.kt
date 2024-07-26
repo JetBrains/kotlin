@@ -123,7 +123,7 @@ inline fun <reified S : FirScope> Iterable<S>.withReplacedSessionOrNull(
 ): List<S>? {
     var wasUpdated = false
     val newScopes = this.map {
-        it.withReplacedSessionOrNull(newSession, newScopeSession).also { newScope ->
+        it.withReplacedSessionOrNull(newSession, newScopeSession)?.also { newScope ->
             wasUpdated = true
         } as S? ?: it
     }
