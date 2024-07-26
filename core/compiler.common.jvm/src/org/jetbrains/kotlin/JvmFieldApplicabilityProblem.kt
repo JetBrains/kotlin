@@ -19,4 +19,5 @@ enum class JvmFieldApplicabilityProblem(val errorMessage: String) {
     TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE("JvmField cannot be applied to top level property of a file annotated with ${JVM_MULTIFILE_CLASS_SHORT}"),
     DELEGATE("JvmField cannot be applied to delegated property"),
     RETURN_TYPE_IS_VALUE_CLASS("JvmField cannot be applied to a property of a value class type"),
+    ANNOTATION("JvmField has no effect on an annotation property"),
 }

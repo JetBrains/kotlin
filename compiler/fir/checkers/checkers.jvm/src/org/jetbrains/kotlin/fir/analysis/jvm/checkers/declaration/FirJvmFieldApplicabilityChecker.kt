@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -67,15 +69,23 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
                 TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE
             declaration.returnTypeRef.isInlineClassThatRequiresMangling(session) -> RETURN_TYPE_IS_VALUE_CLASS
             declaration.returnTypeRef.needsMultiFieldValueClassFlattening(session) -> RETURN_TYPE_IS_VALUE_CLASS
+            containingClassSymbol?.classKind == ClassKind.ANNOTATION_CLASS -> ANNOTATION
             else -> return
         }
 
-        val factory = if (declaration.fromPrimaryConstructor == true &&
-            !context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor)
-        ) {
-            FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
-        } else {
-            FirJvmErrors.INAPPLICABLE_JVM_FIELD
+        val languageVersionSettings = context.session.languageVersionSettings
+        val factory = when {
+            declaration.fromPrimaryConstructor == true &&
+                    !languageVersionSettings.supportsFeature(ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor)
+                -> {
+                FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
+            }
+            problem == ANNOTATION && !languageVersionSettings.supportsFeature(ForbidJvmAnnotationsOnAnnotationParameters) -> {
+                FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
+            }
+            else -> {
+                FirJvmErrors.INAPPLICABLE_JVM_FIELD
+            }
         }
 
         reporter.reportOn(annotation.source, factory, problem.errorMessage, context)
