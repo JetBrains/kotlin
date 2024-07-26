@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNonReflectFunctionType
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
 tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunction? = when (this) {
     is FirAnonymousFunctionExpression -> anonymousFunction
@@ -33,8 +34,11 @@ fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
     val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return
     val isInline = function.isInline
 
+    // Candidate could be a substitution or intersection fake override; unwrap and get the effects of the base function.
+    val effects = function.unwrapFakeOverrides().contractDescription?.effects
+
     val byParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()
-    function.contractDescription?.effects?.forEach { fir ->
+    effects?.forEach { fir ->
         val effect = fir.effect as? ConeCallsEffectDeclaration ?: return@forEach
         // TODO: Support callsInPlace contracts on receivers, KT-59681
         val valueParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex) ?: return@forEach
