@@ -92,7 +92,10 @@ open class TypeApproximatorConfiguration {
         object ApproximateAnonymousTypes : PublicDeclaration(approximateLocalTypes = false, approximateAnonymous = true)
     }
 
-    sealed class AbstractCapturedTypesApproximation(private val approximatedCapturedStatus: CaptureStatus?) :
+    /**
+     * This kind of configuration is supposed only to approximate some captured types doesn't approximate flexible/error ones.
+     */
+    sealed class AbstractCapturedTypesAndILTApproximation(private val approximatedCapturedStatus: CaptureStatus?) :
         AllFlexibleSameValue() {
         override val approximateAllFlexible: Boolean get() = false
         override val approximateErrorTypes: Boolean get() = false
@@ -105,8 +108,8 @@ open class TypeApproximatorConfiguration {
         override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = false
     }
 
-    object IncorporationConfiguration : AbstractCapturedTypesApproximation(CaptureStatus.FOR_INCORPORATION)
-    object SubtypeCapturedTypesApproximation : AbstractCapturedTypesApproximation(CaptureStatus.FOR_SUBTYPING)
+    object IncorporationConfiguration : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FOR_INCORPORATION)
+    object SubtypeCapturedTypesApproximation : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FOR_SUBTYPING)
 
     class TopLevelIntegerLiteralTypeApproximationWithExpectedType(
         override val expectedTypeForIntegerLiteralType: KotlinTypeMarker?,
@@ -116,14 +119,14 @@ open class TypeApproximatorConfiguration {
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
     }
 
-    object InternalTypesApproximation : AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
+    object InternalTypesApproximation : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FROM_EXPRESSION) {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object FinalApproximationAfterResolutionAndInference :
-        AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
+        AbstractCapturedTypesAndILTApproximation(CaptureStatus.FROM_EXPRESSION) {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
@@ -132,7 +135,7 @@ open class TypeApproximatorConfiguration {
     }
 
     object IntermediateApproximationToSupertypeAfterCompletionInK2 :
-        AbstractCapturedTypesApproximation(null) {
+        AbstractCapturedTypesAndILTApproximation(null) {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
@@ -149,7 +152,7 @@ open class TypeApproximatorConfiguration {
         }
     }
 
-    object TypeArgumentApproximationAfterCompletionInK2 : AbstractCapturedTypesApproximation(null) {
+    object TypeArgumentApproximationAfterCompletionInK2 : AbstractCapturedTypesAndILTApproximation(null) {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
