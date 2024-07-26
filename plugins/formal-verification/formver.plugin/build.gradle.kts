@@ -3,6 +3,12 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    maven {
+        url = uri("https://packages.jetbrains.team/maven/p/kotlin-formver/maven")
+    }
+}
+
 dependencies {
     compileOnly(project(":kotlin-formver-compiler-plugin.core"))
     compileOnly(project(":kotlin-formver-compiler-plugin.uniqueness"))
@@ -13,6 +19,8 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(intellijCore())
+
+    compileOnly("viper:silicon_2.13:1.2-SNAPSHOT")
 }
 
 sourceSets {

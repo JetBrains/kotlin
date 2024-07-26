@@ -18,8 +18,6 @@ abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
 ) : BinaryArtifactHandler<A>(
     testServices,
     artifactKind,
-    failureDisablesNextSteps = false,
-    doNotRunIfThereWerePreviousFailures = false
 ) {
     final override fun processModule(module: TestModule, info: A) = Unit
 

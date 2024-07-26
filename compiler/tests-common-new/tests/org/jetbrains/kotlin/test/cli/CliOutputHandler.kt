@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.test.utils.withExtension
 class CliOutputHandler(testServices: TestServices) : BinaryArtifactHandler<CliArtifact>(
     testServices,
     CliArtifact.Kind,
-    failureDisablesNextSteps = false,
-    doNotRunIfThereWerePreviousFailures = true,
 ) {
+    override val doNotRunIfThereWerePreviousFailures = true
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 

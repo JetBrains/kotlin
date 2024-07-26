@@ -181,13 +181,13 @@ data class CliArtifact(
 
 abstract class CliArtifactHandler(
     testServices: TestServices,
-    failureDisablesNextSteps: Boolean = false,
+    override val failureDisablesNextSteps: Boolean = false,
 ) : BinaryArtifactHandler<CliArtifact>(
     testServices,
     CliArtifact.Kind,
-    failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures = true,
-)
+) {
+    override val doNotRunIfThereWerePreviousFailures: Boolean = true
+}
 
 data class CliDiagnostic(
     val name: String,

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -214,7 +216,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     }
 
     override fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
-        val retType = embedType(symbol.resolvedReturnTypeRef.type)
+        val retType = embedType(symbol.resolvedReturnTypeRef.coneType)
         val receiverType = symbol.receiverType
         val isReceiverUnique = symbol.receiverParameter?.isUnique(session) ?: false
         val isReceiverBorrowed = symbol.receiverParameter?.isBorrowed(session) ?: false
@@ -295,7 +297,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 is FirPropertyAccessorSymbol -> propertySymbol
                 else -> this
             }
-            return symbol.dispatchReceiverType ?: symbol.resolvedReceiverTypeRef?.type
+            return symbol.dispatchReceiverType ?: symbol.resolvedReceiverTypeRef?.coneType
         }
 
     /**

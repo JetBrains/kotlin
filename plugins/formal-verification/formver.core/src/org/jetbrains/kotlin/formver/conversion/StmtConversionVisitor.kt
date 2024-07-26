@@ -269,13 +269,13 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         }
     }
 
-    override fun visitBinaryLogicExpression(
-        binaryLogicExpression: FirBinaryLogicExpression,
-        data: StmtConversionContext,
+    override fun visitBooleanOperatorExpression(
+        booleanOperatorExpression: FirBooleanOperatorExpression,
+        data: StmtConversionContext
     ): ExpEmbedding {
-        val left = data.convert(binaryLogicExpression.leftOperand)
-        val right = data.convert(binaryLogicExpression.rightOperand)
-        return when (binaryLogicExpression.kind) {
+        val left = data.convert(booleanOperatorExpression.leftOperand)
+        val right = data.convert(booleanOperatorExpression.rightOperand)
+        return when (booleanOperatorExpression.kind) {
             LogicOperationKind.AND -> If(left, right, BooleanLit(false), buildType { boolean() })
             LogicOperationKind.OR -> If(left, BooleanLit(true), right, buildType { boolean() })
         }
