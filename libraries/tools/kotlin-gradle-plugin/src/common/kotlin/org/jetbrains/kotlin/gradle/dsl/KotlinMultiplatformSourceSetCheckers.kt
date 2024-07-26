@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.P
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -46,10 +45,16 @@ internal object PlatformSourceSetConventionsChecker : KotlinGradleProjectChecker
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         listOf(
-            CheckedPlatformInfo<KotlinJsTargetDsl>("js"),
+            CheckedPlatformInfo<KotlinJsIrTarget>("js") {
+                it.wasmTargetType == null
+            },
             CheckedPlatformInfo<KotlinJvmTarget>("jvm"),
-            CheckedPlatformInfo<KotlinWasmJsTargetDsl>("wasmJs"),
-            CheckedPlatformInfo<KotlinWasmWasiTargetDsl>("wasmJs"),
+            CheckedPlatformInfo<KotlinJsIrTarget>("wasmJs") {
+                it.wasmTargetType == KotlinWasmTargetType.JS
+            },
+            CheckedPlatformInfo<KotlinJsIrTarget>("wasmWasi") {
+                it.wasmTargetType == KotlinWasmTargetType.WASI
+            },
         ).plus(nativeTargetPresets).forEach { checkedPlatformInfo ->
             @Suppress("UNCHECKED_CAST")
             runChecks(checkedPlatformInfo as CheckedPlatformInfo<KotlinTarget>)
