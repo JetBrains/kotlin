@@ -286,6 +286,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("serializableCompanion.kt")
+    public void testSerializableCompanion() {
+      runTest("plugins/kotlinx-serialization/testData/boxIr/serializableCompanion.kt");
+    }
+
+    @Test
     @TestMetadata("serializableFromAnotherModule.kt")
     public void testSerializableFromAnotherModule() {
       runTest("plugins/kotlinx-serialization/testData/boxIr/serializableFromAnotherModule.kt");
