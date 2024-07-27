@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridge
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridgeValueParameter
 import org.jetbrains.kotlin.name.Name
@@ -80,7 +80,7 @@ private fun KaSession.addReceiver(
 ) {
 
     val receiverType = getObjCReceiverType(function)
-    val receiverTypeName = receiverType?.expandedSymbol?.name
+    val receiverTypeName = getObjCReceiverTypeName(receiverType)
 
     if (receiverType != null && receiverTypeName != null) {
         list.add(
@@ -92,6 +92,11 @@ private fun KaSession.addReceiver(
             )
         )
     }
+}
+
+private fun KaSession.getObjCReceiverTypeName(type: KaType?): Name? {
+    return if (type?.expandedSymbol != null) type.expandedSymbol?.name
+    else if (type is KaTypeParameterType) type.name else null
 }
 
 private fun KtObjCExportSession.mapBridgeToFunctionParameters(
