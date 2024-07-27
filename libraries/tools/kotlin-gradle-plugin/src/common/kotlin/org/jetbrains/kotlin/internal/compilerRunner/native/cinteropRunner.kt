@@ -11,38 +11,41 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
-import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.listProperty
-import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.newInstance
+import java.io.File
 
-internal fun ObjectFactory.KotlinNativeLibraryGenerationRunner(
+internal fun ObjectFactory.KotlinNativeCInteropRunner(
     metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
+    kotlinNativeCompilerJar: Provider<File>,
+    actualNativeHomeDirectory: Provider<File>,
+    jvmArgs: Provider<List<String>>,
     useXcodeMessageStyle: Provider<Boolean>,
-    nativeProperties: NativeProperties,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
 ): KotlinNativeToolRunner = newInstance(
     metricsReporter,
     classLoadersCachingBuildService,
-    kotlinToolSpec(useXcodeMessageStyle, nativeProperties, konanPropertiesBuildService)
+    kotlinToolSpec(kotlinNativeCompilerJar, actualNativeHomeDirectory, jvmArgs, useXcodeMessageStyle, konanPropertiesBuildService)
 )
 
 private fun ObjectFactory.kotlinToolSpec(
+    kotlinNativeCompilerJar: Provider<File>,
+    actualNativeHomeDirectory: Provider<File>,
+    jvmArgs: Provider<List<String>>,
     useXcodeMessageStyle: Provider<Boolean>,
-    nativeProperties: NativeProperties,
-    konanPropertiesBuildService: Provider<KonanPropertiesBuildService>
+    konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
 ) = KotlinNativeToolRunner.ToolSpec(
-    displayName = property("generatePlatformLibraries"),
-    optionalToolName = property("generatePlatformLibraries"),
+    displayName = property("cinterop"),
+    optionalToolName = property("cinterop"),
     mainClass = property("org.jetbrains.kotlin.cli.utilities.MainKt"),
     daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
-    classpath = nativeCompilerClasspath(nativeProperties.kotlinNativeCompilerJar, nativeProperties.actualNativeHomeDirectory),
-    jvmArgs = listProperty<String>().value(nativeProperties.jvmArgs),
+    classpath = nativeCompilerClasspath(kotlinNativeCompilerJar, actualNativeHomeDirectory),
+    jvmArgs = listProperty<String>().value(jvmArgs),
     shouldPassArgumentsViaArgFile = property(false),
     systemProperties = nativeExecSystemProperties(useXcodeMessageStyle),
     environment = nativeExecLLVMEnvironment,
     environmentBlacklist = konanPropertiesBuildService.get().environmentBlacklist,
-).enableAssertions()
-    .configureDefaultMaxHeapSize()
+).configureDefaultMaxHeapSize().enableAssertions()

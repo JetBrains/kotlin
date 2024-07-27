@@ -25,9 +25,13 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.compilerRunner.*
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.run
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
+import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
+import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
@@ -38,16 +42,21 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeCompilerOptionMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.GradleLoggerAdapter
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCInteropRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.kotlinNativeCompilerJar
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
@@ -1008,7 +1017,11 @@ internal class CacheBuilder(
 
 @CacheableTask
 abstract class CInteropProcess @Inject internal constructor(params: Params) :
-    DefaultTask(), UsesBuildMetricsService, UsesKotlinNativeBundleBuildService {
+    DefaultTask(),
+    UsesBuildMetricsService,
+    UsesKotlinNativeBundleBuildService,
+    UsesClassLoadersCachingBuildService,
+    UsesKonanPropertiesBuildService {
 
     internal class Params(
         val settings: DefaultCInteropSettings,
@@ -1024,6 +1037,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     }
 
     private val objectFactory: ObjectFactory = params.services.objectFactory
+
+    @get:Inject
+    abstract val providerFactory: ProviderFactory
 
     @get:Internal
     internal val targetName: String = params.targetName
@@ -1093,11 +1109,21 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
 
-    private val runnerSettings = KotlinNativeToolRunner.Settings.of(
-        kotlinNativeProvider.get().bundleDirectory.getFile().absolutePath,
-        kotlinNativeProvider.get().konanDataDir.orNull,
-        project
-    )
+    private val kotlinNativeCompilerJar = project.nativeProperties.kotlinNativeCompilerJar
+    private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
+    private val runnerJvmArgs = project.nativeProperties.jvmArgs
+    private val useXcodeMessageStyle = project.useXcodeMessageStyle
+    private val cinteropRunner: KotlinNativeToolRunner
+        get() = objectFactory.KotlinNativeCInteropRunner(
+            metrics,
+            classLoadersCachingService,
+            kotlinNativeCompilerJar,
+            actualNativeHomeDirectory,
+            runnerJvmArgs,
+            useXcodeMessageStyle,
+            konanPropertiesService,
+        )
+
     // Inputs and outputs.
 
     @OutputFile
@@ -1171,50 +1197,60 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     private val isInIdeaSync = project.isInIdeaSync
 
+    @get:Internal
+    internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
+
     // Task action.
+    @OptIn(ExperimentalStdlibApi::class)
     @TaskAction
     fun processInterop() {
         val buildMetrics = metrics.get()
 
-        val args =
-            mutableListOf<String>().apply {
-                addArg("-o", outputFileProvider.get().absolutePath)
+        val args = buildList<String> {
+            addArg("-o", outputFileProvider.get().absolutePath)
 
-                addArgIfNotNull("-target", konanTarget.visibleName)
-                if (definitionFile.isPresent) {
-                    addArgIfNotNull("-def", definitionFile.getFile().canonicalPath)
-                }
-                addArgIfNotNull("-pkg", packageName)
-
-                addFileArgs("-header", headers)
-
-                compilerOpts.forEach {
-                    addArg("-compiler-option", it)
-                }
-
-                linkerOpts.forEach {
-                    addArg("-linker-option", it)
-                }
-
-                libraries.files.filterKlibsPassedToCompiler().forEach { library ->
-                    addArg("-library", library.absolutePath)
-                }
-
-                addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
-                addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
-                addArg("-Xmodule-name", moduleName)
-
-                addAll(extraOpts)
-
+            addArgIfNotNull("-target", konanTarget.visibleName)
+            if (definitionFile.isPresent) {
+                addArgIfNotNull("-def", definitionFile.getFile().canonicalPath)
             }
+            addArgIfNotNull("-pkg", packageName)
+
+            addFileArgs("-header", headers)
+
+            compilerOpts.forEach {
+                addArg("-compiler-option", it)
+            }
+
+            linkerOpts.forEach {
+                addArg("-linker-option", it)
+            }
+
+            libraries.files.filterKlibsPassedToCompiler().forEach { library ->
+                addArg("-library", library.absolutePath)
+            }
+
+            addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
+            addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
+            addArg("-Xmodule-name", moduleName)
+            addArgIfNotNull("-Xkonan-data-dir", kotlinNativeProvider.get().konanDataDir.orNull)
+
+            addAll(extraOpts)
+        }
+
         addBuildMetricsForTaskAction(buildMetrics, languageVersion = null) {
             outputFileProvider.get().parentFile.mkdirs()
-            KotlinNativeCInteropRunner.createExecutionContext(
-                task = this,
+            createExecutionContext(
                 isInIdeaSync = isInIdeaSync,
-                runnerSettings = runnerSettings,
-                metricsReporter = buildMetrics
-            ).run(objectFactory, args)
+                cinteropRunner = cinteropRunner,
+            ).runWithContext {
+                runTool(
+                    KotlinNativeToolRunner.ToolArguments(
+                        shouldRunInProcessMode = false,
+                        compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
+                        arguments = args,
+                    )
+                )
+            }
         }
     }
 
