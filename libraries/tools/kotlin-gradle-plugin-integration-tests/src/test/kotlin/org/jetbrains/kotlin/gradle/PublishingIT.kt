@@ -111,43 +111,4 @@ class PublishingIT : KGPBaseTest() {
             }
         }
     }
-
-    @DisplayName("Publication with old 'maven' plugin is working")
-    @GradleTest
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_6_9)
-    @DisabledOnOs(OS.WINDOWS)
-    fun testOldMavenPublishing(
-        gradleVersion: GradleVersion,
-        @TempDir localRepoDir: Path
-    ) {
-        project(
-            projectName = "old-maven-publish",
-            gradleVersion = gradleVersion,
-            localRepoDir = localRepoDir,
-            buildOptions = defaultBuildOptions.copy(
-                warningMode = WarningMode.Summary // 'maven' is deprecated
-            )
-        ) {
-            build("uploadArchives") {
-                val publishingDir = localRepoDir.resolve("org.jetbrains.kotlin.example").resolve("1.0.0")
-                assertDirectoryExists(publishingDir)
-                assertFileExists(publishingDir.resolve("org.jetbrains.kotlin.example-1.0.0.jar"))
-                val pomFile = publishingDir.resolve("org.jetbrains.kotlin.example-1.0.0.pom")
-                assertFileExists(pomFile)
-                assertFileContains(
-                    pomFile,
-                    """
-                    |  <dependencies>
-                    |    <dependency>
-                    |      <groupId>org.jetbrains.kotlin</groupId>
-                    |      <artifactId>kotlin-stdlib</artifactId>
-                    |      <scope>compile</scope>
-                    |    </dependency>
-                    |  </dependencies>
-                    """.trimMargin()
-                )
-            }
-        }
-    }
-
 }
