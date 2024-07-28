@@ -216,7 +216,6 @@ val maxParallelTestForks =
 
 // Must be in sync with TestVersions.kt KTI-1612
 val gradleVersions = listOf(
-    "7.2",
     "7.3.3",
     "7.4.2",
     "7.5.1",
