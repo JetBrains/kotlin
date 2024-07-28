@@ -249,8 +249,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("general fields with configuration cache and project isolation")
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_1,
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     fun testFusStatisticsWithConfigurationCacheAndProjectIsolation(gradleVersion: GradleVersion) {
         testFusStatisticsWithConfigurationCache(gradleVersion, true)

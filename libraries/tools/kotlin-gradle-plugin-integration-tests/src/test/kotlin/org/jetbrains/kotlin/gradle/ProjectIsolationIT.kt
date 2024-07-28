@@ -18,9 +18,6 @@ class ProjectIsolationIT : KGPBaseTest() {
 
     @DisplayName("JVM project should be compatible with project isolation")
     @JvmGradlePluginTests
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_1,
-    )
     @GradleTest
     fun testProjectIsolationInJvmSimple(gradleVersion: GradleVersion) {
         project(

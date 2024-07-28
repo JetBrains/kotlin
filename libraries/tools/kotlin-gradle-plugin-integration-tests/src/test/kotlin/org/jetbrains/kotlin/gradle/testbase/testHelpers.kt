@@ -175,13 +175,6 @@ internal fun TestProject.addArchivesBaseNameCompat(
             |}
             """.trimMargin()
         )
-    } else if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_7_1)) {
-        buildGradle.appendText(
-            """
-            |
-            |archivesBaseName = '$archivesBaseName'
-            """.trimMargin()
-        )
     } else {
         buildGradle.appendText(
             """
