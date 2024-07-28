@@ -1,0 +1,4 @@
+org.jetbrains:annotations:13.0 => [compile]
+project : => [flavor1ReleaseCompileClasspath]
+sample.gradle_7_6_3:kmp_native_jvm_android_kgp_snapshot_agp_7_3_1-android-flavor1:1.0 => [flavor1ReleaseApiElements-published]
+sample.gradle_7_6_3:kmp_native_jvm_android_kgp_snapshot_agp_7_3_1:1.0 => [flavor1ReleaseApiElements-published]

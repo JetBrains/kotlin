@@ -577,18 +577,13 @@ class GeneralNativeIT : KGPBaseTest() {
             val bootedSimulatorsBefore = getBootedSimulators()
 
             // Check the case when all tests pass.
-            build("check") {
+            build("check", forceOutput = true) {
 
                 assertTasksExecuted(*testsToExecute.toTypedArray())
                 assertTasksSkipped(*testsToSkip.toTypedArray())
 
-                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                    assertOutputContains("org.foo.test.TestKt.fooTest PASSED")
-                    assertOutputContains("org.foo.test.TestKt.barTest PASSED")
-                } else {
-                    assertOutputContains("org.foo.test.TestKt.fooTest[host] PASSED")
-                    assertOutputContains("org.foo.test.TestKt.barTest[host] PASSED")
-                }
+                assertOutputContains("org.foo.test.TestKt.fooTest[host] PASSED")
+                assertOutputContains("org.foo.test.TestKt.barTest[host] PASSED")
 
                 assertFileInProjectExists(defaultOutputFile)
             }
@@ -673,11 +668,7 @@ class GeneralNativeIT : KGPBaseTest() {
             assertTasksExecuted(*testsToExecute.toTypedArray())
             assertTasksSkipped(*testsToSkip.toTypedArray())
 
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                assertOutputContains("org.foo.test.TestKt.fail FAILED")
-            } else {
-                assertOutputContains("org.foo.test.TestKt.fail[host] FAILED")
-            }
+            assertOutputContains("org.foo.test.TestKt.fail[host] FAILED")
         }
 
         // Check that individual test reports are created correctly.
