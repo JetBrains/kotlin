@@ -6,6 +6,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
@@ -146,13 +147,12 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     // https://sourceforge.net/p/proguard/bugs/735/
     // Gradle 7 compatibility issue: https://github.com/Guardsquare/proguard/issues/136
     @GradleTest
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_6_8)
     @DisplayName("Should correctly interop with ProGuard")
+    @TestMetadata("interopWithProguarded")
     fun testInteropWithProguarded(gradleVersion: GradleVersion) {
         project(
             "interopWithProguarded",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)
         ) {
             build("build") {
                 assertTasksExecuted(":test")
