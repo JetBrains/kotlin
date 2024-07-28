@@ -103,7 +103,6 @@ class KotlinJvmApiTest : KGPBaseTest() {
 
     @DisplayName("KAPT can be set up using APIs")
     @OtherGradlePluginTests
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @GradleTest
     internal fun kaptShouldRunIfSetUpWithApi(gradleVersion: GradleVersion) {
         project(

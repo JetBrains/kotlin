@@ -538,7 +538,6 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @OptIn(EnvironmentalVariablesOverride::class)
     @DisplayName("Checking native tests")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @GradleTest
     fun testNativeTests(gradleVersion: GradleVersion) {
         nativeProject("native-tests", gradleVersion) {
@@ -969,7 +968,6 @@ class GeneralNativeIT : KGPBaseTest() {
     }
 
     @DisplayName("Checks allowing to override download url")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @GradleTest
     fun shouldAllowToOverrideDownloadUrl(gradleVersion: GradleVersion, @TempDir customKonanDir: Path) {
         nativeProject(

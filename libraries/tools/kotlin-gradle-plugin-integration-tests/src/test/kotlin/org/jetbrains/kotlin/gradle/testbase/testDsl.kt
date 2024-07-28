@@ -392,7 +392,7 @@ open class GradleProject(
 }
 
 /**
- * You need at least [TestVersions.Gradle.G_7_0] for supporting environment variables with gradle runner
+ * You need at least Gradle "7.0" for supporting environment variables with Gradle runner
  */
 @JvmInline
 value class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(val environmentalVariables: Map<String, String> = emptyMap()) {

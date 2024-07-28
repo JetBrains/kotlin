@@ -18,7 +18,6 @@ import java.util.stream.Stream
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests an Upgrade sequence for Kotlin direct integration")
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @NativeGradlePluginTests
 class XcodeDirectIntegrationUpgradeSequenceIT : KGPBaseTest() {
 

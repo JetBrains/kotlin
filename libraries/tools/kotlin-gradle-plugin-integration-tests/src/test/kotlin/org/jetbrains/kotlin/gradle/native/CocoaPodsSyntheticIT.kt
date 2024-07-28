@@ -16,7 +16,6 @@ import kotlin.test.assertTrue
 @OptIn(EnvironmentalVariablesOverride::class)
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("K/N tests with synthetic cocoapods")
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @NativeGradlePluginTests
 class CocoaPodsSyntheticIT : KGPBaseTest() {
 
