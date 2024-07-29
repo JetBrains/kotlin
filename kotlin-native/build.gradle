@@ -294,6 +294,7 @@ tasks.register("distCompiler", Copy) {
 
 tasks.register("distDef", Copy) {
     destinationDir project.file("$distDir/konan/platformDef/")
+    dependsOn ":kotlin-native:platformLibs:updateDefFileDependencies"
 
     platformManager.targetValues.each { target ->
         from(project(":kotlin-native:platformLibs").file("src/platform/${target.family.name().toLowerCase()}")) {
