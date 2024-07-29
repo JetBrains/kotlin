@@ -9,16 +9,15 @@ import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCom
 import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_LIBRARY_VERSION
 import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
+import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.utils.TestMessageCollector
-import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import java.io.File
 import java.util.*
 import java.util.jar.Manifest
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
 
@@ -233,18 +232,7 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         if (patchedStdlibFile.exists()) return patchedStdlibFile
 
         val unzippedStdlibDir = createFakeUnzippedStdlibWithSpecificVersion(isWasm, version)
-
-        patchedStdlibFile.outputStream().use { outputStream ->
-            ZipOutputStream(outputStream).use { zipStream ->
-                unzippedStdlibDir.walkTopDown().filter { it != unzippedStdlibDir }.forEach { fileOrDir ->
-                    val isDirectory = fileOrDir.isDirectory
-                    val relativePath = fileOrDir.relativeTo(unzippedStdlibDir).path.butIf(isDirectory) { "$it/" }
-                    zipStream.putNextEntry(ZipEntry(relativePath))
-                    if (!isDirectory) zipStream.write(fileOrDir.readBytes())
-                    zipStream.closeEntry()
-                }
-            }
-        }
+        zipDirectory(directory = unzippedStdlibDir, zipFile = patchedStdlibFile)
 
         return patchedStdlibFile
     }
@@ -286,5 +274,9 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
                 TestVersion(2, 0, 0, "-Beta2"),
                 TestVersion(2, 0, 255, "-SNAPSHOT"),
             ).groupByTo(TreeMap()) { it.basicVersion }.values.toList()
+
+        private fun zipDirectory(directory: File, zipFile: File) {
+            KFile(directory.toPath()).zipDirAs(KFile(zipFile.toPath()))
+        }
     }
 }

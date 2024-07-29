@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
-import org.jetbrains.kotlin.library.impl.javaFile
+import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.util.jar.Manifest
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 /** See KT-68322 for details. */
 abstract class StandardLibrarySpecialCompatibilityChecker {
@@ -60,11 +61,11 @@ abstract class StandardLibrarySpecialCompatibilityChecker {
 
     private fun KotlinLibrary.getJarManifest(): Manifest? {
         val libraryAccess = (this as KotlinLibraryImpl).base.access
-        val jarManifestFile = libraryAccess.inPlace { it.libFile.child(KLIB_JAR_MANIFEST_FILE).javaFile() }
+        val jarManifestFile: KFile = libraryAccess.inPlace { it.libFile.child(KLIB_JAR_MANIFEST_FILE) }
         if (!jarManifestFile.isFile) return null
 
         return try {
-            jarManifestFile.inputStream().use { Manifest(it) }
+            ByteArrayInputStream(jarManifestFile.readBytes()).use { Manifest(it) }
         } catch (e: IOException) {
             null
         }
