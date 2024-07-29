@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -108,8 +109,11 @@ internal val KonanTarget.appleArchitecture: String
         else -> throw IllegalArgumentException("Target $this is not an Apple target or not supported yet")
     }
 
+internal val KotlinNativeTarget.appleTarget: AppleTarget
+    get() = konanTarget.appleTarget
+
 internal val KonanTarget.appleTarget: AppleTarget
-    get() = AppleTarget.values().first { it.targets.contains(this) }
+    get() = AppleTarget.values().singleOrNull { it.targets.contains(this) } ?: throw IllegalArgumentException("Target $this is not an Apple target or not supported yet")
 
 internal val AppleTarget.applePlatform: String
     get() = when (this) {
@@ -122,11 +126,26 @@ internal val AppleTarget.applePlatform: String
         AppleTarget.TVOS_SIMULATOR -> "tvOS Simulator"
     }
 
+internal val AppleTarget.sdk: String
+    get() = when (this) {
+        AppleTarget.MACOS_DEVICE -> "macosx"
+        AppleTarget.IPHONE_DEVICE -> "iphoneos"
+        AppleTarget.IPHONE_SIMULATOR -> "iphonesimulator"
+        AppleTarget.WATCHOS_DEVICE -> "watchos"
+        AppleTarget.WATCHOS_SIMULATOR -> "watchsimulator"
+        AppleTarget.TVOS_DEVICE -> "appletvos"
+        AppleTarget.TVOS_SIMULATOR -> "appletvsimulator"
+    }
+
 internal val KonanTarget.applePlatform: String
     get() = appleTarget.applePlatform
+
 
 internal val NativeBuildType.configuration: String
     get() = when (this) {
         NativeBuildType.RELEASE -> "Release"
         NativeBuildType.DEBUG -> "Debug"
     }
+
+internal val AppleTarget.genericPlatformDestination: String
+    get() = "generic/platform=${applePlatform}"

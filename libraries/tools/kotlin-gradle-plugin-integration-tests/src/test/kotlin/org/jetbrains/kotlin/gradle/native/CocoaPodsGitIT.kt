@@ -57,7 +57,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
     private val defaultPodName = "AFNetworking"
     private val defaultTarget = "IOS"
     private val defaultFamily = "ios"
-    private val defaultSDK = "iphonesimulator"
+    private val defaultAppleTarget = "iosSimulator"
     private val privateSpecGitRepo = "privateSpec.git"
     private val privateSpecName = "KMPPrivateSpec"
     private val customPodLibraryName = "cocoapodsLibrary"
@@ -78,11 +78,11 @@ class CocoaPodsGitIT : KGPBaseTest() {
     private fun podGenFullTaskName(familyName: String = defaultFamily) =
         podGenTaskName + familyName.capitalize()
 
-    private fun podSetupBuildFullTaskName(podName: String = defaultPodName, sdkName: String = defaultSDK) =
-        podSetupBuildTaskName + podName.capitalize() + sdkName.capitalize()
+    private fun podSetupBuildFullTaskName(podName: String = defaultPodName, appleTarget: String = defaultAppleTarget) =
+        podSetupBuildTaskName + podName.capitalize() + appleTarget.capitalize()
 
-    private fun podBuildFullTaskName(podName: String = defaultPodName, sdkName: String = defaultSDK) =
-        podBuildTaskName + podName.capitalize() + sdkName.capitalize()
+    private fun podBuildFullTaskName(podName: String = defaultPodName, appleTarget: String = defaultAppleTarget) =
+        podBuildTaskName + podName.capitalize() + appleTarget.capitalize()
 
     private fun cinteropFullTaskName(podName: String = defaultPodName, targetName: String = defaultTarget) =
         cinteropTaskName + podName.capitalize() + targetName.capitalize()
@@ -263,15 +263,15 @@ class CocoaPodsGitIT : KGPBaseTest() {
                 defaultCinteropTaskName
             )
             val anotherTarget = "MacosX64"
-            val anotherSdk = "macosx"
+            val anotherAppleTarget = "macos"
             val anotherFamily = "macos"
             buildGradleKts.addKotlinBlock(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()")
 
             testImport {
                 assertTasksExecuted(
                     podGenFullTaskName(anotherFamily),
-                    podSetupBuildFullTaskName(sdkName = anotherSdk),
-                    podBuildFullTaskName(sdkName = anotherSdk),
+                    podSetupBuildFullTaskName(appleTarget = anotherAppleTarget),
+                    podBuildFullTaskName(appleTarget = anotherAppleTarget),
                     cinteropFullTaskName(targetName = anotherTarget)
                 )
                 assertTasksUpToDate(tasks)
@@ -280,8 +280,8 @@ class CocoaPodsGitIT : KGPBaseTest() {
             buildGradleKts.replaceText(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()", "")
             testImport {
                 assertOutputDoesNotContain(podGenFullTaskName(anotherFamily))
-                assertOutputDoesNotContain(podSetupBuildFullTaskName(sdkName = anotherSdk))
-                assertOutputDoesNotContain(podBuildFullTaskName(sdkName = anotherSdk))
+                assertOutputDoesNotContain(podSetupBuildFullTaskName(appleTarget = anotherAppleTarget))
+                assertOutputDoesNotContain(podBuildFullTaskName(appleTarget = anotherAppleTarget))
                 assertOutputDoesNotContain(cinteropFullTaskName(targetName = anotherTarget))
                 assertTasksUpToDate(tasks)
             }
@@ -299,17 +299,17 @@ class CocoaPodsGitIT : KGPBaseTest() {
             }
 
             val anotherTarget = "MacosX64"
-            val anotherSdk = "macosx"
-            val anotherSdkDefaultPodTaskName = podBuildFullTaskName(sdkName = anotherSdk)
+            val anotherAppleTarget = "macos"
+            val anotherTargetDefaultPodTaskName = podBuildFullTaskName(appleTarget = anotherAppleTarget)
             buildGradleKts.addCocoapodsBlock("osx.deploymentTarget = \"10.15\"")
             buildGradleKts.addKotlinBlock(anotherTarget.replaceFirstChar { it.lowercase(Locale.getDefault()) } + "()")
 
             testImport {
                 assertTasksUpToDate(defaultBuildTaskName)
-                assertTasksExecuted(anotherSdkDefaultPodTaskName)
+                assertTasksExecuted(anotherTargetDefaultPodTaskName)
             }
             testImport {
-                assertTasksUpToDate(defaultBuildTaskName, anotherSdkDefaultPodTaskName)
+                assertTasksUpToDate(defaultBuildTaskName, anotherTargetDefaultPodTaskName)
             }
         }
     }

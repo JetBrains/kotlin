@@ -776,9 +776,9 @@ class CocoaPodsIT : KGPBaseTest() {
             )
 
             buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
-                assertTasksExecuted(":podBuildAFNetworkingIphonesimulator")
-                assertTasksExecuted(":podBuildSDWebImageIphonesimulator")
-                assertTasksExecuted(":podBuildSSZipArchiveIphonesimulator")
+                assertTasksExecuted(":podBuildAFNetworkingIosSimulator")
+                assertTasksExecuted(":podBuildSDWebImageIosSimulator")
+                assertTasksExecuted(":podBuildSSZipArchiveIosSimulator")
 
                 assertTasksExecuted(":cinteropSDWebImageIOS")
 

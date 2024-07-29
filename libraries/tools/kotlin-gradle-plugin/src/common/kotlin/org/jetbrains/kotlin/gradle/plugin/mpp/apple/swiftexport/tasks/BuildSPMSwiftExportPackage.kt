@@ -15,6 +15,8 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.genericPlatformDestination
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
@@ -146,7 +148,6 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         val deviceId = targetDeviceIdentifier.orNull
         if (deviceId != null) return "id=$deviceId"
 
-        val platformName = target.map { it.applePlatform }.get()
-        return "generic/platform=$platformName"
+        return target.get().appleTarget.genericPlatformDestination
     }
 }
