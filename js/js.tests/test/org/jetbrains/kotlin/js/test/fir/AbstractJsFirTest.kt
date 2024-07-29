@@ -205,17 +205,20 @@ open class AbstractFirJsCodegenWasmJsInteropTest : AbstractFirJsTest(
 )
 
 // TODO(KT-64570): Don't inherit from AbstractFirJsTest after we move the common prefix of lowerings before serialization.
-open class AbstractFirJsKlibSyntheticAccessorTest : AbstractFirJsTest(
+abstract class AbstractFirJsKlibSyntheticAccessorTest(private val narrowedAccessorVisibility: Boolean) : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
     testGroupOutputDirPrefix = "klib/syntheticAccessors-k2/",
 ) {
-
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest()
         defaultDirectives {
             +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
             +CodegenTestDirectives.ENABLE_EXPERIMENTAL_DOUBLE_INLINING
             +CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
+            if (narrowedAccessorVisibility) +CodegenTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
         }
     }
 }
+
+open class AbstractFirJsKlibSyntheticAccessorInPhase1Test : AbstractFirJsKlibSyntheticAccessorTest(narrowedAccessorVisibility = true)
+open class AbstractFirJsKlibSyntheticAccessorInPhase2Test : AbstractFirJsKlibSyntheticAccessorTest(narrowedAccessorVisibility = false)

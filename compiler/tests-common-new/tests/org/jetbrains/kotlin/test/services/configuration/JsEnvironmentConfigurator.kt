@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
@@ -244,12 +245,17 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             mapOf(File(".").absolutePath.removeSuffix(".") to "")
         )
 
-        if (CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS in registeredDirectives) {
+        if (DUMP_KLIB_SYNTHETIC_ACCESSORS in registeredDirectives) {
             configuration.put(
                 KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR,
                 testServices.getOrCreateTempDirectory("synthetic-accessors").absolutePath
             )
         }
+
+        configuration.put(
+            KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY,
+            KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY in registeredDirectives
+        )
     }
 }
 

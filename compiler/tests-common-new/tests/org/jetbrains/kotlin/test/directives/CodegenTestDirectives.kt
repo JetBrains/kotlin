@@ -290,11 +290,28 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY by directive(
+        """
+            Narrow the visibility of generated synthetic accessors to _internal_" +
+            if such accessors are only used in inline functions that are not a part of public ABI
+            Equivalent to passing the '-Xsynthetic-accessors-with-narrowed-visibility' CLI flag.
+        """.trimIndent()
+    )
+
     val DUMP_KLIB_SYNTHETIC_ACCESSORS by directive(
         """
             Enable dumping synthetic accessors and their use-sites immediately generation.
             This directive makes sense only for KLIB-based backends.
             Equivalent to passing the '-Xdump-synthetic-accessors-to=<tempDir>/synthetic-accessors' CLI flag.
+        """.trimIndent()
+    )
+
+    val IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS by directive(
+        """
+            Normally, there should be different dumps of synthetic accessors generated with and without
+            narrowing visibility (see ${::KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY.name} directive
+            for details). But sometimes these dumps are identical. In such cases with this directive
+            it's possible to have just one dump file.
         """.trimIndent()
     )
 }
