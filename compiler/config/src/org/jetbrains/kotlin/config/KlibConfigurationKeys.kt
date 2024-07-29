@@ -25,4 +25,11 @@ object KlibConfigurationKeys {
     @JvmField
     val SYNTHETIC_ACCESSORS_DUMP_DIR: CompilerConfigurationKey<String?> =
         CompilerConfigurationKey.create("Path to a directory to dump synthetic accessors and their use sites")
+
+    @JvmField
+    val SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create(
+            "Narrow the visibility of generated synthetic accessors to _internal_" +
+                    " if such accessors are only used in inline functions that are not a part of public ABI"
+        )
 }

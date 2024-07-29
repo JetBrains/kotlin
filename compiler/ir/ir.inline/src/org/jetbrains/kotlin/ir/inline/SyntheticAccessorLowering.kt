@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
@@ -31,12 +32,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  *   and IR to a KLIB, or at the second phase (KLIB -> binaries) in a KLIB-based backend.
  * - It's not designed to work with the JVM backend because the visibility rules on JVM are stricter.
  * - By the point it's executed, all _private_ inline functions have already been inlined.
- *
- * @property narrowAccessorVisibilities Whether the visibility of a generated accessor should be narrowed from _public_
- * to _internal_ if an accessor is only used in _internal_ inline functions and therefore is not a part of public ABI.
- * This "narrowing" is supposed to be used only during the first phase of compilation.
  */
-class SyntheticAccessorLowering(context: CommonBackendContext, private val narrowAccessorVisibilities: Boolean = false) : FileLoweringPass {
+class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPass {
+    /**
+     * Whether the visibility of a generated accessor should be narrowed from _public_ to _internal_ if an accessor is only used
+     * in _internal_ inline functions and therefore is not a part of public ABI.
+     * This "narrowing" is supposed to be used only during the first phase of compilation.
+     */
+    private val narrowAccessorVisibilities =
+        context.configuration.getBoolean(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY)
+
     /**
      * @property accessor The generated synthetic accessor.
      * @property targetSymbol The symbol of a private declaration that this accessor wraps.

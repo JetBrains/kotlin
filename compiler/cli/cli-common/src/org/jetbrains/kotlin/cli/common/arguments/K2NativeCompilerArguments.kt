@@ -468,6 +468,17 @@ The default value is 1."""
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-Xsynthetic-accessors-with-narrowed-visibility",
+        description = "Narrow the visibility of generated synthetic accessors to _internal_" +
+                " if such accessors are only used in inline functions that are not a part of public ABI"
+    )
+    var narrowedSyntheticAccessorsVisibility: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
             val optInList = it[AnalysisFlags.optIn] as List<*>
