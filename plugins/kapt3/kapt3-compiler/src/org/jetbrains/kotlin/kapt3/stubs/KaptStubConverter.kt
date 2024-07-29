@@ -33,15 +33,24 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
+import org.jetbrains.kotlin.fir.backend.FirAnnotationSourceElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
+import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.*
@@ -53,6 +62,7 @@ import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt3.util.*
+import org.jetbrains.kotlin.kapt3.util.isEnum
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -1202,6 +1212,11 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return nonErrorType
     }
 
+    private fun FirAnnotation.convertNonErrorAnnotationType(type: KotlinType): JCExpression? =
+        if (correctErrorTypes && type.containsErrorTypes())
+            convertFirType(resolvedType)
+        else null
+
     private fun isValidQualifiedName(name: FqName) = name.pathSegments().all { isValidIdentifier(it.asString()) }
 
     private fun isValidIdentifier(name: String, canBeConstructor: Boolean = false): Boolean {
@@ -1302,7 +1317,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
 
         val ktAnnotation = annotationDescriptor?.source?.getPsi() as? KtAnnotationEntry
-        val annotationFqName = getNonErrorType(
+        val firSource = annotationDescriptor?.source as? FirAnnotationSourceElement
+        val firAnnotation = firSource?.fir
+        val annotationFqName = firAnnotation?.convertNonErrorAnnotationType(annotationDescriptor.type) ?: getNonErrorType(
             annotationDescriptor?.type,
             ANNOTATION,
             { ktAnnotation?.typeReference },
@@ -1316,25 +1333,85 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
         )
 
-        val argMapping = ktAnnotation?.calleeExpression
+        val firArgMapping = firAnnotation?.argumentMapping?.mapping ?: emptyMap()
+
+        val argMapping: Map<String, ResolvedValueArgument> = ktAnnotation?.calleeExpression
             ?.getResolvedCall(kaptContext.bindingContext)?.valueArguments
             ?.mapKeys { it.key.name.asString() }
             ?: emptyMap()
 
         val constantValues = pairedListToMap(annotation.values)
 
-        val values = if (argMapping.isNotEmpty()) {
-            argMapping.mapNotNull { (parameterName, arg) ->
-                if (arg is DefaultValueArgument) return@mapNotNull null
-                convertAnnotationArgumentWithName(containingClass, constantValues[parameterName], arg, parameterName)
+        val values = when {
+            firArgMapping.isNotEmpty() -> {
+                firArgMapping.mapNotNull { (parameterName, arg) ->
+                    // TODO: default arguments
+                    convertAnnotationArgumentWithName(
+                        containingClass, constantValues[parameterName.asString()], arg, parameterName.asString(),
+                    )
+                }
             }
-        } else {
-            constantValues.mapNotNull { (parameterName, arg) ->
-                convertAnnotationArgumentWithName(containingClass, arg, null, parameterName)
+            argMapping.isNotEmpty() -> {
+                argMapping.mapNotNull { (parameterName, arg) ->
+                    if (arg is DefaultValueArgument) return@mapNotNull null
+                    convertAnnotationArgumentWithName(containingClass, constantValues[parameterName], arg, parameterName)
+                }
+            }
+            else -> {
+                constantValues.mapNotNull { (parameterName, arg) ->
+                    convertAnnotationArgumentWithName(containingClass, arg, null, parameterName)
+                }
             }
         }
 
         return treeMaker.Annotation(annotationFqName, JavacList.from(values))
+    }
+
+    private fun convertAnnotationArgumentWithName(
+        containingClass: ClassNode,
+        constantValue: Any?,
+        value: FirExpression,
+        name: String,
+    ): JCExpression? {
+        if (!isValidIdentifier(name)) return null
+        if (value !is FirArrayLiteral) return null
+
+        val expr = convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments) ?: return null
+        return treeMaker.Assign(treeMaker.SimpleName(name), expr)
+    }
+
+    private fun convertConstantValueArgumentsFir(
+        containingClass: ClassNode,
+        constantValue: Any?,
+        args: List<FirExpression>,
+    ): JCExpression? {
+        if (constantValue is List<*>) {
+            if (args.size > constantValue.size) {
+                val literalExpression = mapJList(args, ::convertFirGetClassCall)
+                if (literalExpression.size == args.size) {
+                    return treeMaker.NewArray(null, null, literalExpression)
+                }
+            }
+        }
+
+        return convertLiteralExpression(containingClass, constantValue)
+    }
+
+    private fun convertFirGetClassCall(expression: FirExpression): JCExpression? {
+        if (expression !is FirGetClassCall) return null
+        val kClassType = expression.resolvedType
+        val type = kClassType.typeArguments.single().type ?: return null
+        val typeExpression = convertFirType(type)
+        return treeMaker.Select(typeExpression, treeMaker.name("class"))
+    }
+
+    private fun convertFirType(type: ConeKotlinType): JCExpression? {
+        val fqName = when (type) {
+            is ConeErrorType -> (type.diagnostic as? ConeUnresolvedError)?.qualifier
+            is ConeLookupTagBasedType -> (type.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.asString()
+            else -> null
+        } ?: return null
+        return treeMaker.FqName(fqName)
     }
 
     private fun convertAnnotationArgumentWithName(
