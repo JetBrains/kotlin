@@ -162,7 +162,7 @@ void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& 
 template <typename Traits>
 void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept {
     auto handle = gcHandle.processWeaks();
-    for (auto& object : registry.lockForIter()) {
+    for (auto object : registry.lockForIter()) { // FIXME rename
         auto* obj = object.load(std::memory_order_relaxed);
         if (!obj) {
             // We already processed it at some point.

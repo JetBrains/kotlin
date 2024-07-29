@@ -88,7 +88,7 @@ class SpecialRefRegistry : private Pinned {
             auto rc = rc_.exchange(disposedMarker, std::memory_order_release);
             if (compiler::runtimeAssertsEnabled()) {
                 if (rc > 0) {
-                    auto* obj = obj_.load(std::memory_order_relaxed);
+                    auto* obj = objAtomic().load(std::memory_order_relaxed);
                     // In objc export if ObjCClass extends from KtClass
                     // doing retain+autorelease inside [ObjCClass dealloc] will cause
                     // this->dispose() be called after this->retain() but before
@@ -107,19 +107,19 @@ class SpecialRefRegistry : private Pinned {
                 auto rc = rc_.load(std::memory_order_relaxed);
                 RuntimeAssert(rc >= 0, "Dereferencing StableRef@%p with rc %d", this, rc);
             }
-            return obj_.load(std::memory_order_relaxed);
+            return objAtomic().load(std::memory_order_relaxed);
         }
 
         OBJ_GETTER0(tryRef) noexcept {
             AssertThreadState(ThreadState::kRunnable);
-            RETURN_RESULT_OF(mm::weakRefReadBarrier, obj_);
+            RETURN_RESULT_OF(mm::weakRefReadBarrier, objAtomic());
         }
 
         void retainRef() noexcept {
             auto rc = rc_.fetch_add(1, std::memory_order_relaxed);
             RuntimeAssert(rc >= 0, "Retaining StableRef@%p with rc %d", this, rc);
             if (rc == 0) {
-                if (!obj_.load(std::memory_order_relaxed)) {
+                if (!objAtomic().load(std::memory_order_relaxed)) {
                     // In objc export if ObjCClass extends from KtClass
                     // calling retain inside [ObjCClass dealloc] will cause
                     // node.retainRef() be called after node.obj_ was cleared but
@@ -129,18 +129,22 @@ class SpecialRefRegistry : private Pinned {
                     return;
                 }
 
-                // TODO: With CMS root-set-write barrier for marking `obj_` should be here.
-                //       Until we have the barrier, the object must already be in the roots.
-                //       If 0->1 happened from `[ObjCClass _tryRetain]`, it would first hold the object
-                //       on the stack via `tryRef`.
-                //       If 0->1 happened during construction:
-                //       * First of all, currently it's impossible because the `Node` is created with rc=1 and not inserted
-                //         into the roots list until publishing.
-                //       * Even if the above changes, for the construction, the object must have been passed in from somewhere,
-                //         so it must be reachable anyway.
-                //       If 0->1 happened because an object is passing through the interop border for the second time (or more)
-                //       (e.g. accessing a non-permanent global a couple of times). Follows the construction case above:
-                //       "the object must have been passed in from somewhere, so it must be reachable anyway".
+                // With the current CMS implementation no barrier is required here.
+                // The CMS builds Snapshot-at-the-beginning mark closure,
+                // which means, it has to remember only the concurrent deletion of references, not creation.
+                // TODO: A write-into-root-set barrier might be required here for other concurrent mark strategies.
+
+                // In case of non-concurrent root set scanning, it is only required for the object to already be in roots.
+                // If 0->1 happened from `[ObjCClass _tryRetain]`, it would first hold the object
+                // on the stack via `tryRef`.
+                // If 0->1 happened during construction:
+                // * First of all, currently it's impossible because the `Node` is created with rc=1 and not inserted
+                //   into the roots list until publishing.
+                // * Even if the above changes, for the construction, the object must have been passed in from somewhere,
+                //   so it must be reachable anyway.
+                // If 0->1 happened because an object is passing through the interop border for the second time (or more)
+                // (e.g. accessing a non-permanent global a couple of times). Follows the construction case above:
+                // "the object must have been passed in from somewhere, so it must be reachable anyway".
 
                 // 0->1 changes require putting this node into the root set.
                 SpecialRefRegistry::instance().insertIntoRootsHead(*this);
@@ -148,8 +152,14 @@ class SpecialRefRegistry : private Pinned {
         }
 
         void releaseRef() noexcept {
-            auto rc = rc_.fetch_sub(1, std::memory_order_relaxed);
-            RuntimeAssert(rc > 0, "Releasing StableRef@%p with rc %d", this, rc);
+            auto rcBefore = rc_.fetch_sub(1, std::memory_order_relaxed);
+            RuntimeAssert(rcBefore > 0, "Releasing StableRef@%p with rc %d", this, rcBefore);
+            if (rcBefore == 1) {
+                // It's potentially a removal from global root set.
+                // The CMS GC scans global root set concurrently.
+                // Notify GC about the removal.
+                gc::beforeHeapRefUpdate(mm::DirectRefAccessor(obj_), nullptr, true);
+            }
         }
 
         RawSpecialRef* asRaw() noexcept { return reinterpret_cast<RawSpecialRef*>(this); }
@@ -169,7 +179,10 @@ class SpecialRefRegistry : private Pinned {
         //   Synchronization between GC and mutators happens via enabling/disabling
         //   the barriers.
         // TODO: Try to handle it atomically only when the GC is in progress.
-        std::atomic<ObjHeader*> obj_;
+        std_support::atomic_ref<ObjHeader*> objAtomic() noexcept  { return std_support::atomic_ref{obj_}; }
+        std_support::atomic_ref<ObjHeader* const> objAtomic() const noexcept { return std_support::atomic_ref{obj_}; }
+        ObjHeader* obj_;
+
         // Only ever updated using relaxed memory ordering. Any synchronization
         // with nextRoot_ is achieved via acquire-release of nextRoot_.
         std::atomic<Rc> rc_; // After dispose() will be disposedMarker.
@@ -221,7 +234,7 @@ public:
         ObjHeader* operator*() const noexcept {
             // Ignoring rc here. If someone nulls out rc during root
             // scanning, it's okay to be conservative and still make it a root.
-            return node_->obj_.load(std::memory_order_relaxed);
+            return node_->objAtomic().load(std::memory_order_relaxed);
         }
 
         RootsIterator& operator++() noexcept {
@@ -258,7 +271,7 @@ public:
 
     class Iterator {
     public:
-        std::atomic<ObjHeader*>& operator*() noexcept { return iterator_->obj_; }
+        std_support::atomic_ref<ObjHeader*> operator*() noexcept { return iterator_->objAtomic(); }
 
         Iterator& operator++() noexcept {
             iterator_ = owner_->findAliveNode(std::next(iterator_));

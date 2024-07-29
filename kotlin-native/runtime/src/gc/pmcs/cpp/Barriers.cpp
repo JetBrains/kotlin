@@ -30,7 +30,7 @@ ObjHeader* weakRefBarrierImpl(ObjHeader* weakReferee) noexcept {
     return weakReferee;
 }
 
-NO_INLINE ObjHeader* weakRefReadSlowPath(std::atomic<ObjHeader*>& weakReferee) noexcept {
+NO_INLINE ObjHeader* weakRefReadSlowPath(std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     // reread an action to avoid register pollution outside the function
     auto barrier = weakRefBarrier.load(std::memory_order_seq_cst);
 
@@ -107,7 +107,7 @@ void gc::DisableWeakRefBarriers() noexcept {
     }
 }
 
-OBJ_GETTER(gc::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept {
+OBJ_GETTER(gc::WeakRefRead, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     if (!compiler::concurrentWeakSweep()) {
         RETURN_OBJ(weakReferee.load(std::memory_order_relaxed));
     }
