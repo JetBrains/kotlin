@@ -735,8 +735,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // Inline the body of an anonymous function into the generated lambda subclass.
         private fun IrSimpleFunction.createLambdaInvokeMethod() {
             annotations += callee.annotations
-            val valueParameterMap = callee.explicitParameters.withIndex().associate { (index, param) ->
-                param to param.copyTo(this, index = index)
+            val valueParameterMap = callee.explicitParameters.associate { param ->
+                param to param.copyTo(this)
             }
             valueParameters += valueParameterMap.values
             body = callee.moveBodyTo(this, valueParameterMap)
@@ -745,7 +745,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private fun IrSimpleFunction.createFunInterfaceConstructorInvokeMethod() {
             val adapterValueParameter = callee.valueParameters.singleOrNull()
                 ?: throw AssertionError("Single value parameter expected: ${callee.render()}")
-            val invokeValueParameter = adapterValueParameter.copyTo(this, index = 0)
+            val invokeValueParameter = adapterValueParameter.copyTo(this)
             val valueParameterMap = mapOf(adapterValueParameter to invokeValueParameter)
             valueParameters = listOf(invokeValueParameter)
             body = callee.moveBodyTo(this, valueParameterMap)

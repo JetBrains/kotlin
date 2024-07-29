@@ -94,7 +94,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
         })
 
         for (p in oldConstructor.valueParameters) {
-            newValueParameters += p.copyTo(newConstructor, index = p.index + 1)
+            newValueParameters += p.copyTo(newConstructor)
         }
 
         newConstructor.valueParameters = newConstructor.valueParameters memoryOptimizedPlus newValueParameters

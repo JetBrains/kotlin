@@ -69,7 +69,7 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
                 name = Name.identifier(AsmUtil.CAPTURED_THIS_FIELD)
                 type = oldConstructor.parentAsClass.parentAsClass.defaultType
             }
-            valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this, index = it.index + 1) }
+            valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this) }
             metadata = oldConstructor.metadata
         }
 }

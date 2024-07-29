@@ -76,7 +76,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         staticFunction.valueParameters = staticFunction.valueParameters memoryOptimizedPlus function.valueParameters.map {
             // TODO better way to avoid copying default value
-            it.copyTo(staticFunction, index = it.index + 1, defaultValue = null)
+            it.copyTo(staticFunction, defaultValue = null)
         }
 
         val oldParameters =

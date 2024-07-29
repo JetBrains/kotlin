@@ -228,30 +228,16 @@ class ComposableDefaultParamLowering(
         }
 
         // move receiver parameters to value parameters
-        var index = wrapper.valueParameters.size
-        val oldDispatcherReceiver = wrapper.dispatchReceiverParameter
-        var dispatcherReceiver = oldDispatcherReceiver
+        val dispatcherReceiver = wrapper.dispatchReceiverParameter
         if (dispatcherReceiver != null) {
-            dispatcherReceiver = dispatcherReceiver.copyTo(wrapper, index = index++)
             wrapper.valueParameters += dispatcherReceiver
             wrapper.dispatchReceiverParameter = null
         }
 
-        val oldExtensionReceiver = wrapper.extensionReceiverParameter
-        var extensionReceiver = oldExtensionReceiver
+        val extensionReceiver = wrapper.extensionReceiverParameter
         if (extensionReceiver != null) {
-            extensionReceiver = extensionReceiver.copyTo(wrapper, index = index++)
             wrapper.valueParameters += extensionReceiver
             wrapper.extensionReceiverParameter = null
-        }
-
-        wrapper.valueParameters.forEach {
-            it.defaultValue = it.defaultValue?.deepCopyWithSymbols(wrapper)?.apply {
-                transformChildrenVoid(ValueRemapper(buildMap {
-                    if (oldDispatcherReceiver != null) put(oldDispatcherReceiver.symbol, dispatcherReceiver!!.symbol)
-                    if (oldExtensionReceiver != null) put(oldExtensionReceiver.symbol, extensionReceiver!!.symbol)
-                }))
-            }
         }
 
         wrapper.body = DeclarationIrBuilder(

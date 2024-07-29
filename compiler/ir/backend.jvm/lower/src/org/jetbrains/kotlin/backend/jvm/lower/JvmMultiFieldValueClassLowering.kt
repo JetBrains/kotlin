@@ -552,12 +552,11 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 "Static replacement must have no extension receiver but ${replacement.extensionReceiverParameter!!.render()} found"
             }
             val structure = buildList(implementationStructure.size) {
-                var valueParameterIndex = 0
                 add(RegularMapping(dispatchReceiverParameter!!))
                 val valueParametersAsMutableList = mutableListOf<IrValueParameter>()
                 for (expectedParameterStructure in implementationStructure.asSequence().drop(this.size)) {
                     fun IrValueParameter.copy() =
-                        copyTo(this@apply, type = type.substitute(substitutionMap), index = valueParameterIndex++)
+                        copyTo(this@apply, type = type.substitute(substitutionMap))
 
                     val parameterStructure = when (expectedParameterStructure) {
                         is RegularMapping -> RegularMapping(expectedParameterStructure.valueParameter.copy())
@@ -837,8 +836,8 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             }
             extensionReceiverParameter = (originalFunction.dispatchReceiverParameter ?: originalFunction.extensionReceiverParameter)
                 ?.let { it.copyTo(this, type = it.type.substitute(substitutionMap)) }
-            valueParameters = originalFunction.valueParameters.mapIndexed { index, param ->
-                param.copyTo(this, index = index, type = param.type.substitute(substitutionMap))
+            valueParameters = originalFunction.valueParameters.map { param ->
+                param.copyTo(this, type = param.type.substitute(substitutionMap))
             }
             withinScope(this) {
                 body = makeBody(this)

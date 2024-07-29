@@ -798,7 +798,6 @@ open class LocalDeclarationsLowering(
             oldDeclaration.valueParameters.mapTo(this) { v ->
                 v.copyTo(
                     newDeclaration,
-                    index = v.index + capturedValues.size,
                     type = localFunctionContext.remapType(v.type),
                     varargElementType = v.varargElementType?.let { localFunctionContext.remapType(it) }
                 ).also {

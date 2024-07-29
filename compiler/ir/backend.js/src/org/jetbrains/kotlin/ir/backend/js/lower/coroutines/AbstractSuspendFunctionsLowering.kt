@@ -201,13 +201,12 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 parent = coroutineClass
                 coroutineClass.addChild(this)
 
-                valueParameters = functionParameters.memoryOptimizedMapIndexed { index, parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index, defaultValue = null)
+                valueParameters = functionParameters.memoryOptimizedMap { parameter ->
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, defaultValue = null)
                 }
                 val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
                 valueParameters = valueParameters memoryOptimizedPlus continuationParameter.copyTo(
                     this, DECLARATION_ORIGIN_COROUTINE_IMPL,
-                    index = valueParameters.size,
                     startOffset = function.startOffset,
                     endOffset = function.endOffset,
                     type = continuationType,
@@ -258,8 +257,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         .apply { superTypes = superTypes memoryOptimizedPlus parameter.superTypes }
                 }
 
-                valueParameters = stateMachineFunction.valueParameters.memoryOptimizedMapIndexed { index, parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
+                valueParameters = stateMachineFunction.valueParameters.memoryOptimizedMap { parameter ->
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
                 }
 
                 this.createDispatchReceiverParameter()
@@ -295,8 +294,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
                 val unboundArgs = function.valueParameters
 
-                val createValueParameters = (unboundArgs + create1CompletionParameter).memoryOptimizedMapIndexed { index, parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
+                val createValueParameters = (unboundArgs + create1CompletionParameter).memoryOptimizedMap { parameter ->
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
                 }
 
                 valueParameters = createValueParameters

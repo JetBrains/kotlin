@@ -849,7 +849,7 @@ fun IrClass.addSimpleDelegatingConstructor(
         this.isPrimary = isPrimary
     }.also { constructor ->
         constructor.valueParameters = superConstructor.valueParameters.memoryOptimizedMapIndexed { index, parameter ->
-            parameter.copyTo(constructor, index = index)
+            parameter.copyTo(constructor)
         }
 
         constructor.body = factory.createBlockBody(
@@ -893,7 +893,6 @@ val IrTypeParametersContainer.classIfConstructor get() = if (this is IrConstruct
 fun IrValueParameter.copyTo(
     irFunction: IrFunction,
     origin: IrDeclarationOrigin = this.origin,
-    index: Int = this.index, // to be removed
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
     name: Name = this.name,
@@ -925,7 +924,6 @@ fun IrValueParameter.copyTo(
         type = type,
         isAssignable = isAssignable,
         symbol = symbol,
-        index = index,
         varargElementType = varargElementType,
         isCrossinline = isCrossinline,
         isNoinline = isNoinline,
@@ -971,9 +969,8 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map
 
 fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
     copyReceiverParametersFrom(from, substitutionMap)
-    val shift = valueParameters.size
     valueParameters = valueParameters memoryOptimizedPlus from.valueParameters.map {
-        it.copyTo(this, index = it.index + shift, type = it.type.substitute(substitutionMap))
+        it.copyTo(this, type = it.type.substitute(substitutionMap))
     }
 }
 
@@ -1054,7 +1051,6 @@ fun IrFunction.copyValueParametersToStatic(
     val target = this
     assert(target.valueParameters.isEmpty())
 
-    var shift = 0
     source.dispatchReceiverParameter?.let { originalDispatchReceiver ->
         assert(dispatchReceiverType!!.isSubtypeOfClass(originalDispatchReceiver.type.classOrNull!!)) {
             "Dispatch receiver type ${dispatchReceiverType.render()} is not a subtype of ${originalDispatchReceiver.type.render()}"
@@ -1067,7 +1063,6 @@ fun IrFunction.copyValueParametersToStatic(
         target.valueParameters = target.valueParameters memoryOptimizedPlus originalDispatchReceiver.copyTo(
             target,
             origin = originalDispatchReceiver.origin,
-            index = shift++,
             type = type,
             name = Name.identifier("\$this")
         )
@@ -1076,7 +1071,6 @@ fun IrFunction.copyValueParametersToStatic(
         target.valueParameters = target.valueParameters memoryOptimizedPlus originalExtensionReceiver.copyTo(
             target,
             origin = originalExtensionReceiver.origin,
-            index = shift++,
             name = Name.identifier("\$receiver")
         )
     }
@@ -1085,8 +1079,7 @@ fun IrFunction.copyValueParametersToStatic(
         if (oldValueParameter.index >= numValueParametersToCopy) break
         target.valueParameters = target.valueParameters memoryOptimizedPlus oldValueParameter.copyTo(
             target,
-            origin = origin,
-            index = oldValueParameter.index + shift
+            origin = origin
         )
     }
 }
@@ -1338,13 +1331,10 @@ fun IrFactory.createStaticFunctionWithReceivers(
         annotations = oldFunction.annotations
 
         valueParameters = buildList {
-            var offset = 0
-
             addIfNotNull(
                 oldFunction.dispatchReceiverParameter?.copyTo(
                     this@apply,
                     name = Name.identifier("\$this"),
-                    index = offset++,
                     type = remap(dispatchReceiverType!!),
                     origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
                 )
@@ -1357,7 +1347,6 @@ fun IrFactory.createStaticFunctionWithReceivers(
                     .map {
                         it.copyTo(
                             this@apply,
-                            index = offset++,
                             remapTypeMap = typeParameterMap
                         )
                     }
@@ -1367,7 +1356,6 @@ fun IrFactory.createStaticFunctionWithReceivers(
                 oldFunction.extensionReceiverParameter?.copyTo(
                     this@apply,
                     name = Name.identifier("\$receiver"),
-                    index = offset++,
                     origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
                     remapTypeMap = typeParameterMap
                 )
@@ -1380,7 +1368,6 @@ fun IrFactory.createStaticFunctionWithReceivers(
                     .map {
                         it.copyTo(
                             this@apply,
-                            index = offset++,
                             remapTypeMap = typeParameterMap
                         )
                     }

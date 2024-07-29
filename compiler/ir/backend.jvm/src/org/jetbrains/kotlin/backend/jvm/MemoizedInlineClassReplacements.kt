@@ -162,14 +162,14 @@ class MemoizedInlineClassReplacements(
     override fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
             originalFunctionForMethodReplacement[this] = function
-            dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
+            dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this)
             extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(
                 // The function's name will be mangled, so preserve the old receiver name.
-                this, index = -1, name = Name.identifier(function.extensionReceiverName(context.config))
+                this, name = Name.identifier(function.extensionReceiverName(context.config))
             )
             contextReceiverParametersCount = function.contextReceiverParametersCount
-            valueParameters = function.valueParameters.mapIndexed { index, parameter ->
-                parameter.copyTo(this, index = index, defaultValue = null).also {
+            valueParameters = function.valueParameters.map { parameter ->
+                parameter.copyTo(this, defaultValue = null).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
                     // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
@@ -186,26 +186,26 @@ class MemoizedInlineClassReplacements(
             if (function.dispatchReceiverParameter != null) {
                 // FAKE_OVERRIDEs have broken dispatch receivers
                 newValueParameters += function.parentAsClass.thisReceiver!!.copyTo(
-                    this, index = newValueParameters.size, name = Name.identifier("arg${newValueParameters.size}"),
+                    this, name = Name.identifier("arg${newValueParameters.size}"),
                     type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
                 )
             }
             if (function.contextReceiverParametersCount != 0) {
                 function.valueParameters.take(function.contextReceiverParametersCount).forEachIndexed { i, contextReceiver ->
                     newValueParameters += contextReceiver.copyTo(
-                        this, index = newValueParameters.size, name = Name.identifier("contextReceiver$i"),
+                        this, name = Name.identifier("contextReceiver$i"),
                         origin = IrDeclarationOrigin.MOVED_CONTEXT_RECEIVER
                     )
                 }
             }
             function.extensionReceiverParameter?.let {
                 newValueParameters += it.copyTo(
-                    this, index = newValueParameters.size, name = Name.identifier(function.extensionReceiverName(context.config)),
+                    this, name = Name.identifier(function.extensionReceiverName(context.config)),
                     origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
                 )
             }
             for (parameter in function.valueParameters.drop(function.contextReceiverParametersCount)) {
-                newValueParameters += parameter.copyTo(this, index = newValueParameters.size, defaultValue = null).also {
+                newValueParameters += parameter.copyTo(this, defaultValue = null).also {
                     // See comment next to a similar line above.
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }

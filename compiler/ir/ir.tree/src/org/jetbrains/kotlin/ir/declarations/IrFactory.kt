@@ -419,6 +419,7 @@ open class IrFactory(
             factory = this
         ).declarationCreated()
 
+    @Suppress("unused") // Deprecated, parameter [index] is ignored. Kept for backward compatibility only.
     fun createValueParameter(
         startOffset: Int,
         endOffset: Int,

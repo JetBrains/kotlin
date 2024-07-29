@@ -239,7 +239,7 @@ class MemoizedMultiFieldValueClassReplacements(
     }
 
     private fun IrFunction.makeMethodLikeRemappedParameters(function: IrFunction): List<RemappedParameter> {
-        dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
+        dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this)
         val newFlattenedParameters = makeAndAddGroupedValueParametersFrom(function, includeDispatcherReceiver = false, mapOf(), this)
         val receiver = dispatchReceiverParameter
         return if (receiver != null) listOf(RegularMapping(receiver)) + newFlattenedParameters else newFlattenedParameters
