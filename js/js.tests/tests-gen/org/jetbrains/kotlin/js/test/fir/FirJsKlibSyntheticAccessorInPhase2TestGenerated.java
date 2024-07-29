@@ -62,6 +62,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility.kt")
+      public void testLeakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility.kt");
+      }
+
+      @Test
       @TestMetadata("leakingOuterPrivateMethodThroughNestedClass.kt")
       public void testLeakingOuterPrivateMethodThroughNestedClass() {
         runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingOuterPrivateMethodThroughNestedClass.kt");
@@ -126,6 +132,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility.kt")
+      public void testLeakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility.kt");
+      }
+
+      @Test
       @TestMetadata("leakingOuterPrivateMethodThroughNestedClass.kt")
       public void testLeakingOuterPrivateMethodThroughNestedClass() {
         runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingOuterPrivateMethodThroughNestedClass.kt");
@@ -187,6 +199,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       @TestMetadata("leakingOuterPrivateMethodThroughInnerClass.kt")
       public void testLeakingOuterPrivateMethodThroughInnerClass() {
         runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingOuterPrivateMethodThroughInnerClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility.kt")
+      public void testLeakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility.kt");
       }
 
       @Test
@@ -411,6 +429,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       @TestMetadata("leakingPrivateMethodThroughReference.kt")
       public void testLeakingPrivateMethodThroughReference() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughReference.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
+      public void testLeakingPrivateMethodWithDifferentVisibility() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodWithDifferentVisibility.kt");
       }
 
       @Test
@@ -676,6 +700,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
+      public void testLeakingPrivateMethodWithDifferentVisibility() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodWithDifferentVisibility.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateNestedClassThroughInternalInlineFun.kt")
       public void testLeakingPrivateNestedClassThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateNestedClassThroughInternalInlineFun.kt");
@@ -779,6 +809,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       @TestMetadata("leakingPrivateMethodThroughReference.kt")
       public void testLeakingPrivateMethodThroughReference() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateMethodThroughReference.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
+      public void testLeakingPrivateMethodWithDifferentVisibility() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateMethodWithDifferentVisibility.kt");
       }
 
       @Test
@@ -988,6 +1024,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingPrivateTopLevelFunWithDifferentVisibility.kt")
+      public void testLeakingPrivateTopLevelFunWithDifferentVisibility() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelFunWithDifferentVisibility.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelSetterThroughInlineFun.kt")
       public void testLeakingPrivateTopLevelSetterThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelSetterThroughInlineFun.kt");
@@ -1154,6 +1196,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingPrivateTopLevelFunWithDifferentVisibility.kt")
+      public void testLeakingPrivateTopLevelFunWithDifferentVisibility() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelFunWithDifferentVisibility.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelSetterThroughInlineFun.kt")
       public void testLeakingPrivateTopLevelSetterThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelSetterThroughInlineFun.kt");
@@ -1281,6 +1329,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       @TestMetadata("usePrivateTopLevelFunFromLambdaInsidePublicInline.kt")
       public void testUsePrivateTopLevelFunFromLambdaInsidePublicInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromLambdaInsidePublicInline.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelFunWithDifferentVisibility.kt")
+      public void testUsePrivateTopLevelFunWithDifferentVisibility() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunWithDifferentVisibility.kt");
       }
 
       @Test

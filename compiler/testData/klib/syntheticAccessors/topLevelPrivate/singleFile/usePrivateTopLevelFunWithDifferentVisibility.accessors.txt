@@ -1,0 +1,46 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateTopLevelFunWithDifferentVisibility.kt */
+
+/* TARGET declaration */ private fun onlyInternal(): String
+/* TARGET declaration */ private fun internalAndPublic(): String
+/* TARGET declaration */ private fun internalAndInternalPA(): String
+/* TARGET declaration */ private fun onlyPublic(): String
+/* TARGET declaration */ private fun onlyInternalPA(): String
+/* TARGET declaration */ private fun allEffectivelyPublic(): String
+internal inline fun inlineOnlyInternal1(): String
+    /* ACCESSOR use-site */ access$onlyInternal$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+internal inline fun inlineOnlyInternal2(): String
+    /* ACCESSOR use-site */ access$onlyInternal$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+internal inline fun inlineInternalAndPublic1(): String
+    /* ACCESSOR use-site */ access$internalAndPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+public inline fun inlineInternalAndPublic2(): String
+    /* ACCESSOR use-site */ access$internalAndPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+internal inline fun inlineInternalAndInternalPA1(): String
+    /* ACCESSOR use-site */ access$internalAndInternalPA$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+internal inline fun inlineInternalAndInternalPA2(): String
+    /* ACCESSOR use-site */ access$internalAndInternalPA$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+public inline fun inlineOnlyPublic1(): String
+    /* ACCESSOR use-site */ access$onlyPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+public inline fun inlineOnlyPublic2(): String
+    /* ACCESSOR use-site */ access$onlyPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+internal inline fun inlineOnlyInternalPA1(): String
+    /* ACCESSOR use-site */ access$onlyInternalPA$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+internal inline fun inlineOnlyInternalPA2(): String
+    /* ACCESSOR use-site */ access$onlyInternalPA$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+public inline fun inlineAllEffectivelyPublic1(): String
+    /* ACCESSOR use-site */ access$allEffectivelyPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+internal inline fun inlineAllEffectivelyPublic2(): String
+    /* ACCESSOR use-site */ access$allEffectivelyPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt()
+/* ACCESSOR declaration */ public fun access$onlyInternal$tUsePrivateTopLevelFunWithDifferentVisibilityKt(): String
+    /* TARGET use-site */ onlyInternal()
+/* ACCESSOR declaration */ public fun access$internalAndPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt(): String
+    /* TARGET use-site */ internalAndPublic()
+/* ACCESSOR declaration */ public fun access$internalAndInternalPA$tUsePrivateTopLevelFunWithDifferentVisibilityKt(): String
+    /* TARGET use-site */ internalAndInternalPA()
+/* ACCESSOR declaration */ public fun access$onlyPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt(): String
+    /* TARGET use-site */ onlyPublic()
+/* ACCESSOR declaration */ public fun access$onlyInternalPA$tUsePrivateTopLevelFunWithDifferentVisibilityKt(): String
+    /* TARGET use-site */ onlyInternalPA()
+/* ACCESSOR declaration */ public fun access$allEffectivelyPublic$tUsePrivateTopLevelFunWithDifferentVisibilityKt(): String
+    /* TARGET use-site */ allEffectivelyPublic()

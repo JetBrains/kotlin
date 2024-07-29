@@ -1,0 +1,63 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public open class A
+    /* TARGET declaration */ private fun onlyInternal(): String
+    /* TARGET declaration */ private fun internalAndPublic(): String
+    /* TARGET declaration */ private fun internalAndProtected(): String
+    /* TARGET declaration */ private fun internalAndInternalPA(): String
+    /* TARGET declaration */ private fun onlyPublic(): String
+    /* TARGET declaration */ private fun onlyProtected(): String
+    /* TARGET declaration */ private fun onlyInternalPA(): String
+    /* TARGET declaration */ private fun allEffectivelyPublic(): String
+    internal inline fun inlineOnlyInternal1(): String
+        /* ACCESSOR use-site */ access$onlyInternal($this = <this>)
+    internal inline fun inlineOnlyInternal2(): String
+        /* ACCESSOR use-site */ access$onlyInternal($this = <this>)
+    internal inline fun inlineInternalAndPublic1(): String
+        /* ACCESSOR use-site */ access$internalAndPublic($this = <this>)
+    public inline fun inlineInternalAndPublic2(): String
+        /* ACCESSOR use-site */ access$internalAndPublic($this = <this>)
+    internal inline fun inlineInternalAndProtected1(): String
+        /* ACCESSOR use-site */ access$internalAndProtected($this = <this>)
+    protected inline fun inlineInternalAndProtected2(): String
+        /* ACCESSOR use-site */ access$internalAndProtected($this = <this>)
+    internal inline fun inlineInternalAndInternalPA1(): String
+        /* ACCESSOR use-site */ access$internalAndInternalPA($this = <this>)
+    internal inline fun inlineInternalAndInternalPA2(): String
+        /* ACCESSOR use-site */ access$internalAndInternalPA($this = <this>)
+    public inline fun inlineOnlyPublic1(): String
+        /* ACCESSOR use-site */ access$onlyPublic($this = <this>)
+    public inline fun inlineOnlyPublic2(): String
+        /* ACCESSOR use-site */ access$onlyPublic($this = <this>)
+    protected inline fun inlineOnlyProtected1(): String
+        /* ACCESSOR use-site */ access$onlyProtected($this = <this>)
+    protected inline fun inlineOnlyProtected2(): String
+        /* ACCESSOR use-site */ access$onlyProtected($this = <this>)
+    internal inline fun inlineOnlyInternalPA1(): String
+        /* ACCESSOR use-site */ access$onlyInternalPA($this = <this>)
+    internal inline fun inlineOnlyInternalPA2(): String
+        /* ACCESSOR use-site */ access$onlyInternalPA($this = <this>)
+    public inline fun inlineAllEffectivelyPublic1(): String
+        /* ACCESSOR use-site */ access$allEffectivelyPublic($this = <this>)
+    protected inline fun inlineAllEffectivelyPublic2(): String
+        /* ACCESSOR use-site */ access$allEffectivelyPublic($this = <this>)
+    internal inline fun inlineAllEffectivelyPublic3(): String
+        /* ACCESSOR use-site */ access$allEffectivelyPublic($this = <this>)
+    /* ACCESSOR declaration */ internal fun access$onlyInternal($this: A): String
+        /* TARGET use-site */ $this.onlyInternal()
+    /* ACCESSOR declaration */ public fun access$internalAndPublic($this: A): String
+        /* TARGET use-site */ $this.internalAndPublic()
+    /* ACCESSOR declaration */ public fun access$internalAndProtected($this: A): String
+        /* TARGET use-site */ $this.internalAndProtected()
+    /* ACCESSOR declaration */ public fun access$internalAndInternalPA($this: A): String
+        /* TARGET use-site */ $this.internalAndInternalPA()
+    /* ACCESSOR declaration */ public fun access$onlyPublic($this: A): String
+        /* TARGET use-site */ $this.onlyPublic()
+    /* ACCESSOR declaration */ public fun access$onlyProtected($this: A): String
+        /* TARGET use-site */ $this.onlyProtected()
+    /* ACCESSOR declaration */ public fun access$onlyInternalPA($this: A): String
+        /* TARGET use-site */ $this.onlyInternalPA()
+    /* ACCESSOR declaration */ public fun access$allEffectivelyPublic($this: A): String
+        /* TARGET use-site */ $this.allEffectivelyPublic()
