@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -17,36 +18,65 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * Generates synthetic accessor functions for private declarations that are referenced from non-private inline functions,
  * so that after those functions are inlined, there'll be no visibility violations.
  *
  * There are a few important assumptions that this lowering relies on:
- * - It's executed in a KLIB-based backend. It's not designed to work with the JVM backend because the visibility rules on JVM are
- *   stricter.
+ * - It's executed either at the first phase of compilation (source -> KLIB) before serializing the compiled metadata
+ *   and IR to a KLIB, or at the second phase (KLIB -> binaries) in a KLIB-based backend.
+ * - It's not designed to work with the JVM backend because the visibility rules on JVM are stricter.
  * - By the point it's executed, all _private_ inline functions have already been inlined.
+ *
+ * @property narrowAccessorVisibilities Whether the visibility of a generated accessor should be narrowed from _public_
+ * to _internal_ if an accessor is only used in _internal_ inline functions and therefore is not a part of public ABI.
+ * This "narrowing" is supposed to be used only during the first phase of compilation.
  */
-class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPass {
-    private data class GeneratedAccessor(
+class SyntheticAccessorLowering(context: CommonBackendContext, private val narrowAccessorVisibilities: Boolean = false) : FileLoweringPass {
+    /**
+     * @property accessor The generated synthetic accessor.
+     * @property targetSymbol The symbol of a private declaration that this accessor wraps.
+     * @property inlineFunctions All inline functions where the accessor is used.
+     */
+    private class GeneratedAccessor(
         val accessor: IrFunction,
-        val targetSymbol: IrSymbol,
-    )
+        val targetSymbol: IrSymbol
+    ) {
+        val inlineFunctions: MutableSet<IrFunction> = hashSetOf()
+
+        fun computeNarrowedVisibility(): DescriptorVisibility {
+            for (inlineFunction in inlineFunctions) {
+                when (val visibility = inlineFunction.visibility) {
+                    DescriptorVisibilities.PUBLIC, DescriptorVisibilities.PROTECTED -> return DescriptorVisibilities.PUBLIC
+                    DescriptorVisibilities.INTERNAL -> if (inlineFunction.isPublishedApi()) return DescriptorVisibilities.PUBLIC
+                    else -> irError("Unexpected visibility of inline function: $visibility") {
+                        withIrEntry("inlineFunction", inlineFunction)
+                    }
+                }
+            }
+
+            return DescriptorVisibilities.INTERNAL
+        }
+    }
 
     private class GeneratedAccessors {
-        private val accessors = HashSet<GeneratedAccessor>()
+        private val accessors = HashMap<IrFunction, GeneratedAccessor>()
         private var frozen = false
 
-        operator fun plusAssign(accessor: GeneratedAccessor) {
+
+        fun memoize(accessor: IrFunction, targetSymbol: IrSymbol, inlineFunction: IrFunction) {
             check(!frozen) { "An attempt to generate an accessor after all accessors have been already added to their containers" }
-            accessors += accessor
+            accessors.getOrPut(accessor) { GeneratedAccessor(accessor, targetSymbol) }.inlineFunctions += inlineFunction
         }
 
-        fun freezeAndGetAccessors(): Set<GeneratedAccessor> {
+        fun freezeAndGetAccessors(): Collection<GeneratedAccessor> {
             check(!frozen) { "An attempt to add the generated accessors to their containers once again" }
             frozen = true
-            return accessors
+            return accessors.values
         }
     }
 
@@ -56,7 +86,11 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         val transformer = Transformer(irFile)
         irFile.transformChildren(transformer, null)
 
-        addAccessorsToParents(transformer.generatedAccessors)
+        val accessors = transformer.generatedAccessors.freezeAndGetAccessors()
+        runIf(accessors.isNotEmpty()) {
+            runIf(narrowAccessorVisibilities) { narrowAccessorVisibilities(accessors) }
+            addAccessorsToParents(accessors)
+        }
     }
 
     /**
@@ -75,6 +109,12 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
      */
     fun lowerWithoutAddingAccessorsToParents(irFunction: IrFunction) {
         irFunction.accept(Transformer(irFunction.file), null)
+    }
+
+    private fun narrowAccessorVisibilities(accessors: Collection<GeneratedAccessor>) {
+        for (accessor in accessors) {
+            accessor.accessor.visibility = accessor.computeNarrowedVisibility()
+        }
     }
 
     /**
@@ -99,10 +139,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
      * }
      * ```
      */
-    private fun addAccessorsToParents(generatedAccessors: GeneratedAccessors) {
-        val accessors = generatedAccessors.freezeAndGetAccessors()
-        if (accessors.isEmpty()) return
-
+    private fun addAccessorsToParents(accessors: Collection<GeneratedAccessor>) {
         for ((parent, accessorsInParent) in accessors.groupBy { it.accessor.parent }) {
             addAccessorsToParent(parent as IrDeclarationContainer, accessorsInParent)
         }
@@ -145,7 +182,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         }
     }
 
-    private class TransformerData(/* to be used later */ @Suppress("unused") val currentInlineFunction: IrFunction)
+    private class TransformerData(val currentInlineFunction: IrFunction)
 
     private inner class Transformer(irFile: IrFile) : IrElementTransformer<TransformerData?> {
         val generatedAccessors = irFile.generatedAccessors ?: GeneratedAccessors().also { irFile.generatedAccessors = it }
@@ -170,15 +207,18 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         }
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: TransformerData?): IrElement {
-            if (data == null /*|| !insideBody*/ || !expression.symbol.owner.isAbiPrivate)
+            if (data == null || !expression.symbol.owner.isAbiPrivate)
                 return super.visitFunctionAccess(expression, data)
 
-            // TODO(KT-69527): Set the proper visibility for the accessor (the max visibility of all the inline functions that reference it)
+            // Generate and memoize the accessor. The visibility can be narrowed later.
             val accessor = accessorGenerator.getSyntheticFunctionAccessor(expression, null)
+            generatedAccessors.memoize(
+                accessor,
+                targetSymbol = expression.symbol,
+                inlineFunction = data.currentInlineFunction
+            )
+
             val accessorExpression = accessorGenerator.modifyFunctionAccessExpression(expression, accessor.symbol)
-
-            generatedAccessors += GeneratedAccessor(accessor, expression.symbol)
-
             return super.visitFunctionAccess(accessorExpression, data)
         }
     }
