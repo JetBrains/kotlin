@@ -626,7 +626,6 @@ class AppleFrameworkIT : KGPBaseTest() {
     // Should always be green because the CI Xcode version must be supported
     @DisplayName("Xcode version too high diagnostic isn't emitted")
     @GradleTest
-    @GradleTestVersions(minVersion = Gradle.G_7_4)
     fun testXcodeVersionTooHighDiagnosticNotEmitted(gradleVersion: GradleVersion) {
         nativeProject(
             "sharedAppleFramework",

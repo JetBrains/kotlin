@@ -30,7 +30,6 @@ import org.junit.jupiter.api.DisplayName
 class LoggingConfigurationMppIT : KGPBaseTest() {
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("generic-kmp-app-plus-lib-with-tests")
     fun testBasicConfigurations(gradleVersion: GradleVersion) {
         nativeProject(
@@ -50,7 +49,6 @@ class LoggingConfigurationMppIT : KGPBaseTest() {
 class LoggingConfigurationJvmIT : KGPBaseTest() {
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("jvmTargetModernDsl")
     fun testBasicConfigurations(gradleVersion: GradleVersion) {
         project("jvmTargetModernDsl", gradleVersion) {

@@ -52,7 +52,6 @@ class MppJvmRunIT : KGPBaseTest() {
         }
     }
 
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @GradleTest
     fun `test - jvmRun - works with Gradle configuration cache`(version: GradleVersion) {
         project("mppRunJvm", version, buildOptions = defaultBuildOptions.copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)) {

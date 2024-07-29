@@ -98,10 +98,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @NativeGradlePluginTests
     @DisplayName("works with commonizer")
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
-    )
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
@@ -129,8 +125,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @NativeGradlePluginTests
     @DisplayName("Configuration cache works with Kotlin Native bundle and its dependencies downloading")
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_6],
+        additionalVersions = [TestVersions.Gradle.G_8_6],
     )
     @OsCondition(
         supportedOn = [OS.LINUX, OS.MAC], // disabled on Windows because of tmp dir problem KT-62761
@@ -153,10 +148,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @NativeGradlePluginTests
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
-    )
     @GradleTest
     fun testCInteropCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
@@ -166,9 +157,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @DisplayName("KT-66452: There are no false-positive Configuration Cache failures with native tasks")
     @NativeGradlePluginTests
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-    )
     @GradleTest
     fun testFalsePositiveWithNativeTasks(gradleVersion: GradleVersion) {
         nativeProject("native-simple-project", gradleVersion) {
@@ -201,9 +189,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @DisplayName("KT-66452: There are no false-positive Configuration Cache failures with cinterop")
     @NativeGradlePluginTests
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-    )
     @GradleTest
     fun testFalsePositiveWithCInteropTask(gradleVersion: GradleVersion) {
 

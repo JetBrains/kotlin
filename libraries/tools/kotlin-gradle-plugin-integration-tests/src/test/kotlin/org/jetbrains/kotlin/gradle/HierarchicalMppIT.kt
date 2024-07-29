@@ -1161,7 +1161,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("KT-51940: Configurations should not resolved during configuration phase")
     fun `test configurations should not resolved during configuration phase`(gradleVersion: GradleVersion) {
         project("kt-51940-hmpp-resolves-configurations-during-configuration", gradleVersion = gradleVersion) {

@@ -19,7 +19,6 @@ import kotlin.test.assertContains
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Swift Export")
 @SwiftExportGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4) // DefaultResolvedComponentResult with configuration cache is supported only after 7.4
 class SwiftExportIT : KGPBaseTest() {
 
     @DisplayName("embedAndSign executes normally when Swift Export is enabled")

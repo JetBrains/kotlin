@@ -13,7 +13,6 @@ import org.junit.jupiter.api.condition.OS
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for running Swift Export XCTests")
 @SwiftExportGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 class SwiftExportXCIT : KGPBaseTest() {
 
     @DisplayName("run XCTests for testing Swift Export")
