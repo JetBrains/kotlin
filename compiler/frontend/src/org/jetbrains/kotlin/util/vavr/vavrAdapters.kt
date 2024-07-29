@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.util.vavr
 
 import io.vavr.Tuple2
+import io.vavr.control.Option
 
 typealias ImmutableMap<K, V> = io.vavr.collection.Map<K, V>
 typealias ImmutableHashMap<K, V> = io.vavr.collection.HashMap<K, V>
@@ -16,4 +17,5 @@ typealias ImmutableLinkedHashSet<E> = io.vavr.collection.LinkedHashSet<E>
 operator fun <T> Tuple2<T, *>.component1(): T = _1()
 operator fun <T> Tuple2<*, T>.component2(): T = _2()
 
+fun <T> Option<T>.getOrNull(): T? = getOrElse(null as T?)
 fun <K, V> ImmutableMap<K, V>.getOrNull(k: K): V? = get(k)?.getOrElse(null as V?)
