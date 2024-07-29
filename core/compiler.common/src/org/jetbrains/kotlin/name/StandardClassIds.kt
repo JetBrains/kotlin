@@ -186,6 +186,7 @@ object StandardClassIds {
         val FlexibleMutability = "FlexibleMutability".internalIrId()
         val FlexibleArrayElementVariance = "FlexibleArrayElementVariance".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
+        val NoInfer = "NoInfer".internalId()
 
         val FunctionN = "FunctionN".jvmFunctionsId()
 

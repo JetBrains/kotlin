@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/recursiveCapturedTypeInPropertyReference.kt
           CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.map, R of kotlin.collections.map>): kotlin.collections.List<R of kotlin.collections.map> declared in kotlin.collections' type=kotlin.collections.List<<root>.AbstractSymbol<*>> origin=null
             <T>: <root>.Recursive<*>
             <R>: <root>.AbstractSymbol<*>
-            $receiver: CALL 'public final fun filterIsInstance <R> (): kotlin.collections.List<R of kotlin.collections.filterIsInstance> declared in kotlin.collections' type=kotlin.collections.List<<root>.Recursive<*>> origin=null
+            $receiver: CALL 'public final fun filterIsInstance <R> (): kotlin.collections.List<@[NoInfer] R of kotlin.collections.filterIsInstance> declared in kotlin.collections' type=kotlin.collections.List<@[NoInfer] <root>.Recursive<*>> origin=null
               <R>: <root>.Recursive<*>
               $receiver: GET_VAR 'list: kotlin.collections.List<kotlin.Any> declared in <root>.AbstractSymbol.foo' type=kotlin.collections.List<kotlin.Any> origin=null
             transform: PROPERTY_REFERENCE 'public abstract symbol: <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' field=null getter='public abstract fun <get-symbol> (): <root>.AbstractSymbol<R of <root>.Recursive> declared in <root>.Recursive' setter=null type=kotlin.reflect.KProperty1<<root>.Recursive<*>, <root>.AbstractSymbol<out kotlin.Any>> origin=null

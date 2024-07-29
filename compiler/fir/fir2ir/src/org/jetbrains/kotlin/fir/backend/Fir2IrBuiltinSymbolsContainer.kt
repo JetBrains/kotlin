@@ -104,14 +104,22 @@ class Fir2IrBuiltinSymbolsContainer(
     val stringType: IrType get() = stringClass.defaultTypeWithoutArguments
 
     val extensionFunctionTypeAnnotationCall: IrConstructorCall? by lazy {
+        generateAnnotationCall(StandardClassIds.Annotations.ExtensionFunctionType)
+    }
+
+    val noInferAnnotationCall: IrConstructorCall? by lazy {
+        generateAnnotationCall(StandardClassIds.Annotations.NoInfer)
+    }
+
+    private fun generateAnnotationCall(classId: ClassId): IrConstructorCallImpl? {
         val firSymbol =
-            session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Annotations.ExtensionFunctionType) as? FirRegularClassSymbol
-                ?: return@lazy null
-        val irSymbol = firSymbol.toIrSymbol(c, ConversionTypeOrigin.DEFAULT) as? IrClassSymbol ?: return@lazy null
-        val firConstructorSymbol = firSymbol.unsubstitutedScope(c).getDeclaredConstructors().singleOrNull() ?: return@lazy null
+            session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+                ?: return null
+        val irSymbol = firSymbol.toIrSymbol(c, ConversionTypeOrigin.DEFAULT) as? IrClassSymbol ?: return null
+        val firConstructorSymbol = firSymbol.unsubstitutedScope(c).getDeclaredConstructors().singleOrNull() ?: return null
         val constructorSymbol = c.declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
 
-        IrConstructorCallImpl(
+        return IrConstructorCallImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             type = IrSimpleTypeImpl(

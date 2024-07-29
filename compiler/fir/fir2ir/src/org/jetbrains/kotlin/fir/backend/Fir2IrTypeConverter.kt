@@ -22,9 +22,8 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExtensionFunctionType
-import org.jetbrains.kotlin.types.CommonFlexibleTypeBoundsChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.NoInfer
+import org.jetbrains.kotlin.types.*
 
 class Fir2IrTypeConverter(
     private val c: Fir2IrComponents,
@@ -132,6 +131,12 @@ class Fir2IrTypeConverter(
 
                 if (isExtensionFunctionType && annotations.getAnnotationsByClassId(ExtensionFunctionType, session).isEmpty()) {
                     builtins.extensionFunctionTypeAnnotationCall?.let {
+                        typeAnnotations += it
+                    }
+                }
+
+                if (hasNoInfer && annotations.getAnnotationsByClassId(NoInfer, session).isEmpty()) {
+                    builtins.noInferAnnotationCall?.let {
                         typeAnnotations += it
                     }
                 }
