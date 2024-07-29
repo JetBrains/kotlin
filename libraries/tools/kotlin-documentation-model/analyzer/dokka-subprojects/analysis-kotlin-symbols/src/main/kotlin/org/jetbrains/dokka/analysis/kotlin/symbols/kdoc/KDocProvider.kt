@@ -96,10 +96,8 @@ internal fun KaSession.findKDoc(symbol: KaSymbol): KDocContent? {
     }
 
     // for generated function (e.g. `copy`) [KtSymbol.psi] is undefined (although actually returns a class psi), see test `data class kdocs over generated methods`
-    if (symbol.origin != KaSymbolOrigin.SOURCE) return null
-
-
-    val ktElement = symbol.psi as? KtElement
+    // for DELEGATED/INTERSECTION_OVERRIDE/SUBSTITUTION_OVERRIDE members, it continues search in overridden symbols
+    val ktElement = if (symbol.origin == KaSymbolOrigin.SOURCE) symbol.psi as? KtElement else null
     ktElement?.findKDoc()?.let {
         return it
     }
