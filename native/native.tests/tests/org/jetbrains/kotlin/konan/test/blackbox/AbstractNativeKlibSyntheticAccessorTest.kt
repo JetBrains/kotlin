@@ -31,7 +31,9 @@ import java.io.File
 // TODO(KT-64570): Migrate these tests to the Compiler Core test infrastructure as soon as we move IR inlining
 //   to the first compilation stage.
 @ExtendWith(KlibSyntheticAccessorTestSupport::class)
-abstract class AbstractNativeKlibSyntheticAccessorTest : ExternalSourceTransformersProvider {
+abstract class AbstractNativeKlibSyntheticAccessorTest(
+    internal val narrowedAccessorVisibility: Boolean
+) : ExternalSourceTransformersProvider {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider
 
@@ -76,7 +78,8 @@ abstract class AbstractNativeKlibSyntheticAccessorTest : ExternalSourceTransform
                 JUnit5Assertions.assertSyntheticAccessorDumpIsCorrect(
                     dumpDir = syntheticAccessorsDumpDir,
                     moduleNames = testRun.testCase.modules.mapToSet { Name.identifier(it.name) },
-                    testDataFile = absoluteTestFile
+                    testDataFile = absoluteTestFile,
+                    withNarrowedVisibility = narrowedAccessorVisibility
                 )
             }
         }.exceptionOrNull()?.let { exception ->
@@ -93,3 +96,6 @@ abstract class AbstractNativeKlibSyntheticAccessorTest : ExternalSourceTransform
 
     final override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? = null
 }
+
+open class AbstractNativeKlibSyntheticAccessorInPhase1Test : AbstractNativeKlibSyntheticAccessorTest(narrowedAccessorVisibility = true)
+open class AbstractNativeKlibSyntheticAccessorInPhase2Test : AbstractNativeKlibSyntheticAccessorTest(narrowedAccessorVisibility = false)

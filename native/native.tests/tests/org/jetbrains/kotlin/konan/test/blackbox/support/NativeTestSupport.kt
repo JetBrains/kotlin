@@ -104,17 +104,21 @@ class SwiftExportTestSupport : BeforeEachCallback {
  */
 class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
-        val settings = createTestRunSettings(computeKlibSyntheticAccessorTestInstances()) {
+        val nativeTestInstances = computeKlibSyntheticAccessorTestInstances()
+        val settings = createTestRunSettings(nativeTestInstances) {
             with(RegisteredDirectivesBuilder()) {
                 +CodegenTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
                 +CodegenTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
 
-                TestDirectives.FREE_COMPILER_ARGS with listOf(
+                TestDirectives.FREE_COMPILER_ARGS with listOfNotNull(
                     // Don't run LLVM, stop after the last IR lowering.
                     "-Xdisable-phases=LinkBitcodeDependencies,WriteBitcodeFile,ObjectFiles,Linker",
 
                     // Enable double-inlining.
                     "-Xklib-double-inlining",
+
+                    // Enable narrowing of visibility for synthetic accessors.
+                    "-Xsynthetic-accessors-with-narrowed-visibility".takeIf { nativeTestInstances.enclosingTestInstance.narrowedAccessorVisibility }
                 )
 
                 build()
@@ -125,7 +129,7 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
         assumeTrue(settings.get<ThreadStateChecker>() == ThreadStateChecker.DISABLED)
 
         // Inject the required properties to test instance.
-        with(settings.get<NativeTestInstances<AbstractNativeKlibSyntheticAccessorTest>>().enclosingTestInstance) {
+        with(nativeTestInstances.enclosingTestInstance) {
             testRunSettings = settings
             testRunProvider = getOrCreateTestRunProvider()
         }

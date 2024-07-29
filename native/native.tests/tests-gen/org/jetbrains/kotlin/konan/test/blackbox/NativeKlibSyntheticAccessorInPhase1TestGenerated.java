@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 @UseExtTestCaseGroupProvider()
 @Tag("frontend-fir")
 @FirPipeline()
-public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractNativeKlibSyntheticAccessorTest {
+public class NativeKlibSyntheticAccessorInPhase1TestGenerated extends AbstractNativeKlibSyntheticAccessorInPhase1Test {
   @Test
   public void testAllFilesPresentInSyntheticAccessors() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);

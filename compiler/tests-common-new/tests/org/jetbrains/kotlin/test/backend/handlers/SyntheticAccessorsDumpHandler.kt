@@ -51,7 +51,7 @@ abstract class SyntheticAccessorsDumpHandler<A : ResultingArtifact.Binary<A>>(
             dumpDir: File,
             moduleNames: Set<Name>,
             testDataFile: File,
-            withNarrowedVisibility: Boolean = false
+            withNarrowedVisibility: Boolean
         ) {
             val irModuleDumps = moduleNames.mapNotNull { moduleName ->
                 val moduleDumpFile = DumpSyntheticAccessors.getDumpFileForModule(dumpDir, moduleName)
