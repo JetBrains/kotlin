@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.annotations
 
 /**
- * Entity which may have annotations applied inside. E.g, type or declaration
+ * An entity which may have annotations applied to it, such as a declaration or type.
  */
 public interface KaAnnotated {
+    /**
+     * A list of annotations applied to the annotated entity.
+     */
     public val annotations: KaAnnotationList
 }

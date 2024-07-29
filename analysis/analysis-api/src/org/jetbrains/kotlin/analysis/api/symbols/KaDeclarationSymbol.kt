@@ -12,12 +12,22 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSym
 import org.jetbrains.kotlin.descriptors.Visibility
 
 /**
- * Represents a symbol of declaration which can be directly expressed in source code.
- * Eg, classes, type parameters or functions are [KaDeclarationSymbol], but files and packages are not
+ * Represents a source-representable declaration such as a class, function, or property.
+ *
+ * Files and packages are not considered [KaDeclarationSymbol]s, as they cannot be declared explicitly in one place. For example, a
+ * [KaPackageSymbol] is the semantic representation of a package made up of possibly multiple Kotlin source files.
  */
 public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
+    /**
+     * The declaration's *effective* [KaSymbolModality] (e.g. `open`). Effective modality is the symbol's modality after all language rules
+     * and compiler plugins have been taken into account, in contrast to the syntactic modality.
+     */
     public val modality: KaSymbolModality
 
+    /**
+     * The declaration's *effective* [KaSymbolVisibility] (e.g. `public`). Effective visibility is the symbol's visibility after all
+     * language rules and compiler plugins have been taken into account, in contrast to the syntactic visibility.
+     */
     public val visibility: KaSymbolVisibility
         @OptIn(KaExperimentalApi::class)
         get() = compilerVisibility.asKaSymbolVisibility
@@ -26,24 +36,26 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
     public val compilerVisibility: Visibility
 
     /**
-     * Returns true if the declaration is a platform-specific implementation in a multiplatform project.
+     * Whether the declaration is an `actual` declaration in a multiplatform project.
      *
      * See [the official Kotlin documentation](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html) for more details.
      */
     public val isActual: Boolean
 
     /**
-     * Returns true if the declaration is a platform-specific declaration in a multiplatform project.
-     * An implementation in platform modules is expected.
-     * Note, that in the following example:
+     * Whether the declaration is an `expect` declaration in a multiplatform project.
+     *
+     * See [the official Kotlin documentation](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html) for more details.
+     *
+     * #### Example
+     *
      * ```kotlin
      * expect class A {
      *     class Nested
      * }
      * ```
-     * `isExpect` returns `true` for both `A` and `A.Nested`.
      *
-     * See [the official Kotlin documentation](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html) for more details.
+     * In this example, `isExpect` is `true` for both `A` and `A.Nested`.
      */
     public val isExpect: Boolean
 }

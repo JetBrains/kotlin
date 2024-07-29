@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.Variance
 @KaExperimentalApi
 public interface KaRenderer {
     /**
-     * Renders the given [KaDeclarationSymbol] into a string.
+     * Renders the given [KaDeclarationSymbol] to a string.
      * The particular rendering strategy is defined by the [renderer].
      */
     @KaExperimentalApi
