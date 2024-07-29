@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope
-import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
@@ -796,9 +795,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return declarationDescriptor?.unsubstitutedUnderlyingType()
     }
 
-    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
-        require(this is KotlinType, this::errorMessage)
-        return substitutedUnderlyingType()
+    @Suppress("UNCHECKED_CAST")
+    override fun KotlinTypeMarker.substitute(constructor: TypeConstructorMarker, arguments: List<TypeArgumentMarker>): KotlinTypeMarker {
+        require(this is KotlinType && constructor is TypeConstructor, this::errorMessage)
+        val substitution = TypeConstructorSubstitution.create(constructor, arguments as List<TypeProjection>)
+        return TypeSubstitutor.create(substitution).substitute(this, Variance.INVARIANT) ?: this
     }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {

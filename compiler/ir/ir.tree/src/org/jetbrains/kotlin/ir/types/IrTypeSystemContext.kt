@@ -124,7 +124,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
                 error("Type $this has no arguments")
         }
 
-    override fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker> =
+    override fun KotlinTypeMarker.getArguments(): List<IrTypeArgument> =
         when (this) {
             is IrSimpleType -> arguments
             else -> error("Type $this has no arguments")
@@ -475,14 +475,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
         (this as? IrClassSymbol)?.owner?.inlineClassRepresentation?.underlyingType
 
-    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? =
-        typeConstructor().getUnsubstitutedUnderlyingType()?.let { type ->
-            // Taking only the type parameters of the class (and not its outer classes) is OK since inner classes are always top level
-            IrTypeSubstitutor(
-                (this as IrType).getClass()!!.typeParameters.memoryOptimizedMap { it.symbol },
-                (this as? IrSimpleType)?.arguments.orEmpty(),
-            ).substitute(type as IrType)
-        }
+    @Suppress("UNCHECKED_CAST")
+    override fun KotlinTypeMarker.substitute(constructor: TypeConstructorMarker, arguments: List<TypeArgumentMarker>): KotlinTypeMarker =
+        IrTypeSubstitutor(constructor.getParameters(), arguments as List<IrTypeArgument>).substitute(this as IrType)
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortName)

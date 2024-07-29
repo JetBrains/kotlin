@@ -562,16 +562,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return symbol.fir.inlineClassRepresentation?.underlyingType
     }
 
-    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
-        require(this is ConeKotlinType)
-        val unsubstitutedType = upperBoundIfFlexible().typeConstructor().getUnsubstitutedUnderlyingType() ?: return null
-        // TODO: this is wrong - it substitutes nothing. This should instead be `substitutorByMap`
-        //  mapping `typeConstructor()`'s parameters to `this`' arguments.
-        val substitutor = createTypeSubstitutorByTypeConstructor(
-            mapOf(this.typeConstructor() to this), this@ConeTypeContext, approximateIntegerLiterals = true
-        )
-        return substitutor.substituteOrNull(unsubstitutedType as ConeKotlinType)
-    }
+    override fun KotlinTypeMarker.substitute(constructor: TypeConstructorMarker, arguments: List<TypeArgumentMarker>): KotlinTypeMarker =
+        TODO()
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getClassFqNameUnsafe()?.let(StandardNames.FqNames.fqNameToPrimitiveType::get)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.inlineClassUnboxedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 fun TypeSystemCommonBackendContext.getOptimalModeForValueParameter(
@@ -30,8 +31,8 @@ private fun TypeSystemCommonBackendContext.getOptimalModeForSignaturePart(
     if (type.argumentsCount() == 0) return TypeMappingMode.DEFAULT
 
     val isInlineClassType = type.typeConstructor().isInlineClass()
-    if (isInlineClassType && shouldUseUnderlyingType(type)) {
-        val underlyingType = computeUnderlyingType(type)
+    if (isInlineClassType) {
+        val underlyingType = inlineClassUnboxedType(type)
         if (underlyingType != null) {
             return getOptimalModeForSignaturePart(underlyingType, canBeUsedInSupertypePosition).dontWrapInlineClassesMode()
         }
