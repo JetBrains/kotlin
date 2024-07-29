@@ -260,7 +260,7 @@ object IrTree : AbstractTreeBuilder() {
             println()
             withIndent {
                 println("@DelicateIrParameterIndexSetter")
-                println("internal set")
+                println("set")
             }
         }
     }

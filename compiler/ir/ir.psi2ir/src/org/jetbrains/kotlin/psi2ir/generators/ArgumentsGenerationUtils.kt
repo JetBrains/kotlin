@@ -447,7 +447,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
 
     context.symbolTable.enterScope(irAdapterFun)
 
-    fun createValueParameter(name: String, index: Int, type: IrType): IrValueParameter =
+    fun createValueParameter(name: String, type: IrType): IrValueParameter =
         context.irFactory.createValueParameter(
             startOffset = startOffset,
             endOffset = endOffset,
@@ -456,17 +456,16 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             type = type,
             isAssignable = false,
             symbol = IrValueParameterSymbolImpl(),
-            index = index,
             varargElementType = null,
             isCrossinline = false,
             isNoinline = false,
             isHidden = false,
         )
 
-    irAdapterFun.extensionReceiverParameter = createValueParameter("\$callee", -1, funType.toIrType())
+    irAdapterFun.extensionReceiverParameter = createValueParameter("\$callee", funType.toIrType())
     irAdapterFun.valueParameters = suspendFunType.arguments
         .take(suspendFunType.arguments.size - 1)
-        .mapIndexed { index, typeProjection -> createValueParameter("p$index", index, typeProjection.type.toIrType()) }
+        .mapIndexed { index, typeProjection -> createValueParameter("p$index", typeProjection.type.toIrType()) }
 
     val valueArgumentsCount = irAdapterFun.valueParameters.size
     val invokeDescriptor = funType.memberScope

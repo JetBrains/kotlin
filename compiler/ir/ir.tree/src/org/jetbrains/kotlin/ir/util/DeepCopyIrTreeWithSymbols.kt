@@ -374,7 +374,6 @@ open class DeepCopyIrTreeWithSymbols(
             type = declaration.type.remapType(),
             isAssignable = declaration.isAssignable,
             symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
-            index = declaration.index,
             varargElementType = declaration.varargElementType?.remapType(),
             isCrossinline = declaration.isCrossinline,
             isNoinline = declaration.isNoinline,

@@ -166,7 +166,6 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                 type = context.irBuiltIns.anyNType,
                                 isAssignable = arg.isAssignable,
                                 symbol = IrValueParameterSymbolImpl(),
-                                index = arg.index,
                                 varargElementType = null,
                                 isCrossinline = arg.isCrossinline,
                                 isNoinline = arg.isNoinline,

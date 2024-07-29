@@ -249,7 +249,6 @@ abstract class DeclarationStubGenerator(
                     type = contextReceiverParameter.type.toIrType(),
                     isAssignable = false,
                     symbol = IrValueParameterSymbolImpl(contextReceiverParameter),
-                    index = i,
                     varargElementType = null,
                     isCrossinline = false,
                     isNoinline = false,

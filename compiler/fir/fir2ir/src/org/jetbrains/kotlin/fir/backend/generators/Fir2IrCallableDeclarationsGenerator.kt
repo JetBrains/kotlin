@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
@@ -589,7 +588,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             type = type,
             isAssignable = false,
             symbol = IrValueParameterSymbolImpl(),
-            index = parent.contextReceiverParametersCount,
             varargElementType = null,
             isCrossinline = isCrossinline,
             isNoinline = isNoinline,
@@ -628,7 +626,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 type = type,
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
-                index = index,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
@@ -669,7 +666,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
                 function.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                     declarationStorage.createAndCacheParameter(
-                        valueParameter, index + contextReceiverParametersCount,
+                        valueParameter,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.classId != StandardClassIds.Enum,
                         typeOrigin,
                         skipDefaultParameter = isFakeOverride || origin == IrDeclarationOrigin.DELEGATED_MEMBER,
@@ -728,7 +725,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
 
     internal fun createIrParameter(
         valueParameter: FirValueParameter,
-        index: Int = UNDEFINED_PARAMETER_INDEX,
         useStubForDefaultValueStub: Boolean = true,
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
         skipDefaultParameter: Boolean = false,
@@ -750,7 +746,6 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 type = type,
                 isAssignable = valueParameter.containingFunctionSymbol.fir.shouldParametersBeAssignable(c),
                 symbol = IrValueParameterSymbolImpl(),
-                index = index,
                 varargElementType = valueParameter.varargElementType?.toIrType(c, typeOrigin),
                 isCrossinline = valueParameter.isCrossinline,
                 isNoinline = valueParameter.isNoinline,

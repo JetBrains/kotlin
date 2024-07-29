@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.builders.primitiveOp2
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -240,10 +239,13 @@ class Fir2IrVisitor(
                         irFactory.createValueParameter(
                             startOffset, endOffset, origin, name, receiver.typeRef.toIrType(c), isAssignable = false,
                             IrValueParameterSymbolImpl(),
-                            if (isSelf) UNDEFINED_PARAMETER_INDEX else index,
                             varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false
                         ).also {
                             it.parent = irScript
+                            if (!isSelf) {
+                                @OptIn(DelicateIrParameterIndexSetter::class)
+                                it.index = index
+                            }
                         }
                     }
                 if (isSelf) {

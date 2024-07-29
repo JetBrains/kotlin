@@ -389,7 +389,6 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                     type = type,
                     isAssignable = false,
                     symbol = IrValueParameterSymbolImpl(),
-                    index = index,
                     varargElementType = null,
                     isCrossinline = false,
                     isNoinline = false,

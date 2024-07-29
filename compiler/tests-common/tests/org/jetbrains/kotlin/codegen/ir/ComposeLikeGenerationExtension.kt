@@ -158,7 +158,6 @@ class ComposeLikeDefaultArgumentRewriter(
                         type = defaultParameterType(param),
                         isAssignable = param.defaultValue != null,
                         symbol = IrValueParameterSymbolImpl(),
-                        index = param.index,
                         varargElementType = param.varargElementType,
                         isCrossinline = param.isCrossinline,
                         isNoinline = param.isNoinline,

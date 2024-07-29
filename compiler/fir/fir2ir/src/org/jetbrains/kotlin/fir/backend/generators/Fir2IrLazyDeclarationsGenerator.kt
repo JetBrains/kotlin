@@ -69,9 +69,9 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 this@buildList
             )
 
-            fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
+            fir.valueParameters.mapTo(this) { valueParameter ->
                 callablesGenerator.createIrParameter(
-                    valueParameter, index + irFunction.contextReceiverParametersCount, skipDefaultParameter = irFunction.isFakeOverride
+                    valueParameter, skipDefaultParameter = irFunction.isFakeOverride
                 ).apply {
                     this.parent = irFunction
                 }
@@ -133,10 +133,10 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 this@buildList
             )
 
-            fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
+            fir.valueParameters.mapTo(this) { valueParameter ->
                 val parentClass = irConstructor.parent as? IrClass
                 callablesGenerator.createIrParameter(
-                    valueParameter, index + irConstructor.contextReceiverParametersCount,
+                    valueParameter,
                     useStubForDefaultValueStub = parentClass?.classId != StandardClassIds.Enum,
                     forcedDefaultValueConversion = parentClass?.isAnnotationClass == true
                 ).apply {

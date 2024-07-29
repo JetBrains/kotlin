@@ -67,7 +67,7 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
 
     var index: Int = -1
         @DelicateIrParameterIndexSetter
-        internal set
+        set
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)

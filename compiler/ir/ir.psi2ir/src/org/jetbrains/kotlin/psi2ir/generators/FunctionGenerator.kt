@@ -447,7 +447,6 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
             name,
-            index,
             isAssignable = (irOwnerElement as? IrSimpleFunction)?.isTailrec == true && context.extensions.parametersAreAssignable
         )
     }

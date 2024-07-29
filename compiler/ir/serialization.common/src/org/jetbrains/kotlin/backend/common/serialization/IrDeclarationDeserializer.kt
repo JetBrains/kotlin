@@ -291,7 +291,7 @@ class IrDeclarationDeserializer(
         return result
     }
 
-    private fun deserializeIrValueParameter(proto: ProtoValueParameter, index: Int, setParent: Boolean = true): IrValueParameter =
+    private fun deserializeIrValueParameter(proto: ProtoValueParameter, setParent: Boolean = true): IrValueParameter =
         withDeserializedIrDeclarationBase(proto.base, setParent) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = ValueParameterFlags.decode(fcode)
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
@@ -303,7 +303,6 @@ class IrDeclarationDeserializer(
                 type = deserializeIrType(nameAndType.typeIndex),
                 isAssignable = flags.isAssignable,
                 symbol = symbol.checkSymbolType(fallbackSymbolKind = null),
-                index = index,
                 varargElementType = if (proto.hasVarargElementType()) deserializeIrType(proto.varargElementType) else null,
                 isCrossinline = flags.isCrossInline,
                 isNoinline = flags.isNoInline,
@@ -359,7 +358,7 @@ class IrDeclarationDeserializer(
                         .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto).takeIf { it !in oldDeclarations } }
                 }
 
-                thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
+                thisReceiver = deserializeIrValueParameter(proto.thisReceiver)
 
                 valueClassRepresentation = when {
                     !flags.isValue -> null
@@ -440,7 +439,7 @@ class IrDeclarationDeserializer(
     }
 
     private fun deserializeValueParameters(protos: List<ProtoValueParameter>): List<IrValueParameter> {
-        return protos.memoryOptimizedMapIndexed { index, proto -> deserializeIrValueParameter(proto, index) }
+        return protos.memoryOptimizedMap { proto -> deserializeIrValueParameter(proto) }
     }
 
     /**
@@ -540,10 +539,10 @@ class IrDeclarationDeserializer(
                 withBodyGuard {
                     valueParameters = deserializeValueParameters(proto.valueParameterList)
                     dispatchReceiverParameter =
-                        if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver, -1)
+                        if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver)
                         else null
                     extensionReceiverParameter =
-                        if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver, -1)
+                        if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver)
                         else null
                     contextReceiverParametersCount =
                         if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0

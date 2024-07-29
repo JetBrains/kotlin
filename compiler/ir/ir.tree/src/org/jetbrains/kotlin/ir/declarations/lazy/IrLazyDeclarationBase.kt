@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -38,7 +37,6 @@ interface IrLazyDeclarationBase : IrDeclaration {
             type = type.toIrType(),
             isAssignable = false,
             symbol = IrValueParameterSymbolImpl(this),
-            index = UNDEFINED_PARAMETER_INDEX,
             varargElementType = null,
             isCrossinline = false,
             isNoinline = false,

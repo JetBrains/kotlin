@@ -318,7 +318,6 @@ class Fir2IrConverter(
                         injectedValue.typeRef.toIrType(typeConverter),
                         isAssignable = isMutated,
                         injectedValue.irParameterSymbol,
-                        index,
                         varargElementType = null,
                         isCrossinline = false,
                         isNoinline = false,

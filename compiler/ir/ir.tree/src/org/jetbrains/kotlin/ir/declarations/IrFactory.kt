@@ -399,8 +399,6 @@ open class IrFactory(
         type: IrType,
         isAssignable: Boolean,
         symbol: IrValueParameterSymbol,
-        @Suppress("unused") // The index is calculated automatically, keep this parameter for backward compatibility only
-        index: Int,
         varargElementType: IrType?,
         isCrossinline: Boolean,
         isNoinline: Boolean,
@@ -420,6 +418,33 @@ open class IrFactory(
             isAssignable = isAssignable,
             factory = this
         ).declarationCreated()
+
+    fun createValueParameter(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        name: Name,
+        type: IrType,
+        isAssignable: Boolean,
+        symbol: IrValueParameterSymbol,
+        index: Int,
+        varargElementType: IrType?,
+        isCrossinline: Boolean,
+        isNoinline: Boolean,
+        isHidden: Boolean,
+    ): IrValueParameter = createValueParameter(
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = name,
+        type = type,
+        isAssignable = isAssignable,
+        symbol = symbol,
+        varargElementType = varargElementType,
+        isCrossinline = isCrossinline,
+        isNoinline = isNoinline,
+        isHidden = isHidden,
+    )
 
     fun createExpressionBody(
         startOffset: Int,

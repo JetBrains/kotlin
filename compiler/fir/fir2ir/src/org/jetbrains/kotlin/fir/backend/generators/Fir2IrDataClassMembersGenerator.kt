@@ -198,7 +198,7 @@ class Fir2IrDataClassMembersGenerator(
             }
         }
 
-        private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType, index: Int = 0): IrValueParameter =
+        private fun createSyntheticIrParameter(irFunction: IrFunction, name: Name, type: IrType): IrValueParameter =
             c.irFactory.createValueParameter(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
@@ -207,7 +207,6 @@ class Fir2IrDataClassMembersGenerator(
                 type = type,
                 isAssignable = false,
                 symbol = IrValueParameterSymbolImpl(),
-                index = index,
                 varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
