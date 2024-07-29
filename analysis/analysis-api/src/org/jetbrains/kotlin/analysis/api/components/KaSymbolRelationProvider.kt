@@ -12,32 +12,32 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 
 public interface KaSymbolRelationProvider {
     /**
-     * A containing declaration for symbol:
-     *   for top-level declarations, a [KaFileSymbol], or a [KaScriptSymbol] if the file is a script file;
-     *   for scripts, a [KaFileSymbol];
-     *   for class members, a containing class;
-     *   for local declarations, a declaration it was declared it.
+     * The [KaSymbol] which contains this symbol, or `null` if there is no containing declaration:
+     *
+     *  - For top-level declarations, a [KaFileSymbol], or a [KaScriptSymbol] if the file is a script file.
+     *  - For [KaScriptSymbol]s, a [KaFileSymbol].
+     *  - For class members, the containing class symbol.
+     *  - For local declarations, the symbol of the containing declaration.
      */
     public val KaSymbol.containingSymbol: KaSymbol?
 
     /**
-     * A containing declaration for symbol:
-     *   for top-level declarations, a containing [KaScriptSymbol] or `null` for non-script declarations;
-     *   for class members, a containing class;
-     *   for local declarations, a declaration it was declared it.
+     * The [KaDeclarationSymbol] which contains this symbol, or `null` if there is no containing declaration:
+     *
+     *  - For top-level declarations, a containing [KaScriptSymbol], or `null` for non-script declarations.
+     *  - For class members, the containing class symbol.
+     *  - For local declarations, the symbol of the containing declaration.
      */
     public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
 
     /**
-     * The containing file symbol.
-     *
-     * Caveat: returns `null` if the given symbol is already [KaFileSymbol], since there is no containing file.
-     * Also, returns `null` for Java and library declarations.
+     * The [KaFileSymbol] which contains this symbol, or `null` if this symbol is already a [KaFileSymbol], since it has no containing file.
+     * Also `null` for Java and library declarations.
      */
     public val KaSymbol.containingFile: KaFileSymbol?
 
     /**
-     * The containing module for the given symbol.
+     * The [KaModule] which contains this symbol.
      */
     public val KaSymbol.containingModule: KaModule
 

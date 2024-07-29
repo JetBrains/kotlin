@@ -26,7 +26,7 @@ public interface KaSymbolInformationProvider {
     public fun KaNamedFunctionSymbol.canBeOperator(): Boolean
 
     /**
-     * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.
+     * The deprecation status of the given symbol related to the [annotationUseSiteTarget], or `null` if the declaration is not deprecated.
      */
     @KaExperimentalApi
     public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?

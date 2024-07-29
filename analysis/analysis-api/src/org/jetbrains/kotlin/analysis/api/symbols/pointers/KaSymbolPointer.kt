@@ -11,31 +11,32 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.utils.relfection.renderAsDataClassToString
 
 /**
- * [KaSymbol] is valid only during read action it was created in
- * To pass the symbol from one read action to another the KtSymbolPointer should be used
+ * [KaSymbolPointer] allows to point to a [KaSymbol] and later retrieve it in another [KaSession]. A pointer is necessary because
+ * [KaSymbol]s cannot be shared past the boundaries of the [KaSession] they were created in, as they are valid only there.
  *
- * We can restore the symbol
- *  * for symbol which came from Kotlin source it will be restored based on [com.intellij.psi.SmartPsiElementPointer]
- *  * restoring symbols which came from Java source is not supported yet
- *  * for library symbols:
- *    * for function & property symbol if its signature was not changed
- *    * for local variable symbol if code block it was declared in was not changed
- *    * for class & type alias symbols if its qualified name was not changed
- *    * for package symbol if the package is still exists
+ * We can restore the symbol in the following cases:
  *
- * @see org.jetbrains.kotlin.analysis.api.lifetime.KaReadActionConfinementLifetimeToken
+ *  - When the symbol came from Kotlin sources, it will be restored based on [SmartPsiElementPointer][com.intellij.psi.SmartPsiElementPointer].
+ *  - Restoring symbols originating from Java sources is not supported yet.
+ *  - Library symbols:
+ *      - Function & property symbols can be restored if their signature was not changed.
+ *      - Local variable symbols can be restored if their containing code block was not changed.
+ *      - Class & type alias symbols can be restored if their qualified name was not changed.
+ *      - Package symbols can be restored if their package still exists.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
  */
 public abstract class KaSymbolPointer<out S : KaSymbol> {
     /**
-     * @return restored symbol (possibly the new symbol instance) if one is still valid, `null` otherwise
+     * Returns the restored [KaSymbol] (possibly a new symbol instance) if the pointer is still valid, `null` otherwise.
      *
-     * Consider using [org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol]
+     * Consider using [org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol].
      */
     @KaImplementationDetail
     public abstract fun restoreSymbol(analysisSession: KaSession): S?
 
     /**
-     * @return **true** if [other] pointer can be restored to the same symbol. The operation is symmetric and transitive.
+     * Returns `true` if the [other] pointer can be restored to the same symbol. The operation is symmetric and transitive.
      */
     public open fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other
 

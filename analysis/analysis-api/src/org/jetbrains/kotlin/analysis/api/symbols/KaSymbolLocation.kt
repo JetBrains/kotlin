@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 /**
- * Describes a location there [KaSymbol] is defined.
+ * Describes the location where a [KaSymbol] is declared in code.
  *
- * Code example:
+ * #### Example
+ *
  * ```kotlin
  * package my.pack // TOP_LEVEL
  *
@@ -38,7 +39,7 @@ public enum class KaSymbolLocation {
     /**
      * Symbols which are not a part of other symbols.
      *
-     * Examples: [KaFileSymbol], [KaScriptSymbol], [KaPackageSymbol] and top-level declarations.
+     * Examples: [KaFileSymbol], [KaScriptSymbol], [KaPackageSymbol], and top-level declarations.
      */
     TOP_LEVEL,
 
@@ -48,14 +49,15 @@ public enum class KaSymbolLocation {
     CLASS,
 
     /**
-     * Symbols which are a part of a [KaPropertySymbol] such as [KaPropertyAccessorSymbol] and [KaBackingFieldSymbol].
+     * Symbols which are a part of a [KaPropertySymbol], such as [KaPropertyAccessorSymbol] and [KaBackingFieldSymbol].
      */
     PROPERTY,
 
     /**
      * Symbols which are defined directly inside a body.
      *
-     * Note: member declarations of a local class has [CLASS] location and not [LOCAL].
+     * [LOCAL] is not propagated to the members of local classes. So the member declaration of a local class has [CLASS] as its location and
+     * not [LOCAL].
      */
     LOCAL,
 }
