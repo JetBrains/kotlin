@@ -251,7 +251,7 @@ internal class CAdapterApiExporter(
         // Include header into C++ source.
         headerFile.forEachLine { it -> output(it) }
 
-        output("#include <exception>")
+//        output("#include <exception>")
 
         output("""
     |struct KObjHeader;
