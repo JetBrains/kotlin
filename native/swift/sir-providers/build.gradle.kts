@@ -21,9 +21,7 @@ sourceSets {
     "main" { projectDefault() }
 }
 
-if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
-    publish()
-}
+publish()
 
 runtimeJar()
 sourcesJar()

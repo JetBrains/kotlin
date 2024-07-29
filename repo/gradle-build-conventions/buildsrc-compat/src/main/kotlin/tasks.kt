@@ -30,8 +30,6 @@ import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
 
-private const val SWIFT_EXPORT_EMBEDDABLE = ":native:swift:swift-export-embeddable"
-
 val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-assignment",
     ":compose-compiler-gradle-plugin",
@@ -87,27 +85,16 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-test-js-runner",
     ":native:kotlin-klib-commonizer-embeddable",
     ":native:kotlin-klib-commonizer-api",
-    SWIFT_EXPORT_EMBEDDABLE,
+    ":native:swift:swift-export-embeddable",
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-impl",
     ":libraries:tools:gradle:fus-statistics-gradle-plugin"
 )
 
-private fun Task.processDependent(dependent: String, action: () -> Unit) {
-    val isSwiftExportEmbeddable = dependent == SWIFT_EXPORT_EMBEDDABLE
-    val isSwiftExportPluginPublishingEnabled = project.kotlinBuildProperties.isSwiftExportPluginPublishingEnabled
-
-    if (!isSwiftExportEmbeddable || isSwiftExportPluginPublishingEnabled) {
-        action.invoke()
-    }
-}
-
 fun Task.dependsOnKotlinGradlePluginInstall() {
     kotlinGradlePluginAndItsRequired.forEach { dependency ->
-        processDependent(dependency) {
-            dependsOn("${dependency}:install")
-        }
+        dependsOn("${dependency}:install")
     }
 }
 
@@ -118,10 +105,8 @@ fun Task.dependsOnKotlinGradlePluginPublish() {
             it != ":plugins:compose-compiler-plugin:compiler"
         }
         .forEach { dependency ->
-            processDependent(dependency) {
-                project.rootProject.tasks.findByPath("${dependency}:publish")?.let { task ->
-                    dependsOn(task)
-                }
+            project.rootProject.tasks.findByPath("${dependency}:publish")?.let { task ->
+                dependsOn(task)
             }
         }
 }

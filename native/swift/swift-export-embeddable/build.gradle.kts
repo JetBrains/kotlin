@@ -1,16 +1,10 @@
-import org.gradle.internal.jvm.Jvm
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
-
-description = "Runner for Swift Export (for embedding purpose)"
-
 plugins {
     java
 }
 
-if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
-    publish()
-}
+description = "Runner for Swift Export (for embedding purpose)"
+
+publish()
 
 val validateSwiftExportEmbeddable by tasks.registering
 

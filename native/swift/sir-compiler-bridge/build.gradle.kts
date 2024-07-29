@@ -41,9 +41,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 
 testsJar()
 
-if (kotlinBuildProperties.isSwiftExportPluginPublishingEnabled) {
-    publish()
-}
+publish()
 
 runtimeJar()
 sourcesJar()
