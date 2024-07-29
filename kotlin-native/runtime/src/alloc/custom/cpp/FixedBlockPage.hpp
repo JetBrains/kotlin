@@ -34,7 +34,7 @@ struct alignas(8) FixedBlockCell {
 class alignas(kPageAlignment) FixedBlockPage : public MultiObjectPage<FixedBlockPage> {
 public:
     static PERFORMANCE_INLINE size_t pageSize() {
-        return compiler::fixedBlockPageSize();
+        return compiler::fixedBlockPageSize() * 1024;
     }
 
     static inline constexpr const int MAX_BLOCK_SIZE = 128;

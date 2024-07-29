@@ -22,7 +22,7 @@
 
 namespace kotlin::alloc {
 Heap::Heap(uint32_t fixedBlockStartupDelay) noexcept {
-    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+    for (int blockSize = 0; blockSize <= FixedBlockPage::MAX_BLOCK_SIZE; ++blockSize) {
         fixedBlockSizeDelay_[blockSize] = fixedBlockStartupDelay;
     }
 }

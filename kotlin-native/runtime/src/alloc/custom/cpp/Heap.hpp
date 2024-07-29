@@ -86,7 +86,7 @@ private:
     PageStore<SingleObjectPage> singleObjectPages_;
     PageStore<ExtraObjectPage> extraObjectPages_;
 
-    std::atomic<uint8_t> fixedBlockSizeDelay_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
+    std::atomic<uint8_t> fixedBlockSizeDelay_[FixedBlockPage::MAX_BLOCK_SIZE + 1];
 
     FinalizerQueue pendingFinalizerQueue_;
     std::mutex pendingFinalizerQueueMutex_;
