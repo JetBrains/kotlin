@@ -162,8 +162,8 @@ void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& 
 template <typename Traits>
 void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept {
     auto handle = gcHandle.processWeaks();
-    for (auto& object : registry.lockForIter()) {
-        auto* obj = object.load(std::memory_order_relaxed);
+    for (auto objRef : registry.lockForIter()) {
+        auto* obj = objRef.load(std::memory_order_relaxed);
         if (!obj) {
             // We already processed it at some point.
             handle.addUndisposed();
@@ -176,7 +176,7 @@ void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept 
             continue;
         }
         // Object is not alive. Clear it out.
-        object.store(nullptr, std::memory_order_relaxed);
+        objRef.store(nullptr, std::memory_order_relaxed);
         handle.addNulled();
     }
 }

@@ -32,6 +32,6 @@ private:
 void EnableWeakRefBarriers(int64_t epoch) noexcept;
 void DisableWeakRefBarriers() noexcept;
 
-OBJ_GETTER(WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept;
+OBJ_GETTER(WeakRefRead, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 
 } // namespace kotlin::gc

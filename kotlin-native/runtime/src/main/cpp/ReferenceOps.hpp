@@ -210,6 +210,6 @@ private:
     ObjHeader* value_ = nullptr;
 };
 
-OBJ_GETTER(weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept;
+OBJ_GETTER(weakRefReadBarrier, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;
 
 }

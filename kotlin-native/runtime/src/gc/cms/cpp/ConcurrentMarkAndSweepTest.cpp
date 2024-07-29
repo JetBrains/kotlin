@@ -6,6 +6,7 @@
 #include "ConcurrentMarkAndSweep.hpp"
 
 #include <mutex>
+#include <atomic>
 
 #include "gtest/gtest.h"
 
@@ -110,5 +111,41 @@ TYPED_TEST_P(TracingGCTest, WeakResurrectionAtMarkTermination) {
     }
 }
 
-REGISTER_TYPED_TEST_SUITE_WITH_LISTS(TracingGCTest, TRACING_GC_TEST_LIST, WeakResurrectionAtMarkTermination);
+TYPED_TEST_P(TracingGCTest, ReleaseStableRefDuringRSCollection) {
+    std::vector<Mutator> mutators(kDefaultThreadCount);
+
+    std::atomic<size_t> readyThreads = 0;
+    std::atomic<bool> gcDone = false;
+
+    std::vector<std::future<void>> mutatorFutures;
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutatorFutures.push_back(mutators[i].Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
+            auto& obj = AllocateObject(threadData);
+            auto stableRef = mm::StableRef::create(obj.header());
+
+            ++readyThreads;
+            while (!mm::IsThreadSuspensionRequested()) {}
+
+            mm::safePoint();
+
+            mutator.AddStackRoot(obj.header());
+            std::move(stableRef).dispose();
+
+            while (!gcDone) { mm::safePoint(); }
+
+            EXPECT_THAT(mutator.Alive(), testing::Contains(obj.header()));
+        }));
+    }
+
+    while (readyThreads < kDefaultThreadCount) {}
+
+    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+    gcDone = true;
+
+    for (auto& future : mutatorFutures) {
+        future.wait();
+    }
+}
+
+REGISTER_TYPED_TEST_SUITE_WITH_LISTS(TracingGCTest, TRACING_GC_TEST_LIST, WeakResurrectionAtMarkTermination, ReleaseStableRefDuringRSCollection);
 INSTANTIATE_TYPED_TEST_SUITE_P(CMS, TracingGCTest, ConcurrentMarkAndSweepTest);

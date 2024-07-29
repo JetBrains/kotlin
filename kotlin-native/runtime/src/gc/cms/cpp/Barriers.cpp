@@ -126,8 +126,14 @@ void gc::barriers::disableBarriers() noexcept {
 namespace {
 
 // TODO decide whether it's really beneficial to NO_INLINE the slow path
-NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
-    auto prev = ref.load();
+NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {
+    ObjHeader* prev;
+    if (loadAtomic) {
+        prev = ref.loadAtomic(std::memory_order_relaxed);
+    } else {
+        prev = ref.load();
+    }
+
     if (prev != nullptr && prev->heap()) {
         // TODO Redundant if the destination object is black.
         //      Yet at the moment there is now efficient way to distinguish black and gray objects.
@@ -143,11 +149,11 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
 
 } // namespace
 
-ALWAYS_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
+ALWAYS_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value, bool loadAtomic) noexcept {
     auto phase = currentPhase();
     BarriersLogDebug(phase, "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
     if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
-        beforeHeapRefUpdateSlowPath(ref, value);
+        beforeHeapRefUpdateSlowPath(ref, value, loadAtomic);
     }
 }
 
@@ -175,7 +181,7 @@ NO_INLINE ObjHeader* weakRefReadInWeakSweepSlowPath(ObjHeader* weakReferee) noex
 
 } // namespace
 
-ALWAYS_INLINE ObjHeader* gc::barriers::weakRefReadBarrier(std::atomic<ObjHeader*>& weakReferee) noexcept {
+ALWAYS_INLINE ObjHeader* gc::barriers::weakRefReadBarrier(std_support::atomic_ref<ObjHeader*> weakReferee) noexcept {
     if (__builtin_expect(currentPhase() != BarriersPhase::kDisabled, false)) {
         // Mark dispatcher requires weak reads be protected by the following:
         auto weakReadProtector = markDispatcher().weakReadProtector();
