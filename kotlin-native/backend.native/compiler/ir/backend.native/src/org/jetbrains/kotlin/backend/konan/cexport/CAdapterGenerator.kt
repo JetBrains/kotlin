@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
@@ -374,23 +375,6 @@ internal class ExportedElement(
         }
     }
 }
-
-private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-    val result = mutableSetOf<FqName>()
-
-    fun getSubPackages(fqName: FqName) {
-        result.add(fqName)
-        module.getSubPackagesOf(fqName) { true }.forEach { getSubPackages(it) }
-    }
-
-    getSubPackages(FqName.ROOT)
-    return result
-}
-
-private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> =
-        getPackagesFqNames(this).flatMap {
-            getPackage(it).fragments.filter { it.module == this }
-        }
 
 /**
  * First phase of C export: walk given declaration descriptors and create [CAdapterExportedElements] from them.
