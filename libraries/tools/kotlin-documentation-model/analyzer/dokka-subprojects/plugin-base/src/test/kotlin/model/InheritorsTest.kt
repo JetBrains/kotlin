@@ -5,8 +5,11 @@
 package model
 
 import org.jetbrains.dokka.Platform
+import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
 import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.model.doc.CustomDocTag
+import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
 import utils.AbstractModelTest
@@ -608,4 +611,76 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
             }
         }
     }
+
+    @Test
+    fun `substitution override (fake override) should have KDoc`() {
+        inlineModelTest(
+            """
+            |open class Job<T> {
+            |   /** some doc */
+            |    open fun do1(p: T) = p
+            |    /** some doc */
+            |    var p: T? = null
+            |}
+            |class GoodJob : Job<Int>()
+        """
+        ) {
+            with((this / "inheritors" / "GoodJob" / "do1").cast<DFunction>()) {
+                name equals "do1"
+                documentation.values.single().children.first() equals Description(
+                    CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(Text(body = "some doc"))
+                            )
+                        ), name = MARKDOWN_ELEMENT_FILE_NAME
+                    )
+                )
+            }
+            with((this / "inheritors" / "GoodJob" / "p").cast<DProperty>()) {
+                name equals "p"
+                documentation.values.single().children.first() equals Description(
+                    CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(Text(body = "some doc"))
+                            )
+                        ), name = MARKDOWN_ELEMENT_FILE_NAME
+                    )
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `members implemented by delegation should inherit KDoc`() {
+        inlineModelTest(
+            """
+               |interface CookieJar {
+               |    /**
+               |    * Saves cookies
+               |     */
+               |    fun saveFromResponse(url: String)
+               |}
+               |
+               |class JavaNetCookieJar private constructor(
+               |    delegate: CookieJarImpl,
+               |) : CookieJar by delegate
+            """.trimMargin()
+        ) {
+            with((this / "inheritors" / "JavaNetCookieJar"/ "saveFromResponse").cast<DFunction>()) {
+                name equals "saveFromResponse"
+                documentation.values.single().children.first() equals Description(
+                    CustomDocTag(
+                        children = listOf(
+                            P(
+                                children = listOf(Text(body = "Saves cookies"))
+                            )
+                        ), name = MARKDOWN_ELEMENT_FILE_NAME
+                    )
+                )
+            }
+        }
+    }
+
 }
