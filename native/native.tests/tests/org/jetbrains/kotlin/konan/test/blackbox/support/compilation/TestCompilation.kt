@@ -82,10 +82,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             add("-enable-assertions")
 
         add(irValidationCompilerOptions)
-
-        // We use dev distribution for tests as it provides a full set of testing utilities,
-        // which might not be available in user distribution.
-        add("-Xllvm-variant=dev")
+        
         addFlattened(binaryOptions.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
     }
 
