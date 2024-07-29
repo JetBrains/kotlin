@@ -286,8 +286,8 @@ fun extractFunction(expression: JsExpression) = when (expression) {
     else -> InlineMetadata.decompose(expression)?.function ?: InlineMetadata.tryExtractFunction(expression)
 }
 
-fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode): List<T> {
-    return with(InstanceCollector(klass, visitNestedDeclarations = false)) {
+fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode, visitNestedDeclarations: Boolean = false): List<T> {
+    return with(InstanceCollector(klass, visitNestedDeclarations)) {
         accept(scope)
         collected
     }

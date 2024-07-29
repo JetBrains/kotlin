@@ -235,9 +235,10 @@ public class DirectiveTestUtils {
             String functionName = arguments.getNamedArgument("function");
             String countStr = arguments.findNamedArgument("count");
             String maxCountStr = arguments.findNamedArgument("max");
+            String includeNestedDeclarations = arguments.findNamedArgument("includeNestedDeclarations");
 
             JsFunction function = AstSearchUtil.getFunction(ast, functionName);
-            List<T> nodes = collectInstances(klass, function.getBody());
+            List<T> nodes = collectInstances(klass, function.getBody(), includeNestedDeclarations != null && includeNestedDeclarations.equals("true"));
             int actualCount = 0;
 
             for (T node : nodes) {
@@ -306,6 +307,8 @@ public class DirectiveTestUtils {
             return node.getOperator().getSymbol().equals(symbol) ? 1 : 0;
         }
     };
+
+    private static final DirectiveHandler COUNT_SUPER = new CountNodesDirective<>("CHECK_SUPER_COUNT", JsSuperRef.class);
 
     private static final DirectiveHandler COUNT_DEBUGGER = new CountNodesDirective<>("CHECK_DEBUGGER_COUNT", JsDebugger.class);
 
@@ -519,6 +522,7 @@ public class DirectiveTestUtils {
             COUNT_IF,
             COUNT_TERNARY_OPERATOR,
             COUNT_BINOPS,
+            COUNT_SUPER,
             COUNT_DEBUGGER,
             COUNT_STRING_LITERALS,
             NOT_REFERENCED,
