@@ -7,4 +7,8 @@ package org.jetbrains.kotlin.analysis.api.symbols.markers
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
+/**
+ * A [KaSymbol] which may contain declarations. These declarations may be accessed through the [KaScope][org.jetbrains.kotlin.analysis.api.scopes.KaScope]s
+ * provided by [KaScopeProvider][org.jetbrains.kotlin.analysis.api.components.KaScopeProvider].
+ */
 public interface KaDeclarationContainerSymbol : KaSymbol

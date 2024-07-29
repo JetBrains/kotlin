@@ -43,7 +43,9 @@ public interface KaSymbolInformationProvider {
     @KaExperimentalApi
     public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
 
-    /** A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class. */
+    /**
+     * A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class.
+     */
     @KaExperimentalApi
     public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
 }

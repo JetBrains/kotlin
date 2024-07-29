@@ -14,6 +14,23 @@ import org.jetbrains.kotlin.name.Name
  * @see org.jetbrains.kotlin.analysis.api.symbols.name
  */
 public interface KaNamedSymbol : KaSymbol {
+    /**
+     * The simple name of this [KaSymbol].
+     *
+     * For invalid declarations that are missing a name, [name] might be [SpecialNames.NO_NAME_PROVIDED][org.jetbrains.kotlin.name.SpecialNames.NO_NAME_PROVIDED].
+     *
+     * #### Example
+     *
+     * ```
+     * package foo.bar
+     *
+     * fun baz() {
+     * }
+     * ```
+     *
+     * The [name] of the function `baz` is simply `baz`. In contrast, its [callableId][org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol.callableId]
+     * is `foo/bar/baz`.
+     */
     public val name: Name
 }
 

@@ -21,6 +21,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
+/**
+ * [KaClassifierSymbol] represents a type declaration, including classes, objects, interfaces, type aliases, and type parameters.
+ *
+ * Typically, [KaClassifierSymbol] is not used directly. Instead, its inheritors should be used to access more specific information about a
+ * declaration.
+ *
+ * @see KaClassLikeSymbol
+ * @see KaTypeParameterSymbol
+ */
 public sealed class KaClassifierSymbol : KaDeclarationSymbol {
     public abstract val name: Name?
 }
@@ -28,11 +37,36 @@ public sealed class KaClassifierSymbol : KaDeclarationSymbol {
 public val KaClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS
 
+/**
+ * [KaTypeParameterSymbol] represents a type parameter of a class, function, property, or type alias.
+ */
 public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbol {
     abstract override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol>
 
+    /**
+     * A list of [upper bounds](https://kotlinlang.org/docs/generics.html#upper-bounds) declared for the type parameter.
+     *
+     * #### Example
+     *
+     * ```
+     * interface Bar
+     *
+     * class Foo<T : Bar>
+     * ```
+     *
+     * The type parameter symbol for `T` has the upper bound `Bar`.
+     */
     public abstract val upperBounds: List<KaType>
+
+    /**
+     * The type parameter's [declaration-site variance](https://kotlinlang.org/docs/generics.html#declaration-site-variance) (invariant,
+     * covariant `out`, contravariant `in`).
+     */
     public abstract val variance: Variance
+
+    /**
+     * Whether the type parameter has the `reified` modifier. `reified` is only applicable to type parameters of callables.
+     */
     public abstract val isReified: Boolean
 
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
@@ -43,34 +77,58 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 }
 
+/**
+ * [KaClassLikeSymbol] represents a class, object, interface, or type alias declaration.
+ *
+ * @see KaClassifierSymbol
+ * @see KaTypeAliasSymbol
+ */
 public sealed class KaClassLikeSymbol : KaClassifierSymbol() {
     /**
-     * The [ClassId] of this class, or `null` if this class is local.
+     * The fully-qualified [ClassId] of this class, or `null` if the class is local.
      */
     public abstract val classId: ClassId?
 
     abstract override fun createPointer(): KaSymbolPointer<KaClassLikeSymbol>
 }
 
+/**
+ * [KaTypeAliasSymbol] represents a type alias declaration.
+ */
 @OptIn(KaImplementationDetail::class)
-public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(),
-    KaNamedSymbol,
-    KaTypeParameterOwnerSymbol
-{
+public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val modality: KaSymbolModality
         get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     /**
-     * Returns type from right-hand site of type alias
-     * If type alias has type parameters, then those type parameters will be present in result type
+     * The type this type alias expands to, which is the right-hand side of the `typealias` declaration. The type alias's [typeParameters]
+     * will be contained in the resulting [KaType] unless they're unused.
      */
     public abstract val expandedType: KaType
 
     abstract override fun createPointer(): KaSymbolPointer<KaTypeAliasSymbol>
 }
 
+/**
+ * [KaClassSymbol] represents a class, object, or interface declaration.
+ *
+ * Consider the following example use cases for [KaClassSymbol]:
+ *
+ *  - **Analyzing class hierarchies:** Use [superTypes] to navigate the inheritance hierarchy of a class and analyze its relationships with
+ *  other classes and interfaces, or use the [isSubClassOf][org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.isSubClassOf]
+ *  function instead.
+ *  - **Exploring class members:** Use scopes such as [declaredMemberScope][org.jetbrains.kotlin.analysis.api.components.KaScopeProvider.declaredMemberScope]
+ *  and [staticDeclaredMemberScope][org.jetbrains.kotlin.analysis.api.components.KaScopeProvider.staticDeclaredMemberScope] to access the
+ *  members of a class, including functions, properties, and nested classes. See [KaScopeProvider][org.jetbrains.kotlin.analysis.api.components.KaScopeProvider]
+ *  for a comprehensive list of available scopes.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.isSubClassOf
+ * @see org.jetbrains.kotlin.analysis.api.components.KaScopeProvider
+ */
 public sealed class KaClassSymbol : KaClassLikeSymbol(), KaDeclarationContainerSymbol {
-
+    /**
+     * The kind of the class (e.g. ordinary class, interface, enum class, etc.).
+     */
     public abstract val classKind: KaClassKind
 
     /**
@@ -91,6 +149,17 @@ public sealed class KaClassSymbol : KaClassLikeSymbol(), KaDeclarationContainerS
     abstract override fun createPointer(): KaSymbolPointer<KaClassSymbol>
 }
 
+/**
+ * [KaAnonymousObjectSymbol] represents anonymous object declarations.
+ *
+ * #### Example
+ *
+ * ```
+ * val runnable = object : Runnable {
+ *     override fun run() {}
+ * }
+ * ```
+ */
 public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
     final override val classKind: KaClassKind get() = withValidityAssertion { KaClassKind.ANONYMOUS_OBJECT }
     final override val classId: ClassId? get() = withValidityAssertion { null }
@@ -108,19 +177,45 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol>
 }
 
+/**
+ * [KaNamedClassSymbol] represents a named class, object, or interface declaration. The symbol covers most class declarations except for
+ * anonymous objects, which are represented by [KaAnonymousObjectSymbol].
+ */
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 public abstract class KaNamedClassSymbol : KaClassSymbol(),
     KaTypeParameterOwnerSymbol,
     KaNamedSymbol,
     KaContextReceiversOwner {
 
+    /**
+     * Whether the class is an [inner class](https://kotlinlang.org/docs/nested-classes.html#inner-classes).
+     */
     public abstract val isInner: Boolean
+
+    /**
+     * Whether the class is a [data class](https://kotlinlang.org/docs/data-classes.html).
+     */
     public abstract val isData: Boolean
+
+    /**
+     * Whether the class is an [inline class](https://kotlinlang.org/docs/inline-classes.html).
+     */
     public abstract val isInline: Boolean
+
+    /**
+     * Whether the class is a [functional interface](https://kotlinlang.org/docs/fun-interfaces.html).
+     */
     public abstract val isFun: Boolean
 
+    /**
+     * Whether the class is implemented outside of Kotlin (accessible through [JNI](https://kotlinlang.org/docs/java-interop.html#using-jni-with-kotlin)
+     * or [JavaScript](https://kotlinlang.org/docs/js-interop.html#external-modifier)).
+     */
     public abstract val isExternal: Boolean
 
+    /**
+     * The nested companion object, or `null` if there is no companion object.
+     */
     public abstract val companionObject: KaNamedClassSymbol?
 
     abstract override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol>

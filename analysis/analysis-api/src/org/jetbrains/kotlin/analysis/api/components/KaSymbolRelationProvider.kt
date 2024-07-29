@@ -42,7 +42,8 @@ public interface KaSymbolRelationProvider {
     public val KaSymbol.containingModule: KaModule
 
     /**
-     * Returns [KaSamConstructorSymbol] if the given [KaClassLikeSymbol] is a functional interface type, a.k.a. SAM.
+     * The associated [KaSamConstructorSymbol] if this [KaClassLikeSymbol] is a
+     * [functional interface type (SAM)](https://kotlinlang.org/docs/fun-interfaces.html).
      */
     public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
 

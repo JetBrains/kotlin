@@ -62,6 +62,8 @@ public interface KaTypeProvider {
     /**
      * Returns the representation of [this] in terms of [KaType].
      *
+     * Type parameters are substituted with matching type parameter types, e.g. `List<T>` for the `List` class.
+     *
      * @see KaTypeCreator
      */
     public val KaClassifierSymbol.defaultType: KaType
