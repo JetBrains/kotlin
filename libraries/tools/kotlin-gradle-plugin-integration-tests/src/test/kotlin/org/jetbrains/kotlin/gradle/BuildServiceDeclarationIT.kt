@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build services usages in tasks are declared with `usesService`")
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5)
 class BuildServiceDeclarationIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         warningMode = WarningMode.All // we currently have other warnings when `STABLE_CONFIGURATION_CACHE` is enabled unrelated to build services declaration, so we check for this kind of warnings in the build output

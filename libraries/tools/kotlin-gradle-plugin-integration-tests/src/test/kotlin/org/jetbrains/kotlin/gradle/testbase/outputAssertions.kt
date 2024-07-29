@@ -385,19 +385,10 @@ fun CommandLineArguments.assertCommandLineArgumentsContainSequentially(
  */
 
 fun BuildResult.assertOutputContainsNativeFrameworkVariant(variantName: String, gradleVersion: GradleVersion) {
-    val isAtLeastGradle75 = gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_5)
     try {
-        assertOutputContains(
-            if (isAtLeastGradle75)
-                "Variant $variantName"
-            else "variant \"$variantName\" ["
-        )
+        assertOutputContains("Variant $variantName")
     } catch (originalError: AssertionError) {
-        val regexPattern = if (isAtLeastGradle75) {
-            "Variant (.*?):"
-        } else {
-            "variant \"(.*?)\" \\["
-        }
+        val regexPattern = "Variant (.*?):"
         val matchedVariants = Regex(regexPattern).findAll(output).toList()
         throw AssertionError(
             "Expected variant $variantName. " +

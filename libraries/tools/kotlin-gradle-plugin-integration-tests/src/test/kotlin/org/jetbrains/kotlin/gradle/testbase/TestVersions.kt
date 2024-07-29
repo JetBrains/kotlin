@@ -15,7 +15,6 @@ interface TestVersions {
     // https://gradle.org/nightly/
     // Gradle nightly releases retention policy is 3 months
     object Gradle {
-        const val G_7_5 = "7.5.1"
         const val G_7_6 = "7.6.3"
         const val G_8_0 = "8.0.2"
         const val G_8_1 = "8.1.1"
