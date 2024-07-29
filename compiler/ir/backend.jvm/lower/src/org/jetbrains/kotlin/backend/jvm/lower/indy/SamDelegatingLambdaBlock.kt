@@ -194,12 +194,11 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         typeSubstitutor: IrTypeSubstitutor
     ): List<IrValueParameter> {
         val lambdaParameters = ArrayList<IrValueParameter>()
-        var index = 0
         superMethod.extensionReceiverParameter?.let { superExtensionReceiver ->
-            lambdaParameters.add(superExtensionReceiver.copySubstituted(lambda, typeSubstitutor, index++, Name.identifier("\$receiver")))
+            lambdaParameters.add(superExtensionReceiver.copySubstituted(lambda, typeSubstitutor, Name.identifier("\$receiver")))
         }
         superMethod.valueParameters.mapTo(lambdaParameters) { superValueParameter ->
-            superValueParameter.copySubstituted(lambda, typeSubstitutor, index++)
+            superValueParameter.copySubstituted(lambda, typeSubstitutor)
         }
         return lambdaParameters
     }
@@ -207,12 +206,10 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
     private fun IrValueParameter.copySubstituted(
         function: IrSimpleFunction,
         substitutor: IrTypeSubstitutor,
-        newIndex: Int,
         newName: Name = name
     ) =
         buildValueParameter(function) {
             name = newName
-            index = newIndex
             type = substitutor.substitute(this@copySubstituted.type)
         }
 

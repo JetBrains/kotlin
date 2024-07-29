@@ -270,7 +270,6 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         return buildValueParameter(target) {
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             name = parameter.name
-            index = parameter.index
             type = substituteType(parameter.type)
             varargElementType = parameter.varargElementType?.let { substituteType(it) }
             isCrossInline = parameter.isCrossinline

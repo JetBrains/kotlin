@@ -329,7 +329,7 @@ fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDe
             type = type,
             isAssignable = isAssignable,
             symbol = IrValueParameterSymbolImpl(),
-            index = index,
+            index = -1,
             varargElementType = varargElementType,
             isCrossinline = isCrossInline,
             isNoinline = isNoinline,
@@ -350,9 +350,6 @@ inline fun <D> buildValueParameter(declaration: D, builder: IrValueParameterBuil
 inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
         builder()
-        if (index == UNDEFINED_PARAMETER_INDEX) {
-            index = valueParameters.size
-        }
         factory.buildValueParameter(this, this@addValueParameter).also { valueParameter ->
             valueParameters = valueParameters + valueParameter
         }

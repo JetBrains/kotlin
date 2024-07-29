@@ -67,7 +67,6 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
             val outerThisValueParameter = buildValueParameter(this) {
                 origin = JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS
                 name = Name.identifier(AsmUtil.CAPTURED_THIS_FIELD)
-                index = 0
                 type = oldConstructor.parentAsClass.parentAsClass.defaultType
             }
             valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this, index = it.index + 1) }

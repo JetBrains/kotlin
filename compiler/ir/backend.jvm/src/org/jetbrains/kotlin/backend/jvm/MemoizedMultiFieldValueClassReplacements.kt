@@ -53,7 +53,6 @@ class MemoizedMultiFieldValueClassReplacements(
             targetFunction.addValueParameter {
                 updateFrom(oldParam)
                 this.name = oldParam.name
-                index = targetFunction.valueParameters.size
             }.apply {
                 defaultValue = oldParam.defaultValue
                 copyAnnotationsFrom(oldParam)
@@ -69,7 +68,6 @@ class MemoizedMultiFieldValueClassReplacements(
                 this.name = Name.identifier("${name ?: oldParam.name}-${leaf.fullFieldName}")
                 type = leaf.type.substitute(localSubstitutionMap)
                 origin = originWhenFlattened
-                index = targetFunction.valueParameters.size
                 isAssignable = isAssignable || oldParam.defaultValue != null
             }.also { newParam ->
                 newParam.defaultValue = oldParam.defaultValue?.let {

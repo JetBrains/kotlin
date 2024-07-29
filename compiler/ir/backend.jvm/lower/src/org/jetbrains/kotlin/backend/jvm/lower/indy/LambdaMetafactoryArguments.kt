@@ -462,22 +462,21 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         val newValueParameters = ArrayList<IrValueParameter>()
         val oldToNew = HashMap<IrValueParameter, IrValueParameter>()
-        var newParameterIndex = 0
 
         lambda.valueParameters.take(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
-            oldParameter.copy(lambda, newParameterIndex++).also {
+            oldParameter.copy(lambda).also {
                 oldToNew[oldParameter] = it
             }
         }
 
         newValueParameters.add(
-            oldExtensionReceiver.copy(lambda, newParameterIndex++, oldExtensionReceiver.name).also {
+            oldExtensionReceiver.copy(lambda, oldExtensionReceiver.name).also {
                 oldToNew[oldExtensionReceiver] = it
             }
         )
 
         lambda.valueParameters.drop(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
-            oldParameter.copy(lambda, newParameterIndex++).also {
+            oldParameter.copy(lambda).also {
                 oldToNew[oldParameter] = it
             }
         }
@@ -498,10 +497,9 @@ internal class LambdaMetafactoryArgumentsBuilder(
     }
 
 
-    private fun IrValueParameter.copy(parent: IrSimpleFunction, newIndex: Int, newName: Name = this.name): IrValueParameter =
+    private fun IrValueParameter.copy(parent: IrSimpleFunction, newName: Name = this.name): IrValueParameter =
         buildValueParameter(parent) {
             updateFrom(this@copy)
-            index = newIndex
             name = newName
         }
 

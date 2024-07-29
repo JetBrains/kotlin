@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
@@ -118,7 +117,6 @@ object JsIrBuilder {
     fun buildValueParameter(
         parent: IrFunction,
         name: String,
-        index: Int,
         type: IrType,
         isAssignable: Boolean = false,
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
@@ -126,7 +124,6 @@ object JsIrBuilder {
         buildValueParameter(parent) {
             this.origin = origin
             this.name = Name.identifier(name)
-            this.index = index
             this.type = type
             this.isAssignable = isAssignable
         }

@@ -197,7 +197,7 @@ private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, 
         it.copyTypeParametersFrom(constructor.parentAsClass)
 
         it.valueParameters = constructor.valueParameters.memoryOptimizedMap { p -> p.copyTo(it) }
-        it.valueParameters = it.valueParameters memoryOptimizedPlus JsIrBuilder.buildValueParameter(it, "\$this", constructor.valueParameters.size, type)
+        it.valueParameters = it.valueParameters memoryOptimizedPlus JsIrBuilder.buildValueParameter(it, "\$this", type)
     }
 }
 

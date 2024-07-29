@@ -221,7 +221,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                     addValueParameter {
                         name = BOUND_RECEIVER_NAME
                         type = it.type
-                        index = 0
                     }
                 }
 
@@ -232,7 +231,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                     continuation = addValueParameter {
                         name = superContinuation.name
                         type = superContinuation.type
-                        index = if (boundReceiverParameter == null) 0 else 1
                     }
                 }
 
@@ -398,7 +396,6 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                 buildValueParameter(this) {
                     name = Name.identifier("p$i")
                     type = t
-                    index = i
                 }
             }
 

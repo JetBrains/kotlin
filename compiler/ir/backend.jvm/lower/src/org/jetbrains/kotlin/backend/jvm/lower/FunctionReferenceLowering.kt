@@ -270,7 +270,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 val proxyParameter = buildValueParameter(proxyFun) {
                     updateFrom(originalParameter)
                     name = Name.identifier("p$proxyParameterIndex\$${originalParameter.name.asString()}")
-                    index = proxyParameterIndex
                     type = originalParameter.type.eraseTypeParameters()
                     proxyParameterIndex++
                 }.apply {
