@@ -1,3 +1,5 @@
+// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+
 class A {
     private companion object {
         fun foo() = "OK"

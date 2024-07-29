@@ -1,3 +1,5 @@
+// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+
 // FILE: A.kt
 
 private const val privateConstVal = "OK"

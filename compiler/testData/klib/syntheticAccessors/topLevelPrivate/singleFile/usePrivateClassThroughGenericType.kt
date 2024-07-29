@@ -1,3 +1,5 @@
+// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+
 private class Private
 
 private inline fun <reified T> parameterized(): String {

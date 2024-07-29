@@ -1,3 +1,5 @@
+// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+
 // MODULE: lib
 // FILE: A.kt
 private fun privateMethod() = "OK"

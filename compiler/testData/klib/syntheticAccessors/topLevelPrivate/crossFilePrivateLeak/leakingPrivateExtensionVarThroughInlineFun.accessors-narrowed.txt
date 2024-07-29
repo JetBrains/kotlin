@@ -1,0 +1,15 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=B.kt */
+
+private var A.privateVar: Int
+    /* TARGET declaration */ private fun A.<get-privateVar>(): Int
+    /* TARGET declaration */ private fun A.<set-privateVar>(value: Int)
+internal inline fun A.customSetVar(value: Int)
+    /* ACCESSOR use-site */ access$<set-privateVar>$tBKt($receiver = <this>, value = value)
+internal inline fun A.customGetVar(): Int
+    /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = <this>)
+/* ACCESSOR declaration */ internal fun access$<get-privateVar>$tBKt($receiver: A): Int
+    /* TARGET use-site */ $receiver.<get-privateVar>()
+/* ACCESSOR declaration */ internal fun access$<set-privateVar>$tBKt($receiver: A, value: Int)
+    /* TARGET use-site */ $receiver.<set-privateVar>(value = value)

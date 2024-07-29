@@ -1,0 +1,18 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=a.kt */
+
+public var privateSetterVarA: Int
+    /* TARGET declaration */ private fun <set-privateSetterVarA>(<set-?>: Int)
+public var privateSetterVarB: Int
+    /* TARGET declaration */ private fun <set-privateSetterVarB>(value: Int)
+internal var inlineVarA: Int
+    internal inline fun <set-inlineVarA>(value: Int)
+        /* ACCESSOR use-site */ access$<set-privateSetterVarA>$tAKt(<set-?> = value)
+internal var inlineVarB: Int
+    internal inline fun <set-inlineVarB>(value: Int)
+        /* ACCESSOR use-site */ access$<set-privateSetterVarB>$tAKt(value = value)
+/* ACCESSOR declaration */ internal fun access$<set-privateSetterVarA>$tAKt(<set-?>: Int)
+    /* TARGET use-site */ <set-privateSetterVarA>(<set-?> = <set-?>)
+/* ACCESSOR declaration */ internal fun access$<set-privateSetterVarB>$tAKt(value: Int)
+    /* TARGET use-site */ <set-privateSetterVarB>(value = value)

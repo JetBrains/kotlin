@@ -1,0 +1,11 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+internal val internalInlineVal: Function0<String>
+    internal inline fun <get-internalInlineVal>(): Function0<String>
+        local fun <anonymous>(): String
+            /* ACCESSOR use-site */ access$privateMethod$tAKt()
+/* TARGET declaration */ private fun privateMethod(): String
+/* ACCESSOR declaration */ internal fun access$privateMethod$tAKt(): String
+    /* TARGET use-site */ privateMethod()

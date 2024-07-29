@@ -1,0 +1,9 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=a.kt */
+
+internal inline fun internalInlineFun(): String
+    /* ACCESSOR use-site */ access$privateFun$tAKt()
+/* TARGET declaration */ private fun privateFun(): String
+/* ACCESSOR declaration */ internal fun access$privateFun$tAKt(): String
+    /* TARGET use-site */ privateFun()

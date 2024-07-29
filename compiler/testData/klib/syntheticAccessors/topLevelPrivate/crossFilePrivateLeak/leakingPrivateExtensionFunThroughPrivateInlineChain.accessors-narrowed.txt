@@ -1,0 +1,17 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=B.kt */
+
+/* TARGET declaration */ private fun A.privateExtension(): String
+private inline fun A.privateInlineExtension1(): String
+    /* TARGET use-site */ <this>.privateExtension()
+private inline fun A.privateInlineExtension2(): String
+    /* TARGET use-site */ this.privateExtension()
+private inline fun A.privateInlineExtension3(): String
+    /* TARGET use-site */ this.privateExtension()
+private inline fun A.privateInlineExtension4(): String
+    /* TARGET use-site */ this.privateExtension()
+internal inline fun A.internalInlineExtension(): String
+    /* ACCESSOR use-site */ access$privateExtension$tBKt($receiver = this)
+/* ACCESSOR declaration */ internal fun access$privateExtension$tBKt($receiver: A): String
+    /* TARGET use-site */ $receiver.privateExtension()

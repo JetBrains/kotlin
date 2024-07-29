@@ -1,0 +1,11 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=useCompanionPrivateMethodFromInternalInline.kt */
+
+public class A
+    public companion object Companion
+        /* TARGET declaration */ private fun privateMethod(): String
+        /* ACCESSOR declaration */ internal fun access$privateMethod($this: Companion): String
+            /* TARGET use-site */ $this.privateMethod()
+    internal inline fun internalInlineMethod(): String
+        /* ACCESSOR use-site */ access$privateMethod($this = Companion)

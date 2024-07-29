@@ -1,0 +1,17 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateSetterFromInternalInlineFun.kt */
+
+public class A
+    public var privateSetterVarA: Int
+        /* TARGET declaration */ private fun <set-privateSetterVarA>(<set-?>: Int)
+    public var privateSetterVarB: Int
+        /* TARGET declaration */ private fun <set-privateSetterVarB>(value: Int)
+    internal inline fun customSetVarA(value: Int)
+        /* ACCESSOR use-site */ access$<set-privateSetterVarA>($this = <this>, <set-?> = value)
+    internal inline fun customSetVarB(value: Int)
+        /* ACCESSOR use-site */ access$<set-privateSetterVarB>($this = <this>, value = value)
+    /* ACCESSOR declaration */ internal fun access$<set-privateSetterVarA>($this: A, <set-?>: Int)
+        /* TARGET use-site */ $this.<set-privateSetterVarA>(<set-?> = <set-?>)
+    /* ACCESSOR declaration */ internal fun access$<set-privateSetterVarB>($this: A, value: Int)
+        /* TARGET use-site */ $this.<set-privateSetterVarB>(value = value)

@@ -1,0 +1,17 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=a.kt */
+
+public class Foo
+    /* TARGET declaration */ private fun o(): String
+    /* TARGET declaration */ private fun k(): String
+    internal inline fun internalInlineFun(oo: String, kk: Function0<String>): String
+        oo: String
+            /* ACCESSOR use-site */ access$o($this = <this>)
+        kk: Function0<String>
+            local fun <anonymous>(): String
+                /* ACCESSOR use-site */ access$k($this = <this>)
+    /* ACCESSOR declaration */ internal fun access$o($this: Foo): String
+        /* TARGET use-site */ $this.o()
+    /* ACCESSOR declaration */ internal fun access$k($this: Foo): String
+        /* TARGET use-site */ $this.k()

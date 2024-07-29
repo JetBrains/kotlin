@@ -1,0 +1,17 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=a.kt */
+
+/* TARGET declaration */ private fun privateFun(): String
+private inline fun privateInlineFun1(): String
+    /* TARGET use-site */ privateFun()
+private inline fun privateInlineFun2(): String
+    /* TARGET use-site */ privateFun()
+private inline fun privateInlineFun3(): String
+    /* TARGET use-site */ privateFun()
+private inline fun privateInlineFun4(): String
+    /* TARGET use-site */ privateFun()
+internal inline fun internalInlineFun(): String
+    /* ACCESSOR use-site */ access$privateFun$tAKt()
+/* ACCESSOR declaration */ internal fun access$privateFun$tAKt(): String
+    /* TARGET use-site */ privateFun()

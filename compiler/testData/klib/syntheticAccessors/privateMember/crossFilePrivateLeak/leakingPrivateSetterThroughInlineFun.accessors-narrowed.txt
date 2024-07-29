@@ -1,0 +1,17 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    public var a: Int
+        /* TARGET declaration */ private fun <set-a>(<set-?>: Int)
+    public var b: Int
+        /* TARGET declaration */ private fun <set-b>(value: Int)
+    internal inline fun internalInlineSetA()
+        /* ACCESSOR use-site */ access$<set-a>($this = <this>, <set-?> = 42)
+    internal inline fun internalInlineSetB()
+        /* ACCESSOR use-site */ access$<set-b>($this = <this>, value = 21)
+    /* ACCESSOR declaration */ internal fun access$<set-a>($this: A, <set-?>: Int)
+        /* TARGET use-site */ $this.<set-a>(<set-?> = <set-?>)
+    /* ACCESSOR declaration */ internal fun access$<set-b>($this: A, value: Int)
+        /* TARGET use-site */ $this.<set-b>(value = value)

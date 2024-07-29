@@ -1,0 +1,26 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=B.kt */
+
+private var A.privateVar: Int
+    /* TARGET declaration */ private fun A.<get-privateVar>(): Int
+    /* TARGET declaration */ private fun A.<set-privateVar>(value: Int)
+private var A.privateInlineVar1: Int
+    private inline fun A.<get-privateInlineVar1>(): Int
+        /* TARGET use-site */ <this>.<get-privateVar>()
+    private inline fun A.<set-privateInlineVar1>(value: Int)
+        /* TARGET use-site */ <this>.<set-privateVar>(value = value)
+private var A.privateInlineVar2: Int
+    private inline fun A.<get-privateInlineVar2>(): Int
+        /* TARGET use-site */ this.<get-privateVar>()
+    private inline fun A.<set-privateInlineVar2>(value: Int)
+        /* TARGET use-site */ this.<set-privateVar>(value = value)
+internal var A.inlineVar: Int
+    internal inline fun A.<get-inlineVar>(): Int
+        /* ACCESSOR use-site */ access$<get-privateVar>$tBKt($receiver = this)
+    internal inline fun A.<set-inlineVar>(value: Int)
+        /* ACCESSOR use-site */ access$<set-privateVar>$tBKt($receiver = this, value = value)
+/* ACCESSOR declaration */ internal fun access$<get-privateVar>$tBKt($receiver: A): Int
+    /* TARGET use-site */ $receiver.<get-privateVar>()
+/* ACCESSOR declaration */ internal fun access$<set-privateVar>$tBKt($receiver: A, value: Int)
+    /* TARGET use-site */ $receiver.<set-privateVar>(value = value)

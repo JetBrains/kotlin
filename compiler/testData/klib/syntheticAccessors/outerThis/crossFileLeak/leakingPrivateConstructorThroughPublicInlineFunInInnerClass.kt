@@ -1,3 +1,5 @@
+// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+
 // FILE: Outer.kt
 class Outer private constructor(val s: String) {
     constructor() : this("")
