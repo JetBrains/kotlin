@@ -39,7 +39,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("Build report is created")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildReportSmokeTest(gradleVersion: GradleVersion) {
@@ -56,7 +56,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("Build report output property accepts only certain values")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildReportOutputProperty(gradleVersion: GradleVersion) {
@@ -69,7 +69,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("Build metrics produces valid report")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildMetricsSmokeTest(gradleVersion: GradleVersion) {
@@ -78,7 +78,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("Build metrics produces valid report for mpp-jvm")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildMetricsForMppJvm(gradleVersion: GradleVersion) {
@@ -87,7 +87,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("Build metrics produces valid report for mpp-js")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildMetricsForMppJs(gradleVersion: GradleVersion) {
@@ -96,7 +96,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("Build metrics produces valid report for JS project")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildMetricsForJsProject(gradleVersion: GradleVersion) {
@@ -186,7 +186,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("Compiler build metrics report is produced")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testCompilerBuildMetricsSmokeTest(gradleVersion: GradleVersion) {
@@ -211,7 +211,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("with no kotlin task executed")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testFileReportWithoutKotlinTask(gradleVersion: GradleVersion) {
@@ -228,7 +228,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("validation")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testSingleBuildMetricsFileValidation(gradleVersion: GradleVersion) {
@@ -244,7 +244,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("single build report output")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testSingleBuildMetricsFile(gradleVersion: GradleVersion) {
@@ -262,7 +262,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("deprecated properties")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testDeprecatedReportProperties(gradleVersion: GradleVersion) {
@@ -280,7 +280,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("smoke")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testSingleBuildMetricsFileSmoke(gradleVersion: GradleVersion) {
@@ -304,7 +304,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("custom value limit")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testCustomValueLimitForBuildScan(gradleVersion: GradleVersion) {
@@ -325,7 +325,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("build scan listener lazy initialisation")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildScanListenerLazyInitialisation(gradleVersion: GradleVersion) {
@@ -345,7 +345,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("build scan with project isolation")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildReportWithProjectIsolation(gradleVersion: GradleVersion) {
@@ -371,7 +371,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("Error file is created")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testErrorsFileSmokeTest(
@@ -428,7 +428,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("Error file should not contain compilation exceptions")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testErrorsFileWithCompilationError(
@@ -510,7 +510,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("build scan metrics validation")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildScanMetricsValidation(gradleVersion: GradleVersion) {
@@ -528,7 +528,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("build reports work with init script")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildReportsWithInitScript(gradleVersion: GradleVersion) {
@@ -569,7 +569,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("json validation")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testJsonBuildMetricsFileValidation(gradleVersion: GradleVersion) {
@@ -587,7 +587,7 @@ class BuildReportsIT : KGPBaseTest() {
 
     @DisplayName("json report")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testJsonBuildReport(gradleVersion: GradleVersion) {

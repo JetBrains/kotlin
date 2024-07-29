@@ -239,7 +239,6 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Browser print works with null type")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @OsCondition(
         supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
         enabledOnCI = []

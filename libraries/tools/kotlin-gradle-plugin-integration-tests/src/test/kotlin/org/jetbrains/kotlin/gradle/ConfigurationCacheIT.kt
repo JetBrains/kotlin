@@ -65,9 +65,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_6,
-    )
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
@@ -83,11 +80,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @MppGradlePluginTests
     @DisplayName("KT-63363: all metadata jar works well with configuration cache")
-    @GradleTestVersions(
-        // Min Gradle version is 7.6 because the project `new-mpp-lib-and-app/sample-lib` has a dependency on `kotlin("test")`,
-        // and this requires setting dependency resolution results as task inputs, which is only supported in Gradle 7.6+.
-        minVersion = TestVersions.Gradle.G_7_6,
-    )
     @GradleTest
     @TestMetadata("new-mpp-lib-and-app/sample-lib")
     fun testAllMetadataJarWithConfigurationCache(gradleVersion: GradleVersion) {
@@ -314,7 +306,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @JvmGradlePluginTests
     @DisplayName("with build report")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
@@ -335,9 +327,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @JvmGradlePluginTests
     @DisplayName("with build scan report")
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6], //build scan reports doesn't work properly for Gradle 8.0
-    )
     @GradleTest
     fun testBuildScanReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {

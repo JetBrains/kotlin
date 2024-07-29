@@ -16,7 +16,7 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("works for project with buildSrc and kotlinDsl plugin")
     @GradleTest
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2, TestVersions.Gradle.G_8_3],
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2, TestVersions.Gradle.G_8_3],
     )
     fun testCompatibilityBuildSrcWithKotlinDsl(gradleVersion: GradleVersion) {
         project(

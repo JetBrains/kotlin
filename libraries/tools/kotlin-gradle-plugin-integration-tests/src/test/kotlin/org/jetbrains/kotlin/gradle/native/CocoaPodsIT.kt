@@ -103,9 +103,7 @@ class CocoaPodsIT : KGPBaseTest() {
 
             buildWithCocoapodsWrapper(":kotlin-library:podImport") {
                 podImportAsserts(subProject("kotlin-library").buildGradleKts, "kotlin-library")
-                if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_6)) {
-                    assertOutputContains("Podfile location is set")
-                }
+                assertOutputContains("Podfile location is set")
             }
 
             buildWithCocoapodsWrapper(":second-library:podImport") {
@@ -901,7 +899,6 @@ class CocoaPodsIT : KGPBaseTest() {
     }
 
     @DisplayName("Configuration cache works in a complex scenario")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun testConfigurationCacheWorksInAComplexScenario(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(

@@ -75,7 +75,6 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @TestMetadata("errorDiagnosticBuildFails")
     fun testErrorDiagnosticBuildFailsWithConfigurationCache(gradleVersion: GradleVersion) {
         project("errorDiagnosticBuildFails", gradleVersion) {
