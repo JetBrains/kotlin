@@ -13,9 +13,12 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.utils.TestMessageCollector
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import java.io.File
 import java.util.*
 import java.util.jar.Manifest
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
 
@@ -120,6 +123,17 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         isWasm: Boolean,
         expectedWarningStatus: WarningStatus,
     ) {
+        compileDummyLibrary(stdlibVersion, compilerVersion, isWasm, isZipped = false, expectedWarningStatus)
+        compileDummyLibrary(stdlibVersion, compilerVersion, isWasm, isZipped = true, expectedWarningStatus)
+    }
+
+    private fun compileDummyLibrary(
+        stdlibVersion: TestVersion?,
+        compilerVersion: TestVersion?,
+        isWasm: Boolean,
+        isZipped: Boolean,
+        expectedWarningStatus: WarningStatus,
+    ) {
         val sourcesDir = createDir("sources")
         val outputDir = createDir("build")
 
@@ -129,7 +143,11 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         val messageCollector = TestMessageCollector()
 
         withCustomCompilerVersion(compilerVersion) {
-            val fakeStdlib = createFakeStdlibWithSpecificVersion(isWasm, stdlibVersion)
+            val fakeStdlib = if (isZipped)
+                createFakeZippedStdlibWithSpecificVersion(isWasm, stdlibVersion)
+            else
+                createFakeUnzippedStdlibWithSpecificVersion(isWasm, stdlibVersion)
+
             runJsCompiler(messageCollector) {
                 this.freeArgs = listOf(sourceFile.absolutePath)
                 this.noStdlib = true // it is passed explicitly
@@ -176,7 +194,7 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
 
-    private fun createFakeStdlibWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
+    private fun createFakeUnzippedStdlibWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
         val rawVersion = version?.toString()
 
         val patchedStdlibDir = createDir("dependencies/stdlib-${rawVersion ?: "unknown"}")
@@ -208,6 +226,29 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         return patchedStdlibDir
     }
 
+    private fun createFakeZippedStdlibWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
+        val rawVersion = version?.toString()
+
+        val patchedStdlibFile = createFile("dependencies/stdlib-${rawVersion ?: "unknown"}.klib")
+        if (patchedStdlibFile.exists()) return patchedStdlibFile
+
+        val unzippedStdlibDir = createFakeUnzippedStdlibWithSpecificVersion(isWasm, version)
+
+        patchedStdlibFile.outputStream().use { outputStream ->
+            ZipOutputStream(outputStream).use { zipStream ->
+                unzippedStdlibDir.walkTopDown().filter { it != unzippedStdlibDir }.forEach { fileOrDir ->
+                    val isDirectory = fileOrDir.isDirectory
+                    val relativePath = fileOrDir.relativeTo(unzippedStdlibDir).path.butIf(isDirectory) { "$it/" }
+                    zipStream.putNextEntry(ZipEntry(relativePath))
+                    if (!isDirectory) zipStream.write(fileOrDir.readBytes())
+                    zipStream.closeEntry()
+                }
+            }
+        }
+
+        return patchedStdlibFile
+    }
+
     private inline fun <T> withCustomCompilerVersion(version: TestVersion?, block: () -> T): T {
         @Suppress("DEPRECATION")
         return try {
@@ -219,6 +260,7 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     }
 
     private fun createDir(name: String): File = tmpdir.resolve(name).apply { mkdirs() }
+    private fun createFile(name: String): File = tmpdir.resolve(name).apply { parentFile.mkdirs() }
 
     private enum class WarningStatus { NO_WARNINGS, JS_WARNING, WASM_WARNING }
 
