@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isNullableType
 
 val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
@@ -27,15 +24,14 @@ fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
 
 fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass() || isMultiFieldValueClass()
 
-fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
-    (constructor.declarationDescriptor as? ClassDescriptor)?.inlineClassRepresentation?.underlyingType
+fun DeclarationDescriptor.unsubstitutedUnderlyingType(): KotlinType? =
+    (this as? ClassDescriptor)?.inlineClassRepresentation?.underlyingType
 
-fun KotlinType.unsubstitutedUnderlyingTypes(): List<KotlinType> {
-    val declarationDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return emptyList()
+fun DeclarationDescriptor.unsubstitutedUnderlyingTypes(): List<KotlinType> {
     return when {
-        declarationDescriptor.isInlineClass() -> listOfNotNull(unsubstitutedUnderlyingType())
-        declarationDescriptor.isMultiFieldValueClass() ->
-            declarationDescriptor.unsubstitutedPrimaryConstructor?.valueParameters?.map { it.type } ?: emptyList()
+        this !is ClassDescriptor -> emptyList()
+        isInlineClass() -> listOfNotNull(unsubstitutedUnderlyingType())
+        isMultiFieldValueClass() -> unsubstitutedPrimaryConstructor?.valueParameters?.map { it.type } ?: emptyList()
         else -> emptyList()
     }
 }
@@ -48,17 +44,15 @@ fun KotlinType.needsMfvcFlattening(): Boolean =
     constructor.declarationDescriptor?.run { isMultiFieldValueClass() && !isNullableType() } == true
 
 fun KotlinType.substitutedUnderlyingType(): KotlinType? =
-    unsubstitutedUnderlyingType()?.let { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }
-
-fun KotlinType.substitutedUnderlyingTypes(): List<KotlinType?> =
-    unsubstitutedUnderlyingTypes().map { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }
+    constructor.declarationDescriptor?.unsubstitutedUnderlyingType()
+        ?.let { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }
 
 fun KotlinType.isRecursiveInlineOrValueClassType(): Boolean =
     isRecursiveInlineOrValueClassTypeInner(hashSetOf())
 
 private fun KotlinType.isRecursiveInlineOrValueClassTypeInner(visited: HashSet<ClassifierDescriptor>): Boolean {
     val types = when (val descriptor = constructor.declarationDescriptor?.original?.takeIf { it.isValueClass() }) {
-        is ClassDescriptor -> if (descriptor.isValueClass()) unsubstitutedUnderlyingTypes() else emptyList()
+        is ClassDescriptor -> if (descriptor.isValueClass()) descriptor.unsubstitutedUnderlyingTypes() else emptyList()
         is TypeParameterDescriptor -> descriptor.upperBounds
         else -> emptyList()
     }
@@ -70,7 +64,7 @@ private fun KotlinType.isRecursiveInlineOrValueClassTypeInner(visited: HashSet<C
 
 fun KotlinType.isNullableUnderlyingType(): Boolean {
     if (!isInlineClassType()) return false
-    val underlyingType = unsubstitutedUnderlyingType() ?: return false
+    val underlyingType = constructor.declarationDescriptor?.unsubstitutedUnderlyingType() ?: return false
 
     return TypeUtils.isNullableType(underlyingType)
 }

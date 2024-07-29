@@ -604,7 +604,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         @JvmStatic
         fun mapUnderlyingTypeOfInlineClassType(kotlinType: KotlinTypeMarker, typeMapper: KotlinTypeMapperBase): Type {
             val underlyingType = with(typeMapper.typeSystem) {
-                kotlinType.getUnsubstitutedUnderlyingType()
+                kotlinType.typeConstructor().getUnsubstitutedUnderlyingType()
             } ?: throw IllegalStateException("There should be underlying type for inline class type: $kotlinType")
             return typeMapper.mapTypeCommon(underlyingType, TypeMappingMode.DEFAULT)
         }

@@ -472,11 +472,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
             irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
         } ?: owner.superTypes.first()
 
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
-        (this as IrType).classOrNull?.owner?.inlineClassRepresentation?.underlyingType
+    override fun TypeConstructorMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
+        (this as? IrClassSymbol)?.owner?.inlineClassRepresentation?.underlyingType
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? =
-        getUnsubstitutedUnderlyingType()?.let { type ->
+        typeConstructor().getUnsubstitutedUnderlyingType()?.let { type ->
             // Taking only the type parameters of the class (and not its outer classes) is OK since inner classes are always top level
             IrTypeSubstitutor(
                 (this as IrType).getClass()!!.typeParameters.memoryOptimizedMap { it.symbol },

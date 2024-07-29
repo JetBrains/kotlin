@@ -791,9 +791,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return representativeUpperBound
     }
 
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? {
-        require(this is KotlinType, this::errorMessage)
-        return unsubstitutedUnderlyingType()
+    override fun TypeConstructorMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? {
+        require(this is TypeConstructor, this::errorMessage)
+        return declarationDescriptor?.unsubstitutedUnderlyingType()
     }
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {

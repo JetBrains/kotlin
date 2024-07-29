@@ -88,7 +88,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
         }
 
         var baseParametersOk = true
-        val baseParameterTypes = descriptor.defaultType.substitutedUnderlyingTypes()
+        val baseParameterTypes = descriptor.unsubstitutedUnderlyingTypes()
 
         for ((baseParameter, baseParameterType) in primaryConstructor.valueParameters zip baseParameterTypes) {
             if (!isParameterAcceptableForInlineClass(baseParameter)) {
@@ -98,7 +98,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
             }
 
             val baseParameterTypeReference = baseParameter.typeReference
-            if (baseParameterType != null && baseParameterTypeReference != null) {
+            if (baseParameterTypeReference != null) {
                 if (!context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
                     (baseParameterType.isTypeParameter() || baseParameterType.isGenericArrayOfTypeParameter())
                 ) {

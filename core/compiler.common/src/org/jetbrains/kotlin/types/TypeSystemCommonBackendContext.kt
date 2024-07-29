@@ -34,8 +34,8 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean
     fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>?
     fun TypeConstructorMarker.isInnerClass(): Boolean
+    fun TypeConstructorMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker?
     fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker
-    fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker?
     fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker?
 
     fun KotlinTypeMarker.makeNullable(): KotlinTypeMarker =

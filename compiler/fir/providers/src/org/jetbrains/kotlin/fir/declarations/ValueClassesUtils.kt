@@ -13,27 +13,10 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-internal fun ConeKotlinType.substitutedUnderlyingTypeForInlineClass(session: FirSession, context: ConeTypeContext): ConeKotlinType? {
-    val unsubstitutedType = unsubstitutedUnderlyingTypeForInlineClass(session) ?: return null
-    val substitutor = createTypeSubstitutorByTypeConstructor(
-        mapOf(this.typeConstructor(context) to this), context, approximateIntegerLiterals = true
-    )
-    return substitutor.substituteOrNull(unsubstitutedType)
-}
-
-internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: FirSession): ConeKotlinType? {
-    val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
-    symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-    return symbol.fir.inlineClassRepresentation?.underlyingType
-}
 
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null

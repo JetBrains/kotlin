@@ -354,10 +354,11 @@ private fun KotlinType.toInlineClass(): Class<*>? {
     // See computeExpandedTypeForInlineClass.
     // TODO: add tests on type parameters with value class bounds.
     // TODO: add tests on usages of value classes in Java.
-    val klass = constructor.declarationDescriptor.toInlineClass() ?: return null
+    val descriptor = constructor.declarationDescriptor ?: return null
+    val klass = descriptor.toInlineClass() ?: return null
     if (!TypeUtils.isNullableType(this)) return klass
 
-    val expandedUnderlyingType = unsubstitutedUnderlyingType() ?: return null
+    val expandedUnderlyingType = descriptor.unsubstitutedUnderlyingType() ?: return null
     if (!TypeUtils.isNullableType(expandedUnderlyingType) && !KotlinBuiltIns.isPrimitiveType(expandedUnderlyingType)) return klass
 
     return null

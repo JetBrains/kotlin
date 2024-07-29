@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -555,14 +556,21 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     @Suppress("NOTHING_TO_INLINE")
     private inline fun ConeTypeParameterLookupTag.bounds(): List<FirTypeRef> = symbol.resolvedBounds
 
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? {
-        require(this is ConeKotlinType)
-        return unsubstitutedUnderlyingTypeForInlineClass(session)
+    override fun TypeConstructorMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? {
+        val symbol = this.toClassLikeSymbol()?.fullyExpandedClass(session) ?: return null
+        symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+        return symbol.fir.inlineClassRepresentation?.underlyingType
     }
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
         require(this is ConeKotlinType)
-        return substitutedUnderlyingTypeForInlineClass(session, this@ConeTypeContext)
+        val unsubstitutedType = upperBoundIfFlexible().typeConstructor().getUnsubstitutedUnderlyingType() ?: return null
+        // TODO: this is wrong - it substitutes nothing. This should instead be `substitutorByMap`
+        //  mapping `typeConstructor()`'s parameters to `this`' arguments.
+        val substitutor = createTypeSubstitutorByTypeConstructor(
+            mapOf(this.typeConstructor() to this), this@ConeTypeContext, approximateIntegerLiterals = true
+        )
+        return substitutor.substituteOrNull(unsubstitutedType as ConeKotlinType)
     }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
