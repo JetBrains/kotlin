@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheckIfAgpIsApplied
+import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck.runGradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -70,7 +71,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     override fun apply(project: Project) {
         project.registerDefaultVariantImplementations()
-        checkGradleCompatibility()
+        project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
 
         if (project.kotlinPropertiesProvider.enableFusMetricsCollection) {

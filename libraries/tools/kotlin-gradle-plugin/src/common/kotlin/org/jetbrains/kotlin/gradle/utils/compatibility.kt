@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ArtifactCollection
@@ -28,21 +27,6 @@ import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.util.GradleVersion
 import java.io.File
-
-const val minSupportedGradleVersion = "7.6.3"
-
-internal fun checkGradleCompatibility(
-    withComponent: String = "the Kotlin Gradle plugin",
-    minSupportedVersion: GradleVersion = GradleVersion.version(minSupportedGradleVersion)
-) {
-    val currentVersion = GradleVersion.current()
-    if (currentVersion < minSupportedVersion) {
-        throw GradleException(
-            "The current Gradle version ${currentVersion.version} is not compatible with $withComponent. " +
-                    "Please use Gradle ${minSupportedVersion.version} or newer, or the previous version of the Kotlin plugin."
-        )
-    }
-}
 
 internal val AbstractArchiveTask.archivePathCompatible: File
     get() = archiveFile.get().asFile

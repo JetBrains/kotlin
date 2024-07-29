@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
@@ -203,6 +204,20 @@ object KotlinToolingDiagnostics {
                 This source directory was supported by: ${multiplatformAndroidSourceSetLayoutV1.name}
                 Current KotlinAndroidSourceSetLayout: $currentLayoutName
                 New source directory is: $v2StyleSourceDirToUse
+            """.trimIndent()
+        )
+    }
+
+    object IncompatibleGradleVersionTooLowFatalError : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(
+            currentGradleVersion: GradleVersion,
+            minimallySupportedGradleVersion: GradleVersion,
+        ) = build(
+            """
+                Kotlin Gradle Plugin <-> Gradle compatibility issue:
+                The applied Kotlin Gradle is not compatible with the used Gradle version ($currentGradleVersion).
+                
+                Please update the Gradle version to at least $minimallySupportedGradleVersion.
             """.trimIndent()
         )
     }
