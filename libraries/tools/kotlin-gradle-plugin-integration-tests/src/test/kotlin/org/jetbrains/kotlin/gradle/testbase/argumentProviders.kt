@@ -138,6 +138,8 @@ annotation class JdkVersions(
     }
 }
 
+private typealias MinimalSupportingGradleVersion = GradleVersion
+
 /**
  * Parameterized test against different Gradle and JDK versions.
  * Test should accept [GradleVersion] and [JdkVersions.ProvidedJdk] as a parameters.
@@ -203,9 +205,8 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
     }
 
     companion object {
-        private val jdkGradleCompatibilityMatrix = mapOf(
-            JavaVersion.VERSION_17 to GradleVersion.version(TestVersions.Gradle.G_7_3),
-            JavaVersion.VERSION_21 to GradleVersion.version(TestVersions.Gradle.G_7_3),
+        private val jdkGradleCompatibilityMatrix = mapOf<JavaVersion, MinimalSupportingGradleVersion>(
+            JavaVersion.VERSION_21 to GradleVersion.version(TestVersions.Gradle.G_8_5),
         )
     }
 }

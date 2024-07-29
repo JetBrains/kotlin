@@ -20,7 +20,6 @@ import kotlin.io.path.relativeTo
 )
 @DisplayName("Scripting plugin")
 @OtherGradlePluginTests
-@GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_3) // workaround for a Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450
 abstract class ScriptingIT : KGPBaseTest() {
 
     @DisplayName("basic script is working")
@@ -46,12 +45,14 @@ abstract class ScriptingIT : KGPBaseTest() {
         }
     }
 
+    @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled non-incremental")
     @GradleTest
     fun testScriptingCustomExtensionNonIncremental(gradleVersion: GradleVersion) {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = false)
     }
 
+    @Disabled("Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450")
     @DisplayName("With custom file extension compiled incremental")
     @GradleTest
     open fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
