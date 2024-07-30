@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExt
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunParameter
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.has
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.directives.model.Directive
@@ -25,6 +23,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import java.io.File
+import kotlin.time.Duration
 
 internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
     // Create and cache test cases in groups on demand.
@@ -213,7 +212,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             }) return null
 
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location)
-        val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives)
+        val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives, location)
 
         val testKind = parseTestKind(registeredDirectives, location) ?: settings.get<TestKind>()
 
@@ -295,12 +294,11 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             }
         }
 
-        private fun computeExecutionTimeoutCheck(settings: Settings, expectedTimeoutFailure: Boolean): ExecutionTimeout {
-            val executionTimeout = settings.get<Timeouts>().executionTimeout
-            return if (expectedTimeoutFailure)
-                ExecutionTimeout.ShouldExceed(executionTimeout)
+        private fun computeExecutionTimeoutCheck(settings: Settings, expectedTimeoutFailure: Duration?): ExecutionTimeout {
+            return if (expectedTimeoutFailure != null)
+                ExecutionTimeout.ShouldExceed(expectedTimeoutFailure)
             else
-                ExecutionTimeout.ShouldNotExceed(executionTimeout)
+                ExecutionTimeout.ShouldNotExceed(settings.get<Timeouts>().executionTimeout)
         }
 
         private fun computeExitCodeCheck(testKind: TestKind, registeredDirectives: RegisteredDirectives, location: Location): ExitCode =

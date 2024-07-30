@@ -1,5 +1,5 @@
 // KIND: STANDALONE_NO_TR
-// EXPECTED_TIMEOUT_FAILURE
+// EXPECTED_TIMEOUT_FAILURE: 5s
 
 import kotlin.math.E
 import kotlin.math.sqrt
@@ -7,12 +7,12 @@ import kotlin.system.getTimeMillis
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-// Runs for ~240 seconds. Prints 200 thousand bytes to stdout every second.
-// 24o seconds is expected to exceed the default test timeout and multipliers used in special modes.
+// Runs for ~60 seconds. Prints 200 thousand bytes to stdout every second.
+// It is expected to exceed the 5s timeout specified above.
 fun main() {
     assertEquals(10, TEN_BYTES_STRING.length)
 
-    for (i in 1..240) {
+    for (i in 1..60) {
         repeat(200) { print1000Bytes() }
         sleep(1000)
     }
