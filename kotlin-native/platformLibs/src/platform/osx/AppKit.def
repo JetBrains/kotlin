@@ -7,4 +7,4 @@ compilerOpts = -framework AppKit
 linkerOpts = -framework AppKit
 
 strictEnums = NSBezierPathElement
-objcClassesIncludingCategories = NSImage NSProgressIndicator
+objcClassesIncludingCategories = NSImage NSProgressIndicator NSCursor NSDocument NSGraphicsContext NSMutableParagraphStyle NSParagraphStyle NSTextTab NSToolbar NSWindow
