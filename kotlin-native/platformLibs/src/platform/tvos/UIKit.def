@@ -6,3 +6,5 @@ modules = UIKit
 compilerOpts = -framework UIKit
 linkerOpts = -framework UIKit
 excludedFunctions = UISceneErrorDomain
+
+objcClassesIncludingCategories = NSMutableParagraphStyle NSParagraphStyle NSTextContainer NSTextTab

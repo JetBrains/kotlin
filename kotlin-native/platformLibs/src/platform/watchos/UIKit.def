@@ -5,3 +5,5 @@ modules = UIKit
 
 compilerOpts = -framework UIKit
 linkerOpts = -framework UIKit
+
+objcClassesIncludingCategories = NSMutableParagraphStyle NSParagraphStyle NSTextContainer NSTextTab
