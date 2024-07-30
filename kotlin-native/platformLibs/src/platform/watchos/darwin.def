@@ -1,4 +1,4 @@
-depends = posix
+depends = 
 language = Objective-C
 package = platform.darwin
 headers =  AssertMacros.h Availability.h AvailabilityInternal.h \
