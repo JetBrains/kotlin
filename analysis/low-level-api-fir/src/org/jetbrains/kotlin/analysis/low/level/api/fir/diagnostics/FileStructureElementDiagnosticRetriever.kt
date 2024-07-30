@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.visitScriptDependentElements
@@ -33,7 +34,7 @@ internal sealed class FileStructureElementDiagnosticRetriever(
     private val file: FirFile,
     private val moduleComponents: LLFirModuleResolveComponents,
 ) {
-    fun retrieve(collector: FileStructureElementDiagnosticsCollector): FileStructureElementDiagnosticList {
+    fun retrieve(filter: DiagnosticCheckerFilter): FileStructureElementDiagnosticList {
         val sessionHolder = SessionHolderImpl(moduleComponents.session, moduleComponents.scopeSessionProvider.getScopeSession())
         val context = if (declaration is FirFile) {
             PersistentCheckerContextFactory.createEmptyPersistenceCheckerContext(sessionHolder)
@@ -42,7 +43,7 @@ internal sealed class FileStructureElementDiagnosticRetriever(
         }
 
         return withSourceCodeAnalysisExceptionUnwrapping {
-            collector.collectForStructureElement(declaration) { components ->
+            collectForStructureElement(declaration, filter) { components ->
                 createVisitor(context, components)
             }
         }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
-import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.*
@@ -41,7 +40,6 @@ object ExtraDeclarationCheckers : DeclarationCheckers() {
     override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker>
         get() = setOf(
             UnreachableCodeChecker,
-            FirReturnsImpliesAnalyzer,
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>

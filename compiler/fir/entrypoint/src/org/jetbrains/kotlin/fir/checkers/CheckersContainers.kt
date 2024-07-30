@@ -31,6 +31,13 @@ fun FirSessionConfigurator.registerExtraCommonCheckers() {
     useCheckers(ExtraLanguageVersionSettingsCheckers)
 }
 
+fun FirSessionConfigurator.registerExperimentalCheckers() {
+    useCheckers(ExperimentalExpressionCheckers)
+    useCheckers(ExperimentalDeclarationCheckers)
+    useCheckers(ExperimentalTypeCheckers)
+    useCheckers(ExperimentalLanguageVersionSettingsCheckers)
+}
+
 fun FirSessionConfigurator.registerJvmCheckers() {
     useCheckers(JvmDeclarationCheckers)
     useCheckers(JvmExpressionCheckers)

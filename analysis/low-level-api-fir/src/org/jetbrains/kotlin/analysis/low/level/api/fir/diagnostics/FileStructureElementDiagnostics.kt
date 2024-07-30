@@ -10,16 +10,17 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 
-/**
- * @see FileStructureElementDiagnosticsCollector
- */
 internal class FileStructureElementDiagnostics(private val retriever: FileStructureElementDiagnosticRetriever) {
     private val diagnosticByDefaultCheckers: FileStructureElementDiagnosticList by lazy {
-        retriever.retrieve(FileStructureElementDiagnosticsCollector.USUAL_COLLECTOR)
+        retriever.retrieve(DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
     }
 
     private val diagnosticByExtraCheckers: FileStructureElementDiagnosticList by lazy {
-        retriever.retrieve(FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR)
+        retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXTRA_CHECKERS)
+    }
+
+    private val diagnosticByExperimentalCheckers: FileStructureElementDiagnosticList by lazy {
+        retriever.retrieve(DiagnosticCheckerFilter.ONLY_EXPERIMENTAL_CHECKERS)
     }
 
     fun diagnosticsFor(filter: DiagnosticCheckerFilter, element: PsiElement): List<KtPsiDiagnostic> =
@@ -30,6 +31,9 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
             if (filter.runExtraCheckers) {
                 addAll(diagnosticByExtraCheckers.diagnosticsFor(element))
             }
+            if (filter.runExperimentalCheckers) {
+                addAll(diagnosticByExperimentalCheckers.diagnosticsFor(element))
+            }
         }
 
 
@@ -39,6 +43,9 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
         }
         if (filter.runExtraCheckers) {
             diagnosticByExtraCheckers.forEach(action)
+        }
+        if (filter.runExperimentalCheckers) {
+            diagnosticByExperimentalCheckers.forEach(action)
         }
     }
 }

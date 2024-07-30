@@ -87,6 +87,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = "Enable extra checkers"
     )
 
+    val WITH_EXPERIMENTAL_CHECKERS by directive(
+        description = "Enable experimental checkers"
+    )
+
     val SCOPE_DUMP by stringDirective(
         description = """
             Dump hierarchies of overrides of classes listed in arguments

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DUMP_VFIR
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.TEST_ALONGSIDE_K1_TESTDATA
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
@@ -232,12 +233,20 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     forTestsMatching(
         "compiler/fir/analysis-tests/testData/resolve/extraCheckers/*" or
-                "compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/*" or
+                "compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/*"
+    ) {
+        defaultDirectives {
+            +WITH_EXTRA_CHECKERS
+        }
+    }
+
+    forTestsMatching(
+        "compiler/fir/analysis-tests/testData/resolve/extraCheckers/*" or
                 "compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/*" or
                 "compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/*"
     ) {
         defaultDirectives {
-            +WITH_EXTRA_CHECKERS
+            +WITH_EXPERIMENTAL_CHECKERS
         }
     }
 

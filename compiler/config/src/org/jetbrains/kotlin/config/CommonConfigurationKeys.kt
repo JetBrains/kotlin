@@ -57,6 +57,9 @@ object CommonConfigurationKeys {
     val USE_FIR_EXTRA_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extra checkers")
 
     @JvmField
+    val USE_FIR_EXPERIMENTAL_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir not-public-ready checkers")
+
+    @JvmField
     val PARALLEL_BACKEND_THREADS =
         CompilerConfigurationKey.create<Int>("When using the IR backend, run lowerings by file in N parallel threads")
 

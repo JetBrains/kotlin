@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.AbstractLLFirDiagnosticsCollector
@@ -13,10 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponent
 internal class LLFirStructureElementDiagnosticsCollector(
     session: FirSession,
     private val doCreateVisitor: (components: DiagnosticCollectorComponents) -> CheckerRunningDiagnosticCollectorVisitor,
-    useExtraCheckers: Boolean,
+    filter: DiagnosticCheckerFilter,
 ) : AbstractLLFirDiagnosticsCollector(
     session,
-    useExtraCheckers,
+    filter,
 ) {
     override fun createVisitor(components: DiagnosticCollectorComponents): CheckerRunningDiagnosticCollectorVisitor {
         return doCreateVisitor(components)

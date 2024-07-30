@@ -84,6 +84,7 @@ class CompilerArgumentsContentProspectorTest {
             CommonCompilerArguments::checkPhaseConditions,
             CommonCompilerArguments::checkStickyPhaseConditions,
             CommonCompilerArguments::useFirExtraCheckers,
+            CommonCompilerArguments::useFirExperimentalCheckers,
             CommonCompilerArguments::metadataKlib,
             CommonCompilerArguments::extendedCompilerChecks,
             CommonCompilerArguments::disableDefaultScriptingPlugin,

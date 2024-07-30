@@ -528,6 +528,16 @@ This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibi
         }
 
     @Argument(
+        value = "-Xuse-fir-experimental-checkers",
+        description = "Enable experimental frontend IR checkers that are not yet ready for production."
+    )
+    var useFirExperimentalCheckers = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xuse-fir-ic",
         description = "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready."
     )
