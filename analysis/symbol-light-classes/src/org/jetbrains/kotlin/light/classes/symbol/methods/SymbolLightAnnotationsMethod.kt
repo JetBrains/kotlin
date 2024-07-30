@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -64,12 +64,12 @@ internal class SymbolLightAnnotationsMethod private constructor(
     private val _name: String by lazyPub {
         analyzeForLightClasses(ktModule) {
             val symbol = propertySymbol()
-            symbol.getJvmNameFromAnnotation(AnnotationUseSiteTarget.PROPERTY.toOptionalFilter()) ?: run {
-                val defaultName = symbol.name.identifier.let {
-                    if (containingClass.isAnnotationType) it else it.abiName()
-                }
-                symbol.computeJvmMethodName(defaultName, containingClass, AnnotationUseSiteTarget.PROPERTY)
+            val outerClass = this@SymbolLightAnnotationsMethod.containingClass
+            val defaultName = symbol.name.identifier.let {
+                if (outerClass.isAnnotationType) it else it.abiName()
             }
+
+            computeJvmMethodName(symbol = symbol, defaultName = defaultName)
         }
     }
 

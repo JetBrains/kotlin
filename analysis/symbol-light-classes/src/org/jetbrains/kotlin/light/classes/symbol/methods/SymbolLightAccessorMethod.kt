@@ -92,17 +92,15 @@ internal class SymbolLightAccessorMethod private constructor(
     private val _name: String by lazyPub {
         withPropertySymbol { propertySymbol ->
             val accessorSymbol = propertySymbol.accessorSymbol
-            accessorSymbol.getJvmNameFromAnnotation(accessorSite.toOptionalFilter()) ?: run {
-                val outerClass = this@SymbolLightAccessorMethod.containingClass
-                val defaultName = propertySymbol.name.identifier.let {
-                    if (outerClass.isAnnotationType || outerClass.isRecord)
-                        it
-                    else
-                        it.abiName()
-                }
-
-                propertySymbol.computeJvmMethodName(defaultName, outerClass, accessorSite, accessorSymbol.visibility)
+            val outerClass = this@SymbolLightAccessorMethod.containingClass
+            val defaultName = propertySymbol.name.identifier.let {
+                if (outerClass.isAnnotationType || outerClass.isRecord)
+                    it
+                else
+                    it.abiName()
             }
+
+            computeJvmMethodName(accessorSymbol, defaultName)
         }
     }
 

@@ -50,9 +50,9 @@ internal class SymbolLightSimpleMethod(
 ) {
     private val _name: String by lazyPub {
         withFunctionSymbol { functionSymbol ->
-            functionSymbol.computeJvmMethodName(
-                functionSymbol.name.asString(),
-                this@SymbolLightSimpleMethod.containingClass,
+            computeJvmMethodName(
+                symbol = functionSymbol,
+                defaultName = functionSymbol.name.asString(),
             )
         }
     }

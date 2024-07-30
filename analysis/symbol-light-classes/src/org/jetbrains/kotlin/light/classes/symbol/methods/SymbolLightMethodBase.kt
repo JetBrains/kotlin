@@ -24,12 +24,9 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.mangleInternalName
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasPublishedApiAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.toFilter
-import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 
 internal abstract class SymbolLightMethodBase(
@@ -113,21 +110,17 @@ internal abstract class SymbolLightMethodBase(
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 
-    context(KaSession)
-    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-    protected fun KaCallableSymbol.computeJvmMethodName(
+    protected fun KaSession.computeJvmMethodName(
+        symbol: KaCallableSymbol,
         defaultName: String,
-        containingClass: SymbolLightClassBase,
-        annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-        visibility: KaSymbolVisibility = this.visibility,
     ): String {
-        getJvmNameFromAnnotation(annotationUseSiteTarget.toOptionalFilter())?.let { return it }
+        symbol.getJvmNameFromAnnotation()?.let { return it }
 
-        if (visibility != KaSymbolVisibility.INTERNAL) return defaultName
         if (containingClass is KtLightClassForFacade) return defaultName
-        if (hasPublishedApiAnnotation(annotationUseSiteTarget.toFilter())) return defaultName
-
         val sourceModule = ktModule as? KaSourceModule ?: return defaultName
+
+        if (symbol.hasPublishedApiAnnotation()) return defaultName
+        if (symbol.visibility != KaSymbolVisibility.INTERNAL) return defaultName
         return mangleInternalName(defaultName, sourceModule.stableModuleName ?: sourceModule.name)
     }
 
