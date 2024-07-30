@@ -29,6 +29,7 @@ where possible options include:
                              progressive mode enabled may cause compilation errors in progressive mode.
   -script                    Evaluate the given Kotlin script (*.kts) file.
   -nowarn                    Don't generate any warnings.
+  -Wextra                    Enable extra checkers for K2.
   -verbose                   Enable verbose logging output.
   -version                   Display the compiler version.
   -J<option>                 Pass an option directly to JVM.
