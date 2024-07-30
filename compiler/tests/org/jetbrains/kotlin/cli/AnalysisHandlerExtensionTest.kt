@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.cli
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.CLITool
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -55,7 +55,7 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
     }
 
     private fun runTest(
-        compiler: CLITool<*>,
+        compiler: CLICompiler<*>,
         src: TestKtFile,
         klass: KClass<out ComponentRegistrar>,
         expectedExitCode: ExitCode = ExitCode.OK,

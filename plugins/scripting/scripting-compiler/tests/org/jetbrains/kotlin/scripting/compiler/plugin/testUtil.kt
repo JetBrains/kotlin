@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.cli.common.CLITool
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
@@ -186,7 +186,7 @@ fun runWithK2JVMCompiler(
 ) {
     val argsWithBasefromProp = getBaseCompilerArgumentsFromProperty()?.let { (it + args).toTypedArray() } ?: args
     val (out, err, ret) = captureOutErrRet {
-        CLITool.doMainNoExit(
+        CLICompiler.doMainNoExit(
             K2JVMCompiler(),
             argsWithBasefromProp
         )

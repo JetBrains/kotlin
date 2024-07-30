@@ -24,7 +24,6 @@ import java.io.PrintStream
 import java.io.PrintWriter
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -37,7 +36,7 @@ import org.junit.runners.JUnit4
 
 // AbstractCliTest
 private fun executeCompilerGrabOutput(
-    compiler: CLITool<*>,
+    compiler: CLICompiler<*>,
     args: List<String>
 ): Pair<String, ExitCode> {
     val output = StringBuilder()
@@ -59,12 +58,12 @@ private fun executeCompilerGrabOutput(
     return Pair(output.toString(), ExitCode.OK)
 }
 // CompilerTestUtil
-private fun executeCompiler(compiler: CLITool<*>, args: List<String>): Pair<String, ExitCode> {
+private fun executeCompiler(compiler: CLICompiler<*>, args: List<String>): Pair<String, ExitCode> {
     val bytes = ByteArrayOutputStream()
     val origErr = System.err
     try {
         System.setErr(PrintStream(bytes))
-        val exitCode = CLITool.doMainNoExit(compiler, args.toTypedArray())
+        val exitCode = CLICompiler.doMainNoExit(compiler, args.toTypedArray())
         return Pair(String(bytes.toByteArray()), exitCode)
     } finally {
         System.setErr(origErr)

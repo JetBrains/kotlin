@@ -15,7 +15,7 @@ import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.checkers.ThirdPartyAnnotationPathsKt;
-import org.jetbrains.kotlin.cli.common.CLITool;
+import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
@@ -48,14 +48,14 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String BUILD_FILE_ARGUMENT_PREFIX = "-Xbuild-file=";
 
     public static Pair<String, ExitCode> executeCompilerGrabOutput(
-            @NotNull CLITool<?> compiler,
+            @NotNull CLICompiler<?> compiler,
             @NotNull List<String> args
     ) {
         return executeCompilerGrabOutput(compiler, args, null);
     }
 
     public static Pair<String, ExitCode> executeCompilerGrabOutput(
-            @NotNull CLITool<?> compiler,
+            @NotNull CLICompiler<?> compiler,
             @NotNull List<String> args,
             @Nullable MessageRenderer messageRenderer
     ) {
@@ -102,7 +102,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         return exitCode == null ? normalizedOutputWithoutExitCode : (normalizedOutputWithoutExitCode + exitCode + "\n");
     }
 
-    protected void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) {
+    protected void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler) {
         System.setProperty("java.awt.headless", "true");
 
         File environmentTestConfig = new File(fileName.replaceFirst("\\.args$", ".env"));

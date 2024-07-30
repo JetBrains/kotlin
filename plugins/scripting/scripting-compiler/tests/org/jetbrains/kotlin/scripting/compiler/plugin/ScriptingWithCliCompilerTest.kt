@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
-import org.jetbrains.kotlin.cli.common.CLITool
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -177,7 +177,7 @@ class ScriptingWithCliCompilerTest {
     @Test
     fun testExceptionWithCause() {
         val (_, err, _) = captureOutErrRet {
-            CLITool.doMainNoExit(
+            CLICompiler.doMainNoExit(
                 K2JVMCompiler(),
                 arrayOf(
                     "-script",
@@ -205,7 +205,7 @@ class ScriptingWithCliCompilerTest {
         fun compileVariant(vararg flags: String, withScriptInstance: Boolean = true): Pair<List<String>, ExitCode> {
             return withTempDir { tmpdir ->
                 val (_, err, exitCode) = captureOutErrRet {
-                    CLITool.doMainNoExit(
+                    CLICompiler.doMainNoExit(
                         K2JVMCompiler(),
                         arrayOf(
                             "-d", tmpdir.path,
@@ -264,7 +264,7 @@ class ScriptingWithCliCompilerTest {
         withTempDir { tmpdir ->
             val scriptPath = "$TEST_DATA_DIR/compiler/mixedCompilation/scriptAccessingNonScript.main.kts"
             val ret =
-                CLITool.doMainNoExit(
+                CLICompiler.doMainNoExit(
                     K2JVMCompiler(),
                     arrayOf(
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
@@ -290,7 +290,7 @@ class ScriptingWithCliCompilerTest {
     fun testAccessScriptFromRegularSource() {
         withTempDir { tmpdir ->
             val (_, err, ret) = captureOutErrRet {
-                CLITool.doMainNoExit(
+                CLICompiler.doMainNoExit(
                     K2JVMCompiler(),
                     arrayOf(
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
@@ -315,7 +315,7 @@ class ScriptingWithCliCompilerTest {
 
             fun compileSuccessfullyGetStdErr(fileArg: String): List<String> {
                 val (_, err, ret) = captureOutErrRet {
-                    CLITool.doMainNoExit(
+                    CLICompiler.doMainNoExit(
                         K2JVMCompiler(),
                         arrayOf(
                             "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
