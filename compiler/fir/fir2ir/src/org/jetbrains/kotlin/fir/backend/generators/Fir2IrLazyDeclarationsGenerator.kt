@@ -29,7 +29,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
         symbol: IrSimpleFunctionSymbol,
         lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
-    ): IrSimpleFunction {
+    ): Fir2IrLazySimpleFunction {
         val irFunction = fir.convertWithOffsets { startOffset, endOffset ->
             val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
             val isFakeOverride = fir.isFakeOverride(firContainingClass)
@@ -112,6 +112,8 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
             Fir2IrLazyConstructor(c, startOffset, endOffset, declarationOrigin, fir, symbol, lazyParent)
         }
 
+        irConstructor.prepareTypeParameters()
+
         declarationStorage.enterScope(symbol)
 
         val containingClass = lazyParent as? IrClass
@@ -151,19 +153,32 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
         firClass: FirRegularClass,
         irParent: IrDeclarationParent,
         symbol: IrClassSymbol
-    ): Fir2IrLazyClass = firClass.convertWithOffsets { startOffset, endOffset ->
+    ): Fir2IrLazyClass {
         val firClassOrigin = firClass.irOrigin(c)
-        Fir2IrLazyClass(c, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
+        val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
+            Fir2IrLazyClass(c, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
+        }
+
+        // NB: this is needed to prevent recursions in case of self bounds
+        irClass.prepareTypeParameters()
+
+        return irClass
     }
 
     fun createIrLazyTypeAlias(
         firTypeAlias: FirTypeAlias,
         irParent: IrDeclarationParent,
         symbol: IrTypeAliasSymbol
-    ): Fir2IrLazyTypeAlias = firTypeAlias.convertWithOffsets { startOffset, endOffset ->
-        Fir2IrLazyTypeAlias(
-            c, startOffset, endOffset, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, firTypeAlias, symbol, irParent
-        )
+    ): Fir2IrLazyTypeAlias {
+        val irTypeAlias = firTypeAlias.convertWithOffsets { startOffset, endOffset ->
+            Fir2IrLazyTypeAlias(
+                c, startOffset, endOffset, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, firTypeAlias, symbol, irParent
+            )
+        }
+
+        irTypeAlias.prepareTypeParameters()
+
+        return irTypeAlias
     }
 
     // TODO: Should be private

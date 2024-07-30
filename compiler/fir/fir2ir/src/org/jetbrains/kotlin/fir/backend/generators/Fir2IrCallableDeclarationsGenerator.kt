@@ -180,9 +180,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             if (!allowLazyDeclarationsCreation) {
                 error("Lazy constructors should be processed in Fir2IrDeclarationStorage")
             }
-            val lazyConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent)
-            lazyConstructor.prepareTypeParameters()
-            return lazyConstructor
+            return lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent)
         }
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
         return constructor.convertWithOffsets { startOffset, endOffset ->
