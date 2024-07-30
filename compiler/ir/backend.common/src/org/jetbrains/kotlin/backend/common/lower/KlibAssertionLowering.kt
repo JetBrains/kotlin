@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -60,5 +62,53 @@ abstract class KlibAssertionWrapperLowering(val context: CommonBackendContext) :
             val builder = context.createIrBuilder(data, expression.startOffset, expression.endOffset)
             return builder.irIfThen(builder.irCall(isAssertionArgumentEvaluationEnabled), expression)
         }
+    }
+}
+
+/**
+ * This lowering replaces `isAssertionThrowingExceptionEnabled` and `isAssertionArgumentErrorEnabled` intrinsics with actual value,
+ * depending on the assertion mode.
+ */
+abstract class KlibAssertionRemoverLowering(
+    val context: CommonBackendContext, val throwingErrorEnabled: Boolean, val argumentEvaluationEnabled: Boolean
+) : FileLoweringPass {
+    protected abstract val isAssertionThrowingErrorEnabled: IrSimpleFunctionSymbol
+    protected abstract val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitWhen(expression: IrWhen): IrExpression {
+                if (expression.branches.size != 1) return super.visitWhen(expression)
+
+                val branch = expression.branches.first()
+                val condition = branch.condition
+                if (condition !is IrCall) return super.visitWhen(expression)
+
+                val flag = when (condition.symbol) {
+                    isAssertionThrowingErrorEnabled -> throwingErrorEnabled
+                    isAssertionArgumentEvaluationEnabled -> argumentEvaluationEnabled
+                    else -> return super.visitWhen(expression)
+                }
+
+                return if (flag) {
+                    branch.result.transform(this, null)
+                } else {
+                    IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type)
+                }
+            }
+
+            // This one is a fallback if for some reason we didn't eliminate intrinsics on the previous step
+            override fun visitCall(expression: IrCall): IrExpression {
+                if (expression.symbol == isAssertionThrowingErrorEnabled) {
+                    return IrConstImpl.boolean(expression.startOffset, expression.endOffset, expression.type, throwingErrorEnabled)
+                }
+
+                if (expression.symbol == isAssertionArgumentEvaluationEnabled) {
+                    return IrConstImpl.boolean(expression.startOffset, expression.endOffset, expression.type, argumentEvaluationEnabled)
+                }
+
+                return super.visitCall(expression)
+            }
+        })
     }
 }
