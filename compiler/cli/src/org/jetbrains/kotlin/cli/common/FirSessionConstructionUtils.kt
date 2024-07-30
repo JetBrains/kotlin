@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.CliOnlyLanguageVersionSettingsCheckers
-import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
+import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -333,10 +333,10 @@ private inline fun <F> prepareSessions(
     val sessionProvider = FirProjectSessionProvider()
 
     createLibrarySession(sessionProvider)
-    val extendedAnalysisMode = configuration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
+    val extraAnalysisMode = configuration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS)
     val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
-        if (extendedAnalysisMode) {
-            registerExtendedCommonCheckers()
+        if (extraAnalysisMode) {
+            registerExtraCommonCheckers()
         }
     }
 

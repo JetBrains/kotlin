@@ -1,5 +1,5 @@
 // CHECK_TYPE
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 //KT-1778 Automatically cast error
 package kt1778
 

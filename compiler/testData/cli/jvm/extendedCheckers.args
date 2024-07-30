@@ -1,4 +1,4 @@
 $TESTDATA_DIR$/extendedCheckers.kt
--Xuse-fir-extended-checkers
+-Xuse-fir-extra-checkers
 -d
 $TEMP_DIR$

@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationCh
 import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extra.*
 
-object ExtendedDeclarationCheckers : DeclarationCheckers() {
+object ExtraDeclarationCheckers : DeclarationCheckers() {
     override val fileCheckers: Set<FirFileChecker>
         get() = setOf(
             PlatformClassMappedToKotlinImportsChecker

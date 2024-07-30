@@ -1699,7 +1699,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         )
     }
 
-    val EXTENDED_CHECKERS by object : DiagnosticGroup("Extended checkers") {
+    val EXTRA_CHECKERS by object : DiagnosticGroup("Extra checkers") {
         val REDUNDANT_VISIBILITY_MODIFIER by warning<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val REDUNDANT_MODALITY_MODIFIER by warning<KtModifierListOwner>(PositioningStrategy.MODALITY_MODIFIER)
         val REDUNDANT_RETURN_UNIT_TYPE by warning<KtElement>()

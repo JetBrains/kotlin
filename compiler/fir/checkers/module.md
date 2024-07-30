@@ -57,10 +57,10 @@ There is a number of different container groups:
     - Native:
         - [NativeDeclarationCheckers](./checkers.native/src/org/jetbrains/kotlin/fir/analysis/native/checkers/NativeDeclarationCheckers.kt)
         - [NativeExpressionCheckers](./checkers.native/src/org/jetbrains/kotlin/fir/analysis/native/checkers/NativeExpressionCheckers.kt)
-- Extended checkers. Those checkers are disabled by default and can be enabled with the `-Xuse-fir-extended-checkers` compiler flag. This group includes experimental and not very performant checkers, which are not crucial for regular compilation
-    - [ExtendedDeclarationCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtendedDeclarationCheckers.kt)
-    - [ExtendedExpressionCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtendedExpressionCheckers.kt)
-    - [ExtendedTypeCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtendedTypeCheckers.kt)
+- Extra checkers. Those checkers are disabled by default and can be enabled with the `-Xuse-fir-extra-checkers` compiler flag. This group includes experimental and not very performant checkers, which are not crucial for regular compilation
+    - [ExtraDeclarationCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraDeclarationCheckers.kt)
+    - [ExtraExpressionCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraExpressionCheckers.kt)
+    - [ExtraTypeCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraTypeCheckers.kt)
 
 At the beginning of the compilation, in the initialization phase, all required checker containers are collected inside a session component named [CheckersComponent](./src/org/jetbrains/kotlin/fir/analysis/CheckersComponent.kt). When the time of checker phase comes, the compiler [creates](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/entrypoint/src/org/jetbrains/kotlin/fir/pipeline/analyse.kt#L23) an instance of [AbstractDiagnosticCollector](./src/org/jetbrains/kotlin/fir/analysis/collectors/AbstractDiagnosticCollector.kt), which is responsible to run all checkers. `DiagnosticCollector` traverses the whole given FIR tree, collects `CheckerContext` during this traversal, and runs all checkers that suite the element type on each element.
 

@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.LLFirStructureElementDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 
-internal class FileStructureElementDiagnosticsCollector private constructor(private val useExtendedCheckers: Boolean) {
+internal class FileStructureElementDiagnosticsCollector private constructor(private val useExtraCheckers: Boolean) {
     companion object {
-        val USUAL_COLLECTOR = FileStructureElementDiagnosticsCollector(useExtendedCheckers = false)
-        val EXTENDED_COLLECTOR = FileStructureElementDiagnosticsCollector(useExtendedCheckers = true)
+        val USUAL_COLLECTOR = FileStructureElementDiagnosticsCollector(useExtraCheckers = false)
+        val EXTENDED_COLLECTOR = FileStructureElementDiagnosticsCollector(useExtraCheckers = true)
     }
 
     fun collectForStructureElement(
@@ -24,7 +24,7 @@ internal class FileStructureElementDiagnosticsCollector private constructor(priv
         val collector = LLFirStructureElementDiagnosticsCollector(
             firDeclaration.moduleData.session,
             createVisitor,
-            useExtendedCheckers,
+            useExtraCheckers,
         )
         collector.collectDiagnostics(firDeclaration, reporter)
         val source = firDeclaration.source

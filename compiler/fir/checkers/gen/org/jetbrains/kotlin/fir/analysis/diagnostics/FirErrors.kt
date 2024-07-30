@@ -848,7 +848,7 @@ object FirErrors {
     val TYPEALIAS_SHOULD_EXPAND_TO_CLASS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("TYPEALIAS_SHOULD_EXPAND_TO_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
     val CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION", ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection, SourceElementPositioningStrategies.DEFAULT, KtElement::class)
 
-    // Extended checkers
+    // Extra checkers
     val REDUNDANT_VISIBILITY_MODIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_VISIBILITY_MODIFIER", WARNING, SourceElementPositioningStrategies.VISIBILITY_MODIFIER, KtModifierListOwner::class)
     val REDUNDANT_MODALITY_MODIFIER: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_MODALITY_MODIFIER", WARNING, SourceElementPositioningStrategies.MODALITY_MODIFIER, KtModifierListOwner::class)
     val REDUNDANT_RETURN_UNIT_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_RETURN_UNIT_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class)

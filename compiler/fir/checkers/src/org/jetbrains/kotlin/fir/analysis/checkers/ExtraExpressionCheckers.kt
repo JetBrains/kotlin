@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.*
+import org.jetbrains.kotlin.fir.analysis.checkers.extra.*
 
-object ExtendedExpressionCheckers : ExpressionCheckers() {
+object ExtraExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
             ArrayEqualityCanBeReplacedWithEquals,

@@ -518,10 +518,10 @@ This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibi
         }
 
     @Argument(
-        value = "-Xuse-fir-extended-checkers",
+        value = "-Xuse-fir-extra-checkers",
         description = "Use extended analysis mode based on the frontend IR.\nWarning: This feature is not yet production-ready."
     )
-    var useFirExtendedCheckers = false
+    var useFirExtraCheckers = false
         set(value) {
             checkFrozen()
             field = value

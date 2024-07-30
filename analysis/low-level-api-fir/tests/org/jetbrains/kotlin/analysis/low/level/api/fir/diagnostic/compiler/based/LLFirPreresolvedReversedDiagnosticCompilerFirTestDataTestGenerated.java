@@ -2899,547 +2899,547 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
     }
 
     @Nested
-    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers")
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers")
     @TestDataPath("$PROJECT_ROOT")
-    public class ExtendedCheckers {
+    public class ExtraCheckers {
       @Test
-      public void testAllFilesPresentInExtendedCheckers() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      public void testAllFilesPresentInExtraCheckers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
       @TestMetadata("ArrayEqualityCanBeReplacedWithEquals.kt")
       public void testArrayEqualityCanBeReplacedWithEquals() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/ArrayEqualityCanBeReplacedWithEquals.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/ArrayEqualityCanBeReplacedWithEquals.kt");
       }
 
       @Test
       @TestMetadata("CanBeValChecker.kt")
       public void testCanBeValChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/CanBeValChecker.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/CanBeValChecker.kt");
       }
 
       @Test
       @TestMetadata("kt69190.kt")
       public void testKt69190() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/kt69190.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/kt69190.kt");
       }
 
       @Test
       @TestMetadata("RedundantExplicitTypeChecker.kt")
       public void testRedundantExplicitTypeChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantExplicitTypeChecker.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantExplicitTypeChecker.kt");
       }
 
       @Test
       @TestMetadata("RedundantModalityModifierChecker.kt")
       public void testRedundantModalityModifierChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantModalityModifierChecker.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantModalityModifierChecker.kt");
       }
 
       @Test
       @TestMetadata("RedundantReturnUnitTypeChecker.kt")
       public void testRedundantReturnUnitTypeChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantReturnUnitTypeChecker.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantReturnUnitTypeChecker.kt");
       }
 
       @Test
       @TestMetadata("RedundantSetterParameterTypeChecker.kt")
       public void testRedundantSetterParameterTypeChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantSetterParameterTypeChecker.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantSetterParameterTypeChecker.kt");
       }
 
       @Test
       @TestMetadata("RedundantSingleExpressionStringTemplateChecker.kt")
       public void testRedundantSingleExpressionStringTemplateChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantSingleExpressionStringTemplateChecker.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantSingleExpressionStringTemplateChecker.kt");
       }
 
       @Test
       @TestMetadata("RedundantVisibilityDueToOverride.kt")
       public void testRedundantVisibilityDueToOverride() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityDueToOverride.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantVisibilityDueToOverride.kt");
       }
 
       @Test
       @TestMetadata("RedundantVisibilityModifierChecker.kt")
       public void testRedundantVisibilityModifierChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierChecker.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantVisibilityModifierChecker.kt");
       }
 
       @Test
       @TestMetadata("RedundantVisibilityModifierCheckerForInnerComponents.kt")
       public void testRedundantVisibilityModifierCheckerForInnerComponents() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierCheckerForInnerComponents.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantVisibilityModifierCheckerForInnerComponents.kt");
       }
 
       @Test
       @TestMetadata("RedundantVisibilityModifierCheckerWithExplicitApiMode.kt")
       public void testRedundantVisibilityModifierCheckerWithExplicitApiMode() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierCheckerWithExplicitApiMode.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantVisibilityModifierCheckerWithExplicitApiMode.kt");
       }
 
       @Nested
-      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment")
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment")
       @TestDataPath("$PROJECT_ROOT")
       public class CanBeReplacedWithOperatorAssignment {
         @Test
         public void testAllFilesPresentInCanBeReplacedWithOperatorAssignment() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
         @TestMetadata("BasicTest.kt")
         public void testBasicTest() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/BasicTest.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/BasicTest.kt");
         }
 
         @Test
         @TestMetadata("ComplexExpression.kt")
         public void testComplexExpression() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/ComplexExpression.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/ComplexExpression.kt");
         }
 
         @Test
         @TestMetadata("flexibleTypeBug.kt")
         public void testFlexibleTypeBug() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/flexibleTypeBug.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/flexibleTypeBug.kt");
         }
 
         @Test
         @TestMetadata("illegalMultipleOperators.kt")
         public void testIllegalMultipleOperators() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/illegalMultipleOperators.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/illegalMultipleOperators.kt");
         }
 
         @Test
         @TestMetadata("illegalMultipleOperatorsMiddle.kt")
         public void testIllegalMultipleOperatorsMiddle() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/illegalMultipleOperatorsMiddle.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/illegalMultipleOperatorsMiddle.kt");
         }
 
         @Test
         @TestMetadata("invalidSubtraction.kt")
         public void testInvalidSubtraction() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/invalidSubtraction.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/invalidSubtraction.kt");
         }
 
         @Test
         @TestMetadata("list.kt")
         public void testList() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/list.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/list.kt");
         }
 
         @Test
         @TestMetadata("logicOperators.kt")
         public void testLogicOperators() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/logicOperators.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/logicOperators.kt");
         }
 
         @Test
         @TestMetadata("multipleOperators.kt")
         public void testMultipleOperators() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/multipleOperators.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/multipleOperators.kt");
         }
 
         @Test
         @TestMetadata("multipleOperatorsRightSideRepeat.kt")
         public void testMultipleOperatorsRightSideRepeat() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/multipleOperatorsRightSideRepeat.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/multipleOperatorsRightSideRepeat.kt");
         }
 
         @Test
         @TestMetadata("mutableList.kt")
         public void testMutableList() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/mutableList.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/mutableList.kt");
         }
 
         @Test
         @TestMetadata("nonCommutativeRepeat.kt")
         public void testNonCommutativeRepeat() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/nonCommutativeRepeat.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/nonCommutativeRepeat.kt");
         }
 
         @Test
         @TestMetadata("nonRepeatingAssignment.kt")
         public void testNonRepeatingAssignment() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/nonRepeatingAssignment.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/nonRepeatingAssignment.kt");
         }
 
         @Test
         @TestMetadata("OperatorAssignment.kt")
         public void testOperatorAssignment() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/OperatorAssignment.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/OperatorAssignment.kt");
         }
 
         @Test
         @TestMetadata("plusAssignConflict.kt")
         public void testPlusAssignConflict() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/plusAssignConflict.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/plusAssignConflict.kt");
         }
 
         @Test
         @TestMetadata("rightSideRepeat.kt")
         public void testRightSideRepeat() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/rightSideRepeat.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/rightSideRepeat.kt");
         }
 
         @Test
         @TestMetadata("simpleAssign.kt")
         public void testSimpleAssign() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/simpleAssign.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/simpleAssign.kt");
         }
 
         @Test
         @TestMetadata("validAddition.kt")
         public void testValidAddition() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/validAddition.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/validAddition.kt");
         }
 
         @Test
         @TestMetadata("validSubtraction.kt")
         public void testValidSubtraction() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment/validSubtraction.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/validSubtraction.kt");
         }
       }
 
       @Nested
-      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/emptyRangeChecker")
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker")
       @TestDataPath("$PROJECT_ROOT")
       public class EmptyRangeChecker {
         @Test
         public void testAllFilesPresentInEmptyRangeChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
         @TestMetadata("NoWarning.kt")
         public void testNoWarning() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/emptyRangeChecker/NoWarning.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker/NoWarning.kt");
         }
 
         @Test
         @TestMetadata("Warning.kt")
         public void testWarning() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/emptyRangeChecker/Warning.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/emptyRangeChecker/Warning.kt");
         }
       }
 
       @Nested
-      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod")
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod")
       @TestDataPath("$PROJECT_ROOT")
       public class RedundantCallOfConversionMethod {
         @Test
         public void testAllFilesPresentInRedundantCallOfConversionMethod() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
         @TestMetadata("booleanToInt.kt")
         public void testBooleanToInt() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/booleanToInt.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/booleanToInt.kt");
         }
 
         @Test
         @TestMetadata("byte.kt")
         public void testByte() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/byte.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/byte.kt");
         }
 
         @Test
         @TestMetadata("char.kt")
         public void testChar() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/char.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/char.kt");
         }
 
         @Test
         @TestMetadata("double.kt")
         public void testDouble() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/double.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/double.kt");
         }
 
         @Test
         @TestMetadata("float.kt")
         public void testFloat() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/float.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/float.kt");
         }
 
         @Test
         @TestMetadata("int.kt")
         public void testInt() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/int.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/int.kt");
         }
 
         @Test
         @TestMetadata("long.kt")
         public void testLong() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/long.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/long.kt");
         }
 
         @Test
         @TestMetadata("nullable.kt")
         public void testNullable() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/nullable.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/nullable.kt");
         }
 
         @Test
         @TestMetadata("nullable2.kt")
         public void testNullable2() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/nullable2.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/nullable2.kt");
         }
 
         @Test
         @TestMetadata("safeString.kt")
         public void testSafeString() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/safeString.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/safeString.kt");
         }
 
         @Test
         @TestMetadata("safeString2.kt")
         public void testSafeString2() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/safeString2.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/safeString2.kt");
         }
 
         @Test
         @TestMetadata("short.kt")
         public void testShort() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/short.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/short.kt");
         }
 
         @Test
         @TestMetadata("string.kt")
         public void testString() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/string.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/string.kt");
         }
 
         @Test
         @TestMetadata("StringTemplate.kt")
         public void testStringTemplate() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/StringTemplate.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/StringTemplate.kt");
         }
 
         @Test
         @TestMetadata("toOtherType.kt")
         public void testToOtherType() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/toOtherType.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/toOtherType.kt");
         }
 
         @Test
         @TestMetadata("uByte.kt")
         public void testUByte() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/uByte.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/uByte.kt");
         }
 
         @Test
         @TestMetadata("uInt.kt")
         public void testUInt() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/uInt.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/uInt.kt");
         }
 
         @Test
         @TestMetadata("uLong.kt")
         public void testULong() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/uLong.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/uLong.kt");
         }
 
         @Test
         @TestMetadata("uShort.kt")
         public void testUShort() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/uShort.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/uShort.kt");
         }
 
         @Test
         @TestMetadata("variable.kt")
         public void testVariable() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/variable.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/variable.kt");
         }
       }
 
       @Nested
-      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused")
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused")
       @TestDataPath("$PROJECT_ROOT")
       public class Unused {
         @Test
         public void testAllFilesPresentInUnused() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
         @TestMetadata("classProperty.kt")
         public void testClassProperty() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/classProperty.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/classProperty.kt");
         }
 
         @Test
         @TestMetadata("invoke.kt")
         public void testInvoke() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invoke.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invoke.kt");
         }
 
         @Test
         @TestMetadata("invokeCustomTypeExt.kt")
         public void testInvokeCustomTypeExt() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeCustomTypeExt.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeCustomTypeExt.kt");
         }
 
         @Test
         @TestMetadata("invokeCustomTypeMember.kt")
         public void testInvokeCustomTypeMember() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeCustomTypeMember.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeCustomTypeMember.kt");
         }
 
         @Test
         @TestMetadata("invokeKFunction.kt")
         public void testInvokeKFunction() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKFunction.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeKFunction.kt");
         }
 
         @Test
         @TestMetadata("invokeKFunctionFromMethodReference.kt")
         public void testInvokeKFunctionFromMethodReference() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKFunctionFromMethodReference.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeKFunctionFromMethodReference.kt");
         }
 
         @Test
         @TestMetadata("invokeKSuspendFunction.kt")
         public void testInvokeKSuspendFunction() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeKSuspendFunction.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeKSuspendFunction.kt");
         }
 
         @Test
         @TestMetadata("invokeOverload1.kt")
         public void testInvokeOverload1() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeOverload1.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeOverload1.kt");
         }
 
         @Test
         @TestMetadata("invokeOverload2.kt")
         public void testInvokeOverload2() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeOverload2.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeOverload2.kt");
         }
 
         @Test
         @TestMetadata("invokeSuspend.kt")
         public void testInvokeSuspend() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeSuspend.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeSuspend.kt");
         }
 
         @Test
         @TestMetadata("invokeWithExtensionReceiver.kt")
         public void testInvokeWithExtensionReceiver() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/invokeWithExtensionReceiver.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/invokeWithExtensionReceiver.kt");
         }
 
         @Test
         @TestMetadata("lambda.kt")
         public void testLambda() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/lambda.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/lambda.kt");
         }
 
         @Test
         @TestMetadata("localVariable.kt")
         public void testLocalVariable() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/localVariable.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/localVariable.kt");
         }
 
         @Test
         @TestMetadata("localVariableInSecondaryConstructor.kt")
         public void testLocalVariableInSecondaryConstructor() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/localVariableInSecondaryConstructor.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/localVariableInSecondaryConstructor.kt");
         }
 
         @Test
         @TestMetadata("manyLocalVariables.kt")
         public void testManyLocalVariables() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/manyLocalVariables.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/manyLocalVariables.kt");
         }
 
         @Test
         @TestMetadata("usedInAnnotationArguments.kt")
         public void testUsedInAnnotationArguments() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/usedInAnnotationArguments.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/usedInAnnotationArguments.kt");
         }
 
         @Test
         @TestMetadata("valueIsNeverRead.kt")
         public void testValueIsNeverRead() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/valueIsNeverRead.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/unused/valueIsNeverRead.kt");
         }
       }
 
       @Nested
-      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker")
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker")
       @TestDataPath("$PROJECT_ROOT")
       public class UselessCallOnNotNullChecker {
         @Test
         public void testAllFilesPresentInUselessCallOnNotNullChecker() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
         @TestMetadata("Basic.kt")
         public void testBasic() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/Basic.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/Basic.kt");
         }
 
         @Test
         @TestMetadata("NotNullType.kt")
         public void testNotNullType() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NotNullType.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/NotNullType.kt");
         }
 
         @Test
         @TestMetadata("NotNullTypeChain.kt")
         public void testNotNullTypeChain() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NotNullTypeChain.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/NotNullTypeChain.kt");
         }
 
         @Test
         @TestMetadata("NullOrBlankSafe.kt")
         public void testNullOrBlankSafe() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NullOrBlankSafe.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/NullOrBlankSafe.kt");
         }
 
         @Test
         @TestMetadata("NullOrEmpty.kt")
         public void testNullOrEmpty() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NullOrEmpty.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/NullOrEmpty.kt");
         }
 
         @Test
         @TestMetadata("NullOrEmptyFake.kt")
         public void testNullOrEmptyFake() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NullOrEmptyFake.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/NullOrEmptyFake.kt");
         }
 
         @Test
         @TestMetadata("NullOrEmptySafe.kt")
         public void testNullOrEmptySafe() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/NullOrEmptySafe.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/NullOrEmptySafe.kt");
         }
 
         @Test
         @TestMetadata("OrEmptyFake.kt")
         public void testOrEmptyFake() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/OrEmptyFake.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/OrEmptyFake.kt");
         }
 
         @Test
         @TestMetadata("SafeCall.kt")
         public void testSafeCall() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/SafeCall.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/SafeCall.kt");
         }
 
         @Test
         @TestMetadata("Sequence.kt")
         public void testSequence() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/Sequence.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/Sequence.kt");
         }
 
         @Test
         @TestMetadata("String.kt")
         public void testString() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker/String.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/UselessCallOnNotNullChecker/String.kt");
         }
       }
     }

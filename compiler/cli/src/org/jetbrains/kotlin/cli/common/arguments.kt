@@ -27,7 +27,7 @@ fun CompilerConfiguration.setupCommonArguments(
     val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
-    put(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS, arguments.useFirExtendedCheckers)
+    put(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS, arguments.useFirExtraCheckers)
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)

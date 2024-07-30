@@ -1,5 +1,5 @@
 // DIAGNOSTICS: +UNUSED_VARIABLE, +UNUSED_VALUE
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 
 inline fun execute(func: () -> Unit) { func() }
 fun conditionA(): Boolean { return false }

@@ -35,11 +35,11 @@ import org.jetbrains.kotlin.platform.konan.isNative
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
-    useExtendedCheckers: Boolean,
+    useExtraCheckers: Boolean,
 ) : AbstractDiagnosticCollector(
     session,
     createComponents = { reporter ->
-        CheckersFactory.createComponents(session, reporter, useExtendedCheckers)
+        CheckersFactory.createComponents(session, reporter, useExtraCheckers)
     }
 )
 
@@ -48,17 +48,17 @@ private object CheckersFactory {
     fun createComponents(
         session: FirSession,
         reporter: DiagnosticReporter,
-        useExtendedCheckers: Boolean
+        useExtraCheckers: Boolean
     ): DiagnosticCollectorComponents {
         val module = session.llFirModuleData.ktModule
         val platform = module.targetPlatform
         val extensionCheckers = session.extensionService.additionalCheckers
-        val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform, extensionCheckers)
-        val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform, extensionCheckers)
-        val typeCheckers = createTypeCheckers(useExtendedCheckers, platform, extensionCheckers)
+        val declarationCheckers = createDeclarationCheckers(useExtraCheckers, platform, extensionCheckers)
+        val expressionCheckers = createExpressionCheckers(useExtraCheckers, platform, extensionCheckers)
+        val typeCheckers = createTypeCheckers(useExtraCheckers, platform, extensionCheckers)
 
         val regularComponents = buildList {
-            if (!useExtendedCheckers) {
+            if (!useExtraCheckers) {
                 add(ErrorNodeDiagnosticCollectorComponent(session, reporter))
             }
             add(DeclarationCheckersDiagnosticComponent(session, reporter, declarationCheckers))
@@ -71,12 +71,12 @@ private object CheckersFactory {
 
 
     private fun createDeclarationCheckers(
-        useExtendedCheckers: Boolean,
+        useExtraCheckers: Boolean,
         platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
     ): DeclarationCheckers {
-        return if (useExtendedCheckers) {
-            ExtendedDeclarationCheckers
+        return if (useExtraCheckers) {
+            ExtraDeclarationCheckers
         } else {
             createDeclarationCheckers {
                 add(CommonDeclarationCheckers)
@@ -93,12 +93,12 @@ private object CheckersFactory {
     }
 
     private fun createExpressionCheckers(
-        useExtendedCheckers: Boolean,
+        useExtraCheckers: Boolean,
         platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
     ): ExpressionCheckers {
-        return if (useExtendedCheckers) {
-            ExtendedExpressionCheckers
+        return if (useExtraCheckers) {
+            ExtraExpressionCheckers
         } else {
             createExpressionCheckers {
                 add(CommonExpressionCheckers)
@@ -114,11 +114,11 @@ private object CheckersFactory {
     }
 
     private fun createTypeCheckers(
-        useExtendedCheckers: Boolean,
+        useExtraCheckers: Boolean,
         platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>,
     ): TypeCheckers {
-        if (useExtendedCheckers) return ExtendedTypeCheckers
+        if (useExtraCheckers) return ExtraTypeCheckers
         return createTypeCheckers {
             add(CommonTypeCheckers)
             when {

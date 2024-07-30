@@ -2864,7 +2864,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Conflicting declarations: the enum entry 'entries' and the property 'Enum.entries' (KT-48872). Please rename the enum entry declaration."
         )
 
-        // Extended checkers group
+        // Extra checkers group
         map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier.")
         map.put(REDUNDANT_MODALITY_MODIFIER, "Redundant modality modifier.")
         map.put(REDUNDANT_RETURN_UNIT_TYPE, "Redundant return 'Unit' type.")

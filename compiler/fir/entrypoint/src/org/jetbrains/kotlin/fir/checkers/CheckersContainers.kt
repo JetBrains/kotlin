@@ -24,11 +24,11 @@ fun FirSessionConfigurator.registerCommonCheckers() {
     useCheckers(CommonLanguageVersionSettingsCheckers)
 }
 
-fun FirSessionConfigurator.registerExtendedCommonCheckers() {
-    useCheckers(ExtendedExpressionCheckers)
-    useCheckers(ExtendedDeclarationCheckers)
-    useCheckers(ExtendedTypeCheckers)
-    useCheckers(ExtendedLanguageVersionSettingsCheckers)
+fun FirSessionConfigurator.registerExtraCommonCheckers() {
+    useCheckers(ExtraExpressionCheckers)
+    useCheckers(ExtraDeclarationCheckers)
+    useCheckers(ExtraTypeCheckers)
+    useCheckers(ExtraLanguageVersionSettingsCheckers)
 }
 
 fun FirSessionConfigurator.registerJvmCheckers() {

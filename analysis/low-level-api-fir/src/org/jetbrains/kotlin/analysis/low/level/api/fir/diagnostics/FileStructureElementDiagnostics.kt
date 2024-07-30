@@ -18,7 +18,7 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
         retriever.retrieve(FileStructureElementDiagnosticsCollector.USUAL_COLLECTOR)
     }
 
-    private val diagnosticByExtendedCheckers: FileStructureElementDiagnosticList by lazy {
+    private val diagnosticByExtraCheckers: FileStructureElementDiagnosticList by lazy {
         retriever.retrieve(FileStructureElementDiagnosticsCollector.EXTENDED_COLLECTOR)
     }
 
@@ -27,8 +27,8 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
             if (filter.runCommonCheckers) {
                 addAll(diagnosticByCommonCheckers.diagnosticsFor(element))
             }
-            if (filter.runExtendedCheckers) {
-                addAll(diagnosticByExtendedCheckers.diagnosticsFor(element))
+            if (filter.runExtraCheckers) {
+                addAll(diagnosticByExtraCheckers.diagnosticsFor(element))
             }
         }
 
@@ -37,8 +37,8 @@ internal class FileStructureElementDiagnostics(private val retriever: FileStruct
         if (filter.runCommonCheckers) {
             diagnosticByCommonCheckers.forEach(action)
         }
-        if (filter.runExtendedCheckers) {
-            diagnosticByExtendedCheckers.forEach(action)
+        if (filter.runExtraCheckers) {
+            diagnosticByExtraCheckers.forEach(action)
         }
     }
 }

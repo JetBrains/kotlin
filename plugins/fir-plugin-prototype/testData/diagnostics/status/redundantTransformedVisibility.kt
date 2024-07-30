@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 // ISSUE: KT-54496
 
 import org.jetbrains.kotlin.fir.plugin.AllPublic

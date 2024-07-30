@@ -1,5 +1,5 @@
 // JAVAC_EXPECTED_FILE
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 
 class TestIface(r : Runnable) : Runnable by r {}
 

@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>kotlin.jvm.functions.Function0<!>
 

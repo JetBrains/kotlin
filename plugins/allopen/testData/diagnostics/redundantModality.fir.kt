@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 // ISSUE: KT-54496
 
 annotation class AllOpen

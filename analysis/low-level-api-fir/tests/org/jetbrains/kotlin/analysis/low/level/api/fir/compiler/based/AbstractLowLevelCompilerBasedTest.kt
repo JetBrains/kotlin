@@ -105,8 +105,8 @@ abstract class AbstractLowLevelCompilerBasedTest : AbstractCompilerBasedTest() {
                     .map { psiFile -> psiFile.getOrBuildFirFile(firResolveSession) }
             )
 
-            val diagnosticCheckerFilter = if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
-                DiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS
+            val diagnosticCheckerFilter = if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
+                DiagnosticCheckerFilter.EXTRA_AND_COMMON_CHECKERS
             } else DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
 
             val analyzerFacade = facadeFactory.createFirFacade(firResolveSession, allFirFiles.toMap(), diagnosticCheckerFilter)

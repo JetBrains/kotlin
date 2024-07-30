@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 
 fun foo(a: (Int) -> Unit) {}
 fun foo(a: (Int, Int) -> Unit) {}

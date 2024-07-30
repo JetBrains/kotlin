@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 class Generic<T>
 
 fun redundantNullable(

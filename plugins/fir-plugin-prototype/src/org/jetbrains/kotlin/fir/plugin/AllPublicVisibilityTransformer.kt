@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.explicitVisibility
+import org.jetbrains.kotlin.fir.analysis.checkers.extra.explicitVisibility
 import org.jetbrains.kotlin.fir.copyWithNewDefaults
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration

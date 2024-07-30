@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponent
 internal class LLFirStructureElementDiagnosticsCollector(
     session: FirSession,
     private val doCreateVisitor: (components: DiagnosticCollectorComponents) -> CheckerRunningDiagnosticCollectorVisitor,
-    useExtendedCheckers: Boolean,
+    useExtraCheckers: Boolean,
 ) : AbstractLLFirDiagnosticsCollector(
     session,
-    useExtendedCheckers,
+    useExtraCheckers,
 ) {
     override fun createVisitor(components: DiagnosticCollectorComponents): CheckerRunningDiagnosticCollectorVisitor {
         return doCreateVisitor(components)

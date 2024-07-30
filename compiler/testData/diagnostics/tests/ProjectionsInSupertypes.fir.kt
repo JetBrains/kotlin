@@ -1,4 +1,4 @@
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 interface A<T> {}
 interface B<T> {}
 interface C<T> {}

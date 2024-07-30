@@ -1,5 +1,5 @@
 // CHECK_TYPE
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Comparable
 

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// WITH_EXTENDED_CHECKERS
+// WITH_EXTRA_CHECKERS
 // KT-716 Type inference failed
 
 class TypeInfo<T>

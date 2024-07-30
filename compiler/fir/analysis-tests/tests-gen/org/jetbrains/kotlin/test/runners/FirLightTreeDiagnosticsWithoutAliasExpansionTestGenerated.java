@@ -190,35 +190,35 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     }
 
     @Nested
-    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers")
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers")
     @TestDataPath("$PROJECT_ROOT")
-    public class ExtendedCheckers {
+    public class ExtraCheckers {
       @Test
       @TestMetadata("ArrayEqualityCanBeReplacedWithEquals.kt")
       public void testArrayEqualityCanBeReplacedWithEquals() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/ArrayEqualityCanBeReplacedWithEquals.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/ArrayEqualityCanBeReplacedWithEquals.kt");
       }
 
       @Test
       @TestMetadata("RedundantExplicitTypeChecker.kt")
       public void testRedundantExplicitTypeChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantExplicitTypeChecker.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantExplicitTypeChecker.kt");
       }
 
       @Test
       @TestMetadata("RedundantSingleExpressionStringTemplateChecker.kt")
       public void testRedundantSingleExpressionStringTemplateChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantSingleExpressionStringTemplateChecker.kt");
+        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantSingleExpressionStringTemplateChecker.kt");
       }
 
       @Nested
-      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod")
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod")
       @TestDataPath("$PROJECT_ROOT")
       public class RedundantCallOfConversionMethod {
         @Test
         @TestMetadata("int.kt")
         public void testInt() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod/int.kt");
+          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantCallOfConversionMethod/int.kt");
         }
       }
     }
