@@ -439,9 +439,6 @@ class LightTreeRawFirDeclarationBuilder(
         val className = identifier.nameAsSafeName(if (calculatedModifiers.isCompanion()) "Companion" else "")
         val isLocalWithinParent = classNode.getParent()?.elementType != CLASS_BODY && isClassLocal(classNode) { getParent() }
         val classIsExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
-        val classIsKotlinAny = identifier.nameAsSafeName() == StandardNames.FqNames.any.shortName()
-                && classNode.getParent()?.getChildNodeByType(PACKAGE_DIRECTIVE)?.getChildNodeByType(REFERENCE_EXPRESSION)
-            ?.getReferencedNameAsName() == StandardNames.BUILT_INS_PACKAGE_NAME
 
         return withChildClassName(className, isExpect = classIsExpect, isLocalWithinParent) {
             val classSymbol = FirRegularClassSymbol(context.currentClassId)
@@ -532,6 +529,8 @@ class LightTreeRawFirDeclarationBuilder(
                                 delegatedSuperTypeRef = implicitAnyType
                             }
                         }
+
+                        val classIsKotlinAny = symbol.classId == StandardClassIds.Any
 
                         if (superTypeRefs.isEmpty() && !classIsKotlinAny) {
                             superTypeRefs += implicitAnyType

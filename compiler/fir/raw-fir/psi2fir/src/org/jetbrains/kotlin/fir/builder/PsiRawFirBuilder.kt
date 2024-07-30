@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
@@ -1030,11 +1031,12 @@ open class PsiRawFirBuilder(
                 }
             }
 
-            val isKotlinAny = this.isKotlinAny()
+            val constructedClassId = this@PsiRawFirBuilder.context.currentClassId
+            val isKotlinAny = constructedClassId == StandardClassIds.Any
             val defaultDelegatedSuperTypeRef =
                 when {
                     classKind == ClassKind.ENUM_ENTRY && this is KtClass -> delegatedEnumSuperTypeRef ?: implicitAnyType
-                    container.superTypeRefs.isEmpty() && !isKotlinAny() -> implicitAnyType
+                    container.superTypeRefs.isEmpty() && !isKotlinAny -> implicitAnyType
                     else -> FirImplicitTypeRefImplWithoutSource
                 }
 
@@ -1073,22 +1075,6 @@ open class PsiRawFirBuilder(
 
             delegateFieldsMap.values.mapTo(container.declarations) { it.fir }
             return delegatedSuperTypeRef!! to delegateFieldsMap.takeIf { it.isNotEmpty() }
-        }
-
-        private fun KtClassOrObject.isKotlinAny(): Boolean {
-            if (nameAsName != StandardNames.FqNames.any.shortName()) return false
-            val classOrObjectStub = stub
-
-            if (classOrObjectStub != null) {
-                val parentStub = classOrObjectStub.parentStub
-                if (parentStub !is KotlinFileStub) return false
-                return parentStub.getPackageFqName().pathSegments().singleOrNull() == StandardNames.BUILT_INS_PACKAGE_NAME
-            } else {
-                if (parent !is KtFile) return false
-                return parent.findDescendantOfType<KtPackageDirective> { packageDirective ->
-                    packageDirective.packageNames.singleOrNull()?.getReferencedNameAsName() == StandardNames.BUILT_INS_PACKAGE_NAME
-                } != null
-            }
         }
 
         /**
