@@ -40,12 +40,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-a> (): kotlin.collections.List<*> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<*>
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -103,7 +103,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-a> visibility:public modality:OPEN <> ($this:<root>.B, value:kotlin.collections.List<*>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.B
         VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
         BLOCK_BODY
@@ -150,13 +150,13 @@ FILE fqName:<root> fileName:/1.kt
           public open fun <get-a> (): kotlin.collections.List<*> declared in <root>.Java1
           public abstract fun <get-a> (): kotlin.collections.List<kotlin.Any?> declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
           public abstract fun <set-a> (<set-?>: kotlin.collections.List<kotlin.Any?>): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<*>
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -210,7 +210,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-a> visibility:public modality:OPEN <> ($this:<root>.D, value:kotlin.collections.List<*>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
           public abstract fun <set-a> (<set-?>: kotlin.collections.List<kotlin.Any?>): kotlin.Unit declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.D
         VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
@@ -256,12 +256,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-a> (): kotlin.collections.List<*> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<*>
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
@@ -307,12 +307,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-a> (): kotlin.collections.List<*> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<*>
   CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
@@ -354,12 +354,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-a> (): kotlin.collections.List<*> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<*>
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     CONSTRUCTOR visibility:public <> () returnType:<root>.H [primary]
@@ -402,12 +402,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-a> (): kotlin.collections.List<*> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.collections.List<*>) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-a> (value: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.collections.List<*>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.collections.List<*>
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.collections.List<*>
   CLASS CLASS name:I modality:ABSTRACT visibility:public superTypes:[<root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]

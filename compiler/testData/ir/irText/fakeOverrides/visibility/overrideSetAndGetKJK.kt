@@ -1,6 +1,6 @@
+// FIR_IDENTICAL
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
 
 // FILE: J.java
 public class J extends A {

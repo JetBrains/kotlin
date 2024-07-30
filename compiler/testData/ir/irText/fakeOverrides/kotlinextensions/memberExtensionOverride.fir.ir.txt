@@ -115,13 +115,13 @@ FILE fqName:<root> fileName:/1.kt
           public open fun <get-a> (): kotlin.Int declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
         $receiver: VALUE_PARAMETER name:<this> type:<root>.A
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, $receiver:<root>.A, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, $receiver:<root>.A, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
         $receiver: VALUE_PARAMETER name:<this> type:<root>.A
-        VALUE_PARAMETER name:value index:0 type:kotlin.Int
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open b: kotlin.String declared in <root>.Java1
@@ -131,13 +131,13 @@ FILE fqName:<root> fileName:/1.kt
           public open fun <get-b> (): kotlin.String declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
         $receiver: VALUE_PARAMETER name:<this> type:<root>.Java2
-      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, $receiver:<root>.Java2, value:kotlin.String) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, $receiver:<root>.Java2, <set-?>:kotlin.String) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-b> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
         $receiver: VALUE_PARAMETER name:<this> type:<root>.Java2
-        VALUE_PARAMETER name:value index:0 type:kotlin.String
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -205,7 +205,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-a> visibility:public modality:OPEN <> ($this:<root>.C, $receiver:<root>.A, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-a> (value: kotlin.Int): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         $receiver: VALUE_PARAMETER name:<this> type:<root>.A
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
@@ -225,7 +225,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-b> visibility:public modality:OPEN <> ($this:<root>.C, $receiver:<root>.Java2, value:kotlin.String) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-b> (value: kotlin.String): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         $receiver: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:value index:0 type:kotlin.String

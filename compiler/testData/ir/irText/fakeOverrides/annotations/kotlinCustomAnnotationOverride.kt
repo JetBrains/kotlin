@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-65388
 
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
+// REASON: For default setter parameter, K1 sets explicitly specified name `value`, K2 sets fixed name `<set-?>`
+
 // FILE: Java1.java
 public class Java1 extends A {
     public Java1(int i) {

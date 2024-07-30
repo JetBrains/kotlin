@@ -200,12 +200,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-a> (): java.util.ArrayList<kotlin.Int> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, value:java.util.ArrayList<kotlin.Int>) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:java.util.ArrayList<kotlin.Int>) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-a> (value: java.util.ArrayList<kotlin.Int>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: java.util.ArrayList<kotlin.Int>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:java.util.ArrayList<kotlin.Int>
+        VALUE_PARAMETER name:<set-?> index:0 type:java.util.ArrayList<kotlin.Int>
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open b: java.util.HashSet<kotlin.Any?> declared in <root>.Java1
@@ -214,12 +214,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-b> (): java.util.HashSet<kotlin.Any?> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, value:java.util.HashSet<kotlin.Any?>) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:java.util.HashSet<kotlin.Any?>) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-b> (value: java.util.HashSet<kotlin.Any?>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (<set-?>: java.util.HashSet<kotlin.Any?>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:java.util.HashSet<kotlin.Any?>
+        VALUE_PARAMETER name:<set-?> index:0 type:java.util.HashSet<kotlin.Any?>
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open c: kotlin.IntArray declared in <root>.Java1
@@ -228,12 +228,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-c> (): kotlin.IntArray declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.IntArray) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.IntArray) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-c> (value: kotlin.IntArray): kotlin.Unit declared in <root>.Java1
+          public open fun <set-c> (<set-?>: kotlin.IntArray): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.IntArray
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.IntArray
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open d: kotlin.Array<out kotlin.String> declared in <root>.Java1
@@ -242,12 +242,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-d> (): kotlin.Array<out kotlin.String> declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-d> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-d> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:d visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-d> (value: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-d> (<set-?>: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:value index:0 type:kotlin.Array<out kotlin.String>
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Array<out kotlin.String>
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -337,7 +337,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-a> visibility:public modality:OPEN <> ($this:<root>.C, value:java.util.ArrayList<kotlin.Int>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-a> (value: java.util.ArrayList<kotlin.Int>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-a> (<set-?>: java.util.ArrayList<kotlin.Int>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:value index:0 type:java.util.ArrayList<kotlin.Int>
         BLOCK_BODY
@@ -356,7 +356,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-b> visibility:public modality:OPEN <> ($this:<root>.C, value:java.util.HashSet<kotlin.Any?>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-b> (value: java.util.HashSet<kotlin.Any?>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (<set-?>: java.util.HashSet<kotlin.Any?>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:value index:0 type:java.util.HashSet<kotlin.Any?>
         BLOCK_BODY
@@ -374,7 +374,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-c> visibility:public modality:OPEN <> ($this:<root>.C, value:kotlin.IntArray) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:c visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-c> (value: kotlin.IntArray): kotlin.Unit declared in <root>.Java1
+          public open fun <set-c> (<set-?>: kotlin.IntArray): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:value index:0 type:kotlin.IntArray
         BLOCK_BODY
@@ -393,7 +393,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-d> visibility:public modality:OPEN <> ($this:<root>.C, value:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:d visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-d> (value: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.Java1
+          public open fun <set-d> (<set-?>: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:value index:0 type:kotlin.Array<out kotlin.String>
         BLOCK_BODY
@@ -585,28 +585,28 @@ FILE fqName:<root> fileName:/1.kt
     VALUE_PARAMETER name:d index:2 type:<root>.D
     VALUE_PARAMETER name:e index:3 type:<root>.E
     BLOCK_BODY
-      CALL 'public open fun <set-a> (value: java.util.ArrayList<kotlin.Int>): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
+      CALL 'public open fun <set-a> (<set-?>: java.util.ArrayList<kotlin.Int>): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-        value: CALL 'public final fun arrayListOf <T> (vararg elements: T of kotlin.collections.arrayListOf): java.util.ArrayList<T of kotlin.collections.arrayListOf> declared in kotlin.collections' type=java.util.ArrayList<kotlin.Int> origin=null
+        <set-?>: CALL 'public final fun arrayListOf <T> (vararg elements: T of kotlin.collections.arrayListOf): java.util.ArrayList<T of kotlin.collections.arrayListOf> declared in kotlin.collections' type=java.util.ArrayList<kotlin.Int> origin=null
           <T>: kotlin.Int
           elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1
-      CALL 'public open fun <set-b> (value: java.util.HashSet<kotlin.Any?>): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
+      CALL 'public open fun <set-b> (<set-?>: java.util.HashSet<kotlin.Any?>): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-        value: CALL 'public final fun hashSetOf <T> (vararg elements: T of kotlin.collections.hashSetOf): java.util.HashSet<T of kotlin.collections.hashSetOf> declared in kotlin.collections' type=java.util.HashSet<kotlin.Any?> origin=null
+        <set-?>: CALL 'public final fun hashSetOf <T> (vararg elements: T of kotlin.collections.hashSetOf): java.util.HashSet<T of kotlin.collections.hashSetOf> declared in kotlin.collections' type=java.util.HashSet<kotlin.Any?> origin=null
           <T>: kotlin.Any?
           elements: VARARG type=kotlin.Array<out kotlin.Any?> varargElementType=kotlin.Any?
             CONST Int type=kotlin.Int value=1
             CONST String type=kotlin.String value=""
             CONST Null type=kotlin.Nothing? value=null
-      CALL 'public open fun <set-c> (value: kotlin.IntArray): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
+      CALL 'public open fun <set-c> (<set-?>: kotlin.IntArray): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-        value: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+        <set-?>: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
           elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1
-      CALL 'public open fun <set-d> (value: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
+      CALL 'public open fun <set-d> (<set-?>: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-        value: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+        <set-?>: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
           <T>: kotlin.String
           elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             CONST String type=kotlin.String value=""

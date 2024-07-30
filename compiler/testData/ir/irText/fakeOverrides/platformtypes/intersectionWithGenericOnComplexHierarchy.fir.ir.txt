@@ -41,12 +41,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.Java2? declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2<T of <root>.B>
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java2<T of <root>.B>, value:@[FlexibleNullability] T of <root>.B?) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java2<T of <root>.B>, <set-?>:@[FlexibleNullability] T of <root>.B?) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
-          public abstract fun <set-a> (value: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
+          public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2<T of <root>.B>
-        VALUE_PARAMETER name:value index:0 type:@[FlexibleNullability] T of <root>.B?
+        VALUE_PARAMETER name:<set-?> index:0 type:@[FlexibleNullability] T of <root>.B?
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1<T of <root>.C>; <root>.Java2<T of <root>.C>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C<T of <root>.C>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.C<T of <root>.C>, <set-?>:T of <root>.C) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public abstract fun <set-a> (value: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
+          public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.C>
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.C
         BLOCK_BODY
@@ -155,12 +155,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.Java2? declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2<T of <root>.D>
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java2<T of <root>.D>, value:@[FlexibleNullability] T of <root>.D?) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java2<T of <root>.D>, <set-?>:@[FlexibleNullability] T of <root>.D?) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
-          public abstract fun <set-a> (value: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
+          public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2<T of <root>.D>
-        VALUE_PARAMETER name:value index:0 type:@[FlexibleNullability] T of <root>.D?
+        VALUE_PARAMETER name:<set-?> index:0 type:@[FlexibleNullability] T of <root>.D?
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Kotlin<T of <root>.E>; <root>.Java2<T of <root>.E>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E<T of <root>.E>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -182,7 +182,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.E<T of <root>.E>, <set-?>:T of <root>.E) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public abstract fun <set-a> (value: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
+          public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.Java2?): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.E<T of <root>.E>
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.E
         BLOCK_BODY
@@ -464,9 +464,9 @@ FILE fqName:<root> fileName:/1.kt
         TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
           CALL 'public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.B? declared in <root>.B' type=@[FlexibleNullability] kotlin.Int? origin=GET_PROPERTY
             $this: GET_VAR 'b: <root>.B<kotlin.Int> declared in <root>.test' type=<root>.B<kotlin.Int> origin=null
-      CALL 'public abstract fun <set-a> (value: @[FlexibleNullability] T of <root>.B?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
+      CALL 'public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.B?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'b: <root>.B<kotlin.Int> declared in <root>.test' type=<root>.B<kotlin.Int> origin=null
-        value: CONST Int type=kotlin.Int value=1
+        <set-?>: CONST Int type=kotlin.Int value=1
       VAR name:k2 type:kotlin.Unit [val]
         CALL 'public abstract fun bar (o: @[FlexibleNullability] T of <root>.B?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
           $this: GET_VAR 'b: <root>.B<kotlin.Int> declared in <root>.test' type=<root>.B<kotlin.Int> origin=null
@@ -499,9 +499,9 @@ FILE fqName:<root> fileName:/1.kt
       VAR name:k9 type:kotlin.Any? [val]
         CALL 'public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.D? declared in <root>.D' type=kotlin.Any? origin=GET_PROPERTY
           $this: GET_VAR 'd: <root>.D<kotlin.Any?> declared in <root>.test' type=<root>.D<kotlin.Any?> origin=null
-      CALL 'public abstract fun <set-a> (value: @[FlexibleNullability] T of <root>.D?): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=EQ
+      CALL 'public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.D?): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'd: <root>.D<kotlin.Any?> declared in <root>.test' type=<root>.D<kotlin.Any?> origin=null
-        value: CONST Null type=kotlin.Nothing? value=null
+        <set-?>: CONST Null type=kotlin.Nothing? value=null
       VAR name:k10 type:kotlin.Unit [val]
         CALL 'public abstract fun bar (o: T of <root>.D): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
           $this: GET_VAR 'd: <root>.D<kotlin.Any?> declared in <root>.test' type=<root>.D<kotlin.Any?> origin=null

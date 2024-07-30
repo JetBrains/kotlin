@@ -35,12 +35,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1<kotlin.Int>
-      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java1<kotlin.Int>, value:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT <> ($this:<root>.Java1<kotlin.Int>, <set-?>:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
-          public abstract fun <set-a> (value: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
+          public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1<kotlin.Int>
-        VALUE_PARAMETER name:value index:0 type:@[FlexibleNullability] kotlin.Int?
+        VALUE_PARAMETER name:<set-?> index:0 type:@[FlexibleNullability] kotlin.Int?
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     PROPERTY name:a visibility:public modality:OPEN [var]
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.C, <set-?>:kotlin.Int?) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public abstract fun <set-a> (value: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
+          public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int?
         BLOCK_BODY
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:OPEN <> ($this:<root>.D, <set-?>:kotlin.Int?) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [var]
         overridden:
-          public abstract fun <set-a> (value: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
+          public abstract fun <set-a> (<set-?>: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.D
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int?
         BLOCK_BODY

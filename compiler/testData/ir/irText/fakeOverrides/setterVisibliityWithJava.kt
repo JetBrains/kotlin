@@ -1,8 +1,6 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // DUMP_EXTERNAL_CLASS: JavaChild
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^^ different names of setter argument
 // FILE: JavaChild.java
 
 public class JavaChild extends KotlinBase {

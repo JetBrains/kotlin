@@ -196,12 +196,12 @@ FILE fqName:<root> fileName:/test.kt
         overridden:
           public open fun <get-a1> (): kotlin.Int declared in <root>.J
         $this: VALUE_PARAMETER name:<this> type:<root>.J
-      FUN FAKE_OVERRIDE name:<set-a1> visibility:public modality:OPEN <> ($this:<root>.J, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a1> visibility:public modality:OPEN <> ($this:<root>.J, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a1 visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-a1> (value: kotlin.Int): kotlin.Unit declared in <root>.J
+          public open fun <set-a1> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.J
         $this: VALUE_PARAMETER name:<this> type:<root>.J
-        VALUE_PARAMETER name:value index:0 type:kotlin.Int
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:a2 visibility:protected modality:OPEN [fake_override,var]
       overridden:
         protected open a2: kotlin.Int declared in <root>.J
@@ -210,12 +210,12 @@ FILE fqName:<root> fileName:/test.kt
         overridden:
           protected open fun <get-a2> (): kotlin.Int declared in <root>.J
         $this: VALUE_PARAMETER name:<this> type:<root>.J
-      FUN FAKE_OVERRIDE name:<set-a2> visibility:protected modality:OPEN <> ($this:<root>.J, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a2> visibility:protected modality:OPEN <> ($this:<root>.J, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a2 visibility:protected modality:OPEN [fake_override,var]
         overridden:
-          protected open fun <set-a2> (value: kotlin.Int): kotlin.Unit declared in <root>.J
+          protected open fun <set-a2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.J
         $this: VALUE_PARAMETER name:<this> type:<root>.J
-        VALUE_PARAMETER name:value index:0 type:kotlin.Int
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:a3 visibility:internal modality:OPEN [fake_override,var]
       overridden:
         internal open a3: kotlin.Int declared in <root>.J
@@ -224,18 +224,18 @@ FILE fqName:<root> fileName:/test.kt
         overridden:
           internal open fun <get-a3> (): kotlin.Int declared in <root>.J
         $this: VALUE_PARAMETER name:<this> type:<root>.J
-      FUN FAKE_OVERRIDE name:<set-a3> visibility:internal modality:OPEN <> ($this:<root>.J, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-a3> visibility:internal modality:OPEN <> ($this:<root>.J, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a3 visibility:internal modality:OPEN [fake_override,var]
         overridden:
-          internal open fun <set-a3> (value: kotlin.Int): kotlin.Unit declared in <root>.J
+          internal open fun <set-a3> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.J
         $this: VALUE_PARAMETER name:<this> type:<root>.J
-        VALUE_PARAMETER name:value index:0 type:kotlin.Int
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
   FUN name:test visibility:public modality:FINAL <> (c:<root>.C) returnType:kotlin.Unit
     VALUE_PARAMETER name:c index:0 type:<root>.C
     BLOCK_BODY
-      CALL 'public open fun <set-a1> (value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+      CALL 'public open fun <set-a1> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-        value: CONST Int type=kotlin.Int value=1
-      CALL 'internal open fun <set-a3> (value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+        <set-?>: CONST Int type=kotlin.Int value=1
+      CALL 'internal open fun <set-a3> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-        value: CONST Int type=kotlin.Int value=2
+        <set-?>: CONST Int type=kotlin.Int value=2

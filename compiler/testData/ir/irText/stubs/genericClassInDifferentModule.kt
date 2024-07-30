@@ -1,5 +1,4 @@
-// SKIP_DESERIALIZED_IR_TEXT_DUMP
-// REASON: KT-70036 Fix param name in overridden setter
+// FIR_IDENTICAL
 // MODULE: m1
 // FILE: genericClassInDifferentModule_m1.kt
 
