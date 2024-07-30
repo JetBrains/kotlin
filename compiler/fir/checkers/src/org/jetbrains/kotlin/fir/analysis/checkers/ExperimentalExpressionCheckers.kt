@@ -5,6 +5,22 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.analysis.checkers.experimental.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 
-object ExperimentalExpressionCheckers : ExpressionCheckers()
+object ExperimentalExpressionCheckers : ExpressionCheckers() {
+    override val functionCallCheckers: Set<FirFunctionCallChecker>
+        get() = setOf(
+            EmptyRangeChecker,
+        )
+
+    override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
+        get() = setOf(
+            RedundantInterpolationPrefixCheckerConcatenation,
+        )
+
+    override val literalExpressionCheckers: Set<FirLiteralExpressionChecker>
+        get() = setOf(
+            RedundantInterpolationPrefixCheckerLiteral,
+        )
+}
