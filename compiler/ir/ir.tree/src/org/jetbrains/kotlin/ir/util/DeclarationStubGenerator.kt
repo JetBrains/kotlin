@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -201,7 +202,10 @@ abstract class DeclarationStubGenerator(
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
                 isOperator = descriptor.isOperator, isInfix = descriptor.isInfix,
                 stubGenerator = this, typeTranslator = typeTranslator
-            ).generateParentDeclaration()
+            ).generateParentDeclaration().also {
+                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
+                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
+            }
         }
     }
 
@@ -221,7 +225,10 @@ abstract class DeclarationStubGenerator(
                 descriptor.name, descriptor.visibility,
                 descriptor.isInline, descriptor.isEffectivelyExternal(), descriptor.isPrimary, descriptor.isExpect,
                 this, typeTranslator
-            ).generateParentDeclaration()
+            ).generateParentDeclaration().also {
+                it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
+                it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
+            }
         }
     }
 
@@ -239,6 +246,12 @@ abstract class DeclarationStubGenerator(
             }
         }.generateParentDeclaration()
     }
+
+    private fun IrLazyFunctionBase.createReceiverParameter(parameter: ReceiverParameterDescriptor?): IrValueParameter? =
+        if (stubGenerator.extensions.isStaticFunction(descriptor)) null
+        else typeTranslator.buildWithScope(this) {
+            parameter?.generateReceiverParameterStub()?.also { it.parent = this@createReceiverParameter }
+        }
 
     // in IR Generator enums also have special handling, but here we have not enough data for it
     // probably, that is not a problem, because you can't add new enum value to external module
