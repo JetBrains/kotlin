@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -89,7 +88,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         withPropertySymbol { propertySymbol ->
-            propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD.toOptionalFilter())
+            propertySymbol.hasDeprecatedAnnotation() || propertySymbol.backingFieldSymbol?.hasDeprecatedAnnotation() == true
         }
     }
 
@@ -133,18 +132,16 @@ internal class SymbolLightFieldForProperty private constructor(
         }
 
         PsiModifier.VOLATILE -> withPropertySymbol { propertySymbol ->
-            val hasAnnotation = propertySymbol.backingFieldSymbol?.hasAnnotation(
+            val hasAnnotation = propertySymbol.backingFieldSymbol?.annotations?.contains(
                 VOLATILE_ANNOTATION_CLASS_ID,
-                AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
             ) == true
 
             mapOf(modifier to hasAnnotation)
         }
 
         PsiModifier.TRANSIENT -> withPropertySymbol { propertySymbol ->
-            val hasAnnotation = propertySymbol.backingFieldSymbol?.hasAnnotation(
+            val hasAnnotation = propertySymbol.backingFieldSymbol?.annotations?.contains(
                 TRANSIENT_ANNOTATION_CLASS_ID,
-                AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
             ) == true
 
             mapOf(modifier to hasAnnotation)
@@ -161,11 +158,9 @@ internal class SymbolLightFieldForProperty private constructor(
                 computer = ::computeModifiers,
             ),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = backingFieldSymbolPointer ?: propertySymbolPointer,
-                    annotationUseSiteTargetFilter = AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
-                ),
+                annotationsProvider = (backingFieldSymbolPointer)?.let { pointer ->
+                    SymbolAnnotationsProvider(ktModule = ktModule, annotatedSymbolPointer = pointer)
+                } ?: EmptyAnnotationsProvider,
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
                         when {
