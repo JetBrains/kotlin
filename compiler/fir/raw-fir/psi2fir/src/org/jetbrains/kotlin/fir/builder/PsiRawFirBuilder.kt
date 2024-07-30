@@ -1041,7 +1041,11 @@ open class PsiRawFirBuilder(
                 }
 
             if (container.superTypeRefs.isEmpty() && !isKotlinAny) {
-                container.superTypeRefs += implicitAnyType
+                val classIsKotlinNothing = constructedClassId == StandardClassIds.Nothing
+                // kotlin.Nothing doesn't have `Any` supertype, but does have delegating constructor call to Any
+                if (!classIsKotlinNothing) {
+                    container.superTypeRefs += implicitAnyType
+                }
                 delegatedSuperTypeRef = implicitAnyType
             }
 

@@ -533,7 +533,11 @@ class LightTreeRawFirDeclarationBuilder(
                         val classIsKotlinAny = symbol.classId == StandardClassIds.Any
 
                         if (superTypeRefs.isEmpty() && !classIsKotlinAny) {
-                            superTypeRefs += implicitAnyType
+                            val classIsKotlinNothing = symbol.classId == StandardClassIds.Nothing
+                            // kotlin.Nothing doesn't have `Any` supertype, but does have delegating constructor call to Any
+                            if (!classIsKotlinNothing) {
+                                superTypeRefs += implicitAnyType
+                            }
                             delegatedSuperTypeRef = implicitAnyType
                         }
 

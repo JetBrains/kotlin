@@ -3488,7 +3488,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class Nothing : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class Nothing {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nothing] constructor(): R|kotlin/Nothing| {
             super<R|kotlin/Any|>()
         }
