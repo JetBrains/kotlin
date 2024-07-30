@@ -32,7 +32,7 @@ class Fir2IrLazyPropertyAccessor(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     private val firAccessor: FirPropertyAccessor?,
-    private val isSetter: Boolean,
+    val isSetter: Boolean,
     private val firParentProperty: FirProperty,
     firParentClass: FirRegularClass?,
     symbol: IrSimpleFunctionSymbol,
@@ -66,40 +66,6 @@ class Fir2IrLazyPropertyAccessor(
     }
 
     override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
-
-    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
-        if (!isSetter && contextReceiverParametersCount == 0) emptyList()
-        else {
-            declarationStorage.enterScope(this.symbol)
-
-            buildList {
-                callablesGenerator.addContextReceiverParametersTo(
-                    fir.contextReceiversForFunctionOrContainingProperty(),
-                    this@Fir2IrLazyPropertyAccessor,
-                    this@buildList
-                )
-
-                if (isSetter) {
-                    val valueParameter = firAccessor?.valueParameters?.firstOrNull()
-                    add(
-                        callablesGenerator.createDefaultSetterParameter(
-                            startOffset, endOffset,
-                            (valueParameter?.returnTypeRef ?: firParentProperty.returnTypeRef).toIrType(
-                                typeConverter, conversionTypeContext
-                            ),
-                            parent = this@Fir2IrLazyPropertyAccessor,
-                            firValueParameter = valueParameter,
-                            name = valueParameter?.name,
-                            isCrossinline = valueParameter?.isCrossinline == true,
-                            isNoinline = valueParameter?.isNoinline == true
-                        )
-                    )
-                }
-            }.apply {
-                declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor.symbol)
-            }
-        }
-    }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) {
         if (firParentClass == null) return@lazyMappedFunctionListVar emptyList()

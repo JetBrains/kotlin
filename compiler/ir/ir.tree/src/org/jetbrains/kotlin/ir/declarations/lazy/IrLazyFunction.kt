@@ -62,10 +62,6 @@ class IrLazyFunction(
 
     override val initialSignatureFunction: IrFunction? by createInitialSignatureFunction()
 
-    override var valueParameters: List<IrValueParameter> by lazyVar(stubGenerator.lock) {
-        createValueParameters()
-    }
-
     override var contextReceiverParametersCount: Int = descriptor.contextReceiverParameters.size
 
     override var metadata: MetadataSource?

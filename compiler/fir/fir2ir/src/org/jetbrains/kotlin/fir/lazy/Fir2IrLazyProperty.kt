@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.asCompileTimeIrInitializer
+import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.utils.toIrConst
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -217,7 +218,7 @@ class Fir2IrLazyProperty(
             isFakeOverride = isFakeOverride,
             correspondingPropertySymbol = this.symbol
         ).also {
-            initializeAccessor(it, ConversionTypeOrigin.DEFAULT)
+            initializeAccessor(it, fir.getter, ConversionTypeOrigin.DEFAULT)
         }
     }
 
@@ -241,11 +242,11 @@ class Fir2IrLazyProperty(
             isFakeOverride = isFakeOverride,
             correspondingPropertySymbol = this.symbol
         ).also {
-            initializeAccessor(it, ConversionTypeOrigin.SETTER)
+            initializeAccessor(it, fir.setter, ConversionTypeOrigin.SETTER)
         }
     }
 
-    private fun initializeAccessor(accessor: Fir2IrLazyPropertyAccessor, typeOrigin: ConversionTypeOrigin) {
+    private fun initializeAccessor(accessor: Fir2IrLazyPropertyAccessor, firAccessor: FirPropertyAccessor?, typeOrigin: ConversionTypeOrigin) {
         declarationStorage.enterScope(accessor.symbol)
 
         accessor.classifiersGenerator.setTypeParameters(accessor, fir, typeOrigin)
@@ -266,6 +267,32 @@ class Fir2IrLazyProperty(
                 thisOrigin = accessor.origin,
                 explicitReceiver = it
             )
+        }
+
+        val accessorFir = accessor.fir
+        accessor.valueParameters = buildList {
+            callablesGenerator.addContextReceiverParametersTo(
+                accessorFir.contextReceiversForFunctionOrContainingProperty(),
+                accessor,
+                this@buildList
+            )
+
+            if (accessor.isSetter) {
+                val valueParameter = firAccessor?.valueParameters?.firstOrNull()
+                add(
+                    callablesGenerator.createDefaultSetterParameter(
+                        accessor.startOffset, accessor.endOffset,
+                        (valueParameter?.returnTypeRef ?: accessorFir.returnTypeRef).toIrType(
+                            typeConverter, typeOrigin
+                        ),
+                        parent = accessor,
+                        firValueParameter = valueParameter,
+                        name = valueParameter?.name,
+                        isCrossinline = valueParameter?.isCrossinline == true,
+                        isNoinline = valueParameter?.isNoinline == true
+                    )
+                )
+            }
         }
 
         declarationStorage.leaveScope(accessor.symbol)

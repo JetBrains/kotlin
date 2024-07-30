@@ -38,31 +38,6 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
             stubGenerator.generateFunctionStub(initialSignatureDescriptor.original)
         }
 
-    fun createValueParameters(): List<IrValueParameter> =
-        typeTranslator.buildWithScope(this) {
-            val result = arrayListOf<IrValueParameter>()
-            descriptor.contextReceiverParameters.mapIndexedTo(result) { i, contextReceiverParameter ->
-                factory.createValueParameter(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    origin = origin,
-                    name = Name.identifier("contextReceiverParameter$i"),
-                    type = contextReceiverParameter.type.toIrType(),
-                    isAssignable = false,
-                    symbol = IrValueParameterSymbolImpl(contextReceiverParameter),
-                    index = i,
-                    varargElementType = null,
-                    isCrossinline = false,
-                    isNoinline = false,
-                    isHidden = false,
-                ).apply { parent = this@IrLazyFunctionBase }
-            }
-            descriptor.valueParameters.mapTo(result) {
-                stubGenerator.generateValueParameterStub(it, it.index + descriptor.contextReceiverParameters.size)
-                    .apply { parent = this@IrLazyFunctionBase }
-            }
-        }
-
     fun createReturnType(): IrType =
         typeTranslator.buildWithScope(this) {
             descriptor.returnType!!.toIrType()

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
 import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.utils.irOrigin
@@ -17,7 +18,10 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.name.StandardClassIds
 
 class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
     internal fun createIrLazyFunction(
@@ -56,6 +60,22 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 thisType = thisType ?: error("No dispatch receiver receiver for function"),
                 thisOrigin = irFunction.origin
             )
+        }
+
+        irFunction.valueParameters = buildList {
+            callablesGenerator.addContextReceiverParametersTo(
+                fir.contextReceiversForFunctionOrContainingProperty(),
+                irFunction,
+                this@buildList
+            )
+
+            fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
+                callablesGenerator.createIrParameter(
+                    valueParameter, index + irFunction.contextReceiverParametersCount, skipDefaultParameter = irFunction.isFakeOverride
+                ).apply {
+                    this.parent = irFunction
+                }
+            }
         }
 
         declarationStorage.leaveScope(symbol)
@@ -102,6 +122,25 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 thisType = outerClass.thisReceiver!!.type,
                 thisOrigin = irConstructor.origin
             )
+        }
+
+        irConstructor.valueParameters = buildList {
+            callablesGenerator.addContextReceiverParametersTo(
+                fir.contextReceivers,
+                irConstructor,
+                this@buildList
+            )
+
+            fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
+                val parentClass = irConstructor.parent as? IrClass
+                callablesGenerator.createIrParameter(
+                    valueParameter, index + irConstructor.contextReceiverParametersCount,
+                    useStubForDefaultValueStub = parentClass?.classId != StandardClassIds.Enum,
+                    forcedDefaultValueConversion = parentClass?.isAnnotationClass == true
+                ).apply {
+                    this.parent = irConstructor
+                }
+            }
         }
 
         declarationStorage.leaveScope(symbol)
