@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
@@ -67,7 +66,6 @@ internal class SymbolLightClassForFacade(
                     annotationsProvider = SymbolAnnotationsProvider(
                         ktModule = this.ktModule,
                         annotatedSymbolPointer = firstFileInFacade.symbolPointerOfType<KaFileSymbol>(),
-                        annotationUseSiteTargetFilter = AnnotationUseSiteTarget.FILE.toOptionalFilter(),
                     )
                 )
             },

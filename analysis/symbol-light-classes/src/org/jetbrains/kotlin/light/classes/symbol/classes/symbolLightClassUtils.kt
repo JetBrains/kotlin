@@ -372,16 +372,14 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
             else -> return false
         }
 
-        val useSiteTargetFilterForPropertyAccessor = siteTarget.toOptionalFilter()
-        if (onlyJvmStatic &&
-            !hasJvmStaticAnnotation(useSiteTargetFilterForPropertyAccessor) &&
-            !declaration.hasJvmStaticAnnotation(useSiteTargetFilterForPropertyAccessor)
-        ) return false
+        if (onlyJvmStatic && !hasJvmStaticAnnotation() && !declaration.hasJvmStaticAnnotation()) return false
 
         if (declaration.hasReifiedParameters) return false
+        if (isHiddenByDeprecation(declaration)) return false
+        if (isHiddenOrSynthetic(siteTarget)) return false
         if (!hasBody && visibility == KaSymbolVisibility.PRIVATE) return false
-        if (declaration.isHiddenOrSynthetic(siteTarget)) return false
-        return !isHiddenOrSynthetic(siteTarget, useSiteTargetFilterForPropertyAccessor)
+
+        return true
     }
 
     val getter = declaration.getter?.takeIf {
@@ -473,10 +471,9 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
         return hasBackingFieldByPsi
     }
 
-    val fieldUseSite = AnnotationUseSiteTarget.FIELD
     if (property.isExpect ||
         property.modality == KaSymbolModality.ABSTRACT ||
-        property.hasJvmSyntheticAnnotation(fieldUseSite.toOptionalFilter())
+        property.backingFieldSymbol?.hasJvmSyntheticAnnotation() == true
     ) return false
 
     return hasBackingFieldByPsi ?: property.hasBackingField

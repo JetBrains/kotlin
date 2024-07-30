@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAnnotationsMethod
@@ -76,7 +75,6 @@ internal class SymbolLightParameterForReceiver private constructor(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = receiverPointer,
-                    annotationUseSiteTargetFilter = AnnotationUseSiteTarget.RECEIVER.toOptionalFilter(),
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->

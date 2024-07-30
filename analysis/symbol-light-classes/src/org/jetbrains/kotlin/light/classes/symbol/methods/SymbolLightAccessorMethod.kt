@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -128,9 +127,6 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override val kotlinOrigin: KtDeclaration? get() = containingPropertyDeclaration
 
-    private val accessorSite
-        get() = if (isGetter) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
-
     //TODO Fix it when SymbolConstructorValueParameter be ready
     private val isParameter: Boolean get() = containingPropertyDeclaration == null || containingPropertyDeclaration is KtParameter
 
@@ -140,7 +136,6 @@ internal class SymbolLightAccessorMethod private constructor(
                 builder,
                 this@SymbolLightAccessorMethod,
                 containingClass,
-                accessorSite.toOptionalFilter(),
             )
         }
     }
@@ -181,8 +176,7 @@ internal class SymbolLightAccessorMethod private constructor(
             return@withPropertySymbol true
         }
 
-        val filter = accessorSite.toOptionalFilter()
-        propertySymbol.hasJvmStaticAnnotation(filter) || propertySymbol.accessorSymbol.hasJvmStaticAnnotation(filter)
+        propertySymbol.hasJvmStaticAnnotation() || propertySymbol.accessorSymbol.hasJvmStaticAnnotation()
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
@@ -190,17 +184,9 @@ internal class SymbolLightAccessorMethod private constructor(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = CompositeAnnotationsProvider(
-                    SymbolAnnotationsProvider(
-                        ktModule = ktModule,
-                        annotatedSymbolPointer = propertyAccessorSymbolPointer,
-                        annotationUseSiteTargetFilter = accessorSite.toOptionalFilter(),
-                    ),
-                    SymbolAnnotationsProvider(
-                        ktModule = ktModule,
-                        annotatedSymbolPointer = containingPropertySymbolPointer,
-                        annotationUseSiteTargetFilter = accessorSite.toFilter(),
-                    ),
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = propertyAccessorSymbolPointer,
                 ),
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                     NullabilityAnnotationsProvider {
@@ -232,8 +218,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         withPropertySymbol { propertySymbol ->
-            val filter = accessorSite.toOptionalFilter()
-            propertySymbol.hasDeprecatedAnnotation(filter) || propertySymbol.accessorSymbol.hasDeprecatedAnnotation(filter)
+            propertySymbol.hasDeprecatedAnnotation() || propertySymbol.accessorSymbol.hasDeprecatedAnnotation()
         }
     }
 

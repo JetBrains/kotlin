@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_ANNOTATIONS
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -80,7 +79,7 @@ internal class SymbolLightAnnotationsMethod private constructor(
     override val kotlinOrigin: KtDeclaration? get() = containingPropertyDeclaration
 
     private val _modifierList: PsiModifierList by lazyPub {
-        return@lazyPub containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
+        containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
             SymbolLightMemberModifierList(
                 containingDeclaration = this@SymbolLightAnnotationsMethod,
                 modifiersBox = GranularModifiersBox(mapOf(PsiModifier.STATIC to true)) { modifier ->
@@ -95,8 +94,7 @@ internal class SymbolLightAnnotationsMethod private constructor(
                 annotationsBox = GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
                         ktModule = ktModule,
-                        annotatedSymbolPointer = propertySymbol.createPointer(),
-                        annotationUseSiteTargetFilter = AnnotationUseSiteTarget.PROPERTY.toOptionalFilter(),
+                        annotatedSymbolPointer = containingPropertySymbolPointer,
                     ),
                     additionalAnnotationsProvider = DeprecatedAdditionalAnnotationsProvider
                 ),

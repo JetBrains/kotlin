@@ -29,40 +29,19 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_CL
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-/**
- * @return [AnnotationUseSiteTargetFilter] which allows [this] and [NoAnnotationUseSiteTargetFilter] filter
- */
-internal fun AnnotationUseSiteTarget?.toOptionalFilter(): AnnotationUseSiteTargetFilter {
-    if (this == null) return NoAnnotationUseSiteTargetFilter
-
-    return annotationUseSiteTargetFilterOf(NoAnnotationUseSiteTargetFilter, toFilter())
+internal fun KaAnnotatedSymbol.hasJvmSyntheticAnnotation(): Boolean {
+    if (this is KaPropertySymbol) return backingFieldSymbol?.hasJvmSyntheticAnnotation() == true
+    return JVM_SYNTHETIC_ANNOTATION_CLASS_ID in annotations
 }
 
-internal fun annotationUseSiteTargetFilterOf(
-    vararg filters: AnnotationUseSiteTargetFilter,
-): AnnotationUseSiteTargetFilter = AnnotationUseSiteTargetFilter { useSiteTarget ->
-    filters.any { filter -> filter.isAllowed(useSiteTarget) }
-}
-
-internal fun KaAnnotatedSymbol.hasJvmSyntheticAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean {
-    if (this is KaPropertySymbol) return backingFieldSymbol?.hasJvmSyntheticAnnotation(useSiteTargetFilter) == true
-    return hasAnnotation(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, useSiteTargetFilter)
-}
-
-internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): String? {
-    val annotation = findAnnotation(JvmStandardClassIds.Annotations.JvmName, useSiteTargetFilter)
+internal fun KaAnnotatedSymbol.getJvmNameFromAnnotation(): String? {
+    val annotation = findAnnotation(JvmStandardClassIds.Annotations.JvmName)
     return annotation?.let {
         (it.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? String
     }
 }
 
-context(KaSession)
-@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
-internal fun isHiddenByDeprecation(
+internal fun KaSession.isHiddenByDeprecation(
     symbol: KaAnnotatedSymbol,
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
 ): Boolean = symbol.deprecationStatus(annotationUseSiteTarget)?.deprecationLevel == DeprecationLevelValue.HIDDEN
@@ -71,26 +50,19 @@ context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 internal fun KaAnnotatedSymbol.isHiddenOrSynthetic(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = annotationUseSiteTarget.toFilter(),
-) = isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(useSiteTargetFilter)
+) = isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation()
 
 internal fun KaAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmField in annotations
 
-internal fun KaAnnotatedSymbol.hasPublishedApiAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean = hasAnnotation(StandardClassIds.Annotations.PublishedApi, useSiteTargetFilter)
+internal fun KaAnnotatedSymbol.hasPublishedApiAnnotation(): Boolean = StandardClassIds.Annotations.PublishedApi in annotations
 
-internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean = hasAnnotation(StandardClassIds.Annotations.Deprecated, useSiteTargetFilter)
+internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(): Boolean = StandardClassIds.Annotations.Deprecated in annotations
 
 internal fun KaAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = JVM_OVERLOADS_CLASS_ID in annotations
 
 internal fun KaAnnotatedSymbol.hasJvmNameAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmName in annotations
 
-internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean = hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic, useSiteTargetFilter)
+internal fun KaAnnotatedSymbol.hasJvmStaticAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmStatic in annotations
 
 internal fun KaAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = StandardClassIds.Annotations.InlineOnly in annotations
 
@@ -117,30 +89,7 @@ internal fun KaAnnotatedSymbol.getJvmSuppressWildcardsFromAnnotation(): Boolean?
 
 internal fun KaAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmWildcard in annotations
 
-internal fun KaAnnotatedSymbol.findAnnotation(
-    classId: ClassId,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): KaAnnotation? {
-    if (!hasAnnotation(classId, useSiteTargetFilter)) return null
-
-    return annotationsByClassId(classId, useSiteTargetFilter).firstOrNull()
-}
-
-internal fun KaAnnotatedSymbol.hasAnnotation(
-    classId: ClassId,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-): Boolean {
-    return annotations[classId]
-        .any { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
-}
-
-internal fun KaAnnotatedSymbol.annotationsByClassId(
-    classId: ClassId,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter
-): List<KaAnnotation> {
-    return annotations[classId]
-        .filter { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
-}
+internal fun KaAnnotatedSymbol.findAnnotation(classId: ClassId): KaAnnotation? = annotations[classId].firstOrNull()
 
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
@@ -148,14 +97,13 @@ internal fun KaAnnotatedSymbol.computeThrowsList(
     builder: LightReferenceListBuilder,
     useSitePosition: PsiElement,
     containingClass: SymbolLightClassBase,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ) {
     if (containingClass.isEnum && this is KaNamedFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
         builder.addReference(java.lang.IllegalArgumentException::class.qualifiedName)
         builder.addReference(java.lang.NullPointerException::class.qualifiedName)
     }
 
-    val annoApp = findAnnotation(JvmStandardClassIds.Annotations.Throws, useSiteTargetFilter) ?: return
+    val annoApp = findAnnotation(JvmStandardClassIds.Annotations.Throws) ?: return
 
     fun handleAnnotationValue(annotationValue: KaAnnotationValue) {
         when (annotationValue) {

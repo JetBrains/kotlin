@@ -12,12 +12,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.annotations.FieldAnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.NoAnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.light.classes.symbol.annotations.PropertyAnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.annotations.annotationUseSiteTargetFilterOf
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
@@ -46,11 +42,6 @@ internal class SymbolLightFieldForEnumEntry(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = enumEntry.symbolPointerOfType<KaEnumEntrySymbol>(),
-                    annotationUseSiteTargetFilter = annotationUseSiteTargetFilterOf(
-                        NoAnnotationUseSiteTargetFilter,
-                        FieldAnnotationUseSiteTargetFilter,
-                        PropertyAnnotationUseSiteTargetFilter,
-                    ),
                 )
             ),
         )

@@ -88,7 +88,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         withPropertySymbol { propertySymbol ->
-            propertySymbol.hasDeprecatedAnnotation() || propertySymbol.backingFieldSymbol?.hasDeprecatedAnnotation() == true
+            propertySymbol.hasDeprecatedAnnotation()
         }
     }
 
