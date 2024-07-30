@@ -200,6 +200,21 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         )
     }
 
+    /**
+     * Disabled because of:
+     * - KT-70319 annotation doc translation
+     * - KT-69742 mangling
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - DateTimeUnit`() {
+        doTest(
+            dependenciesDir.resolve("dateTimeUnit"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxDatetime, testLibraryKotlinxSerializationCore)
+            )
+        )
+    }
+
     private fun doTest(root: File, configuration: HeaderGenerator.Configuration = HeaderGenerator.Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()
