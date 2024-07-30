@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.codegen.ir
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
@@ -77,7 +77,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     private fun compileToKlib(files: List<TestFile>) {
         val sourceFiles = loadMultiFilesReal(files)
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
-            K2JSCompiler(),
+            K2JsIrCompiler(),
             listOf(
                 "-ir-output-dir", outputDir.normalize().absolutePath,
                 "-ir-output-name", klibName,

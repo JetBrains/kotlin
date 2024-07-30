@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.ComponentProvider
@@ -83,32 +83,32 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
 
     fun testShouldNotGenerateCodeJs() {
         if (jsirStdlib != null)
-            runTest(K2JSCompiler(), classNotFound, jsirStdlib!!, outjs, listOf("-Xir-produce-js"))
+            runTest(K2JsIrCompiler(), classNotFound, jsirStdlib!!, outjs, listOf("-Xir-produce-js"))
     }
 
     fun testShouldNotGenerateCodeKlib() {
         if (jsirStdlib != null)
-            runTest(K2JSCompiler(), classNotFound, jsirStdlib!!, outklib, listOf("-Xir-produce-klib-file"))
+            runTest(K2JsIrCompiler(), classNotFound, jsirStdlib!!, outklib, listOf("-Xir-produce-klib-file"))
     }
 
     fun testShouldNotGenerateCodeWasm() {
         if (jsirStdlib != null && wasmStdlib != null)
-            runTest(K2JSCompiler(), classNotFound, "$jsirStdlib,$wasmStdlib", outjs, listOf("-Xir-produce-js", "-Xwasm"))
+            runTest(K2JsIrCompiler(), classNotFound, "$jsirStdlib,$wasmStdlib", outjs, listOf("-Xir-produce-js", "-Xwasm"))
     }
 
     fun testRepeatedAnalysisJs() {
         if (jsirStdlib != null)
-            runTest(K2JSCompiler(), repeatedAnalysis, jsirStdlib!!, outjs, listOf("-Xir-produce-js"))
+            runTest(K2JsIrCompiler(), repeatedAnalysis, jsirStdlib!!, outjs, listOf("-Xir-produce-js"))
     }
 
     fun testRepeatedAnalysisKlib() {
         if (jsirStdlib != null)
-            runTest(K2JSCompiler(), repeatedAnalysis, jsirStdlib!!, outklib, listOf("-Xir-produce-klib-file"))
+            runTest(K2JsIrCompiler(), repeatedAnalysis, jsirStdlib!!, outklib, listOf("-Xir-produce-klib-file"))
     }
 
     fun testRepeatedAnalysisWasm() {
         if (jsirStdlib != null && wasmStdlib != null)
-            runTest(K2JSCompiler(), repeatedAnalysis, "$jsirStdlib,$wasmStdlib", outjs, listOf("-Xir-produce-js", "-Xwasm"))
+            runTest(K2JsIrCompiler(), repeatedAnalysis, "$jsirStdlib,$wasmStdlib", outjs, listOf("-Xir-produce-js", "-Xwasm"))
     }
 }
 

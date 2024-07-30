@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
@@ -213,7 +213,7 @@ object MockLibraryUtil {
         @Synchronized get() = loadCompilerClass(K2JVMCompiler::class)
 
     private val compiler2JSClass: Class<*>
-        @Synchronized get() = loadCompilerClass(K2JSCompiler::class)
+        @Synchronized get() = loadCompilerClass(K2JsIrCompiler::class)
 
     private val compiler2MetadataClass: Class<*>
         @Synchronized get() = loadCompilerClass(K2MetadataCompiler::class)
