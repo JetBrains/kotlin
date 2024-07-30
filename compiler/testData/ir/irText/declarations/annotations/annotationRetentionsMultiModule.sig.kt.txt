@@ -1,0 +1,88 @@
+// MODULE: lib
+// FILE: lib.kt
+
+// CHECK:
+//   Mangled name: Binary
+//   Public signature: /Binary|null[0]
+@Target(allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER])
+@Retention(value = AnnotationRetention.BINARY)
+open annotation class Binary : Annotation {
+  // CHECK:
+  //   Mangled name: Binary#<init>(){}
+  //   Public signature: /Binary.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Runtime
+//   Public signature: /Runtime|null[0]
+@Target(allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER])
+@Retention(value = AnnotationRetention.RUNTIME)
+open annotation class Runtime : Annotation {
+  // CHECK:
+  //   Mangled name: Runtime#<init>(){}
+  //   Public signature: /Runtime.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Source
+//   Public signature: /Source|null[0]
+@Target(allowedTargets = [AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER])
+@Retention(value = AnnotationRetention.SOURCE)
+open annotation class Source : Annotation {
+  // CHECK:
+  //   Mangled name: Source#<init>(){}
+  //   Public signature: /Source.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #binary(kotlin.Short){}
+//   Public signature: /binary|5277060220079691354[0]
+//   Public signature debug description: binary(kotlin.Short){}
+// CHECK JVM_IR:
+//   Mangled name: #binary(kotlin.Short){}kotlin.Short
+//   Public signature: /binary|3722288943792656571[0]
+//   Public signature debug description: binary(kotlin.Short){}kotlin.Short
+fun binary(@Binary x: @Binary Short): @Binary Short
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #runtime(kotlin.Short){}
+//   Public signature: /runtime|3585133020944593394[0]
+//   Public signature debug description: runtime(kotlin.Short){}
+// CHECK JVM_IR:
+//   Mangled name: #runtime(kotlin.Short){}kotlin.Short
+//   Public signature: /runtime|-2605823662956932982[0]
+//   Public signature debug description: runtime(kotlin.Short){}kotlin.Short
+fun runtime(@Runtime x: @Runtime Short): @Runtime Short
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #source(kotlin.Short){}
+//   Public signature: /source|4536131730791831220[0]
+//   Public signature debug description: source(kotlin.Short){}
+// CHECK JVM_IR:
+//   Mangled name: #source(kotlin.Short){}kotlin.Short
+//   Public signature: /source|-1429226632148152221[0]
+//   Public signature debug description: source(kotlin.Short){}kotlin.Short
+fun source(@Source x: @Source Short): @Source Short
+
+// MODULE: main
+// FILE: main.kt
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
+fun box(): String
+

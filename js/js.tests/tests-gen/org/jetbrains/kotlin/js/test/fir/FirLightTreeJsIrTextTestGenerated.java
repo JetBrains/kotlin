@@ -568,6 +568,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
       }
 
       @Test
+      @TestMetadata("annotationRetentionsMultiModule.kt")
+      public void testAnnotationRetentionsMultiModule() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/annotationRetentionsMultiModule.kt");
+      }
+
+      @Test
       @TestMetadata("annotationsInAnnotationArguments.kt")
       public void testAnnotationsInAnnotationArguments() {
         runTest("compiler/testData/ir/irText/declarations/annotations/annotationsInAnnotationArguments.kt");
