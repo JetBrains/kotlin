@@ -18,32 +18,36 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.kotlinNativeDist
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.inject.Inject
+import kotlin.io.path.exists
 
 fun Project.familyDefFiles(family: Family) = fileTree("src/platform/${family.visibleName}")
         .filter { it.name.endsWith(".def") }
 
 fun Project.registerUpdateDefFileDependenciesForAppleFamiliesTasks(aggregateTask: TaskProvider<*>): Map<Family, TaskProvider<*>> {
     val shouldUpdate = project.getBooleanProperty(updateDefFileDependenciesFlag) ?: false
-    val changedDefFilesLists = project.files()
+    val defFilesChanges = project.files()
     aggregateTask.configure {
         onlyIf { shouldUpdate }
-        inputs.files(changedDefFilesLists)
+        inputs.files(defFilesChanges)
         outputs.upToDateWhen { true }
         doLast {
-            val changedDefFiles = changedDefFilesLists.flatMap {
-                it.readText().split("\n").filterNot { it.isBlank() }
-            }.joinToString(" ")
-            if (changedDefFiles.isNotBlank()) {
+            val changes = defFilesChanges.map { it.readText() }.joinToString("\n")
+            if (changes.isNotBlank()) {
                 error("""
-                    Def files changed, please commit the changes
-                    To update def files run: KONAN_USE_INTERNAL_SERVER=1 ./gradlew :kotlin-native:platformLibs:updateDefFileDependencies -P${updateDefFileDependenciesFlag}
-                    Changes in $changedDefFiles
-                    """.trimIndent()
+                    |Def files changed, please commit the changes
+                    |To update def files run:
+                    |
+                    |    KONAN_USE_INTERNAL_SERVER=1 ./gradlew :kotlin-native:platformLibs:updateDefFileDependencies -P${updateDefFileDependenciesFlag}
+                    |
+                    |Changes:
+                    |$changes
+                    """.trimMargin()
                 )
             }
         }
@@ -60,7 +64,7 @@ fun Project.registerUpdateDefFileDependenciesForAppleFamiliesTasks(aggregateTask
                 targets = it.value,
                 shouldUpdate = shouldUpdate,
         )
-        changedDefFilesLists.from(task.flatMap { it.changedDefFilesList })
+        defFilesChanges.from(task.flatMap { it.defFileChangesOutput })
         return@mapValues task
     }
 }
@@ -76,7 +80,7 @@ private fun Project.registerUpdateDefFileDependenciesTask(
     defFiles.from(familyDefFiles(family))
     targetNames.set(targets.map { it.name })
     runKonan.set(File(kotlinNativeDist.absolutePath).resolve("bin/run_konan"))
-    changedDefFilesList.set(layout.buildDirectory.file("${family.visibleName}ChangedDefFiles"))
+    defFileChangesOutput.set(layout.buildDirectory.file("${family.visibleName}ChangedDefFiles"))
 }
 
 private const val updateDefFileDependenciesFlag = "kotlin.native.platformLibs.updateDefFileDependencies"
@@ -96,7 +100,13 @@ private open class UpdateDefFileDependenciesTask @Inject constructor(
     val runKonan: Property<File> = project.objects.property(File::class.java)
 
     @get:InputFile
-    protected val selectedXcode: File = Files.readSymbolicLink(Paths.get("/var/db/xcode_select_link")).parent.resolve("version.plist").toFile()
+    protected val selectedXcode: File? = Paths.get("/var/db/xcode_select_link").let { xcodeSelectLink ->
+        if (xcodeSelectLink.exists()) {
+            Files.readSymbolicLink(xcodeSelectLink).parent.resolve("version.plist").toFile()
+        } else {
+            null
+        }
+    }
 
     @get:Input
     protected val internalToolchain = project.providers.environmentVariable("KONAN_USE_INTERNAL_SERVER").orElse("")
@@ -105,7 +115,7 @@ private open class UpdateDefFileDependenciesTask @Inject constructor(
     protected val developerDir = project.providers.environmentVariable("DEVELOPER_DIR").orElse("")
 
     @get:OutputFile
-    val changedDefFilesList: RegularFileProperty = project.objects.fileProperty()
+    val defFileChangesOutput: RegularFileProperty = project.objects.fileProperty()
 
     @TaskAction
     fun update() {
@@ -121,24 +131,27 @@ private open class UpdateDefFileDependenciesTask @Inject constructor(
                 changedDefFiles.add(it)
             }
         }
-        if (changedDefFiles.isNotEmpty()) {
+        val changes = buildString {
             changedDefFiles.forEach { file ->
-                logger.error("Def file $file changed:")
-                dumpDefFileDiff(file, initialDefFiles[file]!!.encodeToByteArray().inputStream())
+                appendLine("$file:")
+                appendLine(dumpDefFileDiff(file, initialDefFiles[file]!!.encodeToByteArray().inputStream()))
             }
         }
-        changedDefFilesList.get().asFile.writeText(changedDefFiles.joinToString("\n"))
+        defFileChangesOutput.get().asFile.writeText(changes)
     }
 
     private fun dumpDefFileDiff(
             changedDefFile: File,
             initialDefFile: InputStream
-    ) {
+    ): String {
+        val diff = ByteArrayOutputStream()
         execOperations.exec {
             commandLine("/usr/bin/diff", "/dev/stdin", changedDefFile.path)
             standardInput = initialDefFile
+            standardOutput = diff
             setIgnoreExitValue(true)
         }
+        return diff.toString()
     }
 
 }
