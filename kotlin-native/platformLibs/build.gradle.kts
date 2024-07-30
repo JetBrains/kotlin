@@ -35,7 +35,7 @@ val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
 val updateDefFileDependenciesTask = tasks.register("updateDefFileDependencies")
 val updateDefFileTasksPerFamily = if (HostManager.hostIsMac) {
-    registerUpdateDefFileDependenciesForAppleFamiliesTasks()
+    registerUpdateDefFileDependenciesForAppleFamiliesTasks(updateDefFileDependenciesTask)
 } else {
     emptyMap()
 }
