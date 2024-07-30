@@ -63,7 +63,9 @@ fun IrBuilderWithScope.irDiagramString(
             addArgument(
                 irString {
                     appendLine()
-                    append(rowSource.substring(minOf(minSourceIndent, rowSource.length)))
+                    val sourceLine = rowSource.substring(minOf(minSourceIndent, rowSource.length))
+                    if (sourceLine.isNotBlank() && valuesByRow[row - 1] != null) appendLine() // Add an extra line after displayed values.
+                    append(sourceLine)
                 },
             )
 

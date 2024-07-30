@@ -96,7 +96,7 @@ fun test3(a: Int, b: Int): String {
           val tmp_32: Int = b
           val tmp_33: Boolean = EQEQ(arg0 = tmp_31, arg1 = tmp_32)
           assert(value = tmp_33, lazyMessage = local fun <anonymous>(): String {
-            return "\nassert(" + "\n    when {" + "\n        a < b -> a == b" + "\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_32 + "\n        | | |    | " + tmp_33 + "\n        | | |    " + tmp_31 + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
+            return "\nassert(" + "\n    when {" + "\n        a < b -> a == b" + "\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_32 + "\n        | | |    | " + tmp_33 + "\n        | | |    " + tmp_31 + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
           }
 )
         }
@@ -110,13 +110,13 @@ fun test3(a: Int, b: Int): String {
               val tmp_38: Int = a
               val tmp_39: Boolean = EQEQ(arg0 = tmp_37, arg1 = tmp_38)
               assert(value = tmp_39, lazyMessage = local fun <anonymous>(): String {
-                return "\nassert(" + "\n    when {" + "\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n        b < a -> b == a" + "\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_38 + "\n        | | |    | " + tmp_39 + "\n        | | |    " + tmp_37 + "\n        | | " + tmp_35 + "\n        | " + tmp_36 + "\n        " + tmp_34 + "\n        else -> false" + "\n    }" + "\n)" + "\n"
+                return "\nassert(" + "\n    when {" + "\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n\n        b < a -> b == a" + "\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_38 + "\n        | | |    | " + tmp_39 + "\n        | | |    " + tmp_37 + "\n        | | " + tmp_35 + "\n        | " + tmp_36 + "\n        " + tmp_34 + "\n\n        else -> false" + "\n    }" + "\n)" + "\n"
               }
 )
             }
             else -> { // BLOCK
               assert(value = false, lazyMessage = local fun <anonymous>(): String {
-                return "\nassert(" + "\n    when {" + "\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n        b < a -> b == a" + "\n        | | |" + "\n        | | " + tmp_35 + "\n        | " + tmp_36 + "\n        " + tmp_34 + "\n        else -> false" + "\n    }" + "\n)" + "\n"
+                return "\nassert(" + "\n    when {" + "\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp_29 + "\n        | " + tmp_30 + "\n        " + tmp_28 + "\n\n        b < a -> b == a" + "\n        | | |" + "\n        | | " + tmp_35 + "\n        | " + tmp_36 + "\n        " + tmp_34 + "\n\n        else -> false" + "\n    }" + "\n)" + "\n"
               }
 )
             }
@@ -143,7 +143,7 @@ fun test4(initial: Boolean, a: Int, b: Int): String {
               val tmp_45: Int = b
               val tmp_46: Boolean = EQEQ(arg0 = tmp_44, arg1 = tmp_45)
               assert(value = tmp_46, lazyMessage = local fun <anonymous>(): String {
-                return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b" + "\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_45 + "\n        | | |    | " + tmp_46 + "\n        | | |    " + tmp_44 + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
+                return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp_40 + "\n\n        a < b -> a == b" + "\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_45 + "\n        | | |    | " + tmp_46 + "\n        | | |    " + tmp_44 + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
               }
 )
             }
@@ -157,13 +157,13 @@ fun test4(initial: Boolean, a: Int, b: Int): String {
                   val tmp_51: Int = a
                   val tmp_52: Boolean = EQEQ(arg0 = tmp_50, arg1 = tmp_51)
                   assert(value = tmp_52, lazyMessage = local fun <anonymous>(): String {
-                    return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n        b < a -> b == a" + "\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_51 + "\n        | | |    | " + tmp_52 + "\n        | | |    " + tmp_50 + "\n        | | " + tmp_48 + "\n        | " + tmp_49 + "\n        " + tmp_47 + "\n        else -> false" + "\n    }" + "\n)" + "\n"
+                    return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp_40 + "\n\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n\n        b < a -> b == a" + "\n        | | |    | |  |" + "\n        | | |    | |  " + tmp_51 + "\n        | | |    | " + tmp_52 + "\n        | | |    " + tmp_50 + "\n        | | " + tmp_48 + "\n        | " + tmp_49 + "\n        " + tmp_47 + "\n\n        else -> false" + "\n    }" + "\n)" + "\n"
                   }
 )
                 }
                 else -> { // BLOCK
                   assert(value = false, lazyMessage = local fun <anonymous>(): String {
-                    return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n        b < a -> b == a" + "\n        | | |" + "\n        | | " + tmp_48 + "\n        | " + tmp_49 + "\n        " + tmp_47 + "\n        else -> false" + "\n    }" + "\n)" + "\n"
+                    return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp_40 + "\n\n        a < b -> a == b" + "\n        | | |" + "\n        | | " + tmp_42 + "\n        | " + tmp_43 + "\n        " + tmp_41 + "\n\n        b < a -> b == a" + "\n        | | |" + "\n        | | " + tmp_48 + "\n        | " + tmp_49 + "\n        " + tmp_47 + "\n\n        else -> false" + "\n    }" + "\n)" + "\n"
                   }
 )
                 }
@@ -173,7 +173,7 @@ fun test4(initial: Boolean, a: Int, b: Int): String {
         }
         else -> { // BLOCK
           assert(value = false, lazyMessage = local fun <anonymous>(): String {
-            return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp_40 + "\n        a < b -> a == b" + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
+            return "\nassert(" + "\n    initial && when {" + "\n    |" + "\n    " + tmp_40 + "\n\n        a < b -> a == b" + "\n        b < a -> b == a" + "\n        else -> false" + "\n    }" + "\n)" + "\n"
           }
 )
         }
