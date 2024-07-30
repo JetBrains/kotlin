@@ -380,7 +380,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                     ?: mapSignatureSkipGeneric(declaration)
             }
 
-        return IrCallableMethod(owner, invokeOpcode, signature, isInterface, declaration.returnType)
+        return IrCallableMethod(owner, invokeOpcode, signature, isInterface, declaration)
     }
 
     // TODO: get rid of this (probably via some special lowering)

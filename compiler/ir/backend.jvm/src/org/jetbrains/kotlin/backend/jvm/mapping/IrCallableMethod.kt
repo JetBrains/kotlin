@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -16,7 +16,7 @@ class IrCallableMethod(
     val invokeOpcode: Int,
     val signature: JvmMethodSignature,
     val isInterfaceMethod: Boolean,
-    val returnType: IrType,
+    val target: IrSimpleFunction,
 ) {
     val asmMethod: Method = signature.asmMethod
 

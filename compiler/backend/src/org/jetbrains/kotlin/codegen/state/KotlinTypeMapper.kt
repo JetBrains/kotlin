@@ -601,14 +601,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return ContainingClassesInfo.forPackageMember(facadeName, implClassName)
         }
 
-        @JvmStatic
-        fun mapUnderlyingTypeOfInlineClassType(kotlinType: KotlinTypeMarker, typeMapper: KotlinTypeMapperBase): Type {
-            val underlyingType = with(typeMapper.typeSystem) {
-                kotlinType.typeConstructor().getUnsubstitutedUnderlyingType()
-            } ?: throw IllegalStateException("There should be underlying type for inline class type: $kotlinType")
-            return typeMapper.mapTypeCommon(underlyingType, TypeMappingMode.DEFAULT)
-        }
-
         private fun getJvmShortName(klass: ClassDescriptor): String {
             return JavaToKotlinClassMap.mapKotlinToJava(getFqName(klass))?.shortClassName?.asString()
                 ?: SpecialNames.safeIdentifier(klass.name).identifier

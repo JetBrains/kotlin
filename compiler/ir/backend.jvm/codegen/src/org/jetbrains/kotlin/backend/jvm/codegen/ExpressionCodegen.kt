@@ -542,10 +542,10 @@ class ExpressionCodegen(
             intrinsic.invoke(expression, this, data)?.let { return it }
         }
 
-        val callee = expression.symbol.owner
-        require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }
+        require(expression.symbol.owner.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${expression.symbol.owner.render()}" }
         val callable = methodSignatureMapper.mapToCallableMethod(expression, irFunction)
         val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
+        val callee = callable.target
 
         val suspensionPointKind = expression.getSuspensionPointKind()
         if (suspensionPointKind != SuspensionPointKind.NEVER) {
@@ -567,7 +567,9 @@ class ExpressionCodegen(
             handleParameter(
                 callee.dispatchReceiverParameter!!,
                 receiver,
-                if (expression.superQualifierSymbol != null) receiver.asmType else callable.owner,
+                // If this method is on `Object` we can't use `receiver.asmType` because it might in fact not even
+                // be a reference type (methods of `Any` can be called directly on primitives).
+                if (expression.superQualifierSymbol != null && callable.owner != OBJECT_TYPE) receiver.asmType else callable.owner,
             )
         }
 
@@ -614,7 +616,7 @@ class ExpressionCodegen(
                 // is methods that do not pass through the state machine generating MethodVisitor, since getting
                 // COROUTINE_SUSPENDED here is still possible; luckily, all those methods are bridges.
                 if (callable.asmMethod.returnType != Type.VOID_TYPE)
-                    MaterialValue(this, callable.asmMethod.returnType, callable.returnType).discard()
+                    MaterialValue(this, callable.asmMethod.returnType, callee.returnType).discard()
                 // don't generate redundant UNIT/pop instructions
                 unitValue
             }
@@ -637,7 +639,7 @@ class ExpressionCodegen(
             callee.resultIsActuallyAny(null) == true ->
                 MaterialValue(this, callable.asmMethod.returnType, context.irBuiltIns.anyNType)
             else ->
-                MaterialValue(this, callable.asmMethod.returnType, callable.returnType)
+                MaterialValue(this, callable.asmMethod.returnType, callee.returnType)
         }
     }
 

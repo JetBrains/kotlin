@@ -197,7 +197,7 @@ public abstract class StackValue {
             @NotNull KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v, @NotNull KotlinTypeMapperBase typeMapper
     ) {
         Type boxed = typeMapper.mapTypeCommon(kotlinType, TypeMappingMode.CLASS_DECLARATION);
-        Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType, typeMapper);
+        Type unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType);
         boolean isNullable = typeMapper.getTypeSystem().isNullableType(kotlinType) && !isPrimitive(unboxed);
         boxInlineClass(unboxed, boxed, isNullable, v);
     }
@@ -232,7 +232,7 @@ public abstract class StackValue {
             @NotNull KotlinTypeMapperBase typeMapper
     ) {
         Type boxed = typeMapper.mapTypeCommon(targetInlineClassType, TypeMappingMode.CLASS_DECLARATION);
-        Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(targetInlineClassType, typeMapper);
+        Type unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(targetInlineClassType);
         boolean isNullable = typeMapper.getTypeSystem().isNullableType(targetInlineClassType) && !isPrimitive(unboxed);
         unboxInlineClass(type, boxed, unboxed, isNullable, v);
     }
@@ -382,7 +382,7 @@ public abstract class StackValue {
     }
 
     private static boolean isUnboxedInlineClass(@NotNull KotlinType kotlinType, @NotNull Type actualType) {
-        return KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType, StaticTypeMapperForOldBackend.INSTANCE).equals(actualType);
+        return StaticTypeMapperForOldBackend.INSTANCE.mapUnderlyingTypeOfInlineClassType(kotlinType).equals(actualType);
     }
 
     public static void coerce(@NotNull Type fromType, @NotNull Type toType, @NotNull InstructionAdapter v) {

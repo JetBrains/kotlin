@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.inlineClassFieldName
 import org.jetbrains.kotlin.backend.jvm.ir.eraseIfTypeParameter
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -34,36 +34,33 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
     open fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
         val erasedSourceType = irType.eraseIfTypeParameter()
         val erasedTargetType = irTarget.eraseIfTypeParameter()
-
-        // Coerce inline classes
-        val isFromTypeUnboxed = InlineClassAbi.unboxType(erasedSourceType)?.let(typeMapper::mapType) == type
-        val isToTypeUnboxed = InlineClassAbi.unboxType(erasedTargetType)?.let(typeMapper::mapType) == target
-        if (isFromTypeUnboxed && !isToTypeUnboxed) {
-            val boxed = typeMapper.mapType(erasedSourceType, TypeMappingMode.CLASS_DECLARATION)
-            StackValue.boxInlineClass(type, boxed, erasedSourceType.isNullable(), mv)
-
-            if (typeMapper.mapType(erasedTargetType) == target) {
-                if (!erasedSourceType.isSubtypeOf(erasedTargetType, codegen.context.typeSystem)) {
-                    StackValue.coerce(boxed, target, mv, false)
-                }
+        val boxedSourceType = erasedSourceType.getBoxedTypeIfInlineClass() ?: type
+        val boxedTargetType = erasedTargetType.getBoxedTypeIfInlineClass() ?: target
+        if (type != boxedSourceType && target == boxedTargetType) {
+            // `unboxed` can be different from `type` for generic inline classes, e.g. in `class IC<T>(val x: T)`
+            // `box-impl` takes an `Object` but if this value is an `IC<String>` then `type` should be `String`.
+            val unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(erasedSourceType)
+            if (type.sort != Type.OBJECT && unboxed.sort == Type.OBJECT) {
+                // The unsubstituted type is a supertype of the substituted type so CHECKCASTs would be redundant,
+                // but primitives might need to be double-boxed first; e.g. if we have an `IC<Int>` in the above
+                // example, it should be stored as `I` in its completely unboxed form, then boxed into `Integer`
+                // before being passed to `IC.box-impl(LObject;)LIC;`.
+                StackValue.coerce(type, unboxed, mv, false)
             }
-
-            return
-        }
-        if (!isFromTypeUnboxed && isToTypeUnboxed) {
-            val boxed = typeMapper.mapType(erasedTargetType, TypeMappingMode.CLASS_DECLARATION)
+            StackValue.boxInlineClass(unboxed, boxedSourceType, erasedSourceType.isNullable(), mv)
+            StackValue.coerce(boxedSourceType, target, mv, false)
+        } else if (type == boxedSourceType && target != boxedTargetType) {
+            val unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(erasedTargetType)
             val irClass = codegen.irFunction.parentAsClass
             if (irClass.isSingleFieldValueClass && irClass.symbol == irType.classifierOrNull && !irType.isNullable()) {
-                // Use getfield instead of unbox-impl inside inline classes
-                codegen.mv.getfield(boxed.internalName, irClass.inlineClassFieldName.asString(), target.descriptor)
+                // Use GETFIELD instead of `unbox-impl` inside inline classes
+                codegen.mv.getfield(boxedTargetType.internalName, irClass.inlineClassFieldName.asString(), unboxed.descriptor)
             } else {
-                StackValue.unboxInlineClass(type, boxed, target, erasedTargetType.isNullable(), mv)
+                StackValue.unboxInlineClass(type, boxedTargetType, unboxed, erasedTargetType.isNullable(), mv)
             }
-            return
-        }
-
-        if (type != target || (castForReified && irType.anyTypeArgument { it.isReified })) {
-            StackValue.coerce(type, target, mv, type == target)
+            StackValue.coerce(unboxed, target, mv, false)
+        } else if (type != target || (castForReified && irType.anyTypeArgument { it.isReified })) {
+            StackValue.coerce(type, target, mv, true)
         }
     }
 
@@ -74,6 +71,11 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
 
     val typeMapper: IrTypeMapper
         get() = codegen.typeMapper
+
+    private fun IrType.getBoxedTypeIfInlineClass(): Type? =
+        if (classOrNull?.owner?.inlineClassRepresentation != null)
+            typeMapper.mapType(this, TypeMappingMode.CLASS_DECLARATION)
+        else null
 }
 
 

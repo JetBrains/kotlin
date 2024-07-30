@@ -22,4 +22,11 @@ abstract class KotlinTypeMapperBase {
 
     fun mapDefaultImpls(descriptor: ClassDescriptor): Type =
         Type.getObjectType(mapClass(descriptor).internalName + JvmAbi.DEFAULT_IMPLS_SUFFIX)
+
+    fun mapUnderlyingTypeOfInlineClassType(kotlinType: KotlinTypeMarker): Type {
+        val underlyingType = with(typeSystem) {
+            kotlinType.typeConstructor().getUnsubstitutedUnderlyingType()
+        } ?: throw IllegalStateException("There should be underlying type for inline class type: $kotlinType")
+        return mapTypeCommon(underlyingType, TypeMappingMode.DEFAULT)
+    }
 }
