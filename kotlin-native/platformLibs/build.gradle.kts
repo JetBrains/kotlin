@@ -65,7 +65,7 @@ val defFileUpdates = mapOf(
         val execOperations = serviceOf<ExecOperations>()
         val logger = logger
         val runKonan = File(kotlinNativeDist.absolutePath).resolve("bin/run_konan")
-        val failIfDefFilesChanged = project.kotlinBuildProperties.isTeamcityBuild && !project.kotlinBuildProperties.getBoolean("kotlin.native.ignore-def-file-changes", false)
+        val failIfDefFilesChanged = project.getBooleanProperty("kotlin.native.fail-on-def-file-changes") ?: false
         doLast {
             val updateDefFileDependencies = {
                 execOperations.exec {
@@ -143,7 +143,7 @@ enabledTargets(platformManager).forEach { target ->
             this.compilerOpts.addAll(
                     "-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}"
             )
-            this.enableParallel.set(project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: true)
+            this.enableParallel.set(project.getBooleanProperty("kotlin.native.platformLibs.parallel") ?: true)
         }
 
         val klibInstallTask = tasks.register(libName, Sync::class.java) {
