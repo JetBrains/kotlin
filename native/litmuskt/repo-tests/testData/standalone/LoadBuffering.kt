@@ -1,4 +1,7 @@
 // KIND: STANDALONE
+// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 
 import kotlin.test.*
 import org.jetbrains.litmuskt.*

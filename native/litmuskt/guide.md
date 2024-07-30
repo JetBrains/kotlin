@@ -12,6 +12,10 @@ This guide is not intended to be complete. Instead, the key points for running a
     * Run `./gradlew :native:native.tests:generateTests`
     * Then run `./gradlew :litmuskt:repo-tests:nativeTest`
   
+## Notes
+
+* The `// IGNORE_NATIVE: ...` lines in all test files are a workaround (for unknown reasons, builds with certain types of cache always fail because they cannot link the cinterop klib).
+
 ## Updating LitmusKt version
 
 In theory, there should have been a git submodule here. In practice, it was decided that no one uses them and it would be simpler to do everything manually.
