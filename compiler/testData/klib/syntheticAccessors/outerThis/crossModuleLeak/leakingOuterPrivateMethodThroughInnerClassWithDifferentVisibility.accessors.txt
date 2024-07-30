@@ -1,1 +1,94 @@
-/* empty dump */
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=Outer.kt */
+
+public open class OuterOnlyInternal
+    public open inner class Inner
+        internal inline fun inlineFoo1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        internal inline fun inlineFoo2(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterOnlyInternal
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterOnlyInternal
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: OuterOnlyInternal
+public open class OuterInternalAndPublic
+    public open inner class Inner
+        internal inline fun inlineFoo1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        public inline fun inlineFoo2(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterInternalAndPublic
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterInternalAndPublic
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: OuterInternalAndPublic
+public open class OuterInternalAndProtected
+    public open inner class Inner
+        internal inline fun inlineFoo1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        protected inline fun inlineFoo2(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterInternalAndProtected
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterInternalAndProtected
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: OuterInternalAndProtected
+public open class OuterInternalAndInternalPA
+    public open inner class Inner
+        internal inline fun inlineFoo1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        internal inline fun inlineFoo2(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterInternalAndInternalPA
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterInternalAndInternalPA
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: OuterInternalAndInternalPA
+public open class OuterOnlyPublic
+    public open inner class Inner
+        public inline fun inlineFoo1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        public inline fun inlineFoo2(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterOnlyPublic
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterOnlyPublic
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: OuterOnlyPublic
+public open class OuterOnlyProtected
+    public open inner class Inner
+        protected inline fun inlineFoo1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        protected inline fun inlineFoo2(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterOnlyProtected
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterOnlyProtected
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: OuterOnlyProtected
+public open class OuterOnlyInternalPA
+    public open inner class Inner
+        internal inline fun inlineFoo1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        internal inline fun inlineFoo2(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterOnlyInternalPA
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterOnlyInternalPA
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: OuterOnlyInternalPA
+public open class OuterAllEffectivelyPublic
+    public open inner class Inner
+        public inline fun inlineFoo1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        protected inline fun inlineFoo2(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        internal inline fun inlineFoo3(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterAllEffectivelyPublic
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterAllEffectivelyPublic
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: OuterAllEffectivelyPublic

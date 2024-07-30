@@ -1,5 +1,3 @@
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
-
 open class OuterOnlyInternal {
     fun foo() = "foo"
     open inner class Inner {

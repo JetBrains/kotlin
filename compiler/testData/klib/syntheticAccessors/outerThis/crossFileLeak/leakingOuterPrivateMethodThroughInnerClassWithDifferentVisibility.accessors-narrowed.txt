@@ -1,6 +1,6 @@
 /* MODULE name=<main> */
 
-/* FILE package=<root> fileName=leakingOuterPrivateMethodThroughInnerClassWithDifferentVisibility.kt */
+/* FILE package=<root> fileName=Outer.kt */
 
 public open class OuterOnlyInternal
     public open inner class Inner
@@ -10,7 +10,7 @@ public open class OuterOnlyInternal
             /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterOnlyInternal
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterOnlyInternal
+        /* ACCESSOR declaration */ internal fun access$<outer-this-0>($this: Inner): OuterOnlyInternal
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: OuterOnlyInternal
 public open class OuterInternalAndPublic

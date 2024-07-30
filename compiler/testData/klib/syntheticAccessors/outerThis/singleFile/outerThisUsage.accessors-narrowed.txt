@@ -51,15 +51,15 @@ public class Outer
                 /* ACCESSOR use-site */ $this.<outer-this-1>()
         /* ACCESSOR declaration */ private fun <outer-this-0>(): Outer
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ public fun access$<get-privatePropertyOfInnerL1>($this: InnerL1): String
+        /* ACCESSOR declaration */ internal fun access$<get-privatePropertyOfInnerL1>($this: InnerL1): String
             /* TARGET use-site */ $this.<get-privatePropertyOfInnerL1>()
-        /* ACCESSOR declaration */ public fun access$privateFunctionOfInnerL1($this: InnerL1): String
+        /* ACCESSOR declaration */ internal fun access$privateFunctionOfInnerL1($this: InnerL1): String
             /* TARGET use-site */ $this.privateFunctionOfInnerL1()
         /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: InnerL1): Outer
             /* ACCESSOR use-site */ $this.<outer-this-0>()
         /* TARGET declaration */ <this>: InnerL1
-    /* ACCESSOR declaration */ public fun access$<get-privatePropertyOfOuter>($this: Outer): String
+    /* ACCESSOR declaration */ internal fun access$<get-privatePropertyOfOuter>($this: Outer): String
         /* TARGET use-site */ $this.<get-privatePropertyOfOuter>()
-    /* ACCESSOR declaration */ public fun access$privateFunctionOfOuter($this: Outer): String
+    /* ACCESSOR declaration */ internal fun access$privateFunctionOfOuter($this: Outer): String
         /* TARGET use-site */ $this.privateFunctionOfOuter()
     /* TARGET declaration */ <this>: Outer

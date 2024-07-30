@@ -8,10 +8,17 @@ public class Outer
         /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
     public inner class Inner
         internal inline fun customVarGetter(): Int
-            /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            /* ACCESSOR use-site */ access$<get-privateVar>($this = access$<outer-this-0>($this = <this>))
         internal inline fun customVarSetter(value: Int)
-            /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = value)
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            /* ACCESSOR use-site */ access$<set-privateVar>($this = access$<outer-this-0>($this = <this>), <set-?> = value)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): Outer
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ internal fun access$<outer-this-0>($this: Inner): Outer
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* ACCESSOR declaration */ internal fun access$<get-privateVar>($this: Outer): Int
         /* TARGET use-site */ $this.<get-privateVar>()
     /* ACCESSOR declaration */ internal fun access$<set-privateVar>($this: Outer, <set-?>: Int)
         /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
+    /* TARGET declaration */ <this>: Outer

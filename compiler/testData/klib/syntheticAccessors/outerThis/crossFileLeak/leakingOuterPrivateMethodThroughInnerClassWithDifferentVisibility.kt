@@ -1,5 +1,3 @@
-// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
-
 // FILE: Outer.kt
 open class OuterOnlyInternal {
     fun foo() = "foo"

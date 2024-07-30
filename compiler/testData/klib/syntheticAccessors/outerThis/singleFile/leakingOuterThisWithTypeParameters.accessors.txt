@@ -1,0 +1,20 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingOuterThisWithTypeParameters.kt */
+
+public class Outer<O : Any?>
+    public inner class InnerL1<I1 : Any?>
+        public inner class InnerL2<I2 : Any?>
+            public inline fun getAll(): Triple<O, I1, I2>
+                /* ACCESSOR use-site */ access$<outer-this-1>($this = <this>)
+                /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            /* ACCESSOR declaration */ private fun <outer-this-0>(): InnerL1<I1, O>
+                /* TARGET use-site */ <this>
+            /* ACCESSOR declaration */ private fun <outer-this-1>(): Outer<O>
+                /* TARGET use-site */ <this>
+            /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: InnerL2<I2, I1, O>): InnerL1<I1, O>
+                /* ACCESSOR use-site */ $this.<outer-this-0>()
+            /* ACCESSOR declaration */ public fun access$<outer-this-1>($this: InnerL2<I2, I1, O>): Outer<O>
+                /* ACCESSOR use-site */ $this.<outer-this-1>()
+        /* TARGET declaration */ <this>: InnerL1<I1, O>
+    /* TARGET declaration */ <this>: Outer<O>

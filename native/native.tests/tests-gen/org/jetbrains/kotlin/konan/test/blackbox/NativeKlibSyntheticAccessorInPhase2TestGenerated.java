@@ -112,6 +112,12 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
       }
 
       @Test
+      @TestMetadata("leakingOuterThisWithTypeParameters.kt")
+      public void testLeakingOuterThisWithTypeParameters() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingOuterThisWithTypeParameters.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt")
       public void testLeakingPrivateConstructorThroughPublicInlineFunInInnerClass() {
         runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak/leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt");
@@ -187,6 +193,12 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
       }
 
       @Test
+      @TestMetadata("leakingOuterThisWithTypeParameters.kt")
+      public void testLeakingOuterThisWithTypeParameters() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingOuterThisWithTypeParameters.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt")
       public void testLeakingPrivateConstructorThroughPublicInlineFunInInnerClass() {
         runTest("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak/leakingPrivateConstructorThroughPublicInlineFunInInnerClass.kt");
@@ -253,6 +265,12 @@ public class NativeKlibSyntheticAccessorInPhase2TestGenerated extends AbstractNa
       @TestMetadata("leakingOuterPrivateVarThroughNestedClass.kt")
       public void testLeakingOuterPrivateVarThroughNestedClass() {
         runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingOuterPrivateVarThroughNestedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingOuterThisWithTypeParameters.kt")
+      public void testLeakingOuterThisWithTypeParameters() {
+        runTest("compiler/testData/klib/syntheticAccessors/outerThis/singleFile/leakingOuterThisWithTypeParameters.kt");
       }
 
       @Test

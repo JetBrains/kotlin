@@ -1,1 +1,65 @@
-/* empty dump */
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=Outer.kt */
+
+public class Outer
+    private val privatePropertyOfOuter: String
+        /* TARGET declaration */ private fun <get-privatePropertyOfOuter>(): String
+    /* TARGET declaration */ private fun privateFunctionOfOuter(): String
+    public inner class InnerL1
+        public inline fun usesPublicPropertyOfOuterInInnerL1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        internal inline fun usesPrivatePropertyOfOuterInInnerL1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            /* ACCESSOR use-site */ access$<get-privatePropertyOfOuter>($this = access$<outer-this-0>($this = <this>))
+        public inline fun usesPublicFunctionOfOuterInInnerL1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+        internal inline fun usesPrivateFunctionOfOuterInInnerL1(): String
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            /* ACCESSOR use-site */ access$privateFunctionOfOuter($this = access$<outer-this-0>($this = <this>))
+        private val privatePropertyOfInnerL1: String
+            /* TARGET declaration */ private fun <get-privatePropertyOfInnerL1>(): String
+        /* TARGET declaration */ private fun privateFunctionOfInnerL1(): String
+        public inner class InnerL2
+            public inline fun usesPublicPropertyOfOuterInInnerL2(): String
+                /* ACCESSOR use-site */ access$<outer-this-1>($this = <this>)
+            internal inline fun usesPrivatePropertyOfOuterInInnerL2(): String
+                /* ACCESSOR use-site */ access$<outer-this-1>($this = <this>)
+                /* ACCESSOR use-site */ access$<get-privatePropertyOfOuter>($this = access$<outer-this-1>($this = <this>))
+            public inline fun usesPublicFunctionOfOuterInInnerL2(): String
+                /* ACCESSOR use-site */ access$<outer-this-1>($this = <this>)
+            internal inline fun usesPrivateFunctionOfOuterInInnerL2(): String
+                /* ACCESSOR use-site */ access$<outer-this-1>($this = <this>)
+                /* ACCESSOR use-site */ access$privateFunctionOfOuter($this = access$<outer-this-1>($this = <this>))
+            public inline fun usesPublicPropertyOfInnerL1InInnerL2(): String
+                /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            internal inline fun usesPrivatePropertyOfInnerL1InInnerL2(): String
+                /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+                /* ACCESSOR use-site */ access$<get-privatePropertyOfInnerL1>($this = access$<outer-this-0>($this = <this>))
+            public inline fun usesPublicFunctionOfInnerL1InInnerL2(): String
+                /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            internal inline fun usesPrivateFunctionOfInnerL1InInnerL2(): String
+                /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+                /* ACCESSOR use-site */ access$privateFunctionOfInnerL1($this = access$<outer-this-0>($this = <this>))
+            /* ACCESSOR declaration */ private fun <outer-this-0>(): InnerL1
+                /* TARGET use-site */ <this>
+            /* ACCESSOR declaration */ private fun <outer-this-1>(): Outer
+                /* TARGET use-site */ <this>
+            /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: InnerL2): InnerL1
+                /* ACCESSOR use-site */ $this.<outer-this-0>()
+            /* ACCESSOR declaration */ public fun access$<outer-this-1>($this: InnerL2): Outer
+                /* ACCESSOR use-site */ $this.<outer-this-1>()
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): Outer
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<get-privatePropertyOfInnerL1>($this: InnerL1): String
+            /* TARGET use-site */ $this.<get-privatePropertyOfInnerL1>()
+        /* ACCESSOR declaration */ public fun access$privateFunctionOfInnerL1($this: InnerL1): String
+            /* TARGET use-site */ $this.privateFunctionOfInnerL1()
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: InnerL1): Outer
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+        /* TARGET declaration */ <this>: InnerL1
+    /* ACCESSOR declaration */ public fun access$<get-privatePropertyOfOuter>($this: Outer): String
+        /* TARGET use-site */ $this.<get-privatePropertyOfOuter>()
+    /* ACCESSOR declaration */ public fun access$privateFunctionOfOuter($this: Outer): String
+        /* TARGET use-site */ $this.privateFunctionOfOuter()
+    /* TARGET declaration */ <this>: Outer

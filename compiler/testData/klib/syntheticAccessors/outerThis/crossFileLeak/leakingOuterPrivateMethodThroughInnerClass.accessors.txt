@@ -6,6 +6,12 @@ public class Outer
     /* TARGET declaration */ private fun privateMethod(): String
     public inner class Inner
         internal inline fun internalMethod(): String
-            /* ACCESSOR use-site */ access$privateMethod($this = <this>)
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            /* ACCESSOR use-site */ access$privateMethod($this = access$<outer-this-0>($this = <this>))
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): Outer
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): Outer
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* ACCESSOR declaration */ public fun access$privateMethod($this: Outer): String
         /* TARGET use-site */ $this.privateMethod()
+    /* TARGET declaration */ <this>: Outer
