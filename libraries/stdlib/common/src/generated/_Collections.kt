@@ -1714,6 +1714,8 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
  * in the order of the [other] collection.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
+ * 
+ * @sample samples.collections.Collections.BinaryOperations.unionOfGeneric
  */
 public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
