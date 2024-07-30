@@ -464,6 +464,12 @@ public class SymbolLightClassesEqualityByFqNameForLibraryTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("DelegatedProperty.kt")
+    public void testDelegatedProperty() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/DelegatedProperty.kt");
+    }
+
+    @Test
     @TestMetadata("FunctionTypeParameterAnnotation.kt")
     public void testFunctionTypeParameterAnnotation() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/FunctionTypeParameterAnnotation.kt");

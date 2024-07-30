@@ -577,6 +577,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/AllPrivate.kt");
     }
 
+    @TestMetadata("DelegatedProperty.kt")
+    public void testDelegatedProperty() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/DelegatedProperty.kt");
+    }
+
     @TestMetadata("FunctionTypeParameterAnnotation.kt")
     public void testFunctionTypeParameterAnnotation() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/FunctionTypeParameterAnnotation.kt");
