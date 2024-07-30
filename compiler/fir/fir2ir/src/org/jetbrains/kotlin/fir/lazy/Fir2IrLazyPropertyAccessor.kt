@@ -102,7 +102,6 @@ class Fir2IrLazyPropertyAccessor(
                             ),
                             parent = this@Fir2IrLazyPropertyAccessor,
                             firValueParameter = valueParameter,
-                            name = valueParameter?.name,
                             isCrossinline = valueParameter?.isCrossinline == true,
                             isNoinline = valueParameter?.isNoinline == true
                         )
