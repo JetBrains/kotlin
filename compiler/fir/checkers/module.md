@@ -57,7 +57,7 @@ There is a number of different container groups:
     - Native:
         - [NativeDeclarationCheckers](./checkers.native/src/org/jetbrains/kotlin/fir/analysis/native/checkers/NativeDeclarationCheckers.kt)
         - [NativeExpressionCheckers](./checkers.native/src/org/jetbrains/kotlin/fir/analysis/native/checkers/NativeExpressionCheckers.kt)
-- Extra checkers. Those checkers are disabled by default and can be enabled with the `-Xuse-fir-extra-checkers` compiler flag. This group includes not very performant checkers, which are not crucial for regular compilation
+- Extra checkers. Those checkers are disabled by default and can be enabled with the `-Wextra` compiler flag. This group includes not very performant checkers, which are not crucial for regular compilation
     - [ExtraDeclarationCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraDeclarationCheckers.kt)
     - [ExtraExpressionCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraExpressionCheckers.kt)
     - [ExtraTypeCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraTypeCheckers.kt)

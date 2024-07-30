@@ -227,8 +227,6 @@ where advanced options include:
                              Suppress specified warning module-wide.
   -Xunrestricted-builder-inference
                              Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
-  -Xuse-fir-extra-checkers   Use extended analysis mode based on the frontend IR.
-                             Warning: This feature is not yet production-ready.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.

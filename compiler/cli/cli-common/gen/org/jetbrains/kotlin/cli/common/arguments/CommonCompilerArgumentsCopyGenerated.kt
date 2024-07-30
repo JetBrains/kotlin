@@ -78,8 +78,8 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.suppressedDiagnostics = from.suppressedDiagnostics?.copyOf()
     to.unrestrictedBuilderInference = from.unrestrictedBuilderInference
     to.useExperimental = from.useExperimental?.copyOf()
-    to.useFirExtraCheckers = from.useFirExtraCheckers
     to.useFirExperimentalCheckers = from.useFirExperimentalCheckers
+    to.useFirExtraCheckers = from.useFirExtraCheckers
     to.useFirIC = from.useFirIC
     to.useFirLT = from.useFirLT
     to.useK2 = from.useK2
