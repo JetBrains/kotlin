@@ -1,0 +1,30 @@
+KaNamedClassSymbol:
+  annotations: []
+  classId: JavaClass
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Unknown
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: OPEN
+  name: JavaClass
+  origin: JAVA_SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: UNKNOWN
+  getContainingFileSymbol: null
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null

@@ -183,7 +183,7 @@ internal object FirAnnotationValueConverter {
             }
 
             is FirGetClassCall -> {
-                val coneType = getTargetType()?.fullyExpandedType(session)
+                val coneType = getTargetType()?.fullyExpandedType(session)?.lowerBoundIfFlexible()
 
                 if (coneType is ConeClassLikeType && coneType !is ConeErrorType) {
                     val classId = coneType.lookupTag.classId
