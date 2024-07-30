@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.isValueClass
@@ -205,6 +206,7 @@ abstract class DeclarationStubGenerator(
             ).generateParentDeclaration().also {
                 it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
                 it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
+                it.valueParameters = it.createValueParameters()
             }
         }
     }
@@ -228,13 +230,39 @@ abstract class DeclarationStubGenerator(
             ).generateParentDeclaration().also {
                 it.dispatchReceiverParameter = it.createReceiverParameter(descriptor.dispatchReceiverParameter)
                 it.extensionReceiverParameter = it.createReceiverParameter(descriptor.extensionReceiverParameter)
+                it.valueParameters = it.createValueParameters()
             }
         }
     }
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor, index: Int): IrValueParameter = with(descriptor) {
+    private fun IrLazyFunctionBase.createValueParameters(): List<IrValueParameter> =
+        typeTranslator.buildWithScope(this) {
+            val result = arrayListOf<IrValueParameter>()
+            descriptor.contextReceiverParameters.mapIndexedTo(result) { i, contextReceiverParameter ->
+                factory.createValueParameter(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = origin,
+                    name = Name.identifier("contextReceiverParameter$i"),
+                    type = contextReceiverParameter.type.toIrType(),
+                    isAssignable = false,
+                    symbol = IrValueParameterSymbolImpl(contextReceiverParameter),
+                    index = i,
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false,
+                ).apply { parent = this@createValueParameters }
+            }
+            descriptor.valueParameters.mapTo(result) {
+                stubGenerator.generateValueParameterStub(it, it.index + descriptor.contextReceiverParameters.size)
+                    .apply { parent = this@createValueParameters }
+            }
+        }
+
+    private fun generateValueParameterStub(descriptor: ValueParameterDescriptor, index: Int): IrValueParameter = with(descriptor) {
         IrLazyValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name, index,
             type, varargElementType,

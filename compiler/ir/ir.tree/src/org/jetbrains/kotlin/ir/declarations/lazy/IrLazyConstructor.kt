@@ -48,7 +48,7 @@ class IrLazyConstructor(
 
     override var extensionReceiverParameter: IrValueParameter? = null
 
-    override var valueParameters: List<IrValueParameter> by lazyVar(stubGenerator.lock) { createValueParameters() }
+    override var valueParameters: List<IrValueParameter> = emptyList()
 
     override var contextReceiverParametersCount: Int = descriptor.contextReceiverParameters.size
 
