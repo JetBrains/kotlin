@@ -1,4 +1,4 @@
-depends =
+depends = bar
 package = platform.posix
 headers = alloca.h ar.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcntl.h \
     fenv.h float.h fnmatch.h fts.h ftw.h getopt.h grp.h inttypes.h libgen.h limits.h \
