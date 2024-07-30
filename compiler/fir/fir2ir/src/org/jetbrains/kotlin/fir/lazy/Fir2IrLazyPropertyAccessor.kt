@@ -66,19 +66,6 @@ class Fir2IrLazyPropertyAccessor(
         if (isSetter) builtins.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
     }
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        val containingClass = (parent as? IrClass)?.takeUnless { it.isFacadeClass }
-        if (containingClass != null && shouldHaveDispatchReceiver(containingClass)) {
-            createThisReceiverParameter(thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"))
-        } else null
-    }
-
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        firParentProperty.receiverParameter?.let {
-            createThisReceiverParameter(it.typeRef.toIrType(typeConverter, conversionTypeContext), it)
-        }
-    }
-
     override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
 
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {

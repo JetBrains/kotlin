@@ -50,25 +50,6 @@ class Fir2IrLazySimpleFunction(
         fir.symbol.resolvedReturnTypeRef.toIrType(typeConverter)
     }
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        val containingClass = parent as? IrClass
-        if (containingClass != null && shouldHaveDispatchReceiver(containingClass)) {
-            val thisType = Fir2IrCallableDeclarationsGenerator.computeDispatchReceiverType(
-                this,
-                fir,
-                containingClass,
-                c
-            )
-            createThisReceiverParameter(thisType ?: error("No dispatch receiver receiver for function"))
-        } else null
-    }
-
-    override var extensionReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        fir.receiverParameter?.let {
-            createThisReceiverParameter(it.typeRef.toIrType(typeConverter), it)
-        }
-    }
-
     override var contextReceiverParametersCount: Int = fir.contextReceiversForFunctionOrContainingProperty().size
 
     override var valueParameters: List<IrValueParameter> by lazyVar(lock) {

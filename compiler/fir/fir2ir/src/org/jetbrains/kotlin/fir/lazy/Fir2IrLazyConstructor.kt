@@ -83,20 +83,7 @@ class Fir2IrLazyConstructor(
         fir.returnTypeRef.toIrType(typeConverter)
     }
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
-        val containingClass = parent as? IrClass
-        val outerClass = containingClass?.parentClassOrNull
-        if (containingClass?.isInner == true && outerClass != null) {
-            declarationStorage.enterScope(this.symbol)
-            declareThisReceiverParameter(
-                c,
-                thisType = outerClass.thisReceiver!!.type,
-                thisOrigin = origin
-            ).apply {
-                declarationStorage.leaveScope(this@Fir2IrLazyConstructor.symbol)
-            }
-        } else null
-    }
+    override var dispatchReceiverParameter: IrValueParameter? = null
 
     override var extensionReceiverParameter: IrValueParameter? = null
 

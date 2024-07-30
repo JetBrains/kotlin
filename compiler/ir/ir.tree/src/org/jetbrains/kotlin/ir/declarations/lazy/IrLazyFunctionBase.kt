@@ -63,15 +63,6 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
             }
         }
 
-    fun createReceiverParameter(
-        parameter: ReceiverParameterDescriptor?,
-        functionDispatchReceiver: Boolean = false,
-    ): IrValueParameter? =
-        if (functionDispatchReceiver && stubGenerator.extensions.isStaticFunction(descriptor)) null
-        else typeTranslator.buildWithScope(this) {
-            parameter?.generateReceiverParameterStub()?.also { it.parent = this@IrLazyFunctionBase }
-        }
-
     fun createReturnType(): IrType =
         typeTranslator.buildWithScope(this) {
             descriptor.returnType!!.toIrType()
