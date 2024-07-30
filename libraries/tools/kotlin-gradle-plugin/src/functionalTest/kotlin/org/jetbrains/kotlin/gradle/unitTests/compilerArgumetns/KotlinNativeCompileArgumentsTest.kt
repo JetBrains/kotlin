@@ -228,13 +228,20 @@ class KotlinNativeCompileArgumentsTest {
             "org.jetbrains.kotlin.native.platform.$it"
         }.toSet()
 
-        val expectedDependencies = expectedPlatformDependencies + listOf("stdlib")
+        val expectedNativeDependencies = expectedPlatformDependencies
+
+        val actualNativeDependencies = nativeCompilation.nativeDistributionDependencies
+            .files
+            .map { it.name }
+            .toSet()
+
+        assertEquals(expectedNativeDependencies, actualNativeDependencies)
 
         val actualDependencies = nativeCompilation.compileDependencyFiles
             .map { it.name }
             .toSet()
 
-        assertEquals(expectedDependencies, actualDependencies)
+        assertEquals(setOf("stdlib"), actualDependencies)
     }
 
     @Test
@@ -264,14 +271,14 @@ class KotlinNativeCompileArgumentsTest {
                 if (!file.path.contains("platform${File.separator}$target")) fail("File $file is expected to be a platform dependency of $target")
             }
         }
-        compileLinuxX64.excludeOriginalPlatformLibraries.assertIsPlatformDependencies("linux_x64")
-        compileLinuxArm64.excludeOriginalPlatformLibraries.assertIsPlatformDependencies("linux_arm64")
-        if (compileLinuxMainMetadata.excludeOriginalPlatformLibraries != null) fail(
+        compileLinuxX64.originalPlatformLibraries().assertIsPlatformDependencies("linux_x64")
+        compileLinuxArm64.originalPlatformLibraries().assertIsPlatformDependencies("linux_arm64")
+        if (compileLinuxMainMetadata.originalPlatformLibraries() != null) fail(
             "Native metadata compilation should not exclude platform libraries because they are coming from commonizer. " +
                     "And is not included by default by Kotlin/Native compiler like default platform libraries."
         )
-        linkLinuxX64.excludeOriginalPlatformLibraries.assertIsPlatformDependencies("linux_x64")
-        linkLinuxArm64.excludeOriginalPlatformLibraries.assertIsPlatformDependencies("linux_arm64")
+        linkLinuxX64.originalPlatformLibraries().assertIsPlatformDependencies("linux_x64")
+        linkLinuxArm64.originalPlatformLibraries().assertIsPlatformDependencies("linux_arm64")
 
         fun Array<String>?.assertFilePathsDontContain(pathSubString: String) {
             if (this == null) return

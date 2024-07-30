@@ -343,10 +343,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @DisplayName("with native dependencies downloader")
     @NativeGradlePluginTests
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_4,
-        additionalVersions = [TestVersions.Gradle.G_7_6],
-    )
     @GradleTest
     fun testNativeBundleDownloadForConfigurationCache(gradleVersion: GradleVersion, @TempDir konanDirTemp: Path) {
         nativeProject(
@@ -355,8 +351,10 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                     version = TestVersions.Kotlin.STABLE_RELEASE,
                     distributionDownloadFromMaven = true,
                 ),
-                konanDataDir = konanDirTemp
-            )
+                konanDataDir = konanDirTemp,
+            ),
+            forceOutput = true,
+            enableGradleDebug = true
         ) {
             testConfigurationCacheOf(":assemble")
         }

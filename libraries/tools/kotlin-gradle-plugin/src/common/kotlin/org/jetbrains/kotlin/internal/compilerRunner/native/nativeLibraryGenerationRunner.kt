@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
+import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
@@ -21,28 +23,30 @@ internal fun ObjectFactory.KotlinNativeLibraryGenerationRunner(
     metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     useXcodeMessageStyle: Provider<Boolean>,
-    nativeProperties: NativeProperties,
-    konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
+    classpath: FileCollection,
+    jvmArgs: ListProperty<String>,
+    environmentBlacklist: Provider<Set<String>>,
 ): KotlinNativeToolRunner = newInstance(
     metricsReporter,
     classLoadersCachingBuildService,
-    kotlinToolSpec(useXcodeMessageStyle, nativeProperties, konanPropertiesBuildService)
+    kotlinToolSpec(useXcodeMessageStyle, classpath, jvmArgs, environmentBlacklist)
 )
 
 private fun ObjectFactory.kotlinToolSpec(
     useXcodeMessageStyle: Provider<Boolean>,
-    nativeProperties: NativeProperties,
-    konanPropertiesBuildService: Provider<KonanPropertiesBuildService>
+    classpath: FileCollection,
+    jvmArgs: ListProperty<String>,//nativeProperties.jvmArgs
+    environmentBlacklist: Provider<Set<String>>,
 ) = KotlinNativeToolRunner.ToolSpec(
     displayName = property("generatePlatformLibraries"),
     optionalToolName = property("generatePlatformLibraries"),
     mainClass = nativeMainClass,
     daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
-    classpath = nativeCompilerClasspath(nativeProperties.actualNativeHomeDirectory, nativeProperties.shouldUseEmbeddableCompilerJar),
-    jvmArgs = listProperty<String>().value(nativeProperties.jvmArgs),
+    classpath = classpath,
+    jvmArgs = listProperty<String>().value(jvmArgs),
     shouldPassArgumentsViaArgFile = property(false),
     systemProperties = nativeExecSystemProperties(useXcodeMessageStyle),
     environment = nativeExecLLVMEnvironment,
-    environmentBlacklist = konanPropertiesBuildService.get().environmentBlacklist,
+    environmentBlacklist = environmentBlacklist.get(),
 ).enableAssertions()
     .configureDefaultMaxHeapSize()

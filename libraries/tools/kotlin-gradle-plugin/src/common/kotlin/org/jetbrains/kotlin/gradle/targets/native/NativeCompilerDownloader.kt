@@ -14,6 +14,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
+import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
@@ -88,7 +89,8 @@ class NativeCompilerDownloader(
         }
 
         private fun getDependencyName(project: Project): String {
-            val dependencySuffix = NativeDistributionTypeProvider(project).getDistributionType().suffix
+            val dependencySuffix =
+                NativeDistributionTypeProvider(PropertiesProvider(project).nativeDistributionType).getDistributionType().suffix
             return if (dependencySuffix != null) {
                 "kotlin-native-$dependencySuffix"
             } else {
@@ -280,18 +282,24 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
         logger.info("User-provided Kotlin/Native distribution: ${nativeProperties.userProvidedNativeHome.orNull}")
     }
 
-    val distributionType = NativeDistributionTypeProvider(project).getDistributionType()
+    val distributionType = NativeDistributionTypeProvider(PropertiesProvider(project).nativeDistributionType).getDistributionType()
     if (distributionType.mustGeneratePlatformLibs) {
+        val nativeProperties = project.nativeProperties
+        val konanPropertiesBuildService = project.konanPropertiesBuildService
         PlatformLibrariesGenerator(
             project.objects,
             konanTarget,
-            project.kotlinPropertiesProvider,
-            project.konanPropertiesBuildService,
+            project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel,
+            konanPropertiesBuildService,
             project.objects.property(GradleBuildMetricsReporter()),
             ClassLoadersCachingBuildService.registerIfAbsent(project),
             PlatformLibrariesGenerator.registerRequiredServiceIfAbsent(project),
             project.useXcodeMessageStyle,
-            project.nativeProperties
+            project.objects.nativeCompilerClasspath(nativeProperties.actualNativeHomeDirectory, nativeProperties.shouldUseEmbeddableCompilerJar),
+            project.listProperty { nativeProperties.jvmArgs.get() },
+            nativeProperties.actualNativeHomeDirectory,
+            project.provider { nativeProperties.konanDataDir.orNull?.absolutePath },
+            nativeProperties.getKonanCacheKind(konanTarget, konanPropertiesBuildService)
         ).generatePlatformLibsIfNeeded()
     }
 }

@@ -47,6 +47,7 @@ internal fun Project.setupCInteropPropagatedDependencies() {
     val kotlin = this.multiplatformExtensionOrNull ?: return
 
     kotlin.forAllSharedNativeCompilations { compilation ->
+//        compilation.compileDependencyFiles += compilation.nativeDistributionDependencies.get()
         compilation.compileDependencyFiles += getPropagatedCInteropDependenciesOrEmpty(compilation)
     }
 

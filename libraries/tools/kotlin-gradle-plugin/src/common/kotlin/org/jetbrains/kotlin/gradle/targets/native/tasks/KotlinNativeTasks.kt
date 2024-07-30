@@ -25,6 +25,8 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.commonizer.KonanDistribution
+import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
@@ -123,6 +125,9 @@ internal fun MutableList<String>.addFileArgs(parameter: String, values: FileColl
  */
 private val File.canKlibBePassedToCompiler get() = (extension == "klib" || isDirectory) && exists()
 
+/**
+ * [File.exists] is called on files, it could leads to issues with configuration cache
+ */
 internal fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter(File::canKlibBePassedToCompiler)
 
 // endregion
@@ -168,6 +173,9 @@ abstract class AbstractKotlinNativeCompile<
             is KotlinCompilationInfo.TCS -> (compilation.compilation as AbstractKotlinNativeCompilation).konanTarget
         }
     }
+
+    @get:Internal
+    internal val konanDistribution = project.nativeProperties.actualNativeHomeDirectory
 
     @get:Internal
     internal val enabledOnCurrentHostForKlibCompilationProperty: Property<Boolean> = project.objects.property<Boolean>().convention(
@@ -360,7 +368,7 @@ internal constructor(
         message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
-    val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
+    val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
 
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
@@ -441,16 +449,6 @@ internal constructor(
 
     // endregion.
 
-    /**
-     * This is utility property that contains list of native platform dependencies that are present in [compileDependencyFiles]
-     * but should be excluded from actual classpath because they are included by default by Kotlin Native Compiler.
-     * this behaviour will be fixed as part of KT-65232
-     */
-    @get:InputFiles
-    @get:Optional
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal var excludeOriginalPlatformLibraries: FileCollection? = null
-
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
     override fun setupCompilerArgs(args: K2NativeCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
@@ -505,7 +503,15 @@ internal constructor(
 
         dependencyClasspath { args ->
             args.libraries = runSafe {
-                libraries.exclude(excludeOriginalPlatformLibraries).files.filterKlibsPassedToCompiler().toPathsArray()
+                //filterKlibsPassedToCompiler call exists on files
+                val filteredLibraries = libraries.exclude(originalPlatformLibraries()).files.filterKlibsPassedToCompiler().toMutableList()
+                when (val compilation = compilation) {
+                    is KotlinCompilationInfo.TCS ->
+                        filteredLibraries.addAll(
+                            (compilation.compilation as AbstractKotlinNativeCompilation).nativeDistributionDependencies.exclude(originalPlatformLibraries()).files
+                        )
+                }
+                filteredLibraries.toPathsArray()
             }
             args.friendModules = runSafe {
                 friendModule.files.takeIf { it.isNotEmpty() }?.map { it.absolutePath }?.joinToString(File.pathSeparator)
@@ -531,6 +537,18 @@ internal constructor(
     internal val isMetadataCompilation: Boolean = when (compilation) {
         is KotlinCompilationInfo.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
     }
+
+    /**
+     * Retuns list of native platform dependencies that are present in [compileDependencyFiles]
+     * but should be excluded from actual classpath because they are included by default by Kotlin Native Compiler.
+     * this behaviour will be fixed as part of KT-65232
+     */
+    internal fun originalPlatformLibraries() =
+        if (isMetadataCompilation) {
+            null
+        } else {
+            objectFactory.fileCollection().from(KonanDistribution(konanDistribution.get()).platformLibsDir.resolve(konanTarget.name))
+        }
 
     private fun createSharedCompilationDataOrNull(): SharedCompilationData? {
         if (!isMetadataCompilation) return null
@@ -783,7 +801,7 @@ internal class CacheBuilder(
         val optimized: Boolean,
         val konanDataDir: Provider<File>,
         val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
-        val forceDisableRunningInProcess: Provider<Boolean>
+        val forceDisableRunningInProcess: Provider<Boolean>,
     ) {
         val rootCacheDirectory
             get() = getRootCacheDirectory(
@@ -1128,7 +1146,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
         message = "This property will be removed in future releases. Don't use it in your code.",
     )
     @get:Internal
-    val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
+    val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
 
     private val shouldUseEmbeddableCompilerJar = project.nativeProperties.shouldUseEmbeddableCompilerJar
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
