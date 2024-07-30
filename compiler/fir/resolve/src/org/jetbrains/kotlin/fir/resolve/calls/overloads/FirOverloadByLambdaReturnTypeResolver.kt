@@ -51,7 +51,7 @@ class FirOverloadByLambdaReturnTypeResolver(
         call: T,
         reducedCandidates: Set<Candidate>,
         allCandidates: Collection<Candidate>
-    ): Set<Candidate>? where T : FirResolvable, T : FirExpression {
+    ): Set<Candidate>? where T : FirResolvable, T : FirExpression { // here
         val candidatesWithAnnotation = allCandidates.filter { candidate ->
             (candidate.symbol.fir as FirAnnotationContainer).annotations.any {
                 it.annotationTypeRef.coneType.classId == OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
