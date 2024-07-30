@@ -12,17 +12,17 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class UniqueChecker(
+class UniqueCheckerData(
     override val session: FirSession,
     override val config: PluginConfiguration,
     override val errorCollector: ErrorCollector,
-) :
-    UniqueCheckerContext {
+    override val uniqueStack: ArrayDeque<ArrayDeque<PathUnique>> = ArrayDeque(),
+) : UniqueCheckerContext {
 
     private fun getAnnotationId(name: String): ClassId =
         ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlin", "formver", "plugin")), Name.identifier(name))
 
-    private val uniqueId: ClassId
+    override val uniqueId: ClassId
         get() = getAnnotationId("Unique")
 
     override fun resolveUniqueAnnotation(declaration: FirDeclaration): UniqueLevel {

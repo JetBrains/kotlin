@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.text
 
 class UniqueDeclarationChecker(private val session: FirSession, private val config: PluginConfiguration) :
     FirSimpleFunctionChecker(MppCheckerKind.Common) {
@@ -20,9 +22,10 @@ class UniqueDeclarationChecker(private val session: FirSession, private val conf
         if (!config.checkUniqueness) return
         val errorCollector = ErrorCollector()
         try {
-            val uniqueCheckerContext = UniqueChecker(session, config, errorCollector)
-            declaration.accept(UniquenessCheckExceptionWrapper, uniqueCheckerContext)
+            val cfaChecker = UniqueCFA(UniqueCheckerData(session, config, errorCollector))
+            declaration.controlFlowGraphReference?.controlFlowGraph?.let { cfaChecker.analyze(it, reporter, context) }
         } catch (e: Exception) {
+            errorCollector.addErrorInfo("... while checking uniqueness level for ${declaration.source.text}")
             val error = errorCollector.formatErrorWithInfos(e.message ?: "No message provided")
             reporter.reportOn(declaration.source, PluginErrors.UNIQUENESS_VIOLATION, error, context)
         }

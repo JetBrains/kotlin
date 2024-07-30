@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":kotlin-formver-compiler-plugin.common"))
+    compileOnly(project(":compiler:fir:checkers"))
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:plugin-utils"))

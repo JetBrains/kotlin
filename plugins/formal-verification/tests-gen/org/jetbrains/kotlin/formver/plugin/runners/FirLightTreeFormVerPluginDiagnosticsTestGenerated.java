@@ -557,6 +557,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
       public void testShared_to_shared() {
         runTest("plugins/formal-verification/testData/diagnostics/uniqueness/good_unique/shared_to_shared.kt");
       }
+
+      @Test
+      @TestMetadata("unique_to_unique.kt")
+      public void testUnique_to_unique() {
+        runTest("plugins/formal-verification/testData/diagnostics/uniqueness/good_unique/unique_to_unique.kt");
+      }
     }
   }
 }
