@@ -87,7 +87,7 @@ fun subprojectTasks(taskName: String): List<String> =
 
 fun includedBuildTasks(taskName: String, filter: (IncludedBuild) -> Boolean = { true }): List<TaskReference> =
     gradle.includedBuilds
-        .filter { it.name != "build-logic" }
+        .filter { it.name != "build-logic" && it.name != "build-settings-logic" }
         .filter(filter)
         .mapNotNull { it.task(":$taskName") }
 
