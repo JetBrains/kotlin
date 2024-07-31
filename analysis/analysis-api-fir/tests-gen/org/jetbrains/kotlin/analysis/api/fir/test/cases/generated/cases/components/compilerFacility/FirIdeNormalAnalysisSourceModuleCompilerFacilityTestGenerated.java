@@ -140,6 +140,24 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("duplicateLibrary2.kt")
+    public void testDuplicateLibrary2() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary2.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateLibrary3.kt")
+    public void testDuplicateLibrary3() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary3.kt");
+    }
+
+    @Test
+    @TestMetadata("duplicateLibrary4.kt")
+    public void testDuplicateLibrary4() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/duplicateLibrary4.kt");
+    }
+
+    @Test
     @TestMetadata("fragmentFunction.kt")
     public void testFragmentFunction() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/fragmentFunction.kt");

@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
+package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -21,7 +22,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 /**
  * **Note**: the signature doesn't contain a name. This check should be done externally.
  */
-internal class FirCallableSignature private constructor(
+@KaImplementationDetail
+class FirCallableSignature private constructor(
     private val receiverType: String?,
     private val contextReceiverTypes: List<String>,
     private val parameters: List<String>?,
