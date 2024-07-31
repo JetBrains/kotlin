@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.wasm.test
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
@@ -182,7 +182,7 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
 
         val compilerXmlOutput = ByteArrayOutputStream()
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            K2JsIrCompiler().execFullPathsInMessages(printStream, allCompilerArgs)
+            K2JSCompiler().execFullPathsInMessages(printStream, allCompilerArgs)
         }
 
         if (exitCode != ExitCode.OK)

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.isIrBackendEnabled
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -194,7 +194,7 @@ class IncrementalJsCompilerRunner(
     ): Pair<ExitCode, Collection<File>> {
         val freeArgsBackup = args.freeArgs
 
-        val compiler = K2JsIrCompiler()
+        val compiler = K2JSCompiler()
         return try {
             args.freeArgs += sourcesToCompile.map { it.absolutePath }
             compiler.exec(messageCollector, services, args) to sourcesToCompile

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerEdition.CURRENT
@@ -232,7 +232,7 @@ private class ModuleDetails(val name: ModuleName, val outputDir: File) {
 private fun releasedCompilerCall(): (PrintStream, Array<String>) -> ExitCode {
     val releasedCompiler = JsKlibTestSettings.releasedJsCompiler
 
-    val compilerClass = Class.forName("org.jetbrains.kotlin.cli.js.K2JsIrCompiler", true, releasedCompiler.classLoader)
+    val compilerClass = Class.forName("org.jetbrains.kotlin.cli.js.K2JSCompiler", true, releasedCompiler.classLoader)
     val entryPoint = compilerClass.getMethod(
         "execFullPathsInMessages",
         PrintStream::class.java,
@@ -246,7 +246,7 @@ private fun releasedCompilerCall(): (PrintStream, Array<String>) -> ExitCode {
 }
 
 private fun currentCompilerCall() = { printStream: PrintStream, args: Array<String> ->
-    K2JsIrCompiler().execFullPathsInMessages(printStream, args)
+    K2JSCompiler().execFullPathsInMessages(printStream, args)
 }
 
 internal class ReleasedJsCompiler(private val jsHome: ReleasedJsArtifactsHome) {

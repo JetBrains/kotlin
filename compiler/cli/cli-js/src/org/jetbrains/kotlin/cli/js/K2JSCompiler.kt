@@ -98,10 +98,10 @@ private class DisposableZipFileSystemAccessor private constructor(
     }
 }
 
-class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
-    class K2JsIrCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JS (IR) Compiler")
+class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
+    class K2JSCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JS Compiler")
 
-    override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2JsIrCompilerPerformanceManager()
+    override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2JSCompilerPerformanceManager()
 
     override fun createArguments(): K2JSCompilerArguments {
         return K2JSCompilerArguments()
@@ -914,7 +914,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            doMain(K2JsIrCompiler(), args)
+            doMain(K2JSCompiler(), args)
         }
 
         private fun reportCompiledSourcesList(messageCollector: MessageCollector, sourceFiles: List<KtFile>) {

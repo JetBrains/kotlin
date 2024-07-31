@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.multiplatform
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -56,7 +56,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
                 appendLine()
                 appendLine("-- JS --")
                 appendLine(
-                    K2JsIrCompiler().compile(
+                    K2JSCompiler().compile(
                         jsSrc,
                         commonSrc,
                         "-Xir-produce-klib-dir",

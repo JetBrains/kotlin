@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
@@ -213,7 +213,7 @@ object MockLibraryUtil {
         @Synchronized get() = loadCompilerClass(K2JVMCompiler::class)
 
     private val compiler2JSClass: Class<*>
-        @Synchronized get() = loadCompilerClass(K2JsIrCompiler::class)
+        @Synchronized get() = loadCompilerClass(K2JSCompiler::class)
 
     private val compiler2MetadataClass: Class<*>
         @Synchronized get() = loadCompilerClass(K2MetadataCompiler::class)

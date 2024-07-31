@@ -10,7 +10,7 @@ import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -96,7 +96,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     ): File {
         val destination = File(tmpdir, libraryName)
         val output = compileKotlin(
-            libraryName, destination, compiler = K2JsIrCompiler(), additionalOptions = additionalOptions, expectedFileName = null
+            libraryName, destination, compiler = K2JSCompiler(), additionalOptions = additionalOptions, expectedFileName = null
         )
         checkKotlinOutput(normalizeOutput(output))
         return destination
@@ -152,7 +152,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
         additionalSources.mapTo(args) { File(testDataDirectory, it).path }
 
-        if (compiler is K2JsIrCompiler) {
+        if (compiler is K2JSCompiler) {
             args.add("-libraries")
             args.add((classpath + PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath).joinToString(File.pathSeparator))
             args.add("-Xir-produce-klib-dir")

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.testOld.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
@@ -69,7 +69,7 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
 
         val compilerXmlOutput = ByteArrayOutputStream()
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            K2JsIrCompiler().execFullPathsInMessages(printStream, args)
+            K2JSCompiler().execFullPathsInMessages(printStream, args)
         }
 
         return CompilationResult(exitCode, compilerXmlOutput.toString())

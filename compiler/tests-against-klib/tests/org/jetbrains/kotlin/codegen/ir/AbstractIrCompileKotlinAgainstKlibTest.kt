@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.codegen.ir
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
@@ -77,7 +77,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     private fun compileToKlib(files: List<TestFile>) {
         val sourceFiles = loadMultiFilesReal(files)
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
-            K2JsIrCompiler(),
+            K2JSCompiler(),
             listOf(
                 "-ir-output-dir", outputDir.normalize().absolutePath,
                 "-ir-output-name", klibName,

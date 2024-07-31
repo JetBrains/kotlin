@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.klib
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -64,7 +64,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
         val sourceFiles = walkKtFiles(workingDir)
         val artifact = File(workingDir, "$MODULE_NAME.klib")
         CompilerTestUtil.executeCompilerAssertSuccessful(
-            K2JsIrCompiler(),
+            K2JSCompiler(),
             sourceFiles + extraArgs + listOf(
                 "-Xir-produce-klib-file",
                 "-ir-output-dir", artifact.parentFile.absolutePath,

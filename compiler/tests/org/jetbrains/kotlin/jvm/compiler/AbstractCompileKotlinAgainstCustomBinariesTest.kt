@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.cli.transformMetadataInClassFile
@@ -109,7 +109,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
         val result =
             when (compiler) {
-                is K2JsIrCompiler -> compileJsLibrary(
+                is K2JSCompiler -> compileJsLibrary(
                     libraryName,
                     additionalOptions = libraryOptions
                 )
@@ -228,7 +228,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
-        doTestPreReleaseKotlinLibrary(K2JsIrCompiler(), "library", File(tmpdir, "usage.js"))
+        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {
@@ -236,7 +236,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
-        doTestPreReleaseKotlinLibrary(K2JsIrCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
+        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
     }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() {
@@ -318,14 +318,14 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     // KT-59901 K2: Disappeared API_NOT_AVAILABLE
     fun testRequireKotlinInNestedClassesJs() = muteForK2 {
-        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JsIrCompiler())
+        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
     }
 
     // KT-59901 K2: Disappeared API_NOT_AVAILABLE
     fun testRequireKotlinInNestedClassesAgainst14Js() = muteForK2 {
         val library = compileJsLibrary("library", additionalOptions = listOf("-Xmetadata-version=1.4.0"))
         compileKotlin(
-            "source.kt", File(tmpdir, "usage.js"), listOf(library), K2JsIrCompiler(),
+            "source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(),
             additionalOptions = listOf("-Xskip-metadata-version-check")
         )
     }
@@ -491,13 +491,13 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             "source.kt",
             File(tmpdir, "usage.js"),
             listOf(compileJsLibrary("library")),
-            K2JsIrCompiler(),
+            K2JSCompiler(),
         )
     }
 
     fun testInternalFromFriendModuleJs() {
         val library = compileJsLibrary("library")
-        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JsIrCompiler(), listOf("-Xfriend-modules=${library.path}"))
+        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(), listOf("-Xfriend-modules=${library.path}"))
     }
 
     /*
@@ -612,7 +612,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     fun testConstEvaluationWithDifferentLV() {
         val library = compileJsLibrary("library", additionalOptions = listOf("-language-version", "1.9"))
         compileKotlin(
-            "src", File(tmpdir, "usage.js"), emptyList(), K2JsIrCompiler(),
+            "src", File(tmpdir, "usage.js"), emptyList(), K2JSCompiler(),
             additionalOptions = listOf("-Xinclude=${library.absolutePath}", "-Xir-produce-js"),
         )
     }

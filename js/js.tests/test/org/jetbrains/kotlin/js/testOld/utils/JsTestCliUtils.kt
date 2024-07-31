@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.testOld.utils
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.test.utils.TestMessageCollector
@@ -19,7 +19,7 @@ internal fun runJsCompiler(
 ) {
     val args = K2JSCompilerArguments().apply(argsBuilder)
 
-    val exitCode = K2JsIrCompiler().exec(messageCollector, Services.EMPTY, args)
+    val exitCode = K2JSCompiler().exec(messageCollector, Services.EMPTY, args)
     if (exitCode != ExitCode.OK) fail(
         buildString {
             appendLine("Compilation failed with exit code: $exitCode")

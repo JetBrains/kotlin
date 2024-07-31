@@ -16,7 +16,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
-import org.jetbrains.kotlin.cli.js.K2JsIrCompiler;
+import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.utils.JsLibraryUtils;
 
 import java.io.File;
@@ -185,8 +185,8 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
 
     @NotNull
     @Override
-    protected K2JsIrCompiler createCompiler() {
-        return new K2JsIrCompiler();
+    protected K2JSCompiler createCompiler() {
+        return new K2JSCompiler();
     }
 
     @SuppressWarnings("unchecked")
