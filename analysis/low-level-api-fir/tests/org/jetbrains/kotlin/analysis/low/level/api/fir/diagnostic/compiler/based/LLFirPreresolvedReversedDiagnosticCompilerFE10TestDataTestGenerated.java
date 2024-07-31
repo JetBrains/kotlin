@@ -23305,6 +23305,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("overrideForMemberExtensionProp.kt")
+      public void testOverrideForMemberExtensionProp() {
+        runTest("compiler/testData/diagnostics/tests/j+k/overrideForMemberExtensionProp.kt");
+      }
+
+      @Test
       @TestMetadata("overrideRawType.kt")
       public void testOverrideRawType() {
         runTest("compiler/testData/diagnostics/tests/j+k/overrideRawType.kt");
@@ -28607,6 +28613,30 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         @Test
         public void testAllFilesPresentInSmartCasts() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/smartCasts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("classNoDefaultConstructor_commonCode.kt")
+        public void testClassNoDefaultConstructor_commonCode() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/classNoDefaultConstructor_commonCode.kt");
+        }
+
+        @Test
+        @TestMetadata("classNoDefaultConstructor_platformCode.kt")
+        public void testClassNoDefaultConstructor_platformCode() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/classNoDefaultConstructor_platformCode.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineFunction_commonCode.kt")
+        public void testInlineFunction_commonCode() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/inlineFunction_commonCode.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineFunction_platformCode.kt")
+        public void testInlineFunction_platformCode() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/inlineFunction_platformCode.kt");
         }
 
         @Test
@@ -39371,6 +39401,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         @TestMetadata("reassignedInRhs.kt")
         public void testReassignedInRhs() {
           runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedInRhs.kt");
+        }
+
+        @Test
+        @TestMetadata("reassignment.kt")
+        public void testReassignment() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignment.kt");
         }
 
         @Test
