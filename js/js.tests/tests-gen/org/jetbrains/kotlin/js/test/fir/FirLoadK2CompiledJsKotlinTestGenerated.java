@@ -480,12 +480,6 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
         }
 
         @Test
-        @TestMetadata("SupertypesAndBounds.kt")
-        public void testSupertypesAndBounds() {
-          runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/SupertypesAndBounds.kt");
-        }
-
-        @Test
         @TestMetadata("TypeAnnotationWithArguments.kt")
         public void testTypeAnnotationWithArguments() {
           runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");
@@ -1284,12 +1278,6 @@ public class FirLoadK2CompiledJsKotlinTestGenerated extends AbstractFirLoadK2Com
       @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature")
       @TestDataPath("$PROJECT_ROOT")
       public class KotlinSignature {
-        @Test
-        @TestMetadata("AllBoundsInWhen.kt")
-        public void testAllBoundsInWhen() {
-          runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/AllBoundsInWhen.kt");
-        }
-
         @Test
         public void testAllFilesPresentInKotlinSignature() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
