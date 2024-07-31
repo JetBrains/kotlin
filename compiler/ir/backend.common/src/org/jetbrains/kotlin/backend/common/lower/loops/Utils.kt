@@ -244,10 +244,18 @@ internal fun IrExpression.getMostPreciseTypeFromValInitializer(): IrType {
             }
         }
 
+    fun unwrapImplicitCast(expression: IrExpression): IrExpression? =
+        (expression as? IrTypeOperatorCall)?.let {
+            expression.argument.takeIf {
+                expression.operator.let { it == IrTypeOperator.IMPLICIT_CAST || it == IrTypeOperator.CAST }
+            }
+        }
+
     var temp = this
     do {
         unwrapValInitializer(temp)?.let { temp = it }
             ?: unwrapStatementContainer(temp)?.let { temp = it }
+            ?: unwrapImplicitCast(temp)?.let { temp = it }
             ?: return temp.type
     } while (true)
 }

@@ -732,9 +732,9 @@ open class FunctionInlining(
                     if (isDefaultArg) variableInitializer.endOffset else UNDEFINED_OFFSET,
                     // If original type of parameter is T, then `parameter.type` is T after substitution or erasure,
                     // depending on whether T reified or not.
-                    parameter.type
+                    type = parameter.type
                 ).apply {
-                    statements.add(variableInitializer)
+                    statements.add(variableInitializer.doImplicitCastIfNeededTo(parameter.type))
                 },
                 nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers(),
                 isMutable = false,

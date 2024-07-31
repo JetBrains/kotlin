@@ -5206,6 +5206,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/casts/kt65197.kt");
     }
 
+    @TestMetadata("kt68509.kt")
+    public void testKt68509() {
+      runTest("compiler/testData/codegen/box/casts/kt68509.kt");
+    }
+
     @TestMetadata("lambdaToUnitCast.kt")
     public void testLambdaToUnitCast() {
       runTest("compiler/testData/codegen/box/casts/lambdaToUnitCast.kt");
