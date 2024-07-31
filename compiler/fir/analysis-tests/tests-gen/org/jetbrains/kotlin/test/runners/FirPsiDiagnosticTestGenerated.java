@@ -2839,6 +2839,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
         }
 
         @Test
+        @TestMetadata("safeCallsWithImplicitInvoke.kt")
+        public void testSafeCallsWithImplicitInvoke() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/safeCallsWithImplicitInvoke.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke/simple.kt");

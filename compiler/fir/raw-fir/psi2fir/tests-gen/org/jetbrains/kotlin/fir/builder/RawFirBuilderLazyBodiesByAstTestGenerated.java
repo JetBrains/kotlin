@@ -709,6 +709,11 @@ public class RawFirBuilderLazyBodiesByAstTestGenerated extends AbstractRawFirBui
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/qualifierWithTypeArguments.kt");
     }
 
+    @TestMetadata("safeCallsImplicitWithInvoke.kt")
+    public void testSafeCallsImplicitWithInvoke() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsImplicitWithInvoke.kt");
+    }
+
     @TestMetadata("safeCallsWithAssignment.kt")
     public void testSafeCallsWithAssignment() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithAssignment.kt");
