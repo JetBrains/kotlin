@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.measureTimeMillisWithResult
 import java.io.File
+import java.time.LocalDateTime
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
@@ -164,8 +165,8 @@ private fun showProcessorStats(wrappedProcessors: List<ProcessorWrapper>, logger
 private fun dumpProcessorStats(wrappedProcessors: List<ProcessorWrapper>, apReportFile: File, logger: (String) -> Unit) {
     logger("Dumping Kapt Annotation Processing performance report to ${apReportFile.absolutePath}")
 
-    apReportFile.writeText(buildString {
-        appendLine("Kapt Annotation Processing performance report:")
+    apReportFile.appendText(buildString {
+        appendLine("${LocalDateTime.now()} Kapt Annotation Processing performance report:")
         wrappedProcessors.forEach { processor ->
             appendLine(processor.renderSpentTime())
         }
