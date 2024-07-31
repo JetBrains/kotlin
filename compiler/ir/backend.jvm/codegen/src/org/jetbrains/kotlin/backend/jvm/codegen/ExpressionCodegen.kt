@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
+import org.jetbrains.kotlin.types.inlineClassUnboxedType
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.Label
@@ -348,7 +348,7 @@ class ExpressionCodegen(
         val asmType = param.type.asmType
         val expandedType =
             if (param.type.isInlineClassType())
-                context.typeSystem.computeExpandedTypeForInlineClass(param.type) as? IrType ?: param.type
+                context.typeSystem.inlineClassUnboxedType(param.type) as? IrType ?: param.type
             else param.type
         if (!expandedType.isNullable() && !isPrimitive(asmType)) {
             mv.load(findLocalIndex(param.symbol), asmType)

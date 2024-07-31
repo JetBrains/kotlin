@@ -179,7 +179,7 @@ object AbstractTypeMapper {
         materialized: Boolean
     ): Type {
         if (typeConstructor.isInlineClass() && !mode.needInlineClassWrapping) {
-            val expandedType = computeExpandedTypeForInlineClass(type)
+            val expandedType = inlineClassUnboxedType(type)
             require(expandedType is RigidTypeMarker?)
             if (expandedType != null) {
                 return mapType(context, expandedType, mode.wrapInlineClassesMode(), sw, materialized)

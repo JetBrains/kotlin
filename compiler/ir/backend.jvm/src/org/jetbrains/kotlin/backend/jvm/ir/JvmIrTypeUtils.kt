@@ -36,15 +36,19 @@ import org.jetbrains.kotlin.ir.util.isNullable
  * recursive erasure could loop. For example, a type parameter
  * `T : Comparable<T>` is replaced by `Comparable<*>`.
  */
-fun IrType.eraseTypeParameters(): IrType = when (this) {
+fun IrType.eraseTypeParameters(): IrType =
+    eraseTypeParameters(mutableSetOf()) ?: this
+
+private fun IrType.eraseTypeParameters(visited: MutableSet<IrTypeParameter>): IrType? = when (this) {
     is IrSimpleType ->
         when (val owner = classifier.owner) {
             is IrScript -> {
                 assert(arguments.isEmpty()) { "Script can't be generic: " + owner.render() }
                 IrSimpleTypeImpl(classifier, nullability, emptyList(), annotations)
             }
-            is IrClass -> IrSimpleTypeImpl(classifier, nullability, arguments.map { it.eraseTypeParameters() }, annotations)
-            is IrTypeParameter -> owner.erasedType(isNullable())
+            is IrClass -> IrSimpleTypeImpl(classifier, nullability, arguments.map { it.eraseTypeParameters(visited) }, annotations)
+            is IrTypeParameter ->
+                owner.takeIf(visited::add)?.representativeUpperBound?.eraseTypeParameters(visited)?.mergeNullability(this)
             else -> error("Unknown IrSimpleType classifier kind: $owner")
         }
     is IrErrorType ->
@@ -54,23 +58,12 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
 
 fun IrType.eraseIfTypeParameter(): IrType {
     val typeParameter = (this as? IrSimpleType)?.classifier?.owner as? IrTypeParameter ?: return this
-    return typeParameter.erasedType(isNullable())
+    return typeParameter.representativeUpperBound.eraseIfTypeParameter().mergeNullability(this)
 }
 
-private fun IrTypeParameter.erasedType(isNullable: Boolean): IrType {
-    val upperBound = erasedUpperBound
-    return IrSimpleTypeImpl(
-        upperBound.symbol,
-        isNullable,
-        // Should not affect JVM signature, but may result in an invalid type object
-        List(upperBound.typeParameters.size) { IrStarProjectionImpl },
-        annotations
-    )
-}
-
-private fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
+private fun IrTypeArgument.eraseTypeParameters(visited: MutableSet<IrTypeParameter>): IrTypeArgument = when (this) {
     is IrStarProjection -> this
-    is IrTypeProjection -> makeTypeProjection(type.eraseTypeParameters(), variance)
+    is IrTypeProjection -> type.eraseTypeParameters(visited)?.let { makeTypeProjection(it, variance) } ?: IrStarProjectionImpl
 }
 
 /**
@@ -119,7 +112,7 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
         return IrConstImpl.defaultValueForType(startOffset, endOffset, this)
 
     val underlyingType = unboxInlineClass()
-    val defaultValueForUnderlyingType = IrConstImpl.defaultValueForType(startOffset, endOffset, underlyingType)
+    val defaultValueForUnderlyingType = underlyingType.defaultValue(startOffset, endOffset, context)
     return IrCallImpl.fromSymbolOwner(startOffset, endOffset, this, context.ir.symbols.unsafeCoerceIntrinsic).also {
         it.typeArguments[0] = underlyingType
         it.typeArguments[1] = this

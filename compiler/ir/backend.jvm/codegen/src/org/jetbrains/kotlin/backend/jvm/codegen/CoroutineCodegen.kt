@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.hasContinuation
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
 import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
-import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -114,25 +113,16 @@ internal fun IrFunction.originalReturnTypeOfSuspendFunctionReturningUnboxedInlin
 
 private fun IrSimpleFunction.overridesReturningDifferentType(returnType: IrType): Boolean {
     val visited = hashSetOf<IrSimpleFunction>()
+    val expectedClass = returnType.classOrNull?.owner
 
     fun dfs(function: IrSimpleFunction): Boolean {
-        if (!visited.add(function)) return false
-
-        for (overridden in function.overriddenSymbols) {
+        return visited.add(function) && function.overriddenSymbols.any { overridden ->
             val owner = overridden.owner
             val overriddenReturnType = owner.returnType
-
-            if (!overriddenReturnType.erasedUpperBound.isSingleFieldValueClass) return true
-
-            if (overriddenReturnType.isNullable() &&
-                overriddenReturnType.makeNotNull().unboxInlineClass().isNullable()
-            ) return true
-
-            if (overriddenReturnType.classOrNull != returnType.classOrNull) return true
-
-            if (dfs(owner)) return true
+            val overriddenReturnClass = overriddenReturnType.erasedUpperBound
+            // Has to return the same class in unboxed state as well.
+            overriddenReturnClass != expectedClass || InlineClassAbi.unboxType(overriddenReturnType) == null || dfs(owner)
         }
-        return false
     }
 
     return dfs(this)

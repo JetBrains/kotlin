@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.inlineClassUnboxedType
 
 /**
  * Replace inline classes by their underlying types.
@@ -41,21 +42,8 @@ object InlineClassAbi {
      * Unwraps inline class types to their underlying representation.
      * Returns null if the type cannot be unboxed.
      */
-    fun unboxType(type: IrType): IrType? {
-        val klass = type.classOrNull?.owner ?: return null
-        val representation = klass.inlineClassRepresentation ?: return null
-
-        // TODO: Apply type substitutions
-        var underlyingType = representation.underlyingType.unboxInlineClass()
-        if (!underlyingType.isNullable() && underlyingType.isTypeParameter()) {
-            underlyingType = underlyingType.erasedUpperBound.defaultType
-        }
-        if (!type.isNullable())
-            return underlyingType
-        if (underlyingType.isNullable() || underlyingType.isPrimitiveType())
-            return null
-        return underlyingType.makeNullable()
-    }
+    fun unboxType(type: IrType): IrType? =
+        IrTypeSystemContextImplWithoutBuiltins.inlineClassUnboxedType(type) as IrType?
 
     /**
      * Returns a mangled name for a function taking inline class arguments

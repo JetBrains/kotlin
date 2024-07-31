@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.unwrapTypeParameters
 import org.jetbrains.org.objectweb.asm.Type
 
 abstract class KotlinTypeMapperBase {
@@ -25,7 +26,7 @@ abstract class KotlinTypeMapperBase {
 
     fun mapUnderlyingTypeOfInlineClassType(kotlinType: KotlinTypeMarker): Type {
         val underlyingType = with(typeSystem) {
-            kotlinType.typeConstructor().getUnsubstitutedUnderlyingType()
+            unwrapTypeParameters(kotlinType).typeConstructor().getUnsubstitutedUnderlyingType()
         } ?: throw IllegalStateException("There should be underlying type for inline class type: $kotlinType")
         return mapTypeCommon(underlyingType, TypeMappingMode.DEFAULT)
     }

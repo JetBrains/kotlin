@@ -40,25 +40,17 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
             // `unboxed` can be different from `type` for generic inline classes, e.g. in `class IC<T>(val x: T)`
             // `box-impl` takes an `Object` but if this value is an `IC<String>` then `type` should be `String`.
             val unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(erasedSourceType)
-            if (type.sort != Type.OBJECT && unboxed.sort == Type.OBJECT) {
-                // The unsubstituted type is a supertype of the substituted type so CHECKCASTs would be redundant,
-                // but primitives might need to be double-boxed first; e.g. if we have an `IC<Int>` in the above
-                // example, it should be stored as `I` in its completely unboxed form, then boxed into `Integer`
-                // before being passed to `IC.box-impl(LObject;)LIC;`.
-                StackValue.coerce(type, unboxed, mv, false)
-            }
-            StackValue.boxInlineClass(unboxed, boxedSourceType, erasedSourceType.isNullable(), mv)
-            StackValue.coerce(boxedSourceType, target, mv, false)
+            StackValue.boxInlineClass(type, unboxed, boxedSourceType, target, erasedSourceType.isNullable(), mv)
         } else if (type == boxedSourceType && target != boxedTargetType) {
             val unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(erasedTargetType)
             val irClass = codegen.irFunction.parentAsClass
             if (irClass.isSingleFieldValueClass && irClass.symbol == irType.classifierOrNull && !irType.isNullable()) {
                 // Use GETFIELD instead of `unbox-impl` inside inline classes
                 codegen.mv.getfield(boxedTargetType.internalName, irClass.inlineClassFieldName.asString(), unboxed.descriptor)
+                StackValue.coerce(unboxed, target, mv, false)
             } else {
-                StackValue.unboxInlineClass(type, boxedTargetType, unboxed, erasedTargetType.isNullable(), mv)
+                StackValue.unboxInlineClass(type, boxedTargetType, unboxed, target, erasedTargetType.isNullable(), mv)
             }
-            StackValue.coerce(unboxed, target, mv, false)
         } else if (type != target || (castForReified && irType.anyTypeArgument { it.isReified })) {
             StackValue.coerce(type, target, mv, true)
         }

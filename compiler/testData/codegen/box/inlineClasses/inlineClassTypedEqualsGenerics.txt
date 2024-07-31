@@ -37,7 +37,7 @@ public final class IC2 {
     public synthetic final static method box-impl(p0: Generic): IC2
     public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: Generic): Generic
     public method equals(p0: java.lang.Object): boolean
-    public final static method equals-P1kVloU(p0: Generic, @org.jetbrains.annotations.NotNull p1: java.lang.Number): boolean
+    public final static method equals-P1kVloU(p0: Generic, p1: double): boolean
     public static method equals-impl(p0: Generic, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: Generic, @org.jetbrains.annotations.NotNull p1: Generic): boolean
     public final @org.jetbrains.annotations.NotNull method getValue(): Generic

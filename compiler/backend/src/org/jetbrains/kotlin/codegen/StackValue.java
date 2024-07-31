@@ -199,17 +199,26 @@ public abstract class StackValue {
         Type boxed = typeMapper.mapTypeCommon(kotlinType, TypeMappingMode.CLASS_DECLARATION);
         Type unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType);
         boolean isNullable = typeMapper.getTypeSystem().isNullableType(kotlinType) && !isPrimitive(unboxed);
-        boxInlineClass(unboxed, boxed, isNullable, v);
+        boxInlineClass(unboxed, unboxed, boxed, boxed, isNullable, v);
     }
 
     public static void boxInlineClass(
-            @NotNull Type unboxed, @NotNull Type boxed, boolean isNullable, @NotNull InstructionAdapter v
+            @NotNull Type fromType, @NotNull Type unboxed, @NotNull Type boxed, @NotNull Type toType, boolean isNullable,
+            @NotNull InstructionAdapter v
     ) {
+        if (fromType.getSort() != Type.OBJECT && unboxed.getSort() == Type.OBJECT) {
+            // The unsubstituted type is a supertype of the substituted type so CHECKCASTs would be redundant,
+            // but primitives might need to be double-boxed first. For example, if `class IC<T>(val x: T)`
+            // is instantiated as `IC<Int>`, it might be stored as `I` when fully unboxed, but the `box-impl`
+            // method takes `Object`, so first we need to wrap `I` into `Integer`.
+            coerce(fromType, unboxed, v, false);
+        }
         if (isNullable) {
             boxOrUnboxWithNullCheck(v, vv -> invokeBoxMethod(vv, boxed, unboxed));
         } else {
             invokeBoxMethod(v, boxed, unboxed);
         }
+        coerce(boxed, toType, v, false);
     }
 
     private static void invokeBoxMethod(
@@ -234,11 +243,12 @@ public abstract class StackValue {
         Type boxed = typeMapper.mapTypeCommon(targetInlineClassType, TypeMappingMode.CLASS_DECLARATION);
         Type unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(targetInlineClassType);
         boolean isNullable = typeMapper.getTypeSystem().isNullableType(targetInlineClassType) && !isPrimitive(unboxed);
-        unboxInlineClass(type, boxed, unboxed, isNullable, v);
+        unboxInlineClass(type, boxed, unboxed, unboxed, isNullable, v);
     }
 
     public static void unboxInlineClass(
-            @NotNull Type type, @NotNull Type boxed, @NotNull Type unboxed, boolean isNullable, @NotNull InstructionAdapter v
+            @NotNull Type type, @NotNull Type boxed, @NotNull Type unboxed, @NotNull Type toType, boolean isNullable,
+            @NotNull InstructionAdapter v
     ) {
         coerce(type, boxed, v);
         if (isNullable) {
@@ -246,6 +256,7 @@ public abstract class StackValue {
         } else {
             invokeUnboxMethod(v, boxed, unboxed);
         }
+        coerce(unboxed, toType, v);
     }
 
     private static void invokeUnboxMethod(
@@ -353,36 +364,25 @@ public abstract class StackValue {
         *  "return true" means that types were coerced successfully and usual coercion shouldn't be evaluated
         * */
 
-        if (isFromTypeInlineClass && isToTypeInlineClass) {
-            boolean isFromTypeUnboxed = isUnboxedInlineClass(fromKotlinType, fromType);
-            boolean isToTypeUnboxed = isUnboxedInlineClass(toKotlinType, toType);
-            if (isFromTypeUnboxed && !isToTypeUnboxed) {
-                boxInlineClass(fromKotlinType, v, typeMapper);
-                return true;
-            }
-            else if (!isFromTypeUnboxed && isToTypeUnboxed) {
-                unboxInlineClass(fromType, toKotlinType, v, typeMapper);
-                return true;
-            }
+        Type fromBoxedType = isFromTypeInlineClass ? typeMapper.mapTypeCommon(fromKotlinType, TypeMappingMode.CLASS_DECLARATION) : fromType;
+        Type toBoxedType = isToTypeInlineClass ? typeMapper.mapTypeCommon(toKotlinType, TypeMappingMode.CLASS_DECLARATION) : toType;
+        if (!fromType.equals(fromBoxedType) && toType.equals(toBoxedType)) {
+            Type unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(fromKotlinType);
+            boolean isNullable = typeMapper.getTypeSystem().isNullableType(fromKotlinType) && !isPrimitive(unboxed);
+            boxInlineClass(fromType, unboxed, fromBoxedType, toType, isNullable, v);
+            return true;
         }
-        else if (isFromTypeInlineClass) {
-            if (isUnboxedInlineClass(fromKotlinType, fromType)) {
-                boxInlineClass(fromKotlinType, v, typeMapper);
-                return true;
-            }
+        else if (fromType.equals(fromBoxedType) && !toType.equals(toBoxedType)) {
+            Type unboxed = typeMapper.mapUnderlyingTypeOfInlineClassType(toKotlinType);
+            boolean isNullable = typeMapper.getTypeSystem().isNullableType(toKotlinType) && !isPrimitive(unboxed);
+            unboxInlineClass(fromType, toBoxedType, unboxed, toType, isNullable, v);
+            return true;
         }
-        else { // isToTypeInlineClass is `true`
-            if (isUnboxedInlineClass(toKotlinType, toType)) {
-                unboxInlineClass(fromType, toKotlinType, v, typeMapper);
-                return true;
-            }
-        }
-
         return false;
     }
 
     private static boolean isUnboxedInlineClass(@NotNull KotlinType kotlinType, @NotNull Type actualType) {
-        return StaticTypeMapperForOldBackend.INSTANCE.mapUnderlyingTypeOfInlineClassType(kotlinType).equals(actualType);
+        return !StaticTypeMapperForOldBackend.INSTANCE.mapTypeCommon(kotlinType, TypeMappingMode.CLASS_DECLARATION).equals(actualType);
     }
 
     public static void coerce(@NotNull Type fromType, @NotNull Type toType, @NotNull InstructionAdapter v) {
