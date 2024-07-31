@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
@@ -77,26 +78,21 @@ fun FirAnnotationContainer.resolvedCompilerRequiredAnnotations(anchorElement: Fi
 fun FirAnnotationContainer.resolvedAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
     if (isDefinitelyEmpty(anchorElement)) return emptyList()
 
+    if (anchorElement.fir.resolvePhase >= FirResolvePhase.ANNOTATION_ARGUMENTS) return annotations
+
     annotations.resolveAnnotationsWithArguments(anchorElement)
-    // Note: this.annotations reference may be changed by the previous call!
+
+    // Note: the previous call may change this.annotations reference!
     return annotations
 }
 
-@SymbolInternals
-fun List<FirAnnotation>.resolveAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>) {
-    /**
-     * This loop by index is required to avoid possible [ConcurrentModificationException],
-     * because the annotations might be in a process of resolve from some other threads
-     */
-    var hasAnnotationCallWithArguments = false
-    for (i in indices) {
-        val currentAnnotation = get(i)
-        if (currentAnnotation is FirAnnotationCall && currentAnnotation.arguments.isNotEmpty()) {
-            hasAnnotationCallWithArguments = true
-            break
-        }
-    }
-
+private fun List<FirAnnotation>.resolveAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>) {
+    // This is safe to iterate over the collection without indices since all annotations after 582b640b commit
+    // declared as `MutableOrEmptyList<FirAnnotation>`, so:
+    // - `replaceAnnotations` replaces the entire collection without modifications
+    // - `transformAnnotations` theoretically may modify annotations, but it is not allowed due
+    // to the compiler contract to change already published annotations – only their content can be changed
+    val hasAnnotationCallWithArguments = any { it is FirAnnotationCall && it.arguments.isNotEmpty() }
     val phase = if (hasAnnotationCallWithArguments) {
         FirResolvePhase.ANNOTATION_ARGUMENTS
     } else {
@@ -123,13 +119,7 @@ fun FirAnnotationContainer.resolvedAnnotationsWithClassIds(anchorElement: FirBas
     return annotations
 }
 
-@SymbolInternals
-fun resolveAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>) {
-    anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
-}
-
-@SymbolInternals
-fun FirAnnotationContainer.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {
+private fun FirAnnotationContainer.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {
     return resolvedAnnotationsWithClassIds(anchorElement).mapNotNull {
         it.annotationTypeRef.coneType.classLikeLookupTagIfAny?.classId
     }
