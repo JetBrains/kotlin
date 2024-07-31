@@ -50,22 +50,27 @@ internal fun annotationsByClassId(
     builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KaAnnotation> {
+    val session = builder.rootSession
     if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId, builder.rootSession)) {
-        when (classId) {
-            StandardClassIds.Annotations.Target -> annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
-                .mapIndexedToAnnotationApplication(builder.rootSession, classId) { index, annotation ->
-                    computeKotlinTargetAnnotation(annotation, builder, index)
-                }
-            JvmStandardClassIds.Annotations.Java.Target -> annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
-                .mapIndexedToAnnotationApplication(builder.rootSession, classId) { index, annotation ->
-                    computeJavaTargetAnnotation(annotation, builder, index)
-                }
+        // This is safe to iterate over the collection without indices since all annotations after 582b640b commit
+        // declared as `MutableOrEmptyList<FirAnnotation>`, so:
+        // - `replaceAnnotations` replaces the entire collection without modifications
+        // - `transformAnnotations` theoretically may modify annotations, but it is not allowed due
+        // to the compiler contract to change already published annotations – only their content can be changed
+        return annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).mapIndexedNotNull { index, annotation ->
+            if (annotation.toAnnotationClassIdSafe(session) != classId) {
+                return@mapIndexedNotNull null
+            }
+
+            annotation.toKaAnnotation(builder, index) { classId ->
+                computeAnnotationArguments(firSymbol, annotationContainer, classId, index, builder)
+            }
         }
     }
 
     return annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
-        .mapIndexedToAnnotationApplication(builder.rootSession, classId) { index, annotation ->
-            annotation.toKaAnnotation(builder, index) {
+        .mapIndexedToAnnotationApplication(session, classId) { index, annotation ->
+            annotation.toKaAnnotation(builder, index) { classId ->
                 computeAnnotationArguments(firSymbol, annotationContainer, classId, index, builder)
             }
         }
@@ -143,22 +148,10 @@ private fun computeTargetAnnotationArguments(
     return emptyList()
 }
 
-private fun computeKotlinTargetAnnotation(annotation: FirAnnotation, builder: KaSymbolByFirBuilder, index: Int): KaAnnotation {
-    return annotation.toKaAnnotation(builder, index) {
-        computeKotlinTargetAnnotationArguments(annotation, builder)
-    }
-}
-
 private fun computeKotlinTargetAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
     val enumClassId = StandardClassIds.AnnotationTarget
     val parameterName = StandardClassIds.Annotations.ParameterNames.targetAllowedTargets
     return computeTargetAnnotationArguments(annotation, builder, enumClassId, parameterName) { KotlinTarget.valueOrNull(it)?.name }
-}
-
-private fun computeJavaTargetAnnotation(annotation: FirAnnotation, builder: KaSymbolByFirBuilder, index: Int): KaAnnotation {
-    return annotation.toKaAnnotation(builder, index) {
-        computeJavaTargetAnnotationArguments(annotation, builder)
-    }
 }
 
 private fun computeJavaTargetAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
@@ -209,22 +202,18 @@ internal fun hasAnnotation(
     classId: ClassId,
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): Boolean {
-    return if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId, useSiteSession)) {
-        // this loop by index is required to avoid possible ConcurrentModificationException
-        val annotations = annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
-        for (index in annotations.indices) {
-            val annotation = annotations[index]
-            if (annotation.toAnnotationClassIdSafe(useSiteSession) == classId) {
-                return true
-            }
-        }
-
-        false
-    } else {
-        annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).any {
-            it.toAnnotationClassId(useSiteSession) == classId
-        }
+): Boolean = if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId, useSiteSession)) {
+    // This is safe to iterate over the collection without indices since all annotations after 582b640b commit
+    // declared as `MutableOrEmptyList<FirAnnotation>`, so:
+    // - `replaceAnnotations` replaces the entire collection without modifications
+    // - `transformAnnotations` theoretically may modify annotations, but it is not allowed due
+    // to the compiler contract to change already published annotations – only their content can be changed
+    annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).any {
+        it.toAnnotationClassIdSafe(useSiteSession) == classId
+    }
+} else {
+    annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).any {
+        it.toAnnotationClassId(useSiteSession) == classId
     }
 }
 

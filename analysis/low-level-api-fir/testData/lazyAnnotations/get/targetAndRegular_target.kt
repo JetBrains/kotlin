@@ -1,5 +1,4 @@
 // QUERY: get: kotlin.annotation/Target
-// IGNORE_FIR
 // WITH_STDLIB
 package pack
 

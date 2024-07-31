@@ -1,1 +1,1 @@
-@R|pack/MyAnno|[Types](LAZY_EXPRESSION) @R|kotlin/jvm/JvmName|[Types](String(myName)) public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] i: R|kotlin/Int|): R|kotlin/String|
+@MyAnno[Unresolved](LAZY_EXPRESSION) @R|kotlin/jvm/JvmName|[CompilerRequiredAnnotations](String(myName)) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] i: Int): String

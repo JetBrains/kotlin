@@ -1,1 +1,1 @@
-@R|one/MyAnno|[Types]() public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any|
+@MyAnno[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo : R|kotlin/Any|
