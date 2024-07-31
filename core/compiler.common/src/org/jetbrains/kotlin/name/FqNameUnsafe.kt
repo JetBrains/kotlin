@@ -118,21 +118,7 @@ class FqNameUnsafe {
         }
     }
 
-    /**
-     * Consider using [properPathSegments].
-     */
     fun pathSegments(): List<Name> {
-        return if (isRoot) emptyList() else SPLIT_BY_DOTS.split(fqName).map(Name::guessByFirstCharacter)
-    }
-
-    /**
-     * Returns path segments (`[a,b,c]` for `a.b.c`), but unlike [pathSegments],
-     * gathers information from [parent] and [shortName].
-     * This allows handling fqName parts containing dots as part of their name.
-     *
-     * The original function is left intact to avoid introducing possible unexpected behavior changes in K1.
-     */
-    fun properPathSegments(): List<Name> {
         fun collectSegmentsOf(fqName: FqNameUnsafe): MutableList<Name> {
             if (fqName.isRoot) {
                 return ArrayList()
