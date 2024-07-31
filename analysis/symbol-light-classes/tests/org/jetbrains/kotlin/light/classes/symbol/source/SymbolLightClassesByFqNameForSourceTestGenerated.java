@@ -139,6 +139,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
   }
 
   @Test
+  @TestMetadata("Deprecated.kt")
+  public void testDeprecated() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/Deprecated.kt");
+  }
+
+  @Test
   @TestMetadata("DeprecatedEnumEntry.kt")
   public void testDeprecatedEnumEntry() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/DeprecatedEnumEntry.kt");
@@ -669,6 +675,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("DelegatedProperty.kt")
     public void testDelegatedProperty() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/DelegatedProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("Deprecated.kt")
+    public void testDeprecated() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/Deprecated.kt");
     }
 
     @Test
