@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
+import java.util.Collections
 
 /**
  * This class is meant to have the shape of a BindingTrace object that could exist and flow
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice
  * because the combination of IrAttributeContainer and WeakHashMap makes this relatively safe.
  */
 class WeakBindingTrace {
-    private val map = WeakHashMap<Any, KeyFMap>()
+    private val map = Collections.synchronizedMap(WeakHashMap<Any, KeyFMap>())
 
     fun <K : IrAttributeContainer, V> record(slice: WritableSlice<K, V>, key: K, value: V) {
         var holder = map[key.attributeOwnerId] ?: KeyFMap.EMPTY_MAP
