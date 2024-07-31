@@ -271,6 +271,7 @@ open class IrFileSerializer(
 
     /* ------- IrTypes ---------------------------------------------------------- */
 
+    // Serializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
     private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
         annotations.map {
             for (index in 0 until it.valueArgumentsCount) {

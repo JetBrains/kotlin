@@ -101,6 +101,7 @@ class IrDeclarationDeserializer(
         return makeTypeProjection(deserializeIrType(encoding.typeIndex), encoding.variance)
     }
 
+    // Deserializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
     internal fun deserializeAnnotations(annotations: List<ProtoConstructorCall>): List<IrConstructorCall> {
         return annotations.memoryOptimizedMap { bodyDeserializer.deserializeAnnotation(it) }
     }
