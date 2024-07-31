@@ -79,11 +79,7 @@ fun FirSession.getRegularClassSymbolByClassId(classId: ClassId): FirRegularClass
 }
 
 fun FirSession.getImplicitActualClassSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
-    return getRegularClassSymbolByClassId(classId)
-        ?.takeIf { it.origin is FirDeclarationOrigin.Java.Source }
-        ?: moduleData.dependencies.firstNotNullOfOrNull {
-            it.session.getRegularClassSymbolByClassId(classId)
-        }
+    return getRegularClassSymbolByClassId(classId)?.takeIf { it.origin is FirDeclarationOrigin.Java.Source }
 }
 
 val FirSession.symbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor()
