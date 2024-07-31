@@ -2,12 +2,7 @@
 // CHECK_CONTAINS_NO_CALLS: inRange
 // CHECK_CONTAINS_NO_CALLS: inRange2
 // CHECK_CONTAINS_NO_CALLS: inRange3
-// CHECK_CONTAINS_NO_CALLS: inRange4 TARGET_BACKENDS=JS
 
-// CHECK_CONTAINS_NO_CALLS: inLongRange except=lessThanOrEqual;lessThan;fromInt TARGET_BACKENDS=JS
-// CHECK_CONTAINS_NO_CALLS: inLongRange2 except=lessThanOrEqual;lessThan;fromInt TARGET_BACKENDS=JS
-// CHECK_CONTAINS_NO_CALLS: inLongRange3 except=lessThanOrEqual;lessThan;fromInt TARGET_BACKENDS=JS
-// CHECK_CONTAINS_NO_CALLS: inLongRange4 except=lessThanOrEqual;lessThan;fromInt TARGET_BACKENDS=JS
 // CHECK_VARS_COUNT: function=inLongRange count=0
 // CHECK_VARS_COUNT: function=inLongRange2 count=0
 // CHECK_VARS_COUNT: function=inLongRange3 count=0

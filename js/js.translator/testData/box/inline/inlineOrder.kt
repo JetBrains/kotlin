@@ -1,8 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1284
 package foo
 
-// CHECK_FUNCTIONS_HAVE_SAME_LINES: declaredBefore declaredAfter match=(h|g)1 replace=$1 TARGET_BACKENDS=JS
-
 // CHECK_BREAKS_COUNT: function=declaredBefore count=0 TARGET_BACKENDS=JS_IR
 // CHECK_LABELS_COUNT: function=declaredBefore name=$l$block count=0 TARGET_BACKENDS=JS_IR
 fun declaredBefore(): Int {

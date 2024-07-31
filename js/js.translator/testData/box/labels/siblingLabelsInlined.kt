@@ -2,9 +2,8 @@
 package foo
 
 // CHECK_NOT_CALLED: testInline
-// CHECK_LABELS_COUNT: function=testNoinline name=loop count=2 TARGET_BACKENDS=JS
-// CHECK_LABELS_COUNT: function=testNoinline name=loop count=1 IGNORED_BACKENDS=JS
-// CHECK_LABELS_COUNT: function=testNoinline name=loop_0 count=1 IGNORED_BACKENDS=JS
+// CHECK_LABELS_COUNT: function=testNoinline name=loop count=1
+// CHECK_LABELS_COUNT: function=testNoinline name=loop_0 count=1
 
 inline fun testInline(): Int {
     var c = 0

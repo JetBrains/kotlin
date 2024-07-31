@@ -4,10 +4,6 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: test1
 // CHECK_CONTAINS_NO_CALLS: test2
 
-// FIXME: The IR backend generates a lot of redundant vars
-// CHECK_VARS_COUNT: function=test1 count=0 TARGET_BACKENDS=JS
-// CHECK_VARS_COUNT: function=test2 count=1 TARGET_BACKENDS=JS
-
 var log = ""
 
 internal inline fun run1(fn: ()->Int): Int {

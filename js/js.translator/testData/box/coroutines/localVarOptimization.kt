@@ -1,7 +1,4 @@
 // EXPECTED_REACHABLE_NODES: 1401
-// DECLARES_VARIABLE: function=doResume name=k TARGET_BACKENDS=JS
-// PROPERTY_READ_COUNT: name=local$o count=1 TARGET_BACKENDS=JS
-// PROPERTY_WRITE_COUNT: name=local$o count=2 TARGET_BACKENDS=JS
 
 import kotlin.coroutines.*
 

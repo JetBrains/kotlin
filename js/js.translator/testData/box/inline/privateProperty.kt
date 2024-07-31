@@ -100,36 +100,26 @@ private class A {
             a = v + 1100
         }
 
-    // CHECK_FUNCTION_EXISTS: get_p12_s8ev3n$ TARGET_BACKENDS=JS
-    // CHECK_NOT_CALLED_IN_SCOPE: function=get_p12_s8ev3n$ scope=box TARGET_BACKENDS=JS
-    // CHECK_FUNCTION_EXISTS: set_p12_dqglrj$ TARGET_BACKENDS=JS
-    // CHECK_NOT_CALLED_IN_SCOPE: function=set_p12_dqglrj$ scope=box TARGET_BACKENDS=JS
-    // CHECK_NOT_CALLED_IN_SCOPE: function=get_p12_qp3nj6_k$ scope=box IGNORED_BACKENDS=JS
-    // CHECK_NOT_CALLED_IN_SCOPE: function=set_p12_5gautq_k$ scope=box IGNORED_BACKENDS=JS
+    // CHECK_NOT_CALLED_IN_SCOPE: function=get_p12_qp3nj6_k$ scope=box
+    // CHECK_NOT_CALLED_IN_SCOPE: function=set_p12_5gautq_k$ scope=box
     inline var Int.p12: Int
         get() = this * 100 + a + 120000
         set(v) {
             a = this + v + 1200
         }
 
-    // CHECK_FUNCTION_EXISTS: get_p13_s8ev3n$ TARGET_BACKENDS=JS
-    // CHECK_NOT_CALLED_IN_SCOPE: function=get_p13_s8ev3n$ scope=box TARGET_BACKENDS=JS
-    // CHECK_CALLED_IN_SCOPE: function=set_p13_dqglrj$ scope=box TARGET_BACKENDS=JS
-    // CHECK_FUNCTION_EXISTS: get_p13_58c7pb_k$ IGNORED_BACKENDS=JS
-    // CHECK_NOT_CALLED_IN_SCOPE: function=get_p13_58c7pb_k$ scope=box IGNORED_BACKENDS=JS
-    // CHECK_CALLED_IN_SCOPE: function=set_p13_daivm5_k$ scope=box IGNORED_BACKENDS=JS
+    // CHECK_FUNCTION_EXISTS: get_p13_58c7pb_k$
+    // CHECK_NOT_CALLED_IN_SCOPE: function=get_p13_58c7pb_k$ scope=box
+    // CHECK_CALLED_IN_SCOPE: function=set_p13_daivm5_k$ scope=box
     var Int.p13: Int
         inline get() = this * 100 + a + 130000
         set(v) {
             a = this + v + 1300
         }
 
-    // CHECK_CALLED_IN_SCOPE: function=get_p14_s8ev3n$ scope=box TARGET_BACKENDS=JS
-    // CHECK_FUNCTION_EXISTS: set_p14_dqglrj$ TARGET_BACKENDS=JS
-    // CHECK_NOT_CALLED_IN_SCOPE: function=set_p14_dqglrj$ scope=box TARGET_BACKENDS=JS
-    // CHECK_CALLED_IN_SCOPE: function=get_p14_xvbz1c_k$ scope=box IGNORED_BACKENDS=JS
-    // CHECK_FUNCTION_EXISTS: set_p14_l4qwek_k$ IGNORED_BACKENDS=JS
-    // CHECK_NOT_CALLED_IN_SCOPE: function=set_p14_l4qwek_k$ scope=box IGNORED_BACKENDS=JS
+    // CHECK_CALLED_IN_SCOPE: function=get_p14_xvbz1c_k$ scope=box
+    // CHECK_FUNCTION_EXISTS: set_p14_l4qwek_k$
+    // CHECK_NOT_CALLED_IN_SCOPE: function=set_p14_l4qwek_k$ scope=box
     var Int.p14: Int
         get() = this * 100 + a + 140000
         inline set(v) {
@@ -137,38 +127,28 @@ private class A {
         }
 }
 
-// CHECK_FUNCTION_EXISTS: get_p15 TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=get_p15 scope=box TARGET_BACKENDS=JS
-// CHECK_FUNCTION_EXISTS: set_p15 TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=set_p15 scope=box TARGET_BACKENDS=JS
-// CHECK_FUNCTION_EXISTS: get_p15 IGNORED_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=get_p15 scope=box IGNORED_BACKENDS=JS
-// CHECK_FUNCTION_EXISTS: set_p15 IGNORED_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=set_p15 scope=box IGNORED_BACKENDS=JS
+// CHECK_FUNCTION_EXISTS: get_p15
+// CHECK_NOT_CALLED_IN_SCOPE: function=get_p15 scope=box
+// CHECK_FUNCTION_EXISTS: set_p15
+// CHECK_NOT_CALLED_IN_SCOPE: function=set_p15 scope=box
 private inline var A.p15: Int
     get() = a + 150000
     set(v) {
         a = v + 1500
     }
 
-// CHECK_FUNCTION_EXISTS: get_p16 TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=get_p16 scope=box TARGET_BACKENDS=JS
-// CHECK_CALLED_IN_SCOPE: function=set_p16 scope=box TARGET_BACKENDS=JS
-// CHECK_FUNCTION_EXISTS: set_p16 IGNORED_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=get_p16 scope=box IGNORED_BACKENDS=JS
-// CHECK_CALLED_IN_SCOPE: function=set_p16 scope=box IGNORED_BACKENDS=JS
+// CHECK_FUNCTION_EXISTS: set_p16
+// CHECK_NOT_CALLED_IN_SCOPE: function=get_p16 scope=box
+// CHECK_CALLED_IN_SCOPE: function=set_p16 scope=box
 private var A.p16: Int
     inline get() = a + 160000
     set(v) {
         a = v + 1600
     }
 
-// CHECK_CALLED_IN_SCOPE: function=get_p17 scope=box TARGET_BACKENDS=JS
-// CHECK_FUNCTION_EXISTS: set_p17 TARGET_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=set_p17 scope=box TARGET_BACKENDS=JS
-// CHECK_CALLED_IN_SCOPE: function=get_p17 scope=box IGNORED_BACKENDS=JS
-// CHECK_FUNCTION_EXISTS: set_p17 IGNORED_BACKENDS=JS
-// CHECK_NOT_CALLED_IN_SCOPE: function=set_p17 scope=box IGNORED_BACKENDS=JS
+// CHECK_CALLED_IN_SCOPE: function=get_p17 scope=box
+// CHECK_FUNCTION_EXISTS: set_p17
+// CHECK_NOT_CALLED_IN_SCOPE: function=set_p17 scope=box
 private var A.p17: Int
     get() = a + 170000
     inline set(v) {

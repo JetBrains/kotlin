@@ -1,8 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1286
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test TARGET_BACKENDS=JS
-
 inline fun block(p: () -> Unit) = p()
 
 class A(val x: Int) {

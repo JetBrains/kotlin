@@ -40,8 +40,6 @@ inline fun B.Companion.test2() = bar()
 // MODULE: main(module2)
 // FILE: main.kt
 
-// CHECK_CONTAINS_NO_CALLS: box except=foo;bar;toString TARGET_BACKENDS=JS
-
 import A.test
 
 fun box(): String {

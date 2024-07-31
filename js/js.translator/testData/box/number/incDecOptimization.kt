@@ -1,5 +1,4 @@
 // EXPECTED_REACHABLE_NODES: 1283
-// CHECK_VARS_COUNT: function=test count=1 TARGET_BACKENDS=JS
 
 class A {
     var i = 23

@@ -1,8 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1287
 
-// FIXME: The IR backend generates a lot of redundant vars
-// CHECK_VARS_COUNT: function=box count=1 TARGET_BACKENDS=JS
-
 package foo
 
 var log = ""

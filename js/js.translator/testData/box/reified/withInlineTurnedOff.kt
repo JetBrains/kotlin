@@ -2,7 +2,6 @@
 package foo
 
 // NO_INLINE
-// CHECK_CALLED_IN_SCOPE: scope=box function=isInstanceOf TARGET_BACKENDS=JS
 
 class A
 class B

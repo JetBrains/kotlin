@@ -268,12 +268,6 @@ fun testLib2() {
 // FILE: main.kt
 package foo
 
-// PROPERTY_READ_COUNT: name=longConst count=1 scope=testImportedLongConstInlinedFromOtherModule TARGET_BACKENDS=JS
-// PROPERTY_READ_COUNT: name=L42 count=1 scope=testImportedLongConstInlinedFromOtherModule TARGET_BACKENDS=JS
-// PROPERTY_READ_COUNT: name=L_42 count=4 scope=testImportedLongConstInlinedFromOtherModule TARGET_BACKENDS=JS
-// PROPERTY_READ_COUNT: name=L84 count=2 scope=testImportedLongConstInlinedFromOtherModule TARGET_BACKENDS=JS
-// PROPERTY_READ_COUNT: name=bigLongConst count=1 scope=testImportedLongConstInlinedFromOtherModule TARGET_BACKENDS=JS
-// PROPERTY_READ_COUNT: name=L123456789012345 count=1 scope=testImportedLongConstInlinedFromOtherModule TARGET_BACKENDS=JS
 fun testImportedLongConstInlinedFromOtherModule() {
     testImportedLongConstInlineFun()
 }

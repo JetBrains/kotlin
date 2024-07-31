@@ -1,8 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 // EXPECTED_REACHABLE_NODES: 1280
-// PROPERTY_WRITE_COUNT: name=publishedTopLevel_61zpoe$ count=1 TARGET_BACKENDS=JS
-// PROPERTY_WRITE_COUNT: name=published_61zpoe$ count=1 TARGET_BACKENDS=JS
-// PROPERTY_WRITE_COUNT: name=B count=1 TARGET_BACKENDS=JS
 class A {
     @PublishedApi
     internal fun published(x: String) = "${x}K"

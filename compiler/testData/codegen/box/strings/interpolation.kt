@@ -1,16 +1,16 @@
 // CHECK_STRING_LITERAL_COUNT: function=foo count=1
 fun foo(x: Int) = "foo $x"
 
-// CHECK_STRING_LITERAL_COUNT: function=bar count=2 IGNORED_BACKENDS=JS
+// CHECK_STRING_LITERAL_COUNT: function=bar count=2
 fun bar(x: Int) = "$x bar"
 
 // CHECK_STRING_LITERAL_COUNT: function=baz count=1
 fun baz(x: Int) = "${x.toString()} baz"
 
-// CHECK_STRING_LITERAL_COUNT: function=beer count=2 IGNORED_BACKENDS=JS
+// CHECK_STRING_LITERAL_COUNT: function=beer count=2
 fun beer(x: Int?) = "$x beer"
 
-// CHECK_STRING_LITERAL_COUNT: function=quux count=2 IGNORED_BACKENDS=JS
+// CHECK_STRING_LITERAL_COUNT: function=quux count=2
 fun quux(x: Int?) = "${x?.toString()} quux"
 
 // CHECK_STRING_LITERAL_COUNT: function=test count=2

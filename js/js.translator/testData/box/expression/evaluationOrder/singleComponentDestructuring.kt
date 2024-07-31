@@ -1,6 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 // EXPECTED_REACHABLE_NODES: 1283
-// CHECK_VARS_COUNT: function=test count=2 TARGET_BACKENDS=JS
 var log = ""
 
 fun test() {

@@ -2,8 +2,6 @@
 // EXPECTED_REACHABLE_NODES: 1281
 package foo
 
-// CHECK_FUNCTIONS_HAVE_SAME_LINES: syntaxTestInline syntaxTest TARGET_BACKENDS=JS
-
 inline fun syntaxTestInline() {
     var result: Int = -0
 
