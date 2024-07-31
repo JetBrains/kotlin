@@ -562,8 +562,17 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return symbol.fir.inlineClassRepresentation?.underlyingType
     }
 
-    override fun KotlinTypeMarker.substitute(constructor: TypeConstructorMarker, arguments: List<TypeArgumentMarker>): KotlinTypeMarker =
-        TODO()
+    override fun KotlinTypeMarker.substitute(constructor: TypeConstructorMarker, arguments: List<TypeArgumentMarker>): KotlinTypeMarker {
+        if (constructor !is ConeClassifierLookupTag) return this
+        val symbol = constructor.toSymbol(session) as? FirClassLikeSymbol<*> ?: return this
+        val mapping = buildMap {
+            symbol.fir.typeParameters.zip(arguments) { parameter, arg ->
+                val type = (arg as ConeTypeProjection).type ?: return@zip
+                put(parameter.symbol, type)
+            }
+        }
+        return substitutorByMap(mapping, session).substituteOrSelf(this as ConeKotlinType)
+    }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getClassFqNameUnsafe()?.let(StandardNames.FqNames.fqNameToPrimitiveType::get)
