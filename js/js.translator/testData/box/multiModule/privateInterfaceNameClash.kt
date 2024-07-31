@@ -43,10 +43,5 @@ fun box(): String {
     val b = Derived2()
     if (b.bar() != "B.foo") return "fail2: ${b.bar()}"
 
-    if (testUtils.isLegacyBackend()) {
-        checkJsNames("foo", a)
-        checkJsNames("foo", b)
-    }
-
     return "OK"
 }

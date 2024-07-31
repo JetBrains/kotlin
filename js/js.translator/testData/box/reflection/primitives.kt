@@ -56,13 +56,8 @@ fun box(): String {
 
     assertEquals("Long", Long::class.simpleName)
     assertEquals("Long", 23L::class.simpleName)
-    if (testUtils.isLegacyBackend()) {
-        assertEquals("BoxedChar", Char::class.simpleName)
-        assertEquals("BoxedChar", '@'::class.simpleName)
-    } else {
-        assertEquals("Char", Char::class.simpleName)
-        assertEquals("Char", '@'::class.simpleName)
-    }
+    assertEquals("Char", Char::class.simpleName)
+    assertEquals("Char", '@'::class.simpleName)
     assertEquals("RuntimeException", RuntimeException::class.simpleName)
     assertEquals("RuntimeException", RuntimeException()::class.simpleName)
     assertEquals("KClass", KClass::class.simpleName)

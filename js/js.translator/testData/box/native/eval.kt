@@ -11,10 +11,5 @@ fun box(): String {
 
     assertEquals(5, eval("3 + 2"))
 
-    if (testUtils.isLegacyBackend()) {
-        val PACKAGE = "main"
-        assertEquals(top, eval("$PACKAGE.top"))
-    }
-
     return "OK"
 }

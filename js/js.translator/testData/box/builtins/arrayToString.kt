@@ -24,11 +24,7 @@ fun testKt14013() {
     log(a.toString())
     log(a!!.toString())
 
-    if (testUtils.isLegacyBackend()) {
-        assertEquals(",1;[...];,1;", pullLog(), "testKt14013")
-    } else {
-        assertEquals("[...];[...];[...];", pullLog(), "testKt14013")
-    }
+    assertEquals("[...];[...];[...];", pullLog(), "testKt14013")
 }
 
 fun concreteArrayToString(a: Array<Int>) {
@@ -55,27 +51,15 @@ fun box(): String {
     val a = arrayOf(1, 2, 3)
     concreteArrayToString(a)
 
-    if (testUtils.isLegacyBackend()) {
-        assertEquals("1,2,3;1,2,3;[...];", pullLog(), "concreteArrayToString")
-    } else {
-        assertEquals("[...];1,2,3;1,2,3;", pullLog(), "concreteArrayToString")
-    }
+    assertEquals("[...];1,2,3;1,2,3;", pullLog(), "concreteArrayToString")
 
     genericValueToString(a)
 
-    if (testUtils.isLegacyBackend()) {
-        assertEquals("[...];1,2,3;[...];", pullLog(), "genericValueToString")
-    } else {
-        assertEquals("[...];[...];[...];", pullLog(), "genericValueToString")
-    }
+    assertEquals("[...];[...];[...];", pullLog(), "genericValueToString")
 
     anyValueToString(a)
 
-    if (testUtils.isLegacyBackend()) {
-        assertEquals("1,2,3;1,2,3;[...];", pullLog(), "anyValueToString")
-    } else {
-        assertEquals("[...];[...];[...];", pullLog(), "anyValueToString")
-    }
+    assertEquals("[...];[...];[...];", pullLog(), "anyValueToString")
 
     return "OK"
 }

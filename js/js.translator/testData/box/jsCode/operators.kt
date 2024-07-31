@@ -18,16 +18,6 @@ fun box(): String {
     assertEquals(1, js("0 ^ 1"), "^")
     assertEquals(-2, js("~1"), "~")
 
-    if (testUtils.isLegacyBackend()) {
-        var i = 2
-        assertEquals(1, js("--i"), "-- prefix")
-        assertEquals(1, js("i--"), "-- postfix (1)")
-        assertEquals(0, js("i"), "-- postfix (0)")
-        assertEquals(1, js("++i"), "++ prefix")
-        assertEquals(1, js("i++"), "++ postfix (1)")
-        assertEquals(2, js("i"), "++ postfix (0)")
-    }
-
     assertEquals(true , js("true || false"), "||")
     assertEquals(false , js("true && false"), "&&")
     assertEquals(false , js("!true"), "!")
@@ -45,16 +35,6 @@ fun box(): String {
     assertEquals("odd", js("(1 % 2 === 0)?'even':'odd'"), "?:")
     assertEquals("even", js("(4 % 2 === 0)?'even':'odd'"), "?:")
     assertEquals(3, js("1,2,3"), ", (comma)")
-
-    if (testUtils.isLegacyBackend()) {
-        var j = 0
-        assertEquals(1, js("j = 1"), "=")
-        assertEquals(3, js("j += 2"), "+=")
-        assertEquals(2, js("j -= 1"), "-=")
-        assertEquals(14, js("j *= 7"), "*=")
-        assertEquals(7, js("j /= 2"), "/=")
-        assertEquals(1, js("j %= 2"), "%=")
-    }
 
     assertEquals(undefined, js("(void 0)"), "void")
     assertEquals(true, js("'key' in {'key': 10}"), "in")

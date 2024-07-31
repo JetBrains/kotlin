@@ -117,9 +117,6 @@ fun getDerived1(): ExportedBase = Derived1()
 @JsExport
 fun getDerived2(): ExportedBase = Derived2()
 
-@JsExport
-fun isLegacyBackend() = testUtils.isLegacyBackend()
-
 // FILE: test.js
 function assertEquals(expected, actual, msg) {
     if (expected !== actual) {
@@ -131,23 +128,21 @@ function box() {
 
     var d = exportedBaseClass;
 
-    if (!d.isLegacyBackend()) {
-        assertEquals(
-            true,
-            d.ExportedBase.prototype.hasOwnProperty('foo'),
-            'Property foo should be defined for ExportedBase.prototype'
-        );
-        assertEquals(
-            true,
-            d.ExportedBase.prototype.hasOwnProperty('bar'),
-            'Property bar should be defined for ExportedBase.prototype'
-        );
-        assertEquals(
-            true,
-            d.ExportedBase.prototype.hasOwnProperty('baz'),
-            'Property baz should be defined for ExportedBase.prototype'
-        );
-    }
+    assertEquals(
+        true,
+        d.ExportedBase.prototype.hasOwnProperty('foo'),
+        'Property foo should be defined for ExportedBase.prototype'
+    );
+    assertEquals(
+        true,
+        d.ExportedBase.prototype.hasOwnProperty('bar'),
+        'Property bar should be defined for ExportedBase.prototype'
+    );
+    assertEquals(
+        true,
+        d.ExportedBase.prototype.hasOwnProperty('baz'),
+        'Property baz should be defined for ExportedBase.prototype'
+    );
 
     assertEquals(
         true,
@@ -162,23 +157,21 @@ function box() {
     derived1.bar = '11';
     assertEquals('11', derived1.bar, "derived1.bar after write");
     assertEquals('11', derived1.baz, "derived1.baz initial value");
-    if (!d.isLegacyBackend()) {
-        assertEquals(
-            false,
-            Object.getPrototypeOf(derived1).hasOwnProperty('foo'),
-            'Property foo of Derived1 should be inherited from ExportedBase.prototype'
-        );
-        assertEquals(
-            false,
-            Object.getPrototypeOf(derived1).hasOwnProperty('bar'),
-            'Property bar should of Derived1 be inherited from ExportedBase.prototype'
-        );
-        assertEquals(
-            false,
-            Object.getPrototypeOf(derived1).hasOwnProperty('baz'),
-            'Property baz should of Derived1 be inherited from ExportedBase.prototype'
-        );
-    }
+    assertEquals(
+        false,
+        Object.getPrototypeOf(derived1).hasOwnProperty('foo'),
+        'Property foo of Derived1 should be inherited from ExportedBase.prototype'
+    );
+    assertEquals(
+        false,
+        Object.getPrototypeOf(derived1).hasOwnProperty('bar'),
+        'Property bar should of Derived1 be inherited from ExportedBase.prototype'
+    );
+    assertEquals(
+        false,
+        Object.getPrototypeOf(derived1).hasOwnProperty('baz'),
+        'Property baz should of Derived1 be inherited from ExportedBase.prototype'
+    );
 
     var derived2 = d.getDerived2();
     assertEquals('2', derived2.foo, "derived2.foo");
@@ -187,23 +180,21 @@ function box() {
     derived2.bar = '22';
     assertEquals('22', derived2.bar, "derived2.bar after write");
     assertEquals('22', derived2.baz, "derived2.baz initial value");
-    if (!d.isLegacyBackend()) {
-        assertEquals(
-            false,
-            Object.getPrototypeOf(derived2).hasOwnProperty('foo'),
-            'Property foo of Derived2 should be inherited from ExportedBase.prototype'
-        );
-        assertEquals(
-            false,
-            Object.getPrototypeOf(derived2).hasOwnProperty('bar'),
-            'Property bar of Derived2 should be inherited from ExportedBase.prototype'
-        );
-        assertEquals(
-            false,
-            Object.getPrototypeOf(derived2).hasOwnProperty('baz'),
-            'Property baz of Derived2 should be inherited from ExportedBase.prototype'
-        );
-    }
+    assertEquals(
+        false,
+        Object.getPrototypeOf(derived2).hasOwnProperty('foo'),
+        'Property foo of Derived2 should be inherited from ExportedBase.prototype'
+    );
+    assertEquals(
+        false,
+        Object.getPrototypeOf(derived2).hasOwnProperty('bar'),
+        'Property bar of Derived2 should be inherited from ExportedBase.prototype'
+    );
+    assertEquals(
+        false,
+        Object.getPrototypeOf(derived2).hasOwnProperty('baz'),
+        'Property baz of Derived2 should be inherited from ExportedBase.prototype'
+    );
 
     var exportedDerived1 = new d.ExportedDerived1();
     assertEquals('ExportedDerived1.foo', exportedDerived1.foo, "exportedDerived1.foo");
@@ -213,63 +204,57 @@ function box() {
     assertEquals('ExportedDerived1.baz', exportedDerived1.baz, "exportedDerived1.baz initial value");
     exportedDerived1.baz = 'ExportedDerived1.baz (updated)';
     assertEquals('ExportedDerived1.baz (updated)', exportedDerived1.baz, "exportedDerived1.baz after write");
-    if (!d.isLegacyBackend()) {
-        assertEquals(
-            false,
-            d.ExportedDerived1.prototype.hasOwnProperty('foo'),
-            'Property foo of ExportedDerived1 should be inherited from ExportedBase.prototype'
-        );
-        assertEquals(
-            false,
-            d.ExportedDerived1.prototype.hasOwnProperty('bar'),
-            'Property bar of ExportedDerived1 should be inherited from ExportedBase.prototype'
-        );
+    assertEquals(
+        false,
+        d.ExportedDerived1.prototype.hasOwnProperty('foo'),
+        'Property foo of ExportedDerived1 should be inherited from ExportedBase.prototype'
+    );
+    assertEquals(
+        false,
+        d.ExportedDerived1.prototype.hasOwnProperty('bar'),
+        'Property bar of ExportedDerived1 should be inherited from ExportedBase.prototype'
+    );
 
-        // true because it is val -> var override, to we need to redefine property with setter
-        assertEquals(
-            true,
-            d.ExportedDerived1.prototype.hasOwnProperty('baz'),
-            'Property baz of ExportedDerived1 should be defined for ExportedDerived1.prototype'
-        );
-    }
+    // true because it is val -> var override, to we need to redefine property with setter
+    assertEquals(
+        true,
+        d.ExportedDerived1.prototype.hasOwnProperty('baz'),
+        'Property baz of ExportedDerived1 should be defined for ExportedDerived1.prototype'
+    );
 
     var exportedDerived2 = new d.ExportedDerived2();
-    if (!d.isLegacyBackend()) {
-        assertEquals(
-            false,
-            d.ExportedDerived2.prototype.hasOwnProperty('foo'),
-            'Property foo should not be defined for ExportedDerived2.prototype'
-        );
-        assertEquals(
-            false,
-            d.ExportedDerived2.prototype.hasOwnProperty('bar'),
-            'Property bar should not be defined for ExportedDerived2.prototype'
-        );
-        assertEquals(
-            false,
-            d.ExportedDerived2.prototype.hasOwnProperty('baz'),
-            'Property baz should not be defined for ExportedDerived2.prototype'
-        );
-    }
+    assertEquals(
+        false,
+        d.ExportedDerived2.prototype.hasOwnProperty('foo'),
+        'Property foo should not be defined for ExportedDerived2.prototype'
+    );
+    assertEquals(
+        false,
+        d.ExportedDerived2.prototype.hasOwnProperty('bar'),
+        'Property bar should not be defined for ExportedDerived2.prototype'
+    );
+    assertEquals(
+        false,
+        d.ExportedDerived2.prototype.hasOwnProperty('baz'),
+        'Property baz should not be defined for ExportedDerived2.prototype'
+    );
 
     var exportedDerived3 = new d.ExportedDerived3 ();
-    if (!d.isLegacyBackend()) {
-        assertEquals(
-            false,
-            d.ExportedDerived3.prototype.hasOwnProperty('foo'),
-            'Property foo should not be defined for ExportedDerived3.prototype'
-        );
-        assertEquals(
-            false,
-            d.ExportedDerived3.prototype.hasOwnProperty('bar'),
-            'Property bar should not be defined for ExportedDerived3.prototype'
-        );
-        assertEquals(
-            false,
-            d.ExportedDerived3.prototype.hasOwnProperty('baz'),
-            'Property baz should not be defined for ExportedDerived3.prototype'
-        );
-    }
+    assertEquals(
+        false,
+        d.ExportedDerived3.prototype.hasOwnProperty('foo'),
+        'Property foo should not be defined for ExportedDerived3.prototype'
+    );
+    assertEquals(
+        false,
+        d.ExportedDerived3.prototype.hasOwnProperty('bar'),
+        'Property bar should not be defined for ExportedDerived3.prototype'
+    );
+    assertEquals(
+        false,
+        d.ExportedDerived3.prototype.hasOwnProperty('baz'),
+        'Property baz should not be defined for ExportedDerived3.prototype'
+    );
 
     return 'OK';
 }

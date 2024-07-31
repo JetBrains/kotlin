@@ -44,8 +44,6 @@ external class A(c: Char): I {
     override var maybeBaz: Char?
 }
 
-val expectedCharRepresentationInProperty = if (testUtils.isLegacyBackend()) "object" else "number"
-
 fun box(): String {
 
     if (actualTypeOfChar('a') != "number") return "Fail (actualTypeOfChar)"
@@ -85,11 +83,11 @@ fun box(): String {
     if (a.barNull != null) return "Fail (a.barNull)"
     if (a.baz != 'q') return "Fail (a.baz initial value)"
     a.baz = 'r'
-    if (js("typeof a._baz") != expectedCharRepresentationInProperty) return "Fail (typeof a._baz after modification)"
+    if (js("typeof a._baz") != "number") return "Fail (typeof a._baz after modification)"
     if (a.baz != 'r') return "Fail (a.baz after modification)"
     if (a.maybeBaz != null) return "Fail (a.maybeBaz initial value)"
     a.maybeBaz = 's'
-    if (js("typeof a._nullableBaz") != expectedCharRepresentationInProperty) return "Fail (typeof a._nullableBaz after 1st modification)"
+    if (js("typeof a._nullableBaz") != "number") return "Fail (typeof a._nullableBaz after 1st modification)"
     if (a.maybeBaz != 's') return "Fail (a.maybeBaz after 1st modification)"
     a.maybeBaz = null
     if (js("typeof a._nullableBaz") != "object") return "Fail (typeof a._nullableBaz after 2nd modification)"
@@ -107,11 +105,11 @@ fun box(): String {
     if (b.barNull != null) return "Fail (b.barNull)"
     if (b.baz != 'q') return "Fail (b.baz initial value)"
     b.baz = 'r'
-    if (js("typeof b._baz") != expectedCharRepresentationInProperty) return "Fail (typeof b._baz after modification)"
+    if (js("typeof b._baz") != "number") return "Fail (typeof b._baz after modification)"
     if (b.baz != 'r') return "Fail (b.baz after modification)"
     if (b.maybeBaz != null) return "Fail (b.maybeBaz initial value)"
     b.maybeBaz = 's'
-    if (js("typeof b._nullableBaz") != expectedCharRepresentationInProperty) return "Fail (typeof b._nullableBaz after 1st modification)"
+    if (js("typeof b._nullableBaz") != "number") return "Fail (typeof b._nullableBaz after 1st modification)"
     if (b.maybeBaz != 's') return "Fail (b.maybeBaz after 1st modification)"
     b.maybeBaz = null
     if (js("typeof b._nullableBaz") != "object") return "Fail (typeof b._nullableBaz after 2nd modification)"

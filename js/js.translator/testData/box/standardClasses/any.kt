@@ -15,11 +15,7 @@ fun box(): String {
 
     if (arrayOf(1, 2, 3).asAny() !is Any) return "fail3"
 
-    if (testUtils.isLegacyBackend()) {
-        if (createNakedObject() is Any) return "fail4"
-    } else {
-        if (createNakedObject() !is Any) return "fail4"
-    }
+    if (createNakedObject() !is Any) return "fail4"
 
     if (({ }).asAny() !is Any) return "fail5"
 
