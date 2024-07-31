@@ -5,10 +5,13 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
@@ -66,7 +69,16 @@ internal class SirClassFromKtSymbol(
         // For now, we support only `class C : Kotlin.Any()` class declarations, and
         // translate Kotlin.Any to KotlinRuntime.KotlinBase.
         ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
-        SirNominalType(KotlinRuntimeModule.kotlinBase)
+        ktSymbol.superTypes
+            .mapNotNull { (it as? KaClassType)?.symbol as? KaClassSymbol }
+            .firstOrNull { it.classKind == KaClassKind.CLASS }
+            ?.let {
+                if (it.classId == DefaultTypeClassIds.ANY) {
+                    SirNominalType(KotlinRuntimeModule.kotlinBase)
+                } else {
+                    (it.sirDeclaration() as? SirNamedDeclaration)?.let { SirNominalType(it) }
+                }
+            }
     }
 
     private fun childDeclarations(): List<SirDeclaration> = withSessions {

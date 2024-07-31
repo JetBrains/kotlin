@@ -34,6 +34,17 @@ typealias ShouldHaveNoAnnotation = @UselessAnnotation Int
 
 typealias UselessDeclaration = UselessAnnotation
 
+// File: supported.kt
+
+open class OPEN_CLASS
+typealias openClass = OPEN_CLASS
+
+class INHERITANCE_SINGLE_CLASS : OPEN_CLASS()
+typealias inheritanceSingleClass = INHERITANCE_SINGLE_CLASS
+
+object OBJECT_WITH_CLASS_INHERITANCE: OPEN_CLASS()
+typealias objectWithClassInheritance = OBJECT_WITH_CLASS_INHERITANCE
+
 // FILE: should_be_ignored.kt
 import typealiases.Foo
 
@@ -46,6 +57,9 @@ enum class ENUM {
 }
 typealias enumClass = ENUM
 
+// FIXME: KT-70541: typealiases can not properly detect unsupported nested classes
+// So we have to exclude these tests for now:
+/*
 interface OUTSIDE_PROTO {
     abstract class INSIDE_PROTO
 }
@@ -58,6 +72,9 @@ typealias inheritanceCouple = INHERITANCE_COUPLE
 class INHERITANCE_SINGLE_PROTO : OUTSIDE_PROTO.INSIDE_PROTO()
 typealias inhertanceSingleProto = INHERITANCE_SINGLE_PROTO
 
+object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
+typealias objectWithInterfaceInheritance = OBJECT_WITH_INTERFACE_INHERITANCE
+*/
 data class DATA_CLASS(val a: Int)
 typealias dataClass = DATA_CLASS
 
@@ -77,9 +94,6 @@ sealed class SEALED {
     object O : SEALED()
 }
 typealias sealedClass = SEALED
-
-object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
-typealias objectWithInterfaceInheritance = OBJECT_WITH_INTERFACE_INHERITANCE
 
 // copied from std, the simpliest generic inheritance that I could come up with.
 object OBJECT_WITH_GENERIC_INHERITANCE: ListIterator<Nothing> {

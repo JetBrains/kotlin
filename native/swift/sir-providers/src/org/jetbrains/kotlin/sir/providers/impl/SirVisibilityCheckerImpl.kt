@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
@@ -81,8 +83,17 @@ public class SirVisibilityCheckerImpl(
                 unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inner classes are not supported yet.")
                 return@with false
             }
-            if (!(superTypes.count() == 1 && superTypes.first().isAnyType)) {
-                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "inheritance is not supported yet.")
+            if (superTypes.any { ((it as? KaClassType)?.symbol as? KaClassSymbol)?.classKind != KaClassKind.CLASS }) {
+                unsupportedDeclarationReporter
+                    .report(this@isConsumableBySirBuilder, "inheritance from non-classes is not supported yet.")
+                return@with false
+            }
+            if (!typeParameters.isEmpty() || superTypes.any { (it as? KaClassType)?.typeArguments?.isEmpty() == false }) {
+                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "generics are not supported yet.")
+                return@with false
+            }
+            if (classId == DefaultTypeClassIds.ANY) {
+                unsupportedDeclarationReporter.report(this@isConsumableBySirBuilder, "${classId} is not supported yet.")
                 return@with false
             }
             if (isInline) {

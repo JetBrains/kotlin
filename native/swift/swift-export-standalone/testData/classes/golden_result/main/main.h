@@ -61,7 +61,13 @@ void __root___Foo_init_initialize__TypesOfArguments__uintptr_t_int32_t__(uintptr
 
 void __root___Foo_init_initialize__TypesOfArguments__uintptr_t_float__(uintptr_t __kt, float f);
 
+uintptr_t __root___INHERITANCE_SINGLE_CLASS_init_allocate();
+
+void __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
 uintptr_t __root___OBJECT_NO_PACKAGE_get();
+
+uintptr_t __root___OBJECT_WITH_CLASS_INHERITANCE_get();
 
 uintptr_t __root___OPEN_CLASS_init_allocate();
 

@@ -94,6 +94,18 @@ public final class Foo : KotlinRuntime.KotlinBase {
         return Foo_foo(self.__externalRCRef())
     }
 }
+public final class INHERITANCE_SINGLE_CLASS : main.OPEN_CLASS {
+    public override init() {
+        let __kt = __root___INHERITANCE_SINGLE_CLASS_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+    }
+    public override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
 public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
     public final class Bar : KotlinRuntime.KotlinBase {
         public final class CLASS_INSIDE_CLASS_INSIDE_OBJECT : KotlinRuntime.KotlinBase {
@@ -184,6 +196,21 @@ public final class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
     }
     public func foo() -> Swift.Int32 {
         return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
+    }
+}
+public final class OBJECT_WITH_CLASS_INHERITANCE : main.OPEN_CLASS {
+    public static var shared: main.OBJECT_WITH_CLASS_INHERITANCE {
+        get {
+            return main.OBJECT_WITH_CLASS_INHERITANCE(__externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
+        }
+    }
+    private override init() {
+        fatalError()
+    }
+    public override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
     }
 }
 open class OPEN_CLASS : KotlinRuntime.KotlinBase {
