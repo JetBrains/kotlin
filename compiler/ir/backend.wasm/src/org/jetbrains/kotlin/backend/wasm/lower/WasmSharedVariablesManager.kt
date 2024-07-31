@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 
 class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariablesManager {
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
