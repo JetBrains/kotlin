@@ -30,6 +30,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("dataClass.kt")
+  public void testDataClass() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/dataClass.kt");
+  }
+
+  @Test
   @TestMetadata("interface.kt")
   public void testInterface() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/interface.kt");

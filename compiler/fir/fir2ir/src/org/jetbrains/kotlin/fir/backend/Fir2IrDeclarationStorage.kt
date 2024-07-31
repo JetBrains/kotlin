@@ -397,7 +397,14 @@ class Fir2IrDeclarationStorage(
 
             function.origin.generatedAnyMethod -> {
                 val name = function.nameOrSpecialName
-                require(OperatorNameConventions.isComponentN(name) || name == DATA_CLASS_COPY) {
+                /*
+                 * During regular compilation `equals`, `hashCode` and `toString` are generated separately using DataClassMemberGenerator.
+                 *   `componentN` and `copy` are generated on a FIR level, so they are created here like any other regular function.
+                 *
+                 * In AA API mode the source-based data class may come as a dependency, which means that even for generated method we
+                 *   will create a regular Fir2IrLazyFunction
+                 */
+                require(OperatorNameConventions.isComponentN(name) || name == DATA_CLASS_COPY || configuration.allowNonCachedDeclarations) {
                     "Only componentN functions should be cached this way, but got: $name"
                 }
                 functionCache[function] = irFunctionSymbol

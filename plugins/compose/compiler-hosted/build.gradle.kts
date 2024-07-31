@@ -1,9 +1,21 @@
+import org.gradle.api.artifacts.dsl.DependencyHandler
+
 plugins {
     kotlin("jvm")
 }
 
 repositories {
+    if (!kotlinBuildProperties.isTeamcityBuild) {
+        androidXMavenLocal(androidXMavenLocalPath)
+    }
     androidxSnapshotRepo(libs.versions.compose.snapshot.id.get())
+    composeGoogleMaven(libs.versions.compose.stable.get())
+}
+
+fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
+    testImplementation(dependency) {
+        isTransitive = false
+    }
 }
 
 description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
@@ -34,7 +46,18 @@ dependencies {
     testApi(project(":compiler:plugin-api"))
     testImplementation(projectTests(":compiler:tests-common-new"))
 
+    // runtime tests
     testImplementation(composeRuntime())
+    testImplementation(composeRuntimeTestUtils())
+
+    // other compose
+    testImplementationArtifactOnly(compose("foundation", "foundation"))
+    testImplementationArtifactOnly(compose("foundation", "foundation-layout"))
+    testImplementationArtifactOnly(compose("animation", "animation"))
+    testImplementationArtifactOnly(compose("ui", "ui"))
+    testImplementationArtifactOnly(compose("ui", "ui-graphics"))
+    testImplementationArtifactOnly(compose("ui", "ui-text"))
+    testImplementationArtifactOnly(compose("ui", "ui-unit"))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
