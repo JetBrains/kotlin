@@ -5,7 +5,7 @@ FILE: overriddenPropertiesWithExplicitBackingFields.kt
         }
 
         public open var it: R|kotlin/Number|
-            private <explicit backing field>: R|kotlin/Int| = Int(3)
+            private final backing field field: R|kotlin/Int| = Int(3)
             public get(): R|kotlin/Number|
             public set(value: R|kotlin/Number|): R|kotlin/Unit| {
                 this@R|/A|.F|/A.it| = R|<local>/value|.R|kotlin/Number.toInt|()

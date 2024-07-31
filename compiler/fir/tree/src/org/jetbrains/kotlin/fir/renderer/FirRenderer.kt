@@ -352,11 +352,7 @@ class FirRenderer(
         }
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry) {
-            visitCallableDeclaration(enumEntry)
-            enumEntry.initializer?.let {
-                print(" = ")
-                it.accept(this)
-            }
+            visitVariable(enumEntry)
         }
 
         override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
@@ -397,14 +393,7 @@ class FirRenderer(
         }
 
         override fun visitBackingField(backingField: FirBackingField) {
-            modifierRenderer?.renderModifiers(backingField)
-            print("<explicit backing field>: ")
-            backingField.returnTypeRef.accept(this)
-
-            backingField.initializer?.let {
-                print(" = ")
-                it.accept(this)
-            }
+            visitVariable(backingField)
         }
 
         override fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {

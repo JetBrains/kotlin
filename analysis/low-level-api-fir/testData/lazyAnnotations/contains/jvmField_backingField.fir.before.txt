@@ -1,1 +1,1 @@
-private <explicit backing field>: Int
+private final? [ResolvedTo(RAW_FIR)] backing field field: Int

@@ -1,6 +1,6 @@
 FILE: localVariablesWithBackingFields.kt
     public final val that: R|kotlin/Number|
-        private <explicit backing field>: R|kotlin/Int| = Int(239)
+        private final backing field field: R|kotlin/Int| = Int(239)
         public get(): R|kotlin/Number|
     public final fun test(): R|kotlin/Unit| {
         lval a: R|kotlin/Number|
@@ -20,14 +20,14 @@ FILE: localVariablesWithBackingFields.kt
             ^ Int(2)
         }
         )
-            private <explicit backing field>: R|kotlin/Int| = Int(10)
+            private final backing field field: R|kotlin/Int| = Int(10)
             public get(): R|kotlin/Number| {
                 ^ this@R|/A|.D|/A.c|.R|kotlin/getValue|<R|kotlin/Int|>(this@R|/A|, ::R|/A.c|)
             }
 
     }
     public final val R|A|.cc: R|kotlin/Number|
-        private <explicit backing field>: R|kotlin/Int| = Int(10)
+        private final backing field field: R|kotlin/Int| = Int(10)
         public get(): R|kotlin/Number|
     public final fun R|A|.cc(): R|kotlin/Unit| {
         lval it: <ERROR TYPE REF: Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]> = <Unresolved name: a>#.<Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]>#(Int(2))

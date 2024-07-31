@@ -48,6 +48,7 @@ open class FirDeclarationRenderer(
                 is FirPropertyAccessor -> if (declaration.isGetter) "get" else "set"
                 is FirField -> "field"
                 is FirEnumEntry -> "enum entry"
+                is FirBackingField -> "backing field"
                 else -> "unknown"
             }
         )

@@ -5,7 +5,7 @@ FILE: propertyTypeNarrowing.kt
         }
 
         public final val it: R|kotlin/Number|
-            private <explicit backing field>: R|kotlin/Int| = Int(4)
+            private final backing field field: R|kotlin/Int| = Int(4)
             public get(): R|kotlin/Number|
 
         public final fun test(): R|kotlin/Int| {
