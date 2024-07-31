@@ -4,10 +4,10 @@
 // FILE: common.kt
 // TARGET_PLATFORM: Common
 
-import kotlin.collections.<!UNRESOLVED_REFERENCE!>listOf<!>
+import kotlin.collections.listOf
 
 fun common() {
-    <!UNRESOLVED_REFERENCE!>listOf<!>("foo", "bar").<!DEBUG_INFO_MISSING_UNRESOLVED!>map<!> { <!UNRESOLVED_REFERENCE!>it<!> }
+    listOf("foo", "bar").map { it }
 }
 
 // MODULE: jvm
