@@ -95,7 +95,7 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
                 }
                 typeElement.receiverTypeReference?.let { append(getTypeText(it.typeElement)) }
                 append(typeElement.parameters.joinToString(", ", "(", ")") { param ->
-                    param.name?.let { "$it: " }.orEmpty() + param.typeReference?.getTypeText()?.orEmpty()
+                    param.name?.let { "$it: " }.orEmpty() + param.typeReference?.getTypeText().orEmpty()
                 })
                 typeElement.returnTypeReference?.let { returnType ->
                     append(" -> ")

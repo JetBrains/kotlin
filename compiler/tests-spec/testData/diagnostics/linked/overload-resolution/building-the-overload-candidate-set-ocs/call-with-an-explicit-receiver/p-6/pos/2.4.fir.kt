@@ -91,7 +91,7 @@ class Case3() {
             fun String?.orEmpty(): String = "my local inner extension for $this"
             fun String?.funWithTrailingLambda( x : Any? = null, body : ()-> String = {""} ): String = body()
 
-            s?.<!DEBUG_INFO_CALL("fqName: sentence3.Case3.case3.innerFirst.orEmpty; typeCall: extension function")!>orEmpty()<!>
+            s?.<!DEBUG_INFO_CALL("fqName: sentence3.Case3.case3.innerFirst.orEmpty; typeCall: extension function"), USELESS_CALL_ON_NOT_NULL!>orEmpty()<!>
             //trailing lambda
             s.<!DEBUG_INFO_CALL("fqName: sentence3.Case3.case3.innerFirst.funWithTrailingLambda; typeCall: extension function")!>funWithTrailingLambda { "ss" }<!>
             s.<!DEBUG_INFO_CALL("fqName: sentence3.Case3.case3.innerFirst.funWithTrailingLambda; typeCall: extension function")!>funWithTrailingLambda (x= 1) { "ss" }<!>
