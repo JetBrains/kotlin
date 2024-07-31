@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.caches
 
+import java.util.concurrent.locks.ReentrantLock
+
 object FirThreadUnsafeCachesFactory : FirCachesFactory() {
     override fun <K : Any, V, CONTEXT> createCache(createValue: (K, CONTEXT) -> V): FirCache<K, V, CONTEXT> =
         FirThreadUnsafeCache(createValue = createValue)
@@ -21,7 +23,8 @@ object FirThreadUnsafeCachesFactory : FirCachesFactory() {
 
     override fun <K : Any, V, CONTEXT, DATA> createCacheWithPostCompute(
         createValue: (K, CONTEXT) -> Pair<V, DATA>,
-        postCompute: (K, V, DATA) -> Unit
+        postCompute: (K, V, DATA) -> Unit,
+        sharedComputationLock: ReentrantLock?,
     ): FirCache<K, V, CONTEXT> =
         FirThreadUnsafeCacheWithPostCompute(createValue, postCompute)
 

@@ -136,20 +136,21 @@ abstract class AbstractFirBuiltinSymbolProvider(
         }
 
         private val classCache = moduleData.session.firCachesFactory.createCacheWithPostCompute(
-            { classId: ClassId, context: FirDeserializationContext? -> FirRegularClassSymbol(classId) to context }
-        ) { classId, symbol, parentContext ->
-            val classData = classDataFinder.findClassData(classId)!!
-            val classProto = classData.classProto
+            { classId: ClassId, context: FirDeserializationContext? -> FirRegularClassSymbol(classId) to context },
+            { classId, symbol, parentContext ->
+                val classData = classDataFinder.findClassData(classId)!!
+                val classProto = classData.classProto
 
-            deserializeClassToSymbol(
-                classId, classProto, symbol, nameResolver, moduleData.session, moduleData,
-                null, FirTypeDeserializer.FlexibleTypeFactory.Default,
-                kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
-                null,
-                origin = if (originateFromFallbackBuiltIns) FirDeclarationOrigin.BuiltInsFallback else FirDeclarationOrigin.BuiltIns,
-                this::findAndDeserializeClass,
-            )
-        }
+                deserializeClassToSymbol(
+                    classId, classProto, symbol, nameResolver, moduleData.session, moduleData,
+                    null, FirTypeDeserializer.FlexibleTypeFactory.Default,
+                    kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
+                    null,
+                    origin = if (originateFromFallbackBuiltIns) FirDeclarationOrigin.BuiltInsFallback else FirDeclarationOrigin.BuiltIns,
+                    this::findAndDeserializeClass,
+                )
+            }
+        )
 
         private val functionCache: FirCache<Name, List<FirNamedFunctionSymbol>, Nothing?> =
             moduleData.session.firCachesFactory.createCache { name ->

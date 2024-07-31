@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import java.util.concurrent.locks.ReentrantLock
 
 // This symbol provider only loads JVM classes *not* annotated with Kotlin `@Metadata` annotation.
 // Use it in application sessions for loading classes from Java files listed on the command line.
@@ -35,6 +36,12 @@ open class JavaSymbolProvider(
         val foundJavaClass: JavaClass? = null,
     )
 
+    /**
+     * @see org.jetbrains.kotlin.fir.caches.FirCachesFactory.createCacheWithPostCompute
+     */
+    protected open val sharedClassComputationLock: ReentrantLock?
+        get() = null
+
     private val classCache =
         session.firCachesFactory.createCacheWithPostCompute(
             createValue = createValue@{ classId: ClassId, context: ClassCacheContext? ->
@@ -45,7 +52,8 @@ open class JavaSymbolProvider(
                 if (classSymbol != null && javaClass != null) {
                     javaFacade.convertJavaClassToFir(classSymbol, parentClassSymbol, javaClass)
                 }
-            }
+            },
+            sharedClassComputationLock,
         )
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =

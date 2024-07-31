@@ -22,6 +22,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     private val key: KEY,
     calculate: (KEY) -> Pair<VALUE, DATA>,
     postCompute: (KEY, VALUE, DATA) -> Unit,
+    sharedComputationLock: ReentrantLock? = null,
 ) {
     private var _calculate: ((KEY) -> Pair<VALUE, DATA>)? = calculate
     private var _postCompute: ((KEY, VALUE, DATA) -> Unit)? = postCompute
@@ -30,26 +31,21 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
      * [lock] being volatile ensures the consistent reads between [lock] and [value] in different threads.
      */
     @Volatile
-    private var lock: ReentrantLock? = ReentrantLock()
+    private var lock: ReentrantLock? = sharedComputationLock ?: ReentrantLock()
 
     /**
-     * can be in one of the following three states:
-     * [ValueIsNotComputed] -- value is not initialized and thread are now executing [_postCompute]
-     * [ValueIsPostComputingNow] -- thread with threadId has computed the value and only it can access it during post compute
-     * some value of type [VALUE] -- value is computed and post compute was executed, values is visible for all threads
+     * [value] can be in one of the following states:
      *
-     * Value may be set only under [ValueWithPostCompute] intrinsic lock hold
-     * And may be read from any thread
+     *  - [ValueIsNotComputed] -- The value has not been initialized yet.
+     *  - [ValueIsCalculatingNow] -- The value is currently being calculated with [_calculate].
+     *  - [ValueIsPostComputingNow] -- The value is currently being post-computed with [_postCompute]. The thread with `threadId` has
+     *  calculated the value, and only it can access the value during post-computation.
+     *  - A value of type [VALUE] -- The value has been calculated and post-computed. It is visible for all threads.
+     *
+     * [value] may be set only under [ValueWithPostCompute] intrinsic lock hold, and may be read from any thread.
      */
     @Volatile
     private var value: Any? = ValueIsNotComputed
-
-    private inline fun <T> recursiveGuarded(body: () -> T): T {
-        check(lock!!.holdCount == 1) {
-            "Should not be called recursively"
-        }
-        return body()
-    }
 
     @Suppress("UNCHECKED_CAST")
     fun getValue(): VALUE {
@@ -74,7 +70,8 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                     } ?: return value as VALUE
                 }
             }
-            ValueIsNotComputed -> lock?.lockWithPCECheck(LOCKING_INTERVAL_MS) {
+
+            ValueIsNotComputed, ValueIsCalculatingNow -> lock?.lockWithPCECheck(LOCKING_INTERVAL_MS) {
                 return computeValueWithoutLock()
             } ?: return value as VALUE
 
@@ -95,6 +92,9 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                 // will be computed later, the read of `ValueIsNotComputed` guarantees that lock is not null
                 require(lock!!.isHeldByCurrentThread)
             }
+            ValueIsCalculatingNow -> {
+                error("Value calculation should not access the ${ValueWithPostCompute::class.simpleName} recursively.")
+            }
             else -> {
                 // other thread computed the value for us and set `lock` to null
                 require(lock == null)
@@ -103,9 +103,8 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
         }
 
         val calculatedValue = try {
-            val (calculated, data) = recursiveGuarded {
-                _calculate!!(key)
-            }
+            value = ValueIsCalculatingNow
+            val (calculated, data) = _calculate!!(key)
             value = ValueIsPostComputingNow(calculated, Thread.currentThread().id) // only current thread may see the value
             _postCompute!!(key, calculated, data)
             calculated
@@ -124,13 +123,24 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
 
     @Suppress("UNCHECKED_CAST")
     fun getValueIfComputed(): VALUE? = when (value) {
-        ValueIsNotComputed -> null
+        ValueIsNotComputed, ValueIsCalculatingNow -> null
         is ValueIsPostComputingNow -> null
         else -> value as VALUE
     }
 
-    private class ValueIsPostComputingNow(val value: Any?, val threadId: Long)
     private object ValueIsNotComputed
+
+    /**
+     * [ValueWithPostCompute] is in the [ValueIsCalculatingNow] state during value calculation with [_calculate]. It allows us to detect
+     * forbidden recursive calls to [getValue] during value calculation, as we can throw an error if [computeValueWithoutLock] is entered
+     * again while the value is in a [ValueIsCalculatingNow] state.
+     *
+     * We cannot detect recursion from the [lock]'s hold count since it may be shared and a value may be calculated inside the
+     * post-computation of another [ValueWithPostCompute].
+     */
+    private object ValueIsCalculatingNow
+
+    private class ValueIsPostComputingNow(val value: Any?, val threadId: Long)
 }
 
 private const val LOCKING_INTERVAL_MS = 50L

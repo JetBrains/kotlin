@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.LLSharedCacheLocks
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -56,7 +57,8 @@ class LLBinaryOriginLibrarySymbolProviderFactory(private val project: Project) :
                 kotlinScopeProvider,
                 packagePartProvider,
                 VirtualFileFinderFactory.getInstance(project).create(scope),
-                firJavaFacade
+                firJavaFacade,
+                sharedClassComputationLock = LLSharedCacheLocks.sharedJavaClassComputationLock,
             )
         )
     }

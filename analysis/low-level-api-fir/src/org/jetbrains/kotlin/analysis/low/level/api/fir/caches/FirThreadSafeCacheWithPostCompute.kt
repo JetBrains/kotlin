@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
 
 import org.jetbrains.kotlin.fir.caches.FirCache
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.locks.ReentrantLock
 
 internal class FirThreadSafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
     private val createValue: (K, CONTEXT) -> Pair<V, DATA>,
-    private val postCompute: (K, V, DATA) -> Unit
+    private val postCompute: (K, V, DATA) -> Unit,
+    private val sharedComputationLock: ReentrantLock? = null,
 ) : FirCache<K, V, CONTEXT>() {
     private val map = ConcurrentHashMap<K, ValueWithPostCompute<K, V, DATA>>()
 
@@ -19,7 +21,8 @@ internal class FirThreadSafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
             ValueWithPostCompute(
                 key,
                 calculate = { createValue(it, context) },
-                postCompute = postCompute
+                postCompute = postCompute,
+                sharedComputationLock = sharedComputationLock,
             )
         }.getValue()
 

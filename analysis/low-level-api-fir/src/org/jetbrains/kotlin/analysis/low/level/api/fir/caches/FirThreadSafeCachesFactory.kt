@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
+import java.util.concurrent.locks.ReentrantLock
 
 object FirThreadSafeCachesFactory : FirCachesFactory() {
     override fun <KEY : Any, VALUE, CONTEXT> createCache(createValue: (KEY, CONTEXT) -> VALUE): FirCache<KEY, VALUE, CONTEXT> =
@@ -27,9 +28,10 @@ object FirThreadSafeCachesFactory : FirCachesFactory() {
 
     override fun <KEY : Any, VALUE, CONTEXT, DATA> createCacheWithPostCompute(
         createValue: (KEY, CONTEXT) -> Pair<VALUE, DATA>,
-        postCompute: (KEY, VALUE, DATA) -> Unit
+        postCompute: (KEY, VALUE, DATA) -> Unit,
+        sharedComputationLock: ReentrantLock?,
     ): FirCache<KEY, VALUE, CONTEXT> =
-        FirThreadSafeCacheWithPostCompute(createValue, postCompute)
+        FirThreadSafeCacheWithPostCompute(createValue, postCompute, sharedComputationLock)
 
     override fun <V> createLazyValue(createValue: () -> V): FirLazyValue<V> =
         FirThreadSafeValue(createValue)

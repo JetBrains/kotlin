@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.concurrent.locks.ReentrantLock
 
 // This symbol provider loads JVM classes, reading extra info from Kotlin `@Metadata` annotations
 // if present. Use it for library and incremental compilation sessions. For source sessions use
@@ -54,7 +55,8 @@ class JvmClassFileBasedSymbolProvider(
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
-    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
+    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
+    override val sharedClassComputationLock: ReentrantLock? = null,
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ) {

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
+import java.util.concurrent.locks.ReentrantLock
 
 class PackagePartsCacheData(
     val proto: ProtoBuf.Package,
@@ -164,13 +165,22 @@ abstract class AbstractFirDeserializedSymbolProvider(
                 if (postProcessor != null && symbol != null) {
                     postProcessor.invoke(symbol)
                 }
-            }
+            },
+            sharedClassComputationLock,
         )
 
     private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
     private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
     // ------------------------ Abstract members ------------------------
+
+    /**
+     * A shared computation lock for the value computation of the provider's class cache.
+     *
+     * @see org.jetbrains.kotlin.fir.caches.FirCachesFactory.createCacheWithPostCompute
+     */
+    protected open val sharedClassComputationLock: ReentrantLock?
+        get() = null
 
     protected abstract fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData>
 
