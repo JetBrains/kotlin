@@ -698,6 +698,11 @@ public class FirPsiCompileJavaAgainstKotlinTestGenerated extends AbstractFirPsiC
       public void testSetter() {
         runTest("compiler/testData/compileJavaAgainstKotlin/targets/setter.kt");
       }
+
+      @TestMetadata("setterVisability.kt")
+      public void testSetterVisability() {
+        runTest("compiler/testData/compileJavaAgainstKotlin/targets/setterVisability.kt");
+      }
     }
   }
 
@@ -1378,6 +1383,11 @@ public class FirPsiCompileJavaAgainstKotlinTestGenerated extends AbstractFirPsiC
       @TestMetadata("setter.kt")
       public void testSetter() {
         runTest("compiler/testData/compileJavaAgainstKotlin/targets/setter.kt");
+      }
+
+      @TestMetadata("setterVisability.kt")
+      public void testSetterVisability() {
+        runTest("compiler/testData/compileJavaAgainstKotlin/targets/setterVisability.kt");
       }
     }
   }

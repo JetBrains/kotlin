@@ -1,4 +1,4 @@
-// ISSUE: KT-66534
+// ISSUE: KT-66534, KT-66954
 // WITH_STDLIB
 
 // FILE: A.java
@@ -77,6 +77,14 @@ val expectedNullableUnitExplicitReturnNull: () -> Unit? = l@ {
 fun expectedFlexibleUnitExplicitReturnNull() {
     A.foo = l@ {
         return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
+    }
+}
+
+fun nullableUnit(): Unit? = null
+
+fun expectedFlexibleUnitImplicitReturnNull() {
+    A.foo = l@ {
+        return@l <!RETURN_TYPE_MISMATCH!>nullableUnit()<!>
     }
 }
 
