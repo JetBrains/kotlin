@@ -396,6 +396,18 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsideInternalInline.kt")
+      public void testLeakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsideInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsideInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsidePublicInline.kt")
+      public void testLeakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsidePublicInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsidePublicInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateMethodInInnerClass.kt")
       public void testLeakingPrivateMethodInInnerClass() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodInInnerClass.kt");
@@ -435,6 +447,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       @TestMetadata("leakingPrivateMethodThroughInheritedCompanion.kt")
       public void testLeakingPrivateMethodThroughInheritedCompanion() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughInheritedCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodThroughInlineMethodInLocalObjectInPublicInline.kt")
+      public void testLeakingPrivateMethodThroughInlineMethodInLocalObjectInPublicInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateMethodThroughInlineMethodInLocalObjectInPublicInline.kt");
       }
 
       @Test
@@ -664,6 +682,18 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsideInternalInline.kt")
+      public void testLeakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsideInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsideInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsidePublicInline.kt")
+      public void testLeakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsidePublicInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodFromLocalObjectWithCrossinlineUsageInsidePublicInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateMethodInInnerClass.kt")
       public void testLeakingPrivateMethodInInnerClass() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodInInnerClass.kt");
@@ -703,6 +733,12 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       @TestMetadata("leakingPrivateMethodThroughInheritedCompanion.kt")
       public void testLeakingPrivateMethodThroughInheritedCompanion() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughInheritedCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateMethodThroughInlineMethodInLocalObjectInPublicInline.kt")
+      public void testLeakingPrivateMethodThroughInlineMethodInLocalObjectInPublicInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateMethodThroughInlineMethodInLocalObjectInPublicInline.kt");
       }
 
       @Test
@@ -887,6 +923,24 @@ public class FirJsKlibSyntheticAccessorInPhase2TestGenerated extends AbstractFir
       @TestMetadata("usePrivateMethodFromLocalObjectInsideInternalInline.kt")
       public void testUsePrivateMethodFromLocalObjectInsideInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromLocalObjectInsideInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateMethodFromLocalObjectWithCrossinlineUsageInsideInternalInline.kt")
+      public void testUsePrivateMethodFromLocalObjectWithCrossinlineUsageInsideInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromLocalObjectWithCrossinlineUsageInsideInternalInline.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateMethodFromLocalObjectWithCrossinlineUsageInsidePublicInline.kt")
+      public void testUsePrivateMethodFromLocalObjectWithCrossinlineUsageInsidePublicInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromLocalObjectWithCrossinlineUsageInsidePublicInline.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateMethodThroughInlineMethodInLocalObjectInPublicInline.kt")
+      public void testUsePrivateMethodThroughInlineMethodInLocalObjectInPublicInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodThroughInlineMethodInLocalObjectInPublicInline.kt");
       }
 
       @Test
