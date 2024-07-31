@@ -8,7 +8,7 @@ fun foo(): Int {
     if (c is Int) {
         val k = object: Runnable() {
             init {
-                a!!.toInt()
+                a!!.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
             }
             override fun run() = Unit
         }

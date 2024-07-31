@@ -8,7 +8,7 @@ class A {
     fun foo(w: Boolean) {
         if (w) {
             val message = ""
-            message.toString()
+            message.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
         } else {
             message.append() // message here should relate to the class-level property
         }

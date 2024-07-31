@@ -13,7 +13,7 @@ val p3 = (-1).toByte()
 val p3a =-1.toByte()
 
 // val p4: -1
-val p4 = -1.toInt()
+val p4 = -1.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
 
 // val p5: -1.toShort()
 val p5 = (-1).toShort()

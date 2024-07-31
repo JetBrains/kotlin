@@ -4,7 +4,7 @@ package test
 val prop1 = 1.toLong() + 1
 
 // val prop2: false
-val prop2 = -1.toInt()
+val prop2 = -1.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
 
 // val prop3: false
 val prop3 = 1 + 1.toByte()

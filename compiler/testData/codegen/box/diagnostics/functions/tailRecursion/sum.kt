@@ -1,3 +1,4 @@
+// DIAGNOSTICS: -REDUNDANT_CALL_OF_CONVERSION_METHOD
 // TODO: muted automatically, investigate should it be ran for JS or not
 // DONT_RUN_GENERATED_CODE: JS
 

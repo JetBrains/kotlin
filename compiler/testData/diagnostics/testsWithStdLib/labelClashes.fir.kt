@@ -48,7 +48,7 @@ class TypedThis {
 object OtherTests {
     fun Int.with() {
         <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") {
-            this<!LABEL_NAME_CLASH!>@with<!>.toString()
+            this<!LABEL_NAME_CLASH!>@with<!>.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
             this<!LABEL_NAME_CLASH!>@with<!>.length
             this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
         }
@@ -58,7 +58,7 @@ object OtherTests {
 object OtherTests2 {
     fun Int.with() {
         with("") {
-            this<!LABEL_NAME_CLASH!>@with<!>.toString()
+            this<!LABEL_NAME_CLASH!>@with<!>.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
         }
     }
 }

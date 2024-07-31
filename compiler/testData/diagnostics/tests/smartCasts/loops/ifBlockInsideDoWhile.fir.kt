@@ -2,7 +2,7 @@ public fun foo(p: String?, y: String?): Int {
     do {
         // After the check, smart cast should work
         if (y == null) {
-            "null".toString()
+            "null".<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
             break
         }
         y.length

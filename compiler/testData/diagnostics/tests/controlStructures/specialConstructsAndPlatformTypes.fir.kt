@@ -24,7 +24,7 @@ val testSafeCall1: String = <!INITIALIZER_TYPE_MISMATCH!>J.s?.let { it }<!>
 val testSafeCall2: String? = J.s?.let { it }
 
 val testSafeCall3: String = <!INITIALIZER_TYPE_MISMATCH!>J.m[""]?.let { it }<!>
-val testSafeCall4: String? = J.m[""]?.let { it.toString() }
+val testSafeCall4: String? = J.m[""]?.let { it.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!> }
 
 val testIf1: String = if (true) J.s else J.s
 val testIf2: String? = if (true) J.s else J.s

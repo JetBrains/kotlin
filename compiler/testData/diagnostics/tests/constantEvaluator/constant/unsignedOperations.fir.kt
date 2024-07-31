@@ -30,7 +30,7 @@ const val toDouble = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toDouble()<!>
 
 const val toUByte = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toUByte()<!>
 const val toUShort = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toUShort()<!>
-const val toUInt = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toUInt()<!>
+const val toUInt = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toUInt()<!><!>
 const val toULong = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toULong()<!>
 
 const val toString = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1u.toString()<!>

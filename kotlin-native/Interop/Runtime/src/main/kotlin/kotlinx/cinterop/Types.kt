@@ -190,6 +190,7 @@ public val CPointer<*>?.rawValue: NativePtr
 @ExperimentalForeignApi
 public fun <T : CPointed> CPointer<*>.reinterpret(): CPointer<T> = interpretCPointer(this.rawValue)!!
 
+@Suppress("REDUNDANT_CALL_OF_CONVERSION_METHOD")
 @ExperimentalForeignApi
 public fun <T : CPointed> CPointer<T>?.toLong(): Long = this.rawValue.toLong()
 

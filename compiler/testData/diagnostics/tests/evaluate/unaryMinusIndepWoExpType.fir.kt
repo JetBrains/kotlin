@@ -1,7 +1,7 @@
 val p1 = -1
 val p2 = -1.toLong()
 val p3 = (-1).toByte()
-val p4 = -1.toInt()
+val p4 = -1.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
 val p5 = (-1).toShort()
 val p6 = -1111111111111111111
 

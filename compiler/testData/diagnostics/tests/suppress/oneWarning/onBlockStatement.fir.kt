@@ -13,42 +13,42 @@ fun <T : CharSequence> foo(x: Array<Any>, y: IntArray, block: (T, Int) -> Int) {
 
     if (i != 1) {
         @Suppress("UNCHECKED_CAST")
-        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
     }
 
     if (i != 1)
         @Suppress("UNCHECKED_CAST")
-        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
 
     if (i != 2)
         @Suppress("UNCHECKED_CAST")
-        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
     else
         @Suppress("UNCHECKED_CAST")
-        i += block(x[1] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+        i += block(x[1] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
 
     while (i != 1)
         @Suppress("UNCHECKED_CAST")
-        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
 
     do
         @Suppress("UNCHECKED_CAST")
-        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
     while (i != 1)
 
     for (j in 1..100)
         @Suppress("UNCHECKED_CAST")
-        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
 
     when (i) {
         1 ->
             @Suppress("UNCHECKED_CAST")
-            i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+            i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
     }
 
     val l: () -> Unit = {
         @Suppress("UNCHECKED_CAST")
-        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+        i += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
     }
     l()
 
@@ -56,5 +56,5 @@ fun <T : CharSequence> foo(x: Array<Any>, y: IntArray, block: (T, Int) -> Int) {
     @Suppress("UNCHECKED_CAST")
 
 
-    y[i] += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
+    y[i] += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toInt()<!>
 }
