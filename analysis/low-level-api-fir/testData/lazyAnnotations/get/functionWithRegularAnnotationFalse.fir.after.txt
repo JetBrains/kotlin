@@ -1,0 +1,1 @@
+@R|MyAnno|[Types]() public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] i: R|kotlin/Int|): <implicit>

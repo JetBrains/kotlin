@@ -1,0 +1,1 @@
+@R|one/MyAnno|[Types]() public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any|

@@ -1,0 +1,1 @@
+@R|pack/AnotherAnno|[Types](value = Int(1)) @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyAnno : R|kotlin/Annotation|

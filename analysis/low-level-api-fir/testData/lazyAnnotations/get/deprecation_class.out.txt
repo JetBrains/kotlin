@@ -1,0 +1,2 @@
+kotlin/Deprecated(message = "deprecated class", replaceWith = kotlin/ReplaceWith(expression = "12", ))
+  psi: KtAnnotationEntry

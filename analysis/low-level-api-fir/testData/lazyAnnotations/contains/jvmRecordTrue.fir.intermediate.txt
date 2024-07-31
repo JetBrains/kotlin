@@ -1,0 +1,1 @@
+@R|kotlin/jvm/JvmRecord|[CompilerRequiredAnnotations]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo : R|kotlin/Any|

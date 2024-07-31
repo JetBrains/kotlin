@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] suppress_fileTrue.kt
+    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(abc)))

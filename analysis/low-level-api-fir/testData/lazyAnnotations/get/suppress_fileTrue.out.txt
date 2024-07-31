@@ -1,0 +1,2 @@
+kotlin/Suppress(names = ["abc"])
+  psi: KtAnnotationEntry

@@ -1,0 +1,1 @@
+@PROPERTY_GETTER:R|pack/MyAnno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|

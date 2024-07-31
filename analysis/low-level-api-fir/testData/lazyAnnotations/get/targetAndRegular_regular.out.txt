@@ -1,0 +1,2 @@
+pack/AnotherAnno(value = 1)
+  psi: KtAnnotationEntry

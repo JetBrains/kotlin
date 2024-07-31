@@ -40,6 +40,10 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
                 append(renderer.renderAnnotationApplication(useSiteSession, application))
             }
 
+            testServices.assertions.assertTrue(classId in annotationList) {
+                "ClassId $classId is not found in the annotation list"
+            }
+
             val rawList = renderAnnotation(annotationList[classId].single())
             val resolvedList = renderAnnotation(annotationList.single { it.classId == classId })
             testServices.assertions.assertEquals(resolvedList, rawList) {
