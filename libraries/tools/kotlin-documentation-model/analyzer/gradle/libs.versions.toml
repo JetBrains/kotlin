@@ -43,7 +43,7 @@ apacheMaven-pluginTools = "3.5.2"
 kotlinx-cli = "0.3.6"
 
 ## NPM | Frontend
-node = "16.13.0"
+node = "20.16.0"
 
 ## Publishing
 gradlePlugin-shadow = "8.1.1"
