@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import java.util.concurrent.locks.ReentrantLock
 
+@LLFirInternals
 object FirThreadSafeCachesFactory : FirCachesFactory() {
     override fun <KEY : Any, VALUE, CONTEXT> createCache(createValue: (KEY, CONTEXT) -> VALUE): FirCache<KEY, VALUE, CONTEXT> =
         FirThreadSafeCache(createValue = createValue)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import java.util.concurrent.locks.ReentrantLock
 
@@ -15,7 +16,8 @@ import java.util.concurrent.locks.ReentrantLock
  * only thread that initiated the calculating may see the value,
  * other threads will have to wait until that value is calculated
  */
-internal class ValueWithPostCompute<KEY, VALUE, DATA>(
+@LLFirInternals
+class ValueWithPostCompute<KEY, VALUE, DATA>(
     /**
      * We need at least one final field to be written in constructor to guarantee safe initialization of our [ValueWithPostCompute]
      */
