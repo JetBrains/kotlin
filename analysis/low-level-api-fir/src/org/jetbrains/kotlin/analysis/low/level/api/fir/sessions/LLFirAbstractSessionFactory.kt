@@ -551,14 +551,20 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerCommonComponentsAfterExtensionsAreConfigured()
 
             val dependencyProvider = LLFirDependenciesSymbolProvider(this) {
-                val providers = buildList {
+                buildList {
                     addMerged(computeFlattenedSymbolProviders(listOf(contextSession)))
-                    add(contextSession.dependenciesSymbolProvider) // Add the context module dependency symbol provider as is
+
+                    when (contextSession.ktModule) {
+                        is KaLibraryModule, is KaLibrarySourceModule -> {
+                            // Wrap library dependencies into a single classpath-filtering provider
+                            // Also see 'LLFirDanglingFileDependenciesSymbolProvider.filterSymbols()'
+                            add(LLFirDanglingFileDependenciesSymbolProvider(contextSession.dependenciesSymbolProvider))
+                        }
+                        else -> add(contextSession.dependenciesSymbolProvider)
+                    }
+
                     add(builtinsSession.symbolProvider)
                 }
-
-                // Wrap dependencies into a single classpath-filtering provider
-                listOf(LLFirDanglingFileDependenciesSymbolProvider(FirCompositeSymbolProvider(session, providers)))
             }
 
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)

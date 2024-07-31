@@ -58,6 +58,12 @@ public class FirIdeNormalAnalysisSourceModuleCodeFragmentCollectDiagnosticsTestG
   }
 
   @Test
+  @TestMetadata("libraryOverloads.kt")
+  public void testLibraryOverloads() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/libraryOverloads.kt");
+  }
+
+  @Test
   @TestMetadata("localClass.kt")
   public void testLocalClass() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/localClass.kt");
