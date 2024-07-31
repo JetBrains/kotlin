@@ -1,0 +1,9 @@
+depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreVideo Foundation Security darwin posix
+language = Objective-C
+package = platform.QuartzCore
+headers = QuartzCore/QuartzCore.h
+
+headerFilter = QuartzCore/**
+
+compilerOpts = -framework QuartzCore
+linkerOpts = -framework QuartzCore
