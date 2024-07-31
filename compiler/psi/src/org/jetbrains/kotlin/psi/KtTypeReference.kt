@@ -117,6 +117,7 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
                     }
                 }
             }
+            is KtDynamicType -> "dynamic"
             null -> null
             else -> error("Unsupported type $typeElement")
         }
