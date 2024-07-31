@@ -42,7 +42,7 @@ fun foo(y: IntArray) {
     var z = 1
     @Ann1 x + z
 
-    @Ann1 x = x + 2
+    @Ann1 x <!CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT!>=<!> x + 2
     @Ann1 x += z + 2
 
     @Ann1 x + 6 * 2 > 0

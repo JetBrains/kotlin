@@ -21,10 +21,10 @@ fun case1() {
 
 class B(var a: Int) {
     operator fun plus(value: Int): B {
-        a= a + value
+        a<!CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT!>=<!> a + value
         return this
     }
     operator fun plusAssign(value: Int): Unit {
-        a= a + value
+        a<!CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT!>=<!> a + value
     }
 }

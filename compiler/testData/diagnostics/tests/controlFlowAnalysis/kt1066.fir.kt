@@ -28,7 +28,7 @@ fun test() {
             sum += second
 
         temp = second
-        second = first + second
+        second <!CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT!>=<!> first + second
         first = temp
     }
 }

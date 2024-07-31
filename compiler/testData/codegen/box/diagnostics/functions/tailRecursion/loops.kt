@@ -1,3 +1,4 @@
+// DIAGNOSTICS: -CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
 
 tailrec fun test(x : Int) : Int {
     var z = if (x > 3) 3 else x
