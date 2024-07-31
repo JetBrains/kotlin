@@ -5,8 +5,8 @@ package foo
 
 inline fun <T> block(f: () -> T): T = f()
 
-// CHECK_BREAKS_COUNT: function=test count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test count=0
+// CHECK_LABELS_COUNT: function=test name=$l$block count=0
 fun test() = block(fun(): Int { return 23 })
 
 fun box(): String {

@@ -1,3 +1,4 @@
+// TODO: Add similar directives for JS_IR_ES6 but for classes
 // CHECK_FUNCTION_EXISTS: box$MyClass TARGET_BACKENDS=JS_IR
 // CHECK_FUNCTION_EXISTS: box$MyClass$ok$InternalClass TARGET_BACKENDS=JS_IR
 fun box(): String {

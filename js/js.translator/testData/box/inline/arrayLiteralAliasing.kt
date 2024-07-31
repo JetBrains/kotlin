@@ -47,8 +47,8 @@ inline fun moveTo(source: Array<Int>, sink: Array<Int>): PairArray<Int, Int> {
     return PairArray(source, sink)
 }
 
-// CHECK_BREAKS_COUNT: function=box count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=box name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=box count=0
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0
 fun box(): String {
     val expected = PairArray<Int, Int>(arrayOf(), arrayOf(1,2,3,4))
     assertTrue(expected.deepEquals(moveTo(arrayOf(3, 4),  arrayOf(1, 2))))

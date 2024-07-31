@@ -13,15 +13,15 @@ class Foo {
     val baz = Baz()
 }
 
-// CHECK_BREAKS_COUNT: function=testDispatch count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=testDispatch name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=testDispatch count=0
+// CHECK_LABELS_COUNT: function=testDispatch name=$l$block count=0
 fun testDispatch(foo: Foo): String {
     foo.bar { return "O" }
     return "FailDispatch;"
 }
 
-// CHECK_BREAKS_COUNT: function=testExtension count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=testExtension name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=testExtension count=0
+// CHECK_LABELS_COUNT: function=testExtension name=$l$block count=0
 fun testExtension(foo: Foo): String {
     foo.baz { return "K" }
     return "FailExtension;"

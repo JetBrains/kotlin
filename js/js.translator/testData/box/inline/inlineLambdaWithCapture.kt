@@ -21,8 +21,8 @@ internal inline fun maxBy(a: Array<Int>, keyFun: (Int) -> Int): Int {
     return maxVal
 }
 
-// CHECK_BREAKS_COUNT: function=maxBySquare count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=maxBySquare name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=maxBySquare count=0
+// CHECK_LABELS_COUNT: function=maxBySquare name=$l$block count=0
 internal fun maxBySquare(a: Array<Int>, r: Result): Result {
     var invocationCount = 0
     val maxVal = maxBy(a, { x -> invocationCount++; x * x;})

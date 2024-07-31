@@ -12,8 +12,8 @@ internal inline fun repeatAction(times: Int, action: () -> Unit) {
     }
 }
 
-// CHECK_BREAKS_COUNT: function=capturedInLambda count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=capturedInLambda name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=capturedInLambda count=0
+// CHECK_LABELS_COUNT: function=capturedInLambda name=$l$block count=0
 internal fun capturedInLambda(state: State, a: Int, b: Int): Int {
     inline fun State.inc() {
         count++
@@ -27,8 +27,8 @@ internal fun capturedInLambda(state: State, a: Int, b: Int): Int {
 }
 
 
-// CHECK_BREAKS_COUNT: function=declaredInLambda count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=declaredInLambda name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=declaredInLambda count=0
+// CHECK_LABELS_COUNT: function=declaredInLambda name=$l$block count=0
 internal fun declaredInLambda(state: State, a: Int, b: Int): Int {
     repeatAction(a)  {
         inline fun State.inc() {

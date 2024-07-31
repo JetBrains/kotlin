@@ -20,9 +20,9 @@ internal inline fun inline3(a: Int): Int {
     return i1
 }
 
-// CHECK_BREAKS_COUNT: function=squareMultipliedByTwo count=2 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=squareMultipliedByTwo name=$l$block count=1 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=squareMultipliedByTwo name=$l$block_0 count=1 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=squareMultipliedByTwo count=2
+// CHECK_LABELS_COUNT: function=squareMultipliedByTwo name=$l$block count=1
+// CHECK_LABELS_COUNT: function=squareMultipliedByTwo name=$l$block_0 count=1
 internal fun squareMultipliedByTwo(a: Int): Int {
     return inline3(a)
 }

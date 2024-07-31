@@ -19,20 +19,20 @@ internal class Inline {
     }
 }
 
-// CHECK_BREAKS_COUNT: function=doNothing1 count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=doNothing1 name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=doNothing1 count=0
+// CHECK_LABELS_COUNT: function=doNothing1 name=$l$block count=0
 internal fun doNothing1 (inline1: Inline, a: Int): Int {
     return inline1.identity1(a)
 }
 
-// CHECK_BREAKS_COUNT: function=doNothing2 count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=doNothing2 name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=doNothing2 count=0
+// CHECK_LABELS_COUNT: function=doNothing2 name=$l$block count=0
 internal fun doNothing2 (inline2: Inline, a: Int): Int {
     return inline2.identity2(a, {it})
 }
 
-// CHECK_BREAKS_COUNT: function=doNothing3 count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=doNothing3 name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=doNothing3 count=0
+// CHECK_LABELS_COUNT: function=doNothing3 name=$l$block count=0
 internal fun doNothing3 (inline3: Inline): Int {
     return inline3.identity3({11})
 }

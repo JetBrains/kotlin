@@ -26,8 +26,8 @@ inline fun run(): String {
 
 // FILE: 3.kt
 
-// CHECK_BREAKS_COUNT: function=ok count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=ok name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=ok count=0
+// CHECK_LABELS_COUNT: function=ok name=$l$block count=0
 fun ok() = o.run() + k.run()
 
 // FILE: main.kt

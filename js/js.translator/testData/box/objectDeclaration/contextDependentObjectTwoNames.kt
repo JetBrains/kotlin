@@ -2,6 +2,7 @@ interface A {
     fun run()
 }
 
+// TODO: Add similar directives for JS_IR_ES6 but for classes
 // CHECK_FUNCTION_EXISTS: box$a$1 TARGET_BACKENDS=JS_IR
 // CHECK_FUNCTION_EXISTS: box$a$1$run$b$1 TARGET_BACKENDS=JS_IR
 // CHECK_FUNCTION_EXISTS: box$a$1$run$c$1 TARGET_BACKENDS=JS_IR

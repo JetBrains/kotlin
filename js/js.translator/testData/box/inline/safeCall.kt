@@ -5,8 +5,8 @@ package foo
 
 inline fun <T : Any, R> T.doLet(f: (T) -> R): R = f(this)
 
-// CHECK_BREAKS_COUNT: function=sum count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=sum name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=sum count=0
+// CHECK_LABELS_COUNT: function=sum name=$l$block count=0
 private fun sum(x: Int?, y: Int): Int =
         x?.doLet { it + y } ?: 0
 

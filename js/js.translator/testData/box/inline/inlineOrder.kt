@@ -1,8 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1284
 package foo
 
-// CHECK_BREAKS_COUNT: function=declaredBefore count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=declaredBefore name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=declaredBefore count=0
+// CHECK_LABELS_COUNT: function=declaredBefore name=$l$block count=0
 fun declaredBefore(): Int {
     val a = g() + h()
     return a
@@ -28,8 +28,8 @@ inline fun h1(): Int {
     return a
 }
 
-// CHECK_BREAKS_COUNT: function=declaredAfter count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=declaredAfter name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=declaredAfter count=0
+// CHECK_LABELS_COUNT: function=declaredAfter name=$l$block count=0
 fun declaredAfter(): Int {
     val a = g1() + h1()
     return a

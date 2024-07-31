@@ -11,8 +11,8 @@ internal inline fun repeatAction(times: Int, action: () -> Unit) {
     }
 }
 
-// CHECK_BREAKS_COUNT: function=addToState count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=addToState name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=addToState count=0
+// CHECK_LABELS_COUNT: function=addToState name=$l$block count=0
 internal fun addToState(state: State, a: Int, b: Int): Int {
     inline fun inc(a: Int): Int {
         return a + 1

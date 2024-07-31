@@ -13,8 +13,8 @@ internal fun multiplyNoInline(a: Int, b: Int): Int {
     return (c++) + (d++) + multiply(c, d) - (--c + --d)
 }
 
-// CHECK_BREAKS_COUNT: function=box count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=box name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=box count=0
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0
 fun box(): String {
     assertEquals(0, multiplyNoInline(1, 0))
     assertEquals(1, multiplyNoInline(1, 1))

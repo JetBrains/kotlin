@@ -17,23 +17,23 @@ class Inline() {
     }
 }
 
-// CHECK_BREAKS_COUNT: function=test1 count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test1 name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test1 count=0
+// CHECK_LABELS_COUNT: function=test1 name=$l$block count=0
 fun test1(): Double {
     val inlineX = Inline()
     return inlineX.foo1({ z: Int -> z}, 25, { z: Double -> z}, 11.5)
 }
 
-// CHECK_BREAKS_COUNT: function=test1WithCaptured count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test1WithCaptured name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test1WithCaptured count=0
+// CHECK_LABELS_COUNT: function=test1WithCaptured name=$l$block count=0
 fun test1WithCaptured(): Double {
     val inlineX = Inline()
     var d = 0.0;
     return inlineX.foo1({ z: Int -> d = 1.0; z}, 25, { z: Double -> z + d}, 11.5)
 }
 
-// CHECK_BREAKS_COUNT: function=test2 count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test2 name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test2 count=0
+// CHECK_LABELS_COUNT: function=test2 name=$l$block count=0
 fun test2(): Double {
     val inlineX = Inline()
     return inlineX.foo2({ z: Int, p: Int -> z + p}, 25, { x: Double, y: Int, z: Int -> z + x + y}, 11.5, 2)

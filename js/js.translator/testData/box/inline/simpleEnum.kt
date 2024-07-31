@@ -15,8 +15,8 @@ enum class MyEnum {
     }
 }
 
-// CHECK_BREAKS_COUNT: function=test1 count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=test1 name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=test1 count=0
+// CHECK_LABELS_COUNT: function=test1 name=$l$block count=0
 fun test1(): String {
     return MyEnum.K.doSmth("O")
 }

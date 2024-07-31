@@ -8,14 +8,14 @@ internal inline fun sum(a: Int, b: Int = 0): Int {
     return a + b
 }
 
-// CHECK_BREAKS_COUNT: function=identity count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=identity name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=identity count=0
+// CHECK_LABELS_COUNT: function=identity name=$l$block count=0
 internal fun identity(a: Int): Int {
     return sum(a)
 }
 
-// CHECK_BREAKS_COUNT: function=sumNoInline count=0 TARGET_BACKENDS=JS_IR
-// CHECK_LABELS_COUNT: function=sumNoInline name=$l$block count=0 TARGET_BACKENDS=JS_IR
+// CHECK_BREAKS_COUNT: function=sumNoInline count=0
+// CHECK_LABELS_COUNT: function=sumNoInline name=$l$block count=0
 internal fun sumNoInline(a: Int, b: Int): Int {
     return sum(a, b)
 }
