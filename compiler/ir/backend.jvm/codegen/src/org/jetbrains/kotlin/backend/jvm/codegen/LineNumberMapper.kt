@@ -100,10 +100,6 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
         return lastLineNumber
     }
 
-    fun resetLineNumber() {
-        lastLineNumber = -1
-    }
-
     fun beforeIrInline(inlinedBlock: IrInlinedFunctionBlock) {
         if (inlinedBlock.isLambdaInlining()) {
             setUpAdditionalLineNumbersBeforeLambdaInlining(inlinedBlock)

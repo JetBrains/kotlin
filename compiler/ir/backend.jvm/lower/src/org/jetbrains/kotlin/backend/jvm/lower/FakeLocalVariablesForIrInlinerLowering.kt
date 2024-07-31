@@ -61,8 +61,8 @@ internal class FakeLocalVariablesForIrInlinerLowering(
         if (context.configuration.getBoolean(USE_INLINE_SCOPES_NUMBERS)) {
             irFile.acceptVoid(ScopeNumberVariableProcessor())
         } else {
-            irFile.acceptVoid(FunctionParametersProcessor())
             irFile.accept(LocalVariablesProcessor(), LocalVariablesProcessor.Data(processingOriginalDeclarations = false))
+            irFile.acceptVoid(FunctionParametersProcessor())
         }
     }
 
@@ -103,7 +103,8 @@ internal class FakeLocalVariablesForIrInlinerLowering(
             val tmpVar = scope.createTmpVariable(
                 irInt(0), name.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED
             )
-            this@addFakeLocalVariable.putStatementsInFrontOfInlinedFunction(listOf(tmpVar))
+            val position = this@addFakeLocalVariable.getDefaultAdditionalStatementsFromInlinedBlock().size
+            this@addFakeLocalVariable.statements.add(position, tmpVar)
         }
     }
 }
@@ -175,7 +176,7 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
         super.visitInlinedFunctionBlock(inlinedBlock)
-        inlinedBlock.getAdditionalStatementsFromInlinedBlock().forEach {
+        inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach {
             it.processFunctionParameter(inlinedBlock)
         }
     }
@@ -227,7 +228,7 @@ private class ScopeNumberVariableProcessor : IrElementVisitorVoid {
 }
 
 private fun IrVariable.calculateNewName(inlinedBlock: IrInlinedFunctionBlock): String {
-    val varName = name.asString().substringAfterLast("_")
+    val varName = name.asString()
     return when {
         this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER ->
             inlinedBlock.getReceiverParameterName()

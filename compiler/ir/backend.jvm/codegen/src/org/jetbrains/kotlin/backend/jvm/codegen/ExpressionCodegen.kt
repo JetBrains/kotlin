@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFromInlinedBlock
-import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
-import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
@@ -40,9 +37,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
@@ -476,11 +471,6 @@ class ExpressionCodegen(
         val inlineCall = inlinedBlock.inlineCall!!
         val callee = inlinedBlock.inlineDeclaration as? IrFunction
 
-        // 1. Evaluate NON DEFAULT arguments from inline function call
-        inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
-            exp.accept(this, info).discard()
-        }
-
         lineNumberMapper.beforeIrInline(inlinedBlock)
 
         lineNumberMapper.noLineNumberScopeWithCondition(inlinedBlock.inlineDeclaration.isInlineOnly()) {
@@ -495,18 +485,7 @@ class ExpressionCodegen(
                 mv.nop()
             }
 
-            // 2. Evaluate DEFAULT arguments from inline function call
-            inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
-                exp.accept(this, info).discard()
-            }
-
-            if (inlineCall.usesDefaultArguments()) {
-                // we must reset LN because at this point in original inliner we will inline non default call
-                lineNumberMapper.resetLineNumber()
-            }
-
-            // 3. Evaluate statements from inline function body
-            val result = inlinedBlock.getOriginalStatementsFromInlinedBlock().fold(unitValue) { prev, exp ->
+            val result = inlinedBlock.statements.fold(unitValue) { prev, exp ->
                 prev.discard()
                 exp.accept(this, info)
             }

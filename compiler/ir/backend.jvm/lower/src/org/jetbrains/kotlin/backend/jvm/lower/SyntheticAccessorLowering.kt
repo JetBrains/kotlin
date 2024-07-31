@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
@@ -349,6 +350,15 @@ private class SyntheticAccessorTransformer(
             }
         }
         return super.visitInlinedFunctionBlock(inlinedBlock)
+    }
+
+    override fun visitBlock(expression: IrBlock): IrExpression {
+        if (expression.origin == LoweredStatementOrigins.INLINE_ARGS_CONTAINER) {
+            return withinIrInlinedFun {
+                super.visitBlock(expression)
+            }
+        }
+        return super.visitBlock(expression)
     }
 }
 

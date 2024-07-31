@@ -14,9 +14,6 @@ object LoweredStatementOrigins {
     val DEFAULT_DISPATCH_CALL by IrStatementOriginImpl
 
     val INLINED_FUNCTION_REFERENCE by IrStatementOriginImpl
-    val INLINED_FUNCTION_ARGUMENTS by IrStatementOriginImpl
-    val INLINED_FUNCTION_DEFAULT_ARGUMENTS by IrStatementOriginImpl
-
     val INLINE_LAMBDA by IrStatementOriginImpl
     val INLINE_ARGS_CONTAINER by IrStatementOriginImpl
 }
