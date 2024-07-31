@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.*
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -659,7 +660,7 @@ private fun Project.prepareKlibValidationClasspath(): NamedDomainObjectProvider<
             it.description = "Runtime classpath for running binary-compatibility-validator."
             it.isCanBeResolved = false
             it.isCanBeConsumed = false
-            it.isCanBeDeclared = true
+            it.isCanBeDeclaredCompat = true
             it.isVisible = false
         }
 
@@ -669,7 +670,7 @@ private fun Project.prepareKlibValidationClasspath(): NamedDomainObjectProvider<
         it.description = "Resolve the runtime classpath for running binary-compatibility-validator."
         it.isCanBeResolved = true
         it.isCanBeConsumed = false
-        it.isCanBeDeclared = false
+        it.isCanBeDeclaredCompat = false
         it.isVisible = false
         it.extendsFrom(dependencyConfiguration)
     }
@@ -689,7 +690,7 @@ private fun Project.prepareJvmValidationClasspath(): NamedDomainObjectProvider<C
             it.description = "Runtime classpath for running binary-compatibility-validator."
             it.isCanBeResolved = false
             it.isCanBeConsumed = false
-            it.isCanBeDeclared = true
+            it.isCanBeDeclaredCompat = true
             it.isVisible = false
         }
 
@@ -701,7 +702,7 @@ private fun Project.prepareJvmValidationClasspath(): NamedDomainObjectProvider<C
         it.description = "Resolve the runtime classpath for running binary-compatibility-validator."
         it.isCanBeResolved = true
         it.isCanBeConsumed = false
-        it.isCanBeDeclared = false
+        it.isCanBeDeclaredCompat = false
         it.isVisible = false
         it.extendsFrom(dependencyConfiguration)
     }
@@ -757,3 +758,16 @@ private fun Project.readVersion(): String? {
 
     return version
 }
+
+private val Gradle820 = GradleVersion.version("8.2")
+
+/**
+ * [Configuration.isCanBeDeclared] is introduced in Gradle 8.2, we need to compat older Gradle users.
+ */
+private var Configuration.isCanBeDeclaredCompat: Boolean
+    get() = if (GradleVersion.current() >= Gradle820) isCanBeDeclared else true
+    set(value) {
+        if (GradleVersion.current() >= Gradle820) {
+            isCanBeDeclared = value
+        }
+    }
