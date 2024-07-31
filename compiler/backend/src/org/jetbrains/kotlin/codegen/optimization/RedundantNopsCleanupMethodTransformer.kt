@@ -78,7 +78,7 @@ class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
         for (i in 0..specialLabels.size - 2) {
             val begin = specialLabels[i]
             val end = specialLabels[i + 1]
-            if (begin is LineNumberNode) {
+            if (begin.firstMeaningfulInsnBeforeIsLineNumber()) {
                 requiredNops.addIfNotNull(getRequiredNopInRange(begin, end))
             }
         }
@@ -90,6 +90,14 @@ class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
             if (nop?.opcode == Opcodes.NOP) {
                 requiredNops.add(nop)
             }
+        }
+    }
+
+    private fun AbstractInsnNode.firstMeaningfulInsnBeforeIsLineNumber(): Boolean {
+        return when {
+            this is LineNumberNode -> true
+            !this.isMeaningful -> this.previous?.firstMeaningfulInsnBeforeIsLineNumber() ?: false
+            else -> false
         }
     }
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFromInlinedBlock
-import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
@@ -476,11 +475,6 @@ class ExpressionCodegen(
         val inlineCall = inlinedBlock.inlineCall
         val callee = inlinedBlock.inlineDeclaration as? IrFunction
 
-        // 1. Evaluate NON DEFAULT arguments from inline function call
-        inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
-            exp.accept(this, info).discard()
-        }
-
         lineNumberMapper.beforeIrInline(inlinedBlock)
 
         lineNumberMapper.noLineNumberScopeWithCondition(inlinedBlock.inlineDeclaration.isInlineOnly()) {
@@ -495,7 +489,7 @@ class ExpressionCodegen(
                 mv.nop()
             }
 
-            // 2. Evaluate DEFAULT arguments from inline function call
+            // Evaluate DEFAULT arguments from inline function call
             inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
                 exp.accept(this, info).discard()
             }
@@ -505,7 +499,7 @@ class ExpressionCodegen(
                 lineNumberMapper.resetLineNumber()
             }
 
-            // 3. Evaluate statements from inline function body
+            // Evaluate statements from inline function body
             val result = inlinedBlock.getOriginalStatementsFromInlinedBlock().fold(unitValue) { prev, exp ->
                 prev.discard()
                 exp.accept(this, info)

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.util.isLambdaInlining
@@ -167,13 +168,24 @@ private class LocalVariablesProcessor : IrElementVisitor<Unit, LocalVariablesPro
 }
 
 private class FunctionParametersProcessor : IrElementVisitorVoid {
+    private val notProcessedVars = mutableListOf<IrVariable>()
+
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
 
+    override fun visitVariable(declaration: IrVariable) {
+        if (declaration.isTmpForInline) {
+            notProcessedVars.add(declaration)
+        }
+        super.visitVariable(declaration)
+    }
+
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
         super.visitInlinedFunctionBlock(inlinedBlock)
-        inlinedBlock.getAdditionalStatementsFromInlinedBlock().forEach {
+        notProcessedVars.forEach { it.processFunctionParameter(inlinedBlock) }
+        notProcessedVars.clear()
+        inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach {
             it.processFunctionParameter(inlinedBlock)
         }
     }
@@ -206,9 +218,10 @@ private class ScopeNumberVariableProcessor : IrElementVisitorVoid {
         declaration.acceptChildrenVoid(processor)
     }
 
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+    override fun visitBlock(expression: IrBlock) {
+        val inlinedBlock = expression.statements.lastOrNull() as? IrInlinedFunctionBlock ?: return super.visitBlock(expression)
         inlinedBlock.insertInStackAndProcess {
-            super.visitInlinedFunctionBlock(inlinedBlock)
+            super.visitBlock(expression)
         }
     }
 
