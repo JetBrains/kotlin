@@ -144,7 +144,10 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         val unwrappedIntersectionTypes = subjectType.unwrapTypeParameterAndIntersectionTypes(bodyResolveComponents.session)
 
         for (unwrappedSubjectType in unwrappedIntersectionTypes) {
-            if (unwrappedSubjectType.toRegularClassSymbol(session)?.isExpect != true) {
+            // `kotlin.Boolean` is always exhaustive despite the fact it could be `expect` (relevant for stdlib K2)
+            if (unwrappedSubjectType.toRegularClassSymbol(session)?.isExpect != true ||
+                unwrappedSubjectType.classId == StandardClassIds.Boolean
+            ) {
                 val localStatus = computeStatusForNonIntersectionType(unwrappedSubjectType, session, whenExpression)
                 when {
                     localStatus === ExhaustivenessStatus.ProperlyExhaustive -> {
