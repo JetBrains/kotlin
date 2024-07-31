@@ -728,7 +728,7 @@ class LightTreeRawFirExpressionBuilder(
         return builder.apply {
             this.explicitReceiver = receiverForInvoke
             typeArguments += firTypeArguments
-        }.build()
+        }.build().pullUpSafeCallIfNecessary()
     }
 
     /**
