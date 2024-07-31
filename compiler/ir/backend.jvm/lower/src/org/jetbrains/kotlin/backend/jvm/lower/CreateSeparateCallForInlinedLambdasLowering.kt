@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
-import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
-import org.jetbrains.kotlin.ir.util.isAdaptedFunctionReference
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.ir.util.isLambdaBlock
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 @PhaseDescription(
@@ -53,7 +50,7 @@ class CreateSeparateCallForInlinedLambdasLowering(val context: JvmBackendContext
     }
 
     private fun IrInlinedFunctionBlock.getOnlyInlinableArguments(): List<IrExpression> {
-        return this.inlineCall.getArgumentsWithIr()
+        return this.inlineCall!!.getArgumentsWithIr()
             .filter { (param, arg) -> param.isInlineParameter() && arg.isInlinableExpression() }
             .map { it.second }
     }

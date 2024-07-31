@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
@@ -210,11 +211,12 @@ open class FunctionInlining(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
                 type = callSite.type,
-                inlineCall = callSite,
                 inlinedElement = originalInlinedElement,
                 origin = null,
                 statements = evaluationStatements + newStatements
-            )
+            ).apply {
+                this.inlineCall = callSite
+            }
 
             // Note: here we wrap `IrInlinedFunctionBlock` inside `IrReturnableBlock` because such way it is easier to
             // control special composite blocks that are inside `IrInlinedFunctionBlock`

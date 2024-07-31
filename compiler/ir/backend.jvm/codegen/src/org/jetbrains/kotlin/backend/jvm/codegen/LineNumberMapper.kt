@@ -111,7 +111,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
 
     fun afterIrInline(inlinedBlock: IrInlinedFunctionBlock) {
         if (inlinedBlock.isFunctionInlining()) {
-            val callLineNumber = getLineNumberForOffset(inlinedBlock.inlineCall.startOffset)
+            val callLineNumber = getLineNumberForOffset(inlinedBlock.inlineCall!!.startOffset)
             // `takeUnless` is required to avoid `markLineNumberAfterInlineIfNeeded` for inline only
             lastLineNumber = callLineNumber.takeUnless { noLineNumberScope } ?: -1
             markLineNumberAfterInlineIfNeeded(expressionCodegen.isInsideCondition)
@@ -146,7 +146,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
             callSite
         } else {
             if (irInlineData.size == 0 || irInlineData.firstOrNull()?.inlinedBlock.isLambdaPassedToTheFirstInlineFunction()) {
-                val offset = inlinedBlock.inlineCall.startOffset
+                val offset = inlinedBlock.inlineCall!!.startOffset
                 val sourceInfo = smap.sourceInfo!!
                 val line = fileEntry.getLineNumber(offset) + 1
                 val sourcePosition = SourcePosition(line, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
@@ -165,7 +165,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
     }
 
     private fun setUpAdditionalLineNumbersBeforeLambdaInlining(inlinedBlock: IrInlinedFunctionBlock) {
-        val lineNumberForOffset = getLineNumberForOffset(inlinedBlock.inlineCall.startOffset)
+        val lineNumberForOffset = getLineNumberForOffset(inlinedBlock.inlineCall!!.startOffset)
         val callee = inlinedBlock.inlineDeclaration as? IrFunction
 
         // TODO: reuse code from org/jetbrains/kotlin/codegen/inline/MethodInliner.kt:267
@@ -186,7 +186,8 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
     }
 
     private fun setUpAdditionalLineNumbersAfterLambdaInlining(inlinedBlock: IrInlinedFunctionBlock) {
-        val lineNumberForOffset = getLineNumberForOffset(inlinedBlock.inlineCall.startOffset)
+        val inlineCall = inlinedBlock.inlineCall!!
+        val lineNumberForOffset = getLineNumberForOffset(inlineCall.startOffset)
 
         // TODO: reuse code from org/jetbrains/kotlin/codegen/inline/MethodInliner.kt:316
         val overrideLineNumber = irInlineData.map { it.inlinedBlock }
@@ -198,7 +199,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
                 expressionCodegen.mv.visitLineNumber(currentLineNumber, markNewLabel())
             } else {
                 // Need to go through the superclass here to properly remap the line number via `sourceMapper`.
-                markLineNumber(inlinedBlock.inlineCall, startOffset = true)
+                markLineNumber(inlineCall, startOffset = true)
             }
             expressionCodegen.mv.nop()
         }
@@ -215,7 +216,7 @@ class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
     }
 
     private fun IrInlinedFunctionBlock.isInvokeOnDefaultArg(): Boolean {
-        val call = this.inlineCall
+        val call = this.inlineCall!!
         val expected = this.inlineDeclaration
         if (call.symbol.owner.name != OperatorNameConventions.INVOKE) return false
 

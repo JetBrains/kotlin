@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isStringClassType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isToString
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.util.*
 
 class IrInterpreterCommonChecker : IrInterpreterChecker {
     private val visitedStack = mutableListOf<IrElement>()
@@ -101,7 +98,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         // `IrReturnableBlock` will be created from IrCall after inline. We should do basically the same check as for IrCall.
         if (expression is IrReturnableBlock) {
             val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
-            if (inlinedBlock != null) return inlinedBlock.inlineCall.accept(this, data)
+            if (inlinedBlock != null) return inlinedBlock.inlineCall?.accept(this, data) ?: false
         }
 
         return visitStatements(expression.statements, data)
