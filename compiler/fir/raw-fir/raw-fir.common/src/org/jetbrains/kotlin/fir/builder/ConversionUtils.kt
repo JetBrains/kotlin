@@ -679,8 +679,7 @@ val CharSequence.isUnderscore: Boolean
 
 data class CalleeAndReceiver(
     val reference: FirNamedReference,
-    val receiverExpression: FirExpression? = null,
-    val isImplicitInvoke: Boolean = false
+    val receiverForInvoke: FirExpression? = null,
 )
 
 /**

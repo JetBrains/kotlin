@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
@@ -675,7 +674,7 @@ class LightTreeRawFirExpressionBuilder(
 
         val source = callSuffix.toFirSourceElement()
 
-        val (calleeReference, explicitReceiver, isImplicitInvoke) = when {
+        val (calleeReference, receiverForInvoke) = when {
             name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
                     this.source = callSuffix.getFirstChildExpressionUnwrapped()?.toFirSourceElement() ?: source
@@ -699,7 +698,6 @@ class LightTreeRawFirExpressionBuilder(
                         this.name = OperatorNameConventions.INVOKE
                     },
                     additionalArgument!!,
-                    isImplicitInvoke = true
                 )
             }
 
@@ -712,7 +710,7 @@ class LightTreeRawFirExpressionBuilder(
         }
 
         val builder: FirQualifiedAccessExpressionBuilder = if (hasArguments) {
-            val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
+            val builder = if (receiverForInvoke != null) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
             builder.apply {
                 this.source = source
                 this.calleeReference = calleeReference
@@ -728,7 +726,7 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
         return builder.apply {
-            this.explicitReceiver = explicitReceiver
+            this.explicitReceiver = receiverForInvoke
             typeArguments += firTypeArguments
         }.build()
     }
