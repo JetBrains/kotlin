@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithArguments
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithClassIds
 import org.jetbrains.kotlin.fir.symbols.resolvedCompilerRequiredAnnotations
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -62,44 +62,35 @@ internal fun annotationsByClassId(
                 return@mapIndexedNotNull null
             }
 
-            annotation.toKaAnnotation(builder, index) { classId ->
-                computeAnnotationArguments(firSymbol, annotationContainer, classId, index, builder)
-            }
+            annotation.toKaAnnotation(builder, index)
         }
     }
 
     return annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
         .mapIndexedToAnnotationApplication(session, classId) { index, annotation ->
-            annotation.toKaAnnotation(builder, index) { classId ->
-                computeAnnotationArguments(firSymbol, annotationContainer, classId, index, builder)
-            }
+            annotation.toKaAnnotation(builder, index)
         }
 }
 
-internal fun computeAnnotationArguments(
-    firSymbol: FirBasedSymbol<*>,
-    annotationContainer: FirAnnotationContainer,
-    classId: ClassId?,
-    index: Int,
-    builder: KaSymbolByFirBuilder
-): List<KaNamedAnnotationValue> {
-    if (firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
-        when (classId) {
-            StandardClassIds.Annotations.Target -> {
-                return computeKotlinTargetAnnotationArguments(annotationContainer.annotations[index], builder)
-            }
-            JvmStandardClassIds.Annotations.Java.Target -> {
-                return computeJavaTargetAnnotationArguments(annotationContainer.annotations[index], builder)
+internal fun computeAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
+    if (annotation is FirAnnotationCall) {
+        if (annotation.arguments.isEmpty()) return emptyList()
+
+        val symbol = annotation.containingDeclarationSymbol
+        if (symbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
+            when (annotation.toAnnotationClassId(builder.rootSession)) {
+                StandardClassIds.Annotations.Target -> return computeKotlinTargetAnnotationArguments(annotation, builder)
+                JvmStandardClassIds.Annotations.Java.Target -> return computeJavaTargetAnnotationArguments(annotation, builder)
             }
         }
-    }
 
-    val annotations = annotationContainer.resolvedAnnotationsWithArguments(firSymbol)
+        symbol.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+    }
 
     return FirAnnotationValueConverter.toNamedConstantValue(
         builder.analysisSession,
-        mapAnnotationParameters(annotations[index]),
-        builder
+        mapAnnotationParameters(annotation),
+        builder,
     )
 }
 
@@ -184,9 +175,7 @@ internal fun annotations(
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KaAnnotation> =
     annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
-        annotation.toKaAnnotation(builder, index) { classId ->
-            computeAnnotationArguments(firSymbol, annotationContainer, classId, index, builder)
-        }
+        annotation.toKaAnnotation(builder, index)
     }
 
 internal fun annotationClassIds(

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getTargetType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -221,7 +220,10 @@ internal object FirAnnotationValueConverter {
                 psi = psi as? KtCallElement,
                 useSiteTarget = null,
                 hasArguments = argumentMapping.isNotEmpty(),
-                lazyArguments = lazy { toNamedConstantValue(builder.analysisSession, argumentMapping, builder) },
+                lazyArguments = if (argumentMapping.isNotEmpty())
+                    lazy { toNamedConstantValue(builder.analysisSession, argumentMapping, builder) }
+                else
+                    lazyOf(emptyList()),
                 index = null,
                 constructorSymbol = with(builder.analysisSession) {
                     builder.functionBuilder.buildConstructorSymbol(resolvedSymbol)
