@@ -26,6 +26,7 @@ import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
@@ -36,15 +37,18 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.backend.FirAnnotationSourceElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -53,7 +57,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.*
@@ -833,6 +839,12 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val value = field.value
 
         val origin = kaptContext.origins[field]
+        val irField = (origin as? JvmIrDeclarationOrigin)?.declaration as? IrField
+        val firInitializer = when (val metadata = irField?.metadata) {
+            is FirMetadataSource.Field -> metadata.fir.initializer
+            is FirMetadataSource.Property -> metadata.fir.initializer
+            else -> null
+        }
 
         val propertyInitializer = when (val declaration = origin?.element) {
             is KtProperty -> declaration.initializer
@@ -841,11 +853,14 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
 
         if (value != null) {
-            if (propertyInitializer != null) {
-                return convertConstantValueArguments(containingClass, value, listOf(propertyInitializer))
+            return when {
+                firInitializer != null ->
+                    convertConstantValueArgumentsFir(containingClass, value, listOf(firInitializer))
+                propertyInitializer != null ->
+                    convertConstantValueArguments(containingClass, value, listOf(propertyInitializer))
+                else ->
+                    convertValueOfPrimitiveTypeOrString(value)
             }
-
-            return convertValueOfPrimitiveTypeOrString(value)
         }
 
         val propertyType = (origin?.descriptor as? PropertyDescriptor)?.returnType
@@ -1403,7 +1418,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 convertFirGetClassCall(value)
             }
             else -> {
-                convertLiteralExpression(containingClass, constantValue)
+                convertConstantValueArgumentsFir(containingClass, constantValue, listOfNotNull(value))
             }
         } ?: return null
         return treeMaker.Assign(treeMaker.SimpleName(name), expr)
@@ -1423,7 +1438,30 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
         }
 
+        if (constantValue.isOfPrimitiveType() && args.size == 1) {
+            // Do not inline primitive constants
+            tryParseReferenceToIntConstant(args.single())?.let { return it }
+        } else if (constantValue is List<*> &&
+            constantValue.isNotEmpty() &&
+            args.isNotEmpty() &&
+            constantValue.all { it.isOfPrimitiveType() }
+        ) {
+            val parsed = args.mapNotNull(::tryParseReferenceToIntConstant).toJavacList()
+            if (parsed.size == args.size) {
+                return treeMaker.NewArray(null, null, parsed)
+            }
+        }
+
         return convertLiteralExpression(containingClass, constantValue)
+    }
+
+    private fun tryParseReferenceToIntConstant(expression: FirExpression): JCExpression? {
+        if (expression !is FirPropertyAccessExpression) return null
+        val field = expression.calleeReference.resolved?.resolvedSymbol as? FirFieldSymbol ?: return null
+        if (!field.isJavaOrEnhancement || field.dispatchReceiverType != null) return null
+        val containingClass = field.containingClassLookupTag() ?: return null
+        val fqName = containingClass.classId.asSingleFqName().child(field.name)
+        return treeMaker.FqName(fqName)
     }
 
     private fun convertFirGetClassCall(expression: FirExpression): JCExpression? {

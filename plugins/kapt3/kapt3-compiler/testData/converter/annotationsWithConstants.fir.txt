@@ -268,8 +268,8 @@ package app;
 /**
  * public final class app/MyActivity : kotlin/Any {
  *
- *   // signature: <init>()V
- *   public constructor()
+ *   // signature: <init>(II)V
+ *   public constructor(param1: kotlin/Int (* = ... *), param2: kotlin/Int (* = ... *))
  *
  *   // signature: foo()V
  *   public final fun foo(): kotlin/Unit
@@ -349,6 +349,18 @@ package app;
  *   public final val f: kotlin/Int
  *     public final get
  *
+ *   // field: param1:I
+ *   // getter: getParam1()I
+ *   public final val param1: kotlin/Int
+ *     public final get
+ *
+ *   // field: param2:I
+ *   // getter: getParam2()I
+ *   // setter: setParam2(I)V
+ *   public final var param2: kotlin/Int
+ *     public final get
+ *     public final set
+ *
  *   // field: propB:I
  *   // getter: getPropB()I
  *   public final val propB: kotlin/Int
@@ -384,19 +396,21 @@ package app;
  */
 @kotlin.Metadata()
 public final class MyActivity {
-    @BindField(id = 100)
+    private final int param1 = 0;
+    private int param2;
+    @BindField(id = lib.R.id.textView)
     private final int a = 0;
-    @BindField(id = 100)
+    @BindField(id = lib.R.id.textView)
     private final int b = 0;
-    @BindField(id = 100)
+    @BindField(id = app.R.layout.mainActivity)
     private final int c = 0;
-    @BindField(id = 100)
+    @BindField(id = app.R.layout.mainActivity)
     private final int d = 0;
-    @BindField(id = 100)
+    @BindField(id = app.R2.layout.mainActivity)
     private final int e = 0;
-    @BindField(id = 200)
+    @BindField(id = app.B.id.textView)
     private final int f = 0;
-    public final int propA = 200;
+    public final int propA = app.B.id.textView;
     private final int propB = 0;
     private int propC;
     @kotlin.jvm.JvmField()
@@ -405,15 +419,26 @@ public final class MyActivity {
     public int propE;
     private final int propF = 0;
 
-    public MyActivity() {
+    public MyActivity(int param1, int param2) {
         super();
+    }
+
+    public final int getParam1() {
+        return 0;
+    }
+
+    public final int getParam2() {
+        return 0;
+    }
+
+    public final void setParam2(int p0) {
     }
 
     public final int getA() {
         return 0;
     }
 
-    @Bind(id = 100)
+    @Bind(id = lib.R.id.textView)
     @java.lang.Deprecated()
     public static void getA$annotations() {
     }
@@ -422,7 +447,7 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = 100)
+    @Bind(id = lib.R.id.textView)
     @java.lang.Deprecated()
     public static void getB$annotations() {
     }
@@ -431,7 +456,7 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = 100)
+    @Bind(id = app.R.layout.mainActivity)
     @java.lang.Deprecated()
     public static void getC$annotations() {
     }
@@ -440,7 +465,7 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = 100)
+    @Bind(id = app.R.layout.mainActivity)
     @java.lang.Deprecated()
     public static void getD$annotations() {
     }
@@ -449,8 +474,8 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = 100)
-    @Anno(a1 = false, a2 = (byte)1, a3 = 2, a4 = (short)3, a5 = 4L, a6 = '5', a7 = 6.0F, a8 = 7.0, a9 = "A")
+    @Bind(id = app.R2.layout.mainActivity)
+    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
     @java.lang.Deprecated()
     public static void getE$annotations() {
     }
@@ -459,33 +484,33 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = 200)
+    @Bind(id = app.B.id.textView)
     @java.lang.Deprecated()
     public static void getF$annotations() {
     }
 
-    @Bind(id = 100)
+    @Bind(id = lib.R.id.textView)
     public final void foo() {
     }
 
-    @Bind(id = 100)
+    @Bind(id = lib.R.id.textView)
     public final void foo2() {
     }
 
-    @Bind(id = 100)
+    @Bind(id = app.R.layout.mainActivity)
     public final void foo3() {
     }
 
-    @Bind(id = 100)
+    @Bind(id = app.R.layout.mainActivity)
     public final void foo4() {
     }
 
-    @Bind(id = 100)
-    @Anno(a1 = false, a2 = (byte)1, a3 = 2, a4 = (short)3, a5 = 4L, a6 = '5', a7 = 6.0F, a8 = 7.0, a9 = "A")
+    @Bind(id = app.R2.layout.mainActivity)
+    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
     public final void foo5() {
     }
 
-    @Bind(id = 200)
+    @Bind(id = app.B.id.textView)
     public final void plainIntConstant() {
     }
 
@@ -493,15 +518,15 @@ public final class MyActivity {
     public final void multi0() {
     }
 
-    @MultiValue(ids = {200})
+    @MultiValue(ids = {app.B.id.textView})
     public final void multi1() {
     }
 
-    @MultiValue(ids = {200, 2})
+    @MultiValue(ids = {app.B.id.textView, app.B.a3})
     public final void multi2() {
     }
 
-    @MultiValue(ids = {200, 2})
+    @MultiValue(ids = {app.B.id.textView, app.B.a3})
     public final void multi3() {
     }
 
@@ -509,15 +534,15 @@ public final class MyActivity {
     public final void multi4() {
     }
 
-    @MultiValueByte(ids = {(byte)1})
+    @MultiValueByte(ids = {app.B.a2})
     public final void multi5() {
     }
 
-    @lib.OnClick(value = {200})
+    @lib.OnClick(value = {app.B.id.textView})
     public final void multiJava1() {
     }
 
-    @lib.OnClick(value = {200, 100})
+    @lib.OnClick(value = {app.B.id.textView, app.R.layout.mainActivity})
     public final void multiJava2() {
     }
 
@@ -534,6 +559,10 @@ public final class MyActivity {
 
     public final int getPropF() {
         return 0;
+    }
+
+    public MyActivity() {
+        super();
     }
 }
 
