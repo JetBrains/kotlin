@@ -12,7 +12,7 @@ interface MutableListEx<E> : MutableList<E> {
     fun removeToSize(size: Int) {}
 }
 
-expect class FastArrayList<E> : MutableListEx<E>, <!UNRESOLVED_REFERENCE!>RandomAccess<!> {
+expect class FastArrayList<E> : MutableListEx<E>, RandomAccess {
     constructor()
     constructor(initialCapacity: Int)
     constructor(elements: Collection<E>)

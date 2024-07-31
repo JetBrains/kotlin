@@ -2,13 +2,13 @@
 package
 
 public final class ConcurrentVolatile {
-    public constructor ConcurrentVolatile(/*0*/ s: kotlin.Int)
-    @field:kotlin.concurrent.Volatile public final var noBacking: kotlin.String
-    @field:kotlin.concurrent.Volatile public final val s: kotlin.Int
-    @field:kotlin.concurrent.Volatile public final val w: kotlin.Int = 2
-    @field:kotlin.concurrent.Volatile public final val x: kotlin.Int = 0
-    @field:kotlin.concurrent.Volatile public final var y: kotlin.Int
-    @delegate:kotlin.concurrent.Volatile public final var z: kotlin.String
+    public constructor ConcurrentVolatile(/*0*/ @[Error type: Unresolved type for Volatile] /* annotation class not found */ s: kotlin.Int)
+    @[Error type: Unresolved type for Volatile] /* annotation class not found */ public final var noBacking: kotlin.String
+    public final val s: kotlin.Int
+    @field:[Error type: Unresolved type for Volatile] /* annotation class not found */ public final val w: kotlin.Int = 2
+    @[Error type: Unresolved type for Volatile] /* annotation class not found */ public final val x: kotlin.Int = 0
+    @[Error type: Unresolved type for Volatile] /* annotation class not found */ public final var y: kotlin.Int
+    @delegate:[Error type: Unresolved type for Volatile] /* annotation class not found */ public final var z: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -40,3 +40,4 @@ public final class JvmVolatile {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
