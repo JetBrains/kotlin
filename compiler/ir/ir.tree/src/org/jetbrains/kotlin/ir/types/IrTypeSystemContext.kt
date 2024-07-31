@@ -622,5 +622,9 @@ fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
     return result.compactIfPossible()
 }
 
+object IrTypeSystemContextImplWithoutBuiltins : IrTypeSystemContext {
+    override val irBuiltIns: IrBuiltIns
+        get() = throw UnsupportedOperationException("Builtins are unavailable")
+}
 
 class IrTypeSystemContextImpl(override val irBuiltIns: IrBuiltIns) : IrTypeSystemContext

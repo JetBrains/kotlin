@@ -37,10 +37,7 @@ open class IrMangleComputer(
         /*Session=*/Nothing?,
         >(builder, mode, allowOutOfScopeTypeParameters) {
 
-    final override fun getTypeSystemContext(session: Nothing?) = object : IrTypeSystemContext {
-        override val irBuiltIns: IrBuiltIns
-            get() = throw UnsupportedOperationException("Builtins are unavailable")
-    }
+    final override fun getTypeSystemContext(session: Nothing?) = IrTypeSystemContextImplWithoutBuiltins
 
     override fun copy(newMode: MangleMode) = IrMangleComputer(builder, newMode, compatibleMode)
 
