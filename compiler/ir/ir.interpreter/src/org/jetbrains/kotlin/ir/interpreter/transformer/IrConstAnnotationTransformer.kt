@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
 import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
-import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isAnnotation
@@ -51,7 +50,7 @@ internal abstract class IrConstAnnotationTransformer(
         annotation.saveInConstTracker()
     }
 
-    protected fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression {
+    protected fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression? {
         return when (argument) {
             is IrVararg -> argument.transformVarArg()
             else -> argument.transformSingleArg(valueParameter.type)
@@ -64,16 +63,16 @@ internal abstract class IrConstAnnotationTransformer(
         for (element in this.elements) {
             when (val arg = (element as? IrSpreadElement)?.expression ?: element) {
                 is IrVararg -> arg.transformVarArg().elements.forEach { newIrVararg.addElement(it) }
-                is IrExpression -> newIrVararg.addElement(arg.transformSingleArg(this.varargElementType))
+                is IrExpression -> arg.transformSingleArg(this.varargElementType)?.let(newIrVararg::addElement)
                 else -> newIrVararg.addElement(arg)
             }
         }
         return newIrVararg
     }
 
-    private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression {
+    private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression? {
         return when {
-            this is IrGetClass && argument.type is IrErrorType -> this
+            this is IrGetClass && argument.type is IrErrorType -> null
             this is IrGetEnumValue || this is IrClassReference -> this
             this is IrConstructorCall && this.type.isAnnotation() -> {
                 transformAnnotation(this)
