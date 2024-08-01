@@ -624,8 +624,7 @@ fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source:
 
 // Turns (a?.b).f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
 // Other patterns remain unchanged
-fun FirExpression.pullUpSafeCallIfNecessary(): FirExpression {
-    if (this !is FirQualifiedAccessExpression) return this
+fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression {
     val safeCall = explicitReceiver as? FirSafeCallExpression ?: return this
     val safeCallSelector = safeCall.selector as? FirExpression ?: return this
 

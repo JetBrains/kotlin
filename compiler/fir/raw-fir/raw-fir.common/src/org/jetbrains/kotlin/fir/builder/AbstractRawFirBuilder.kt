@@ -853,7 +853,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     val result = unwrappedLhs.convert()
                     result.replaceAnnotations(result.annotations.smartPlus(annotations))
                     source = result.source?.fakeElement(KtFakeSourceElementKind.IndexedAssignmentCoercionBlock)
-                    statements += result.pullUpSafeCallIfNecessary()
+                    statements += (result as? FirQualifiedAccessExpression)?.pullUpSafeCallIfNecessary() ?: result
                 } else {
                     val receiver = unwrappedLhs.convert()
 
