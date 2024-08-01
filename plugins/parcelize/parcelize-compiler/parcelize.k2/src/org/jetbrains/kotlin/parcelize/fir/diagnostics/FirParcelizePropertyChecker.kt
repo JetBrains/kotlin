@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.BuiltinParcelableTypes
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_ID
 
 class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId>) : FirPropertyChecker(MppCheckerKind.Platform) {
@@ -51,7 +51,7 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
             if (
                 !fromPrimaryConstructor &&
                 (declaration.hasBackingField || declaration.delegate != null) &&
-                !declaration.hasIgnoredOnParcel() &&
+                !declaration.hasIgnoredOnParcel(session) &&
                 !containingClassSymbol.hasCustomParceler(session)
             ) {
                 reporter.reportOn(declaration.source, KtErrorsParcelize.PROPERTY_WONT_BE_SERIALIZED, context)
@@ -75,12 +75,12 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val type = property.returnTypeRef.coneType.fullyExpandedType(context.session)
-        if (type is ConeErrorType || containingClassSymbol.hasCustomParceler(context.session) || property.hasIgnoredOnParcel()) {
+        val session = context.session
+        val type = property.returnTypeRef.coneType.fullyExpandedType(session)
+        if (type is ConeErrorType || containingClassSymbol.hasCustomParceler(session) || property.hasIgnoredOnParcel(session)) {
             return
         }
 
-        val session = context.session
         val customParcelerTypes = getCustomParcelerTypes(property.annotations + containingClassSymbol.annotations, session)
         val unsupported = checkParcelableType(type, customParcelerTypes, context)
         if (type in unsupported) {
@@ -214,13 +214,13 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
         return false
     }
 
-    private fun FirProperty.hasIgnoredOnParcel(): Boolean {
-        return annotations.hasIgnoredOnParcel() || (getter?.annotations?.hasIgnoredOnParcel() ?: false)
+    private fun FirProperty.hasIgnoredOnParcel(session: FirSession): Boolean {
+        return annotations.hasIgnoredOnParcel(session) || (getter?.annotations?.hasIgnoredOnParcel(session) ?: false)
     }
 
-    private fun List<FirAnnotation>.hasIgnoredOnParcel(): Boolean {
+    private fun List<FirAnnotation>.hasIgnoredOnParcel(session: FirSession): Boolean {
         return this.any {
-            if (it.annotationTypeRef.coneType.classId !in IGNORED_ON_PARCEL_CLASS_IDS) return@any false
+            if (it.fqName(session) !in IGNORED_ON_PARCEL_FQ_NAMES) return@any false
             val target = it.useSiteTarget
             target == null || target == AnnotationUseSiteTarget.PROPERTY || target == AnnotationUseSiteTarget.PROPERTY_GETTER
         }

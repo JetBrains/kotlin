@@ -349,6 +349,12 @@ public class ParcelizeFirLightTreeBoxTestGenerated extends AbstractParcelizeFirL
   }
 
   @Test
+  @TestMetadata("mppAdditionalAnnotations.kt")
+  public void testMppAdditionalAnnotations() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/mppAdditionalAnnotations.kt");
+  }
+
+  @Test
   @TestMetadata("mppWithExpectParcelable.kt")
   public void testMppWithExpectParcelable() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/mppWithExpectParcelable.kt");
