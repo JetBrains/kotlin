@@ -2628,6 +2628,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       }
 
       @Test
+      @TestMetadata("parenthesizedSafeCallsAndOperators.kt")
+      public void testParenthesizedSafeCallsAndOperators() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/parenthesizedSafeCallsAndOperators.kt");
+      }
+
+      @Test
       @TestMetadata("plusWithAssignSmartCast.kt")
       public void testPlusWithAssignSmartCast() {
         runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/plusWithAssignSmartCast.kt");

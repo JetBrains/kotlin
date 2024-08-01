@@ -1,0 +1,114 @@
+FILE: parenthesizedSafeCallsAndOperators.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var alias: R|Foo| = this@R|/Foo|
+            public get(): R|Foo|
+            public set(value: R|Foo|): R|kotlin/Unit|
+
+        public final operator fun get(index: R|kotlin/Int|): R|Foo| {
+            ^get this@R|/Foo|
+        }
+
+        public final operator fun set(index: R|kotlin/Int|, arg: R|Foo|): R|kotlin/Unit| {
+        }
+
+        public final operator fun plusAssign(arg: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+        public final operator fun inc(): R|Foo| {
+            ^inc this@R|/Foo|
+        }
+
+        public final operator fun invoke(arg: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+    public final operator fun R|Foo?|.get(index: R|kotlin/Int|): R|Foo?| {
+        ^get this@R|/get|
+    }
+    public final operator fun R|Foo?|.set(index: R|kotlin/Int|, arg: R|Foo?|): R|kotlin/Unit| {
+    }
+    public final operator fun R|Foo?|.plusAssign(arg: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final operator fun R|Foo?|.inc(): R|Foo| {
+        ^inc this@R|/inc|!!
+    }
+    public final operator fun R|Foo?|.invoke(arg: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun huh(arg: R|Foo?|): R|kotlin/Unit| {
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.set|(Int(42), R|<local>/arg|) }
+        Unit
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.plusAssign|(String()) }
+        R|<local>/arg|?.{  {
+            lval <receiver>: R|Foo| = $subj$
+            lval <unary>: R|Foo| = R|<local>/<receiver>|.R|/Foo.alias|
+            R|<local>/<receiver>|.R|/Foo.alias| = R|<local>/<unary>|.R|/Foo.inc|()
+            R|<local>/<unary>|
+        }
+         }
+        R|<local>/arg|?.{  {
+            lval <receiver>: R|Foo| = $subj$
+            R|<local>/<receiver>|.R|/Foo.alias| = R|<local>/<receiver>|.R|/Foo.alias|.R|/Foo.inc|()
+            R|<local>/<receiver>|.R|/Foo.alias|
+        }
+         }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.invoke|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)).R|/Foo.plusAssign|(String()) }
+        Unit
+        R|<local>/arg|?.{  {
+            lval <array>: R|Foo| = $subj$.R|/Foo.alias|
+            lval <index_0>: R|kotlin/Int| = Int(42)
+            lval <unary>: R|Foo| = R|<local>/<array>|.R|/Foo.get|(R|<local>/<index_0>|)
+            R|<local>/<array>|.R|/Foo.set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|/Foo.inc|())
+            R|<local>/<unary>|
+        }
+         }
+        R|<local>/arg|?.{  {
+            lval <array>: R|Foo| = $subj$.R|/Foo.alias|
+            lval <index_0>: R|kotlin/Int| = Int(42)
+            R|<local>/<array>|.R|/Foo.set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/Foo.get|(R|<local>/<index_0>|).R|/Foo.inc|())
+            R|<local>/<array>|.R|/Foo.get|(R|<local>/<index_0>|)
+        }
+         }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.set|(Int(42), R|<local>/arg|) }
+        Unit
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.plusAssign|(String()) }
+        R|<local>/arg|?.{  {
+            lval <receiver>: R|Foo| = $subj$
+            lval <unary>: R|Foo| = R|<local>/<receiver>|.R|/Foo.alias|
+            R|<local>/<receiver>|.R|/Foo.alias| = R|<local>/<unary>|.R|/Foo.inc|()
+            R|<local>/<unary>|
+        }
+         }
+        R|<local>/arg|?.{  {
+            lval <receiver>: R|Foo| = $subj$
+            R|<local>/<receiver>|.R|/Foo.alias| = R|<local>/<receiver>|.R|/Foo.alias|.R|/Foo.inc|()
+            R|<local>/<receiver>|.R|/Foo.alias|
+        }
+         }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.invoke|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)).R|/Foo.plusAssign|(String()) }
+        Unit
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)).R|/Foo.plusAssign|(String()) }
+        Unit
+        R|<local>/arg|?.{  {
+            lval <array>: R|Foo| = $subj$.R|/Foo.alias|
+            lval <index_0>: R|kotlin/Int| = Int(42)
+            lval <unary>: R|Foo| = R|<local>/<array>|.R|/Foo.get|(R|<local>/<index_0>|)
+            R|<local>/<array>|.R|/Foo.set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|/Foo.inc|())
+            R|<local>/<unary>|
+        }
+         }
+        R|<local>/arg|?.{  {
+            lval <array>: R|Foo| = $subj$.R|/Foo.alias|
+            lval <index_0>: R|kotlin/Int| = Int(42)
+            R|<local>/<array>|.R|/Foo.set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/Foo.get|(R|<local>/<index_0>|).R|/Foo.inc|())
+            R|<local>/<array>|.R|/Foo.get|(R|<local>/<index_0>|)
+        }
+         }
+    }

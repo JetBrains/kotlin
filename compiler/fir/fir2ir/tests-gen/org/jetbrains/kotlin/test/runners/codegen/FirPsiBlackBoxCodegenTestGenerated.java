@@ -54720,6 +54720,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("parenthesizedSafeCallsAndOperators.kt")
+    public void testParenthesizedSafeCallsAndOperators() {
+      runTest("compiler/testData/codegen/box/safeCall/parenthesizedSafeCallsAndOperators.kt");
+    }
+
+    @Test
     @TestMetadata("primitive.kt")
     public void testPrimitive() {
       runTest("compiler/testData/codegen/box/safeCall/primitive.kt");

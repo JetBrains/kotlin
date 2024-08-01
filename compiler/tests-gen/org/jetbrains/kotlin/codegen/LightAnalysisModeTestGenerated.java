@@ -43532,6 +43532,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/safeCall/kt52743.kt");
     }
 
+    @TestMetadata("parenthesizedSafeCallsAndOperators.kt")
+    public void testParenthesizedSafeCallsAndOperators() {
+      runTest("compiler/testData/codegen/box/safeCall/parenthesizedSafeCallsAndOperators.kt");
+    }
+
     @TestMetadata("primitive.kt")
     public void testPrimitive() {
       runTest("compiler/testData/codegen/box/safeCall/primitive.kt");
