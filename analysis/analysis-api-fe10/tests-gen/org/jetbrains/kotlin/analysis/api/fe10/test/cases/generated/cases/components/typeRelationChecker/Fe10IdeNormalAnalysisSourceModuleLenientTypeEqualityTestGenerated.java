@@ -154,6 +154,18 @@ public class Fe10IdeNormalAnalysisSourceModuleLenientTypeEqualityTestGenerated e
   }
 
   @Test
+  @TestMetadata("FlexibleList_List.kt")
+  public void testFlexibleList_List() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/FlexibleList_List.kt");
+  }
+
+  @Test
+  @TestMetadata("FlexibleList_MutableList.kt")
+  public void testFlexibleList_MutableList() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/FlexibleList_MutableList.kt");
+  }
+
+  @Test
   @TestMetadata("FunctionType_Function.kt")
   public void testFunctionType_Function() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/FunctionType_Function.kt");
