@@ -38,28 +38,24 @@ import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.backend.FirAnnotationSourceElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
-import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.*
@@ -95,11 +91,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.replaceAnonymousTypeWithSuperType
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isEnum
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -876,6 +874,11 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
         }
 
+        val firProperty = (irField?.metadata as? FirMetadataSource.Property)?.fir
+        if (firProperty != null) {
+            convertNonConstPropertyInitializerFir(firProperty, containingClass)?.let { return it }
+        }
+
         if (propertyInitializer != null && propertyType != null) {
             val constValue = getConstantValue(propertyInitializer, propertyType)
             if (constValue != null) {
@@ -892,6 +895,53 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
 
         return null
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun convertNonConstPropertyInitializerFir(property: FirProperty, containingClass: ClassNode): JCExpression? {
+        val propertyInitializer = property.initializer ?: return null
+        val reference = propertyInitializer.toReference(kaptContext.firSession!!)
+        val expression =
+            if (kaptContext.options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES])
+                ((reference as? FirPropertyFromParameterResolvedNamedReference)?.resolvedSymbol?.fir as? FirValueParameter)
+                    ?.defaultValue ?: propertyInitializer
+            else propertyInitializer
+        val asmValue = evaluateFirExpression(expression) ?: return null
+        return convertConstantValueArgumentsFir(containingClass, asmValue, listOf(expression))
+    }
+
+    private fun evaluateFirExpression(initialExpression: FirExpression): Any? {
+        val session = kaptContext.firSession!!
+        val expression =
+            if (initialExpression is FirFunctionCall)
+                FirArrayOfCallTransformer().transformFunctionCall(initialExpression, session) as FirExpression
+            else initialExpression
+
+        // KT-70839 K2 kapt: consider using IR evaluator instead of FIR for non-const property initializers
+        @OptIn(PrivateConstantEvaluatorAPI::class, PrivateForInline::class)
+        val result = FirExpressionEvaluator.evaluateExpression(expression, session)?.result ?: return null
+
+        return when (result) {
+            is FirLiteralExpression -> result.value?.let { constValue ->
+                when (result.kind) {
+                    ConstantValueKind.Int -> (constValue as Number).toInt()
+                    ConstantValueKind.UnsignedInt -> (constValue as Number).toInt()
+                    ConstantValueKind.Byte -> (constValue as Number).toByte()
+                    ConstantValueKind.UnsignedByte -> (constValue as Number).toByte()
+                    ConstantValueKind.Short -> (constValue as Number).toShort()
+                    ConstantValueKind.UnsignedShort -> (constValue as Number).toShort()
+                    else -> constValue
+                }
+            }
+            is FirPropertyAccessExpression -> result.calleeReference.toResolvedEnumEntrySymbol()?.let { enumEntry ->
+                val enumType = AsmUtil.asmTypeByClassId(enumEntry.callableId.classId!!)
+                arrayOf(enumType.descriptor, enumEntry.name.asString())
+            }
+            is FirArrayLiteral -> {
+                result.argumentList.arguments.map(::evaluateFirExpression)
+            }
+            else -> null
+        }
     }
 
     private fun DeclarationDescriptor.isInsideCompanionObject(): Boolean {

@@ -642,6 +642,12 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
+  @TestMetadata("nonConstProperties.kt")
+  public void testNonConstProperties() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/nonConstProperties.kt");
+  }
+
+  @Test
   @TestMetadata("nonExistentClass.kt")
   public void testNonExistentClass() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/nonExistentClass.kt");
