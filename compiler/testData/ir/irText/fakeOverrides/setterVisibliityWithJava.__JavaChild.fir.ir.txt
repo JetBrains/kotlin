@@ -78,9 +78,9 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:JavaChild modality:OPEN visib
       overridden:
         public open fun <get-e> (): kotlin.Int declared in <root>.KotlinBase
       $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.JavaChild
-    FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:<set-e> visibility:public/*package*/ modality:OPEN <> ($this:<root>.JavaChild, <set-?>:kotlin.Int) returnType:kotlin.Unit
+    FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:<set-e> visibility:public/*package*/ modality:OPEN <> ($this:<root>.JavaChild, value:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:e visibility:public modality:OPEN [var]
       overridden:
         public open fun <set-e> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.KotlinBase
       $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.JavaChild
-      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+      VALUE_PARAMETER name:value index:0 type:kotlin.Int

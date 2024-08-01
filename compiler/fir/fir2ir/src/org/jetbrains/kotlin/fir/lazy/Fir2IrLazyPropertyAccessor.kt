@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.ir.declarations.*
@@ -102,6 +103,7 @@ class Fir2IrLazyPropertyAccessor(
                             ),
                             parent = this@Fir2IrLazyPropertyAccessor,
                             firValueParameter = valueParameter,
+                            name = valueParameter?.name?.takeUnless { firAccessor is FirDefaultPropertySetter },
                             isCrossinline = valueParameter?.isCrossinline == true,
                             isNoinline = valueParameter?.isNoinline == true
                         )

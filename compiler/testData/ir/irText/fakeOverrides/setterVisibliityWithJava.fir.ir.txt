@@ -76,12 +76,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-e> (): kotlin.Int declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-      FUN FAKE_OVERRIDE name:<set-e> visibility:public/*package*/ modality:OPEN <> ($this:<root>.JavaChild, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-e> visibility:public/*package*/ modality:OPEN <> ($this:<root>.JavaChild, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:e visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public/*package*/ open fun <set-e> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
+          public/*package*/ open fun <set-e> (value: kotlin.Int): kotlin.Unit declared in <root>.JavaChild
         $this: VALUE_PARAMETER name:<this> type:<root>.JavaChild
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
   CLASS CLASS name:KotlinBase modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinBase
     PROPERTY name:a visibility:public modality:FINAL [var]

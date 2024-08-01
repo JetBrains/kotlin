@@ -1,6 +1,10 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // DUMP_EXTERNAL_CLASS: JavaChild
+
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
+// REASON: KT-70036 Fir2IR Lazy IR does not contain parameter name for fake setter of e
+
 // FILE: JavaChild.java
 
 public class JavaChild extends KotlinBase {

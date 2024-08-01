@@ -1,6 +1,8 @@
-// FIR_IDENTICAL
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
+
+// SEPARATE_SIGNATURE_DUMP_FOR_K2
+// REASON: KT-70036 Fir2IR Lazy IR does not contain parameter name for fake setters of a1 and a2
 
 // FILE: J.java
 public class J extends A {

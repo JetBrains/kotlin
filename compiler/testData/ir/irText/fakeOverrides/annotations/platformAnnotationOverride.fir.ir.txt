@@ -164,12 +164,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-c> (): @[EnhancedNullability] kotlin.String declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
-      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:OPEN <> ($this:<root>.Java2, <set-?>:@[EnhancedNullability] kotlin.String) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:OPEN <> ($this:<root>.Java2, text:@[EnhancedNullability] kotlin.String) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-c> (<set-?>: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.Java2
+          public open fun <set-c> (text: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
-        VALUE_PARAMETER name:<set-?> index:0 type:@[EnhancedNullability] kotlin.String
+        VALUE_PARAMETER name:text index:0 type:@[EnhancedNullability] kotlin.String
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -209,12 +209,12 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-c> (): @[EnhancedNullability] kotlin.String declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
-      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:OPEN <> ($this:<root>.Java2, <set-?>:@[EnhancedNullability] kotlin.String) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-c> visibility:public modality:OPEN <> ($this:<root>.Java2, text:@[EnhancedNullability] kotlin.String) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-c> (<set-?>: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.Java2
+          public open fun <set-c> (text: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
-        VALUE_PARAMETER name:<set-?> index:0 type:@[EnhancedNullability] kotlin.String
+        VALUE_PARAMETER name:text index:0 type:@[EnhancedNullability] kotlin.String
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: @[EnhancedNullability] kotlin.String declared in <root>.Java2
@@ -754,9 +754,9 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun <get-c> (): @[EnhancedNullability] kotlin.String declared in <root>.C' type=@[EnhancedNullability] kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-      CALL 'public open fun <set-c> (<set-?>: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+      CALL 'public open fun <set-c> (text: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-        <set-?>: CONST String type=kotlin.String value="2"
+        text: CONST String type=kotlin.String value="2"
       CALL 'public open fun overloadMethod (first: @[EnhancedNullability] kotlin.String, second: @[EnhancedNullability] kotlin.String, third: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         first: CONST String type=kotlin.String value=""
@@ -771,9 +771,9 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun <get-c> (): @[EnhancedNullability] kotlin.String declared in <root>.D' type=@[EnhancedNullability] kotlin.String origin=GET_PROPERTY
           $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
-      CALL 'public open fun <set-c> (<set-?>: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=EQ
+      CALL 'public open fun <set-c> (text: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
-        <set-?>: CONST String type=kotlin.String value="2"
+        text: CONST String type=kotlin.String value="2"
       CALL 'public open fun overloadMethod (first: kotlin.String, second: kotlin.String, third: kotlin.Int): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
         $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
         first: CONST String type=kotlin.String value=""

@@ -154,7 +154,7 @@ class C : Java2 {
     //   Mangled name: C#<set-c>(kotlin.String{EnhancedNullability}){}
     //   Public signature: /C.c.<set-c>|163997591642030389[0]
     //   Public signature debug description: <set-c>(kotlin.String{EnhancedNullability}){}
-    /* fake */ override set(<set-?>: @EnhancedNullability String): Unit
+    /* fake */ override set(text: @EnhancedNullability String): Unit
 
 }
 
@@ -194,7 +194,7 @@ class D : Java2 {
     //   Mangled name: D#<set-c>(kotlin.String{EnhancedNullability}){}
     //   Public signature: /D.c.<set-c>|163997591642030389[0]
     //   Public signature debug description: <set-c>(kotlin.String{EnhancedNullability}){}
-    /* fake */ override set(<set-?>: @EnhancedNullability String): Unit
+    /* fake */ override set(text: @EnhancedNullability String): Unit
 
   // CHECK:
   //   Mangled name: D{}a
@@ -658,4 +658,3 @@ interface KotlinInterface {
 //   Public signature: /test|-2663909601123444132[0]
 //   Public signature debug description: test(A;B;C;D;E;F;G;H){}
 fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H): Unit
-

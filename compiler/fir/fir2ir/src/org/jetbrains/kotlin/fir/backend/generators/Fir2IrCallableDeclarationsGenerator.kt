@@ -579,6 +579,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         type: IrType,
         parent: IrFunction,
         firValueParameter: FirValueParameter?,
+        name: Name? = null,
         isCrossinline: Boolean = false,
         isNoinline: Boolean = false,
     ): IrValueParameter {
@@ -586,7 +587,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             startOffset = startOffset,
             endOffset = endOffset,
             origin = IrDeclarationOrigin.DEFINED,
-            name = SpecialNames.IMPLICIT_SET_PARAMETER,
+            name = name ?: SpecialNames.IMPLICIT_SET_PARAMETER,
             type = type,
             isAssignable = false,
             symbol = IrValueParameterSymbolImpl(),

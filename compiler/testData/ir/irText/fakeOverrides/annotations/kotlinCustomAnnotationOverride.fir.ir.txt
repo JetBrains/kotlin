@@ -126,14 +126,14 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-b> (): kotlin.Int declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
         annotations:
           MyAnnotation
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -185,7 +185,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-b> visibility:public modality:OPEN <> ($this:<root>.C, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
@@ -236,14 +236,14 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-b> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
-      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java2, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java2, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
         annotations:
           MyAnnotation
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java2
+          public open fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
     PROPERTY name:b visibility:public modality:OPEN [var]
@@ -263,7 +263,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:OPEN <> ($this:<root>.E, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java2
+          public open fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.E
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
@@ -363,14 +363,14 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-b> (): kotlin.Int declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
         annotations:
           MyAnnotation
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
   CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
@@ -427,14 +427,14 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-b> (): kotlin.Int declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
         annotations:
           MyAnnotation
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     CONSTRUCTOR visibility:public <> () returnType:<root>.H [primary]
@@ -492,14 +492,14 @@ FILE fqName:<root> fileName:/1.kt
           public open fun <get-b> (): kotlin.Int declared in <root>.Java1
           public abstract fun <get-b> (): kotlin.Int declared in <root>.KotlinInterface
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN <> ($this:<root>.Java1, value:kotlin.Int) returnType:kotlin.Unit [fake_override]
         annotations:
           MyAnnotation
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
-          public open fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.Java1
-        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        VALUE_PARAMETER name:value index:0 type:kotlin.Int
   CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
@@ -559,7 +559,7 @@ FILE fqName:<root> fileName:/1.kt
       FUN name:<set-b> visibility:public modality:OPEN <> ($this:<root>.I, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:b visibility:public modality:OPEN [var]
         overridden:
-          public open fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java1
+          public open fun <set-b> (value: kotlin.Int): kotlin.Unit declared in <root>.Java1
         $this: VALUE_PARAMETER name:<this> type:<root>.I
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
