@@ -437,6 +437,7 @@ val distCommon = distTask<Sync>("distCommon") {
         rename { name ->
             name
                 .replace("-metadata.jar", "-common.jar")
+                .replace("-metadata.klib", "-common.klib")
                 .replace("-metadata-sources.jar", "-common-sources.jar")
         }
     }
