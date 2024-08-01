@@ -11,10 +11,13 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.unregisterFinders
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -29,6 +32,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -56,6 +61,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.nio.file.Paths
+import kotlin.collections.filterIsInstance
+import kotlin.collections.orEmpty
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 open class FirFrontendFacade(
     testServices: TestServices,
@@ -190,6 +198,15 @@ open class FirFrontendFacade(
                 val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
 
                 if (isCommon) {
+                    val klibFiles = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS).orEmpty()
+                        .filterIsInstance<JvmClasspathRoot>()
+                        .filter { it.file.isDirectory || it.file.extension == "klib" }
+                        .map { it.file.absolutePath }
+
+                    val resolvedKLibs = klibFiles.map {
+                        KotlinResolvedLibraryImpl(resolveSingleFileKlib(KFile(it), configuration.getLogger()))
+                    }
+
                     FirCommonSessionFactory.createLibrarySession(
                         mainModuleName = moduleName,
                         sessionProvider = sessionProvider,
@@ -197,7 +214,7 @@ open class FirFrontendFacade(
                         projectEnvironment = projectEnvironment,
                         extensionRegistrars = extensionRegistrars,
                         librariesScope = projectFileSearchScope,
-                        resolvedKLibs = emptyList(),
+                        resolvedKLibs = resolvedKLibs,
                         packageAndMetadataPartProvider = packagePartProvider as PackageAndMetadataPartProvider,
                         languageVersionSettings = languageVersionSettings,
                         registerExtraComponents = ::registerExtraComponents
