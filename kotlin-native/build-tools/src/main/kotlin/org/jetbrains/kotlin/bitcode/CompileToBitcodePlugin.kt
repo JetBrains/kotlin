@@ -647,12 +647,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             }
 
             owner.allTestsTasks[target.name]!!.configure {
-                dependsOn(runTask)
-            }
-
-            // TODO: Support tsan natively on macOS arm64.
-            if (target == KonanTarget.MACOS_X64 && sanitizer == SanitizerKind.THREAD) {
-                owner.allTestsTasks[KonanTarget.MACOS_ARM64.name]!!.configure {
+                // TODO(KT-70409): Support Linux tsan tests
+                if (!(target == KonanTarget.LINUX_X64 && sanitizer == SanitizerKind.THREAD)) {
                     dependsOn(runTask)
                 }
             }
