@@ -45,7 +45,7 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
                     for (allowErrorTypes in listOf(false, true)) {
                         for (typeMappingMode in KaTypeMappingMode.entries) {
                             for (isAnnotationMethod in listOf(false, true)) {
-                                val psiType = returnType.asPsiType(psiContext, allowErrorTypes, typeMappingMode, isAnnotationMethod)
+                                val psiType = returnType.asPsiType(psiContext, allowErrorTypes, typeMappingMode, isAnnotationMethod, inferAnnotations = true)
                                 appendLine("asPsiType(allowErrorTypes=$allowErrorTypes, mode=$typeMappingMode, isAnnotationMethod=$isAnnotationMethod):")
                                 withIndent {
                                     appendLine("PsiType: ${AnalysisApiPsiTypeProviderTestUtils.render(psiType)}")

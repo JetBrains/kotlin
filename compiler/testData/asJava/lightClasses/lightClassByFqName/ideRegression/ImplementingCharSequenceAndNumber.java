@@ -29,15 +29,15 @@ public final class Container /* p1.Container*/ {
   public static final class MyString /* p1.Container.MyString*/ implements java.lang.CharSequence {
     @java.lang.Override()
     @org.jetbrains.annotations.NotNull()
-    public @org.jetbrains.annotations.NotNull() IntStream chars();//  chars()
+    public IntStream chars();//  chars()
 
     @java.lang.Override()
     @org.jetbrains.annotations.NotNull()
-    public @org.jetbrains.annotations.NotNull() IntStream codePoints();//  codePoints()
+    public IntStream codePoints();//  codePoints()
 
     @java.lang.Override()
     @org.jetbrains.annotations.NotNull()
-    public @org.jetbrains.annotations.NotNull() java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
+    public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
 
     @java.lang.Override()
     public char get(int);//  get(int)

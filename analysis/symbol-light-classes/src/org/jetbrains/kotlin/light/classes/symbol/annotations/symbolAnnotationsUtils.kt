@@ -140,6 +140,7 @@ fun annotateByKtType(
     psiType: PsiType,
     ktType: KaType,
     annotationParent: PsiElement,
+    inferAnnotations: Boolean,
 ): PsiType {
     fun getAnnotationsSequence(type: KaType): Sequence<List<PsiAnnotation>> = sequence {
         val unwrappedType = when (type) {
@@ -158,14 +159,18 @@ fun annotateByKtType(
             )
         }
 
-        // Original type should be used to infer nullability
-        val typeNullability = when {
-            psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KaTypeNullability.NON_NULLABLE
-            else -> getTypeNullability(type)
-        }
+        val nullabilityAnnotation = if (inferAnnotations) {
+            // Original type should be used to infer nullability
+            val typeNullability = when {
+                psiType !is PsiPrimitiveType && type.isPrimitiveBacked -> KaTypeNullability.NON_NULLABLE
+                else -> getTypeNullability(type)
+            }
 
-        val nullabilityAnnotation = typeNullability.asAnnotationQualifier?.let {
-            SymbolLightSimpleAnnotation(it, annotationParent)
+            typeNullability.asAnnotationQualifier?.let {
+                SymbolLightSimpleAnnotation(it, annotationParent)
+            }
+        } else {
+            null
         }
 
         yield(explicitTypeAnnotations + listOfNotNull(nullabilityAnnotation))

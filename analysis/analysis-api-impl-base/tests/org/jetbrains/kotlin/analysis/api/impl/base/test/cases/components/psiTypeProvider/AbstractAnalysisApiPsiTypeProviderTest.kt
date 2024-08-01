@@ -35,7 +35,7 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiBased
                 analyze(declaration) {
                     val ktType = declaration.returnType
                     appendLine("${KaType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(useSiteSession, ktType)}")
-                    val psiType = ktType.asPsiType(psiContext, allowErrorTypes = false)
+                    val psiType = ktType.asPsiType(psiContext, allowErrorTypes = false, inferAnnotations = true)
                     appendLine("${PsiType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(psiType)}")
                 }
             }

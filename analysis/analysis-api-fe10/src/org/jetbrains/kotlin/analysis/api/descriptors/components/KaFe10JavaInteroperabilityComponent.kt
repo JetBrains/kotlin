@@ -70,7 +70,7 @@ internal class KaFe10JavaInteroperabilityComponent(
         mode: KaTypeMappingMode,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
-        preserveAnnotations: Boolean,
+        inferAnnotations: Boolean,
         forceValueClassResolution: Boolean,
     ): PsiType? = withValidityAssertion {
         val kotlinType = (this as KaFe10Type).fe10Type
@@ -90,7 +90,7 @@ internal class KaFe10JavaInteroperabilityComponent(
         )
 
         val psiType = typeElement?.type ?: return null
-        if (!preserveAnnotations) return psiType
+        if (!inferAnnotations) return psiType
 
         return annotateByKotlinType(psiType, kotlinType, typeElement, inferNullability = true)
     }

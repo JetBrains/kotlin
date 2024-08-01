@@ -21,7 +21,7 @@ public abstract class AnotherDerived /* AnotherDerived*/ extends Base {
 
   public abstract int getAbstractProp();//  getAbstractProp()
 
-  public abstract void noReturn(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  noReturn(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract void noReturn(@org.jetbrains.annotations.NotNull() java.lang.String);//  noReturn(java.lang.String)
 }
 
 public abstract class Base /* Base*/ {
@@ -30,7 +30,7 @@ public abstract class Base /* Base*/ {
   private int z = 1 /* initializer type: int */;
 
   @org.jetbrains.annotations.Nullable()
-  protected @org.jetbrains.annotations.Nullable() java.lang.Integer v();//  v()
+  protected java.lang.Integer v();//  v()
 
   protected int getZ();//  getZ()
 
@@ -54,7 +54,7 @@ public final class Derived /* Derived*/ extends Base implements IntfWithProp {
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() error.NonExistentClass v();//  v()
+  public error.NonExistentClass v();//  v()
 
   @java.lang.Override()
   public int abs();//  abs()

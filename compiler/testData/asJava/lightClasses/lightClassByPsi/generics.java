@@ -1,78 +1,78 @@
 public abstract class C /* C*/<T>  {
   @org.jetbrains.annotations.NotNull()
-  private @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence> constructorParam;
+  private java.util.List<? extends java.lang.CharSequence> constructorParam;
 
   @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.util.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String> sHashSetProp;
+  private java.util.HashSet<java.lang.String> sHashSetProp;
 
   @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence> csListProp;
+  private java.util.List<? extends java.lang.CharSequence> csListProp;
 
   @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> sListProp;
+  private java.util.List<java.lang.String> sListProp;
 
   @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> sMutableSetProp;
+  private java.util.Set<java.lang.String> sMutableSetProp;
 
   @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> sSetProp;
+  private java.util.Set<java.lang.String> sSetProp;
 
   @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.CharSequence>> nested(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>>);//  nested(@org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>>)
+  public abstract java.util.Collection<java.util.Collection<java.lang.CharSequence>> nested(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.util.List<? extends java.lang.CharSequence>>);//  nested(java.util.List<? extends java.util.List<? extends java.lang.CharSequence>>)
 
   @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.CharSequence> listCS(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>);//  listCS(@org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>)
+  public abstract java.util.List<java.lang.CharSequence> listCS(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.CharSequence>);//  listCS(java.util.List<? extends java.lang.CharSequence>)
 
   @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> listS(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>);//  listS(@org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>)
+  public abstract java.util.List<java.lang.String> listS(@org.jetbrains.annotations.NotNull() java.util.List<java.lang.String>);//  listS(java.util.List<java.lang.String>)
 
   @org.jetbrains.annotations.NotNull()
-  public abstract @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.CharSequence> mutables(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? super @org.jetbrains.annotations.NotNull() java.lang.Number>, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() C<?>>);//  mutables(@org.jetbrains.annotations.NotNull() java.util.Collection<? super @org.jetbrains.annotations.NotNull() java.lang.Number>, @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() C<?>>)
+  public abstract java.util.Set<java.lang.CharSequence> mutables(@org.jetbrains.annotations.NotNull() java.util.Collection<? super java.lang.Number>, @org.jetbrains.annotations.NotNull() java.util.List<? extends C<?>>);//  mutables(java.util.Collection<? super java.lang.Number>, java.util.List<? extends C<?>>)
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.CharSequence> getConstructorParam();//  getConstructorParam()
+  public final java.util.List<java.lang.CharSequence> getConstructorParam();//  getConstructorParam()
 
   @org.jetbrains.annotations.Nullable()
-  public final <T extends java.lang.Comparable<? super T>> @org.jetbrains.annotations.Nullable() T max(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.Collection<? extends T>);// <T extends java.lang.Comparable<? super T>>  max(@org.jetbrains.annotations.Nullable() java.util.Collection<? extends T>)
+  public final <T extends java.lang.Comparable<? super T>> T max(@org.jetbrains.annotations.Nullable() java.util.Collection<? extends T>);// <T extends java.lang.Comparable<? super T>>  max(java.util.Collection<? extends T>)
 
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.Nullable() java.util.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String> getSHashSetProp();//  getSHashSetProp()
+  public final java.util.HashSet<java.lang.String> getSHashSetProp();//  getSHashSetProp()
 
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.Nullable() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.CharSequence> getCsListProp();//  getCsListProp()
+  public final java.util.List<java.lang.CharSequence> getCsListProp();//  getCsListProp()
 
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.Nullable() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String> getSListProp();//  getSListProp()
+  public final java.util.List<java.lang.String> getSListProp();//  getSListProp()
 
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> getSMutableSetProp();//  getSMutableSetProp()
+  public final java.util.Set<java.lang.String> getSMutableSetProp();//  getSMutableSetProp()
 
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> getSSetProp();//  getSSetProp()
+  public final java.util.Set<java.lang.String> getSSetProp();//  getSSetProp()
 
-  public  C(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>);//  .ctor(@org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>)
+  public  C(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.CharSequence>);//  .ctor(java.util.List<? extends java.lang.CharSequence>)
 
   public final <Q extends T> Q getW(@org.jetbrains.annotations.NotNull() Q);// <Q extends T>  getW(Q)
 
-  public final <V, U extends V> T foo(V, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() C<V>, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.sequences.Sequence<? extends V>);// <V, U extends V>  foo(V, @org.jetbrains.annotations.NotNull() C<V>, @org.jetbrains.annotations.NotNull() kotlin.sequences.Sequence<? extends V>)
+  public final <V, U extends V> T foo(V, @org.jetbrains.annotations.NotNull() C<V>, @org.jetbrains.annotations.NotNull() kotlin.sequences.Sequence<? extends V>);// <V, U extends V>  foo(V, C<V>, kotlin.sequences.Sequence<? extends V>)
 
-  public final void setConstructorParam(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>);//  setConstructorParam(@org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>)
+  public final void setConstructorParam(@org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.CharSequence>);//  setConstructorParam(java.util.List<? extends java.lang.CharSequence>)
 
-  public final void setCsListProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>);//  setCsListProp(@org.jetbrains.annotations.Nullable() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>)
+  public final void setCsListProp(@org.jetbrains.annotations.Nullable() java.util.List<? extends java.lang.CharSequence>);//  setCsListProp(java.util.List<? extends java.lang.CharSequence>)
 
-  public final void setSHashSetProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String>);//  setSHashSetProp(@org.jetbrains.annotations.Nullable() java.util.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String>)
+  public final void setSHashSetProp(@org.jetbrains.annotations.Nullable() java.util.HashSet<java.lang.String>);//  setSHashSetProp(java.util.HashSet<java.lang.String>)
 
-  public final void setSListProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>);//  setSListProp(@org.jetbrains.annotations.Nullable() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>)
+  public final void setSListProp(@org.jetbrains.annotations.Nullable() java.util.List<java.lang.String>);//  setSListProp(java.util.List<java.lang.String>)
 
-  public final void setSMutableSetProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>);//  setSMutableSetProp(@org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>)
+  public final void setSMutableSetProp(@org.jetbrains.annotations.Nullable() java.util.Set<java.lang.String>);//  setSMutableSetProp(java.util.Set<java.lang.String>)
 
-  public final void setSSetProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>);//  setSSetProp(@org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>)
+  public final void setSSetProp(@org.jetbrains.annotations.Nullable() java.util.Set<java.lang.String>);//  setSSetProp(java.util.Set<java.lang.String>)
 }
 
-public class K /* K*/<T extends K<? extends @org.jetbrains.annotations.NotNull() T>>  {
+public class K /* K*/<T extends K<? extends T>>  {
   public  K();//  .ctor()
 }
 
-public final class Sub /* Sub*/ extends K<@org.jetbrains.annotations.NotNull() K<?>> {
+public final class Sub /* Sub*/ extends K<K<?>> {
   public  Sub();//  .ctor()
 }

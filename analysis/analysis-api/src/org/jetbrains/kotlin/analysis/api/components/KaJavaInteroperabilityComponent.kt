@@ -41,7 +41,7 @@ public interface KaJavaInteroperabilityComponent {
      * - `false` means they should appear.
      * - `null` is no-op by default, i.e., their suppression/appearance is determined by type annotations.
      *
-     * @param preserveAnnotations if **true** the result [PsiType] will have converted annotations from the original [type][this]
+     * @param inferAnnotations if **true** the result [PsiType] will have converted annotations from the original [type][this]
      *
      * @param forceValueClassResolution if **false** and underlying [TypeMappingMode.needInlineClassWrapping] is **false** then
      * the result doesn't guarantee that a value class will be unwrapped.
@@ -53,7 +53,7 @@ public interface KaJavaInteroperabilityComponent {
         mode: KaTypeMappingMode = KaTypeMappingMode.DEFAULT,
         isAnnotationMethod: Boolean = false,
         suppressWildcards: Boolean? = null,
-        preserveAnnotations: Boolean = true,
+        inferAnnotations: Boolean = false,
         forceValueClassResolution: Boolean = true,
     ): PsiType?
 

@@ -1,5 +1,5 @@
 public abstract interface Base /* Base*/ {
-  public abstract int foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object)
+  public abstract int foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(java.lang.String, java.lang.Object)
 
   public abstract int getX();//  getX()
 
@@ -29,7 +29,7 @@ public final class BaseImpl /* BaseImpl*/ implements Base {
 
 public final class Derived /* Derived*/ implements Base {
   @java.lang.Override()
-  public int foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object)
+  public int foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.Object);//  foo(java.lang.String, java.lang.Object)
 
   @java.lang.Override()
   public void printMessage();//  printMessage()
@@ -37,5 +37,5 @@ public final class Derived /* Derived*/ implements Base {
   @java.lang.Override()
   public void printMessageLine();//  printMessageLine()
 
-  public  Derived(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Base);//  .ctor(@org.jetbrains.annotations.NotNull() Base)
+  public  Derived(@org.jetbrains.annotations.NotNull() Base);//  .ctor(Base)
 }

@@ -1,24 +1,24 @@
 public abstract class AbstractKotlinClass /* AbstractKotlinClass*/ {
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() AbstractKotlinClass.Companion Companion;
+  public static final AbstractKotlinClass.Companion Companion;
 
-  public @org.jetbrains.annotations.NotNull() Custom classLateinitVariable;
+  public Custom classLateinitVariable;
 
-  public static @org.jetbrains.annotations.NotNull() Custom companionLateinitStaticVariable;
+  public static Custom companionLateinitStaticVariable;
 
-  public static @org.jetbrains.annotations.NotNull() Custom companionLateinitVariable;
-
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Custom getClassLateinitVariable();//  getClassLateinitVariable()
+  public static Custom companionLateinitVariable;
 
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
+  public final Custom getClassLateinitVariable();//  getClassLateinitVariable()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
 
   public  AbstractKotlinClass();//  .ctor()
 
-  public final void setClassLateinitVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setClassLateinitVariable(@org.jetbrains.annotations.NotNull() Custom)
+  public final void setClassLateinitVariable(@org.jetbrains.annotations.NotNull() Custom);//  setClassLateinitVariable(Custom)
 
-  public static final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom)
+  public static final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(Custom)
 
   class Companion ...
 }
@@ -29,16 +29,16 @@ public static final class Companion /* AbstractKotlinClass.Companion*/ {
   public static void getCompanionLateinitStaticVariable$annotations();//  getCompanionLateinitStaticVariable$annotations()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
+  public final Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitVariable();//  getCompanionLateinitVariable()
+  public final Custom getCompanionLateinitVariable();//  getCompanionLateinitVariable()
 
   private  Companion();//  .ctor()
 
-  public final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom)
+  public final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(Custom)
 
-  public final void setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() Custom)
+  public final void setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitVariable(Custom)
 }
 
 public final class Custom /* Custom*/ {
@@ -47,25 +47,25 @@ public final class Custom /* Custom*/ {
 
 public final class KotlinClass /* KotlinClass*/ {
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() KotlinClass.Companion Companion;
+  public static final KotlinClass.Companion Companion;
 
-  public @org.jetbrains.annotations.NotNull() Custom classLateinitVariable;
+  public Custom classLateinitVariable;
 
-  public static @org.jetbrains.annotations.NotNull() Custom companionLateinitStaticVariable;
+  public static Custom companionLateinitStaticVariable;
 
-  public static @org.jetbrains.annotations.NotNull() Custom companionLateinitVariable;
-
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Custom getClassLateinitVariable();//  getClassLateinitVariable()
+  public static Custom companionLateinitVariable;
 
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
+  public final Custom getClassLateinitVariable();//  getClassLateinitVariable()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
 
   public  KotlinClass();//  .ctor()
 
-  public final void setClassLateinitVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setClassLateinitVariable(@org.jetbrains.annotations.NotNull() Custom)
+  public final void setClassLateinitVariable(@org.jetbrains.annotations.NotNull() Custom);//  setClassLateinitVariable(Custom)
 
-  public static final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom)
+  public static final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(Custom)
 
   class Companion ...
 }
@@ -76,23 +76,23 @@ public static final class Companion /* KotlinClass.Companion*/ {
   public static void getCompanionLateinitStaticVariable$annotations();//  getCompanionLateinitStaticVariable$annotations()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
+  public final Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitVariable();//  getCompanionLateinitVariable()
+  public final Custom getCompanionLateinitVariable();//  getCompanionLateinitVariable()
 
   private  Companion();//  .ctor()
 
-  public final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom)
+  public final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(Custom)
 
-  public final void setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() Custom)
+  public final void setCompanionLateinitVariable(@org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitVariable(Custom)
 }
 
 public final class LateinitPropertiesKt /* LateinitPropertiesKt*/ {
-  public static @org.jetbrains.annotations.NotNull() Custom topLevelLateinit;
+  public static Custom topLevelLateinit;
 
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() Custom getTopLevelLateinit();//  getTopLevelLateinit()
+  public static final Custom getTopLevelLateinit();//  getTopLevelLateinit()
 
-  public static final void setTopLevelLateinit(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setTopLevelLateinit(@org.jetbrains.annotations.NotNull() Custom)
+  public static final void setTopLevelLateinit(@org.jetbrains.annotations.NotNull() Custom);//  setTopLevelLateinit(Custom)
 }

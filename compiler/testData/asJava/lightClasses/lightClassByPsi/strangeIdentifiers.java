@@ -18,69 +18,69 @@ public final class A()B() /* A()B()*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno /* Anno*/ {
-  public abstract @org.jetbrains.annotations.NotNull() StrangeEnum size();//  size()
+  public abstract StrangeEnum size();//  size()
 
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String A B();//  A B()
+  public abstract java.lang.String A B();//  A B()
 
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String name();//  name()
+  public abstract java.lang.String name();//  name()
 }
 
 public enum StrangeEnum /* StrangeEnum*/ {
   InvalidFieldName;
 
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String size;
+  private final java.lang.String size;
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getSize();//  getSize()
+  public final java.lang.String getSize();//  getSize()
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() StrangeEnum @org.jetbrains.annotations.NotNull() [] values();//  values()
+  public static StrangeEnum valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() StrangeEnum valueOf(@org.jetbrains.annotations.NotNull() java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public static StrangeEnum[] values();//  values()
 
   @org.jetbrains.annotations.NotNull()
-  public static @org.jetbrains.annotations.NotNull() kotlin.enums.EnumEntries<@org.jetbrains.annotations.NotNull() StrangeEnum> getEntries();//  getEntries()
+  public static kotlin.enums.EnumEntries<StrangeEnum> getEntries();//  getEntries()
 
-  private  StrangeEnum(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+  private  StrangeEnum(java.lang.String);//  .ctor(java.lang.String)
 }
 
 public final class Test /* Test*/ {
-  public @org.jetbrains.annotations.NotNull() java.lang.String simpleName;
+  public java.lang.String simpleName;
 
-  public @org.jetbrains.annotations.NotNull() java.lang.String strange name;
+  public java.lang.String strange name;
 
-  public @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() !A@> strangeType;
-
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getSimpleName();//  getSimpleName()
+  public java.util.List<!A@> strangeType;
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getStrange name();//  getStrange name()
+  public final java.lang.String getSimpleName();//  getSimpleName()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() !A@> getStrangeType();//  getStrangeType()
+  public final java.lang.String getStrange name();//  getStrange name()
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.util.List<!A@> getStrangeType();//  getStrangeType()
 
   public  Test();//  .ctor()
 
-  public final void setSimpleName(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setSimpleName(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public final void setSimpleName(@org.jetbrains.annotations.NotNull() java.lang.String);//  setSimpleName(java.lang.String)
 
-  public final void setStrange name(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setStrange name(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public final void setStrange name(@org.jetbrains.annotations.NotNull() java.lang.String);//  setStrange name(java.lang.String)
 
-  public final void setStrangeType(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() !A@>);//  setStrangeType(@org.jetbrains.annotations.NotNull() java.util.List<@org.jetbrains.annotations.NotNull() !A@>)
+  public final void setStrangeType(@org.jetbrains.annotations.NotNull() java.util.List<!A@>);//  setStrangeType(java.util.List<!A@>)
 
   public final void simpleFun();//  simpleFun()
 
   public final void strange!Fun();//  strange!Fun()
 
-  public final void strangeFun2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A()B());//  strangeFun2(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() A()B())
+  public final void strangeFun2(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() A()B());//  strangeFun2(java.lang.String, A()B())
 
-  public final void strangeFun3(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() AB);//  strangeFun3(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() AB)
+  public final void strangeFun3(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() AB);//  strangeFun3(java.lang.String, AB)
 
-  public final void strangeFun4(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  strangeFun4(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+  public final void strangeFun4(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  strangeFun4(java.lang.String, java.lang.String)
 
-  public final void strangeFun5(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() AB.C);//  strangeFun5(@org.jetbrains.annotations.NotNull() AB.C)
+  public final void strangeFun5(@org.jetbrains.annotations.NotNull() AB.C);//  strangeFun5(AB.C)
 
   class (^_^) ...
 }

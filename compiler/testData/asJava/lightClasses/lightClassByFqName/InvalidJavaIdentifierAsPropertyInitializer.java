@@ -1,15 +1,15 @@
 public final class Big /* Big*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() Size @org.jetbrains.annotations.NotNull() [] sizes;
+  private final Size size;
 
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() Size size;
+  private final Size[] sizes;
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Size @org.jetbrains.annotations.NotNull() [] getSizes();//  getSizes()
+  public final Size getSize();//  getSize()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() Size getSize();//  getSize()
+  public final Size[] getSizes();//  getSizes()
 
   public  Big();//  .ctor()
 }

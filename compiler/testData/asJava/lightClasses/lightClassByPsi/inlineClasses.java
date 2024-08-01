@@ -4,7 +4,7 @@ public enum Foo /* Foo*/ {
   private final int x;
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+  public java.lang.String toString();//  toString()
 
   public final int getX();//  getX()
 }
@@ -25,9 +25,9 @@ public final class InlinedDelegate /* InlinedDelegate*/<T>  {
   private T node;
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+  public java.lang.String toString();//  toString()
 
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+  public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
 
   public final T getNode();//  getNode()
 
@@ -38,9 +38,9 @@ public final class UInt /* UInt*/ {
   private final int value;
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+  public java.lang.String toString();//  toString()
 
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+  public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
 
   public int hashCode();//  hashCode()
 }

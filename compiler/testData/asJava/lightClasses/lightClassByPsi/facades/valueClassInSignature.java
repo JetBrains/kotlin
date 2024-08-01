@@ -1,22 +1,22 @@
 @kotlin.jvm.JvmInline()
 public final class Some /* Some*/ {
   @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.String value;
+  private final java.lang.String value;
 
   @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
+  public final java.lang.String getValue();//  getValue()
 
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getValue();//  getValue()
+  public java.lang.String toString();//  toString()
 
-  public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
+  public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
 
   public int hashCode();//  hashCode()
 }
 
 public final class SomeClass /* SomeClass*/ {
   @org.jetbrains.annotations.NotNull()
-  private @org.jetbrains.annotations.NotNull() java.lang.String memberProp;
+  private java.lang.String memberProp;
 
   public  SomeClass();//  .ctor()
 }
@@ -27,11 +27,11 @@ public abstract interface SomeInterface /* SomeInterface*/ {
 
 public final class ValueClassInSignatureKt /* ValueClassInSignatureKt*/ {
   @org.jetbrains.annotations.NotNull()
-  private static @org.jetbrains.annotations.NotNull() java.lang.String topLevelProp;
+  private static java.lang.String topLevelProp;
 
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String getTopLevelProp();//  getTopLevelProp()
+  public static final java.lang.String getTopLevelProp();//  getTopLevelProp()
 
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String topLevelFunInReturn();//  topLevelFunInReturn()
+  public static final java.lang.String topLevelFunInReturn();//  topLevelFunInReturn()
 }

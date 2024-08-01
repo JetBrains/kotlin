@@ -92,7 +92,7 @@ internal class KaFirJavaInteroperabilityComponent(
         mode: KaTypeMappingMode,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
-        preserveAnnotations: Boolean,
+        inferAnnotations: Boolean,
         forceValueClassResolution: Boolean,
     ): PsiType? = withValidityAssertion {
         val coneType = this.coneType
@@ -114,13 +114,13 @@ internal class KaFirJavaInteroperabilityComponent(
         ) ?: return null
 
         val psiType = typeElement.type
-        if (!preserveAnnotations) return psiType
 
         return with(analysisSession) {
             annotateByKtType(
                 psiType = psiType,
                 ktType = this@asPsiType,
                 annotationParent = typeElement,
+                inferAnnotations = inferAnnotations
             )
         }
     }
