@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.NameUtils
@@ -97,7 +98,7 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
             if (!data.processingInlinedFunction && inlinedBlock.isFunctionInlining()) {
                 inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
 
-                val inlinedAt = inlinedBlock.inlineCall.symbol.owner.name
+                val inlinedAt = (inlinedBlock.inlineDeclaration as? IrDeclarationWithName)?.name?.asString() ?: "UNKNOWN"
                 val newData = data.append("\$inlined\$$inlinedAt").copy(isLocal = true, processingInlinedFunction = true)
 
                 return inlinedBlock.getOriginalStatementsFromInlinedBlock().forEach { it.accept(this, newData) }
