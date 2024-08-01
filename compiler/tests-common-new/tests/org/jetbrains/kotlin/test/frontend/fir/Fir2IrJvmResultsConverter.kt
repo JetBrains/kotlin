@@ -52,7 +52,8 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
     }
 
     override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> IrExtraActualDeclarationExtractor? {
-        return FirJvmBuiltinProviderActualDeclarationExtractor.Companion::initializeIfNeeded
+        return TODO()
+        // return FirJvmBuiltinProviderActualDeclarationExtractor.Companion::initializeIfNeeded
     }
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinResolvedLibrary> {
