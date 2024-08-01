@@ -34,16 +34,28 @@ internal class TypeTranslator(
             is KaTypeArgumentWithVariance -> toBoundFrom(typeProjection.type).wrapWithVariance(typeProjection.variance)
         }
 
-    private fun KaSession.toBoundFromTypeAliased(classType: KaClassType): TypeAliased {
-        val classSymbol = classType.symbol
+    /**
+     * For example,
+     * ```
+     * typealias Inner = String
+     * typealias Outer = Inner
+     *
+     * val outer: Outer = ""
+     * ```
+     *
+     * `Outer` is [abbreviationType]
+     * `String` is [fullyExpandedType]
+     */
+    private fun KaSession.toBoundFromTypeAliased(abbreviationType: KaClassType, fullyExpandedType: Bound): TypeAliased {
+        val classSymbol = abbreviationType.symbol
         return if (classSymbol is KaTypeAliasSymbol)
             TypeAliased(
                 typeAlias = GenericTypeConstructor(
-                    dri = getDRIFromClassType(classType),
-                    projections = classType.typeArguments.map { toProjection(it) }),
-                inner = toBoundFrom(classType.fullyExpandedType),
+                    dri = getDRIFromClassType(abbreviationType),
+                    projections = abbreviationType.typeArguments.map { toProjection(it) }),
+                inner = fullyExpandedType,
                 extra = PropertyContainer.withAll(
-                    getDokkaAnnotationsFrom(classType)?.toSourceSetDependent()?.toAnnotations()
+                    getDokkaAnnotationsFrom(abbreviationType)?.toSourceSetDependent()?.toAnnotations()
                 )
             ) else
             throw IllegalStateException("Expected type alias symbol in type")
@@ -75,8 +87,8 @@ internal class TypeTranslator(
         when (type) {
             is KaUsualClassType -> {
                 // after KT-66996, [type] is an expanded type
-                val abbreviatedType = type.abbreviatedType
-                if (abbreviatedType != null) toBoundFromTypeAliased(abbreviatedType)
+                val abbreviation = type.abbreviation
+                if (abbreviation != null) toBoundFromTypeAliased(abbreviation, toTypeConstructorFrom(type))
                 else toTypeConstructorFrom(type)
             }
 
@@ -92,8 +104,8 @@ internal class TypeTranslator(
             is KaClassErrorType -> UnresolvedBound(type.toString())
             is KaFunctionType -> {
                 // after KT-66996, [type] is an expanded type
-                val abbreviatedType = type.abbreviatedType
-                if (abbreviatedType != null) toBoundFromTypeAliased(abbreviatedType)
+                val abbreviation = type.abbreviation
+                if (abbreviation != null) toBoundFromTypeAliased(abbreviation, toFunctionalTypeConstructorFrom(type))
                 else toFunctionalTypeConstructorFrom(type)
             }
             is KaDynamicType -> Dynamic
@@ -112,6 +124,7 @@ internal class TypeTranslator(
             is KaErrorType -> UnresolvedBound(type.toString())
             is KaCapturedType -> throw NotImplementedError()
             is KaIntersectionType -> throw NotImplementedError()
+            else -> throw NotImplementedError()
         }.let {
             if (type.isMarkedNullable) Nullable(it) else it
         }
@@ -175,6 +188,7 @@ internal class TypeTranslator(
         is KaFlexibleType -> throw NotImplementedError()
         is KaIntersectionType -> throw NotImplementedError()
         is KaTypeParameterType -> throw NotImplementedError()
+        else -> throw NotImplementedError()
     }
 
     private fun KaSession.getDokkaAnnotationsFrom(annotated: KaAnnotated): List<Annotations.Annotation>? =
