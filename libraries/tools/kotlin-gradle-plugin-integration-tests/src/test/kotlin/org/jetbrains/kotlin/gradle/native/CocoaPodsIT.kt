@@ -53,7 +53,7 @@ class CocoaPodsIT : KGPBaseTest() {
     private val podInstallTaskName = ":${KotlinCocoapodsPlugin.POD_INSTALL_TASK_NAME}"
     private val syncTaskName = ":$SYNC_TASK_NAME"
 
-    private val defaultPodName = "AFNetworking"
+    private val defaultPodName = "Base64"
 
     @BeforeAll
     fun setUp() {
@@ -365,10 +365,11 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testCustomPackageName(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
 
-            buildGradleKts.addPod("AFNetworking", "packageName = \"AFNetworking\"")
+            buildGradleKts.addPod("Base64", "packageName = \"Base64\"")
             val srcFileForChanging = projectPath.resolve("src/iosMain/kotlin/A.kt")
             srcFileForChanging.replaceText(
-                "println(\"hi!\")", "println(AFNetworking.AFNetworkingReachabilityNotificationStatusItem)"
+                """println("hi!")""",
+                """println(Base64.MF_Base64Codec.dataFromBase64String(""))"""
             )
             buildWithCocoapodsWrapper("assemble")
         }
@@ -378,8 +379,8 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testCinteropExtraOpts(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
-            buildGradleKts.addPod("AFNetworking", "extraOpts = listOf(\"-help\")")
-            buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
+            buildGradleKts.addPod("Base64", "extraOpts = listOf(\"-help\")")
+            buildWithCocoapodsWrapper("cinteropBase64IOS") {
                 assertOutputContains("Usage: cinterop options_list")
             }
         }
@@ -616,8 +617,8 @@ class CocoaPodsIT : KGPBaseTest() {
             buildWithCocoapodsWrapper(":commonize", "-Pkotlin.mpp.enableCInteropCommonization=false") {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksAreNotInTaskGraph(
-                    ":cinteropAFNetworkingIosArm64",
-                    ":cinteropAFNetworkingIosX64",
+                    ":cinteropBase64IosArm64",
+                    ":cinteropBase64IosX64",
                     ":commonizeCInterop",
                 )
             }
@@ -643,8 +644,8 @@ class CocoaPodsIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsCommonizationProjectName, gradleVersion) {
             buildWithCocoapodsWrapper(":commonize", *buildArguments) {
                 assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksExecuted(":cinteropAFNetworkingIosArm64")
-                assertTasksExecuted(":cinteropAFNetworkingIosX64")
+                assertTasksExecuted(":cinteropBase64IosArm64")
+                assertTasksExecuted(":cinteropBase64IosX64")
                 assertTasksExecuted(":commonizeCInterop")
             }
         }
@@ -738,15 +739,15 @@ class CocoaPodsIT : KGPBaseTest() {
     @GradleTest
     fun testCinteropKlibsProvideLinkerOptsToFramework(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
-            buildGradleKts.addPod("AFNetworking")
-            buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
-                val cinteropManifest = projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-AFNetworking.klib")
+            buildGradleKts.addPod("Base64")
+            buildWithCocoapodsWrapper("cinteropBase64IOS") {
+                val cinteropManifest = projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-Base64.klib")
                     .useAsZipFile { zipFile ->
                         zipFile.readKLibManifest()
                     }
 
                 assertContains(cinteropManifest, "linkerOpts")
-                assertEquals(cinteropManifest["linkerOpts"], "-framework AFNetworking")
+                assertEquals(cinteropManifest["linkerOpts"], "-framework Base64")
             }
         }
     }
@@ -757,14 +758,14 @@ class CocoaPodsIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
             buildGradleKts.addCocoapodsBlock(
                 """
-                    pod("AFNetworking") { linkOnly = true }
+                    pod("Base64") { linkOnly = true }
                     pod("SSZipArchive", linkOnly = true)
                     pod("SDWebImage/Core")
                 """.trimIndent()
             )
 
             buildAndAssertAllTasks(
-                notRegisteredTasks = listOf(":cinteropAFNetworkingIOS", ":cinteropSSZipArchiveIOS"),
+                notRegisteredTasks = listOf(":cinteropBase64IOS", ":cinteropSSZipArchiveIOS"),
                 buildOptions = this.buildOptions.copy(
                     nativeOptions = this.buildOptions.nativeOptions.copy(
                         cocoapodsGenerateWrapper = true
@@ -773,14 +774,14 @@ class CocoaPodsIT : KGPBaseTest() {
             )
 
             buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
-                assertTasksExecuted(":podBuildAFNetworkingIosSimulator")
+                assertTasksExecuted(":podBuildBase64IosSimulator")
                 assertTasksExecuted(":podBuildSDWebImageIosSimulator")
                 assertTasksExecuted(":podBuildSSZipArchiveIosSimulator")
 
                 assertTasksExecuted(":cinteropSDWebImageIOS")
 
                 extractNativeTasksCommandLineArgumentsFromOutput(":linkPodDebugFrameworkIOS") {
-                    assertCommandLineArgumentsContainSequentially("-linker-option", "-framework", "-linker-option", "AFNetworking")
+                    assertCommandLineArgumentsContainSequentially("-linker-option", "-framework", "-linker-option", "Base64")
                     assertCommandLineArgumentsContainSequentially("-linker-option", "-framework", "-linker-option", "SSZipArchive")
                 }
             }
@@ -797,7 +798,7 @@ class CocoaPodsIT : KGPBaseTest() {
                         isStatic = true
                     }
         
-                    pod("AFNetworking") { linkOnly = true }
+                    pod("Base64") { linkOnly = true }
                 """.trimIndent()
             )
             buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
@@ -1207,7 +1208,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 spec.license                  = 'MIT'
                 spec.summary                  = 'CocoaPods test library'
                 spec.ios.deployment_target    = '13.5'
-                spec.dependency 'AFNetworking'
+                spec.dependency 'Base64'
                 spec.social_media_url = 'https://twitter.com/kotlin'
                 spec.vendored_frameworks = 'CustomFramework.xcframework'
                 spec.libraries = 'xml'
