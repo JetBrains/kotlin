@@ -31,7 +31,7 @@ android-gradle-plugin = "7.3.1"
 android-tools = "30.3.1"
 gradle-node = "7.0.1"
 commons-text="1.10.0"
-lincheck="2.28.1"
+lincheck="2.32"
 xerces = "2.12.2"
 # Compose versions used for Compose compiler plugin tests
 compose-stable = "1.7.0-alpha08"
