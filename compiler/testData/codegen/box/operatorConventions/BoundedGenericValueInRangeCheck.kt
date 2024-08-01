@@ -1,7 +1,6 @@
 // ISSUE: KT-68495
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM, JVM_IR
-// REASON: KT-68718 [JVM] Generic function is instantiated with wrong type argument
+// IGNORE_BACKEND: JVM
 
 fun <T: Char> testContainsChar(arg: T): Boolean = arg in 'A'..'Z'
 

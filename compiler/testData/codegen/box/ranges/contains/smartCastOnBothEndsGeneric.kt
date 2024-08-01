@@ -1,6 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM, JVM_IR
-// REASON: KT-68718 [JVM] Generic function is instantiated with wrong type argument
+// IGNORE_BACKEND: JVM
 
 fun <T: Double> checkDouble(a: T?, b: T?, c: T): Boolean where T: Comparable<Double> = a != null && b != null && c !in a..b
 fun <T: Float> checkFloat(a: T?, b: T?, c: T): Boolean where T: Comparable<Float> = a != null && b != null && c !in a..b

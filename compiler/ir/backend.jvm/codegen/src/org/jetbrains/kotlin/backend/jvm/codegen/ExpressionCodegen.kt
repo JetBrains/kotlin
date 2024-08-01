@@ -815,7 +815,7 @@ class ExpressionCodegen(
             StackValue.local(
                 findLocalIndex(expression.symbol),
                 frameMap.typeOf(expression.symbol),
-                expression.symbol.owner.realType.toIrBasedKotlinType()
+                expression.symbol.owner.realType.upperBound.toIrBasedKotlinType()
             )
         else
             genToStackValue(expression, type, parameterType, data)
