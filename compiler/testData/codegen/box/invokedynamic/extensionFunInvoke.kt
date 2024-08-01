@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// KT-37592
+// ISSUE: KT-37592, KT-70310
 
 class A {
     fun test1(): Boolean {
@@ -36,7 +36,7 @@ fun box(): String {
     }
 
     if (A().test2() == true) {
-        return "Fail" // Bug KT-70310
+        return "Fail"
     }
 
     if (B().test3() == false) {

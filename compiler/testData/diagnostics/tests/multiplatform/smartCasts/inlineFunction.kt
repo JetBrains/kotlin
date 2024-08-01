@@ -5,7 +5,7 @@
 
 expect fun run(r: () -> Unit)
 
-fun test() {
+fun testCommon() {
     run {
         // K1: compiled, K2: 'return' is not allowed here
         <!RETURN_NOT_ALLOWED!>return<!>
@@ -16,3 +16,9 @@ fun test() {
 // FILE: jvm.kt
 
 actual inline fun run(r: () -> Unit) = r()
+
+fun testPlatform() {
+    run {
+        return
+    }
+}

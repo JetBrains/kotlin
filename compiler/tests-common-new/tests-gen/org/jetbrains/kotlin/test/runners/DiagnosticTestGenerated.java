@@ -28616,27 +28616,15 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
-        @TestMetadata("classNoDefaultConstructor_commonCode.kt")
-        public void testClassNoDefaultConstructor_commonCode() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/classNoDefaultConstructor_commonCode.kt");
+        @TestMetadata("classNoDefaultConstructor.kt")
+        public void testClassNoDefaultConstructor() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/classNoDefaultConstructor.kt");
         }
 
         @Test
-        @TestMetadata("classNoDefaultConstructor_platformCode.kt")
-        public void testClassNoDefaultConstructor_platformCode() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/classNoDefaultConstructor_platformCode.kt");
-        }
-
-        @Test
-        @TestMetadata("inlineFunction_commonCode.kt")
-        public void testInlineFunction_commonCode() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/inlineFunction_commonCode.kt");
-        }
-
-        @Test
-        @TestMetadata("inlineFunction_platformCode.kt")
-        public void testInlineFunction_platformCode() {
-          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/inlineFunction_platformCode.kt");
+        @TestMetadata("inlineFunction.kt")
+        public void testInlineFunction() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/smartCasts/inlineFunction.kt");
         }
 
         @Test

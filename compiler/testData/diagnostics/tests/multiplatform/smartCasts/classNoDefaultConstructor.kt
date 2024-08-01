@@ -8,7 +8,7 @@ expect class Bar {
     fun foo(): String
 }
 
-fun common() {
+fun testCommon() {
     <!RESOLUTION_TO_CLASSIFIER!>Bar<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
 }
 
@@ -19,4 +19,8 @@ package pack
 
 actual class Bar {
     actual fun foo() = "expect class fun: jvm"
+}
+
+fun testPlatform() {
+    Bar().foo()
 }
