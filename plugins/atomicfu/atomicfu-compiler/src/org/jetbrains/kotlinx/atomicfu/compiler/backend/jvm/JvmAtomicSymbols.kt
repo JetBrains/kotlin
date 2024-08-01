@@ -430,22 +430,22 @@ class JvmAtomicSymbols(
     override fun createBuilder(symbol: IrSymbol, startOffset: Int, endOffset: Int) =
         JvmAtomicfuIrBuilder(this, symbol, startOffset, endOffset)
 
-    fun getJucaAFUClass(valueType: IrType): IrClassSymbol =
+    fun javaFUClassSymbol(valueType: IrType): IrClassSymbol =
         when {
             valueType.isInt() -> atomicIntFieldUpdaterClass
             valueType.isLong() -> atomicLongFieldUpdaterClass
             valueType.isBoolean() -> atomicIntFieldUpdaterClass
-            else -> atomicRefFieldUpdaterClass
+            !valueType.isPrimitiveType() -> atomicRefFieldUpdaterClass
+            else -> error("The corresponding Java AtomicFieldUpdater class cannot be found for the given value type ${valueType.render()}")
         }
-
-    fun getFieldUpdaterType(valueType: IrType) = getJucaAFUClass(valueType).defaultType
 
     fun isAtomicFieldUpdaterType(valueType: IrType) = valueType.classOrNull in ATOMIC_FIELD_UPDATER_TYPES
 
-    fun getNewUpdater(atomicUpdaterClassSymbol: IrClassSymbol): IrSimpleFunctionSymbol =
-        atomicUpdaterClassSymbol.getSimpleFunction("newUpdater") ?: error("No newUpdater function was found for ${atomicUpdaterClassSymbol.owner.render()} ")
+    fun newUpdater(atomicUpdaterClassSymbol: IrClassSymbol): IrSimpleFunctionSymbol =
+        atomicUpdaterClassSymbol.getSimpleFunction("newUpdater")
+            ?: error("No newUpdater function was found for ${atomicUpdaterClassSymbol.owner.render()} ")
 
-    val kotlinKClassJava: IrPropertySymbol = irFactory.buildProperty {
+    private val kotlinKClassJava: IrPropertySymbol = irFactory.buildProperty {
         name = Name.identifier("java")
     }.apply {
         parent = kotlinJvm

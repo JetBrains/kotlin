@@ -27,6 +27,7 @@ private const val ATOMICFU = "atomicfu"
 private const val REF_GETTER = "refGetter\$$ATOMICFU"
 private const val ATOMIC_ARRAY = "atomicArray\$$ATOMICFU"
 private const val INDEX = "index\$$ATOMICFU"
+private const val ACTION = "action\$$ATOMICFU"
 
 class AtomicfuNativeIrTransformer(
     pluginContext: IrPluginContext,
@@ -58,10 +59,10 @@ class AtomicfuNativeIrTransformer(
              */
             val parentContainer = this
             with(atomicSymbols.createBuilder(from.symbol)) {
-                val volatileField = buildVolatileBackingField(from, parentContainer, castBooleanFieldsToInt)
+                val volatileField = buildVolatileBackingField(from, parentContainer)
                 return parentContainer.replacePropertyAtIndex(volatileField, from.visibility, isVar = true, isStatic = from.parent is IrFile, index).also {
-                        atomicfuPropertyToVolatile[from] = it
-                    }
+                    atomicfuPropertyToVolatile[from] = it
+                }
             }
         }
     }
@@ -105,7 +106,6 @@ class AtomicfuNativeIrTransformer(
                     functionName = functionName,
                     propertyRef = getPropertyReference,
                     valueType = valueType,
-                    returnType = expression.type,
                     valueArguments = expression.valueArguments
                 )
             }
@@ -147,7 +147,7 @@ class AtomicfuNativeIrTransformer(
             else -> error("Unsupported type of atomic receiver expression: ${getPropertyReceiver.render()}")
         }
 
-        override fun buildSyntheticValueArgsForTransformedAtomicExtensionCall(
+        override fun generateArgsForAtomicExtension(
             expression: IrCall,
             getPropertyReceiver: IrExpression,
             isArrayReceiver: Boolean,
@@ -268,35 +268,29 @@ class AtomicfuNativeIrTransformer(
             return if (this is IrCall) this.isArrayElementGetter() else false
         }
 
-        override fun IrFunction.checkSyntheticArrayElementExtensionParameter(): Boolean {
+        override fun IrFunction.checkArrayElementExtensionParameters(): Boolean {
             if (valueParameters.size < 2) return false
             return valueParameters[0].name.asString() == ATOMIC_ARRAY && atomicSymbols.isAtomicArrayHandlerType(valueParameters[0].type) &&
                     valueParameters[1].name.asString() == INDEX && valueParameters[1].type == irBuiltIns.intType
         }
 
-        override fun IrFunction.checkSyntheticAtomicExtensionParameters(): Boolean {
+        override fun IrFunction.checkAtomicExtensionParameters(): Boolean {
             if (valueParameters.isEmpty()) return false
             return valueParameters[0].name.asString() == REF_GETTER && valueParameters[0].type.classOrNull == irBuiltIns.functionN(0).symbol
         }
 
-        override fun IrFunction.checkSyntheticParameterTypes(isArrayReceiver: Boolean, receiverValueType: IrType): Boolean {
+        override fun IrFunction.checkAtomicHandlerParameter(isArrayReceiver: Boolean, valueType: IrType): Boolean {
             if (isArrayReceiver) {
                 if (valueParameters.size < 2) return false
-                val atomicArrayClassSymbol = atomicSymbols.getAtomicArrayClassByValueType(receiverValueType)
+                val atomicArrayClassSymbol = atomicSymbols.getAtomicArrayClassByValueType(valueType)
                 return valueParameters[0].name.asString() == ATOMIC_ARRAY && valueParameters[0].type.classOrNull == atomicArrayClassSymbol &&
                         valueParameters[1].name.asString() == INDEX && valueParameters[1].type == irBuiltIns.intType
             } else {
-                if (valueParameters.size < 1) return false
+                if (valueParameters.isEmpty()) return false
                 return valueParameters[0].name.asString() == REF_GETTER && valueParameters[0].type.classOrNull == irBuiltIns.functionN(0).symbol
             }
         }
     }
-
-    /**
-     * On Native AtomicBoolean fields are transformed into Boolean volatile properties and updated via intrinsics.
-     */
-    override val castBooleanFieldsToInt: Boolean
-        get() = false
 
     /**
      * Builds the signature of the transformed atomic extension:
@@ -318,7 +312,7 @@ class AtomicfuNativeIrTransformer(
             extensionReceiverParameter = null
             dispatchReceiverParameter = atomicExtension.dispatchReceiverParameter?.deepCopyWithSymbols(this)
             atomicExtension.typeParameters.forEach { addTypeParameter(it.name.asString(), it.representativeUpperBound) }
-            addSyntheticValueParametersToTransformedAtomicExtension(isArrayReceiver, if (valueType == irBuiltIns.anyNType) atomicReceiverType.arguments.first().typeOrNull!! else valueType)
+            addAtomicHandlerParameter(isArrayReceiver, if (valueType == irBuiltIns.anyNType) atomicReceiverType.arguments.first().typeOrNull!! else valueType)
             atomicExtension.valueParameters.forEach { addValueParameter(it.name, it.type) }
             returnType = atomicExtension.returnType
             this.parent = atomicExtension.parent
@@ -328,11 +322,13 @@ class AtomicfuNativeIrTransformer(
     /**
      * Adds synthetic value parameters to the transformed atomic extension (custom atomic extension or atomicfu inline update functions).
      */
-    override fun IrFunction.addSyntheticValueParametersToTransformedAtomicExtension(isArrayReceiver: Boolean, valueType: IrType) {
+    override fun IrFunction.addAtomicHandlerParameter(isArrayReceiver: Boolean, valueType: IrType) {
+        // Instead of an original atomic boolean value, volatile int field was generated -> parameterize the corresponding KProperty with Int
+        val propertyType = if (valueType.isBoolean()) irBuiltIns.intType else valueType
         if (!isArrayReceiver) {
-            addValueParameter(REF_GETTER, atomicSymbols.kMutableProperty0GetterType(valueType)).apply { isCrossinline = true }
+            addValueParameter(REF_GETTER, atomicSymbols.kMutableProperty0GetterType(propertyType)).apply { isCrossinline = true }
         } else {
-            addValueParameter(ATOMIC_ARRAY, atomicSymbols.getParameterizedAtomicArrayType(valueType))
+            addValueParameter(ATOMIC_ARRAY, atomicSymbols.getParameterizedAtomicArrayType(propertyType))
             addValueParameter(INDEX, irBuiltIns.intType)
         }
     }

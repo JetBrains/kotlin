@@ -35,7 +35,6 @@ class NativeAtomicfuIrBuilder(
         functionName: String,
         propertyRef: IrExpression,
         valueType: IrType,
-        returnType: IrType,
         valueArguments: List<IrExpression?>
     ): IrExpression = when (functionName) {
         "<get-value>" -> atomicGetField(propertyRef, valueType)
@@ -49,38 +48,41 @@ class NativeAtomicfuIrBuilder(
         "incrementAndGet" -> incrementAndGetField(propertyRef, valueType)
         "decrementAndGet" -> decrementAndGetField(propertyRef, valueType)
         else -> error("Unsupported atomic function name $functionName")
-    }.let {
-        if (returnType.isBoolean()) irImplicitCast(it, atomicSymbols.irBuiltIns.booleanType) else it
     }
 
     private fun atomicGetField(receiver: IrExpression?, valueType: IrType): IrCall =
-        irCall(atomicSymbols.atomicGetFieldIntrinsic).apply {
-            extensionReceiver = receiver
-            putTypeArgument(0, valueType)
-        }
+        irDelegatedAtomicfuCall(
+            symbol = atomicSymbols.atomicGetFieldIntrinsic,
+            dispatchReceiver = null,
+            extensionReceiver = receiver,
+            valueArguments = emptyList(),
+            receiverValueType = valueType
+        )
 
     private fun atomicSetField(receiver: IrExpression?, valueType: IrType, newValue: IrExpression?): IrCall =
-        irCall(atomicSymbols.atomicSetFieldIntrinsic).apply {
-            extensionReceiver = receiver
-            putTypeArgument(0, valueType)
-            putValueArgument(0, newValue)
-        }
+        irDelegatedAtomicfuCall(
+            symbol = atomicSymbols.atomicSetFieldIntrinsic,
+            dispatchReceiver = null,
+            extensionReceiver = receiver,
+            valueArguments = listOf(newValue),
+            receiverValueType = valueType
+        )
 
     private fun compareAndSetField(propertyRef: IrExpression, valueType: IrType, expected: IrExpression?, updated: IrExpression?) =
-        callNativeAtomicIntrinsic(propertyRef, atomicSymbols.compareAndSetFieldIntrinsic, valueType, expected, updated)
+        callNativeAtomicIntrinsic(propertyRef, valueType, atomicSymbols.compareAndSetFieldIntrinsic, expected, updated)
 
     private fun getAndSetField(propertyRef: IrExpression, valueType: IrType, value: IrExpression?) =
-        callNativeAtomicIntrinsic(propertyRef, atomicSymbols.getAndSetFieldIntrinsic, valueType, value)
+        callNativeAtomicIntrinsic(propertyRef, valueType, atomicSymbols.getAndSetFieldIntrinsic, value)
 
     private fun getAndAddField(propertyRef: IrExpression, valueType: IrType, delta: IrExpression?): IrCall =
         when {
             valueType.isInt() ->
-                callNativeAtomicIntrinsic(propertyRef, atomicSymbols.getAndAddIntFieldIntrinsic, null, delta)
+                callNativeAtomicIntrinsic(propertyRef, valueType, atomicSymbols.getAndAddIntFieldIntrinsic, delta)
             valueType.isLong() ->
                 callNativeAtomicIntrinsic(
                     propertyRef,
+                    valueType,
                     atomicSymbols.getAndAddLongFieldIntrinsic,
-                    null,
                     delta?.implicitCastTo(context.irBuiltIns.longType)
                 )
             else -> error("kotlin.native.internal/getAndAddField intrinsic is not supported for values of type ${valueType.dumpKotlinLike()}")
@@ -111,17 +113,16 @@ class NativeAtomicfuIrBuilder(
 
     private fun callNativeAtomicIntrinsic(
         propertyRef: IrExpression,
+        receiverType: IrType,
         symbol: IrSimpleFunctionSymbol,
-        typeArgument: IrType?,
         vararg valueArguments: IrExpression?
-    ): IrCall =
-        irCall(symbol).apply {
-            extensionReceiver = propertyRef
-            typeArgument?.let { putTypeArgument(0, it) }
-            valueArguments.forEachIndexed { index, arg ->
-                putValueArgument(index, arg)
-            }
-        }
+    ): IrCall = irDelegatedAtomicfuCall(
+        symbol = symbol,
+        dispatchReceiver = null,
+        extensionReceiver = propertyRef,
+        valueArguments = valueArguments.toList(),
+        receiverValueType = receiverType
+    )
 
     private fun invokePropertyGetter(refGetter: IrExpression) = irCall(atomicSymbols.invoke0Symbol).apply { dispatchReceiver = refGetter }
 
@@ -161,7 +162,7 @@ class NativeAtomicfuIrBuilder(
     }
     */
 
-    override fun atomicfuArrayLoopBody(atomicArrayClass: IrClassSymbol, valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody =
+    override fun atomicfuArrayLoopBody(valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody =
         irBlockBody {
             val array = valueParameters[0]
             val index = valueParameters[1]
@@ -169,9 +170,8 @@ class NativeAtomicfuIrBuilder(
             +irWhile().apply {
                 condition = irTrue()
                 body = irBlock {
-                    val atomicArrayClassSymbol = (array.type as IrSimpleType).classOrNull ?: error("Failed to obtain the class corresponding to the array type ${array.render()}")
                     val cur = createTmpVariable(
-                        atomicGetArrayElement(atomicArrayClassSymbol, valueType, irGet(array), irGet(index)),
+                        atomicGetArrayElement(valueType, irGet(array), irGet(index)),
                         "atomicfu\$cur", false
                     )
                     +irCall(atomicSymbols.invoke1Symbol).apply {
@@ -232,7 +232,6 @@ class NativeAtomicfuIrBuilder(
                             functionName = "compareAndSet",
                             propertyRef = invokePropertyGetter(irGet(refGetter)),
                             valueType = valueType,
-                            returnType = atomicSymbols.irBuiltIns.booleanType,
                             valueArguments = listOf(irGet(cur), irGet(upd))
                         ),
                         thenPart = when (functionName) {
@@ -276,41 +275,40 @@ class NativeAtomicfuIrBuilder(
     override fun atomicfuArrayUpdateBody(
         functionName: String,
         valueType: IrType,
-        atomicArrayClass: IrClassSymbol,
         valueParameters: List<IrValueParameter>
     ): IrBlockBody =
         irBlockBody {
             val array = valueParameters[0]
             val index = valueParameters[1]
             val action = valueParameters[2]
+            val actionArgType = (action.type as IrSimpleType).arguments.first().typeOrNull
             +irWhile().apply {
                 condition = irTrue()
                 body = irBlock {
-                    val atomicArrayClassSymbol = (array.type as IrSimpleType).classOrNull ?: error("Failed to obtain the class corresponding to the array type ${array.render()}")
                     val cur = createTmpVariable(
-                        atomicGetArrayElement(atomicArrayClassSymbol, valueType, irGet(array), irGet(index)),
+                        atomicGetArrayElement(valueType, irGet(array), irGet(index)),
                         "atomicfu\$cur", false
                     )
                     val upd = createTmpVariable(
                         irCall(atomicSymbols.invoke1Symbol).apply {
                             dispatchReceiver = irGet(action)
-                            putValueArgument(0, irGet(cur))
+                            val getCur = if (actionArgType != null) irAs(irGet(cur), actionArgType) else irGet(cur)
+                            putValueArgument(0, getCur)
                         }, "atomicfu\$upd", false
                     )
                     +irIfThen(
                         type = atomicSymbols.irBuiltIns.unitType,
                         condition = callAtomicArray(
-                            arrayClassSymbol = atomicArrayClassSymbol,
                             functionName = "compareAndSet",
-                            dispatchReceiver = irGet(array),
+                            getAtomicArray = irGet(array),
                             index = irGet(index),
                             valueArguments = listOf(irGet(cur), irGet(upd)),
-                            isBooleanReceiver = valueType.isBoolean()
+                            valueType = valueType
                         ),
                         thenPart = when (functionName) {
                             "update" -> irReturnUnit()
-                            "getAndUpdate" -> irReturn(if (valueType.isBoolean() && irGet(cur).type.isInt()) irGet(cur).toBoolean() else irGet(cur))
-                            "updateAndGet" -> irReturn(if (valueType.isBoolean() && irGet(cur).type.isInt()) irGet(upd).toBoolean() else irGet(upd))
+                            "getAndUpdate" -> irReturn(irGet(cur))
+                            "updateAndGet" -> irReturn(irGet(upd))
                             else -> error("Unsupported atomicfu inline loop function name: $functionName")
                         }
                     )

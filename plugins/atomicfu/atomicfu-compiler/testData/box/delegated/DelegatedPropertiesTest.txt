@@ -28,7 +28,7 @@ public final class DelegatedProperties {
     private synthetic volatile field _l$volatile: long
     private synthetic final static field _ref$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic volatile field _ref$volatile: java.lang.Object
-    private synthetic volatile field vBoolean$volatile: boolean
+    private synthetic volatile field vBoolean$volatile: int
     private synthetic volatile field vInt$volatile: int
     private synthetic volatile field vLong$volatile: int
     private synthetic volatile field vRef$volatile: java.lang.Object

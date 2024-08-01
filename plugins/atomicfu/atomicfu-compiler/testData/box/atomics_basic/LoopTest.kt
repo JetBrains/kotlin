@@ -96,20 +96,21 @@ class LoopTest {
     }
 
     fun atomicfuGetAndUpdateTest() {
-        a.getAndUpdate { value ->
+        a.lazySet(50)
+        assertEquals(50, a.getAndUpdate { value ->
             if (value >= 0) Int.MAX_VALUE else value
-        }
+        })
         assertEquals(Int.MAX_VALUE, a.value)
-        b.getAndUpdate { true }
+        b.lazySet(false)
+        assertFalse(b.getAndUpdate { true })
         assertTrue(b.value)
-        l.getAndUpdate { cur ->
+        l.lazySet(50)
+        assertEquals(50, l.getAndUpdate { cur ->
             if (cur >= 0L) Long.MAX_VALUE else cur
-        }
+        })
         assertEquals(Long.MAX_VALUE, l.value)
         r.lazySet(A("aaaa"))
-        r.getAndUpdate { cur ->
-            A("cccc${cur.s}")
-        }
+        assertEquals("aaaa", r.getAndUpdate { cur -> A("cccc${cur.s}") }.s)
         assertEquals("ccccaaaa", r.value.s)
     }
 }
