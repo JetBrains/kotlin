@@ -356,8 +356,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     }
 
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
-        addJvmClasspathRoots(module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList())
-
         val isJava9Module = module.files.any(TestFile::isModuleInfoJavaFile)
         for (dependency in module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList()) {
             if (isJava9Module) {
