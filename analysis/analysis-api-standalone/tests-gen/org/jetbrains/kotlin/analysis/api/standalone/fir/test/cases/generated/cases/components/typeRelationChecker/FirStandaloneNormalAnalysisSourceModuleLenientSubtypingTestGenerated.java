@@ -226,6 +226,12 @@ public class FirStandaloneNormalAnalysisSourceModuleLenientSubtypingTestGenerate
   }
 
   @Test
+  @TestMetadata("Human_PrivateAnimal.kt")
+  public void testHuman_PrivateAnimal() {
+    runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Human_PrivateAnimal.kt");
+  }
+
+  @Test
   @TestMetadata("Int_Int.kt")
   public void testInt_Int() {
     runTest("analysis/analysis-api/testData/components/typeRelationChecker/subtypingAndEquality/Int_Int.kt");
