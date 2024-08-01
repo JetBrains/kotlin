@@ -22,7 +22,6 @@ class KaAnnotationImpl(
     classId: ClassId?,
     psi: KtCallElement?,
     useSiteTarget: AnnotationUseSiteTarget?,
-    hasArguments: Boolean,
 
     /**
      * A list of annotation arguments which were applied when constructing annotation. Every argument is [KaAnnotationValue]
@@ -51,11 +50,6 @@ class KaAnnotationImpl(
     override val useSiteTarget: AnnotationUseSiteTarget?
         get() = withValidityAssertion { backingUseSiteTarget }
 
-    private val backingHasArguments: Boolean = hasArguments
-
-    override val hasArguments: Boolean
-        get() = withValidityAssertion { backingHasArguments }
-
     private val backingArguments: List<KaNamedAnnotationValue> by lazyArguments
 
     override val arguments: List<KaNamedAnnotationValue>
@@ -72,11 +66,11 @@ class KaAnnotationImpl(
         get() = withValidityAssertion { backingConstructorSymbol }
 
     override fun equals(other: Any?): Boolean {
-        return this === other || other is KaAnnotationImpl &&
+        return this === other ||
+                other is KaAnnotationImpl &&
                 backingClassId == other.backingClassId &&
                 backingPsi == other.backingPsi &&
                 backingUseSiteTarget == other.backingUseSiteTarget &&
-                backingHasArguments == other.backingHasArguments &&
                 backingIndex == other.backingIndex &&
                 backingConstructorSymbol == other.backingConstructorSymbol &&
                 backingArguments == other.backingArguments
@@ -87,7 +81,6 @@ class KaAnnotationImpl(
             backingClassId,
             backingPsi,
             backingUseSiteTarget,
-            backingHasArguments,
             backingIndex,
             backingConstructorSymbol,
             backingArguments,
@@ -96,7 +89,7 @@ class KaAnnotationImpl(
 
     override fun toString(): String {
         return "KaAnnotationApplicationWithArgumentsInfo(classId=" + backingClassId + ", psi=" + backingPsi + ", useSiteTarget=" +
-                backingUseSiteTarget + ", hasArguments=" + backingHasArguments + ", index=" + backingIndex + ", constructorSymbol=" +
+                backingUseSiteTarget + ", index=" + backingIndex + ", constructorSymbol=" +
                 backingConstructorSymbol + ", arguments=" + backingArguments + ")"
     }
 }

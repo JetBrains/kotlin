@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,11 +47,13 @@ public interface KaAnnotation : KaLifetimeOwner {
      * then you can avoid [KaAnnotated.annotationsByClassId] call,
      * because effectively you already have all necessary information in [KaAnnotationApplicationInfo]
      */
+    @Deprecated("Use 'arguments.isNotEmpty()' instead.", replaceWith = ReplaceWith("arguments.isNotEmpty()"))
     public val hasArguments: Boolean
+        get() = arguments.isNotEmpty()
 
-    @Deprecated("Use 'hasArguments' instead.", replaceWith = ReplaceWith("hasArguments"))
+    @Deprecated("Use 'arguments.isNotEmpty()' instead.", replaceWith = ReplaceWith("arguments.isNotEmpty()"))
     public val isCallWithArguments: Boolean
-        get() = hasArguments
+        get() = arguments.isNotEmpty()
 
     /**
      * An index of the annotation in an owner. `null` when annotation is used as an argument of other annotations

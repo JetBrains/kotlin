@@ -33,14 +33,12 @@ internal fun KaNamedAnnotationValue.toLightClassAnnotationArgument(): Annotation
  * @param annotation The applied annotation value.
  * @param isDumb If `true`, the [annotation] only contains a [ClassId]. Both constructor pointer and arguments are not provided.
  * @param useSiteTarget Specifies a user-provided use-site annotation target if an annotation is applied on a declaration.
- * @param hasArguments `true` if the annotation has explicitly provided arguments.
  * @param index An index of the annotation in an owner, or `null` if the annotation provided as an annotation argument.
  */
 internal data class AnnotationApplication(
     val annotation: AnnotationValue.Annotation,
     val isDumb: Boolean,
     val useSiteTarget: AnnotationUseSiteTarget?,
-    val hasArguments: Boolean,
     val index: Int?,
 )
 
@@ -52,11 +50,11 @@ internal fun KaAnnotation.toDumbLightClassAnnotationApplication(): AnnotationApp
         sourcePsi = null
     )
 
-    return AnnotationApplication(value, true, useSiteTarget, hasArguments, index)
+    return AnnotationApplication(value, true, useSiteTarget, index)
 }
 
 internal fun KaAnnotation.toLightClassAnnotationApplication(): AnnotationApplication {
-    return AnnotationApplication(toLightClassAnnotationValue(), false, useSiteTarget, hasArguments, index)
+    return AnnotationApplication(toLightClassAnnotationValue(), false, useSiteTarget, index)
 }
 
 internal sealed class AnnotationValue {

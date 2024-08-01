@@ -60,7 +60,6 @@ internal class SymbolLightLazyAnnotation(
             other.annotationApplication.annotation.classId == annotationApplication.annotation.classId &&
             other.annotationApplication.index == annotationApplication.index &&
             other.annotationApplication.useSiteTarget == annotationApplication.useSiteTarget &&
-            other.annotationApplication.hasArguments == annotationApplication.hasArguments &&
             other.annotationsProvider == annotationsProvider &&
             other.parent == parent
 

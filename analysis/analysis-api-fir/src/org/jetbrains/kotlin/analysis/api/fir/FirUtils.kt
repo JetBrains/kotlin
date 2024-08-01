@@ -86,8 +86,6 @@ internal fun FirAnnotation.toKaAnnotation(builder: KaSymbolByFirBuilder, index: 
         classId = classId,
         psi = psi as? KtCallElement,
         useSiteTarget = useSiteTarget,
-        // !This is not correct for Java annotations with arguments!
-        hasArguments = this is FirAnnotationCall && arguments.isNotEmpty(),
         lazyArguments = if (this !is FirAnnotationCall || arguments.isNotEmpty())
             lazy { computeAnnotationArguments(this, builder) }
         else

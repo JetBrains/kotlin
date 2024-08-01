@@ -219,7 +219,6 @@ internal object FirAnnotationValueConverter {
                 classId = resolvedSymbol.callableId.classId,
                 psi = psi as? KtCallElement,
                 useSiteTarget = null,
-                hasArguments = argumentMapping.isNotEmpty(),
                 lazyArguments = if (argumentMapping.isNotEmpty())
                     lazy { toNamedConstantValue(builder.analysisSession, argumentMapping, builder) }
                 else
