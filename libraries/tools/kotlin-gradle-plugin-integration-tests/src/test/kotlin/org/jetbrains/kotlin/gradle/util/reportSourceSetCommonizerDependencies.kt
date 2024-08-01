@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.makeSnapshotTo
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.commonizerTarget
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
@@ -172,21 +173,36 @@ private const val dollar = "\$"
 
 private val taskSourceCode = """
 
-tasks.register("reportCommonizerSourceSetDependencies") {
-    kotlin.sourceSets.withType(org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet::class).all {
-        inputs.files(configurations.getByName(intransitiveMetadataConfigurationName))
-    }
+abstract class ReportCommonizerSourceSetDependencies : DefaultTask() {
+    class SourceSetIntransitiveDependencies(
+        @get:Input
+        val sourceSetName: String,
 
-    doLast {
-        kotlin.sourceSets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet>().forEach { sourceSet ->
-            val configuration = configurations.getByName(sourceSet.intransitiveMetadataConfigurationName)
-            val dependencies = configuration.files
+        @get:InputFiles
+        val dependencies: FileCollection
+    )
 
-            logger.quiet(
-                "SourceSetCommonizerDependencyReport[$dollar{sourceSet.name}]$dollar{dependencies.joinToString("|#+#|")}"
-            )
+    @get:Nested
+    abstract val sourceSetIntransitiveDependencies: ListProperty<SourceSetIntransitiveDependencies>
+
+    @TaskAction
+    fun action() {
+        sourceSetIntransitiveDependencies.get().forEach {
+            println("SourceSetCommonizerDependencyReport[${'$'}{it.sourceSetName}]${'$'}{it.dependencies.joinToString("|#+#|")}")
         }
     }
 }
+
+tasks.register<ReportCommonizerSourceSetDependencies>("reportCommonizerSourceSetDependencies") {
+    sourceSetIntransitiveDependencies.set(kotlin.sourceSets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet>().map { sourceSet ->
+        val configuration = configurations.getByName(sourceSet.intransitiveMetadataConfigurationName)
+
+        ReportCommonizerSourceSetDependencies.SourceSetIntransitiveDependencies(
+            sourceSet.name,
+            configuration.incoming.artifacts.artifactFiles
+        )
+    })
+}
+
 
 """.trimIndent()

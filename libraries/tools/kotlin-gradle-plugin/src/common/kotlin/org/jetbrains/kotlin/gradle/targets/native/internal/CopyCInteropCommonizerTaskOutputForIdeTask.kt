@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @DisableCachingByDefault
 internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
-    private val commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
+    commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
 ) : AbstractCInteropCommonizerTask() {
 
     @get:IgnoreEmptyDirectories
@@ -41,13 +41,21 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
     val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
+    private val allInteropGroups: List<Pair<CInteropCommonizerGroup, File>> = run {
+        val commonizerTask = commonizeCInteropTask.get()
+        commonizerTask.allInteropGroups
+            .getOrThrow()
+            .map { group ->
+                group to commonizerTask.outputDirectory(group)
+            }
+    }
+
     @TaskAction
     protected fun copy() {
         val metricReporter = metrics.get()
         addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {
             outputDirectory.mkdirs()
-            for (group in commonizeCInteropTask.get().allInteropGroups.getOrThrow()) {
-                val source = commonizeCInteropTask.get().outputDirectory(group)
+            for ((group, source) in allInteropGroups) {
                 if (!source.exists()) continue
                 val target = outputDirectory(group)
                 if (target.exists()) target.deleteRecursively()
