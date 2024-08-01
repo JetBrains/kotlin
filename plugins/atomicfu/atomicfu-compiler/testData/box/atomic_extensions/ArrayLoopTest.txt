@@ -1,36 +1,51 @@
 @kotlin.Metadata
-final class ArrayInlineFunctionTest$Box {
+public final class ArrayLoopTest$Box {
     // source: 'ArrayLoopTest.kt'
     private final field n: int
     public method <init>(p0: int): void
-    public final method component1(): int
-    public synthetic static method copy$default(p0: ArrayInlineFunctionTest$Box, p1: int, p2: int, p3: java.lang.Object): ArrayInlineFunctionTest$Box
-    public final @org.jetbrains.annotations.NotNull method copy(p0: int): ArrayInlineFunctionTest$Box
-    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final method getN(): int
-    public method hashCode(): int
-    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
-    private final inner class ArrayInlineFunctionTest$Box
+    public final inner class ArrayLoopTest$Box
 }
 
 @kotlin.Metadata
-public final class ArrayInlineFunctionTest {
+public final class ArrayLoopTest {
     // source: 'ArrayLoopTest.kt'
-    private synthetic final field anyArr: java.util.concurrent.atomic.AtomicReferenceArray
+    private final field SIZE: int
+    private synthetic final field boolArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final field intArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final field longArr: java.util.concurrent.atomic.AtomicLongArray
     private synthetic final field refArr: java.util.concurrent.atomic.AtomicReferenceArray
     public method <init>(): void
-    private final method action(p0: ArrayInlineFunctionTest$Box): ArrayInlineFunctionTest$Box
-    private synthetic final method getAndUpdate$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): java.lang.Object
-    private synthetic final method getAnyArr(): java.util.concurrent.atomic.AtomicReferenceArray
+    private final method action(p0: ArrayLoopTest$Box): ArrayLoopTest$Box
+    public final method atomicBooleanArrLoopTest(): boolean
+    public final method atomicBooleanArrUpdateTest(): void
+    public final method atomicIntArrLoopTest(): int
+    public final method atomicIntArrUpdateTest(): void
+    public final method atomicLongArrLoopTest(): long
+    public final method atomicLongArrUpdateTest(): void
+    public final @org.jetbrains.annotations.Nullable method atomicRefArrLoopTest(): ArrayLoopTest$Box
+    public final method atomicRefArrUpdateTest(): void
+    private synthetic final method getAndUpdate$atomicfu$array$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): java.lang.Object
+    private synthetic final method getAndUpdate$atomicfu$array$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): boolean
+    private synthetic final method getAndUpdate$atomicfu$array$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): int
+    private synthetic final method getAndUpdate$atomicfu$array$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: kotlin.jvm.functions.Function1): long
+    private synthetic final method getBoolArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
     private synthetic final method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
-    private synthetic final method loop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
-    public final method testArrayElementGetAndUpdate(): void
-    public final method testArrayElementUpdate(): void
-    public final method testArrayElementUpdateAndGet(): void
-    public final method testSetArrayElementValueInLoop(): void
-    private synthetic final method update$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
-    private synthetic final method updateAndGet$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): java.lang.Object
-    private final inner class ArrayInlineFunctionTest$Box
+    private synthetic final method loop$atomicfu$array$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$array$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$array$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu$array$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method update$atomicfu$array$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method update$atomicfu$array$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method update$atomicfu$array$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method update$atomicfu$array$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method updateAndGet$atomicfu$array$Any(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): java.lang.Object
+    private synthetic final method updateAndGet$atomicfu$array$Boolean(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): boolean
+    private synthetic final method updateAndGet$atomicfu$array$Int(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): int
+    private synthetic final method updateAndGet$atomicfu$array$Long(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: kotlin.jvm.functions.Function1): long
+    public final inner class ArrayLoopTest$Box
 }
 
 @kotlin.Metadata
