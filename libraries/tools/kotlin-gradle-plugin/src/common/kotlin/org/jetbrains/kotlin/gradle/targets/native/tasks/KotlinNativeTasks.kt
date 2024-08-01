@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
-import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
@@ -55,6 +53,7 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.GradleLoggerAdapter
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCInteropRunner
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.kotlinNativeCompilerJar
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
@@ -62,8 +61,8 @@ import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
-import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.buildDistribution
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -297,7 +296,9 @@ internal constructor(
     K2MultiplatformCompilationTask,
     UsesBuildMetricsService,
     UsesBuildFusService,
-    UsesKotlinNativeBundleBuildService {
+    UsesKotlinNativeBundleBuildService,
+    UsesClassLoadersCachingBuildService,
+    UsesKonanPropertiesBuildService {
 
     // used by KSP1 - should be removed via KT-67992 in 2.1.0 release
     @Deprecated("'execOperations' parameter was removed")
@@ -418,11 +419,28 @@ internal constructor(
     override val additionalCompilerOptions: Provider<Collection<String>>
         get() = compilerOptions.freeCompilerArgs as Provider<Collection<String>>
 
-    private val runnerSettings = KotlinNativeCompilerRunner.Settings.of(
-        kotlinNativeProvider.get().bundleDirectory.getFile().absolutePath,
-        kotlinNativeProvider.get().konanDataDir.orNull,
-        project
-    )
+    @get:Internal
+    internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
+
+    private val kotlinNativeCompilerJar = project.nativeProperties.kotlinNativeCompilerJar
+    private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
+    private val runnerJvmArgs = project.nativeProperties.jvmArgs
+    private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
+    private val useXcodeMessageStyle = project.useXcodeMessageStyle
+
+    @get:Internal
+    internal val nativeCompilerRunner
+        get() = objectFactory.KotlinNativeCompilerRunner(
+            metrics,
+            classLoadersCachingService,
+            forceDisableRunningInProcess,
+            useXcodeMessageStyle,
+            kotlinNativeCompilerJar,
+            actualNativeHomeDirectory,
+            runnerJvmArgs,
+            konanPropertiesService
+        )
+
     // endregion.
 
     /**
@@ -478,6 +496,9 @@ internal constructor(
             KotlinNativeCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+            kotlinNativeProvider.get().konanDataDir.orNull?.let {
+                args.konanDataDir = it
+            }
         }
 
         pluginClasspath { args ->
@@ -562,10 +583,13 @@ internal constructor(
                 ArgumentUtils.convertArgumentsToStringList(arguments)
             }
 
-            objectFactory.KotlinNativeCompilerRunner(
-                settings = runnerSettings,
-                metricsReporter = buildMetrics
-            ).run(buildArguments)
+            nativeCompilerRunner.runTool(
+                KotlinNativeToolRunner.ToolArguments(
+                    shouldRunInProcessMode = !forceDisableRunningInProcess.get(),
+                    compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
+                    arguments = buildArguments,
+                )
+            )
         }
 
     }
@@ -746,52 +770,30 @@ internal class ExternalDependenciesBuilder(
 }
 
 internal class CacheBuilder(
-    private val objectFactory: ObjectFactory,
     private val settings: Settings,
     private val konanPropertiesService: KonanPropertiesBuildService,
-    private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val nativeCompilerRunner: KotlinNativeToolRunner,
 ) {
     class Settings(
-        val runnerSettings: KotlinNativeCompilerRunner.Settings,
-        val konanCacheKind: NativeCacheKind,
+        val konanHome: Provider<File>,
+        val konanCacheKind: Provider<NativeCacheKind>,
         val gradleUserHomeDir: File,
         val konanTarget: KonanTarget,
         val toolOptions: KotlinCommonCompilerToolOptions,
         val externalDependenciesArgs: List<String>,
         val debuggable: Boolean,
         val optimized: Boolean,
+        val konanDataDir: Provider<File>,
+        val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
+        val forceDisableRunningInProcess: Provider<Boolean>
     ) {
         val rootCacheDirectory
             get() = getRootCacheDirectory(
-                File(runnerSettings.parent.konanHome),
+                konanHome.get(),
                 konanTarget,
                 debuggable,
-                konanCacheKind
+                konanCacheKind.get()
             )
-
-        companion object {
-            fun createWithProject(
-                konanHome: String,
-                konanDataDir: String?,
-                project: Project,
-                binary: NativeBinary,
-                konanTarget: KonanTarget,
-                toolOptions: KotlinCommonCompilerToolOptions,
-                externalDependenciesArgs: List<String>,
-            ): Settings {
-                val konanCacheKind = project.getKonanCacheKind(konanTarget)
-                return Settings(
-                    runnerSettings = KotlinNativeCompilerRunner.Settings.of(konanHome, konanDataDir, project),
-                    konanCacheKind = konanCacheKind.get(),
-                    gradleUserHomeDir = project.gradle.gradleUserHomeDir,
-                    konanTarget = konanTarget,
-                    toolOptions = toolOptions,
-                    externalDependenciesArgs = externalDependenciesArgs,
-                    debuggable = binary.debuggable,
-                    optimized = binary.optimized,
-                )
-            }
-        }
     }
 
     private val logger = Logging.getLogger(this::class.java)
@@ -811,7 +813,7 @@ internal class CacheBuilder(
         get() = settings.debuggable
 
     private val konanCacheKind: NativeCacheKind
-        get() = settings.konanCacheKind
+        get() = settings.konanCacheKind.get()
 
     // Inputs and outputs
     private val target: String
@@ -913,6 +915,10 @@ internal class CacheBuilder(
             args += "-Xcache-directory=${cacheDirectory.absolutePath}"
             args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
 
+            settings.konanDataDir.orNull?.let {
+                args += "-Xkonan-data-dir=${it}"
+            }
+
             dependenciesCacheDirectories.forEach {
                 args += "-Xcache-directory=${it.absolutePath}"
             }
@@ -930,7 +936,13 @@ internal class CacheBuilder(
                     args += "-l"
                     args += it.libraryFile.absolutePath
                 }
-            objectFactory.KotlinNativeCompilerRunner(settings.runnerSettings, GradleBuildMetricsReporter()).run(args)
+            nativeCompilerRunner.runTool(
+                KotlinNativeToolRunner.ToolArguments(
+                    shouldRunInProcessMode = !settings.forceDisableRunningInProcess.get(),
+                    compilerArgumentsLogLevel = settings.kotlinCompilerArgumentsLogLevel.get(),
+                    arguments = args
+                )
+            )
         }
     }
 
@@ -964,12 +976,23 @@ internal class CacheBuilder(
             args += "-g"
         args += "-Xadd-cache=${platformLib.absolutePath}"
         args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
-        objectFactory.KotlinNativeCompilerRunner(settings.runnerSettings, metricsReporter).run(args)
+        settings.konanDataDir.orNull?.let {
+            args += "-Xkonan-data-dir=$it"
+        }
+        nativeCompilerRunner.runTool(
+            KotlinNativeToolRunner.ToolArguments(
+                shouldRunInProcessMode = !settings.forceDisableRunningInProcess.get(),
+                compilerArgumentsLogLevel = settings.kotlinCompilerArgumentsLogLevel.get(),
+                arguments = args
+            )
+        )
     }
 
     private fun ensureCompilerProvidedLibsPrecached() {
-        val distribution =
-            Distribution(settings.runnerSettings.parent.konanHome, konanDataDir = settings.runnerSettings.parent.konanDataDir)
+        val distribution = buildDistribution(
+            settings.konanHome.get().absolutePath,
+            konanDataDir = settings.konanDataDir.orNull?.absolutePath,
+        )
         val platformLibs = mutableListOf<File>().apply {
             this += File(distribution.stdlib)
             this += File(distribution.platformLibs(konanTarget)).listFiles().orEmpty()
