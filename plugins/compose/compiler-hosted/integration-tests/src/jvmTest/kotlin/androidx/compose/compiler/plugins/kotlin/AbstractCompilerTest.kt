@@ -22,6 +22,7 @@ import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
@@ -65,23 +66,13 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
         }
 
         val defaultClassPath by lazy {
-            System.getProperty("java.class.path")!!.split(
-                System.getProperty("path.separator")!!
-            ).map { File(it) }
-        }
-
-        val defaultClassPathRoots by lazy {
-            defaultClassPath.filter {
-                !it.path.contains("robolectric") && it.extension != "xml"
-            }.toList()
-        }
-
-        val defaultClassLoader by lazy {
-            URLClassLoader(
-                defaultClassPath.map { it.toURI().toURL() }.toTypedArray(),
-                this::class.java.classLoader
+            listOf(
+                Classpath.kotlinStdlibJar(),
+                Classpath.composeRuntimeJar()
             )
         }
+
+        val defaultClassLoader = this::class.java.classLoader
     }
 
     private val testRootDisposable = Disposer.newDisposable()
@@ -120,16 +111,10 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
                 analysisFlags
             )
             updateConfiguration()
-            val classpath = defaultClassPathRoots
             addJvmClasspathRoots(additionalPaths)
-            addJvmClasspathRoots(classpath)
+            addJvmClasspathRoots(defaultClassPath)
 
-            require(classpath.any { it.name.matches(Regex("kotlin-stdlib-\\S+\\.jar")) }) {
-                "kotlin-stdlib.jar is not found in classpath: $classpath"
-            }
-
-            if (!getBoolean(JVMConfigurationKeys.NO_JDK) &&
-                get(JVMConfigurationKeys.JDK_HOME) == null) {
+            if (!getBoolean(JVMConfigurationKeys.NO_JDK) && get(JVMConfigurationKeys.JDK_HOME) == null) {
                 // We need to set `JDK_HOME` explicitly to use JDK 17
                 put(JVMConfigurationKeys.JDK_HOME, File(System.getProperty("java.home")!!))
             }
@@ -150,9 +135,10 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
 
     protected fun analyze(
         platformSources: List<SourceFile>,
-        commonSources: List<SourceFile> = listOf()
+        commonSources: List<SourceFile> = listOf(),
+        additionalPaths: List<File> = emptyList()
     ): AnalysisResult =
-        createCompilerFacade().analyze(platformSources, commonSources)
+        createCompilerFacade(additionalPaths).analyze(platformSources, commonSources)
 
     protected fun compileToIr(
         sourceFiles: List<SourceFile>,
@@ -222,3 +208,21 @@ fun OutputFile.writeToDir(directory: File) =
     FileUtil.writeToFile(File(directory, relativePath), asByteArray())
 
 fun Collection<OutputFile>.writeToDir(directory: File) = forEach { it.writeToDir(directory) }
+
+object Classpath {
+    fun kotlinStdlibJar() = jarFor<Unit>()
+    fun kotlinxCoroutinesJar() = jarFor<kotlinx.coroutines.CoroutineScope>()
+    fun composeRuntimeJar() = jarFor<androidx.compose.runtime.Composable>()
+    fun composeTestUtilsJar() = jarFor<androidx.compose.runtime.mock.View>()
+    fun composeAnimationJar() = jarFor<androidx.compose.animation.EnterTransition>()
+    fun composeUiJar() = jarFor<androidx.compose.ui.Modifier>()
+    fun composeUiGraphicsJar() = jarFor<androidx.compose.ui.graphics.ColorProducer>()
+    fun composeUiUnitJar() = jarFor<androidx.compose.ui.unit.Dp>()
+    fun composeUiTextJar() = jarFor<androidx.compose.ui.text.input.TextFieldValue>()
+    fun composeFoundationJar() = jarFor<androidx.compose.foundation.Indication>()
+    fun composeFoundationTextJar() = jarFor<androidx.compose.foundation.text.KeyboardActions>()
+    fun composeFoundationLayoutJar() = jarFor<androidx.compose.foundation.layout.RowScope>()
+
+    inline fun <reified T> jarFor() = File(PathUtil.getJarPathForClass(T::class.java))
+    fun jarFor(className: String) = File(PathUtil.getJarPathForClass(Class.forName(className)))
+}

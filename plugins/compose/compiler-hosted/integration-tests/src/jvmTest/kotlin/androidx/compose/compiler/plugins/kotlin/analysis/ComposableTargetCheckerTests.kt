@@ -17,7 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
-import org.junit.Ignore
+import androidx.compose.compiler.plugins.kotlin.Classpath
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -389,7 +389,13 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest(useFir = fal
            BasicText("Some text")
            <!COMPOSE_APPLIER_CALL_MISMATCH!>Invalid<!>()
         }
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeUiGraphicsJar(),
+            Classpath.composeUiTextJar(),
+            Classpath.composeFoundationTextJar()
+        )
     )
 
     @Test

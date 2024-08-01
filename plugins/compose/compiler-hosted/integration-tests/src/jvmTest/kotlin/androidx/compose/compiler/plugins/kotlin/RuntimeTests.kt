@@ -100,7 +100,15 @@ private class RuntimeTestCompiler(
     private fun compileRuntimeTestClasses(sourceRoot: File, commonSources: List<File>, jvmSources: List<File>): List<Class<*>> {
         val generatedClassLoader = createClassLoader(
             commonSourceFiles = commonSources.map { it.toSourceFile(sourceRoot.commonSourceRoot()) },
-            platformSourceFiles = jvmSources.map { it.toSourceFile(sourceRoot.jvmSourceRoot()) }
+            platformSourceFiles = jvmSources.map { it.toSourceFile(sourceRoot.jvmSourceRoot()) },
+            additionalPaths = listOf(
+                Classpath.composeTestUtilsJar(),
+                Classpath.kotlinxCoroutinesJar(),
+                Classpath.jarFor<kotlinx.coroutines.test.TestDispatcher>(), // kotlinx-coroutines-test
+                Classpath.jarFor(kotlin.test.asserter::class.java.canonicalName), // kotlin-test metadata
+                Classpath.jarFor<kotlin.test.Asserter>(), // kotlin-test
+                Classpath.jarFor<Test>() // junit
+            )
         )
 
         val parent = generatedClassLoader.parent

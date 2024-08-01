@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
-import org.junit.Ignore
 import org.junit.Test
 
 class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformTests(useFir) {
@@ -2140,7 +2139,11 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 maxLines: Int = Int.MAX_VALUE,
                 minLines: Int = 1,
             ) {}
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeFoundationLayoutJar()
+        )
     )
 
     @Test

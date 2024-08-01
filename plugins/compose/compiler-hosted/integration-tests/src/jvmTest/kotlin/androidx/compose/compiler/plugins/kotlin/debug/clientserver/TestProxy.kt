@@ -17,30 +17,51 @@
 package androidx.compose.compiler.plugins.kotlin.debug.clientserver
 
 import java.io.File
+import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.Socket
+import java.net.SocketException
 import java.net.URL
+import kotlin.concurrent.thread
 
 class TestProxy(
-    private val serverPort: Int,
+    serverPort: Int,
     private val testClass: String,
     private val methodName: String,
     private val classPath: List<URL>
 ) {
-    fun runTest() {
-        Socket("localhost", serverPort).use { clientSocket ->
-            val output = ObjectOutputStream(clientSocket.getOutputStream())
-            try {
-                output.writeObject(MessageHeader.NEW_TEST)
-                output.writeObject(testClass)
-                output.writeObject(methodName)
-                output.writeObject(MessageHeader.CLASS_PATH)
-                // filter out jdk libs
-                output.writeObject(filterOutJdkJars(classPath).toTypedArray())
-            } finally {
-                output.close()
+    private val clientSocket = Socket("localhost", serverPort)
+    private val output = ObjectOutputStream(clientSocket.getOutputStream())
+    private var input: ObjectInputStream? = null
+    private val receivingThread = thread {
+        try {
+            input = ObjectInputStream(clientSocket.getInputStream()).also { input ->
+                when (val status = input.readObject()) {
+                    MessageHeader.RESULT -> {}
+                    MessageHeader.ERROR -> {
+                        val error = input.readObject() as Throwable
+                        executionError = error
+                    }
+                    else -> {
+                        error("Unexpected message from test server: $status")
+                    }
+                }
             }
+        } catch (e: SocketException) {
+            // ignore
         }
+    }
+
+    var executionError: Throwable? = null
+        private set
+
+    fun runTest() {
+        output.writeObject(MessageHeader.NEW_TEST)
+        output.writeObject(testClass)
+        output.writeObject(methodName)
+        output.writeObject(MessageHeader.CLASS_PATH)
+        // filter out jdk libs
+        output.writeObject(filterOutJdkJars(classPath).toTypedArray())
     }
 
     private fun filterOutJdkJars(classPath: List<URL>): List<URL> {
@@ -49,5 +70,12 @@ class TestProxy(
         return classPath.filterNot {
             File(it.file).startsWith(javaFolder)
         }
+    }
+
+    fun close() {
+        receivingThread.interrupt()
+        output.close()
+        input?.close()
+        clientSocket.close()
     }
 }

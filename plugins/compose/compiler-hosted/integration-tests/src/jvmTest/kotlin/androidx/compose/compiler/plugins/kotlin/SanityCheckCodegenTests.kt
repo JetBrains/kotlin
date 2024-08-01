@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Ignore
 import org.junit.Test
 
 class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -103,24 +102,27 @@ class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     fun testParameterInlineCaptureLambda() {
         testCompile(
             """
-            import androidx.compose.runtime.Composable
-            import androidx.compose.ui.graphics.Color
-
-            @Composable
-            inline fun InlineWidget(
-                propagateMinConstraints: Boolean = false,
-                content: () -> Unit
-            ) {
-            }
-
-            @Composable
-            fun DarkThemeSample() {
-                val color = Color.Black
-                InlineWidget {
-                    println(color)
+                import androidx.compose.runtime.Composable
+                import androidx.compose.ui.graphics.Color
+    
+                @Composable
+                inline fun InlineWidget(
+                    propagateMinConstraints: Boolean = false,
+                    content: () -> Unit
+                ) {
                 }
-            }
-        """
+    
+                @Composable
+                fun DarkThemeSample() {
+                    val color = Color.Black
+                    InlineWidget {
+                        println(color)
+                    }
+                }
+            """,
+            additionalPaths = listOf(
+                Classpath.composeUiGraphicsJar()
+            )
         )
     }
 

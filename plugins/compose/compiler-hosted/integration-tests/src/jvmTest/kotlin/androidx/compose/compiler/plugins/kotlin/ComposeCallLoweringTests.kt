@@ -16,7 +16,6 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Ignore
 import org.junit.Test
 
 class ComposeCallLoweringTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -432,13 +431,13 @@ fun <T> B(foo: T, bar: String) { }
     fun codegen(text: String, dumpClasses: Boolean = false) {
         codegenNoImports(
             """
-           import androidx.compose.runtime.*
-
-           $text
-
-           @Composable fun LinearLayout(block: @Composable ()->Unit) { }
-        """,
-            dumpClasses
+               import androidx.compose.runtime.*
+    
+               $text
+    
+               @Composable fun LinearLayout(block: @Composable ()->Unit) { }
+           """,
+            dumpClasses,
         )
     }
 
@@ -446,6 +445,18 @@ fun <T> B(foo: T, bar: String) { }
         val className = "Test_${uniqueNumber++}"
         val fileName = "$className.kt"
 
-        classLoader(text, fileName, dumpClasses)
+        classLoader(
+            text,
+            fileName,
+            dumpClasses,
+            additionalPaths
+        )
+    }
+
+    companion object {
+        private val additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeFoundationLayoutJar()
+        )
     }
 }

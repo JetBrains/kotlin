@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import com.intellij.openapi.util.io.FileUtil
-import org.checkerframework.checker.regex.qual.Regex
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -92,15 +91,12 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest(useFi
         jvm: String,
         output: String
     ) {
-        val composePluginJar = defaultClassPath.find {
-            it.name.matches(Regex("compiler-hosted-.*?.jar"))
-        } ?: error("Could not find a Compose compiler jar in classpath")
         val optionalArgs = arrayOf(
             "-cp",
             defaultClassPath
                 .filter { it.exists() }
                 .joinToString(File.pathSeparator) { it.absolutePath },
-            "-Xplugin=${composePluginJar.absolutePath}",
+            "-Xplugin=${Classpath.jarFor<ComposePluginRegistrar>().absolutePath}",
             "-Xuse-ir",
             "-language-version=1.9"
         )

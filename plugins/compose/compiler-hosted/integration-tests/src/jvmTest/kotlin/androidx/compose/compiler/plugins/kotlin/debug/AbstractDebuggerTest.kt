@@ -18,10 +18,10 @@
 package androidx.compose.compiler.plugins.kotlin.debug
 
 import androidx.compose.compiler.plugins.kotlin.AbstractCodegenTest
+import androidx.compose.compiler.plugins.kotlin.Classpath
 import androidx.compose.compiler.plugins.kotlin.debug.clientserver.TestProcessServer
 import androidx.compose.compiler.plugins.kotlin.debug.clientserver.TestProxy
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
-import com.intellij.util.PathUtil
 import com.intellij.util.SystemProperties
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.VirtualMachine
@@ -42,7 +42,6 @@ import com.sun.jdi.request.StepRequest
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
-import kotlin.properties.Delegates
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
@@ -87,8 +86,8 @@ abstract class AbstractDebuggerTest(useFir: Boolean) : AbstractCodegenTest(useFi
 
         private fun startTestProcessServer(): Process {
             val classpath = listOf(
-                PathUtil.getJarPathForClass(TestProcessServer::class.java),
-                PathUtil.getJarPathForClass(Delegates::class.java) // Add Kotlin runtime JAR
+                Classpath.jarFor<TestProcessServer>(),
+                Classpath.kotlinStdlibJar()
             )
 
             val javaExec = File(File(SystemProperties.getJavaHome(), "bin"), "java")
@@ -98,7 +97,7 @@ abstract class AbstractDebuggerTest(useFir: Boolean) : AbstractCodegenTest(useFi
                 javaExec.absolutePath,
                 "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=127.0.0.1:0",
                 "-ea",
-                "-classpath", classpath.joinToString(File.pathSeparator),
+                "-classpath", classpath.joinToString(File.pathSeparator) { it.absolutePath },
                 "-Djava.awt.headless=true", // ensure that test process doesn't launch a separate window
                 TestProcessServer::class.qualifiedName,
                 TestProcessServer.DEBUG_TEST
@@ -151,22 +150,27 @@ abstract class AbstractDebuggerTest(useFir: Boolean) : AbstractCodegenTest(useFi
     private fun invokeRunnerMainInSeparateProcess(
         classLoader: URLClassLoader,
         port: Int
-    ) {
+    ): TestProxy {
         val classPath = classLoader.extractUrls().toMutableList()
+        classPath.addAll(defaultClassPath.map { it.toURI().toURL() })
         if (classLoader is GeneratedClassLoader) {
             val outDir = outDirectory.root
             val currentOutput = SimpleOutputFileCollection(classLoader.allGeneratedFiles)
             currentOutput.writeAllTo(outDir)
             classPath.add(0, outDir.toURI().toURL())
         }
-        TestProxy(port, RUNNER_CLASS, MAIN_METHOD, classPath).runTest()
+        return TestProxy(port, RUNNER_CLASS, MAIN_METHOD, classPath).apply { runTest() }
     }
 
     fun collectDebugEvents(@Language("kotlin") source: String): List<LocatableEvent> {
         val classLoader = createClassLoader(
             listOf(
                 SourceFile("Runner.kt", RUNNER_SOURCES),
-                SourceFile("Test.kt", source)
+                SourceFile("Test.kt", source),
+            ),
+            additionalPaths = listOf(
+                Classpath.kotlinxCoroutinesJar(),
+                Classpath.jarFor("androidx.collection.MutableScatterSet") // androidx.collection
             )
         )
         val testClass = classLoader.loadClass(TEST_CLASS)
@@ -176,102 +180,114 @@ abstract class AbstractDebuggerTest(useFir: Boolean) : AbstractCodegenTest(useFi
         if (virtualMachine.allThreads().any { it.isSuspended }) {
             virtualMachine.resume()
         }
-        invokeRunnerMainInSeparateProcess(classLoader, proxyPort)
+        val testProxy = invokeRunnerMainInSeparateProcess(classLoader, proxyPort)
 
         val manager = virtualMachine.eventRequestManager()
 
         val loggedItems = mutableListOf<LocatableEvent>()
         var inContentMethod = false
-        vmLoop@
-        while (true) {
-            val eventSet = virtualMachine.eventQueue().remove(1000) ?: continue
-            for (event in eventSet) {
-                when (event) {
-                    is VMDeathEvent, is VMDisconnectEvent -> {
-                        break@vmLoop
-                    }
-                    // We start VM with option 'suspend=n', in case VMStartEvent is still received, discard.
-                    is VMStartEvent -> {
-                    }
-                    is MethodEntryEvent -> {
-                        if (!inContentMethod &&
-                            event.location().method().name() == CONTENT_METHOD
-                        ) {
-                            if (manager.stepRequests().isEmpty()) {
-                                // Create line stepping request to get all normal line steps starting now.
-                                val stepReq = manager.createStepRequest(
-                                    event.thread(),
-                                    StepRequest.STEP_LINE,
-                                    StepRequest.STEP_INTO
-                                )
-                                stepReq.setSuspendPolicy(SUSPEND_ALL)
-                                stepReq.addClassExclusionFilter("java.*")
-                                stepReq.addClassExclusionFilter("sun.*")
-                                stepReq.addClassExclusionFilter("kotlin.*")
-                                stepReq.addClassExclusionFilter("kotlinx.*")
-                                stepReq.addClassExclusionFilter("androidx.compose.runtime.*")
-                                stepReq.addClassExclusionFilter("jdk.internal.*")
+        try {
+            vmLoop@
+            while (true) {
+                val eventSet = virtualMachine.eventQueue().remove(1000)
 
-                                // Create class prepare request to be able to set breakpoints on class initializer lines.
-                                // There are no line stepping events for class initializers, so we depend on breakpoints.
-                                val prepareReq = manager.createClassPrepareRequest()
-                                prepareReq.setSuspendPolicy(SUSPEND_ALL)
-                                prepareReq.addClassExclusionFilter("java.*")
-                                prepareReq.addClassExclusionFilter("sun.*")
-                                prepareReq.addClassExclusionFilter("kotlinx.*")
-                                prepareReq.addClassExclusionFilter("androidx.compose.runtime.*")
-                                prepareReq.addClassExclusionFilter("jdk.internal.*")
-                            }
-                            manager.stepRequests().map { it.enable() }
-                            manager.classPrepareRequests().map { it.enable() }
-                            inContentMethod = true
-                            loggedItems.add(event)
-                        }
-                    }
-                    is StepEvent -> {
-                        // Handle the case where an Exception causing program to exit without MethodExitEvent.
-                        if (inContentMethod && event.location().method().name() == "run") {
-                            manager.stepRequests().map { it.disable() }
-                            manager.classPrepareRequests().map { it.disable() }
-                            manager.breakpointRequests().map { it.disable() }
+                if (testProxy.executionError != null) {
+                    throw testProxy.executionError!!
+                }
+
+                if (eventSet == null) {
+                    continue
+                }
+                for (event in eventSet) {
+                    when (event) {
+                        is VMDeathEvent, is VMDisconnectEvent -> {
                             break@vmLoop
                         }
-                        if (inContentMethod) {
-                            loggedItems.add(event)
+                        // We start VM with option 'suspend=n', in case VMStartEvent is still received, discard.
+                        is VMStartEvent -> {
                         }
-                    }
-                    is MethodExitEvent -> {
-                        if (event.location().method().name() == CONTENT_METHOD) {
-                            manager.stepRequests().map { it.disable() }
-                            manager.classPrepareRequests().map { it.disable() }
-                            manager.breakpointRequests().map { it.disable() }
-                            break@vmLoop
-                        }
-                    }
-                    is ClassPrepareEvent -> {
-                        if (inContentMethod) {
-                            val initializer =
-                                event.referenceType().methods().find { it.isStaticInitializer }
-                            try {
-                                initializer?.allLineLocations()?.forEach {
-                                    manager.createBreakpointRequest(it).enable()
+                        is MethodEntryEvent -> {
+                            if (!inContentMethod &&
+                                event.location().method().name() == CONTENT_METHOD
+                            ) {
+                                if (manager.stepRequests().isEmpty()) {
+                                    // Create line stepping request to get all normal line steps starting now.
+                                    val stepReq = manager.createStepRequest(
+                                        event.thread(),
+                                        StepRequest.STEP_LINE,
+                                        StepRequest.STEP_INTO
+                                    )
+                                    stepReq.setSuspendPolicy(SUSPEND_ALL)
+                                    stepReq.addClassExclusionFilter("java.*")
+                                    stepReq.addClassExclusionFilter("sun.*")
+                                    stepReq.addClassExclusionFilter("kotlin.*")
+                                    stepReq.addClassExclusionFilter("kotlinx.*")
+                                    stepReq.addClassExclusionFilter("androidx.compose.runtime.*")
+                                    stepReq.addClassExclusionFilter("jdk.internal.*")
+
+                                    // Create class prepare request to be able to set breakpoints on class initializer lines.
+                                    // There are no line stepping events for class initializers, so we depend on breakpoints.
+                                    val prepareReq = manager.createClassPrepareRequest()
+                                    prepareReq.setSuspendPolicy(SUSPEND_ALL)
+                                    prepareReq.addClassExclusionFilter("java.*")
+                                    prepareReq.addClassExclusionFilter("sun.*")
+                                    prepareReq.addClassExclusionFilter("kotlinx.*")
+                                    prepareReq.addClassExclusionFilter("androidx.compose.runtime.*")
+                                    prepareReq.addClassExclusionFilter("jdk.internal.*")
                                 }
-                            } catch (e: AbsentInformationException) {
-                                // If there is no line information, do not set breakpoints.
+                                manager.stepRequests().map { it.enable() }
+                                manager.classPrepareRequests().map { it.enable() }
+                                inContentMethod = true
+                                loggedItems.add(event)
                             }
                         }
-                    }
-                    is BreakpointEvent -> {
-                        if (inContentMethod) {
-                            loggedItems.add(event)
+                        is StepEvent -> {
+                            // Handle the case where an Exception causing program to exit without MethodExitEvent.
+                            if (inContentMethod && event.location().method().name() == "run") {
+                                manager.stepRequests().map { it.disable() }
+                                manager.classPrepareRequests().map { it.disable() }
+                                manager.breakpointRequests().map { it.disable() }
+                                break@vmLoop
+                            }
+                            if (inContentMethod) {
+                                loggedItems.add(event)
+                            }
                         }
-                    }
-                    else -> {
-                        throw IllegalStateException("event not handled: $event")
+                        is MethodExitEvent -> {
+                            if (event.location().method().name() == CONTENT_METHOD) {
+                                manager.stepRequests().map { it.disable() }
+                                manager.classPrepareRequests().map { it.disable() }
+                                manager.breakpointRequests().map { it.disable() }
+                                break@vmLoop
+                            }
+                        }
+                        is ClassPrepareEvent -> {
+                            if (inContentMethod) {
+                                val initializer =
+                                    event.referenceType().methods().find { it.isStaticInitializer }
+                                try {
+                                    initializer?.allLineLocations()?.forEach {
+                                        manager.createBreakpointRequest(it).enable()
+                                    }
+                                } catch (e: AbsentInformationException) {
+                                    // If there is no line information, do not set breakpoints.
+                                }
+                            }
+                        }
+                        is BreakpointEvent -> {
+                            if (inContentMethod) {
+                                loggedItems.add(event)
+                            }
+                        }
+                        else -> {
+                            throw IllegalStateException("event not handled: $event")
+                        }
                     }
                 }
+                eventSet.resume()
             }
-            eventSet.resume()
+        } finally {
+            testProxy.close()
         }
         virtualMachine.resume()
 

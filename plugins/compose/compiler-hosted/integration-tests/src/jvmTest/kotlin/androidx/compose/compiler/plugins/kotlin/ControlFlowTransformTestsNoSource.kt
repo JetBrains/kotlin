@@ -134,7 +134,11 @@ class ControlFlowTransformTestsNoSource(
                     }
                 }
             }
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeFoundationLayoutJar()
+        )
     )
 
     @Test // b/346821372 regression test

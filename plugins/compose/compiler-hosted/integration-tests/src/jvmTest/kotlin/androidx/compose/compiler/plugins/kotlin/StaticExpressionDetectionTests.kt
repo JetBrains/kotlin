@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 
 class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
@@ -292,7 +291,21 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
             SourceFile("ExtraSrc.kt", extraSrc),
             SourceFile("Test.kt", source),
         )
-        val irModule = compileToIr(files)
+        val irModule = compileToIr(
+            files,
+            additionalPaths = if (includeUiImports) {
+                listOf(
+                    Classpath.composeUiJar(),
+                    Classpath.composeUiUnitJar(),
+                    Classpath.composeUiGraphicsJar(),
+                    Classpath.composeUiTextJar(),
+                    Classpath.composeFoundationTextJar(),
+                    Classpath.composeFoundationLayoutJar()
+                )
+            } else {
+                emptyList()
+            }
+        )
 
         val changeFlagsMatcher = Regex(
             pattern = """Receiver\(.+, %composer, (0b)?([01]+)\)""",

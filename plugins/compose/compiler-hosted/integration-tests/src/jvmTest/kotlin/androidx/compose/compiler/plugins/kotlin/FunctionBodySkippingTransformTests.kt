@@ -18,7 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Ignore
 import org.junit.Test
 
 abstract class FunctionBodySkippingTransformTestsBase(
@@ -44,7 +43,13 @@ abstract class FunctionBodySkippingTransformTestsBase(
             $unchecked
             fun used(x: Any?) {}
         """.trimIndent(),
-        dumpTree = dumpTree
+        dumpTree = dumpTree,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeUiUnitJar(),
+            Classpath.composeUiTextJar(),
+            Classpath.composeFoundationLayoutJar()
+        )
     )
 }
 
@@ -1463,7 +1468,11 @@ class FunctionBodySkippingTransformTestsNoSource(
 
             @Composable
             fun Text(value: String) {}
-        """
+        """,
+        additionalPaths = listOf(
+            Classpath.composeUiJar(),
+            Classpath.composeFoundationLayoutJar()
+        )
     )
 
     @Test
