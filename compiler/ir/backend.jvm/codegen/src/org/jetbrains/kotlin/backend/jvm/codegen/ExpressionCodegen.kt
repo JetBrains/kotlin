@@ -810,15 +810,21 @@ class ExpressionCodegen(
         return MaterialValue(this, type, expression.symbol.owner.realType)
     }
 
-    internal fun genOrGetLocal(expression: IrExpression, type: Type, parameterType: IrType, data: BlockInfo): StackValue =
-        if (expression is IrGetValue)
-            StackValue.local(
-                findLocalIndex(expression.symbol),
-                frameMap.typeOf(expression.symbol),
-                expression.symbol.owner.realType.upperBound.toIrBasedKotlinType()
-            )
-        else
-            genToStackValue(expression, type, parameterType, data)
+    internal fun genOrGetLocal(
+        expression: IrExpression,
+        type: Type,
+        parameterType: IrType,
+        data: BlockInfo,
+        eraseType: Boolean,
+    ): StackValue = if (expression is IrGetValue) {
+        val variableIndex = findLocalIndex(expression.symbol)
+        val asmType = frameMap.typeOf(expression.symbol)
+        val irValueDeclaration = expression.symbol.owner
+        val kotlinType = if (eraseType) irValueDeclaration.realType.upperBound else irValueDeclaration.realType
+        StackValue.local(variableIndex, asmType, kotlinType.toIrBasedKotlinType())
+    } else {
+        genToStackValue(expression, type, parameterType, data)
+    }
 
     // We do not mangle functions if Result is the only parameter of the function. This means that if a function
     // taking `Result` as a parameter overrides a function taking `Any?`, there is no bridge unless needed for

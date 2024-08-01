@@ -100,7 +100,7 @@ class IrInlineCodegen(
             lambdaInfo.generateLambdaBody(sourceCompiler)
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
                 val param = lambdaInfo.capturedVars[index]
-                val onStack = codegen.genOrGetLocal(ir, param.type, ir.type, BlockInfo())
+                val onStack = codegen.genOrGetLocal(ir, param.type, ir.type, BlockInfo(), eraseType = false)
                 putCapturedToLocalVal(onStack, param, ir.type.toIrBasedKotlinType())
             }
         } else {
@@ -139,7 +139,7 @@ class IrInlineCodegen(
                     // TODO when stopping at a breakpoint placed in an inline function, arguments which reuse an existing
                     //   local will not be visible in the debugger, so this needs to be reconsidered.
                     val argValue = if (irValueParameter.index >= 0)
-                        codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                        codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     else
                         codegen.genToStackValue(argumentExpression, parameterType, irValueParameter.type, blockInfo)
                     if (inlineArgumentsInPlace) {
