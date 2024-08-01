@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.absolute
 import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
@@ -179,7 +180,9 @@ object TestModuleStructureFactory {
             }
 
             for (libraryRoot in libraryRoots) {
-                check(libraryRoot.extension == "jar")
+                check(libraryRoot.extension.let { it == "jar" || it == "klib" }) {
+                    "Unknown library format: ${libraryRoot.absolute()}"
+                }
 
                 val libraryModule = libraryCache(setOf(libraryRoot)) {
                     createLibraryModule(project, libraryRoot, JvmPlatforms.defaultJvmPlatform, testServices)

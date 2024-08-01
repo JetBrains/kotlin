@@ -60,7 +60,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File stdlibCommonForTests() {
-        return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.jar");
+        return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.klib");
     }
 
     private static File propertyOrDist(String property, String distPath) {
