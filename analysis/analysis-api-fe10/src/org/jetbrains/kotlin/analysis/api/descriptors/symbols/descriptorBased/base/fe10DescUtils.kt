@@ -502,7 +502,6 @@ internal fun ConstantValue<*>.toKaAnnotationValue(analysisContext: Fe10AnalysisC
                     psi = null,
                     useSiteTarget = null,
                     lazyArguments = lazy { value.getKtNamedAnnotationArguments(analysisContext) },
-                    index = null,
                     constructorSymbol = null,
                     token = token
                 ),
@@ -683,16 +682,12 @@ internal fun createKtInitializerValue(
     return KaNonConstantInitializerValue(initializer)
 }
 
-internal fun AnnotationDescriptor.toKaAnnotation(
-    analysisContext: Fe10AnalysisContext,
-    index: Int,
-): KaAnnotation {
+internal fun AnnotationDescriptor.toKaAnnotation(analysisContext: Fe10AnalysisContext): KaAnnotation {
     return KaAnnotationImpl(
         classId = classIdForAnnotation,
         psi = psi,
         useSiteTarget = useSiteTarget,
         lazyArguments = lazy { getKtNamedAnnotationArguments(analysisContext) },
-        index = index,
         constructorSymbol = null,
         token = analysisContext.token
     )

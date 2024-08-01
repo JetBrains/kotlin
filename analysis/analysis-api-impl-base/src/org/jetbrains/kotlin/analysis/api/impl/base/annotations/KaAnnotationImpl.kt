@@ -27,7 +27,6 @@ class KaAnnotationImpl(
      * A list of annotation arguments which were applied when constructing annotation. Every argument is [KaAnnotationValue]
      */
     lazyArguments: Lazy<List<KaNamedAnnotationValue>>,
-    index: Int?,
 
     /**
      * The constructor symbol into which this annotation resolves if the annotation is correctly resolved
@@ -55,11 +54,6 @@ class KaAnnotationImpl(
     override val arguments: List<KaNamedAnnotationValue>
         get() = withValidityAssertion { backingArguments }
 
-    private val backingIndex: Int? = index
-
-    override val index: Int?
-        get() = withValidityAssertion { backingIndex }
-
     private val backingConstructorSymbol: KaConstructorSymbol? = constructorSymbol
 
     override val constructorSymbol: KaConstructorSymbol?
@@ -71,7 +65,6 @@ class KaAnnotationImpl(
                 backingClassId == other.backingClassId &&
                 backingPsi == other.backingPsi &&
                 backingUseSiteTarget == other.backingUseSiteTarget &&
-                backingIndex == other.backingIndex &&
                 backingConstructorSymbol == other.backingConstructorSymbol &&
                 backingArguments == other.backingArguments
     }
@@ -81,7 +74,6 @@ class KaAnnotationImpl(
             backingClassId,
             backingPsi,
             backingUseSiteTarget,
-            backingIndex,
             backingConstructorSymbol,
             backingArguments,
         )
@@ -89,7 +81,7 @@ class KaAnnotationImpl(
 
     override fun toString(): String {
         return "KaAnnotationApplicationWithArgumentsInfo(classId=" + backingClassId + ", psi=" + backingPsi + ", useSiteTarget=" +
-                backingUseSiteTarget + ", index=" + backingIndex + ", constructorSymbol=" +
+                backingUseSiteTarget + ", constructorSymbol=" +
                 backingConstructorSymbol + ", arguments=" + backingArguments + ")"
     }
 }

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithClassIds
 import org.jetbrains.kotlin.fir.symbols.resolvedCompilerRequiredAnnotations
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import java.lang.annotation.ElementType
 
@@ -57,19 +59,22 @@ internal fun annotationsByClassId(
         // - `replaceAnnotations` replaces the entire collection without modifications
         // - `transformAnnotations` theoretically may modify annotations, but it is not allowed due
         // to the compiler contract to change already published annotations – only their content can be changed
-        return annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).mapIndexedNotNull { index, annotation ->
+        return annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).mapNotNull { annotation ->
             if (annotation.toAnnotationClassIdSafe(session) != classId) {
-                return@mapIndexedNotNull null
+                return@mapNotNull null
             }
 
-            annotation.toKaAnnotation(builder, index)
+            annotation.toKaAnnotation(builder)
         }
     }
 
-    return annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
-        .mapIndexedToAnnotationApplication(session, classId) { index, annotation ->
-            annotation.toKaAnnotation(builder, index)
+    return annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapNotNull { annotation ->
+        if (annotation.toAnnotationClassId(session) != classId) {
+            return@mapNotNull null
         }
+
+        annotation.toKaAnnotation(builder)
+    }
 }
 
 internal fun computeAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
@@ -92,18 +97,6 @@ internal fun computeAnnotationArguments(annotation: FirAnnotation, builder: KaSy
         mapAnnotationParameters(annotation),
         builder,
     )
-}
-
-private inline fun List<FirAnnotation>.mapIndexedToAnnotationApplication(
-    useSiteSession: FirSession,
-    classId: ClassId,
-    transformer: (index: Int, annotation: FirAnnotation) -> KaAnnotation?,
-): List<KaAnnotation> = mapIndexedNotNull { index, annotation ->
-    if (annotation.toAnnotationClassId(useSiteSession) != classId) {
-        return@mapIndexedNotNull null
-    }
-
-    transformer(index, annotation)
 }
 
 private fun computeTargetAnnotationArguments(
@@ -173,10 +166,9 @@ internal fun annotations(
     firSymbol: FirBasedSymbol<*>,
     builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KaAnnotation> =
-    annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
-        annotation.toKaAnnotation(builder, index)
-    }
+): List<KaAnnotation> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).map { annotation ->
+    annotation.toKaAnnotation(builder)
+}
 
 internal fun annotationClassIds(
     firSymbol: FirBasedSymbol<*>,

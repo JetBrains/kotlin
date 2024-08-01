@@ -58,7 +58,9 @@ public interface KaAnnotation : KaLifetimeOwner {
     /**
      * An index of the annotation in an owner. `null` when annotation is used as an argument of other annotations
      */
+    @Deprecated("The API is not reliable and will be removed soon. Implement on the use site if needed.")
     public val index: Int?
+        get() = null
 
     /**
      * A list of explicitly provided annotation values.

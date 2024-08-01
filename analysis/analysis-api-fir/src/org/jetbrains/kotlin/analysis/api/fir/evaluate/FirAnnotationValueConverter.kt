@@ -223,7 +223,6 @@ internal object FirAnnotationValueConverter {
                     lazy { toNamedConstantValue(builder.analysisSession, argumentMapping, builder) }
                 else
                     lazyOf(emptyList()),
-                index = null,
                 constructorSymbol = with(builder.analysisSession) {
                     builder.functionBuilder.buildConstructorSymbol(resolvedSymbol)
                 },

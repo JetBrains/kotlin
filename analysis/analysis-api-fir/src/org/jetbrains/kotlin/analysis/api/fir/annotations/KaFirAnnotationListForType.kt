@@ -24,11 +24,11 @@ internal class KaFirAnnotationListForType private constructor(
     private val builder: KaSymbolByFirBuilder,
 ) : AbstractList<KaAnnotation>(), KaAnnotationList {
     private val backingAnnotations: List<KaAnnotation> by lazy {
-        coneType.customAnnotations.mapIndexed { index, firAnnotation ->
+        coneType.customAnnotations.map { firAnnotation ->
             // Resolve annotation types. Probably this call is redundant as we may have resolved types only after the TYPES phase
             (firAnnotation as? FirAnnotationCall)?.containingDeclarationSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-            firAnnotation.toKaAnnotation(builder, index)
+            firAnnotation.toKaAnnotation(builder)
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,11 +22,16 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
     override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotations.map { it.toDumbLightClassAnnotationApplication() }
+        val indices = mutableMapOf<ClassId?, Int>()
+        annotatedSymbol.annotations.map { annotation ->
+            // to preserve the initial annotations order
+            val index = indices.merge(annotation.classId, 0) { old, _ -> old + 1 }!!
+            annotation.toDumbLightClassAnnotationApplication(index)
+        }
     }
 
-    override fun get(classId: ClassId): Collection<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotations[classId].map { it.toLightClassAnnotationApplication() }
+    override fun get(classId: ClassId): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
+        annotatedSymbol.annotations[classId].mapIndexed { index, annotation -> annotation.toLightClassAnnotationApplication(index) }
     }
 
     override fun contains(classId: ClassId): Boolean = withAnnotatedSymbol { annotatedSymbol ->

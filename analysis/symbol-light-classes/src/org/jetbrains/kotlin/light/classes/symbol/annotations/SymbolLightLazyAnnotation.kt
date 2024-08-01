@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.utils.exceptions.logErrorWithAttachment
 
 internal class SymbolLightLazyAnnotation(
     val annotationsProvider: AnnotationsProvider,
@@ -31,17 +33,21 @@ internal class SymbolLightLazyAnnotation(
     )
 
     val annotationApplicationWithArgumentsInfo: Lazy<AnnotationApplication> =
-        annotationApplication.takeUnless { it.isDumb }?.let(::lazyOf) ?: lazyPub {
-            val applications = annotationsProvider[classId]
-            applications.find { it.index == annotationApplication.index }
-                ?: error("expected application: ${annotationApplication}, actual indices: ${applications.map { it.index }}")
-        }
+        annotationApplication.takeUnless(AnnotationApplication::isDumb)?.let(::lazyOf)
+            ?: lazyPub {
+                val applications = annotationsProvider[classId]
+                applications.getOrNull(annotationApplication.relativeIndex) ?: run {
+                    thisLogger().logErrorWithAttachment("Cannot find annotation application") {
+                        withEntry("annotationApplication", annotationApplication) { it.toString() }
+                        withEntry("applications", applications) { it.toString() }
+                    }
+
+                    annotationApplication
+                }
+            }
 
     override val kotlinOrigin: KtCallElement?
-        get() {
-            val annotationApplication = annotationApplicationWithArgumentsInfo.value
-            return annotationApplication.annotation.sourcePsi
-        }
+        get() = annotationApplication.annotation.sourcePsi
 
     override fun getQualifiedName(): String = fqName.asString()
 
@@ -57,8 +63,8 @@ internal class SymbolLightLazyAnnotation(
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightLazyAnnotation &&
             other.fqName == fqName &&
+            other.annotationApplication.relativeIndex == annotationApplication.relativeIndex &&
             other.annotationApplication.annotation.classId == annotationApplication.annotation.classId &&
-            other.annotationApplication.index == annotationApplication.index &&
             other.annotationApplication.useSiteTarget == annotationApplication.useSiteTarget &&
             other.annotationsProvider == annotationsProvider &&
             other.parent == parent

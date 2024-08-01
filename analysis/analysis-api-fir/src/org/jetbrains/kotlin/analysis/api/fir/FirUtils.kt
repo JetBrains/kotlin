@@ -76,7 +76,7 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
         else -> emptyList()
     }
 
-internal fun FirAnnotation.toKaAnnotation(builder: KaSymbolByFirBuilder, index: Int): KaAnnotation {
+internal fun FirAnnotation.toKaAnnotation(builder: KaSymbolByFirBuilder): KaAnnotation {
     val constructorSymbol = findAnnotationConstructor(this, builder.rootSession)
         ?.let(builder.functionBuilder::buildConstructorSymbol)
 
@@ -90,7 +90,6 @@ internal fun FirAnnotation.toKaAnnotation(builder: KaSymbolByFirBuilder, index: 
             lazy { computeAnnotationArguments(this, builder) }
         else
             lazyOf(emptyList()),
-        index = index,
         constructorSymbol = constructorSymbol,
         token = builder.token,
     )

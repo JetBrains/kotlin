@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,9 +23,9 @@ internal class KaFe10AnnotationList private constructor(
 ) : AbstractList<KaAnnotation>(), KaAnnotationList {
     private val backingAnnotations: List<KaAnnotation> by lazy {
         buildList {
-            fe10Annotations.forEachIndexed { index, annotationDescriptor ->
+            for (annotationDescriptor in fe10Annotations) {
                 if (annotationDescriptor.classIdForAnnotation !in ignoredAnnotations) {
-                    add(annotationDescriptor.toKaAnnotation(analysisContext, index))
+                    add(annotationDescriptor.toKaAnnotation(analysisContext))
                 }
             }
         }
@@ -76,7 +76,7 @@ internal class KaFe10AnnotationList private constructor(
                 return@mapIndexedNotNull null
             }
 
-            annotation.toKaAnnotation(analysisContext, index)
+            annotation.toKaAnnotation(analysisContext)
         }
     }
 
