@@ -20,6 +20,7 @@ import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.dokka.plugability.query
 import org.jetbrains.dokka.analysis.kotlin.documentable.ExternalDocumentableProvider
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 
 internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : ExternalDocumentableProvider {
@@ -39,7 +40,7 @@ internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : 
                 else null
             val translator = DokkaSymbolVisitor(sourceSet, sourceSet.displayName, kotlinAnalysis, logger = context.logger, javadocParser)
 
-            val parentDRI = symbol.containingSymbol?.let { getDRIFromSymbol(it) } ?: /* top level */ DRI(dri.packageName)
+            val parentDRI = (symbol.containingSymbol as? KaDeclarationSymbol)?.let { getDRIFromSymbol(it) } ?: /* top level */ DRI(dri.packageName)
             with(translator) {
                 return@analyze visitClassSymbol(symbol, parentDRI)
             }
