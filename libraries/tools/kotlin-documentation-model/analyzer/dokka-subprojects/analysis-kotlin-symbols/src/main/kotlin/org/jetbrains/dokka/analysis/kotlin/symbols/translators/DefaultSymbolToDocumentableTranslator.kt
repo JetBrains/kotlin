@@ -740,7 +740,7 @@ internal class DokkaSymbolVisitor(
     ) = DParameter(
         dri = dri.copy(target = PointingToDeclaration),
         name = null,
-        type = toBoundFrom(receiverParameterSymbol.type),
+        type = toBoundFrom(receiverParameterSymbol.returnType),
         expectPresentInSet = null,
         documentation = getDocumentation(receiverParameterSymbol)?.toSourceSetDependent() ?: emptyMap(),
         sourceSets = setOf(sourceSet),

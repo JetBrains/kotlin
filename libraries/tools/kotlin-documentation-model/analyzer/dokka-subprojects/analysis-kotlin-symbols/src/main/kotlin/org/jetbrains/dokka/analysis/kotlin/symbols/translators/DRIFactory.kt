@@ -45,7 +45,7 @@ internal fun getDRIFromEnumEntry(symbol: KaEnumEntrySymbol): DRI {
 internal fun KaSession.getDRIFromTypeParameter(symbol: KaTypeParameterSymbol): DRI {
     val containingSymbol = symbol.containingSymbol
             ?: throw IllegalStateException("Containing symbol is null for type parameter")
-    val typeParameters = containingSymbol.typeParameters
+    val typeParameters = (containingSymbol as KaDeclarationSymbol).typeParameters
     val index = typeParameters.indexOfFirst { symbol.name == it.name }
     return getDRIFromSymbol(containingSymbol).copy(target = PointingToGenericParameters(index))
 }
@@ -93,7 +93,7 @@ internal fun KaSession.getDRIFromValueParameter(symbol: KaValueParameterSymbol):
  * @return [DRI] to receiver type
  */
 internal fun KaSession.getDRIFromReceiverParameter(receiverParameterSymbol: KaReceiverParameterSymbol): DRI =
-    getDRIFromReceiverType(receiverParameterSymbol.type)
+    getDRIFromReceiverType(receiverParameterSymbol.returnType)
 
 private fun KaSession.getDRIFromReceiverType(type: KaType): DRI {
     return when(type) {
@@ -106,12 +106,14 @@ private fun KaSession.getDRIFromReceiverType(type: KaType): DRI {
         is KaCapturedType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
         is KaFlexibleType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
         is KaIntersectionType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
+        else -> throw IllegalStateException("Unexpected type while creating DRI $type")
     }
 }
 
 internal fun KaSession.getDRIFromSymbol(symbol: KaSymbol): DRI =
     when (symbol) {
         is KaEnumEntrySymbol -> getDRIFromEnumEntry(symbol)
+        is KaReceiverParameterSymbol -> getDRIFromReceiverParameter(symbol)
         is KaTypeParameterSymbol -> getDRIFromTypeParameter(symbol)
         is KaConstructorSymbol -> getDRIFromConstructor(symbol)
         is KaValueParameterSymbol -> getDRIFromValueParameter(symbol)
@@ -119,7 +121,6 @@ internal fun KaSession.getDRIFromSymbol(symbol: KaSymbol): DRI =
         is KaFunctionSymbol -> getDRIFromFunction(symbol)
         is KaClassLikeSymbol -> getDRIFromClassLike(symbol)
         is KaPackageSymbol -> getDRIFromPackage(symbol)
-        is KaReceiverParameterSymbol -> getDRIFromReceiverParameter(symbol)
         else -> throw IllegalStateException("Unknown symbol while creating DRI $symbol")
     }
 

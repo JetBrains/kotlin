@@ -69,6 +69,7 @@ private fun KaSession.getTypeReferenceFromPossiblyRecursive(
         )
         is KaCapturedType -> throw NotImplementedError()
         is KaIntersectionType -> throw NotImplementedError()
+        else -> throw NotImplementedError()
     }.let {
         if (type.isMarkedNullable) Nullable(it) else it
     }
