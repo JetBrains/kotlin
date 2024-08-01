@@ -160,7 +160,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
             checkTaskCompileClasspath(
                 "compileWindowsAndLinuxMainKotlinMetadata",
                 checkModulesInClasspath = commonModules + windowsAndLinuxModules,
-                checkModulesNotInClasspath = hostSpecificModules
+                checkModulesNotInClasspath = hostSpecificModules,
             )
 
             // The consumer should correctly receive the klibs of the host-specific source sets
@@ -474,34 +474,31 @@ open class KlibBasedMppIT : KGPBaseTest() {
     ) {
         val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
         val taskName = taskPath.removePrefix(subproject.orEmpty())
-        val taskClass = "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>"
-        val expression = """(tasks.getByName("$taskName") as $taskClass).libraries.toList()"""
-        checkPrintedItems(subproject, expression, checkModulesInClasspath, checkModulesNotInClasspath)
+        checkPrintedItems(subproject, taskName, checkModulesInClasspath, checkModulesNotInClasspath)
     }
 
-    private var printItemsIndex = 0
     private fun TestProject.checkPrintedItems(
         subproject: String?,
-        itemsExpression: String,
+        taskName: String,
         checkAnyItemsContains: List<Regex>,
         checkNoItemContains: List<Regex>,
     ) {
-        val printingTaskName = "printItems${printItemsIndex++}"
+        val printingTaskName = "printItems"
         val testProject = if (subproject != null) subProject(subproject) else this
         testProject.buildGradleKts.appendText(
             """
-
-            |tasks.register("$printingTaskName") {
-            |    dependsOn("transformDependenciesMetadata")
-            |    dependsOn("commonizeNativeDistribution")
-            |    doLast {
-            |        println("###$printingTaskName" + $itemsExpression)
+            |
+            |tasks.withType<org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>>().configureEach {
+            |    if (name == "$taskName") {
+            |       doLast {
+            |           println("###$printingTaskName" + libraries.toList())
+            |        }
             |    }
             |}
             """.trimMargin()
         )
 
-        build("${subproject?.prependIndent(":").orEmpty()}:$printingTaskName") {
+        build(taskName) {
             val itemsLine = output.lines().single { "###$printingTaskName" in it }.substringAfter(printingTaskName)
             // NOTE: This does not work for commonized libraries, they may contain the ',' naturally
             val items = itemsLine.removeSurrounding("[", "]").split(", ").toSet()

@@ -99,8 +99,8 @@ internal fun Configuration.configureMetadataDependenciesAttribute(project: Proje
             usesPlatformOf(project.multiplatformExtension.awaitMetadataTarget())
         }
     }
-    attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-    attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+    setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_LOCAL_METADATA))
+    setAttribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
 }
 
 /**

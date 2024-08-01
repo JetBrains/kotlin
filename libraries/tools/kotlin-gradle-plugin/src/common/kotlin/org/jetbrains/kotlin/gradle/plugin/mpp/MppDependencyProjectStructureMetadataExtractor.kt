@@ -17,7 +17,7 @@ sealed class MppDependencyProjectStructureMetadataExtractor {
 }
 
 internal abstract class AbstractProjectMppDependencyProjectStructureMetadataExtractor(
-    val projectPath: String,
+    val projectPath: String?,
 ) : MppDependencyProjectStructureMetadataExtractor()
 
 @Deprecated(
@@ -33,7 +33,7 @@ internal class ProjectMppDependencyProjectStructureMetadataExtractorDeprecated(
 }
 
 internal class ProjectMppDependencyProjectStructureMetadataExtractor(
-    projectPath: String,
+    projectPath: String? = null,
     private val projectStructureMetadataFile: File?,
 ) : AbstractProjectMppDependencyProjectStructureMetadataExtractor(projectPath) {
 
@@ -69,10 +69,6 @@ internal open class JarMppDependencyProjectStructureMetadataExtractor(
 internal class IncludedBuildMppDependencyProjectStructureMetadataExtractor(
     primaryArtifact: File,
     private val projectStructureMetadataProvider: () -> KotlinProjectStructureMetadata?,
-    private val projectStructureMetadataFile: File? = null,
 ) : JarMppDependencyProjectStructureMetadataExtractor(primaryArtifact) {
-    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? =
-        projectStructureMetadataFile?.let {
-            parseKotlinSourceSetMetadataFromJson(projectStructureMetadataFile.readText())
-        } ?: projectStructureMetadataProvider()
+    override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? = projectStructureMetadataProvider()
 }
