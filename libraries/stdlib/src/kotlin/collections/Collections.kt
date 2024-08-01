@@ -454,6 +454,35 @@ public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, com
 }
 
 /**
+ * If this list starts with the given [prefix], returns a view of the portion of this list without [prefix].
+ * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list, and vice-versa.
+ *
+ * Structural changes in the base list make the behavior of the view undefined.
+ */
+public fun <T> List<T>.removePrefix(prefix: List<T>): List<T> {
+    return if (this.startsWith(prefix)) {
+        this.subList(prefix.size, this.size)
+    } else {
+        this
+    }
+}
+
+/**
+ * Returns `true` if this list starts with the specified prefix.
+ *
+ * For empty [prefix] returns true
+ */
+public fun <T> List<T>.startsWith(prefix: List<T>): Boolean {
+    if (prefix.isEmpty()) {
+        return true
+    }
+    if (this.size < prefix.size) {
+        return false
+    }
+    return prefix == this.subList(0, prefix.size)
+}
+
+/**
  * Checks that `from` and `to` are in
  * the range of [0..size] and throws an appropriate exception, if they aren't.
  */
