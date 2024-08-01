@@ -18,11 +18,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.isBoolean
-import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
@@ -42,49 +39,96 @@ abstract class AbstractAtomicfuIrBuilder(
         }
 
     // atomicArr.get(index)
-    fun atomicGetArrayElement(atomicArrayClass: IrClassSymbol, returnType: IrType, receiver: IrExpression, index: IrExpression): IrCall {
-        val arrayElement = irCall(atomicSymbols.getAtomicHandlerFunctionSymbol(atomicArrayClass, "get")).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, index)
-        }
-        return if (returnType.isBoolean() && arrayElement.type.isInt()) arrayElement.toBoolean() else arrayElement
-    }
+    fun atomicGetArrayElement(valueType: IrType, receiver: IrExpression, index: IrExpression): IrCall =
+        irDelegatedAtomicfuCall(
+            symbol = atomicSymbols.getAtomicHandlerFunctionSymbol(receiver, "get"),
+            dispatchReceiver = receiver,
+            extensionReceiver = null,
+            valueArguments = listOf(index),
+            receiverValueType = valueType
+        )
 
-    fun irCallWithArgs(symbol: IrSimpleFunctionSymbol, dispatchReceiver: IrExpression?, extensionReceiver: IrExpression?, valueArguments: List<IrExpression?>) =
-        irCall(symbol).apply {
-            this.dispatchReceiver = dispatchReceiver
-            this.extensionReceiver = extensionReceiver
-            valueArguments.forEachIndexed { i, arg ->
-                putValueArgument(i, arg)
-            }
-        }
-
-    fun callAtomicExtension(
+    /**
+     * This function is used to invoke delegates of the *atomicfu library* functions:
+     * - functions on the corresponding atomic handlers for atomics and atomic arrays
+     * - transformed loop/update/getAndUpdate/updateAndGetFunctions
+     *
+     * This is the only place where Bool <-> Int conversion happens for AtomicBoolean properties.
+     * AtomicBoolean property is represented with a volatile Int field + atomic handlers.
+     * There are 2 conversion cases:
+     * 1. The function that returns the current / updated value of the atomic should return a Boolean (get/getAndSet/updateAndGet/getAndUpdate):
+     *   val b: AtomicBoolean = atomic(false)         @Volatile b$volatile: Int = 0 // it's handled with the AtomicIntegerFieldUpdater
+     *   val res: Boolean = b.get()            -----> val res: Boolean = b$FU.get().toBoolean() // the return value should be casted to Boolean
+     * 2. Arguments passed to atomicfu functions are Boolean, these invocations are delegated to atomic handlers that update the volatile Int field,
+     *    hence Boolean arguments should be casted to Int:
+     *    b.compareAndSet(false, true) -----> b$FU.compareAndSet(0, 1) // field updaters for JVM
+     *                                        ::b$volatile.compareAndSetField(0, 1) // atomic intrinsics for K/N
+     *
+     *  Example with `loop` function:
+     *  val res: Boolean = b.loop { cur ->  -----> fun loop$atomicfu$boolean(atomicHandler: Any?, action: (Boolean) -> Boolean) // transformed loop function
+     *      if (!cur) return                       loop$atomicfu$boolean(b$FU, action: (Boolean) -> Boolean) {
+     *      b.compareAndSet(cur, false)                while(true) {
+     *  }                                                  val cur: Boolean = b$FU.get().toBoolean()
+     *                                                     val upd: Boolean = action(cur)
+     *                                                     if (b$FU.compareAndSet(cur.toInt(), upd.toInt())) return
+     *                                                 }
+     *                                             }
+     */
+    fun irDelegatedAtomicfuCall(
         symbol: IrSimpleFunctionSymbol,
         dispatchReceiver: IrExpression?,
-        syntheticValueArguments: List<IrExpression?>,
-        valueArguments: List<IrExpression?>
-    ) = irCallWithArgs(symbol, dispatchReceiver, null, syntheticValueArguments + valueArguments)
+        extensionReceiver: IrExpression?,
+        valueArguments: List<IrExpression?>,
+        receiverValueType: IrType,
+    ): IrCall {
+        val volatileFieldType = if (receiverValueType.isBoolean()) irBuiltIns.intType else receiverValueType
+        val ownerTypeParameter = symbol.owner.typeParameters.firstOrNull()?.defaultType
+        val irCall = irCall(symbol).apply {
+            this.dispatchReceiver = dispatchReceiver
+            this.extensionReceiver = extensionReceiver
+            // NOTE: in case of parameterized K/N intrinsic (atomicGetField<T>, compareAndSet<T>..) compare parameter types with a type argument.
+            if (symbol.owner.typeParameters.isNotEmpty()) {
+                require(symbol.owner.typeParameters.size == 1) { "Only K/N atomic intrinsics are parameterized with a type of the updated volatile field. A function with more type parameters is being invoked: ${symbol.owner.render()}" }
+                putTypeArgument(0, volatileFieldType)
+            }
+            valueArguments.forEachIndexed { i, arg ->
+                putValueArgument(i, arg?.let {
+                    val expectedParameterType = symbol.owner.valueParameters[i].type
+                    if (receiverValueType.isBoolean() && !arg.type.isInt() &&
+                        (expectedParameterType.isInt() || expectedParameterType == ownerTypeParameter)
+                    ) toInt(it) else it
+                })
+            }
+        }
+        return if (receiverValueType.isBoolean() &&
+            (symbol.owner.returnType.isInt() || symbol.owner.returnType == ownerTypeParameter)
+        ) toBoolean(irCall) else irCall
+    }
 
     fun irVolatileField(
         name: String,
-        type: IrType,
+        valueType: IrType,
         initValue: IrExpression?,
         annotations: List<IrConstructorCall>,
-        parentContainer: IrDeclarationContainer
-    ): IrField =
-        context.irFactory.buildField {
+        parentContainer: IrDeclarationContainer,
+    ): IrField {
+        // AtomicBoolean property is replaced with a volatile Int field + atomic handlers for both JVM and K/N.
+        val castBooleanToInt = valueType.isBoolean()
+        return context.irFactory.buildField {
             this.name = Name.identifier(name)
-            this.type = type
+            this.type = if (castBooleanToInt) irBuiltIns.intType else valueType // for a boolean value, create int volatile field
             isFinal = false
             isStatic = parentContainer is IrFile
             visibility = DescriptorVisibilities.PRIVATE
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
         }.apply {
-            initializer = initValue?.let(context.irFactory::createExpressionBody)
+            // Cast the Boolean initValue to Int
+            val castedInitValue = if (castBooleanToInt && initValue != null) toInt(initValue) else initValue
+            initializer = castedInitValue?.let(context.irFactory::createExpressionBody)
             this.annotations = annotations + atomicSymbols.volatileAnnotationConstructorCall
             this.parent = parentContainer
         }
+    }
 
     fun irAtomicArrayField(
         name: Name,
@@ -118,24 +162,18 @@ abstract class AbstractAtomicfuIrBuilder(
 
     // atomicArr.compareAndSet(index, expect, update)
     fun callAtomicArray(
-        arrayClassSymbol: IrClassSymbol,
         functionName: String,
-        dispatchReceiver: IrExpression?,
+        getAtomicArray: IrExpression,
         index: IrExpression,
         valueArguments: List<IrExpression?>,
-        isBooleanReceiver: Boolean
-    ): IrCall {
-        val irCall = irCall(atomicSymbols.getAtomicHandlerFunctionSymbol(arrayClassSymbol, functionName)).apply {
-            this.dispatchReceiver = dispatchReceiver
-            putValueArgument(0, index) // array element index
-            valueArguments.forEachIndexed { index, arg ->
-                // as AtomicBooleanArray is represented with AtomicIntArray,
-                // boolean arguments should be cast to int
-                putValueArgument(index + 1, if (isBooleanReceiver) arg?.toInt() else arg)
-            }
-        }
-        return if (isBooleanReceiver && irCall.type.isInt()) irCall.toBoolean() else irCall
-    }
+        valueType: IrType
+    ): IrCall = irDelegatedAtomicfuCall(
+        symbol = atomicSymbols.getAtomicHandlerFunctionSymbol(getAtomicArray, functionName),
+        dispatchReceiver = getAtomicArray,
+        extensionReceiver = null,
+        valueArguments = buildList { add(index); addAll(valueArguments) },
+        receiverValueType = valueType
+    )
 
     fun buildClassInstance(
         irClass: IrClass,
@@ -159,8 +197,8 @@ abstract class AbstractAtomicfuIrBuilder(
             this.parent = parentContainer
         }
 
-    fun IrExpression.toBoolean() = irNotEquals(this, irInt(0)) as IrCall
-    fun IrExpression.toInt() = irIfThenElse(irBuiltIns.intType, this, irInt(1), irInt(0))
+    fun toBoolean(irExpr: IrExpression) = irEquals(irExpr, irInt(1)) as IrCall
+    fun toInt(irExpr: IrExpression) = irIfThenElse(irBuiltIns.intType, irExpr, irInt(1), irInt(0))
 
     fun irClassWithPrivateConstructor(
         name: String,
@@ -228,7 +266,7 @@ abstract class AbstractAtomicfuIrBuilder(
 
     private fun IrProperty.addGetter(isStatic: Boolean, parentContainer: IrDeclarationContainer, irBuiltIns: IrBuiltIns) {
         val property = this
-        val field = requireNotNull(backingField) { "The backing field of the property $property should not be null."}
+        val field = requireNotNull(backingField) { "The backing field of the property $property should not be null." }
         addGetter {
             visibility = property.visibility
             returnType = field.type
@@ -261,7 +299,7 @@ abstract class AbstractAtomicfuIrBuilder(
 
     private fun IrProperty.addSetter(isStatic: Boolean, parentClass: IrDeclarationContainer, irBuiltIns: IrBuiltIns) {
         val property = this
-        val field = requireNotNull(property.backingField) { "The backing field of the property $property should not be null."}
+        val field = requireNotNull(property.backingField) { "The backing field of the property $property should not be null." }
         this@addSetter.addSetter {
             visibility = property.visibility
             returnType = irBuiltIns.unitType
@@ -296,7 +334,7 @@ abstract class AbstractAtomicfuIrBuilder(
     }
 
     abstract fun atomicfuLoopBody(valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
-    abstract fun atomicfuArrayLoopBody(atomicArrayClass: IrClassSymbol, valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
+    abstract fun atomicfuArrayLoopBody(valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
     abstract fun atomicfuUpdateBody(functionName: String, valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
-    abstract fun atomicfuArrayUpdateBody(functionName: String, valueType: IrType, atomicArrayClass: IrClassSymbol, valueParameters: List<IrValueParameter>): IrBlockBody
+    abstract fun atomicfuArrayUpdateBody(functionName: String, valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
 }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.*
@@ -47,7 +48,7 @@ abstract class AbstractAtomicSymbols(
     abstract val atomicLongArrayClassSymbol: IrClassSymbol
     abstract val atomicRefArrayClassSymbol: IrClassSymbol
 
-    protected val ATOMIC_ARRAY_TYPES: Set<IrClassSymbol>
+    private val ATOMIC_ARRAY_TYPES: Set<IrClassSymbol>
         get() = setOf(
             atomicIntArrayClassSymbol,
             atomicLongArrayClassSymbol,
@@ -76,12 +77,15 @@ abstract class AbstractAtomicSymbols(
             else -> error("No corresponding atomic array class found for the given value type ${valueType.render()}.")
         }
 
-    fun getAtomicHandlerFunctionSymbol(atomicHandlerClass: IrClassSymbol, name: String): IrSimpleFunctionSymbol =
-        when (name) {
-            "<get-value>", "getValue" -> atomicHandlerClass.getSimpleFunction("get")
-            "<set-value>", "setValue", "lazySet" -> atomicHandlerClass.getSimpleFunction("set")
-            else -> atomicHandlerClass.getSimpleFunction(name)
-        } ?: error("No $name function found in ${atomicHandlerClass.owner.render()}")
+    fun getAtomicHandlerFunctionSymbol(getAtomicHandler: IrExpression, name: String): IrSimpleFunctionSymbol {
+        val atomicHandlerClassSymbol = (getAtomicHandler.type as IrSimpleType).classOrNull
+            ?: error("Failed to obtain the class corresponding to the array type ${getAtomicHandler.render()}.")
+        return when (name) {
+            "<get-value>", "getValue" -> atomicHandlerClassSymbol.getSimpleFunction("get")
+            "<set-value>", "setValue", "lazySet" -> atomicHandlerClassSymbol.getSimpleFunction("set")
+            else -> atomicHandlerClassSymbol.getSimpleFunction(name)
+        } ?: error("No $name function found in ${atomicHandlerClassSymbol.owner.render()}")
+    }
 
     abstract fun createBuilder(
         symbol: IrSymbol,
