@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -530,20 +532,25 @@ class IrDeclarationDeserializer(
         val functionSymbol: S = symbol.checkSymbolType(fallbackSymbolKind)
         symbolTable.withScope(functionSymbol) {
             block(functionSymbol, idSig, startOffset, endOffset, origin, fcode).usingParent {
-                typeParameters = deserializeTypeParameters(proto.typeParameterList, false)
-                val nameType = BinaryNameAndType.decode(proto.nameType)
-                returnType = deserializeIrType(nameType.typeIndex)
+                if (this !is IrLazyDeclarationBase) {
+                    typeParameters = deserializeTypeParameters(proto.typeParameterList, false)
+                    val nameType = BinaryNameAndType.decode(proto.nameType)
+                    returnType = deserializeIrType(nameType.typeIndex)
+                }
 
                 withBodyGuard {
-                    valueParameters = deserializeValueParameters(proto.valueParameterList)
-                    dispatchReceiverParameter =
-                        if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver, -1)
-                        else null
-                    extensionReceiverParameter =
-                        if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver, -1)
-                        else null
-                    contextReceiverParametersCount =
-                        if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
+                    if (this !is IrLazyDeclarationBase) {
+                        valueParameters = deserializeValueParameters(proto.valueParameterList)
+                        dispatchReceiverParameter =
+                            if (proto.hasDispatchReceiver()) deserializeIrValueParameter(proto.dispatchReceiver, -1)
+                            else null
+                        extensionReceiverParameter =
+                            if (proto.hasExtensionReceiver()) deserializeIrValueParameter(proto.extensionReceiver, -1)
+                            else null
+                        contextReceiverParametersCount =
+                            if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
+                    }
+
                     body =
                         if (proto.hasBody()) deserializeStatementBody(proto.body) as IrBody?
                         else null

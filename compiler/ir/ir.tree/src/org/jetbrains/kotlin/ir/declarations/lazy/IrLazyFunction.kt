@@ -57,21 +57,21 @@ class IrLazyFunction(
     }
 
     override var returnType: IrType by lazyVar(stubGenerator.lock) {
-        if (tryLoadIr()) returnType else createReturnType()
+        createReturnType()
     }
 
     override val initialSignatureFunction: IrFunction? by createInitialSignatureFunction()
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(stubGenerator.lock) {
-        if (tryLoadIr()) dispatchReceiverParameter else createReceiverParameter(descriptor.dispatchReceiverParameter, true)
+        createReceiverParameter(descriptor.dispatchReceiverParameter, true)
     }
 
     override var extensionReceiverParameter: IrValueParameter? by lazyVar(stubGenerator.lock) {
-        if (tryLoadIr()) extensionReceiverParameter else createReceiverParameter(descriptor.extensionReceiverParameter)
+        createReceiverParameter(descriptor.extensionReceiverParameter)
     }
 
     override var valueParameters: List<IrValueParameter> by lazyVar(stubGenerator.lock) {
-        if (tryLoadIr()) valueParameters else createValueParameters()
+        createValueParameters()
     }
 
     override var contextReceiverParametersCount: Int = descriptor.contextReceiverParameters.size
@@ -81,7 +81,6 @@ class IrLazyFunction(
         set(_) = error("We should never need to store metadata of external declarations.")
 
     override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {
-        if (tryLoadIr()) return@lazyVar typeParameters
         typeTranslator.buildWithScope(this) {
             stubGenerator.symbolTable.withScope(this) {
                 val propertyIfAccessor = descriptor.propertyIfAccessor
