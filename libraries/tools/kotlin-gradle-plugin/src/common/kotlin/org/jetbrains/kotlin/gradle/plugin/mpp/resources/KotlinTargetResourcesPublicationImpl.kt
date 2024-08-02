@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import javax.inject.Inject
 
-abstract class KotlinTargetResourcesPublicationImpl @Inject constructor(
+internal abstract class KotlinTargetResourcesPublicationImpl @Inject constructor(
     private val project: Project,
 ) : KotlinTargetResourcesPublication {
 
