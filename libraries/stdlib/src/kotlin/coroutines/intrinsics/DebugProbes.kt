@@ -1,9 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.coroutines.native.internal
+@file:kotlin.jvm.JvmPackageName("kotlin.coroutines.jvm.internal")
+
+package kotlin.coroutines.intrinsics
 
 // TODO: support coroutines debugging in Kotlin/Native.
 
@@ -23,10 +25,13 @@ import kotlin.coroutines.intrinsics.*
  * +-------+  probeCoroutineCreated +-----------+
  * | START | ---------------------->| SUSPENDED |
  * +-------+                        +-----------+
- *                probeCoroutineResumed |   ^ probeCoroutineSuspended
- *                                      V   |
- *                                  +------------+ completion invoked  +-----------+
- *                                  |   RUNNING  | ------------------->| COMPLETED |
+ *                                      |   ^
+ *                probeCoroutineResumed |   | probeCoroutineSuspended
+ *                              +-------+   |
+ *                              |       |   |
+ *                              |       V   |
+ *                              |   +------------+ completion invoked  +-----------+
+ *                              +-- |   RUNNING  | ------------------->| COMPLETED |
  *                                  +------------+                     +-----------+
  * ```
  *
@@ -42,6 +47,7 @@ import kotlin.coroutines.intrinsics.*
  */
 @SinceKotlin("1.3")
 internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T> {
+    /** implementation of this function is replaced by debugger */
     return completion
 }
 
@@ -49,14 +55,18 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
  * This probe is invoked when coroutine is resumed using [Continuation.resumeWith].
  *
  * This probe is invoked from stdlib implementation of [BaseContinuationImpl.resumeWith] function.
+ * Note, this probe can be invoked multiple times when coroutine is running. Every time the coroutine
+ * resumes a part its callstack that was previously stored in the heap, this probe is invoked
+ * with the references to the newly resumed [frame].
  *
  * Coroutines machinery implementation guarantees that the actual [frame] instance extends
  * [BaseContinuationImpl] class, despite the fact that the declared type of [frame]
  * parameter in this function is `Continuation<*>`. See [probeCoroutineCreated] for details.
  */
-@Suppress("UNUSED_PARAMETER")
 @SinceKotlin("1.3")
+@Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
+    /** implementation of this function is replaced by debugger */
 }
 
 /**
@@ -69,8 +79,8 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
  * [BaseContinuationImpl] class, despite the fact that the declared type of [frame]
  * parameter in this function is `Continuation<*>`. See [probeCoroutineCreated] for details.
  */
-@Suppress("UNUSED_PARAMETER")
 @SinceKotlin("1.3")
+@Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
+    /** implementation of this function is replaced by debugger */
 }
-
