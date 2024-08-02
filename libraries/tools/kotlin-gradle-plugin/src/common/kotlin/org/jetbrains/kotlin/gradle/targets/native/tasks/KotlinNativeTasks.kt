@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCInteropRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
-import org.jetbrains.kotlin.internal.compilerRunner.native.kotlinNativeCompilerJar
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
@@ -422,7 +421,7 @@ internal constructor(
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
-    private val kotlinNativeCompilerJar = project.nativeProperties.kotlinNativeCompilerJar
+    private val isUseEmbeddableCompilerJar = project.nativeProperties.isUseEmbeddableCompilerJar
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
@@ -435,7 +434,7 @@ internal constructor(
             classLoadersCachingService,
             forceDisableRunningInProcess,
             useXcodeMessageStyle,
-            kotlinNativeCompilerJar,
+            isUseEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
             konanPropertiesService
@@ -1132,7 +1131,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
 
-    private val kotlinNativeCompilerJar = project.nativeProperties.kotlinNativeCompilerJar
+    private val isUseEmbeddableCompilerJar = project.nativeProperties.isUseEmbeddableCompilerJar
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
@@ -1140,7 +1139,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
         get() = objectFactory.KotlinNativeCInteropRunner(
             metrics,
             classLoadersCachingService,
-            kotlinNativeCompilerJar,
+            isUseEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
             useXcodeMessageStyle,

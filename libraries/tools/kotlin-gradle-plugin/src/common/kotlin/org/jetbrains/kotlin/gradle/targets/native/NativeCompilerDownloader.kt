@@ -14,7 +14,6 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
-import org.jetbrains.kotlin.compilerRunner.kotlinNativeCompilerJar
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
-import org.jetbrains.kotlin.internal.compilerRunner.native.kotlinNativeCompilerJar
+import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -229,7 +228,12 @@ class NativeCompilerDownloader(
 
     private fun checkClassPath() {
         project.providers.of(NativeCompilerDownloaderClassPathChecker::class.java) {
-            it.parameters.classPath.setFrom(project.nativeProperties.kotlinNativeCompilerJar)
+            it.parameters.classPath.setFrom(
+                project.objects.nativeCompilerClasspath(
+                    project.nativeProperties.actualNativeHomeDirectory,
+                    project.nativeProperties.isUseEmbeddableCompilerJar,
+                )
+            )
         }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor).get()
     }
 
