@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 

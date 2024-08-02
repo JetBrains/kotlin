@@ -75,9 +75,14 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
     completion: Continuation<T>
 ): Any? {
+    // Wrap with CoroutineImpl, otherwise the coroutine will not be interceptable. See KT-55869
+    val wrappedCompletion = if (completion !is InterceptedCoroutine)
+        createSimpleCoroutineForSuspendFunction(completion)
+    else
+        completion
     val a = this.asDynamic()
-    return if (jsTypeOf(a) == "function") a(completion)
-    else this.invokeSuspendSuperType(completion)
+    return if (jsTypeOf(a) == "function") a(wrappedCompletion)
+    else this.invokeSuspendSuperType(wrappedCompletion)
 }
 
 /**
@@ -104,9 +109,14 @@ internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnNonGe
     receiver: R,
     completion: Continuation<T>
 ): Any? {
+    // Wrap with CoroutineImpl, otherwise the coroutine will not be interceptable. See KT-55869
+    val wrappedCompletion = if (completion !is InterceptedCoroutine)
+        createSimpleCoroutineForSuspendFunction(completion)
+    else
+        completion
     val a = this.asDynamic()
-    return if (jsTypeOf(a) == "function") a(receiver, completion)
-    else this.invokeSuspendSuperTypeWithReceiver(receiver, completion)
+    return if (jsTypeOf(a) == "function") a(receiver, wrappedCompletion)
+    else this.invokeSuspendSuperTypeWithReceiver(receiver, wrappedCompletion)
 }
 
 @InlineOnly
@@ -122,9 +132,14 @@ internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnN
     param: P,
     completion: Continuation<T>
 ): Any? {
+    // Wrap with CoroutineImpl, otherwise the coroutine will not be interceptable. See KT-55869
+    val wrappedCompletion = if (completion !is InterceptedCoroutine)
+        createSimpleCoroutineForSuspendFunction(completion)
+    else
+        completion
     val a = this.asDynamic()
-    return if (jsTypeOf(a) == "function") a(receiver, param, completion)
-    else this.invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, completion)
+    return if (jsTypeOf(a) == "function") a(receiver, param, wrappedCompletion)
+    else this.invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, wrappedCompletion)
 }
 
 /**
@@ -195,6 +210,18 @@ private inline fun <T> createCoroutineFromSuspendFunction(
         override fun doResume(): Any? {
             if (exception != null) throw exception
             return block()
+        }
+    }
+}
+
+private fun <T> createSimpleCoroutineForSuspendFunction(
+    completion: Continuation<T>,
+): Continuation<T> {
+    return object : CoroutineImpl(completion as Continuation<Any?>) {
+        override fun doResume(): Any? {
+            @Suppress("UnsafeCastFromDynamic")
+            if (exception != null) throw exception
+            return result
         }
     }
 }
