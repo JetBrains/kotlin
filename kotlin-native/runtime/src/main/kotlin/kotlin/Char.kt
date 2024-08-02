@@ -14,6 +14,7 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /** Represents a 16-bit Unicode character. */
 public actual class Char private constructor() : Comparable<Char> {
@@ -121,6 +122,7 @@ public actual class Char private constructor() : Comparable<Char> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Char_toString")
+    @Escapes.Nothing
     public actual external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation

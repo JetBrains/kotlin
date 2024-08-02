@@ -5,6 +5,7 @@
 
 package kotlin.native.runtime
 
+import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.time.*
 import kotlin.time.Duration.Companion.microseconds
 import kotlin.native.internal.GCUnsafeCall
@@ -26,12 +27,14 @@ public object GC {
      * Trigger new collection and wait for its completion.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_collect")
+    @Escapes.Nothing
     public external fun collect()
 
     /**
      * Trigger new collection without waiting for its completion.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_schedule")
+    @Escapes.Nothing
     public external fun schedule()
 
     /**
@@ -319,72 +322,95 @@ public object GC {
             }
 
         @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_isAvailable")
+        @Escapes.Nothing
         private external fun isAvailable(): Boolean
 
         @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMaxTimeInTask")
+        @Escapes.Nothing
         private external fun getMaxTimeInTask(): Long
 
         @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMaxTimeInTask")
+        @Escapes.Nothing
         private external fun setMaxTimeInTask(value: Long)
 
         @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMinTimeBetweenTasks")
+        @Escapes.Nothing
         private external fun getMinTimeBetweenTasks(): Long
 
         @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMinTimeBetweenTasks")
+        @Escapes.Nothing
         private external fun setMinTimeBetweenTasks(value: Long)
 
         @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getBatchSize")
+        @Escapes.Nothing
         private external fun getBatchSize(): ULong
 
         @GCUnsafeCall("Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setBatchSize")
+        @Escapes.Nothing
         private external fun setBatchSize(value: ULong)
     }
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getTuneThreshold")
+    @Escapes.Nothing
     private external fun getTuneThreshold(): Boolean
 
     @GCUnsafeCall("Kotlin_native_internal_GC_setTuneThreshold")
+    @Escapes.Nothing
     private external fun setTuneThreshold(value: Boolean)
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getRegularGCIntervalMicroseconds")
+    @Escapes.Nothing
     private external fun getRegularGCIntervalMicroseconds(): Long
 
     @GCUnsafeCall("Kotlin_native_internal_GC_setRegularGCIntervalMicroseconds")
+    @Escapes.Nothing
     private external fun setRegularGCIntervalMicroseconds(value: Long)
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getTargetHeapBytes")
+    @Escapes.Nothing
     private external fun getTargetHeapBytes(): Long
 
     @GCUnsafeCall("Kotlin_native_internal_GC_setTargetHeapBytes")
+    @Escapes.Nothing
     private external fun setTargetHeapBytes(value: Long)
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getTargetHeapUtilization")
+    @Escapes.Nothing
     private external fun getTargetHeapUtilization(): Double
 
     @GCUnsafeCall("Kotlin_native_internal_GC_setTargetHeapUtilization")
+    @Escapes.Nothing
     private external fun setTargetHeapUtilization(value: Double)
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getMinHeapBytes")
+    @Escapes.Nothing
     private external fun getMinHeapBytes(): Long
 
     @GCUnsafeCall("Kotlin_native_internal_GC_setMinHeapBytes")
+    @Escapes.Nothing
     private external fun setMinHeapBytes(value: Long)
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getMaxHeapBytes")
+    @Escapes.Nothing
     private external fun getMaxHeapBytes(): Long
 
     @GCUnsafeCall("Kotlin_native_internal_GC_setMaxHeapBytes")
+    @Escapes.Nothing
     private external fun setMaxHeapBytes(value: Long)
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getHeapTriggerCoefficient")
+    @Escapes.Nothing
     private external fun getHeapTriggerCoefficient(): Double
 
     @GCUnsafeCall("Kotlin_native_internal_GC_setHeapTriggerCoefficient")
+    @Escapes.Nothing
     private external fun setHeapTriggerCoefficient(value: Double)
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getPauseOnTargetHeapOverflow")
+    @Escapes.Nothing
     private external fun getPauseOnTargetHeapOverflow(): Boolean
 
     @GCUnsafeCall("Kotlin_native_internal_GC_setPauseOnTargetHeapOverflow")
+    @Escapes.Nothing
     private external fun setPauseOnTargetHeapOverflow(value: Boolean)
 }

@@ -9,6 +9,8 @@
 package kotlin
 
 import kotlin.native.internal.*
+import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.native.internal.escapeAnalysis.PointsTo
 
 /**
  * A generic array of objects. When targeting the JVM, instances of this class are represented as `T[]`.
@@ -67,7 +69,7 @@ public actual class Array<T> {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_Array_set")
-    @PointsTo(0x300, 0x000, 0x000) // this.intestines -> value
+    @PointsTo(0x0300, 0x0000, 0x0000, 0x0000) // this.intestines -> value
     public actual external operator fun set(index: Int, value: T): Unit
 
     /**
@@ -81,6 +83,7 @@ public actual class Array<T> {
         ArrayIterator(this)
 
     @GCUnsafeCall("Kotlin_Array_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }
 

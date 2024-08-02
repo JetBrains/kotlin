@@ -7,6 +7,7 @@ package kotlin.native
 
 import kotlin.native.internal.*
 import kotlinx.cinterop.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * An immutable compile-time array of bytes.
@@ -19,9 +20,11 @@ public final class ImmutableBlob private constructor() {
 
     // Data layout is the same as for ByteArray, so we can share native functions.
     @GCUnsafeCall("Kotlin_ByteArray_get")
+    @Escapes.Nothing
     public external operator fun get(index: Int): Byte
 
     @GCUnsafeCall("Kotlin_ByteArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
@@ -54,6 +57,7 @@ private class ImmutableBlobIteratorImpl(val blob: ImmutableBlob) : ByteIterator(
 @Deprecated("ImmutableBlob is deprecated. Use ByteArray instead.")
 @DeprecatedSinceKotlin(warningSince = "1.9")
 @GCUnsafeCall("Kotlin_ImmutableBlob_toByteArray")
+@Escapes.Nothing
 public external fun ImmutableBlob.toByteArray(startIndex: Int = 0, endIndex: Int = size): ByteArray
 
 /**
@@ -67,6 +71,7 @@ public external fun ImmutableBlob.toByteArray(startIndex: Int = 0, endIndex: Int
 @DeprecatedSinceKotlin(warningSince = "1.9")
 @ExperimentalUnsignedTypes
 @GCUnsafeCall("Kotlin_ImmutableBlob_toByteArray")
+@Escapes.Nothing
 public external fun ImmutableBlob.toUByteArray(startIndex: Int = 0, endIndex: Int = size): UByteArray
 
 /**
@@ -111,6 +116,7 @@ public fun ImmutableBlob.asUCPointer(offset: Int = 0): CPointer<UByteVar> =
 
 @Suppress("DEPRECATION")
 @GCUnsafeCall("Kotlin_ImmutableBlob_asCPointerImpl")
+@Escapes.Nothing // the usage site must guarantee that the receiver is kept alive long enough.
 private external fun ImmutableBlob.asCPointerImpl(offset: Int): kotlin.native.internal.NativePtr
 
 /**
@@ -125,4 +131,5 @@ private external fun ImmutableBlob.asCPointerImpl(offset: Int): kotlin.native.in
 @Deprecated("ImmutableBlob is deprecated. Use ByteArray instead.", ReplaceWith("byteArrayOf(*elements)"))
 @DeprecatedSinceKotlin(warningSince = "1.9")
 @TypedIntrinsic(IntrinsicType.IMMUTABLE_BLOB)
+@Escapes.Nothing
 public external fun immutableBlobOf(vararg elements: Short): ImmutableBlob

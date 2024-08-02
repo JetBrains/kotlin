@@ -358,6 +358,10 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
 class GenerateNativeArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
     override fun FileBuilder.modifyGeneratedFile() {
         import("kotlin.native.internal.*")
+        import("kotlin.native.internal.escapeAnalysis.Escapes")
+        if (!primitiveArrays) {
+            import("kotlin.native.internal.escapeAnalysis.PointsTo")
+        }
     }
 
     override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
@@ -368,6 +372,7 @@ class GenerateNativeArrays(writer: PrintWriter, primitiveArrays: Boolean) : Gene
                 expectActual = ExpectActualModifier.Unspecified
                 signature {
                     annotations += """GCUnsafeCall("Kotlin_${arrayClassName}_getArrayLength")"""
+                    annotations += """Escapes.Nothing"""
                     methodName = "getArrayLength"
                     visibility = MethodVisibility.PRIVATE
                     isExternal = true
@@ -412,6 +417,8 @@ class GenerateNativeArrays(writer: PrintWriter, primitiveArrays: Boolean) : Gene
             annotations += """GCUnsafeCall("Kotlin_${arrayClassName}_get")"""
             if (kind == null) {
                 annotations += """PointsTo(0x000, 0x000, 0x002) // ret -> this.intestines"""
+            } else {
+                annotations += """Escapes.Nothing"""
             }
             modifySignature {
                 isExternal = true
@@ -421,7 +428,9 @@ class GenerateNativeArrays(writer: PrintWriter, primitiveArrays: Boolean) : Gene
         override fun MethodBuilder.modifySetOperator() {
             annotations += """GCUnsafeCall("Kotlin_${arrayClassName}_set")"""
             if (kind == null) {
-                annotations += """PointsTo(0x300, 0x000, 0x000) // this.intestines -> value"""
+                annotations += """PointsTo(0x0300, 0x0000, 0x0000, 0x0000) // this.intestines -> value"""
+            } else {
+                annotations += """Escapes.Nothing"""
             }
             modifySignature {
                 isExternal = true

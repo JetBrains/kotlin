@@ -8,6 +8,7 @@
 package kotlin.native.internal
 
 import kotlinx.cinterop.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 @TypedIntrinsic(IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR)
 @PublishedApi
@@ -52,14 +53,17 @@ internal class NonNullNativePtr private constructor() { // TODO: refactor to use
 internal class NativePtrArray {
 
     @GCUnsafeCall("Kotlin_NativePtrArray_get")
+    @Escapes.Nothing
     public external operator fun get(index: Int): NativePtr
 
     @GCUnsafeCall("Kotlin_NativePtrArray_set")
+    @Escapes.Nothing
     public external operator fun set(index: Int, value: NativePtr): Unit
 
     val size: Int
         get() = getArrayLength()
 
     @GCUnsafeCall("Kotlin_NativePtrArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }

@@ -11,6 +11,7 @@
 package kotlin
 
 import kotlin.native.internal.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /** Represents a 8-bit signed integer. */
 public actual class Byte private constructor() : Number(), Comparable<Byte> {
@@ -430,6 +431,7 @@ public actual class Byte private constructor() : Number(), Comparable<Byte> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Byte_toString")
+    @Escapes.Nothing
     public actual external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -861,6 +863,7 @@ public actual class Short private constructor() : Number(), Comparable<Short> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Short_toString")
+    @Escapes.Nothing
     public actual external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1345,6 +1348,7 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Int_toString")
+    @Escapes.Nothing
     public actual external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1832,6 +1836,7 @@ public actual class Long private constructor() : Number(), Comparable<Long> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Long_toString")
+    @Escapes.Nothing
     public actual external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation

@@ -5,6 +5,7 @@
 
 package kotlin.native.runtime
 
+import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.InternalForKotlinNative
 
@@ -43,6 +44,7 @@ public object Debugging {
      * returns success flag.
      */
     @GCUnsafeCall("Kotlin_native_runtime_Debugging_dumpMemory")
+    @Escapes.Nothing
     public external fun dumpMemory(fd: Long): Boolean
 }
 

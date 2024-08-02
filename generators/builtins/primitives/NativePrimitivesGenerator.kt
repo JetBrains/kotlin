@@ -14,6 +14,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
         suppress("OVERRIDE_BY_INLINE")
         suppress("NOTHING_TO_INLINE")
         import("kotlin.native.internal.*")
+        import("kotlin.native.internal.escapeAnalysis.Escapes")
     }
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject(thisKind: PrimitiveType) {
@@ -166,6 +167,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
         } else {
             modifySignature { isExternal = true }
             annotations += "GCUnsafeCall(\"Kotlin_${thisKind.capitalized}_toString\")"
+            annotations += "Escapes.Nothing"
         }
     }
 

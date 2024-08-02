@@ -8,8 +8,7 @@
 package kotlin.native.internal.ref
 
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.internal.Escapes
+import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.InternalForKotlinNative
 import kotlin.native.internal.NativePtr
@@ -64,6 +63,7 @@ public external fun disposeExternalRCRef(ref: ExternalRCRef)
  */
 @InternalForKotlinNative
 @GCUnsafeCall("Kotlin_native_internal_ref_dereferenceExternalRCRef")
+@Escapes(0b10) // The return value is stored in a global.
 public external fun dereferenceExternalRCRef(ref: ExternalRCRef): Any
 
 /**

@@ -5,9 +5,11 @@
 
 package kotlin.uuid
 
+import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
 
 @GCUnsafeCall("Kotlin_Uuid_getRandomBytes")
+@Escapes.Nothing
 private external fun getRandomBytes(byteArray: ByteArray, size: Int): Unit
 
 @ExperimentalUuidApi

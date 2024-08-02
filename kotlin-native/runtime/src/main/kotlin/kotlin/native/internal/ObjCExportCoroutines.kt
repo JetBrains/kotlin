@@ -9,8 +9,7 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-import kotlin.coroutines.native.internal.*
-import kotlin.native.concurrent.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCppRuntime
 private fun Kotlin_ObjCExport_createContinuationArgumentImpl(
@@ -64,8 +63,10 @@ internal fun interceptedContinuation(continuation: Continuation<Any?>): Continua
 
 @FilterExceptions
 @GCUnsafeCall("Kotlin_ObjCExport_runCompletionSuccess")
+@Escapes(0b010) // result escapes into a stable ref.
 private external fun runCompletionSuccess(completionHolder: Any, result: Any?)
 
 @FilterExceptions
 @GCUnsafeCall("Kotlin_ObjCExport_runCompletionFailure")
+@Escapes(0b0010) // exception escapes into a stable ref.
 private external fun runCompletionFailure(completionHolder: Any, exception: Throwable, exceptionTypes: NativePtr)

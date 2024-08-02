@@ -44,14 +44,12 @@ object GC {
      * Legacy MM: force garbage collection immediately, unless collector is stopped
      * with [stop] operation. Even if GC is suspended, [collect] still triggers collection.
      */
-    @GCUnsafeCall("Kotlin_native_internal_GC_collect")
-    external fun collect()
+    fun collect(): Unit = kotlin.native.runtime.GC.collect()
 
     /**
      * Trigger new collection without waiting for its completion.
      */
-     @GCUnsafeCall("Kotlin_native_internal_GC_schedule")
-     external fun schedule()
+     fun schedule(): Unit = kotlin.native.runtime.GC.schedule()
 
     /**
      * Deprecated and unused.

@@ -8,6 +8,7 @@
 package kotlin.native.internal
 
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 internal value class TypeInfoNames(private val typeInfoPtr: NativePtr) {
     init {
@@ -45,7 +46,9 @@ internal value class TypeInfoNames(private val typeInfoPtr: NativePtr) {
 }
 
 @GCUnsafeCall("Kotlin_TypeInfo_getPackageName")
+@Escapes(0b100) // The return value is stored in a global.
 private external fun getPackageName(typeInfo: NativePtr, checkFlags: Boolean): String?
 
 @GCUnsafeCall("Kotlin_TypeInfo_getRelativeName")
+@Escapes(0b100) // The return value is stored in a global.
 private external fun getRelativeName(typeInfo: NativePtr, checkFlags: Boolean): String?

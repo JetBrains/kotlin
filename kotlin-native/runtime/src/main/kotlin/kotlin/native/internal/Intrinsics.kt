@@ -8,9 +8,6 @@ package kotlin.native.internal
 
 import kotlinx.cinterop.*
 
-import kotlin.native.internal.TypedIntrinsic
-import kotlin.native.internal.IntrinsicType
-
 @TypedIntrinsic(IntrinsicType.ARE_EQUAL_BY_VALUE) @PublishedApi external internal fun areEqualByValue(first: Boolean, second: Boolean): Boolean
 @TypedIntrinsic(IntrinsicType.ARE_EQUAL_BY_VALUE) @PublishedApi external internal fun areEqualByValue(first: Byte, second: Byte): Boolean
 @TypedIntrinsic(IntrinsicType.ARE_EQUAL_BY_VALUE) @PublishedApi external internal fun areEqualByValue(first: Short, second: Short): Boolean

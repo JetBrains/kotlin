@@ -5,12 +5,9 @@
 @file:OptIn(ExperimentalForeignApi::class)
 package kotlinx.cinterop
 
-import kotlin.native.*
-import kotlin.native.internal.Escapes
 import kotlin.native.internal.GCUnsafeCall
 
 @GCUnsafeCall("Kotlin_Interop_createStablePointer")
-@Escapes(0b01) // any escapes into stable ref.
 internal external fun createStablePointer(any: Any): COpaquePointer
 
 @GCUnsafeCall("Kotlin_Interop_disposeStablePointer")

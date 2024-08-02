@@ -8,6 +8,7 @@ package kotlin.native.internal
 
 import kotlin.reflect.KClass
 import kotlinx.cinterop.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCompiler
 internal class KClassImpl<T : Any>(override val typeInfo: NativePtr) : KClass<T>, TypeInfoHolder {
@@ -62,12 +63,15 @@ internal class KClassUnsupportedImpl(private val message: String) : KClass<Any> 
 }
 
 @GCUnsafeCall("Kotlin_TypeInfo_findAssociatedObject")
+@Escapes(0b100) // The return value is stored in a global.
 private external fun findAssociatedObjectImpl(typeInfo: NativePtr, key: NativePtr): Any?
 
 @ExportForCompiler
 @GCUnsafeCall("Kotlin_Any_getTypeInfo")
+@Escapes.Nothing
 internal external fun getObjectTypeInfo(obj: Any): NativePtr
 
 
 @GCUnsafeCall("Kotlin_TypeInfo_isInstance")
+@Escapes.Nothing
 internal external fun isInstance(obj: Any, typeInfo: NativePtr): Boolean

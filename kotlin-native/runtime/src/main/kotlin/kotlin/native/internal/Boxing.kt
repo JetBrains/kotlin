@@ -5,37 +5,45 @@
 
 package kotlin.native.internal
 
+import kotlin.native.internal.escapeAnalysis.Escapes
+
 @GCUnsafeCall("getCachedBooleanBox")
+@Escapes(0b10) // The return value is stored in a global.
 @PublishedApi internal external fun getCachedBooleanBox(value: Boolean): Boolean?
 
 @GCUnsafeCall("inBooleanBoxCache")
 @PublishedApi internal external fun inBooleanBoxCache(value: Boolean): Boolean
 
 @GCUnsafeCall("getCachedByteBox")
+@Escapes(0b10) // The return value is stored in a global.
 @PublishedApi internal external fun getCachedByteBox(value: Byte): Byte?
 
 @GCUnsafeCall("inByteBoxCache")
 @PublishedApi internal external fun inByteBoxCache(value: Byte): Boolean
 
 @GCUnsafeCall("getCachedCharBox")
+@Escapes(0b10) // The return value is stored in a global.
 @PublishedApi internal external fun getCachedCharBox(value: Char): Char?
 
 @GCUnsafeCall("inCharBoxCache")
 @PublishedApi internal external fun inCharBoxCache(value: Char): Boolean
 
 @GCUnsafeCall("getCachedShortBox")
+@Escapes(0b10) // The return value is stored in a global.
 @PublishedApi internal external fun getCachedShortBox(value: Short): Short?
 
 @GCUnsafeCall("inShortBoxCache")
 @PublishedApi internal external fun inShortBoxCache(value: Short): Boolean
 
 @GCUnsafeCall("getCachedIntBox")
+@Escapes(0b10) // The return value is stored in a global.
 @PublishedApi internal external fun getCachedIntBox(idx: Int): Int?
 
 @GCUnsafeCall("inIntBoxCache")
 @PublishedApi internal external fun inIntBoxCache(value: Int): Boolean
 
 @GCUnsafeCall("getCachedLongBox")
+@Escapes(0b10) // The return value is stored in a global.
 @PublishedApi internal external fun getCachedLongBox(value: Long): Long?
 
 @GCUnsafeCall("inLongBoxCache")

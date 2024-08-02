@@ -7,6 +7,7 @@ package kotlin.native.ref
 
 import kotlinx.cinterop.*
 import kotlin.native.internal.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  *   Theory of operations:
@@ -41,6 +42,8 @@ internal class RegularWeakReferenceImpl(
     val referred: COpaquePointer, // TODO: This exists only for the ExtraObjectData's sake. Refactor and remove.
 ) : WeakReferenceImpl() {
     @GCUnsafeCall("Konan_RegularWeakReferenceImpl_get")
+    @Escapes(0b11) // RegularWeakReferenceImpl must always escape to the heap (because of finalizers)
+                   // and the return value escapes because it must be on the heap for weak reference machinery
     external override fun get(): Any?
 }
 

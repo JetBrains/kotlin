@@ -8,6 +8,7 @@ import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * Operating system family.
@@ -169,6 +170,7 @@ private external fun Platform_getCleanersLeakChecker(): Boolean
 private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit
 
 @GCUnsafeCall("Konan_Platform_getAvailableProcessorsEnv")
+@Escapes.Nothing
 private external fun Platform_getAvailableProcessorsEnv(): String?
 
 @GCUnsafeCall("Konan_Platform_getAvailableProcessors")

@@ -17,7 +17,10 @@
 
 package kotlin.native.internal
 
+import kotlin.native.internal.escapeAnalysis.Escapes
+
 @GCUnsafeCall("Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl")
+@Escapes.Nothing
 private external fun bigIntDigitGeneratorInstImpl(results: IntArray, uArray: IntArray, f: Long, e: Int,
                                                   isDenormalized: Boolean, mantissaIsZero: Boolean, p: Int)
 

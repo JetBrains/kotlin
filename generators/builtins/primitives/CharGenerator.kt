@@ -588,6 +588,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         import("kotlin.native.internal.GCUnsafeCall")
         import("kotlin.native.internal.TypedIntrinsic")
         import("kotlin.native.internal.IntrinsicType")
+        import("kotlin.native.internal.escapeAnalysis.Escapes")
     }
 
     override fun CompanionObjectBuilder.modifyGeneratedCompanionObject() {
@@ -716,6 +717,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
 
     override fun MethodBuilder.modifyGeneratedToString() {
         annotations += "GCUnsafeCall(\"Kotlin_Char_toString\")"
+        annotations += "Escapes.Nothing"
         modifySignature { isExternal = true }
     }
 

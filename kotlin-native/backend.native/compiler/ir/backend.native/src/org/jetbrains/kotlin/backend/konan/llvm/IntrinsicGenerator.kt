@@ -9,9 +9,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
 import org.jetbrains.kotlin.backend.konan.lower.volatileField
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.getExternalObjCClassBinaryName
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
@@ -139,10 +138,14 @@ internal interface IntrinsicGeneratorEnvironment {
 }
 
 internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType? =
-        if (callSite.symbol.owner.isTypedIntrinsic) getIntrinsicType(callSite) else null
+        tryGetIntrinsicType(callSite.symbol.owner)
 
-private fun getIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType {
-    val function = callSite.symbol.owner
+internal fun tryGetIntrinsicType(function: IrFunction): IntrinsicType? =
+        if (function.isTypedIntrinsic) getIntrinsicType(function) else null
+
+private fun getIntrinsicType(callSite: IrFunctionAccessExpression) = getIntrinsicType(callSite.symbol.owner)
+
+private fun getIntrinsicType(function: IrFunction): IntrinsicType {
     val annotation = function.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
     val value = annotation.getAnnotationStringValue()!!
     return IntrinsicType.valueOf(value)

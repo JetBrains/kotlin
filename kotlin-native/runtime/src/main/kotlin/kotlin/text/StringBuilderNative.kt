@@ -5,6 +5,7 @@
 
 package kotlin.text
 
+import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
@@ -79,7 +80,9 @@ public fun StringBuilder.appendln(it: Any?): StringBuilder = appendLine(it)
 public fun StringBuilder.appendln(): StringBuilder = appendLine()
 
 @GCUnsafeCall("Kotlin_StringBuilder_insertString")
+@Escapes.Nothing
 internal actual external fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int
 
 @GCUnsafeCall("Kotlin_StringBuilder_insertInt")
+@Escapes.Nothing
 internal actual external fun insertInt(array: CharArray, start: Int, value: Int): Int

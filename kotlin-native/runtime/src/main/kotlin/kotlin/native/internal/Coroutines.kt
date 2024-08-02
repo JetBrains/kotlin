@@ -6,7 +6,7 @@
 package kotlin.native.internal
 
 import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 @kotlin.internal.InlineOnly
 @PublishedApi

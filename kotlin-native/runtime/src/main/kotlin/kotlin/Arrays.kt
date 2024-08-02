@@ -9,6 +9,7 @@
 package kotlin
 
 import kotlin.native.internal.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
@@ -52,6 +53,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_ByteArray_get")
+    @Escapes.Nothing
     public actual external operator fun get(index: Int): Byte
 
     /**
@@ -66,6 +68,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_ByteArray_set")
+    @Escapes.Nothing
     public actual external operator fun set(index: Int, value: Byte): Unit
 
     /**
@@ -79,6 +82,7 @@ public actual constructor(size: Int) {
         ByteArrayIterator(this)
 
     @GCUnsafeCall("Kotlin_ByteArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }
 
@@ -130,6 +134,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_CharArray_get")
+    @Escapes.Nothing
     public actual external operator fun get(index: Int): Char
 
     /**
@@ -144,6 +149,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_CharArray_set")
+    @Escapes.Nothing
     public actual external operator fun set(index: Int, value: Char): Unit
 
     /**
@@ -157,6 +163,7 @@ public actual constructor(size: Int) {
         CharArrayIterator(this)
 
     @GCUnsafeCall("Kotlin_CharArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }
 
@@ -208,6 +215,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_ShortArray_get")
+    @Escapes.Nothing
     public actual external operator fun get(index: Int): Short
 
     /**
@@ -222,6 +230,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_ShortArray_set")
+    @Escapes.Nothing
     public actual external operator fun set(index: Int, value: Short): Unit
 
     /**
@@ -235,6 +244,7 @@ public actual constructor(size: Int) {
         ShortArrayIterator(this)
 
     @GCUnsafeCall("Kotlin_ShortArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }
 
@@ -286,6 +296,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_IntArray_get")
+    @Escapes.Nothing
     public actual external operator fun get(index: Int): Int
 
     /**
@@ -300,6 +311,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_IntArray_set")
+    @Escapes.Nothing
     public actual external operator fun set(index: Int, value: Int): Unit
 
     /**
@@ -313,6 +325,7 @@ public actual constructor(size: Int) {
         IntArrayIterator(this)
 
     @GCUnsafeCall("Kotlin_IntArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }
 
@@ -364,6 +377,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_LongArray_get")
+    @Escapes.Nothing
     public actual external operator fun get(index: Int): Long
 
     /**
@@ -378,6 +392,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_LongArray_set")
+    @Escapes.Nothing
     public actual external operator fun set(index: Int, value: Long): Unit
 
     /**
@@ -391,6 +406,7 @@ public actual constructor(size: Int) {
         LongArrayIterator(this)
 
     @GCUnsafeCall("Kotlin_LongArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }
 
@@ -442,6 +458,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_FloatArray_get")
+    @Escapes.Nothing
     public actual external operator fun get(index: Int): Float
 
     /**
@@ -456,6 +473,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_FloatArray_set")
+    @Escapes.Nothing
     public actual external operator fun set(index: Int, value: Float): Unit
 
     /**
@@ -469,6 +487,7 @@ public actual constructor(size: Int) {
         FloatArrayIterator(this)
 
     @GCUnsafeCall("Kotlin_FloatArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }
 
@@ -520,6 +539,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_DoubleArray_get")
+    @Escapes.Nothing
     public actual external operator fun get(index: Int): Double
 
     /**
@@ -534,6 +554,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_DoubleArray_set")
+    @Escapes.Nothing
     public actual external operator fun set(index: Int, value: Double): Unit
 
     /**
@@ -547,6 +568,7 @@ public actual constructor(size: Int) {
         DoubleArrayIterator(this)
 
     @GCUnsafeCall("Kotlin_DoubleArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }
 
@@ -598,6 +620,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_BooleanArray_get")
+    @Escapes.Nothing
     public actual external operator fun get(index: Int): Boolean
 
     /**
@@ -612,6 +635,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     @GCUnsafeCall("Kotlin_BooleanArray_set")
+    @Escapes.Nothing
     public actual external operator fun set(index: Int, value: Boolean): Unit
 
     /**
@@ -625,6 +649,7 @@ public actual constructor(size: Int) {
         BooleanArrayIterator(this)
 
     @GCUnsafeCall("Kotlin_BooleanArray_getArrayLength")
+    @Escapes.Nothing
     private external fun getArrayLength(): Int
 }
 

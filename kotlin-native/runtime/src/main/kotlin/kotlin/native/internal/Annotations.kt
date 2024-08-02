@@ -66,19 +66,6 @@ internal annotation class ExportTypeInfo(val name: String)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class VolatileLambda
 
-/**
- * Escape analysis annotations.
- */
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class Escapes(val who: Int)
-
-// Decyphering of binary values can be found in EscapeAnalysis.kt
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class PointsTo(vararg val onWhom: Int)
-
-
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class TypedIntrinsic(val kind: String)

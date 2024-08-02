@@ -18,6 +18,7 @@
 package kotlin.native.internal
 
 import kotlin.comparisons.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * Takes a String and an integer exponent. The String should hold a positive
@@ -32,6 +33,7 @@ import kotlin.comparisons.*
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 @GCUnsafeCall("Kotlin_native_FloatingPointParser_parseDoubleImpl")
+@Escapes.Nothing
 private external fun parseDoubleImpl(s: String, e: Int): Double
 
 /**
@@ -47,6 +49,7 @@ private external fun parseDoubleImpl(s: String, e: Int): Double
  * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 @GCUnsafeCall("Kotlin_native_FloatingPointParser_parseFloatImpl")
+@Escapes.Nothing
 private external fun parseFloatImpl(s: String, e: Int): Float
 
 /**

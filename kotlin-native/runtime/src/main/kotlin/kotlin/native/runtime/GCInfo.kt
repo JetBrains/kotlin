@@ -8,11 +8,8 @@ package kotlin.native.runtime
 
 import kotlin.native.internal.*
 import kotlin.native.internal.NativePtr
-import kotlin.native.concurrent.*
-import kotlin.time.*
-import kotlin.time.Duration.Companion.nanoseconds
 import kotlinx.cinterop.*
-import kotlin.system.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * This class represents statistics of memory usage in one memory pool.
@@ -241,5 +238,6 @@ private class GCInfoBuilder() {
     }
 
     @GCUnsafeCall("Kotlin_Internal_GC_GCInfoBuilder_Fill")
+    @Escapes.Nothing
     external fun fill(id: Int)
 }

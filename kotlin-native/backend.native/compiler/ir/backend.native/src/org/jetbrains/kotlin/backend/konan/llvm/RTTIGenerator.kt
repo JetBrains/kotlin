@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 internal class RTTIGenerator(
         override val generationState: NativeGenerationState,
@@ -66,7 +67,7 @@ internal class RTTIGenerator(
             result = result or TF_SUSPEND_FUNCTION
         }
 
-        if (irClass.hasAnnotation(KonanFqNames.hasFinalizer)) {
+        if (irClass.hasAnnotation(NativeRuntimeNames.Annotations.HasFinalizer)) {
             result = result or TF_HAS_FINALIZER
         }
 

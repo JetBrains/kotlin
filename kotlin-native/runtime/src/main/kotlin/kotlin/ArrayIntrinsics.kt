@@ -6,6 +6,8 @@
 package kotlin
 
 import kotlin.native.internal.*
+import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.native.internal.escapeAnalysis.PointsTo
 
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
@@ -26,6 +28,9 @@ public actual inline fun <T> arrayOfNulls(size: Int): Array<T?> =
 public actual external inline fun <T> arrayOf(vararg elements: T): Array<T>
 
 @GCUnsafeCall("Kotlin_emptyArray")
+// The return value is statically allocated and immutable;
+// we can treat it as non-escaping
+@Escapes.Nothing
 public actual external fun <T> emptyArray(): Array<T>
 
 /**
