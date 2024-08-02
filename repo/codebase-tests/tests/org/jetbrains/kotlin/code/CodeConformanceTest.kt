@@ -140,6 +140,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-build-conventions/generators/build/generated-sources",
                 "repo/gradle-build-conventions/compiler-tests-convention/build/generated-sources",
                 "repo/gradle-build-conventions/android-sdk-provisioner/build/generated-sources",
+                "repo/gradle-build-conventions/asm-deprecating-transformer/build/generated-sources",
                 ".gradle/expanded",
             )
         )

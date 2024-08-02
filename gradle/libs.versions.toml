@@ -40,6 +40,7 @@ compose-snapshot-version = "1.8.0-SNAPSHOT"
 ant = "1.10.14"
 kotlin-for-gradle-plugins-compilation = "2.0.20-RC"
 intellij-asm = "9.0"
+diff-utils = "4.12"
 # Wasm specific
 wasmedge = "0.14.0"
 
@@ -99,6 +100,7 @@ xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 
 ant = { module = "org.apache.ant:ant", version.ref = "ant" }
 intellij-asm = { module = "org.jetbrains.intellij.deps:asm-all", version.ref = "intellij-asm" }
+diff-utils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "diff-utils" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }

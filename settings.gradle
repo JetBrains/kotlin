@@ -6,6 +6,12 @@ pluginManagement {
     apply from: 'repo/scripts/kotlin-bootstrap.settings.gradle.kts'
 
     repositories {
+        maven {
+            url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies"
+            content {
+                includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+            }
+        }
         maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
         google()
         mavenCentral()
