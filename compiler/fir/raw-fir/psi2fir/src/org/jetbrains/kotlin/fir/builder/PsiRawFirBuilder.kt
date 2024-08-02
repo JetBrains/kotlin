@@ -2899,15 +2899,30 @@ open class PsiRawFirBuilder(
             }
             val conventionCallName = operationToken.toBinaryName()
             return if (conventionCallName != null || operationToken == IDENTIFIER) {
-                buildFunctionCall {
-                    this.source = source
-                    calleeReference = buildSimpleNamedReference {
-                        this.source = expression.operationReference.toFirSourceElement()
-                        name = conventionCallName ?: expression.operationReference.getReferencedNameAsName()
+                if (operationToken == PLUS
+                    && leftArgument is FirLiteralExpression
+                    && leftArgument.kind == ConstantValueKind.String
+                    && rightArgument is FirLiteralExpression
+                    && rightArgument.kind == ConstantValueKind.String
+                ) {
+                    // Let's fold literal strings concatenation
+                    buildLiteralExpression(
+                        source,
+                        ConstantValueKind.String,
+                        leftArgument.value as String + rightArgument.value as String,
+                        setType = false,
+                    )
+                } else {
+                    buildFunctionCall {
+                        this.source = source
+                        calleeReference = buildSimpleNamedReference {
+                            this.source = expression.operationReference.toFirSourceElement()
+                            name = conventionCallName ?: expression.operationReference.getReferencedNameAsName()
+                        }
+                        explicitReceiver = leftArgument
+                        argumentList = buildUnaryArgumentList(rightArgument)
+                        origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
                     }
-                    explicitReceiver = leftArgument
-                    argumentList = buildUnaryArgumentList(rightArgument)
-                    origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
                 }
             } else {
                 val firOperation = operationToken.toFirOperation()

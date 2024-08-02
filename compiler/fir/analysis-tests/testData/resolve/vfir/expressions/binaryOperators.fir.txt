@@ -1,0 +1,7 @@
+FILE: binaryOperators.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval stringLiterals: R|kotlin/String| = String(ABC)
+        lval intLiterals: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(2)).R|kotlin/Int.plus|(Int(3))
+        lvar a: R|kotlin/String| = String(A)
+        lval stringVariables: R|kotlin/String| = R|<local>/a|.R|kotlin/String.plus|(R|<local>/a|).R|kotlin/String.plus|(R|<local>/a|)
+    }

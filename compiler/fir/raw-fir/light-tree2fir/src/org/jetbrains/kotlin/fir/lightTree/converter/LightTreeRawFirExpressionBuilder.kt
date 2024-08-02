@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -325,15 +326,28 @@ class LightTreeRawFirExpressionBuilder(
         }
         val conventionCallName = operationToken.toBinaryName()
         return if (conventionCallName != null || operationToken == IDENTIFIER) {
-            buildFunctionCall {
-                source = binaryExpression.toFirSourceElement()
-                calleeReference = buildSimpleNamedReference {
-                    source = operationReferenceSource ?: this@buildFunctionCall.source
-                    name = conventionCallName ?: operationTokenName.nameAsSafeName()
+            if (operationToken == PLUS
+                && leftArgAsFir is FirLiteralExpression && leftArgAsFir.kind == ConstantValueKind.String
+                && rightArgAsFir is FirLiteralExpression && rightArgAsFir.kind == ConstantValueKind.String
+            ) {
+                // Let's fold literal strings concatenation
+                buildLiteralExpression(
+                    binaryExpression.toFirSourceElement(),
+                    ConstantValueKind.String,
+                    leftArgAsFir.value as String + rightArgAsFir.value as String,
+                    setType = false,
+                )
+            } else {
+                buildFunctionCall {
+                    source = binaryExpression.toFirSourceElement()
+                    calleeReference = buildSimpleNamedReference {
+                        source = operationReferenceSource ?: this@buildFunctionCall.source
+                        name = conventionCallName ?: operationTokenName.nameAsSafeName()
+                    }
+                    explicitReceiver = leftArgAsFir
+                    argumentList = buildUnaryArgumentList(rightArgAsFir)
+                    origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
                 }
-                explicitReceiver = leftArgAsFir
-                argumentList = buildUnaryArgumentList(rightArgAsFir)
-                origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
             }
         } else {
             val firOperation = operationToken.toFirOperation()
