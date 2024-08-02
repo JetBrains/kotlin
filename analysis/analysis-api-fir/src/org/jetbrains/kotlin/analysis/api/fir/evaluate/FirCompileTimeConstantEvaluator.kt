@@ -359,11 +359,29 @@ internal object FirCompileTimeConstantEvaluator {
             ConstantValueKind.Int -> (value as Number).toInt()
             ConstantValueKind.Long -> (value as Number).toLong()
             ConstantValueKind.Short -> (value as Number).toShort()
-            ConstantValueKind.UnsignedByte -> (value as Number).toLong().toUByte()
-            ConstantValueKind.UnsignedShort -> (value as Number).toLong().toUShort()
-            ConstantValueKind.UnsignedInt -> (value as Number).toLong().toUInt()
-            ConstantValueKind.UnsignedLong -> (value as Number).toLong().toULong()
-            ConstantValueKind.UnsignedIntegerLiteral -> (value as Number).toLong().toULong()
+            ConstantValueKind.UnsignedByte -> {
+                if (value is UByte) value
+                else (value as Number).toLong().toUByte()
+            }
+            ConstantValueKind.UnsignedShort -> {
+                if (value is UShort) value
+                else (value as Number).toLong().toUShort()
+            }
+            ConstantValueKind.UnsignedInt -> {
+                if (value is UInt) value
+                else (value as Number).toLong().toUInt()
+            }
+            ConstantValueKind.UnsignedLong -> {
+                if (value is ULong) value
+                else (value as Number).toLong().toULong()
+            }
+            ConstantValueKind.UnsignedIntegerLiteral -> {
+                when (value) {
+                    is UInt -> value.toULong()
+                    is ULong -> value
+                    else -> (value as Number).toLong().toULong()
+                }
+            }
             else -> null
         }
     }
