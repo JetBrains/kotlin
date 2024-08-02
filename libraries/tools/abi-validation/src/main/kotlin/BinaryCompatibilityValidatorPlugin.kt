@@ -650,13 +650,9 @@ private val Project.klibDumpFileName: String
     get() = "$name.klib.api"
 
 private fun Project.prepareKlibValidationClasspath(): NamedDomainObjectProvider<Configuration> {
-    val compilerVersion = project.objects.property(String::class.java).convention("2.0.0")
-    project.withKotlinPluginVersion { version ->
-        compilerVersion.set(version)
-    }
-
+    val configName = "bcv-rt-klib-cp"
     val dependencyConfiguration =
-        project.configurations.create("bcv-rt-klib-cp") {
+        project.configurations.create(configName) {
             it.description = "Runtime classpath for running binary-compatibility-validator."
             it.isCanBeResolved = false
             it.isCanBeConsumed = false
@@ -664,7 +660,9 @@ private fun Project.prepareKlibValidationClasspath(): NamedDomainObjectProvider<
             it.isVisible = false
         }
 
-    project.dependencies.addProvider(dependencyConfiguration.name, compilerVersion.map { version -> "org.jetbrains.kotlin:kotlin-compiler-embeddable:$version" })
+    project.withKotlinPluginVersion { version ->
+        project.dependencies.add(configName, "org.jetbrains.kotlin:kotlin-compiler-embeddable:$version")
+    }
 
     return project.configurations.register("bcv-rt-klib-cp-resolver") {
         it.description = "Resolve the runtime classpath for running binary-compatibility-validator."
@@ -677,16 +675,9 @@ private fun Project.prepareKlibValidationClasspath(): NamedDomainObjectProvider<
 }
 
 private fun Project.prepareJvmValidationClasspath(): NamedDomainObjectProvider<Configuration> {
-    val metadataDependencyVersion = project.objects.property(String::class.java).convention("2.0.0")
-    project.withKotlinPluginVersion { version ->
-        if (version != null && !version.startsWith("1.")) {
-            metadataDependencyVersion.set(version)
-        }
-    }
-
-
+    val configName = "bcv-rt-jvm-cp"
     val dependencyConfiguration =
-        project.configurations.create("bcv-rt-jvm-cp") {
+        project.configurations.create(configName) {
             it.description = "Runtime classpath for running binary-compatibility-validator."
             it.isCanBeResolved = false
             it.isCanBeConsumed = false
@@ -696,7 +687,15 @@ private fun Project.prepareJvmValidationClasspath(): NamedDomainObjectProvider<C
 
     project.dependencies.add(dependencyConfiguration.name, "org.ow2.asm:asm:9.6")
     project.dependencies.add(dependencyConfiguration.name, "org.ow2.asm:asm-tree:9.6")
-    project.dependencies.addProvider(dependencyConfiguration.name, metadataDependencyVersion.map { version -> "org.jetbrains.kotlin:kotlin-metadata-jvm:$version" })
+    project.withKotlinPluginVersion { version ->
+        val result = when {
+            version == null -> "2.0.0"
+            version.startsWith("1.") -> "2.0.0"
+            else -> version
+        }
+
+        project.dependencies.add(configName, "org.jetbrains.kotlin:kotlin-metadata-jvm:$result")
+    }
 
     return project.configurations.register("bcv-rt-jvm-cp-resolver") {
         it.description = "Resolve the runtime classpath for running binary-compatibility-validator."
