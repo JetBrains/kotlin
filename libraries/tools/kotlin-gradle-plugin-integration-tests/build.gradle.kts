@@ -113,7 +113,7 @@ dependencies {
 
     testRuntimeOnly(project(":compiler:tests-mutes"))
 
-    testCompileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    testCompileOnly(libs.intellij.asm)
 }
 
 val konanDataDir: String = System.getProperty("konanDataDirForIntegrationTests")

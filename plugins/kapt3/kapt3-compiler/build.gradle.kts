@@ -19,7 +19,7 @@ dependencies {
     compileOnly(project(":kotlin-annotation-processing-runtime"))
     compileOnly(intellijCore())
     compileOnly(toolsJarApi())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
     testImplementation(intellijCore())
     testRuntimeOnly(intellijResources()) { isTransitive = false }

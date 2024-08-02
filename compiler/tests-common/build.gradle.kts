@@ -77,7 +77,7 @@ dependencies {
     testApi(intellijJavaRt()) // for FileComparisonFailure
 
     testImplementation(libs.guava)
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    testImplementation(libs.intellij.asm)
     testImplementation(commonDependency("org.jetbrains.intellij.deps:log4j"))
     testImplementation(intellijJDom())
 

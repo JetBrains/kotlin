@@ -38,7 +38,7 @@ dependencies {
     embedded(project(":kotlin-metadata-jvm"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
     testImplementation(libs.junit4)
     testImplementation(projectTests(":compiler:tests-common"))

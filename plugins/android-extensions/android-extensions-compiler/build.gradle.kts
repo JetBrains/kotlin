@@ -29,7 +29,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
+    compileOnly(libs.intellij.asm)
 
     testApi(project(":compiler:util"))
     testApi(project(":compiler:backend"))
