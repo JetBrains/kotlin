@@ -94,13 +94,6 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
 
     override fun visitBlock(expression: IrBlock, data: IrInterpreterCheckerData): Boolean {
         if (!data.mode.canEvaluateBlock(expression)) return false
-
-        // `IrReturnableBlock` will be created from IrCall after inline. We should do basically the same check as for IrCall.
-        if (expression is IrReturnableBlock) {
-            val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
-            if (inlinedBlock != null) return inlinedBlock.inlineCall?.accept(this, data) ?: false
-        }
-
         return visitStatements(expression.statements, data)
     }
 
