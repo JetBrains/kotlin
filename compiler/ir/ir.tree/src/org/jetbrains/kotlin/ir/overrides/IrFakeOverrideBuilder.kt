@@ -65,7 +65,8 @@ class IrFakeOverrideBuilder(
             val (staticMembers, instanceMembers) =
                 clazz.declarations.filterIsInstance<IrOverridableMember>().partition { it.isStaticMember }
 
-            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, clazz.superTypes, isStaticMembers = false)
+            val supertypes = clazz.superTypes.filterNot { it is IrErrorType }
+            buildFakeOverridesForClassImpl(clazz, instanceMembers, oldSignatures, supertypes, isStaticMembers = false)
 
             // Static Java members from the superclass need fake overrides in the subclass, to support the case when the static member is
             // declared in an inaccessible grandparent class but is exposed as public in the parent. For example:
@@ -77,7 +78,7 @@ class IrFakeOverrideBuilder(
             // "exposed visibility" error. Accessing the method via the class A would result in an IllegalAccessError at runtime, thus
             // we need to generate a fake override in class B. This is only possible in case of superclasses, as static _interface_ members
             // are not inherited (see JLS 8.4.8 and 9.4.1).
-            val superClass = clazz.superTypes.filter { it.classOrFail.owner.isClass }
+            val superClass = supertypes.filter { it.classOrFail.owner.isClass }
             buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass, isStaticMembers = true)
         }
     }
