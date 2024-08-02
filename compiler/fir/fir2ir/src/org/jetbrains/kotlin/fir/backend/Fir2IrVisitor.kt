@@ -1483,6 +1483,20 @@ class Fir2IrVisitor(
         }
     }
 
+    override fun visitForLoopWrapper(forLoopWrapper: FirForLoopWrapper, data: Any?): IrElement {
+        return forLoopWrapper.source.convertWithOffsets { startOffset, endOffset ->
+            val irStatements = forLoopWrapper.statements.mapToIrStatements()
+            val singleStatement = irStatements.singleOrNull()
+            if (singleStatement is IrBlock && singleStatement.type.isUnit() &&
+                (singleStatement.origin == IrStatementOrigin.POSTFIX_INCR || singleStatement.origin == IrStatementOrigin.POSTFIX_DECR)
+            ) {
+                singleStatement
+            } else {
+                IrBlockImpl(startOffset, endOffset, builtins.unitType, IrStatementOrigin.FOR_LOOP, irStatements.filterNotNull())
+            }
+        }
+    }
+
     private fun FirJump<FirLoop>.convertJumpWithOffsets(
         f: (startOffset: Int, endOffset: Int, irLoop: IrLoop, label: String?) -> IrBreakContinue
     ): IrExpression {

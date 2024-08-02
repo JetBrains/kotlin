@@ -195,6 +195,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformBlock(block, data)
     }
 
+    open fun transformForLoopWrapper(forLoopWrapper: FirForLoopWrapper, data: D): FirStatement {
+        return transformElement(forLoopWrapper, data)
+    }
+
+    final override fun visitForLoopWrapper(forLoopWrapper: FirForLoopWrapper, data: D): FirStatement {
+        return transformForLoopWrapper(forLoopWrapper, data)
+    }
+
     open fun transformLazyBlock(lazyBlock: FirLazyBlock, data: D): FirStatement {
         return transformElement(lazyBlock, data)
     }

@@ -50,6 +50,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitExpression(block)
     }
 
+    override fun visitForLoopWrapper(forLoopWrapper: FirForLoopWrapper) {
+        visitStatement(forLoopWrapper)
+    }
+
     override fun visitLazyBlock(lazyBlock: FirLazyBlock) {
         visitBlock(lazyBlock)
     }

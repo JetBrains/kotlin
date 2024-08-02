@@ -44,6 +44,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitBlock(block: FirBlock, data: D): R =
         visitExpression(block, data)
 
+    override fun visitForLoopWrapper(forLoopWrapper: FirForLoopWrapper, data: D): R =
+        visitStatement(forLoopWrapper, data)
+
     override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: D): R =
         visitBlock(lazyBlock, data)
 

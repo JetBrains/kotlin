@@ -16,10 +16,7 @@ FirFileImpl
     FirDefaultPropertyBackingField
      FirResolvedTypeRefImpl
      FirResolvedDeclarationStatusImpl
-   FirBlockImpl
-   {
-    source.kind: DesugaredForLoop
-   }
+   FirForLoopWrapperImpl
     FirPropertyImpl
      FirResolvedDeclarationStatusImpl
      FirResolvedTypeRefImpl

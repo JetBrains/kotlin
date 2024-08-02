@@ -179,6 +179,12 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField(statement, withTransform = true)
     }
 
+    val forLoopWrapper: Element by element(Expression) {
+        parent(statement)
+
+        +listField(statement, withTransform = true)
+    }
+
     val lazyBlock: Element by element(Expression) {
         parent(block)
     }

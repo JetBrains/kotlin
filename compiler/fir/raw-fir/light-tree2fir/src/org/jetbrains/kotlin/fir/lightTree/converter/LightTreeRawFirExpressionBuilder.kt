@@ -1164,20 +1164,20 @@ class LightTreeRawFirExpressionBuilder(
 
         val calculatedRangeExpression =
             rangeExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No range in for loop"))
-        val fakeSource = forLoop.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
-        val rangeSource = calculatedRangeExpression.source?.fakeElement(KtFakeSourceElementKind.DesugaredForLoop) ?: fakeSource
+        val source = forLoop.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
+        val rangeSource = calculatedRangeExpression.source?.fakeElement(KtFakeSourceElementKind.DesugaredForLoop) ?: source
         val target: FirLoopTarget
         // NB: FirForLoopChecker relies on this block existence and structure
-        return buildBlock {
-            source = fakeSource
+        return buildForLoopWrapper {
+            this.source = source
             val iteratorVal = generateTemporaryVariable(
                 baseModuleData,
                 rangeSource,
                 SpecialNames.ITERATOR,
                 buildFunctionCall {
-                    source = rangeSource
+                    this.source = rangeSource
                     calleeReference = buildSimpleNamedReference {
-                        source = rangeSource
+                        this.source = rangeSource
                         name = OperatorNameConventions.ITERATOR
                     }
                     explicitReceiver = calculatedRangeExpression
@@ -1186,11 +1186,11 @@ class LightTreeRawFirExpressionBuilder(
             )
             statements += iteratorVal
             statements += FirWhileLoopBuilder().apply {
-                source = fakeSource
+                this.source = source
                 condition = buildFunctionCall {
-                    source = rangeSource
+                    this.source = rangeSource
                     calleeReference = buildSimpleNamedReference {
-                        source = rangeSource
+                        this.source = rangeSource
                         name = OperatorNameConventions.HAS_NEXT
                     }
                     explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
@@ -1201,7 +1201,7 @@ class LightTreeRawFirExpressionBuilder(
                 target = prepareTarget(forLoop)
             }.configure(target) {
                 buildBlock block@{
-                    source = blockNode?.toFirSourceElement()
+                    this.source = blockNode?.toFirSourceElement()
                     val valueParameter = parameter ?: return@block
                     val multiDeclaration = valueParameter.destructuringDeclaration
                     val firLoopParameter = generateTemporaryVariable(
@@ -1209,9 +1209,9 @@ class LightTreeRawFirExpressionBuilder(
                         valueParameter.source,
                         if (multiDeclaration != null) SpecialNames.DESTRUCT else valueParameter.name,
                         buildFunctionCall {
-                            source = rangeSource
+                            this.source = rangeSource
                             calleeReference = buildSimpleNamedReference {
-                                source = rangeSource
+                                this.source = rangeSource
                                 name = OperatorNameConventions.NEXT
                             }
                             explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)

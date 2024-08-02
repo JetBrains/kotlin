@@ -86,6 +86,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitBlock(block: FirBlock, data: D): R =
         visitElement(block, data)
 
+    open fun visitForLoopWrapper(forLoopWrapper: FirForLoopWrapper, data: D): R =
+        visitElement(forLoopWrapper, data)
+
     open fun visitLazyBlock(lazyBlock: FirLazyBlock, data: D): R =
         visitElement(lazyBlock, data)
 

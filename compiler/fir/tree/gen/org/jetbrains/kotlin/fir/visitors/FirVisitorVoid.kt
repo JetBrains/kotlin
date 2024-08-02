@@ -195,6 +195,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(block)
     }
 
+    final override fun visitForLoopWrapper(forLoopWrapper: FirForLoopWrapper, data: Nothing?) {
+        visitForLoopWrapper(forLoopWrapper)
+    }
+
+    open fun visitForLoopWrapper(forLoopWrapper: FirForLoopWrapper) {
+        visitElement(forLoopWrapper)
+    }
+
     final override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: Nothing?) {
         visitLazyBlock(lazyBlock)
     }
