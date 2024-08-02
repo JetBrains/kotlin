@@ -18,7 +18,6 @@
 # OWNER_LIST: Parcelize
 # OWNER_LIST: Mikhail.Glukhikh Dmitriy.Novozhilov Kirill.Rakhman
 # OWNER_LIST: Yan.Zhulanow
-# OWNER_LIST: Dmitry.Gridin
 # OWNER_LIST: Alexander.Udalov
 # OWNER_LIST: Zalim.Bashorov
 # OWNER_LIST: Ilya.Goncharov Artem.Kobzar
@@ -41,8 +40,6 @@
 /.space/ "Kotlin Build Infrastructure"
 
 /analysis/ "Kotlin IDE Analysis Core"
-/analysis/light-classes-base/ Dmitry.Gridin
-/analysis/symbol-light-classes/ Dmitry.Gridin
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnostics.kt "Kotlin Compiler Core"
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnosticsImpl.kt "Kotlin Compiler Core"
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDataClassConverters.kt "Kotlin Compiler Core"
