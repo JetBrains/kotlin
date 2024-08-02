@@ -215,6 +215,8 @@ open class FunctionInlining(
                 origin = null,
                 statements = evaluationStatements + newStatements
             ).apply {
+                // `inlineCall` is required only for JVM backend only, but this inliner is common, so we need opt-in.
+                @OptIn(JvmIrInlineExperimental::class)
                 this.inlineCall = callSite
             }
 
