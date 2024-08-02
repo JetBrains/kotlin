@@ -261,6 +261,8 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it is KtSuperTypeList || (it is KtSuperTypeListEntry && it !is KtSuperTypeCallEntry) ||
                 it is KtValueArgument || it is KtLambdaArgument || it is KtValueArgumentName ||
                 it is KtContainerNodeForControlStructureBody || it is KtContainerNode ||
+                it is KtBinaryExpression && (it.left is KtStringTemplateExpression || it.right is KtStringTemplateExpression) ||
+                it is KtStringTemplateExpression && it.parent is KtBinaryExpression ||
                 it is KtStringTemplateEntry ||
                 it is KtOperationReferenceExpression ||
                 it is KtLabelReferenceExpression ||
