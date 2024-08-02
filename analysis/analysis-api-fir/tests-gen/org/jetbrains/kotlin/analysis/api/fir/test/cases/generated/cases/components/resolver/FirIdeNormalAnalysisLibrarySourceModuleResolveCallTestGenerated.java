@@ -557,6 +557,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("functionCallWithNonTrailingLambdaArgument2.kt")
+  public void testFunctionCallWithNonTrailingLambdaArgument2() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionCallWithNonTrailingLambdaArgument2.kt");
+  }
+
+  @Test
   @TestMetadata("functionCallWithSpreadArgument.kt")
   public void testFunctionCallWithSpreadArgument() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionCallWithSpreadArgument.kt");

@@ -557,6 +557,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("functionCallWithNonTrailingLambdaArgument2.kt")
+  public void testFunctionCallWithNonTrailingLambdaArgument2() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionCallWithNonTrailingLambdaArgument2.kt");
+  }
+
+  @Test
   @TestMetadata("functionCallWithSpreadArgument.kt")
   public void testFunctionCallWithSpreadArgument() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionCallWithSpreadArgument.kt");
@@ -5069,6 +5075,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     @TestMetadata("FakeJavaLang4.kt")
     public void testFakeJavaLang4() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/FakeJavaLang4.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithNonTrailingLambdaArgument.kt")
+    public void testFunctionCallWithNonTrailingLambdaArgument() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/functionCallWithNonTrailingLambdaArgument.kt");
     }
 
     @Test
