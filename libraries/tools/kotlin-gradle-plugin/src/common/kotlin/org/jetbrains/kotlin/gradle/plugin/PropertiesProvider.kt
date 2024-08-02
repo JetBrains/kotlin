@@ -541,7 +541,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION) ?: false
 
     val enableKlibsCrossCompilation: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: false
+        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: true
 
     val kotlinKmpProjectIsolationEnabled: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_KMP_PORJECT_ISOLATION_ENABLED) ?: false
