@@ -214,18 +214,6 @@ private inline fun <T> createCoroutineFromSuspendFunction(
     }
 }
 
-private fun <T> createSimpleCoroutineForSuspendFunction(
-    completion: Continuation<T>,
-): Continuation<T> {
-    return object : CoroutineImpl(completion as Continuation<Any?>) {
-        override fun doResume(): Any? {
-            @Suppress("UnsafeCastFromDynamic")
-            if (exception != null) throw exception
-            return result
-        }
-    }
-}
-
 @InlineOnly
 internal inline fun <T> createCoroutineFromGeneratorFunction(
     completion: Continuation<T>,

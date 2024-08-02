@@ -62,3 +62,15 @@ public val COROUTINE_SUSPENDED: Any get() = CoroutineSingletons.COROUTINE_SUSPEN
 @SinceKotlin("1.3")
 @PublishedApi // This class is Published API via serialized representation of SafeContinuation, don't rename/move
 internal enum class CoroutineSingletons { COROUTINE_SUSPENDED, UNDECIDED, RESUMED }
+
+/**
+ * This function is used when [startCoroutineUninterceptedOrReturn] encounters suspending lambda that does not extend the base
+ * coroutine class (the concrete class depends on the target platform).
+ *
+ * It happens in two cases:
+ *   1. Callable reference to suspending function or tail-call lambdas,
+ *   2. Suspending function reference implemented by Java code.
+ *
+ * This function does not run the lambda itself — the caller is expected to call [invoke] manually.
+ */
+internal expect fun <T> createSimpleCoroutineForSuspendFunction(completion: Continuation<T>): Continuation<T>

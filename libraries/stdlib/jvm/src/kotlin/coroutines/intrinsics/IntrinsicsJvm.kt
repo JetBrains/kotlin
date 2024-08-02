@@ -241,16 +241,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
         }
 }
 
-/**
- * This function is used when [startCoroutineUninterceptedOrReturn] encounters suspending lambda that does not extend BaseContinuationImpl.
- *
- * It happens in two cases:
- *   1. Callable reference to suspending function or tail-call lambdas,
- *   2. Suspending function reference implemented by Java code.
- *
- * This function is the same as above, but does not run lambda itself - the caller is expected to call [invoke] manually.
- */
-private fun <T> createSimpleCoroutineForSuspendFunction(
+internal actual fun <T> createSimpleCoroutineForSuspendFunction(
     completion: Continuation<T>
 ): Continuation<T> {
     val context = completion.context

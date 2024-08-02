@@ -297,15 +297,8 @@ internal inline fun createContinuationArgumentFromCallback(
 internal fun <T> wrapWithContinuationImpl(completion: Continuation<T>): Continuation<T> =
         createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
 
-/**
- * This function is used when [startCoroutineUninterceptedOrReturn] encounters suspending lambda that does not extend BaseContinuationImpl.
- *
- * It happens in two cases: callable reference to suspending function or tail-call lambdas.
- *
- * This function is the same as above, but does not run lambda itself - the caller is expected to call [invoke] manually.
- */
 @Suppress("UNCHECKED_CAST")
-private fun <T> createSimpleCoroutineForSuspendFunction(
+internal actual fun <T> createSimpleCoroutineForSuspendFunction(
         completion: Continuation<T>
 ): Continuation<T> {
     val context = completion.context

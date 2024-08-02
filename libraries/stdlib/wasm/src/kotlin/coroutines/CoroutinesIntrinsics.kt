@@ -25,7 +25,7 @@ import kotlin.wasm.internal.*
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(
-    this, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+    this, if (this !is CoroutineImpl) createSimpleCoroutineForSuspendFunction(completion) else completion
 )
 
 /**
@@ -46,7 +46,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
     receiver: R,
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(
-    this, receiver, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+    this, receiver, if (this !is CoroutineImpl) createSimpleCoroutineForSuspendFunction(completion) else completion
 )
 
 @Suppress("UNCHECKED_CAST")
@@ -56,7 +56,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     param: P,
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic2(
-    this, receiver, param, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+    this, receiver, param, if (this !is CoroutineImpl) createSimpleCoroutineForSuspendFunction(completion) else completion
 )
 
 /**
@@ -146,12 +146,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
 }
 
 @PublishedApi
-@Suppress("UNCHECKED_CAST")
+@Deprecated("Renamed to createSimpleCoroutineForSuspendFunction", level = DeprecationLevel.HIDDEN)
 internal fun <T> createSimpleCoroutineFromSuspendFunction(
     completion: Continuation<T>
-): CoroutineImpl = object : CoroutineImpl(completion as Continuation<Any?>) {
-    override fun doResume(): Any? {
-        if (exception != null) throw exception as Throwable
-        return result
-    }
-}
+): Continuation<T> = createSimpleCoroutineForSuspendFunction(completion)
