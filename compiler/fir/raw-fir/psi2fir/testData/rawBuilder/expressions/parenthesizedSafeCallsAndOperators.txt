@@ -24,14 +24,14 @@ FILE: parenthesizedSafeCallsAndOperators.kt
             R|<local>/<array>|.get#(R|<local>/<index_0>|)
         }
          }
-        arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)) }
-        arg#?.{ $subj$.alias#.set#(IntegerLiteral(42), String()) }
+        arg#?.{ $subj$.alias# }.get#(IntegerLiteral(42))
+        arg#?.{ $subj$.alias# }.set#(IntegerLiteral(42), String())
         Unit
         arg#?.{ +=($subj$.alias#, String()) }
         arg#?.{ $subj$.alias# }++
         ++arg#?.{ $subj$.alias# }
-        arg#?.{ $subj$.alias#.invoke#(String()) }
-        arg#?.{ ArraySet:[$subj$.alias#.get#(IntegerLiteral(42)) += String()] }
+        arg#?.{ $subj$.alias# }.invoke#(String())
+        ArraySet:[arg#?.{ $subj$.alias# }.get#(IntegerLiteral(42)) += String()]
         Unit
         arg#?.{ ArraySet:[$subj$.alias#.get#(IntegerLiteral(42)) += String()] }
         Unit

@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
@@ -631,6 +628,12 @@ fun FirExpression.pullUpSafeCallIfNecessary(): FirExpression {
     if (this !is FirQualifiedAccessExpression) return this
     val safeCall = explicitReceiver as? FirSafeCallExpression ?: return this
     val safeCallSelector = safeCall.selector as? FirExpression ?: return this
+
+    val safeCallSourceElement = safeCall.source ?: error("Nullable source for safe call")
+    check(safeCallSourceElement.elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION)
+    if (safeCallSourceElement.treeStructure.getParent(safeCallSourceElement.lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED) {
+        return this
+    }
 
     replaceExplicitReceiver(safeCallSelector)
     safeCall.replaceSelector(this)

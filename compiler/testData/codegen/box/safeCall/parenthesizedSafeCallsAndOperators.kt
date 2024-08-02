@@ -52,9 +52,9 @@ fun huh(arg: Foo?) {
     checkResult("get: member")
 
     (arg?.alias)[42]
-    checkResult("get: member")
+    checkResult("get: extension")
     (arg?.alias)[42] = arg
-    checkResult("set: member")
+    checkResult("set: extension")
     (arg?.alias) += ""
     checkResult("plusAssign: member")
     (arg?.alias)++
@@ -62,9 +62,9 @@ fun huh(arg: Foo?) {
     ++(arg?.alias)
     checkResult("inc: member")
     (arg?.alias)("")
-    checkResult("invoke: member")
+    checkResult("invoke: extension")
     (arg?.alias)[42] += ""
-    checkResult("plusAssign: member")
+    checkResult("plusAssign: extension")
     (arg?.alias[42]) += ""
     checkResult("plusAssign: member")
     (arg?.alias[42])++
