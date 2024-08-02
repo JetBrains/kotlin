@@ -5383,6 +5383,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         }
 
         @Test
+        @TestMetadata("binaryOperators.kt")
+        public void testBinaryOperators() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/vfir/expressions/binaryOperators.kt");
+        }
+
+        @Test
         @TestMetadata("for.kt")
         public void testFor() {
           runTest("compiler/fir/analysis-tests/testData/resolve/vfir/expressions/for.kt");
