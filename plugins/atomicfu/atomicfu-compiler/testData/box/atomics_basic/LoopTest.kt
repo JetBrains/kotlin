@@ -11,53 +11,48 @@ class LoopTest {
 
     class A(val s: String)
 
-    fun atomicfuIntLoopTest() {
+    fun atomicfuIntLoopTest(): Int {
         a.loop { value ->
             if (a.compareAndSet(value, 777)) {
                 assertEquals(777, a.value)
-                return
+                return a.value
             }
         }
     }
 
-    fun atomicfuBooleanLoopTest() {
+    fun atomicfuBooleanLoopTest(): Boolean {
         b.loop { value ->
             assertTrue(value)
-            if (!b.value) return
             if (b.compareAndSet(value, false)) {
-                return
+                return b.value
             }
         }
     }
 
-    fun atomicfuLongLoopTest() {
+    fun atomicfuLongLoopTest(): Long {
         l.loop { cur ->
             if (l.compareAndSet(5000000003, 9000000000)) {
-                return
+                return l.value
             } else {
                 l.incrementAndGet()
             }
         }
     }
 
-    fun atomicfuRefLoopTest() {
+    fun atomicfuRefLoopTest(): A {
         r.loop { cur ->
             assertEquals("aaaa", cur.s)
             if (r.compareAndSet(cur, A("bbbb"))) {
-                return
+                return r.value
             }
         }
     }
 
     fun atomicfuLoopTest() {
-        atomicfuIntLoopTest()
-        assertEquals(777, a.value)
-        atomicfuBooleanLoopTest()
-        assertFalse(b.value)
-        atomicfuLongLoopTest()
-        assertEquals(9000000000, l.value)
-        atomicfuRefLoopTest()
-        assertEquals("bbbb", r.value.s)
+        assertEquals(777, atomicfuIntLoopTest())
+        assertFalse(atomicfuBooleanLoopTest())
+        assertEquals(9000000000, atomicfuLongLoopTest())
+        assertEquals("bbbb", atomicfuRefLoopTest().s)
     }
 
     fun atomicfuUpdateTest() {
