@@ -5,7 +5,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
         1 -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = kotlin.Int
+          returnType = O1
           symbol = a: O1
           callableId = null),
         { s -> true } -> (KaVariableSignature:
@@ -17,7 +17,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
-          returnType = kotlin.String
+          returnType = T1
           symbol = c: T1
           callableId = null)
       }
@@ -33,7 +33,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             KaVariableSignature:
               name = a
               receiverType = null
-              returnType = kotlin.Int
+              returnType = O1
               symbol = a: O1
               callableId = null,
             KaVariableSignature:
@@ -45,15 +45,12 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             KaVariableSignature:
               name = c
               receiverType = null
-              returnType = kotlin.String
+              returnType = T1
               symbol = c: T1
               callableId = null
           ]
           callableId = /function
-      typeArgumentsMapping = {
-        T1 -> (kotlin.String),
-        O1 -> (kotlin.Int)
-      }
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaApplicableCallCandidateInfo:
@@ -62,7 +59,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
         1 -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = kotlin.Int
+          returnType = O2
           symbol = a: O2
           callableId = null),
         { s -> true } -> (KaVariableSignature:
@@ -74,7 +71,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
-          returnType = kotlin.String
+          returnType = T2
           symbol = c: T2
           callableId = null)
       }
@@ -90,7 +87,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             KaVariableSignature:
               name = a
               receiverType = null
-              returnType = kotlin.Int
+              returnType = O2
               symbol = a: O2
               callableId = null,
             KaVariableSignature:
@@ -102,15 +99,12 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             KaVariableSignature:
               name = c
               receiverType = null
-              returnType = kotlin.String
+              returnType = T2
               symbol = c: T2
               callableId = null
           ]
           callableId = /function
-      typeArgumentsMapping = {
-        T2 -> (kotlin.String),
-        O2 -> (kotlin.Int)
-      }
+      typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -119,7 +113,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
         1 -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = kotlin.Int
+          returnType = O3
           symbol = a: O3
           callableId = null),
         { s -> true } -> (KaVariableSignature:
@@ -131,7 +125,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
-          returnType = kotlin.String
+          returnType = T3
           symbol = c: T3
           callableId = null)
       }
@@ -147,7 +141,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             KaVariableSignature:
               name = a
               receiverType = null
-              returnType = kotlin.Int
+              returnType = O3
               symbol = a: O3
               callableId = null,
             KaVariableSignature:
@@ -159,14 +153,11 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             KaVariableSignature:
               name = c
               receiverType = null
-              returnType = kotlin.String
+              returnType = T3
               symbol = c: T3
               callableId = null
           ]
           callableId = /function
-      typeArgumentsMapping = {
-        T3 -> (kotlin.String),
-        O3 -> (kotlin.Int)
-      }
+      typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Function1<ERROR CLASS: Cannot infer type for parameter s, ERROR CLASS: Cannot infer type variable TypeVariable(_L)>', but 'kotlin.String' was expected.>
     isInBestCandidates = false
