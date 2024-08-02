@@ -147,7 +147,7 @@ open class FunctionInlining(
             }
 
             override fun visitElement(element: IrElement) {
-                if (element is IrAttributeContainer) element.setUpCorrectAttributeOwner()
+                if (element is IrAttributeContainer && element !is IrInlinedFunctionBlock) element.setUpCorrectAttributeOwner()
                 element.acceptChildrenVoid(this)
             }
         })
