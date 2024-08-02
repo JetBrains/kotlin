@@ -48,12 +48,8 @@ private suspend fun AbstractKotlinNativeCompilation.configureStdlibAndPlatformDe
     stdlib: FileCollection
 ) {
     // Commonizer target must not be null for AbstractKotlinNativeCompilation, but we are graceful here and just return
-    val commonizerTarget = commonizerTarget.await() ?: return
-    val nativeDistributionDependencies = project.getNativeDistributionDependencies(commonizerTarget)
-
     val updatedCompileDependencyFiles = project.files().from(
         stdlib,
-        nativeDistributionDependencies,
         compileDependencyFiles
     )
 
@@ -128,7 +124,7 @@ internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget)
 private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection =
     getOriginalPlatformLibrariesFor(target.konanTarget)
 
-private fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
+internal fun Project.getOriginalPlatformLibrariesFor(konanTarget: KonanTarget): FileCollection = project.filesProvider {
     konanDistribution.platformLibsDir.resolve(konanTarget.name).listLibraryFiles().toSet()
 }
 

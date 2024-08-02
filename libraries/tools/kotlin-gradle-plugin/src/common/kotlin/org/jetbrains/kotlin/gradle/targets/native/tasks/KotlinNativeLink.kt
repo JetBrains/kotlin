@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
@@ -66,12 +68,18 @@ constructor(
 
     override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
+    @get:Internal
+    internal val nativeDistributionDependencies = project.provider { project.getOriginalPlatformLibrariesFor(binary.compilation.konanTarget)}
+
     @get:Classpath
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
             @Suppress("DEPRECATION")
-            if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) compilation.compileDependencyFiles
+            if (konanTarget.enabledOnCurrentHostForBinariesCompilation()) project.files().from(
+                nativeDistributionDependencies,
+                compilation.compileDependencyFiles
+            )
             else objectFactory.fileCollection()
         }
     )
