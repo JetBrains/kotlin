@@ -38,6 +38,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             if (typeParameter.isReifiedTypeParameterOrFromKotlinArray()) {
                 checkArgumentAndReport(
                     typeArgument,
+                    typeParameter,
                     source,
                     isExplicit = typeArgumentProjection.source?.kind == KtRealSourceElementKind,
                     isArray = false,
@@ -62,6 +63,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
 
     private fun checkArgumentAndReport(
         typeArgument: ConeKotlinType,
+        typeParameter: FirTypeParameterSymbol,
         source: KtSourceElement,
         isExplicit: Boolean,
         isArray: Boolean,
@@ -73,7 +75,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).
             // Therefore, we check the arguments of the expanded type, not the ones that went into the type alias.
             fullyExpandedType.typeArgumentsOfLowerBoundIfFlexible.forEach {
-                if (it is ConeKotlinType) checkArgumentAndReport(it, source, isExplicit, isArray = true, context, reporter)
+                if (it is ConeKotlinType) checkArgumentAndReport(it, typeParameter, source, isExplicit, isArray = true, context, reporter)
             }
             return
         }
@@ -93,6 +95,8 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             reporter.reportOn(source, FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED, context)
         } else if (typeArgument.cannotBeReified()) {
             reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument, context)
+        } else if (typeArgument is ConeIntersectionType) {
+            reporter.reportOn(source, FirErrors.TYPE_INTERSECTION_AS_REIFIED, typeParameter, typeArgument.intersectedTypes, context)
         }
     }
 

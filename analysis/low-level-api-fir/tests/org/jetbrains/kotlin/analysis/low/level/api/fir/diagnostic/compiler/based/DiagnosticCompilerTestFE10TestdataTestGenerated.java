@@ -21285,6 +21285,28 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/reified")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Reified {
+        @Test
+        public void testAllFilesPresentInReified() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/reified"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("ReifiedIntersectionError.kt")
+        public void testReifiedIntersectionError() {
+          runTest("compiler/testData/diagnostics/tests/inference/reified/ReifiedIntersectionError.kt");
+        }
+
+        @Test
+        @TestMetadata("ReifiedIntersectionWarning.kt")
+        public void testReifiedIntersectionWarning() {
+          runTest("compiler/testData/diagnostics/tests/inference/reified/ReifiedIntersectionWarning.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements")
       @TestDataPath("$PROJECT_ROOT")
       public class ReportingImprovements {
