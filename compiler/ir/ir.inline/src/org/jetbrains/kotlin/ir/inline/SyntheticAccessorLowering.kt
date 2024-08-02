@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -41,49 +42,6 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
      */
     private val narrowAccessorVisibilities =
         context.configuration.getBoolean(KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY)
-
-    /**
-     * @property accessor The generated synthetic accessor.
-     * @property targetSymbol The symbol of a private declaration that this accessor wraps.
-     * @property inlineFunctions All inline functions where the accessor is used.
-     */
-    private class GeneratedAccessor(
-        val accessor: IrFunction,
-        val targetSymbol: IrSymbol
-    ) {
-        val inlineFunctions: MutableSet<IrFunction> = hashSetOf()
-
-        fun computeNarrowedVisibility(): DescriptorVisibility {
-            for (inlineFunction in inlineFunctions) {
-                when (val visibility = inlineFunction.visibility) {
-                    DescriptorVisibilities.PUBLIC, DescriptorVisibilities.PROTECTED -> return DescriptorVisibilities.PUBLIC
-                    DescriptorVisibilities.INTERNAL -> if (inlineFunction.isPublishedApi()) return DescriptorVisibilities.PUBLIC
-                    else -> irError("Unexpected visibility of inline function: $visibility") {
-                        withIrEntry("inlineFunction", inlineFunction)
-                    }
-                }
-            }
-
-            return DescriptorVisibilities.INTERNAL
-        }
-    }
-
-    private class GeneratedAccessors {
-        private val accessors = HashMap<IrFunction, GeneratedAccessor>()
-        private var frozen = false
-
-
-        fun memoize(accessor: IrFunction, targetSymbol: IrSymbol, inlineFunction: IrFunction) {
-            check(!frozen) { "An attempt to generate an accessor after all accessors have been already added to their containers" }
-            accessors.getOrPut(accessor) { GeneratedAccessor(accessor, targetSymbol) }.inlineFunctions += inlineFunction
-        }
-
-        fun freezeAndGetAccessors(): Collection<GeneratedAccessor> {
-            check(!frozen) { "An attempt to add the generated accessors to their containers once again" }
-            frozen = true
-            return accessors.values
-        }
-    }
 
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
@@ -190,7 +148,7 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
     private class TransformerData(val currentInlineFunction: IrFunction)
 
     private inner class Transformer(irFile: IrFile) : IrElementTransformer<TransformerData?> {
-        val generatedAccessors = irFile.generatedAccessors ?: GeneratedAccessors().also { irFile.generatedAccessors = it }
+        val generatedAccessors = irFile::generatedAccessors.getOrSetIfNull(::GeneratedAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
             val newData = if (declaration.isInline) {
@@ -229,12 +187,55 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
     }
 
     companion object {
-        private var IrFile.generatedAccessors: GeneratedAccessors? by irAttribute(followAttributeOwner = false)
-
         // TODO: Take into account visibilities of containers
         // TODO(KT-69565): It's not enough to just look at the visibility, since the declaration may be private inside a local class
         //   and accessed only within that class. For such cases we shouldn't generate an accessor.
         private val IrDeclarationWithVisibility.isAbiPrivate: Boolean
             get() = DescriptorVisibilities.isPrivate(visibility) || visibility == DescriptorVisibilities.LOCAL
+    }
+}
+
+private var IrFile.generatedAccessors: GeneratedAccessors? by irAttribute(followAttributeOwner = false)
+
+private class GeneratedAccessors {
+    private val accessors = HashMap<IrFunction, GeneratedAccessor>()
+    private var frozen = false
+
+
+    fun memoize(accessor: IrFunction, targetSymbol: IrSymbol, inlineFunction: IrFunction) {
+        check(!frozen) { "An attempt to generate an accessor after all accessors have been already added to their containers" }
+        accessors.getOrPut(accessor) { GeneratedAccessor(accessor, targetSymbol) }.inlineFunctions += inlineFunction
+    }
+
+    fun freezeAndGetAccessors(): Collection<GeneratedAccessor> {
+        check(!frozen) { "An attempt to add the generated accessors to their containers once again" }
+        frozen = true
+        return accessors.values
+    }
+}
+
+/**
+ * @property accessor The generated synthetic accessor.
+ * @property targetSymbol The symbol of a private declaration that this accessor wraps.
+ * @property inlineFunctions All inline functions where the accessor is used.
+ */
+private class GeneratedAccessor(
+    val accessor: IrFunction,
+    val targetSymbol: IrSymbol
+) {
+    val inlineFunctions: MutableSet<IrFunction> = hashSetOf()
+
+    fun computeNarrowedVisibility(): DescriptorVisibility {
+        for (inlineFunction in inlineFunctions) {
+            when (val visibility = inlineFunction.visibility) {
+                DescriptorVisibilities.PUBLIC, DescriptorVisibilities.PROTECTED -> return DescriptorVisibilities.PUBLIC
+                DescriptorVisibilities.INTERNAL -> if (inlineFunction.isPublishedApi()) return DescriptorVisibilities.PUBLIC
+                else -> irError("Unexpected visibility of inline function: $visibility") {
+                    withIrEntry("inlineFunction", inlineFunction)
+                }
+            }
+        }
+
+        return DescriptorVisibilities.INTERNAL
     }
 }

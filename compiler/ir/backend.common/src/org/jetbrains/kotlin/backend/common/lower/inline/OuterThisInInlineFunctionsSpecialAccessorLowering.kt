@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 class OuterThisInInlineFunctionsSpecialAccessorLowering(
     context: CommonBackendContext,
@@ -39,23 +40,6 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(
      */
     private val generatePublicAccessors: Boolean = false
 ) : FileLoweringPass {
-
-    private class GeneratedOuterThisAccessors {
-        private val accessors = HashSet<IrSimpleFunction>()
-        private var frozen = false
-
-        fun memoize(accessor: IrSimpleFunction) {
-            check(!frozen) { "An attempt to generate an accessor after all accessors have been already added to their containers" }
-            accessors += accessor
-        }
-
-        fun freezeAndGetAccessors(): Collection<IrSimpleFunction> {
-            check(!frozen) { "An attempt to add the generated accessors to their containers once again" }
-            frozen = true
-            return accessors
-        }
-    }
-
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
     override fun lower(irFile: IrFile) {
@@ -138,8 +122,7 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(
     }
 
     private inner class Transformer(irFile: IrFile) : IrElementTransformer<TransformerData?> {
-        val generatedOuterThisAccessors = irFile.generatedOuterThisAccessors
-            ?: GeneratedOuterThisAccessors().also { irFile.generatedOuterThisAccessors = it }
+        val generatedOuterThisAccessors = irFile::generatedOuterThisAccessors.getOrSetIfNull(::GeneratedOuterThisAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
             val newData = if (declaration.isInline) TransformerData(declaration) else data
@@ -190,8 +173,22 @@ class OuterThisInInlineFunctionsSpecialAccessorLowering(
             }
         }
     }
+}
 
-    companion object {
-        private var IrFile.generatedOuterThisAccessors: GeneratedOuterThisAccessors? by irAttribute(followAttributeOwner = false)
+private var IrFile.generatedOuterThisAccessors: GeneratedOuterThisAccessors? by irAttribute(followAttributeOwner = false)
+
+private class GeneratedOuterThisAccessors {
+    private val accessors = HashSet<IrSimpleFunction>()
+    private var frozen = false
+
+    fun memoize(accessor: IrSimpleFunction) {
+        check(!frozen) { "An attempt to generate an accessor after all accessors have been already added to their containers" }
+        accessors += accessor
+    }
+
+    fun freezeAndGetAccessors(): Collection<IrSimpleFunction> {
+        check(!frozen) { "An attempt to add the generated accessors to their containers once again" }
+        frozen = true
+        return accessors
     }
 }
