@@ -1,4 +1,5 @@
 // one.MyEnumClass
+// WITH_STDLIB
 
 package one
 

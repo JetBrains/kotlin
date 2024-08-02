@@ -1,4 +1,5 @@
 // test.AnnotatedParameterInEnumConstructor
+// WITH_STDLIB
 package test
 
 annotation class Anno(val x: String)
