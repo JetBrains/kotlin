@@ -9,6 +9,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
 internal fun Provider<Boolean>.nativeDaemonEntryPoint() = map { useXcodeMessageStyle ->
@@ -42,3 +43,5 @@ internal fun nativeExecSystemProperties(
 internal val nativeExecLLVMEnvironment = mapOf<String, String>(
     "LIBCLANG_DISABLE_CRASH_RECOVERY" to "1"
 )
+
+internal val ObjectFactory.nativeMainClass get() = property("org.jetbrains.kotlin.cli.utilities.MainKt")

@@ -50,7 +50,7 @@ private fun ObjectFactory.kotlinToolSpec(
 ) = KotlinNativeToolRunner.ToolSpec(
     displayName = property("konanc"),
     optionalToolName = property("konanc"),
-    mainClass = property("org.jetbrains.kotlin.cli.utilities.MainKt"),
+    mainClass = nativeMainClass,
     daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
     classpath = nativeCompilerClasspath(kotlinNativeCompilerJar, actualNativeHomeDirectory),
     jvmArgs = listProperty<String>().value(jvmArgs),
