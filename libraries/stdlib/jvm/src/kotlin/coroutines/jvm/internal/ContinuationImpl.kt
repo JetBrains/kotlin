@@ -8,6 +8,7 @@ package kotlin.coroutines.jvm.internal
 import java.io.Serializable
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.probeCoroutineResumed
 import kotlin.jvm.internal.FunctionBase
 import kotlin.jvm.internal.Reflection
 
