@@ -84,6 +84,7 @@ open class FunctionInlining(
     private val inlineFunctionResolver: InlineFunctionResolver,
     private val insertAdditionalImplicitCasts: Boolean = false,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
+    private val produceOuterThisFields: Boolean = true,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -130,7 +131,8 @@ open class FunctionInlining(
             expression, actualCallee, currentScope ?: containerScope!!, parent,
             context,
             inlineFunctionResolver,
-            insertAdditionalImplicitCasts
+            insertAdditionalImplicitCasts,
+            produceOuterThisFields
         )
         return inliner.inline().markAsRegenerated()
     }
@@ -159,7 +161,8 @@ open class FunctionInlining(
         val parent: IrDeclarationParent?,
         val context: CommonBackendContext,
         private val inlineFunctionResolver: InlineFunctionResolver,
-        private val insertAdditionalImplicitCasts: Boolean = false,
+        private val insertAdditionalImplicitCasts: Boolean,
+        private val produceOuterThisFields: Boolean
     ) {
         private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
@@ -478,6 +481,8 @@ open class FunctionInlining(
 
         private fun ParameterToArgument.andAllOuterClasses(): List<ParameterToArgument> {
             val allParametersReplacements = mutableListOf(this)
+
+            if (!produceOuterThisFields) return allParametersReplacements
 
             var currentThisSymbol = parameter.symbol
             var parameterClassDeclaration = parameter.type.classifierOrNull?.owner as? IrClass ?: return allParametersReplacements
