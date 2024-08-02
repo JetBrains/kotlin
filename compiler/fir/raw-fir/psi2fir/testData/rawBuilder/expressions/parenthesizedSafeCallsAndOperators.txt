@@ -4,8 +4,8 @@ FILE: parenthesizedSafeCallsAndOperators.kt
         arg#?.{ $subj$.alias#.set#(IntegerLiteral(42), String()) }
         Unit
         arg#?.{ +=($subj$.alias#, String()) }
-        arg#?.{ $subj$.alias# }++
-        ++arg#?.{ $subj$.alias# }
+        arg#?.{ $subj$.alias#++ }
+        arg#?.{ ++$subj$.alias# }
         arg#?.{ $subj$.alias#(String()) }
         arg#?.{ ArraySet:[$subj$.alias#.get#(IntegerLiteral(42)) += String()] }
         Unit

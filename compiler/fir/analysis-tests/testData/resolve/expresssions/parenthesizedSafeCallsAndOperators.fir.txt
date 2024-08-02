@@ -78,19 +78,17 @@ FILE: parenthesizedSafeCallsAndOperators.kt
         R|<local>/arg|?.{ $subj$.R|/Foo.alias| }.R|/set|(Int(42), R|<local>/arg|)
         Unit
         R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.plusAssign|(String()) }
-        R|<local>/arg|?.{  {
-            lval <receiver>: R|Foo| = $subj$
-            lval <unary>: R|Foo| = R|<local>/<receiver>|.R|/Foo.alias|
-            R|<local>/<receiver>|.R|/Foo.alias| = R|<local>/<unary>|.R|/Foo.inc|()
+         {
+            lval <unary>: R|Foo?| = R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
+            R|<local>/arg|?.{ $subj$.R|/Foo.alias| } = R|<local>/<unary>|.R|/inc|()
             R|<local>/<unary>|
         }
-         }
-        R|<local>/arg|?.{  {
-            lval <receiver>: R|Foo| = $subj$
-            R|<local>/<receiver>|.R|/Foo.alias| = R|<local>/<receiver>|.R|/Foo.alias|.R|/Foo.inc|()
-            R|<local>/<receiver>|.R|/Foo.alias|
+
+         {
+            R|<local>/arg|?.{ $subj$.R|/Foo.alias| } = R|<local>/arg|?.{ $subj$.R|/Foo.alias| }.R|/inc|()
+            R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
         }
-         }
+
         R|<local>/arg|?.{ $subj$.R|/Foo.alias| }.R|/invoke|(String())
         R|<local>/arg|?.{ $subj$.R|/Foo.alias| }.R|/get|(Int(42)).R|/plusAssign|(String())
         Unit

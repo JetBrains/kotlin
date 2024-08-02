@@ -623,7 +623,10 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             operationName = callName
             isPrefix = prefix
             expression = unwrappedReceiver.convert()
-        }
+        }.pullUpSafeCallIfNecessary(
+            obtainReceiver = FirIncrementDecrementExpression::expression,
+            replaceReceiver = FirIncrementDecrementExpression::replaceExpression
+        )
     }
 
 

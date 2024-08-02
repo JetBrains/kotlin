@@ -1,7 +1,7 @@
 FILE: safeCallsImplicitWithInvoke.kt
     public? final? fun foo(): R|kotlin/Unit| {
         arg#?.{ $subj$.alias# }
-        arg#?.{ $subj$.alias# }++
+        arg#?.{ $subj$.alias#++ }
         arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)) }
         arg#?.{  {
             lval <array>: <implicit> = $subj$.alias#
@@ -12,11 +12,11 @@ FILE: safeCallsImplicitWithInvoke.kt
         }
          }
         arg#?.{ $subj$.alias#(String()) }
-        arg#?.{ $subj$.alias#(String()) }++
+        arg#?.{ $subj$.alias#(String())++ }
         arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)).invoke#(String()) }
-        arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)).invoke#(String()) }++
+        arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)).invoke#(String())++ }
         arg#?.{ $subj$.bar#() }
-        arg#?.{ $subj$.bar#() }++
+        arg#?.{ $subj$.bar#()++ }
         arg#?.{ $subj$.bar#().get#(IntegerLiteral(42)) }
         arg#?.{  {
             lval <array>: <implicit> = $subj$.bar#()
@@ -27,11 +27,11 @@ FILE: safeCallsImplicitWithInvoke.kt
         }
          }
         arg#?.{ $subj$.bar#().invoke#(String()) }
-        arg#?.{ $subj$.bar#().invoke#(String()) }++
+        arg#?.{ $subj$.bar#().invoke#(String())++ }
         arg#?.{ $subj$.bar#().get#(IntegerLiteral(42)).invoke#(String()) }
-        arg#?.{ $subj$.bar#().get#(IntegerLiteral(42)).invoke#(String()) }++
+        arg#?.{ $subj$.bar#().get#(IntegerLiteral(42)).invoke#(String())++ }
         arg#?.{ $subj$.baz#().invoke#().invoke#() }
-        arg#?.{ $subj$.baz#().invoke#().invoke#() }++
+        arg#?.{ $subj$.baz#().invoke#().invoke#()++ }
         arg#?.{ $subj$.baz#().invoke#().invoke#().get#(IntegerLiteral(42)) }
         arg#?.{  {
             lval <array>: <implicit> = $subj$.baz#().invoke#().invoke#()
@@ -42,7 +42,7 @@ FILE: safeCallsImplicitWithInvoke.kt
         }
          }
         arg#?.{ $subj$.baz#().invoke#().invoke#().invoke#(String()) }
-        arg#?.{ $subj$.baz#().invoke#().invoke#().invoke#(String()) }++
+        arg#?.{ $subj$.baz#().invoke#().invoke#().invoke#(String())++ }
         arg#?.{ $subj$.baz#().invoke#().invoke#().get#(IntegerLiteral(42)).invoke#(String()) }
-        arg#?.{ $subj$.baz#().invoke#().invoke#().get#(IntegerLiteral(42)).invoke#(String()) }++
+        arg#?.{ $subj$.baz#().invoke#().invoke#().get#(IntegerLiteral(42)).invoke#(String())++ }
     }

@@ -622,10 +622,19 @@ fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source:
     }
 }
 
+fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression =
+    pullUpSafeCallIfNecessary(
+        FirQualifiedAccessExpression::explicitReceiver,
+        FirQualifiedAccessExpression::replaceExplicitReceiver
+    )
+
 // Turns (a?.b).f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
 // Other patterns remain unchanged
-fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression {
-    val safeCall = explicitReceiver as? FirSafeCallExpression ?: return this
+fun <F : FirExpression> F.pullUpSafeCallIfNecessary(
+    obtainReceiver: F.() -> FirExpression?,
+    replaceReceiver: F.(FirExpression) -> Unit,
+): FirExpression {
+    val safeCall = obtainReceiver() as? FirSafeCallExpression ?: return this
     val safeCallSelector = safeCall.selector as? FirExpression ?: return this
 
     val safeCallSourceElement = safeCall.source ?: error("Nullable source for safe call")
@@ -634,7 +643,7 @@ fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression {
         return this
     }
 
-    replaceExplicitReceiver(safeCallSelector)
+    replaceReceiver(safeCallSelector)
     safeCall.replaceSelector(this)
 
     return safeCall

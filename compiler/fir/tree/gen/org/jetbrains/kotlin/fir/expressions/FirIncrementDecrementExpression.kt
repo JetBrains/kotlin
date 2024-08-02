@@ -39,5 +39,7 @@ abstract class FirIncrementDecrementExpression : FirExpression() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun replaceExpression(newExpression: FirExpression)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirIncrementDecrementExpression
 }

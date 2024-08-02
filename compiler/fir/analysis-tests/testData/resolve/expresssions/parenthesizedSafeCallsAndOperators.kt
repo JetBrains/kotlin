@@ -29,8 +29,8 @@ fun huh(arg: Foo?) {
     (arg?.alias)[42] 
     (arg?.alias)[42] = arg
     (arg?.alias) += "" 
-    (arg?.alias)++ 
-    ++(arg?.alias) 
+    (arg?.<!VARIABLE_EXPECTED!>alias<!>)++
+    ++(arg?.<!VARIABLE_EXPECTED!>alias<!>)
     (arg?.alias)("") 
     (arg?.alias)[42] += ""
     (arg?.alias[42]) += ""
