@@ -77,7 +77,7 @@ FILE: parenthesizedSafeCallsAndOperators.kt
         R|<local>/arg|?.{ $subj$.R|/Foo.alias| }.R|/get|(Int(42))
         R|<local>/arg|?.{ $subj$.R|/Foo.alias| }.R|/set|(Int(42), R|<local>/arg|)
         Unit
-        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.plusAssign|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias| }.R|/plusAssign|(String())
          {
             lval <unary>: R|Foo?| = R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
             R|<local>/arg|?.{ $subj$.R|/Foo.alias| } = R|<local>/<unary>|.R|/inc|()
@@ -92,21 +92,15 @@ FILE: parenthesizedSafeCallsAndOperators.kt
         R|<local>/arg|?.{ $subj$.R|/Foo.alias| }.R|/invoke|(String())
         R|<local>/arg|?.{ $subj$.R|/Foo.alias| }.R|/get|(Int(42)).R|/plusAssign|(String())
         Unit
-        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)).R|/Foo.plusAssign|(String()) }
+        R|<local>/arg|?.{ $subj$.R|/Foo.alias|.R|/Foo.get|(Int(42)) }.R|/plusAssign|(String())
         Unit
-        R|<local>/arg|?.{  {
-            lval <array>: R|Foo| = $subj$.R|/Foo.alias|
-            lval <index_0>: R|kotlin/Int| = Int(42)
-            lval <unary>: R|Foo| = R|<local>/<array>|.R|/Foo.get|(R|<local>/<index_0>|)
-            R|<local>/<array>|.R|/Foo.set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|/Foo.inc|())
-            R|<local>/<unary>|
-        }
-         }
-        R|<local>/arg|?.{  {
-            lval <array>: R|Foo| = $subj$.R|/Foo.alias|
-            lval <index_0>: R|kotlin/Int| = Int(42)
-            R|<local>/<array>|.R|/Foo.set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/Foo.get|(R|<local>/<index_0>|).R|/Foo.inc|())
-            R|<local>/<array>|.R|/Foo.get|(R|<local>/<index_0>|)
-        }
-         }
+        lval <array>: R|Foo?| = R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
+        lval <index_0>: R|kotlin/Int| = Int(42)
+        lval <unary>: R|Foo?| = R|<local>/<array>|.R|/get|(R|<local>/<index_0>|)
+        R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<unary>|.R|/inc|())
+        R|<local>/<unary>|
+        lval <array>: R|Foo?| = R|<local>/arg|?.{ $subj$.R|/Foo.alias| }
+        lval <index_0>: R|kotlin/Int| = Int(42)
+        R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/get|(R|<local>/<index_0>|).R|/inc|())
+        R|<local>/<array>|.R|/get|(R|<local>/<index_0>|)
     }

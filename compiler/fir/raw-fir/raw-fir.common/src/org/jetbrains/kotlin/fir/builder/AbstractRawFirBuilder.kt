@@ -686,8 +686,12 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             else -> error("Unexpected operator: $callName")
         }
         val sourceKind = sourceKindForIncOrDec(callName, prefix)
+        val receiverSourceElement = receiver.toFirSourceElement()
         return buildBlockPossiblyUnderSafeCall(
-            array, convert, receiver.toFirSourceElement(),
+            array, convert,
+            // For (a?.b[3])++ and (a?.b)[3]++ we should not pull `++` inside safe call
+            isChildInParentheses = receiverSourceElement.isChildInParentheses() || array?.toFirSourceElement()?.isChildInParentheses() == true,
+            sourceElementForError = receiverSourceElement,
         ) { arrayReceiver ->
             val baseSource = wholeExpression?.toFirSourceElement()
             val desugaredSource = baseSource?.fakeElement(sourceKind)
@@ -795,6 +799,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     private fun buildBlockPossiblyUnderSafeCall(
         receiver: T?,
         convert: T.() -> FirExpression,
+        isChildInParentheses: Boolean,
         sourceElementForError: KtSourceElement?,
         init: FirBlockBuilder.(receiver: FirExpression) -> Unit = {},
     ): FirExpression {
@@ -803,7 +808,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             diagnostic = ConeSyntaxDiagnostic("No receiver expression")
         }
 
-        return buildPossiblyUnderSafeCall(receiverFir, sourceElementForError) { actualReceiver ->
+        return buildPossiblyUnderSafeCall(receiverFir, isChildInParentheses, sourceElementForError) { actualReceiver ->
             buildBlock { init(actualReceiver) }
         } as FirExpression
     }
@@ -814,10 +819,14 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
     // Otherwise just returns buildSelector(FIR<receiver>)
     private fun buildPossiblyUnderSafeCall(
         receiver: FirExpression,
+        // In most cases, the parameter is equal to `receiver.source.isChildInParentheses()`,
+        // besides the case with `generateIncrementOrDecrementBlockForArrayAccess`
+        isReceiverIsWrappedWithParentheses: Boolean,
         sourceElementForErrorIfSafeCallSelectorIsNotExpression: KtSourceElement?,
         buildSelector: (receiver: FirExpression) -> FirStatement,
     ): FirStatement {
-        if (receiver is FirSafeCallExpression) {
+        // For (a?.b*).f() we would not pull `f` under a safe call
+        if (receiver is FirSafeCallExpression && !isReceiverIsWrappedWithParentheses) {
             receiver.replaceSelector(
                 buildSelector(
                     receiver.selector as? FirExpression ?: buildErrorExpression {
@@ -866,6 +875,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     val receiver = unwrappedLhs.convert()
                     val result = buildPossiblyUnderSafeCall(
                         receiver,
+                        // For (a?.b[3]) += 1 we don't want to pull `+=` under a safe call
+                        isReceiverIsWrappedWithParentheses = unwrappedLhs.toFirSourceElement().isChildInParentheses(),
                         sourceElementForErrorIfSafeCallSelectorIsNotExpression = receiver.source,
                     ) { actualReceiver ->
                         generateIndexedAccessAugmentedAssignment(
@@ -898,6 +909,8 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
 
             return buildPossiblyUnderSafeCall(
                 receiverToUse,
+                // For (a?.b) += 1 we don't want to pull `+=` under a safe call
+                isReceiverIsWrappedWithParentheses = lhsReceiver?.isChildInParentheses() == true,
                 sourceElementForErrorIfSafeCallSelectorIsNotExpression = null
             ) { actualReceiver ->
                 buildAugmentedAssignment {
@@ -966,7 +979,30 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         annotations: List<FirAnnotation>,
         rhs: T?,
         convert: T.() -> FirExpression,
-    ): FirIndexedAccessAugmentedAssignment {
+    ): FirStatement {
+        // For case of LHS is a parenthesized safe call, like (a?.b[3]) += 1
+        // Here, we explicitly declare that it can't be desugared as `a?.{ b[3] = b[3] + 1 }` or
+        // as some other sort of `plus` + set, thus we leave only `plusAssign` form.
+        if (receiver is FirSafeCallExpression) {
+            return buildFunctionCall {
+                this.source = source
+                explicitReceiver = receiver
+                argumentList = buildUnaryArgumentList(
+                    rhs?.convert() ?: buildErrorExpression(
+                        null,
+                        ConeSyntaxDiagnostic("No value for array set")
+                    )
+                )
+
+                calleeReference = buildSimpleNamedReference {
+                    this.source = baseSource
+                    this.name = FirOperationNameConventions.ASSIGNMENTS.getValue(operation)
+                }
+                origin = FirFunctionCallOrigin.Operator
+                this.annotations.addAll(annotations)
+            }
+        }
+
         require(receiver is FirFunctionCall) {
             "Array access should be desugared to a function call, but $receiver is found"
         }

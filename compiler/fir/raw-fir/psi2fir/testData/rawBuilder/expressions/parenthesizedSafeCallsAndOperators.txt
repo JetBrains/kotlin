@@ -27,27 +27,21 @@ FILE: parenthesizedSafeCallsAndOperators.kt
         arg#?.{ $subj$.alias# }.get#(IntegerLiteral(42))
         arg#?.{ $subj$.alias# }.set#(IntegerLiteral(42), String())
         Unit
-        arg#?.{ +=($subj$.alias#, String()) }
+        +=(arg#?.{ $subj$.alias# }, String())
         arg#?.{ $subj$.alias# }++
         ++arg#?.{ $subj$.alias# }
         arg#?.{ $subj$.alias# }.invoke#(String())
         ArraySet:[arg#?.{ $subj$.alias# }.get#(IntegerLiteral(42)) += String()]
         Unit
-        arg#?.{ ArraySet:[$subj$.alias#.get#(IntegerLiteral(42)) += String()] }
+        arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)) }.plusAssign#(String())
         Unit
-        arg#?.{  {
-            lval <array>: <implicit> = $subj$.alias#
-            lval <index_0>: <implicit> = IntegerLiteral(42)
-            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
-            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
-            R|<local>/<unary>|
-        }
-         }
-        arg#?.{  {
-            lval <array>: <implicit> = $subj$.alias#
-            lval <index_0>: <implicit> = IntegerLiteral(42)
-            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
-            R|<local>/<array>|.get#(R|<local>/<index_0>|)
-        }
-         }
+        lval <array>: <implicit> = arg#?.{ $subj$.alias# }
+        lval <index_0>: <implicit> = IntegerLiteral(42)
+        lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
+        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
+        R|<local>/<unary>|
+        lval <array>: <implicit> = arg#?.{ $subj$.alias# }
+        lval <index_0>: <implicit> = IntegerLiteral(42)
+        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+        R|<local>/<array>|.get#(R|<local>/<index_0>|)
     }

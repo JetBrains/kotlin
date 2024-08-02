@@ -56,17 +56,17 @@ fun huh(arg: Foo?) {
     (arg?.alias)[42] = arg
     checkResult("set: extension")
     (arg?.alias) += ""
-    checkResult("plusAssign: member")
+    checkResult("plusAssign: extension")
     (arg?.alias)("")
     checkResult("invoke: extension")
     (arg?.alias)[42] += ""
     checkResult("plusAssign: extension")
     (arg?.alias[42]) += ""
-    checkResult("plusAssign: member")
+    checkResult("plusAssign: extension")
     (arg?.alias[42])++
-    checkResult("set: member")
+    checkResult("set: extension")
     ++(arg?.alias[42])
-    checkResult("get: member")
+    checkResult("get: extension")
 }
 
 fun box(): String {

@@ -628,7 +628,7 @@ fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression =
         FirQualifiedAccessExpression::replaceExplicitReceiver
     )
 
-// Turns (a?.b).f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
+// Turns a?.b.f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
 // Other patterns remain unchanged
 fun <F : FirExpression> F.pullUpSafeCallIfNecessary(
     obtainReceiver: F.() -> FirExpression?,
@@ -637,17 +637,22 @@ fun <F : FirExpression> F.pullUpSafeCallIfNecessary(
     val safeCall = obtainReceiver() as? FirSafeCallExpression ?: return this
     val safeCallSelector = safeCall.selector as? FirExpression ?: return this
 
-    val safeCallSourceElement = safeCall.source ?: error("Nullable source for safe call")
-    check(safeCallSourceElement.elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION)
-    if (safeCallSourceElement.treeStructure.getParent(safeCallSourceElement.lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED) {
-        return this
-    }
+    // (a?.b).f and `(a?.b)[3]` should be left as is
+    if (safeCall.isChildInParentheses()) return this
 
     replaceReceiver(safeCallSelector)
     safeCall.replaceSelector(this)
 
     return safeCall
 }
+
+fun FirStatement.isChildInParentheses(): Boolean {
+    val sourceElement = source ?: error("Nullable source")
+    return sourceElement.isChildInParentheses()
+}
+
+fun KtSourceElement.isChildInParentheses() =
+    treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
 
 fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =
     mapNotNull {
