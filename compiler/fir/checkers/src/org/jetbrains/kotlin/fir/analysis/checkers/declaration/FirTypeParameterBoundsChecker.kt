@@ -145,8 +145,6 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
     }
 
     private fun checkConflictingBounds(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.bounds.size < 2) return
-
         fun anyConflictingTypes(types: List<ConeKotlinType>): Boolean {
             types.forEach { type ->
                 if (!type.canHaveSubtypesAccordingToK1(context.session)) {
@@ -160,7 +158,10 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
             return false
         }
 
-        if (anyConflictingTypes(declaration.symbol.resolvedBounds.map { it.coneType })) {
+        if (
+            declaration.bounds.singleOrNull()?.coneType?.isNothing == true ||
+            declaration.bounds.size >= 2 && anyConflictingTypes(declaration.symbol.resolvedBounds.map { it.coneType })
+        ) {
             reporter.reportOn(declaration.source, FirErrors.CONFLICTING_UPPER_BOUNDS, declaration.symbol, context)
         }
     }
