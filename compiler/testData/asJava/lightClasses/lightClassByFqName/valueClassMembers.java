@@ -12,4 +12,19 @@ public final class ValueClass /* pack.ValueClass*/ {
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
   public int hashCode();//  hashCode()
+
+  public static final class Companion /* pack.ValueClass.Companion*/ {
+    private  Companion();//  .ctor()
+
+    public final int getCompanionProperty();//  getCompanionProperty()
+
+    public final void companionFunction();//  companionFunction()
+  }
+
+  public static final class RegularObject /* pack.ValueClass.RegularObject*/ {
+    @org.jetbrains.annotations.NotNull()
+    public static final @org.jetbrains.annotations.NotNull() pack.ValueClass.RegularObject INSTANCE;
+
+    private  RegularObject();//  .ctor()
+  }
 }
