@@ -1192,6 +1192,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("nothingBound.kt")
+    public void testNothingBound() {
+      runTest("compiler/testData/diagnostics/tests/nothingBound.kt");
+    }
+
+    @Test
     @TestMetadata("Nullability.kt")
     public void testNullability() {
       runTest("compiler/testData/diagnostics/tests/Nullability.kt");
