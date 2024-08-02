@@ -202,7 +202,7 @@ private const val objcName = "nonLiteralArgsObjC"
 
 @ObjCName(
     <!NON_LITERAL_OBJC_NAME_ARG!>objcName<!>,
-    <!NON_LITERAL_OBJC_NAME_ARG!>"nonLiteralArgs" + "Swift"<!>,
+    "nonLiteralArgs" + "Swift",
     <!NON_LITERAL_OBJC_NAME_ARG!>exact<!>
 )
 val nonLiteralArgs: Int = 0
