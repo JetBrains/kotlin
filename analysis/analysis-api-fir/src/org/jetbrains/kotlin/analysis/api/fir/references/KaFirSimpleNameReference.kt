@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.references
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseSimpleNameReference
+import org.jetbrains.kotlin.analysis.api.impl.base.references.KotlinReferenceService
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -22,6 +24,7 @@ internal class KaFirSimpleNameReference(
     expression: KtSimpleNameExpression,
     val isRead: Boolean,
 ) : KaBaseSimpleNameReference(expression), KaFirReference {
+
     private val isAnnotationCall: Boolean
         get() {
             val ktUserType = expression.parent as? KtUserType ?: return false
@@ -75,8 +78,10 @@ internal class KaFirSimpleNameReference(
         }
     }
 
+
+    @OptIn(KaPlatformInterface::class)
     override fun canBeReferenceTo(candidateTarget: PsiElement): Boolean {
-        return true // TODO
+        return KotlinReferenceService.getInstance().canBeReferenceTo(this, candidateTarget)
     }
 
     // Extension point used for deprecated Android Extensions. Not going to implement for FIR.
