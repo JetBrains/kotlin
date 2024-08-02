@@ -6,12 +6,14 @@
       {
         "name": "jsApiElements",
         "sourceSet": [
+          "commonJsWasmMain",
           "commonMain"
         ]
       },
       {
         "name": "jsRuntimeElements",
         "sourceSet": [
+          "commonJsWasmMain",
           "commonMain"
         ]
       },
@@ -30,29 +32,41 @@
       {
         "name": "wasmJsApiElements",
         "sourceSet": [
+          "commonJsWasmMain",
           "commonMain"
         ]
       },
       {
         "name": "wasmJsRuntimeElements",
         "sourceSet": [
+          "commonJsWasmMain",
           "commonMain"
         ]
       },
       {
         "name": "wasmWasiApiElements",
         "sourceSet": [
+          "commonJsWasmMain",
           "commonMain"
         ]
       },
       {
         "name": "wasmWasiRuntimeElements",
         "sourceSet": [
+          "commonJsWasmMain",
           "commonMain"
         ]
       }
     ],
     "sourceSets": [
+      {
+        "name": "commonJsWasmMain",
+        "dependsOn": [
+          "commonMain"
+        ],
+        "moduleDependency": [],
+        "binaryLayout": "klib"
+      },
       {
         "name": "commonMain",
         "dependsOn": [],
