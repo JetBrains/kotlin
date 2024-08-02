@@ -416,7 +416,13 @@ kotlin {
             kotlin.srcDir("jvm/testLongRunning")
         }
 
+        val commonJsWasmMain by creating {
+            dependsOn(commonMain.get())
+            kotlin.srcDir("js-wasm/src")
+        }
+
         val jsMain by getting {
+            dependsOn(commonJsWasmMain)
             val prepareJsIrMainSources by tasks.registering(Sync::class)
             kotlin {
                 srcDir(prepareJsIrMainSources.requiredForImport())
@@ -492,6 +498,7 @@ kotlin {
         }
 
         val wasmCommonMain by creating {
+            dependsOn(commonJsWasmMain)
             dependsOn(nativeWasmMain)
             val prepareWasmBuiltinSources by tasks.registering(Sync::class)
             kotlin {

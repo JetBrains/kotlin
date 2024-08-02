@@ -86,6 +86,11 @@ val commonMainCollectionSources by task<Sync> {
     into(layout.buildDirectory.dir("commonMainCollectionSources"))
 }
 
+val commonJsWasmMainSources by task<Sync> {
+    from("$rootDir/libraries/stdlib/js-wasm/src")
+    into(layout.buildDirectory.dir("commonJsWasmMainSources"))
+}
+
 val jsMainSources by task<Sync> {
     dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
     val jsDir = file("$rootDir/libraries/stdlib/js")
@@ -145,7 +150,12 @@ kotlin {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
             kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
         }
+        val commonJsWasmMain by creating {
+            dependsOn(commonMain.get())
+            kotlin.srcDir(files(commonJsWasmMainSources.map { it.destinationDir }))
+        }
         named("jsMain") {
+            dependsOn(commonJsWasmMain)
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
             kotlin.srcDir("src")
         }

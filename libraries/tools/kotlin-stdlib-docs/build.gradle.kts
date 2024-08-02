@@ -136,6 +136,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 displayName.set("JS")
                 dependsOn("common")
 
+                sourceRoots.from("$kotlin_stdlib_dir/js-wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/generated")
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
                 // kotlinx and org.w3c might become excluded in future
@@ -193,6 +194,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
                 displayName.set("Wasm-JS")
                 dependsOn("common")
+                sourceRoots.from("$kotlin_stdlib_dir/js-wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/builtins")
@@ -208,6 +210,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
                 displayName.set("Wasm-WASI")
                 dependsOn("common")
+                sourceRoots.from("$kotlin_stdlib_dir/js-wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/builtins")
