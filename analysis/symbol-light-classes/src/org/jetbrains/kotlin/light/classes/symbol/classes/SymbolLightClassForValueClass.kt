@@ -98,9 +98,16 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
         withClassSymbol { classSymbol ->
-            val propertySymbol = propertySymbol(classSymbol)
-            val field = propertySymbol?.let { createField(propertySymbol, SymbolLightField.FieldNameGenerator(), isStatic = false) }
-            listOfNotNull(field)
+            buildList {
+                val nameGenerator = SymbolLightField.FieldNameGenerator()
+                addCompanionObjectFieldIfNeeded(this, classSymbol)
+
+                addFieldsFromCompanionIfNeeded(this, classSymbol, nameGenerator)
+
+                propertySymbol(classSymbol)?.let {
+                    createAndAddField(it, nameGenerator, isStatic = false, result = this)
+                }
+            }
         }
     }
 

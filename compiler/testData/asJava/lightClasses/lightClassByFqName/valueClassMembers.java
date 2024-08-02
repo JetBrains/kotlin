@@ -4,6 +4,14 @@ public final class ValueClass /* pack.ValueClass*/ {
   private final @org.jetbrains.annotations.NotNull() pack.OriginalClass original;
 
   @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() pack.ValueClass.Companion Companion;
+
+  @org.jetbrains.annotations.Nullable()
+  private static final @org.jetbrains.annotations.Nullable() pack.OriginalClass companionPropertyWithValueClassType = null /* initializer type: null */;
+
+  private static final int companionProperty = 0 /* initializer type: int */;
+
+  @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 
   @org.jetbrains.annotations.NotNull()
