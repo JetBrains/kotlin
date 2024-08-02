@@ -208,7 +208,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
 ): Continuation<Unit> {
     return object : CoroutineImpl(completion as Continuation<Any?>) {
         override fun doResume(): Any? {
-            if (exception != null) throw exception
+            exception?.let { throw it }
             return block()
         }
     }
@@ -219,8 +219,7 @@ private fun <T> createSimpleCoroutineForSuspendFunction(
 ): Continuation<T> {
     return object : CoroutineImpl(completion as Continuation<Any?>) {
         override fun doResume(): Any? {
-            @Suppress("UnsafeCastFromDynamic")
-            if (exception != null) throw exception
+            exception?.let { throw it }
             return result
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,14 +8,14 @@ package kotlin.coroutines
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 @SinceKotlin("1.3")
-@JsName("CoroutineImpl")
+@kotlin.js.JsName("CoroutineImpl")
 internal abstract class CoroutineImpl(
     private val resultContinuation: Continuation<Any?>?
 ) : InterceptedCoroutine(), Continuation<Any?> {
     protected var state = 0
     protected var exceptionState = 0
-    protected var result: dynamic = null
-    protected var exception: dynamic = null
+    protected var result: Any? = null
+    protected var exception: Throwable? = null
     protected var finallyPath: Array<Int>? = null
 
     private val _context: CoroutineContext? = resultContinuation?.context
@@ -38,15 +38,18 @@ internal abstract class CoroutineImpl(
                     exception = currentException
                 }
 
-                try {
-                    val outcome = doResume()
-                    if (outcome === COROUTINE_SUSPENDED) return
-                    currentResult = outcome
-                    currentException = null
-                } catch (exception: dynamic) { // Catch all exceptions
-                    currentResult = null
-                    currentException = exception.unsafeCast<Throwable>()
-                }
+                tryCatchAll(
+                    tryBlock = {
+                        val outcome = doResume()
+                        if (outcome === COROUTINE_SUSPENDED) return
+                        currentResult = outcome
+                        currentException = null
+                    },
+                    catchBlock = { exception ->
+                        currentResult = null
+                        currentException = exception
+                    }
+                )
 
                 releaseIntercepted() // this state machine instance is terminating
 
