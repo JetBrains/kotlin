@@ -387,11 +387,30 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     }
 
     fun createSymbolLightAccessorMethod(accessor: KaPropertyAccessorSymbol): SymbolLightAccessorMethod {
+        // [KtFakeSourceElementKind.DelegatedPropertyAccessor] is not allowed as source PSI, e.g.,
+        //
+        //   val p by delegate(...)
+        //
+        // However, we also lose the source PSI of a custom property accessor, e.g.,
+        //
+        //   val p by delegate(...)
+        //     get() = ...
+        //
+        // We go upward to the property's source PSI and attempt to find/bind accessor's source PSI.
+        fun sourcePsiFromProperty(): KtPropertyAccessor? {
+            if (accessor.origin != KaSymbolOrigin.SOURCE) return null
+            val propertyPsi = declaration.psi as? KtProperty ?: return null
+            return if (accessor is KaPropertyGetterSymbol)
+                propertyPsi.getter
+            else
+                propertyPsi.setter
+        }
+
         val lightMemberOrigin = originalElement?.let {
             LightMemberOriginForDeclaration(
                 originalElement = it,
                 originKind = JvmDeclarationOriginKind.OTHER,
-                auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>()
+                auxiliaryOriginalElement = accessor.sourcePsiSafe<KtDeclaration>() ?: sourcePsiFromProperty()
             )
         }
 
