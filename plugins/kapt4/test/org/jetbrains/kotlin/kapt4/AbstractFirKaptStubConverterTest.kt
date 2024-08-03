@@ -1,19 +1,14 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt3.test.runners
+package org.jetbrains.kotlin.kapt4
 
 import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
-import org.jetbrains.kotlin.kapt3.test.JvmCompilerWithKaptFacade
-import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptEnvironmentConfigurator
-import org.jetbrains.kotlin.kapt3.test.KaptRegularExtensionForTestConfigurator
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
-import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -22,14 +17,14 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
-open class AbstractIrClassFileToSourceStubConverterTest : AbstractKotlinCompilerTest() {
+open class AbstractFirKaptStubConverterTest : AbstractKotlinCompilerTest() {
     init {
         doOpenInternalPackagesIfRequired()
     }
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
-            frontend = FrontendKinds.ClassicFrontend
+            frontend = FrontendKinds.FIR
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
@@ -43,14 +38,15 @@ open class AbstractIrClassFileToSourceStubConverterTest : AbstractKotlinCompiler
             ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
             ::KaptEnvironmentConfigurator,
-            ::KaptRegularExtensionForTestConfigurator,
+            ::Kapt4EnvironmentConfigurator,
         )
 
-        facadeStep(::JvmCompilerWithKaptFacade)
-        handlersStep(KaptContextBinaryArtifact.Kind) {
-            useHandlers(::ClassFileToSourceKaptStubHandler)
+        facadeStep(::Kapt4Facade)
+
+        handlersStep(Kapt4ContextBinaryArtifact.Kind) {
+            useHandlers(::Kapt4Handler)
         }
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useAfterAnalysisCheckers(::TemporaryKapt4Suppressor)
     }
 }

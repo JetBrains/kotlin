@@ -10,8 +10,8 @@ import com.sun.tools.javac.util.List
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.parseJavaFiles
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
+import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
-import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.getRealJavaFiles
@@ -26,7 +26,7 @@ abstract class BaseKaptHandler(testServices: TestServices) : AbstractKaptHandler
         generateNonExistentClass: Boolean
     ): List<JCTree.JCCompilationUnit> {
         val javaFiles = testServices.sourceFileProvider.getRealJavaFiles(module)
-        val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass)
+        val converter = KaptStubConverter(kaptContext, generateNonExistentClass)
 
         val kaptStubs = converter.convert()
         val convertedFiles = kaptStubs.mapIndexed { index, stub ->

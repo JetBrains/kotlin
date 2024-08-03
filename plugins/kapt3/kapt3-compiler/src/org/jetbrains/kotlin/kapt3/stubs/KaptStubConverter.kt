@@ -78,7 +78,7 @@ import javax.lang.model.element.ElementKind
 import kotlin.math.sign
 import com.sun.tools.javac.util.List as JavacList
 
-class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGeneration, val generateNonExistentClass: Boolean) {
+class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val generateNonExistentClass: Boolean) {
     private companion object {
         private const val VISIBILITY_MODIFIERS = (Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).toLong()
         private const val MODALITY_MODIFIERS = (Opcodes.ACC_FINAL or Opcodes.ACC_ABSTRACT).toLong()
@@ -147,7 +147,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             dumpDeclarationOrigins()
         }
 
-        if (done) error(ClassFileToSourceStubConverter::class.java.simpleName + " can convert classes only once")
+        if (done) error(KaptStubConverter::class.java.simpleName + " can convert classes only once")
         done = true
 
         val stubs = kaptContext.compiledClasses.mapNotNullTo(mutableListOf()) { convertTopLevelClass(it) }

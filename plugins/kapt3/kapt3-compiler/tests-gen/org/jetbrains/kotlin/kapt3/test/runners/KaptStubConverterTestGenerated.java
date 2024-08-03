@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/kapt3/kapt3-compiler/testData/converter")
 @TestDataPath("$PROJECT_ROOT")
-public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrClassFileToSourceStubConverterTest {
+public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTest {
   @Test
   @TestMetadata("abstractEnum.kt")
   public void testAbstractEnum() {

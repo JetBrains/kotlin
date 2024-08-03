@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 private typealias SubstitutionMap = Map<String, Pair<KtTypeParameter, KtTypeProjection>>
 
 class ErrorTypeCorrector(
-    private val converter: ClassFileToSourceStubConverter,
+    private val converter: KaptStubConverter,
     private val typeKind: TypeKind,
     file: KtFile
 ) {

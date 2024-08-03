@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKapt4ToolIntegrationTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
-import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrKotlinKaptContextTest
-import org.jetbrains.kotlin.kapt4.AbstractKotlinKapt4ContextTest
+import org.jetbrains.kotlin.kapt3.test.runners.AbstractKaptStubConverterTest
+import org.jetbrains.kotlin.kapt4.AbstractFirKaptStubConverterTest
 import org.jetbrains.kotlin.lombok.*
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
@@ -44,7 +44,10 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefBlackBoxCodegenTest
 import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefDiagnosticsTestBase
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlinx.atomicfu.*
+import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsFirTest
+import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
+import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmFirLightTreeTest
+import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
 
 
 private class ExcludePattern {
@@ -389,14 +392,14 @@ fun main(args: Array<String>) {
             testClass<AbstractIrKotlinKaptContextTest> {
                 model("kotlinRunner")
             }
-
-            testClass<AbstractIrClassFileToSourceStubConverterTest> {
+            testClass<AbstractKaptStubConverterTest> {
                 model("converter")
             }
         }
-        testGroup("plugins/kapt4/tests-gen", "plugins/kapt4/") {
-            testClass<AbstractKotlinKapt4ContextTest> {
-                model("../kapt3/kapt3-compiler/testData/converter")
+
+        testGroup("plugins/kapt4/tests-gen", "plugins/kapt3/kapt3-compiler/testData") {
+            testClass<AbstractFirKaptStubConverterTest> {
+                model("converter")
             }
         }
 
