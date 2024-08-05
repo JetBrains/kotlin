@@ -565,6 +565,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
       }
 
       @Test
+      @TestMetadata("unique_fun_call.kt")
+      public void testUnique_fun_call() {
+        runTest("plugins/formal-verification/testData/diagnostics/uniqueness/good_unique/unique_fun_call.kt");
+      }
+
+      @Test
       @TestMetadata("unique_to_borrowd_unique.kt")
       public void testUnique_to_borrowd_unique() {
         runTest("plugins/formal-verification/testData/diagnostics/uniqueness/good_unique/unique_to_borrowd_unique.kt");

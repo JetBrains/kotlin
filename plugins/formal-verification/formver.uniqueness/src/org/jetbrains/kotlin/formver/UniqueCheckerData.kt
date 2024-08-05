@@ -22,7 +22,7 @@ class UniqueCheckerData(
     private fun getAnnotationId(name: String): ClassId =
         ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlin", "formver", "plugin")), Name.identifier(name))
 
-    override val uniqueId: ClassId
+    private val uniqueId: ClassId
         get() = getAnnotationId("Unique")
     private val sharedId: ClassId
         get() = getAnnotationId("Shared")

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -147,16 +146,17 @@ class UniqueCFA(private val data: UniqueCheckerContext) : FirControlFlowChecker(
             return dataForNode
         }
 
+        @OptIn(SymbolInternals::class)
         override fun visitFunctionCallExitNode(
             node: FunctionCallExitNode,
             data: PathAwareControlFlowInfo<FirVariableSymbol<FirVariable>, Set<UniqueLevel>>,
         ): PathAwareControlFlowInfo<FirVariableSymbol<FirVariable>, Set<UniqueLevel>> {
             val uniqueLevel = mutableSetOf<UniqueLevel>()
-            // FIXME: might not be able to get the annotation for function declaration in this way
-            if (node.fir.hasAnnotation(this.context.uniqueId, this.context.session)) {
-                uniqueLevel.add(UniqueLevel.Unique)
-            } else {
+            val symbol = node.fir.calleeReference.symbol
+            if (symbol == null) {
                 uniqueLevel.add(UniqueLevel.Shared)
+            } else {
+                uniqueLevel.add(this.context.resolveUniqueAnnotation(symbol.fir))
             }
             context.uniqueStack.last().add(Level(uniqueLevel))
 
