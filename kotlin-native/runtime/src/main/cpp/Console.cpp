@@ -141,7 +141,7 @@ OBJ_GETTER0(Kotlin_io_Console_readlnOrNull) {
     if (data.empty() && isEOF) {
         RETURN_OBJ(nullptr);
     }
-    RETURN_RESULT_OF(StringFromUtf8Buffer, data.data(), data.size());
+    RETURN_RESULT_OF(CreateStringFromUtf8, data.data(), data.size());
 }
 
 } // extern "C"

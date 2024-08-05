@@ -82,6 +82,9 @@ OBJ_GETTER(utf8ToUtf16OrThrow, const char* rawString, size_t rawStringLength) {
 }
 
 OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
+  if (rawStringLength == 0) {
+    RETURN_RESULT_OF0(TheEmptyString);
+  }
   const char* end = rawString + rawStringLength;
   uint32_t charCount = utf8::with_replacement::utf16_length(rawString, end);
   RETURN_RESULT_OF(utf8ToUtf16Impl<utf8::with_replacement::utf8to16>, rawString, end, charCount);
@@ -145,7 +148,7 @@ void DisposeCString(char* cstring) {
     if (cstring) std::free(cstring);
 }
 
-ObjHeader* CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
+KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
     // Note: this function can be called in "Native" thread state. But this is fine:
     //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
     //   because the accessed object is off-heap, imitating permanent static objects.
@@ -158,7 +161,6 @@ ObjHeader* CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
     header->obj()->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT_CONTAINER);
     header->count_ = count;
     utf8::with_replacement::utf8to16(nullTerminatedUTF8, end, CharArrayAddressOfElementAt(header, 0));
-
     return header->obj();
 }
 
@@ -287,13 +289,6 @@ OBJ_GETTER(Kotlin_ByteArray_unsafeStringFromUtf8, KConstRef thiz, KInt start, KI
   }
   const char* rawString = unsafeByteArrayAsCString(thiz, start, size);
   RETURN_RESULT_OF(utf8ToUtf16, rawString, size);
-}
-
-OBJ_GETTER(StringFromUtf8Buffer, const char* start, size_t size) {
-  if (size == 0) {
-    RETURN_RESULT_OF0(TheEmptyString);
-  }
-  RETURN_RESULT_OF(utf8ToUtf16, start, size);
 }
 
 OBJ_GETTER(Kotlin_String_unsafeStringToUtf8, KString thiz, KInt start, KInt size) {

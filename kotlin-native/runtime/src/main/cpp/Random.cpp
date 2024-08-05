@@ -36,7 +36,7 @@ void throwReadingRandomBytesFailed(const char* format, ...) {
     va_end(args);
 
     ObjHolder holder;
-    StringFromUtf8Buffer(buffer.data(), buffer.size() - span.size(), holder.slot());
+    CreateStringFromUtf8(buffer.data(), buffer.size() - span.size(), holder.slot());
     ThrowIllegalStateExceptionWithMessage(holder.obj());
 }
 #endif
