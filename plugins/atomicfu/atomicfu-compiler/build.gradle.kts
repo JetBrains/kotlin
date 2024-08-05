@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.konan.target.HostManager
 
 description = "Atomicfu Compiler Plugin"
@@ -81,6 +80,9 @@ dependencies {
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":generators:test-generator"))
+    testApi(project(":plugins:fir-plugin-prototype"))
+    testApi(project(":compiler:incremental-compilation-impl"))
+    testApi(projectTests(":compiler:incremental-compilation-impl"))
 
     testImplementation(projectTests(":js:js.tests"))
     testImplementation(libs.junit4)

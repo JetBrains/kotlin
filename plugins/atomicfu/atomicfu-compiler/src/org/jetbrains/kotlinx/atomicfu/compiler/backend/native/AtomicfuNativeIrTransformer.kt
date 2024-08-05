@@ -313,6 +313,7 @@ class AtomicfuNativeIrTransformer(
             isInline = true
             visibility = atomicExtension.visibility
             origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
+            containerSource = atomicExtension.containerSource
         }.apply {
             extensionReceiverParameter = null
             dispatchReceiverParameter = atomicExtension.dispatchReceiverParameter?.deepCopyWithSymbols(this)

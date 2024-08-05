@@ -838,7 +838,11 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                     val atomicHandlerProperty = atomicfuPropertyToAtomicHandler[atomicProperty]
                         ?: error("No atomic handler found for the atomic property ${atomicProperty.render()}, \n" +
                                          "these properties were registered: ${
-                                             atomicfuPropertyToAtomicHandler.keys.toList().joinToString("\n") { it.render() }
+                                             buildString {
+                                                 atomicfuPropertyToAtomicHandler.forEach {
+                                                     appendLine("[ property: ${it.key.render()}, atomicHandler: ${it.value.render()}]")
+                                                 }
+                                             }
                                          }" + CONSTRAINTS_MESSAGE)
                     with(atomicSymbols.createBuilder(atomicCallReceiver.symbol)) {
                         // dispatchReceiver for get-a$FU() is null, because a$FU is a static property
