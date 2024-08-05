@@ -540,6 +540,25 @@ constexpr Decomposition decompositionValues[] = {
   {{40709}, 1}, {{40719}, 1}, {{40726}, 1}, {{40763}, 1}, {{173568}, 1}
 };
 
+template <typename T>
+int binarySearchRange(const T* array, int arrayLength, T needle) {
+  int bottom = 0;
+  int top = arrayLength - 1;
+  int middle = -1;
+  T value = 0;
+  while (bottom <= top) {
+    middle = (bottom + top) / 2;
+    value = array[middle];
+    if (needle > value)
+      bottom = middle + 1;
+    else if (needle == value)
+      return middle;
+    else
+      top = middle - 1;
+  }
+  return middle - (needle < value ? 1 : 0);
+}
+
 KInt getCanonicalClass(KInt ch) {
   int index = binarySearchRange(canonicalClassesKeys, ARRAY_SIZE(canonicalClassesKeys), ch);
   if (index == -1 || canonicalClassesKeys[index] != ch) {
