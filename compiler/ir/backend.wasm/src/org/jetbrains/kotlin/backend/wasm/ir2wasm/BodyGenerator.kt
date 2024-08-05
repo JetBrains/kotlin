@@ -756,12 +756,6 @@ class BodyGenerator(
 
     private fun processContainerExpression(expression: IrContainerExpression) {
         if (expression is IrReturnableBlock) {
-            val inlineFunction = expression.symbol.owner.inlineFunction
-            val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
-            val owner = correspondingProperty?.owner ?: inlineFunction
-            val name = owner?.fqNameWhenAvailable?.asString() ?: owner?.name?.asString() ?: "<UNKNOWN>"
-
-            body.commentGroupStart { "Inlined call of `$name`" }
             functionContext.defineNonLocalReturnLevel(
                 expression.symbol,
                 body.buildBlock(context.transformBlockResultType(expression.type))
