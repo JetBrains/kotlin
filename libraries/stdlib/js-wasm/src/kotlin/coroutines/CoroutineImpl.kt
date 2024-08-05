@@ -16,7 +16,6 @@ internal abstract class CoroutineImpl(
     protected var exceptionState = 0
     protected var result: Any? = null
     protected var exception: Throwable? = null
-    protected var finallyPath: Array<Int>? = null
 
     private val _context: CoroutineContext? = resultContinuation?.context
 
