@@ -41,30 +41,19 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             context.newFile(it.file, context.currentFunction, context.localNames)
         } ?: context
 
-        val container = expression.innerInlinedBlockOrThis.statements
-        val statements = container.map { it.accept(this, newContext) }.toSmartList()
-
+        val statements = expression.statements.map { it.accept(this, newContext) }.toSmartList()
         val label = context.getNameForReturnableBlock(expression)
-        val wrappedStatements = statements.wrapInCommentsInlineFunctionCall(expression)
 
         return if (label != null) {
-            JsLabel(label, JsBlock(wrappedStatements))
+            JsLabel(label, JsBlock(statements))
         } else {
-            JsCompositeBlock(wrappedStatements)
+            JsCompositeBlock(statements)
         }.withSource(expression, context)
     }
 
     override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
         val statements = expression.statements.map { it.accept(this, context) }.toSmartList()
         return JsBlock(statements).withSource(expression, context)
-    }
-
-    private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(expression: IrReturnableBlock): List<JsStatement> {
-        val inlineFunction = expression.inlineFunction ?: return this
-        val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
-        val owner = correspondingProperty?.owner ?: inlineFunction
-        val funName = owner.fqNameWhenAvailable ?: owner.name
-        return listOf(JsSingleLineComment(" Inline function '$funName' call")) + this
     }
 
     override fun visitComposite(expression: IrComposite, context: JsGenerationContext): JsStatement {
