@@ -106,7 +106,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
     @DisplayName("Downloading pod from git with specifying commit")
     @GradleTest
     fun testPodDownloadGitCommit(gradleVersion: GradleVersion) {
-        doTestGit(gradleVersion, commit = "b33c69bd76c18d44a8a4b0e79593b752a6467d8d")
+        doTestGit(gradleVersion, commit = "f0edb29fd723a21ad2208d2a6d51edbf36c03b5f")
     }
 
     @DisplayName("Downloading pod from git with specifying branch")
