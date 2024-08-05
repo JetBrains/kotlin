@@ -46,6 +46,7 @@ import kotlin.coroutines.intrinsics.*
  * invoke other suspending functions, so its next suspension can happen with a different frame pointer.
  */
 @SinceKotlin("1.3")
+@PublishedApi
 internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T> {
     /** implementation of this function is replaced by debugger */
     return completion
@@ -65,6 +66,7 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
  */
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
+@PublishedApi
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
     /** implementation of this function is replaced by debugger */
 }
@@ -81,6 +83,7 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
  */
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
+@PublishedApi
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
     /** implementation of this function is replaced by debugger */
 }
