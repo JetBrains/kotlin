@@ -45,7 +45,7 @@ annotation class GradleTestVersions(
 @ArgumentsSource(GradleArgumentsProvider::class)
 annotation class GradleTest
 
-inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T {
+inline fun <reified T : Annotation> findAnnotationOrNull(context: ExtensionContext): T? {
     var nextSuperclass: Class<*>? = context.testClass.get().superclass
     val superClassSequence = if (nextSuperclass != null) {
         generateSequence {
@@ -71,7 +71,11 @@ inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T
             .mapNotNull { annotation ->
                 annotation.annotationClass.annotations.firstOrNull { it is T }
             }
-            .first() as T
+            .firstOrNull() as T?
+}
+
+inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T {
+    return findAnnotationOrNull(context) ?: error("Couldn't find @${T::class.java.simpleName} in the test or the test class hierarchy")
 }
 
 open class GradleParameterResolver : ParameterResolver {
@@ -102,7 +106,7 @@ open class GradleArgumentsProvider : ArgumentsProvider {
     }
 
     protected fun gradleVersions(context: ExtensionContext): Set<GradleVersion> {
-        val versionsAnnotation = findAnnotation<GradleTestVersions>(context)
+        val versionsAnnotation = findAnnotationOrNull<GradleTestVersions>(context) ?: GradleTestVersions()
 
         fun max(a: GradleVersion, b: GradleVersion) = if (a >= b) a else b
         val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
