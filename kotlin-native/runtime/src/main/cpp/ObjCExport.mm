@@ -694,7 +694,7 @@ static const TypeInfo* createTypeInfo(
   }
 
   result->packageName_ = nullptr;
-  result->relativeName_ = CreatePermanentStringFromCString(className);
+  result->relativeName_ = CreatePermanentStringFromCString(className)->obj();
   result->writableInfo_ = (WritableTypeInfo*)std::calloc(1, sizeof(WritableTypeInfo));
 
   for (size_t i = 0; i < vtable.size(); ++i) result->vtable()[i] = vtable[i];

@@ -46,7 +46,7 @@ OBJ_GETTER(Kotlin_Interop_derefStablePointer, KNativePtr pointer) {
 }
 
 OBJ_GETTER(Kotlin_CString_toKStringFromUtf8Impl, const char* cstring) {
-  RETURN_RESULT_OF(StringFromUtf8Buffer, cstring, strlen(cstring));
+  RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
 }
