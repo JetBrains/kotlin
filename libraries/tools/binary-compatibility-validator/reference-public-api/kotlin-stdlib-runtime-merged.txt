@@ -3112,6 +3112,12 @@ public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFra
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 }
 
+public final class kotlin/coroutines/jvm/internal/DebugProbesKt {
+	public static final fun probeCoroutineCreated (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun probeCoroutineResumed (Lkotlin/coroutines/Continuation;)V
+	public static final fun probeCoroutineSuspended (Lkotlin/coroutines/Continuation;)V
+}
+
 public abstract interface class kotlin/enums/EnumEntries : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
 }
 
