@@ -75,11 +75,7 @@ class UniqueCFA(private val data: UniqueCheckerContext) : FirControlFlowChecker(
                 declaration.valueParameters.associate {
                     Pair<FirVariableSymbol<FirVariable>, Set<UniqueLevel>>(
                         it.symbol,
-                        if (it.hasAnnotation(this.context.uniqueId, this.context.session)) {
-                            setOf(UniqueLevel.Unique)
-                        } else {
-                            setOf(UniqueLevel.Shared)
-                        }
+                        setOf(this.context.resolveUniqueAnnotation(it))
                     )
                 }.toMap()
             return dataForNode.transformValues { it.putAll(valueParameters) }
@@ -128,13 +124,13 @@ class UniqueCFA(private val data: UniqueCheckerContext) : FirControlFlowChecker(
             }
             // FIXME: might not get annotation in this way
             params.zip(argumentAliasOrUnique).forEach { (param, varUnique) ->
-                val argShouldUnique = param.hasAnnotation(context.uniqueId, context.session)
+                val argUniqueLevel = this.context.resolveUniqueAnnotation(param)
                 val passedUnique: Set<UniqueLevel> = when (varUnique) {
                     is Path -> data[NormalPath]?.get(varUnique.symbol) ?: setOf(UniqueLevel.Shared)
                     is Level -> varUnique.level
                 }
                 // TODO: more general comparison
-                if (argShouldUnique && passedUnique.any { it != UniqueLevel.Unique }) {
+                if (!passedUnique.lessThanOrEqual(argUniqueLevel)) {
                     throw IllegalArgumentException("uniqueness level not match ${param.source.text}")
                 }
             }

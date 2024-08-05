@@ -24,11 +24,20 @@ class UniqueCheckerData(
 
     override val uniqueId: ClassId
         get() = getAnnotationId("Unique")
+    private val sharedId: ClassId
+        get() = getAnnotationId("Shared")
+    private val borrowedId: ClassId
+        get() = getAnnotationId("Borrowed")
 
     override fun resolveUniqueAnnotation(declaration: FirDeclaration): UniqueLevel {
-        if (declaration.hasAnnotation(uniqueId, session)) {
-            return UniqueLevel.Unique
-        }
-        return UniqueLevel.Shared
+        return if (declaration.hasAnnotation(borrowedId, session) && declaration.hasAnnotation(sharedId, session)) {
+            UniqueLevel.BorrowedShared
+        } else if (declaration.hasAnnotation(borrowedId, session) && declaration.hasAnnotation(uniqueId, session)) {
+            UniqueLevel.BorrowedUnique
+        } else if (declaration.hasAnnotation(sharedId, session)) {
+            UniqueLevel.Shared
+        } else if (declaration.hasAnnotation(uniqueId, session)) {
+            UniqueLevel.Unique
+        } else UniqueLevel.Shared
     }
 }

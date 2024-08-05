@@ -537,6 +537,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
       }
 
       @Test
+      @TestMetadata("direct_pass_borrowed_unique_to_unique.kt")
+      public void testDirect_pass_borrowed_unique_to_unique() {
+        runTest("plugins/formal-verification/testData/diagnostics/uniqueness/bad_unique/direct_pass_borrowed_unique_to_unique.kt");
+      }
+
+      @Test
       @TestMetadata("direct_pass_shared_to_unique.kt")
       public void testDirect_pass_shared_to_unique() {
         runTest("plugins/formal-verification/testData/diagnostics/uniqueness/bad_unique/direct_pass_shared_to_unique.kt");
@@ -556,6 +562,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
       @TestMetadata("shared_to_shared.kt")
       public void testShared_to_shared() {
         runTest("plugins/formal-verification/testData/diagnostics/uniqueness/good_unique/shared_to_shared.kt");
+      }
+
+      @Test
+      @TestMetadata("unique_to_borrowd_unique.kt")
+      public void testUnique_to_borrowd_unique() {
+        runTest("plugins/formal-verification/testData/diagnostics/uniqueness/good_unique/unique_to_borrowd_unique.kt");
       }
 
       @Test
