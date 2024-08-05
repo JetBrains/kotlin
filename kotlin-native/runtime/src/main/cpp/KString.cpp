@@ -136,9 +136,17 @@ OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes) {
   RETURN_RESULT_OF(utf8ToUtf16, utf8, lengthBytes);
 }
 
+OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t lengthChars) {
+  if (utf16 == nullptr) RETURN_OBJ(nullptr);
+  ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, lengthChars, OBJ_RESULT)->array();
+  KChar* rawResult = CharArrayAddressOfElementAt(result, 0);
+  memcpy(rawResult, utf16, lengthChars * sizeof(KChar));
+  RETURN_OBJ(result->obj());
+}
+
 char* CreateCStringFromString(KConstRef kref) {
   if (kref == nullptr) return nullptr;
-    std::string utf8 = to_string(kref->array());
+  std::string utf8 = to_string(kref->array());
   char* result = reinterpret_cast<char*>(std::calloc(1, utf8.size() + 1));
   ::memcpy(result, utf8.c_str(), utf8.size());
   return result;
