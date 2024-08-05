@@ -16,6 +16,7 @@ extern "C" {
 
 OBJ_GETTER(CreateStringFromCString, const char* cstring);
 OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes);
+OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t lengthBytes);
 OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t lengthChars);
 
 char* CreateCStringFromString(KConstRef kstring);
@@ -31,8 +32,11 @@ void FreePermanentStringForTests(ArrayHeader* header);
 }
 #endif
 
+enum class KStringConversionMode { UNCHECKED, CHECKED, REPLACE_INVALID };
+
 namespace kotlin {
 
-std::string to_string(KString kstring);
+std::string to_string(KString kstring, KStringConversionMode mode = KStringConversionMode::UNCHECKED,
+    size_t start = 0, size_t size = std::string::npos);
 
 }

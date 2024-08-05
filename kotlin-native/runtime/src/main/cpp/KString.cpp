@@ -36,57 +36,29 @@ using namespace kotlin;
 
 namespace {
 
-typedef std::back_insert_iterator<std::string> KStdStringInserter;
-typedef KChar* utf8to16(const char*, const char*, KChar*);
-typedef KStdStringInserter utf16to8(const KChar*,const KChar*, KStdStringInserter);
-
-KStdStringInserter utf16toUtf8OrThrow(const KChar* start, const KChar* end, KStdStringInserter result) {
-    try {
-        return utf8::utf16to8(start, end, result);
-    } catch (...) {
-        ThrowCharacterCodingException();
-    }
-}
-
-template<utf8to16 conversion>
-OBJ_GETTER(utf8ToUtf16Impl, const char* rawString, const char* end, uint32_t charCount) {
+template <typename CharCountF /*= uint32_t() */, typename ConvertF /*= void(KChar*) */>
+OBJ_GETTER(convertToUTF16, const char* rawString, size_t rawStringLength, CharCountF&& countChars, ConvertF&& convert) {
     if (rawString == nullptr) RETURN_OBJ(nullptr);
-    ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, charCount, OBJ_RESULT)->array();
-    KChar* rawResult = CharArrayAddressOfElementAt(result, 0);
-    conversion(rawString, end, rawResult);
+    if (rawStringLength == 0) RETURN_RESULT_OF0(TheEmptyString);
+
+    ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, countChars(), OBJ_RESULT)->array();
+    convert(CharArrayAddressOfElementAt(result, 0));
     RETURN_OBJ(result->obj());
 }
 
-template<utf16to8 conversion>
-OBJ_GETTER(unsafeUtf16ToUtf8Impl, KString thiz, KInt start, KInt size) {
+OBJ_GETTER(unsafeConvertToUTF8, KString thiz, KStringConversionMode mode, KInt start, KInt size) {
     RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
-    const KChar* utf16 = CharArrayAddressOfElementAt(thiz, start);
-    std::string utf8;
-    utf8.reserve(size);
-    conversion(utf16, utf16 + size, back_inserter(utf8));
-    ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT)->array();
-    ::memcpy(ByteArrayAddressOfElementAt(result, 0), utf8.c_str(), utf8.size());
-    RETURN_OBJ(result->obj());
-}
 
-OBJ_GETTER(utf8ToUtf16OrThrow, const char* rawString, size_t rawStringLength) {
-    const char* end = rawString + rawStringLength;
-    uint32_t charCount;
+    std::string utf8;
     try {
-        charCount = utf8::utf16_length(rawString, end);
+        utf8 = kotlin::to_string(thiz, mode, static_cast<size_t>(start), static_cast<size_t>(size));
     } catch (...) {
         ThrowCharacterCodingException();
     }
-    RETURN_RESULT_OF(utf8ToUtf16Impl<utf8::unchecked::utf8to16>, rawString, end, charCount);
-}
 
-OBJ_GETTER(utf8ToUtf16, const char* rawString, size_t rawStringLength) {
-    if (rawStringLength == 0) {
-        RETURN_RESULT_OF0(TheEmptyString);
-    }
-    const char* end = rawString + rawStringLength;
-    uint32_t charCount = utf8::with_replacement::utf16_length(rawString, end);
-    RETURN_RESULT_OF(utf8ToUtf16Impl<utf8::with_replacement::utf8to16>, rawString, end, charCount);
+    ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT)->array();
+    ::memcpy(ByteArrayAddressOfElementAt(result, 0), utf8.data(), utf8.size());
+    RETURN_OBJ(result->obj());
 }
 
 uint32_t mismatch(const uint16_t* first, const uint16_t* second, uint32_t size) {
@@ -108,10 +80,9 @@ uint32_t mismatch(const uint16_t* first, const uint16_t* second, uint32_t size) 
     return size;
 }
 
-const char* unsafeByteArrayAsCString(KConstRef thiz, KInt start, KInt size) {
-    const ArrayHeader* array = thiz->array();
-    RuntimeAssert(array->type_info() == theByteArrayTypeInfo, "Must use a byte array");
-    return reinterpret_cast<const char*>(ByteArrayAddressOfElementAt(array, start));
+const char* unsafeGetByteArrayData(KConstRef thiz, KInt start) {
+    RuntimeAssert(thiz->type_info() == theByteArrayTypeInfo, "Must use a byte array");
+    return reinterpret_cast<const char*>(ByteArrayAddressOfElementAt(thiz->array(), start));
 }
 
 template <typename T>
@@ -132,11 +103,25 @@ void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLe
 } // namespace
 
 extern "C" OBJ_GETTER(CreateStringFromCString, const char* cstring) {
-    RETURN_RESULT_OF(utf8ToUtf16, cstring, cstring ? strlen(cstring) : 0);
+    RETURN_RESULT_OF(CreateStringFromUtf8, cstring, cstring ? strlen(cstring) : 0);
 }
 
 extern "C" OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes) {
-    RETURN_RESULT_OF(utf8ToUtf16, utf8, lengthBytes);
+    RETURN_RESULT_OF(convertToUTF16, utf8, lengthBytes,
+        [=]() { return utf8::with_replacement::utf16_length(utf8, utf8 + lengthBytes); },
+        [=](KChar* out) { return utf8::with_replacement::utf8to16(utf8, utf8 + lengthBytes, out); });
+}
+
+extern "C" OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t lengthBytes) {
+    RETURN_RESULT_OF(convertToUTF16, utf8, lengthBytes,
+        [=]() {
+            try {
+                return utf8::utf16_length(utf8, utf8 + lengthBytes);
+            } catch (...) {
+                ThrowCharacterCodingException();
+            }
+        },
+        [=](KChar* out) { utf8::unchecked::utf8to16(utf8, utf8 + lengthBytes, out); });
 }
 
 extern "C" OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t lengthChars) {
@@ -281,27 +266,19 @@ extern "C" KInt Kotlin_String_getStringLength(KString thiz) {
 }
 
 extern "C" OBJ_GETTER(Kotlin_ByteArray_unsafeStringFromUtf8OrThrow, KConstRef thiz, KInt start, KInt size) {
-    if (size == 0) {
-        RETURN_RESULT_OF0(TheEmptyString);
-    }
-    const char* rawString = unsafeByteArrayAsCString(thiz, start, size);
-    RETURN_RESULT_OF(utf8ToUtf16OrThrow, rawString, size);
+    RETURN_RESULT_OF(CreateStringFromUtf8OrThrow, unsafeGetByteArrayData(thiz, start), size);
 }
 
 extern "C" OBJ_GETTER(Kotlin_ByteArray_unsafeStringFromUtf8, KConstRef thiz, KInt start, KInt size) {
-    if (size == 0) {
-        RETURN_RESULT_OF0(TheEmptyString);
-    }
-    const char* rawString = unsafeByteArrayAsCString(thiz, start, size);
-    RETURN_RESULT_OF(utf8ToUtf16, rawString, size);
+    RETURN_RESULT_OF(CreateStringFromUtf8, unsafeGetByteArrayData(thiz, start), size);
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_unsafeStringToUtf8, KString thiz, KInt start, KInt size) {
-    RETURN_RESULT_OF(unsafeUtf16ToUtf8Impl<utf8::with_replacement::utf16to8>, thiz, start, size);
+    RETURN_RESULT_OF(unsafeConvertToUTF8, thiz, KStringConversionMode::REPLACE_INVALID, start, size);
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_unsafeStringToUtf8OrThrow, KString thiz, KInt start, KInt size) {
-    RETURN_RESULT_OF(unsafeUtf16ToUtf8Impl<utf16toUtf8OrThrow>, thiz, start, size);
+    RETURN_RESULT_OF(unsafeConvertToUTF8, thiz, KStringConversionMode::CHECKED, start, size);
 }
 
 extern "C" KInt Kotlin_StringBuilder_insertString(KRef builder, KInt distIndex, KString fromString, KInt sourceIndex, KInt count) {
@@ -470,11 +447,22 @@ extern "C" KInt Kotlin_String_utf16length(KString message) {
     return message->count_ * sizeof(KChar);
 }
 
-std::string kotlin::to_string(KString kstring) {
+std::string kotlin::to_string(KString kstring, KStringConversionMode mode, size_t start, size_t size) {
     RuntimeAssert(kstring->type_info() == theStringTypeInfo, "A Kotlin String expected");
-    const KChar* utf16 = CharArrayAddressOfElementAt(kstring, 0);
+    auto utf16 = CharArrayAddressOfElementAt(kstring, start);
+    if (size == std::string::npos) size = kstring->count_ - start;
     std::string utf8;
-    utf8.reserve(kstring->count_);
-    utf8::unchecked::utf16to8(utf16, utf16 + kstring->count_, back_inserter(utf8));
+    utf8.reserve(size);
+    switch (mode) {
+    case KStringConversionMode::UNCHECKED:
+        utf8::unchecked::utf16to8(utf16, utf16 + size, back_inserter(utf8));
+        break;
+    case KStringConversionMode::CHECKED:
+        utf8::utf16to8(utf16, utf16 + size, back_inserter(utf8));
+        break;
+    case KStringConversionMode::REPLACE_INVALID:
+        utf8::with_replacement::utf16to8(utf16, utf16 + size, back_inserter(utf8));
+        break;
+    }
     return utf8;
 }
