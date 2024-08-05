@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -87,6 +89,17 @@ import org.jetbrains.org.objectweb.asm.Type
 internal class KaFirJavaInteroperabilityComponent(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaSessionComponent<KaFirSession>(), KaJavaInteroperabilityComponent, KaFirSessionComponent {
+    private val jvmTypeMapper: FirJvmTypeMapper by lazy {
+        when {
+            analysisSession.targetPlatform.has<JvmPlatform>() -> rootModuleSession.jvmTypeMapper
+            else -> {
+                // Type mapper is not registered in non-JVM sessions.
+                // Here we use its custom instance for generating Java-like types in multiplatform source-sets.
+                FirJvmTypeMapper(rootModuleSession)
+            }
+        }
+    }
+
     override fun KaType.asPsiType(
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
@@ -95,6 +108,7 @@ internal class KaFirJavaInteroperabilityComponent(
         suppressWildcards: Boolean?,
         preserveAnnotations: Boolean,
         forceValueClassResolution: Boolean,
+        allowNonJvmPlatforms: Boolean,
     ): PsiType? = withValidityAssertion {
         val coneType = this.coneType
 
@@ -104,10 +118,9 @@ internal class KaFirJavaInteroperabilityComponent(
             }
         }
 
-        if (!rootModuleSession.moduleData.platform.has<JvmPlatform>()) return null
+        if (!rootModuleSession.moduleData.platform.has<JvmPlatform>() && !allowNonJvmPlatforms) return null
 
         val typeElement = coneType.simplifyType(rootModuleSession, useSitePosition).asPsiTypeElement(
-            session = rootModuleSession,
             mode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards),
             useSitePosition = useSitePosition,
             allowErrorTypes = allowErrorTypes,
@@ -126,13 +139,54 @@ internal class KaFirJavaInteroperabilityComponent(
         }
     }
 
+    private fun ConeKotlinType.asPsiTypeElement(
+        mode: TypeMappingMode,
+        useSitePosition: PsiElement,
+        allowErrorTypes: Boolean,
+        forceValueClassResolution: Boolean,
+    ): PsiTypeElement? {
+        if (this !is SimpleTypeMarker) return null
+
+        if (!allowErrorTypes && (this is ConeErrorType)) return null
+
+        if (forceValueClassResolution && !mode.needInlineClassWrapping) {
+            this.classLikeLookupTagIfAny?.toSymbol(rootModuleSession)?.lazyResolveToPhase(FirResolvePhase.STATUS)
+        }
+
+        val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
+
+        //TODO Check thread safety
+        jvmTypeMapper.mapType(this, mode, signatureWriter) {
+            val containingFile = useSitePosition.containingKtFile
+            // parameters for default setters does not have kotlin origin, but setter has
+                ?: (useSitePosition as? KtLightParameter)?.parent?.parent?.containingKtFile
+                ?: return@mapType null
+            val correspondingImport = containingFile.findImportByAlias(it) ?: return@mapType null
+            correspondingImport.importPath?.pathStr
+        }
+
+        val canonicalSignature = signatureWriter.toString()
+        require(!canonicalSignature.contains(SpecialNames.ANONYMOUS_STRING))
+
+        if (canonicalSignature.contains("L<error>")) return null
+        if (canonicalSignature.contains(SpecialNames.NO_NAME_PROVIDED.asString())) return null
+
+        val signature = SignatureParsing.CharIterator(canonicalSignature)
+        val typeInfo = SignatureParsing.parseTypeStringToTypeInfo(signature, StubBuildingVisitor.GUESSING_PROVIDER)
+        val typeText = typeInfo.text() ?: return null
+
+        return SyntheticTypeElement(useSitePosition, typeText)
+    }
+
     private fun KaTypeMappingMode.toTypeMappingMode(
         type: KaType,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
     ): TypeMappingMode {
         require(type is KaFirType)
+
         val expandedType = type.coneType.fullyExpandedType(rootModuleSession)
+
         return when (this) {
             KaTypeMappingMode.DEFAULT -> TypeMappingMode.DEFAULT
             KaTypeMappingMode.DEFAULT_UAST -> TypeMappingMode.DEFAULT_UAST
@@ -140,23 +194,15 @@ internal class KaFirJavaInteroperabilityComponent(
             KaTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
             KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
-            KaTypeMappingMode.RETURN_TYPE -> {
-                rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
-            }
-            KaTypeMappingMode.VALUE_PARAMETER -> {
-                rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
-            }
+            KaTypeMappingMode.RETURN_TYPE -> jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
+            KaTypeMappingMode.VALUE_PARAMETER -> jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
         }.let { typeMappingMode ->
             // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
             // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!
             if (expandedType.typeArguments.isEmpty())
                 typeMappingMode
             else
-                typeMappingMode.updateArgumentModeFromAnnotations(
-                    expandedType,
-                    rootModuleSession.jvmTypeMapper.typeContext,
-                    suppressWildcards,
-                )
+                typeMappingMode.updateArgumentModeFromAnnotations(expandedType, jvmTypeMapper.typeContext, suppressWildcards)
         }
     }
 
@@ -219,7 +265,7 @@ internal class KaFirJavaInteroperabilityComponent(
     }
 
     override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
-        return analysisSession.firSession.jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
+        return jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
     }
 
     override val KaType.isPrimitiveBacked: Boolean
@@ -455,46 +501,6 @@ private fun ConeKotlinType.isLocalButAvailableAtPosition(
     return localPsi == context ||
             localPsi.parents.any { it == context } ||
             context.parents.any { it == localPsi }
-}
-
-private fun ConeKotlinType.asPsiTypeElement(
-    session: FirSession,
-    mode: TypeMappingMode,
-    useSitePosition: PsiElement,
-    allowErrorTypes: Boolean,
-    forceValueClassResolution: Boolean,
-): PsiTypeElement? {
-    if (this !is SimpleTypeMarker) return null
-
-    if (!allowErrorTypes && (this is ConeErrorType)) return null
-
-    if (forceValueClassResolution && !mode.needInlineClassWrapping) {
-        this.classLikeLookupTagIfAny?.toSymbol(session)?.lazyResolveToPhase(FirResolvePhase.STATUS)
-    }
-
-    val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
-
-    //TODO Check thread safety
-    session.jvmTypeMapper.mapType(this, mode, signatureWriter) {
-        val containingFile = useSitePosition.containingKtFile
-        // parameters for default setters does not have kotlin origin, but setter has
-            ?: (useSitePosition as? KtLightParameter)?.parent?.parent?.containingKtFile
-            ?: return@mapType null
-        val correspondingImport = containingFile.findImportByAlias(it) ?: return@mapType null
-        correspondingImport.importPath?.pathStr
-    }
-
-    val canonicalSignature = signatureWriter.toString()
-    require(!canonicalSignature.contains(SpecialNames.ANONYMOUS_STRING))
-
-    if (canonicalSignature.contains("L<error>")) return null
-    if (canonicalSignature.contains(SpecialNames.NO_NAME_PROVIDED.asString())) return null
-
-    val signature = SignatureParsing.CharIterator(canonicalSignature)
-    val typeInfo = SignatureParsing.parseTypeStringToTypeInfo(signature, StubBuildingVisitor.GUESSING_PROVIDER)
-    val typeText = typeInfo.text() ?: return null
-
-    return SyntheticTypeElement(useSitePosition, typeText)
 }
 
 private class SyntheticTypeElement(parent: PsiElement, typeText: String) : ClsTypeElementImpl(parent, typeText, '\u0000'), SyntheticElement

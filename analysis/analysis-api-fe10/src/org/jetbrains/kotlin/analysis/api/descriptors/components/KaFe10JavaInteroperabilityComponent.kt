@@ -72,6 +72,7 @@ internal class KaFe10JavaInteroperabilityComponent(
         suppressWildcards: Boolean?,
         preserveAnnotations: Boolean,
         forceValueClassResolution: Boolean,
+        allowNonJvmPlatforms: Boolean,
     ): PsiType? = withValidityAssertion {
         val kotlinType = (this as KaFe10Type).fe10Type
 
