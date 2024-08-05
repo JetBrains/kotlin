@@ -160,6 +160,15 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
             // Library types
             "kotlin.time.Duration" ->
                 return wrapNullableSerializerIfNeeded(irType, durationSerializer)
+            "kotlin.ranges.IntRange" -> return wrapNullableSerializerIfNeeded(
+                irType, IrRangeParcelSerializer(irType.getClass()!!, intSerializer)
+            )
+            "kotlin.ranges.CharRange" -> return wrapNullableSerializerIfNeeded(
+                irType, IrRangeParcelSerializer(irType.getClass()!!, charSerializer)
+            )
+            "kotlin.ranges.LongRange" -> return wrapNullableSerializerIfNeeded(
+                irType, IrRangeParcelSerializer(irType.getClass()!!, longSerializer)
+            )
         }
 
         // Generic container types

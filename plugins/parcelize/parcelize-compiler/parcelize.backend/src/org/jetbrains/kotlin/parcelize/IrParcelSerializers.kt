@@ -627,3 +627,33 @@ class IrMapParcelSerializer(
         }
     }
 }
+
+class IrRangeParcelSerializer(
+    private val irClass: IrClass,
+    private val underlyingTypeSerializer: IrParcelSerializer,
+) : IrParcelSerializer {
+
+    override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
+        val firstGetter = irClass.getPropertyGetter("first")!!
+        val endGetter = irClass.getPropertyGetter("endInclusive")!!
+        return irBlock {
+            val range = irTemporary(value)
+            +writeParcelWith(underlyingTypeSerializer, parcel, flags, irCall(firstGetter).apply {
+                dispatchReceiver = irGet(range)
+            })
+            +writeParcelWith(underlyingTypeSerializer, parcel, flags, irCall(endGetter).apply {
+                dispatchReceiver = irGet(range)
+            })
+        }
+    }
+
+    override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
+        val constructorSymbol = irClass.primaryConstructor!!.symbol
+        return irBlock {
+            +irCall(constructorSymbol).apply {
+                putValueArgument(0, readParcelWith(underlyingTypeSerializer, parcel))
+                putValueArgument(1, readParcelWith(underlyingTypeSerializer, parcel))
+            }
+        }
+    }
+}
