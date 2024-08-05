@@ -43,7 +43,6 @@ typedef const void* KConstNativePtr;
 
 typedef ObjHeader* KRef;
 typedef const ObjHeader* KConstRef;
-typedef const ArrayHeader* KString;
 
 #ifdef __cplusplus
 extern "C" {

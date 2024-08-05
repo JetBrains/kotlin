@@ -542,7 +542,7 @@ OutOfMemory:
 #endif
 
 extern "C" KFloat
-Kotlin_native_FloatingPointParser_parseFloatImpl(KString s, KInt e)
+Kotlin_native_FloatingPointParser_parseFloatImpl(KConstRef s, KInt e)
 {
   std::string utf8;
   try {
