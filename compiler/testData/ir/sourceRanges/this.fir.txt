@@ -16,12 +16,12 @@
             @3:42..46 BRANCH
               @3:42..46 CONST Boolean type=kotlin.Boolean value=true
               @3:42..46 CONST Null type=kotlin.Nothing? value=null
-      @3:4..46 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-maybeThis> visibility:public modality:FINAL <> ($this:<root>.Klass) returnType:<root>.Klass?
-        @3:4..46 VALUE_PARAMETER name:<this> type:<root>.Klass
-        @3:4..46 BLOCK_BODY
-          @3:4..46 RETURN type=kotlin.Nothing from='public final fun <get-maybeThis> (): <root>.Klass? declared in <root>.Klass'
-            @3:4..46 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:maybeThis type:<root>.Klass? visibility:private [final]' type=<root>.Klass? origin=null
-              @3:4..46 GET_VAR '<this>: <root>.Klass declared in <root>.Klass.<get-maybeThis>' type=<root>.Klass origin=null
+      @3:4..17 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-maybeThis> visibility:public modality:FINAL <> ($this:<root>.Klass) returnType:<root>.Klass?
+        @3:4..17 VALUE_PARAMETER name:<this> type:<root>.Klass
+        @3:4..17 BLOCK_BODY
+          @3:4..17 RETURN type=kotlin.Nothing from='public final fun <get-maybeThis> (): <root>.Klass? declared in <root>.Klass'
+            @3:4..17 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:maybeThis type:<root>.Klass? visibility:private [final]' type=<root>.Klass? origin=null
+              @3:4..17 GET_VAR '<this>: <root>.Klass declared in <root>.Klass.<get-maybeThis>' type=<root>.Klass origin=null
     @2:0..4:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @2:0..4:1 VALUE_PARAMETER name:<this> type:kotlin.Any
       @2:0..4:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?

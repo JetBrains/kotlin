@@ -3,5 +3,5 @@
 class C {
     <!CONFLICTING_JVM_DECLARATIONS!>fun setX(x: Int) {}<!>
 
-    <!CONFLICTING_JVM_DECLARATIONS!>var x: Int = 1<!>
+    <!CONFLICTING_JVM_DECLARATIONS!>var x: Int<!> = 1
 }

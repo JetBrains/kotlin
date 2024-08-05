@@ -67,6 +67,6 @@ actual fun withDifferentArg() {}<!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> inTypeParam() {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val onGetter: String = ""<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val onGetter: String<!> = ""
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun onType(param: Any) {}<!>
