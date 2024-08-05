@@ -69,11 +69,11 @@ RUNTIME_NOTHROW OBJ_GETTER(Kotlin_native_internal_reflect_objCNameOrNull, const 
 std::string TypeInfo::fqName() const {
     std::string fqName = "";
     if (packageName_) {
-        fqName += kotlin::to_string(packageName_->array());
+        fqName += kotlin::to_string(packageName_);
         fqName += ".";
     }
     if (relativeName_) {
-        fqName += kotlin::to_string(relativeName_->array());
+        fqName += kotlin::to_string(relativeName_);
     } else {
         fqName += "<anonymous>";
     }

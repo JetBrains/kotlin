@@ -34,9 +34,9 @@ using namespace kotlin;
 
 namespace {
 
-std::string kStringToUtf8(KString message) {
+std::string kStringToUtf8(KConstRef message) {
     if (message->type_info() != theStringTypeInfo) {
-        ThrowClassCastException(message->obj(), theStringTypeInfo);
+        ThrowClassCastException(message, theStringTypeInfo);
     }
     return kotlin::to_string(message, KStringConversionMode::REPLACE_INVALID);
 }
@@ -46,21 +46,21 @@ std::string kStringToUtf8(KString message) {
 extern "C" {
 
 // io/Console.kt
-void Kotlin_io_Console_print(KString message) {
+void Kotlin_io_Console_print(KConstRef message) {
     // TODO: system stdout must be aware about UTF-8.
     auto utf8 = kStringToUtf8(message);
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     konan::consoleWriteUtf8(utf8.c_str(), utf8.size());
 }
 
-void Kotlin_io_Console_printToStdErr(KString message) {
+void Kotlin_io_Console_printToStdErr(KConstRef message) {
     // TODO: system stderr must be aware about UTF-8.
     auto utf8 = kStringToUtf8(message);
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     konan::consoleErrorUtf8(utf8.c_str(), utf8.size());
 }
 
-void Kotlin_io_Console_println(KString message) {
+void Kotlin_io_Console_println(KConstRef message) {
     Kotlin_io_Console_print(message);
 #ifndef KONAN_ANDROID
     Kotlin_io_Console_println0();
@@ -72,7 +72,7 @@ void Kotlin_io_Console_println(KString message) {
 #endif
 }
 
-void Kotlin_io_Console_printlnToStdErr(KString message) {
+void Kotlin_io_Console_printlnToStdErr(KConstRef message) {
     Kotlin_io_Console_printToStdErr(message);
 #ifndef KONAN_ANDROID
     Kotlin_io_Console_println0ToStdErr();
