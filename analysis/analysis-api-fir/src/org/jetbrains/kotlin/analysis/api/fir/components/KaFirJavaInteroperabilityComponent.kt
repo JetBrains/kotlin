@@ -270,7 +270,29 @@ internal class KaFirJavaInteroperabilityComponent(
 
     override val KaType.isPrimitiveBacked: Boolean
         get() = withValidityAssertion {
-            return analysisSession.firSession.jvmTypeMapper.isPrimitiveBacked(coneType)
+            if (analysisSession.targetPlatform.has<JvmPlatform>()) {
+                return jvmTypeMapper.isPrimitiveBacked(coneType)
+            }
+
+            with(analysisSession) {
+                if (!canBeNull) {
+                    if (isPrimitive) {
+                        return true
+                    }
+
+                    val classSymbol = symbol
+                    if (classSymbol is KaNamedClassSymbol && classSymbol.isInline) {
+                        val onlyProperty = classSymbol.memberScope.callables
+                            .singleOrNull { it is KaPropertySymbol && it.isFromPrimaryConstructor }
+
+                        if (onlyProperty != null && onlyProperty.returnType.isPrimitiveBacked) {
+                            return true
+                        }
+                    }
+                }
+            }
+
+            return false
         }
 
     override val PsiClass.namedClassSymbol: KaNamedClassSymbol?
