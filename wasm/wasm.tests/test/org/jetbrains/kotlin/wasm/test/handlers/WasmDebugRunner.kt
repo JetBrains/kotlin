@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
 import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
 import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
-import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
@@ -125,7 +124,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
 
             val exception = try {
                 val result = WasmVM.V8.run(
-                    entryMjs = "./${collectedJsArtifacts.entryPath}",
+                    entryFile = "./${collectedJsArtifacts.entryPath}",
                     jsFiles = jsFilePaths,
                     workingDirectory = dir,
                     toolArgs = listOf("--enable-inspector", "--allow-natives-syntax")

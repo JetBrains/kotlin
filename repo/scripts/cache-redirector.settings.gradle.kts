@@ -93,6 +93,7 @@ val cacheMap: Map<String, String> = mapOf(
     "https://github.com/webassembly/wabt/releases/download" to "https://cache-redirector.jetbrains.com/github.com/webassembly/wabt/releases/download",
     "https://github.com/webassembly/testsuite/zipball" to "https://cache-redirector.jetbrains.com/github.com/webassembly/testsuite/zipball",
     "https://archive.mozilla.org/pub/firefox/nightly" to "https://cache-redirector.jetbrains.com/archive.mozilla.org/pub/firefox/nightly",
+    "https://github.com/WasmEdge/WasmEdge/releases/download" to "https://cache-redirector.jetbrains.com/github.com/WasmEdge/WasmEdge/releases/download",
     "https://storage.googleapis.com/chromium-v8/official/canary" to "https://cache-redirector.jetbrains.com/storage.googleapis.com/chromium-v8/official/canary",
     "https://oss.sonatype.org/content/repositories/snapshots" to "https://cache-redirector.jetbrains.com/oss.sonatype.org/content/repositories/snapshots",
     "https://download.visualstudio.microsoft.com/download/pr" to "https://cache-redirector.jetbrains.com/download.visualstudio.microsoft.com/download/pr",

@@ -38,6 +38,8 @@ compose-stable = "1.7.0-alpha08"
 compose-snapshot-id = "12141312"
 compose-snapshot-version = "1.8.0-SNAPSHOT"
 ant = "1.10.14"
+# Wasm specific
+wasmedge = "0.14.0"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
