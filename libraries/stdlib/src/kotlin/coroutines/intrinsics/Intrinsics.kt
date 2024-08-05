@@ -73,4 +73,15 @@ internal enum class CoroutineSingletons { COROUTINE_SUSPENDED, UNDECIDED, RESUME
  *
  * This function does not run the lambda itself — the caller is expected to call [invoke] manually.
  */
+@PublishedApi
 internal expect fun <T> createSimpleCoroutineForSuspendFunction(completion: Continuation<T>): Continuation<T>
+
+/**
+ * Wraps [completion] with [BaseCompletion] if it isn't [BaseCompletion] already, otherwise the coroutine will not be interceptable.
+ * See [KT-55869](https://youtrack.jetbrains.com/issue/KT-55869).
+ */
+@PublishedApi
+internal inline fun <T, reified BaseCompletion> wrapWithContinuationImplIfNeeded(completion: Continuation<T>): Continuation<T> {
+    if (completion is BaseCompletion) return completion
+    return createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
+}

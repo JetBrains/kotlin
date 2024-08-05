@@ -215,6 +215,7 @@
                   includeRootPackage="false"
                   sincekotlin="1.1">
 
+        <sourceroot path="${kotlin_stdlib_dir}/js-wasm/src"/>
         <sourceroot path="${kotlin_stdlib_dir}/js/src"/>
         <sourceroot path="${kotlin_stdlib_dir}/js/builtins"/>
 

@@ -29,12 +29,12 @@ import kotlin.internal.InlineOnly
 @InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
-): Any? =
-    // Wrap with ContinuationImpl, otherwise the coroutine will not be interceptable. See KT-55869
-    if (this !is BaseContinuationImpl) wrapWithContinuationImpl(completion)
-    else (this as Function1<Continuation<T>, Any?>).invoke(completion)
+): Any? {
+    val wrappedCompletion = wrapWithContinuationImplIfNeeded<T, BaseContinuationImpl>(completion)
+    return (this as Function1<Continuation<T>, Any?>).invoke(wrappedCompletion)
+}
 
-// Work around private and internal visibilities of functions used: [createCoroutineFromSuspendFunction] and [probeCoroutineCreated].
+@Deprecated("Replaced with wrapWithContinuationImplIfNeeded", level = DeprecationLevel.HIDDEN)
 @PublishedApi
 internal fun <T> (suspend () -> T).wrapWithContinuationImpl(
     completion: Continuation<T>
@@ -60,12 +60,12 @@ internal fun <T> (suspend () -> T).wrapWithContinuationImpl(
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
-): Any? =
-    // Wrap with ContinuationImpl, otherwise the coroutine will not be interceptable. See KT-55869
-    if (this !is BaseContinuationImpl) wrapWithContinuationImpl(receiver, completion)
-    else (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+): Any? {
+    val wrappedCompletion = wrapWithContinuationImplIfNeeded<T, BaseContinuationImpl>(completion)
+    return (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, wrappedCompletion)
+}
 
-// Work around private and internal visibilities of functions used: [createCoroutineFromSuspendFunction] and [probeCoroutineCreated].
+@Deprecated("Replaced with wrapWithContinuationImplIfNeeded", level = DeprecationLevel.HIDDEN)
 @PublishedApi
 internal fun <R, T> (suspend R.() -> T).wrapWithContinuationImpl(
     receiver: R,
@@ -80,12 +80,12 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? =
-    // Wrap with ContinuationImpl, otherwise the coroutine will not be interceptable. See KT-55869
-    if (this !is BaseContinuationImpl) wrapWithContinuationImpl(receiver, param, completion)
-    else (this as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, completion)
+): Any? {
+    val wrappedCompletion = wrapWithContinuationImplIfNeeded<T, BaseContinuationImpl>(completion)
+    return (this as Function3<R, P, Continuation<T>, Any?>).invoke(receiver, param, wrappedCompletion)
+}
 
-// Work around private and internal visibilities of functions used: [createCoroutineFromSuspendFunction] and [probeCoroutineCreated].
+@Deprecated("Replaced with wrapWithContinuationImplIfNeeded", level = DeprecationLevel.HIDDEN)
 @PublishedApi
 internal fun <R, P, T> (suspend R.(P) -> T).wrapWithContinuationImpl(
     receiver: R,
@@ -241,6 +241,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
         }
 }
 
+@PublishedApi
 internal actual fun <T> createSimpleCoroutineForSuspendFunction(
     completion: Continuation<T>
 ): Continuation<T> {

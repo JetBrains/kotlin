@@ -26,7 +26,7 @@ import kotlin.native.internal.*
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
         completion: Continuation<T>
 ): Any? {
-    val wrappedCompletion = wrapWithContinuationImpl(completion)
+    val wrappedCompletion = wrapWithContinuationImplIfNeeded<T, BaseContinuationImpl>(completion)
     val function = this as? Function1<Continuation<T>, Any?>
     return if (function == null)
         startCoroutineUninterceptedOrReturnFallback(this, wrappedCompletion)
@@ -64,7 +64,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
         receiver: R,
         completion: Continuation<T>
 ): Any? {
-    val wrappedCompletion = wrapWithContinuationImpl(completion)
+    val wrappedCompletion = wrapWithContinuationImplIfNeeded<T, BaseContinuationImpl>(completion)
     val function = this as? Function2<R, Continuation<T>, Any?>
     return if (function == null)
         startCoroutineUninterceptedOrReturnFallback(this, receiver, wrappedCompletion)
@@ -92,7 +92,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
         param: P,
         completion: Continuation<T>
 ): Any? {
-    val wrappedCompletion = wrapWithContinuationImpl(completion)
+    val wrappedCompletion = wrapWithContinuationImplIfNeeded<T, BaseContinuationImpl>(completion)
     val function = this as? Function3<R, P, Continuation<T>, Any?>
     return if (function == null)
         startCoroutineUninterceptedOrReturnFallback(this, receiver, param, wrappedCompletion)
@@ -293,11 +293,13 @@ internal inline fun createContinuationArgumentFromCallback(
     }
 }
 
+@Deprecated("Replaced with wrapWithContinuationImplIfNeeded", level = DeprecationLevel.HIDDEN)
 @PublishedApi
 internal fun <T> wrapWithContinuationImpl(completion: Continuation<T>): Continuation<T> =
-        createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
+        wrapWithContinuationImplIfNeeded<T, BaseContinuationImpl>(completion)
 
 @Suppress("UNCHECKED_CAST")
+@PublishedApi
 internal actual fun <T> createSimpleCoroutineForSuspendFunction(
         completion: Continuation<T>
 ): Continuation<T> {

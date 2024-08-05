@@ -6280,6 +6280,7 @@ final fun <#A: kotlin/Any?> kotlin.comparisons/maxOf(#A, kotlin/Array<out #A>...
 final fun <#A: kotlin/Any?> kotlin.comparisons/minOf(#A, #A, #A, kotlin/Comparator<in #A>): #A // kotlin.comparisons/minOf|minOf(0:0;0:0;0:0;kotlin.Comparator<in|0:0>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.comparisons/minOf(#A, #A, kotlin/Comparator<in #A>): #A // kotlin.comparisons/minOf|minOf(0:0;0:0;kotlin.Comparator<in|0:0>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.comparisons/minOf(#A, kotlin/Array<out #A>..., kotlin/Comparator<in #A>): #A // kotlin.comparisons/minOf|minOf(0:0;kotlin.Array<out|0:0>...;kotlin.Comparator<in|0:0>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/createSimpleCoroutineForSuspendFunction(kotlin.coroutines/Continuation<#A>): kotlin.coroutines/Continuation<#A> // kotlin.coroutines.intrinsics/createSimpleCoroutineForSuspendFunction|createSimpleCoroutineForSuspendFunction(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/probeCoroutineCreated(kotlin.coroutines/Continuation<#A>): kotlin.coroutines/Continuation<#A> // kotlin.coroutines.intrinsics/probeCoroutineCreated|probeCoroutineCreated(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.sequences/emptySequence(): kotlin.sequences/Sequence<#A> // kotlin.sequences/emptySequence|emptySequence(){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.sequences/iterator(kotlin.coroutines/SuspendFunction1<kotlin.sequences/SequenceScope<#A>, kotlin/Unit>): kotlin.collections/Iterator<#A> // kotlin.sequences/iterator|iterator(kotlin.coroutines.SuspendFunction1<kotlin.sequences.SequenceScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
@@ -8036,6 +8037,7 @@ final inline fun <#A: kotlin/Any?, #B: kotlin/Comparable<#B>> (kotlin/Array<out 
 final inline fun <#A: kotlin/Any?, #B: kotlin/Comparable<#B>> (kotlin/Array<out #A>).kotlin.collections/sortByDescending(crossinline kotlin/Function1<#A, #B?>) // kotlin.collections/sortByDescending|sortByDescending@kotlin.Array<out|0:0>(kotlin.Function1<0:0,0:1?>){0§<kotlin.Any?>;1§<kotlin.Comparable<0:1>>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Comparable<#B>> (kotlin/Array<out #A>).kotlin.collections/sortedBy(crossinline kotlin/Function1<#A, #B?>): kotlin.collections/List<#A> // kotlin.collections/sortedBy|sortedBy@kotlin.Array<out|0:0>(kotlin.Function1<0:0,0:1?>){0§<kotlin.Any?>;1§<kotlin.Comparable<0:1>>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Comparable<#B>> (kotlin/Array<out #A>).kotlin.collections/sortedByDescending(crossinline kotlin/Function1<#A, #B?>): kotlin.collections/List<#A> // kotlin.collections/sortedByDescending|sortedByDescending@kotlin.Array<out|0:0>(kotlin.Function1<0:0,0:1?>){0§<kotlin.Any?>;1§<kotlin.Comparable<0:1>>}[0]
+final inline fun <#A: kotlin/Any?, #B: reified kotlin/Any?> kotlin.coroutines.intrinsics/wrapWithContinuationImplIfNeeded(kotlin.coroutines/Continuation<#A>): kotlin.coroutines/Continuation<#A> // kotlin.coroutines.intrinsics/wrapWithContinuationImplIfNeeded|wrapWithContinuationImplIfNeeded(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (#A).kotlin/also(kotlin/Function1<#A, kotlin/Unit>): #A // kotlin/also|also@0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (#A).kotlin/apply(kotlin/Function1<#A, kotlin/Unit>): #A // kotlin/apply|apply@0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?> (#A).kotlin/takeIf(kotlin/Function1<#A, kotlin/Boolean>): #A? // kotlin/takeIf|takeIf@0:0(kotlin.Function1<0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]
@@ -13728,9 +13730,6 @@ final fun (kotlin/Throwable).kotlin/printStackTrace() // kotlin/printStackTrace|
 
 // Targets: [js, wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?> kotlin.collections/copyToArray(kotlin.collections/Collection<#A>): kotlin/Array<#A> // kotlin.collections/copyToArray|copyToArray(kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}[0]
-
-// Targets: [js, wasmJs, wasmWasi]
-final fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/createSimpleCoroutineForSuspendFunction(kotlin.coroutines/Continuation<#A>): kotlin.coroutines/Continuation<#A> // kotlin.coroutines.intrinsics/createSimpleCoroutineForSuspendFunction|createSimpleCoroutineForSuspendFunction(kotlin.coroutines.Continuation<0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
 final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.collections/toTypedArray(): kotlin/Array<#A> // kotlin.collections/toTypedArray|toTypedArray@kotlin.collections.Collection<0:0>(){0§<kotlin.Any?>}[0]

@@ -75,11 +75,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnNonGeneratorVersion(
     completion: Continuation<T>
 ): Any? {
-    // Wrap with CoroutineImpl, otherwise the coroutine will not be interceptable. See KT-55869
-    val wrappedCompletion = if (completion !is InterceptedCoroutine)
-        createSimpleCoroutineForSuspendFunction(completion)
-    else
-        completion
+    val wrappedCompletion = wrapWithContinuationImplIfNeeded<T, InterceptedCoroutine>(completion)
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(wrappedCompletion)
     else this.invokeSuspendSuperType(wrappedCompletion)
@@ -109,11 +105,7 @@ internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnNonGe
     receiver: R,
     completion: Continuation<T>
 ): Any? {
-    // Wrap with CoroutineImpl, otherwise the coroutine will not be interceptable. See KT-55869
-    val wrappedCompletion = if (completion !is InterceptedCoroutine)
-        createSimpleCoroutineForSuspendFunction(completion)
-    else
-        completion
+    val wrappedCompletion = wrapWithContinuationImplIfNeeded<T, InterceptedCoroutine>(completion)
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(receiver, wrappedCompletion)
     else this.invokeSuspendSuperTypeWithReceiver(receiver, wrappedCompletion)
@@ -132,11 +124,7 @@ internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnN
     param: P,
     completion: Continuation<T>
 ): Any? {
-    // Wrap with CoroutineImpl, otherwise the coroutine will not be interceptable. See KT-55869
-    val wrappedCompletion = if (completion !is InterceptedCoroutine)
-        createSimpleCoroutineForSuspendFunction(completion)
-    else
-        completion
+    val wrappedCompletion = wrapWithContinuationImplIfNeeded<T, InterceptedCoroutine>(completion)
     val a = this.asDynamic()
     return if (jsTypeOf(a) == "function") a(receiver, param, wrappedCompletion)
     else this.invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, wrappedCompletion)
