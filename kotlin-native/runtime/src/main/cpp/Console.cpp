@@ -38,13 +38,7 @@ std::string kStringToUtf8(KString message) {
     if (message->type_info() != theStringTypeInfo) {
         ThrowClassCastException(message->obj(), theStringTypeInfo);
     }
-    const KChar* utf16 = CharArrayAddressOfElementAt(message, 0);
-    std::string utf8;
-    utf8.reserve(message->count_);
-    // Replace incorrect sequences with a default codepoint (see utf8::with_replacement::default_replacement)
-    utf8::with_replacement::utf16to8(utf16, utf16 + message->count_, back_inserter(utf8));
-
-    return utf8;
+    return kotlin::to_string(message, KStringConversionMode::REPLACE_INVALID);
 }
 
 } // namespace
