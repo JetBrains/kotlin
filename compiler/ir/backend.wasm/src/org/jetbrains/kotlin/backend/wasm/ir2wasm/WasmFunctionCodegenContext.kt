@@ -99,7 +99,7 @@ class WasmFunctionCodegenContext(
     }
 
     val currentFunction: IrFunction
-        get() = inlinedFunctionStack.lastOrNull() ?: irFunction
+        get() = inlinedFunctionStack.firstOrNull() ?: irFunction
 
     fun stepIntoInlinedFunction(inlineFunction: IrFunction) {
         inlinedFunctionStack.push(inlineFunction)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.common.lower.SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -912,8 +913,14 @@ class BodyGenerator(
     }
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
-        body.buildNop(inlinedBlock.inlineCall.getSourceLocation())
-        functionContext.stepIntoInlinedFunction(inlinedBlock.inlineCall.symbol.owner)
+        body.buildNop(inlinedBlock.getSourceLocation())
+
+        val inlineFunction = when (val inlineDeclaration = inlinedBlock.inlineDeclaration) {
+            is IrProperty -> inlineDeclaration.getter
+            else -> inlineDeclaration as? IrFunction
+        } ?: compilationException("Function was expected", inlinedBlock.inlineDeclaration)
+
+        functionContext.stepIntoInlinedFunction(inlineFunction)
         super.visitInlinedFunctionBlock(inlinedBlock)
         functionContext.stepOutLastInlinedFunction()
     }

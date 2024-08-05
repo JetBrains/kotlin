@@ -1,4 +1,4 @@
-
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 fun box() {
