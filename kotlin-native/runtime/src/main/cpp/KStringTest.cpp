@@ -14,12 +14,14 @@
 
 using namespace kotlin;
 
-void checkContentsEquality(ArrayHeader* actual, const char16_t* expected) {
-    EXPECT_THAT(actual->count_, std::char_traits<char16_t>::length(expected));
-    for (size_t i=0; i<actual->count_; i++) {
-        EXPECT_THAT(*CharArrayAddressOfElementAt(actual, i), expected[i]);
+void checkContentsEquality(KConstRef actual, const char16_t* expected) {
+    size_t size = StringRawSize(actual) / sizeof(char16_t);
+    EXPECT_THAT(size, std::char_traits<char16_t>::length(expected));
+    const char16_t* data = reinterpret_cast<const char16_t*>(StringRawData(actual));
+    for (size_t i=0; i<size; i++) {
+        EXPECT_THAT(data[i], expected[i]);
     }
-    EXPECT_THAT(actual->obj()->permanent(), true);
+    EXPECT_THAT(actual->permanent(), true);
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_ascii) {

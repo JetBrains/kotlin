@@ -44,7 +44,7 @@ using namespace kotlin;
 #define DEFAULT_WIDTH MAX_ACCURACY_WIDTH
 
 extern "C" {
-KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e);
+KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KConstRef s, KInt e);
 
 void Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl (KRef results,
                                                          KRef uArray,
@@ -643,7 +643,7 @@ OutOfMemory:
 #pragma optimize("",on)         /*restore optimizations */
 #endif
 
-KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e)
+KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KConstRef s, KInt e)
 {
   std::string utf8;
   try {

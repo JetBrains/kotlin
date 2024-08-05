@@ -11,6 +11,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import "Memory.h"
+#import "KString.h"
 #import "ObjCInteropUtils.h"
 #import "ObjCInteropUtilsPrivate.h"
 
@@ -61,15 +62,10 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
   CFStringRef immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
 
   auto length = CFStringGetLength(immutableCopyOrSameStr);
-  CFRange range = {0, length};
-  ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, length, OBJ_RESULT)->array();
-  KChar* rawResult = CharArrayAddressOfElementAt(result, 0);
-
-  CFStringGetCharacters(immutableCopyOrSameStr, range, rawResult);
-
-  result->obj()->SetAssociatedObject((void*)immutableCopyOrSameStr);
-
-  RETURN_OBJ(result->obj());
+  auto result = CreateUninitializedUtf16String(length, OBJ_RESULT);
+  CFStringGetCharacters(immutableCopyOrSameStr, {0, length}, reinterpret_cast<UniChar*>(StringRawData(result)));
+  result->SetAssociatedObject((void*)immutableCopyOrSameStr);
+  RETURN_OBJ(result);
 }
 
 // Note: this body is used for init methods with signatures differing from this;
