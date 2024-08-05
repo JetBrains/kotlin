@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.Analys
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.ApplicationServiceRegistration
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.impl.testConfiguration
@@ -27,6 +29,12 @@ abstract class AnalysisApiTestConfigurator {
     abstract val frontendKind: FrontendKind
 
     abstract val analyseInDependentSession: Boolean
+
+    /**
+     * The platform used by default, in case if no platform is specified in the test data file.
+     */
+    open val defaultTargetPlatform: TargetPlatform
+        get() = JvmPlatforms.defaultJvmPlatform
 
     abstract fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable)
 
