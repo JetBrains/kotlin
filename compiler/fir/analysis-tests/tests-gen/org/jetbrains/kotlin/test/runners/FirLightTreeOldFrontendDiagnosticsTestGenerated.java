@@ -35243,6 +35243,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("stabilityOnReceiverWithDifferentModality.kt")
+      public void testStabilityOnReceiverWithDifferentModality() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/stabilityOnReceiverWithDifferentModality.kt");
+      }
+
+      @Test
       @TestMetadata("syntheticAccessorOnSmartcastedReceiver.kt")
       public void testSyntheticAccessorOnSmartcastedReceiver() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/syntheticAccessorOnSmartcastedReceiver.kt");
