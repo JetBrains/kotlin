@@ -16,12 +16,15 @@ extern "C" {
 
 OBJ_GETTER(CreateStringFromCString, const char* cstring);
 OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes);
+
 char* CreateCStringFromString(KConstRef kstring);
 void DisposeCString(char* cstring);
-ObjHeader* CreatePermanentStringFromCString(const char* nullTerminatedUTF8);
-void FreePermanentStringForTests(ArrayHeader* header);  // to make ASAN happy, in hostRuntimeTests call FreePermanentStringForTests() after CreatePermanentStringFromCString()
 
-OBJ_GETTER(StringFromUtf8Buffer, const char* start, size_t size);
+KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8);
+// In real-world uses, permanent strings created by `CreatePermanentStringFromCString` are referenced until termination
+// and don't need to be deallocated. To make address sanitizer not complain about "memory leaks" in hostRuntimeTests,
+// though, they should be deallocated using this function.
+void FreePermanentStringForTests(ArrayHeader* header);
 
 #ifdef __cplusplus
 }
