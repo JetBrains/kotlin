@@ -53,12 +53,9 @@ abstract class UsefulDeclarationProcessor(
             expression.symbol.owner.enqueue(data, "raw function access")
         }
 
-        override fun visitBlock(expression: IrBlock, data: IrDeclaration) {
-            super.visitBlock(expression, data)
-
-            if (expression is IrReturnableBlock) {
-                expression.inlineFunction?.addToUsefulPolyfilledDeclarations()
-            }
+        override fun visitReturnableBlock(expression: IrReturnableBlock, data: IrDeclaration) {
+            super.visitReturnableBlock(expression, data)
+            expression.inlineFunction?.addToUsefulPolyfilledDeclarations()
         }
 
         override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
