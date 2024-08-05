@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
 import org.jetbrains.kotlin.analysis.utils.classId
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.java.classKind
@@ -41,19 +42,24 @@ import org.jetbrains.kotlin.name.Name
  * be accessed.
  */
 internal class KaFirPsiJavaClassSymbol(
-    override val psi: PsiClass,
+    override val backingPsi: PsiClass,
     override val analysisSession: KaFirSession,
 ) : KaFirNamedClassSymbolBase(), KaFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
     /**
      * [javaClass] is used to defer some properties to the compiler's view of a Java class.
      */
-    private val javaClass: JavaClass = JavaClassImpl(JavaElementSourceFactory.getInstance(analysisSession.project).createPsiSource(psi))
+    private val javaClass: JavaClass = JavaClassImpl(
+        JavaElementSourceFactory.getInstance(analysisSession.project).createPsiSource(backingPsi)
+    )
 
-    override val name: Name = withValidityAssertion { javaClass.name }
+    override val psi: PsiElement? get() = withValidityAssertion { backingPsi }
 
-    override val classId: ClassId = withValidityAssertion {
-        psi.classId ?: error("${KaFirPsiJavaClassSymbol::class.simpleName} requires a non-local PSI class.")
-    }
+    override val name: Name get() = withValidityAssertion { javaClass.name }
+
+    override val classId: ClassId
+        get() = withValidityAssertion {
+            backingPsi.classId ?: error("${KaFirPsiJavaClassSymbol::class.simpleName} requires a non-local PSI class.")
+        }
 
     override val origin: KaSymbolOrigin
         get() = withValidityAssertion {
@@ -81,13 +87,13 @@ internal class KaFirPsiJavaClassSymbol(
         get() = withValidityAssertion { classId.outerClassId != null && !javaClass.isStatic }
 
     val outerClass: KaFirPsiJavaClassSymbol?
-        get() = psi.containingClass?.let { KaFirPsiJavaClassSymbol(it, analysisSession) }
+        get() = withValidityAssertion { backingPsi.containingClass?.let { KaFirPsiJavaClassSymbol(it, analysisSession) } }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {
             // The parent Java class might contribute type parameters to the Java type parameter stack, but for this KtSymbol, parent type
             // parameters aren't relevant.
-            psi.typeParameters.mapIndexed { index, psiTypeParameter ->
+            backingPsi.typeParameters.mapIndexed { index, psiTypeParameter ->
                 KaFirPsiJavaTypeParameterSymbol(psiTypeParameter, analysisSession, origin) {
                     // `psi.typeParameters` should align with the list of regular `FirTypeParameter`s, making the use of `index` valid.
                     val firTypeParameter = firSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().getOrNull(index)
@@ -100,10 +106,10 @@ internal class KaFirPsiJavaClassSymbol(
         }
 
     val annotationSimpleNames: List<String?>
-        get() = psi.annotations.map { it.nameReferenceElement?.referenceName }
+        get() = withValidityAssertion { backingPsi.annotations.map { it.nameReferenceElement?.referenceName } }
 
     val hasAnnotations: Boolean
-        get() = psi.annotations.isNotEmpty()
+        get() = withValidityAssertion { backingPsi.annotations.isNotEmpty() }
 
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }
@@ -121,10 +127,10 @@ internal class KaFirPsiJavaClassSymbol(
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     override val hasLazyFirSymbol: Boolean get() = true
 
-    override val firSymbol: FirRegularClassSymbol by cached {
-        val module = analysisSession.getModule(psi)
+    override val lazyFirSymbol: Lazy<FirRegularClassSymbol> = lazyPub {
+        val module = analysisSession.getModule(backingPsi)
         val provider = analysisSession.firResolveSession.getSessionFor(module).firClassByPsiClassProvider
-        provider.getFirClass(psi)
+        provider.getFirClass(backingPsi)
     }
 
     override val annotations: KaAnnotationList

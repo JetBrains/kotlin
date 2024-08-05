@@ -29,18 +29,24 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal interface KaFirSymbol<out S : FirBasedSymbol<*>> : KaSymbol, KaLifetimeOwner {
+    /**
+     * The underlying [FirBasedSymbol] which is used to provide other property implementations.
+     */
     val firSymbol: S
+
     val analysisSession: KaFirSession
     val builder: KaSymbolByFirBuilder get() = analysisSession.firSymbolBuilder
 
     override val token: KaLifetimeToken get() = analysisSession.token
-    override val origin: KaSymbolOrigin get() = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
+    override val origin: KaSymbolOrigin get() = withValidityAssertion { symbolOrigin() }
 }
 
 internal fun KaFirSymbol<*>.symbolEquals(other: Any?): Boolean {
     if (other !is KaFirSymbol<*>) return false
     return this.firSymbol == other.firSymbol
 }
+
+internal fun KaFirSymbol<*>.symbolOrigin(): KaSymbolOrigin = firSymbol.fir.ktSymbolOrigin()
 
 internal fun KaFirSymbol<*>.symbolHashCode(): Int = firSymbol.hashCode()
 

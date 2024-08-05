@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -24,14 +26,17 @@ import org.jetbrains.kotlin.types.Variance
  * is requested.
  */
 internal class KaFirPsiJavaTypeParameterSymbol(
-    override val psi: PsiTypeParameter,
+    override val backingPsi: PsiTypeParameter,
     override val analysisSession: KaFirSession,
     origin: KaSymbolOrigin,
     computeFirSymbol: () -> FirTypeParameterSymbol,
 ) : KaFirTypeParameterSymbolBase(), KaFirPsiSymbol<PsiTypeParameter, FirTypeParameterSymbol> {
-    override val name: Name = withValidityAssertion {
-        psi.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
-    }
+    override val name: Name
+        get() = withValidityAssertion {
+            backingPsi.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
+        }
+
+    override val psi: PsiElement? get() = withValidityAssertion { backingPsi }
 
     override val origin: KaSymbolOrigin by validityAsserted(origin)
 
@@ -43,12 +48,12 @@ internal class KaFirPsiJavaTypeParameterSymbol(
 
     override val location: KaSymbolLocation
         get() = withValidityAssertion {
-            if (psi.owner is PsiClass) {
+            if (backingPsi.owner is PsiClass) {
                 KaSymbolLocation.CLASS
             } else {
                 KaSymbolLocation.LOCAL
             }
         }
 
-    override val firSymbol: FirTypeParameterSymbol by cached(computeFirSymbol)
+    override val lazyFirSymbol: Lazy<FirTypeParameterSymbol> = lazyPub(computeFirSymbol)
 }
