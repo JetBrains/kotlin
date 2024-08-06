@@ -102,7 +102,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
-    testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.21.0")
+    testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.25.0")
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -113,28 +113,28 @@ dependencies {
     testRuntimeOnly(project(":compiler:backend-common"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
-    atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.21.0") { isTransitive = false }
+    atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.25.0") { isTransitive = false }
     atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
-    atomicfuJvmClasspath("org.jetbrains.kotlinx:atomicfu:0.21.0") { isTransitive = false }
-    atomicfuNativeKlib("org.jetbrains.kotlinx:atomicfu:0.21.0") { isTransitive = false }
+    atomicfuJvmClasspath("org.jetbrains.kotlinx:atomicfu:0.25.0") { isTransitive = false }
+    atomicfuNativeKlib("org.jetbrains.kotlinx:atomicfu:0.25.0") { isTransitive = false }
     atomicfuCompilerPluginForTests(project(":kotlin-atomicfu-compiler-plugin"))
     // Implicit dependencies on native artifacts to run native tests on CI
-    implicitDependencies("org.jetbrains.kotlinx:atomicfu-linuxx64:0.21.0") {
+    implicitDependencies("org.jetbrains.kotlinx:atomicfu-linuxx64:0.25.0") {
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         }
     }
-    implicitDependencies("org.jetbrains.kotlinx:atomicfu-macosarm64:0.21.0"){
+    implicitDependencies("org.jetbrains.kotlinx:atomicfu-macosarm64:0.25.0"){
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         }
     }
-    implicitDependencies("org.jetbrains.kotlinx:atomicfu-macosx64:0.21.0"){
+    implicitDependencies("org.jetbrains.kotlinx:atomicfu-macosx64:0.25.0"){
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         }
     }
-    implicitDependencies("org.jetbrains.kotlinx:atomicfu-mingwx64:0.21.0"){
+    implicitDependencies("org.jetbrains.kotlinx:atomicfu-mingwx64:0.25.0"){
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         }
@@ -149,7 +149,7 @@ dependencies {
         isTransitive = false
     }
 
-    testImplementation("org.jetbrains.kotlinx:atomicfu:0.21.0")
+    testImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
 
     testRuntimeOnly(libs.junit.vintage.engine)
 }
