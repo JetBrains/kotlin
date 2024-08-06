@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -48,7 +49,7 @@ internal class AnnotationTranslator {
         return directAnnotations + backingFieldAnnotations + fileLevelAnnotations
     }
 
-    private fun KaAnnotation.isNoExistedInSource() = psi == null
+    private fun KaAnnotation.isNoExistedInKotlinSource() = psi == null
     private fun AnnotationUseSiteTarget.toDokkaAnnotationScope(): Annotations.AnnotationScope = when (this) {
         AnnotationUseSiteTarget.PROPERTY_GETTER -> Annotations.AnnotationScope.DIRECT // due to compatibility with Dokka K1
         AnnotationUseSiteTarget.PROPERTY_SETTER -> Annotations.AnnotationScope.DIRECT // due to compatibility with Dokka K1
@@ -57,10 +58,17 @@ internal class AnnotationTranslator {
     }
 
     private fun KaSession.mustBeDocumented(annotation: KaAnnotation): Boolean {
-        if (annotation.isNoExistedInSource()) return false
+        /**
+         * Do not document the synthetic [parameterNameAnnotation] annotation since Dokka K1 ignores it too.
+         * The annotation can be added by the compiler during "desugaring" functional types.
+         * e.g., `(x: Int) -> Unit` becomes `Function1<@ParameterName("x") Int, Unit>`
+         * @see ParameterName
+         * @see getPresentableName
+        */
+        if(annotation.classId == parameterNameAnnotation && annotation.isNoExistedInKotlinSource()) return false
+
         val annotationClass = findClass(annotation.classId ?: return false)
-        return annotationClass?.let { mustBeDocumentedAnnotation in it.annotations }
-            ?: false
+        return annotationClass?.let { mustBeDocumentedAnnotation in it.annotations } == true
     }
 
     private fun KaSession.toDokkaAnnotation(annotation: KaAnnotation) =
@@ -132,11 +140,12 @@ internal class AnnotationTranslator {
     }
 
     companion object {
-        val mustBeDocumentedAnnotation = ClassId(FqName("kotlin.annotation"), FqName("MustBeDocumented"), false)
-        private val parameterNameAnnotation = ClassId(FqName("kotlin"), FqName("ParameterName"), false)
+        val mustBeDocumentedAnnotation = ClassId(StandardNames.ANNOTATION_PACKAGE_FQ_NAME, FqName("MustBeDocumented"), false)
+        val parameterNameAnnotation = StandardNames.FqNames.parameterNameClassId
 
         /**
          * Functional types can have **generated** [ParameterName] annotation
+         * e.g., `(x: Int) -> Unit` becomes `Function1<@ParameterName("x") Int, Unit>`.
          * @see ParameterName
          */
         internal fun KaAnnotated.getPresentableName(): String? =
