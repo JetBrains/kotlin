@@ -5,6 +5,9 @@
 
 package java.lang
 
+import kotlin.String
+import kotlin.Throwable
+
 public open class AssertionError : Error {
     public constructor()
     public constructor(message: Any?)
