@@ -838,7 +838,7 @@ internal class DokkaSymbolVisitor(
             return DRIWithOverridden(getDRIFromSymbol(callableSymbol), wasOverriddenBy)
 
         } else { // fake, synthetic, delegating
-            val firstOverriddenSymbolOrNull = callableSymbol.allOverriddenSymbols.firstOrNull()
+            val firstOverriddenSymbolOrNull = callableSymbol.directlyOverriddenSymbols.firstOrNull()
             return if (firstOverriddenSymbolOrNull == null) {
                 DRIWithOverridden(getDRIFromSymbol(callableSymbol), wasOverriddenBy)
             } else {
