@@ -94,6 +94,7 @@ internal class SymbolLightParameterForReceiver private constructor(
                 getTypeMappingMode(ktType),
                 suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
                 forceValueClassResolution = method.canHaveValueClassInSignature(),
+                allowNonJvmPlatforms = true,
             )
 
             if (method is SymbolLightAnnotationsMethod) {

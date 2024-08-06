@@ -13,20 +13,18 @@ public final class C /* C*/ {
 
   public  C();//  .ctor()
 
-  public static final int getY();//  getY()
-
   class Companion ...
 }
 
 public static final class Companion /* C.Companion*/ {
+  @<error>()
+  @Anno(p = "y")
+  @java.lang.Deprecated()
+  public static void getY$annotations();//  getY$annotations()
+
   @Anno(p = "x")
   @java.lang.Deprecated()
   public static void getX$annotations();//  getX$annotations()
-
-  @Anno(p = "y")
-  @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
-  public static void getY$annotations();//  getY$annotations()
 
   private  Companion();//  .ctor()
 
@@ -54,10 +52,6 @@ public class O /* O*/ {
 }
 
 public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
-  @kotlin.jvm.Transient()
-  @kotlin.jvm.Volatile()
-  private static transient volatile int jvmFlags = 0 /* initializer type: int */;
-
   @org.jetbrains.annotations.NotNull()
   private static final @org.jetbrains.annotations.NotNull() java.lang.String nonNullable = "" /* initializer type: java.lang.String */;
 
@@ -68,7 +62,14 @@ public final class PropertyAnnotationsKt /* PropertyAnnotationsKt*/ {
 
   private static final int privateProperty = 1 /* initializer type: int */;
 
+  private static int jvmFlags = 0 /* initializer type: int */;
+
   public static final int constProperty = 1 /* initializer type: int */ /* constant value 1 */;
+
+  @<error>()
+  @<error>()
+  @java.lang.Deprecated()
+  public static void getJvmFlags$annotations();//  getJvmFlags$annotations()
 
   @Anno(p = "const")
   @java.lang.Deprecated()

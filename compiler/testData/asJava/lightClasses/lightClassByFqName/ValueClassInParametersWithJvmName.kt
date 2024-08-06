@@ -1,5 +1,7 @@
 // one.UTypeDeclarationClass
 // WITH_STDLIB
+// LIBRARY_PLATFORMS: JVM
+
 package one
 
 @JvmInline

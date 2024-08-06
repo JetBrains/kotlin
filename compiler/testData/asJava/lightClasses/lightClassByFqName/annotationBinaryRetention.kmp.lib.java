@@ -1,4 +1,4 @@
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.CLASS)
-@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.annotation.Retention()
 public abstract @interface Anno /* one.Anno*/ {
 }

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.psi.PsiNameHelper
+import com.intellij.psi.impl.PsiNameHelperImpl
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
@@ -15,6 +17,7 @@ object AnalysisApiSymbolLightClassesDecompiledTestServiceRegistrar : AnalysisApi
     override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         project.apply {
             registerService(ClsJavaStubByVirtualFileCache::class.java)
+            registerService(PsiNameHelper::class.java, PsiNameHelperImpl::class.java)
         }
     }
 }

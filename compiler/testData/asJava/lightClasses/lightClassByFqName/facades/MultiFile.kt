@@ -1,5 +1,7 @@
 // test.MultiFile
 // WITH_STDLIB
+// LIBRARY_PLATFORMS: JVM
+
 @file:JvmMultifileClass
 @file:JvmName("MultiFile")
 

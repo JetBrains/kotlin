@@ -1,4 +1,5 @@
 // GENERATE_PROPERTY_ANNOTATIONS_METHODS
+// LIBRARY_PLATFORMS: JVM
 
 annotation class Anno(val p: String = "")
 

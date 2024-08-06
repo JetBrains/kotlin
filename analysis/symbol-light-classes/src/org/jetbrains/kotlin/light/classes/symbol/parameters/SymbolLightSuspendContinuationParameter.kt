@@ -50,6 +50,7 @@ internal class SymbolLightSuspendContinuationParameter(
                 allowErrorTypes = true,
                 getTypeMappingMode(ktType),
                 forceValueClassResolution = method.canHaveValueClassInSignature(),
+                allowNonJvmPlatforms = true,
             ) ?: nonExistentType()
         }
     }

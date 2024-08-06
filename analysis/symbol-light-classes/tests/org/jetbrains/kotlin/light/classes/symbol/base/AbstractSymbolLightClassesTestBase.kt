@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
@@ -17,7 +18,11 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.light.classes.symbol.base.service.NullabilityAnnotationSourceProvider
+import org.jetbrains.kotlin.light.classes.symbol.withMultiplatformLightClassSupport
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.has
+import org.jetbrains.kotlin.platform.jvm.JvmPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -35,7 +40,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
-import kotlin.io.path.nameWithoutExtension
 import kotlin.test.fail
 
 // Same as LightProjectDescriptor.TEST_MODULE_NAME
@@ -44,13 +48,14 @@ private const val TEST_MODULE_NAME = "light_idea_test_case"
 abstract class AbstractSymbolLightClassesTestBase(
     override val configurator: AnalysisApiTestConfigurator,
 ) : AbstractAnalysisApiBasedTest() {
-
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
             useAdditionalServices(service(::CompiledLibraryProvider))
             useDirectives(Directives, TestModuleCompiler.Directives)
-            useAdditionalSourceProviders(::NullabilityAnnotationSourceProvider)
+            if (configurator.defaultTargetPlatform.has<JvmPlatform>()) {
+                useAdditionalSourceProviders(::NullabilityAnnotationSourceProvider)
+            }
             defaultDirectives {
                 +ConfigurationDirectives.WITH_STDLIB
                 ModuleStructureDirectives.MODULE + TEST_MODULE_NAME
@@ -63,6 +68,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         doLightClassTest(ktFiles, mainModule, testServices)
     }
 
+    @OptIn(KaNonPublicApi::class)
     open fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
         if (isTestAgainstCompiledCode && TestModuleCompiler.Directives.COMPILATION_ERRORS in module.testModule.directives) {
             return
@@ -73,7 +79,13 @@ abstract class AbstractSymbolLightClassesTestBase(
 
         ignoreExceptionIfIgnoreDirectivePresent(module) {
             compareResults(module, testServices) {
-                getRenderResult(ktFile, ktFiles, testDataPath, module, project)
+                if (configurator.defaultTargetPlatform.has<JvmPlatform>()) {
+                    getRenderResult(ktFile, ktFiles, testDataPath, module, project)
+                } else {
+                    withMultiplatformLightClassSupport {
+                        getRenderResult(ktFile, ktFiles, testDataPath, module, project)
+                    }
+                }
             }
         }
     }
@@ -191,8 +203,8 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    private fun javaPath() = testDataPath.resolveSibling(testDataPath.nameWithoutExtension + EXTENSIONS.JAVA)
-    private fun currentResultPath() = testDataPath.resolveSibling(testDataPath.nameWithoutExtension + currentExtension)
+    private fun javaPath() = getTestDataFileSiblingPath(EXTENSIONS.JAVA)
+    private fun currentResultPath() = getTestDataFileSiblingPath(currentExtension)
 
     protected abstract val currentExtension: String
     protected abstract val isTestAgainstCompiledCode: Boolean
@@ -200,7 +212,9 @@ abstract class AbstractSymbolLightClassesTestBase(
     object EXTENSIONS {
         const val JAVA = ".java"
         const val FIR_JAVA = ".fir.java"
+        const val KMP_JAVA = ".kmp.java"
         const val LIB_JAVA = ".lib.java"
+        const val KMP_LIB_JAVA = ".kmp.lib.java"
     }
 
     private object Directives : SimpleDirectivesContainer() {

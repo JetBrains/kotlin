@@ -1,6 +1,6 @@
 public final class PropertiesKt /* PropertiesKt*/ {
-  @kotlin.jvm.Transient()
-  private static final transient int plainField = 1 /* initializer type: int */;
+  @<error>()
+  private static final int plainField = 1 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
   private static @org.jetbrains.annotations.NotNull() java.lang.String name = "x" /* initializer type: java.lang.String */;

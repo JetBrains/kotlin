@@ -1,5 +1,6 @@
 // A
 // WITH_STDLIB
+// LIBRARY_PLATFORMS: JVM
 
 class A {
     companion object {

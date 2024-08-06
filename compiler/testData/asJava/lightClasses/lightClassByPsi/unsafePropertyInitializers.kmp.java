@@ -27,7 +27,7 @@ public final class UnsafePropertyInitializersKt /* UnsafePropertyInitializersKt*
   private static final @org.jetbrains.annotations.NotNull() kotlin.annotation.AnnotationTarget @org.jetbrains.annotations.NotNull() [] arrayOfEnums = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY} /* initializer type: null */;
 
   @org.jetbrains.annotations.NotNull()
-  private static final @org.jetbrains.annotations.Nullable() java.lang.Object @org.jetbrains.annotations.NotNull() [] arrayOfNAny = {1, 2L, "abc", kotlin.annotation.AnnotationTarget.CLASS, null} /* initializer type: null */;
+  private static final @org.jetbrains.annotations.Nullable() java.lang.Comparable<?> @org.jetbrains.annotations.NotNull() [] arrayOfNAny = {1, 2L, "abc", kotlin.annotation.AnnotationTarget.CLASS, null} /* initializer type: null */;
 
   @org.jetbrains.annotations.NotNull()
   private static final char @org.jetbrains.annotations.NotNull() [] arrayOfCharPrimitives = {'C', '\u0000', '\n', '\r', '\'', '\u00FF'} /* initializer type: null */;
@@ -78,7 +78,7 @@ public final class UnsafePropertyInitializersKt /* UnsafePropertyInitializersKt*
   public static final @org.jetbrains.annotations.NotNull() kotlin.annotation.AnnotationTarget @org.jetbrains.annotations.NotNull() [] getArrayOfEnums();//  getArrayOfEnums()
 
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.Nullable() java.lang.Object @org.jetbrains.annotations.NotNull() [] getArrayOfNAny();//  getArrayOfNAny()
+  public static final @org.jetbrains.annotations.Nullable() java.lang.Comparable<?> @org.jetbrains.annotations.NotNull() [] getArrayOfNAny();//  getArrayOfNAny()
 
   @org.jetbrains.annotations.NotNull()
   public static final char @org.jetbrains.annotations.NotNull() [] getArrayOfCharPrimitives();//  getArrayOfCharPrimitives()

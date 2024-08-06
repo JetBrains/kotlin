@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 typealias JO = JvmOverloads
 
 object O {

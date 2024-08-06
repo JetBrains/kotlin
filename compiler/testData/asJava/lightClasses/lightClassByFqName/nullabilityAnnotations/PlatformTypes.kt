@@ -1,4 +1,5 @@
 // PlatformTypes
+// LIBRARY_PLATFORMS: JVM
 
 import java.util.Collections
 

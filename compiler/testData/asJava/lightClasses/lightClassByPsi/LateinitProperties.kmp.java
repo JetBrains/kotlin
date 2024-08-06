@@ -11,21 +11,16 @@ public abstract class AbstractKotlinClass /* AbstractKotlinClass*/ {
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() Custom getClassLateinitVariable();//  getClassLateinitVariable()
 
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
-
   public  AbstractKotlinClass();//  .ctor()
 
   public final void setClassLateinitVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setClassLateinitVariable(@org.jetbrains.annotations.NotNull() Custom)
-
-  public static final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom)
 
   class Companion ...
 }
 
 public static final class Companion /* AbstractKotlinClass.Companion*/ {
+  @<error>()
   @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
   public static void getCompanionLateinitStaticVariable$annotations();//  getCompanionLateinitStaticVariable$annotations()
 
   @org.jetbrains.annotations.NotNull()
@@ -58,21 +53,16 @@ public final class KotlinClass /* KotlinClass*/ {
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() Custom getClassLateinitVariable();//  getClassLateinitVariable()
 
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() Custom getCompanionLateinitStaticVariable();//  getCompanionLateinitStaticVariable()
-
   public  KotlinClass();//  .ctor()
 
   public final void setClassLateinitVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setClassLateinitVariable(@org.jetbrains.annotations.NotNull() Custom)
-
-  public static final void setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Custom);//  setCompanionLateinitStaticVariable(@org.jetbrains.annotations.NotNull() Custom)
 
   class Companion ...
 }
 
 public static final class Companion /* KotlinClass.Companion*/ {
+  @<error>()
   @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
   public static void getCompanionLateinitStaticVariable$annotations();//  getCompanionLateinitStaticVariable$annotations()
 
   @org.jetbrains.annotations.NotNull()

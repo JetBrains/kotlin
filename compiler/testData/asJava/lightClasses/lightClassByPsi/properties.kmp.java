@@ -8,7 +8,7 @@ public abstract interface A /* A*/ {
 
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
-  private @org.jetbrains.annotations.NotNull() java.lang.Object privateVarWithGet;
+  private @org.jetbrains.annotations.NotNull() Object privateVarWithGet;
 
   @org.jetbrains.annotations.NotNull()
   private @org.jetbrains.annotations.NotNull() java.lang.String name = "x" /* initializer type: java.lang.String */;
@@ -232,8 +232,8 @@ public final class Foo2 /* Foo2*/ {
 }
 
 public final class Modifiers /* Modifiers*/ {
-  @kotlin.jvm.Transient()
-  private final transient int plainField = 1 /* initializer type: int */;
+  @<error>()
+  private final int plainField = 1 /* initializer type: int */;
 
   public  Modifiers();//  .ctor()
 

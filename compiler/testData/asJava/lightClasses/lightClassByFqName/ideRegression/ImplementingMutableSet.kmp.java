@@ -22,24 +22,16 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
   @java.lang.Override()
   public void clear();//  clear()
 
-  @kotlin.jvm.JvmStatic()
-  @org.jetbrains.annotations.NotNull()
-  public static final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create();// <T>  create()
-
-  @kotlin.jvm.JvmStatic()
-  @org.jetbrains.annotations.NotNull()
-  public static final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>)
-
   private  SmartSet();//  .ctor()
 
   public void setSize(int);//  setSize(int)
 
   public static final class Companion /* SmartSet.Companion*/ {
-    @kotlin.jvm.JvmStatic()
+    @<error>()
     @org.jetbrains.annotations.NotNull()
     public final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create();// <T>  create()
 
-    @kotlin.jvm.JvmStatic()
+    @<error>()
     @org.jetbrains.annotations.NotNull()
     public final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>)
 

@@ -3,6 +3,12 @@ public final class X /* X*/ {
 
   private int w = 1 /* initializer type: int */;
 
+  @<error>()
+  public final int getV();//  getV()
+
+  @<error>()
+  public final void setW(int);//  setW(int)
+
   public  X();//  .ctor()
 
   public final int getW();//  getW()

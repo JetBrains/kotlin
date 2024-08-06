@@ -1,15 +1,16 @@
 public final class PrimitiveBackedInlineClassesKt /* PrimitiveBackedInlineClassesKt*/ {
-  @kotlin.jvm.JvmName(name = "getInlineClass")
-  public static final int getInlineClass();//  getInlineClass()
+  @<error>()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() int geUInt();//  geUInt()
 
-  @kotlin.jvm.JvmName(name = "getNullableInlineClass")
+  @<error>()
   @org.jetbrains.annotations.Nullable()
-  public static final @org.jetbrains.annotations.Nullable() InlineClass getNullableInlineClass();//  getNullableInlineClass()
+  public static final @org.jetbrains.annotations.Nullable() InlineClass getNullableUInlineClass();//  getNullableUInlineClass()
 
-  @kotlin.jvm.JvmName(name = "getNullableUInt")
+  @<error>()
   @org.jetbrains.annotations.Nullable()
   public static final @org.jetbrains.annotations.Nullable() kotlin.UInt getNullableUInt();//  getNullableUInt()
 
-  @kotlin.jvm.JvmName(name = "getUInt")
-  public static final int getUInt();//  getUInt()
+  @<error>()
+  public static final int getInlineClass();//  getInlineClass()
 }

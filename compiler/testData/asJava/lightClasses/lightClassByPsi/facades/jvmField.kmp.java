@@ -1,8 +1,13 @@
 public final class JvmFieldKt /* JvmFieldKt*/ {
-  @kotlin.jvm.JvmField()
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.util.Collection<?> a;
+  private static final @org.jetbrains.annotations.NotNull() java.util.Collection<?> a;
 
-  @kotlin.jvm.JvmField()
-  public static int b = 1 /* initializer type: int */;
+  private static int b = 1 /* initializer type: int */;
+
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.util.Collection<?> getA();//  getA()
+
+  public static final int getB();//  getB()
+
+  public static final void setB(int);//  setB(int)
 }

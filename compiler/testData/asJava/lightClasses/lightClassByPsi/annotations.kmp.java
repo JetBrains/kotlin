@@ -44,9 +44,6 @@ public abstract @interface Anno6 /* Anno6*/ {
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
-  @kotlin.jvm.JvmField()
-  public static final int x = 42 /* initializer type: int */;
-
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() AnnoWithCompanion.Companion Companion;
 
@@ -54,7 +51,11 @@ public abstract @interface AnnoWithCompanion /* AnnoWithCompanion*/ {
 }
 
 public static final class Companion /* AnnoWithCompanion.Companion*/ {
+  private static final int x = 42 /* initializer type: int */;
+
   private  Companion();//  .ctor()
+
+  public final int getX();//  getX()
 
   public final void foo();//  foo()
 }
@@ -119,7 +120,7 @@ public final class Example /* Example*/ {
 }
 
 @Anno()
-public final class F /* F*/ implements java.lang.Runnable {
+public final class F /* F*/ implements Runnable {
   @org.jetbrains.annotations.NotNull()
   private @org.jetbrains.annotations.NotNull() java.lang.String prop = "x" /* initializer type: java.lang.String */;
 

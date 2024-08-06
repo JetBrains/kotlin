@@ -3,8 +3,8 @@ public abstract @interface AnotherUniversalAnnotation /* AnotherUniversalAnnotat
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
+@java.lang.annotation.Target()
+@kotlin.annotation.Target(allowedTargets = {})
 public abstract @interface FieldAnnotation /* FieldAnnotation*/ {
 }
 
@@ -44,37 +44,37 @@ public final class MyClass /* MyClass*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.PARAMETER})
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.VALUE_PARAMETER})
+@java.lang.annotation.Target()
+@kotlin.annotation.Target(allowedTargets = {})
 public abstract @interface ParameterAnnotation /* ParameterAnnotation*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD, java.lang.annotation.ElementType.PARAMETER})
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER})
+@java.lang.annotation.Target()
+@kotlin.annotation.Target(allowedTargets = {})
 public abstract @interface ParameterOrFieldAnnotation /* ParameterOrFieldAnnotation*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target(value = {})
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
+@java.lang.annotation.Target()
+@kotlin.annotation.Target(allowedTargets = {})
 public abstract @interface PropertyAnnotation /* PropertyAnnotation*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD})
+@java.lang.annotation.Target()
+@kotlin.annotation.Target(allowedTargets = {})
 public abstract @interface PropertyOrFieldAnnotation /* PropertyOrFieldAnnotation*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.PARAMETER})
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER})
+@java.lang.annotation.Target()
+@kotlin.annotation.Target(allowedTargets = {})
 public abstract @interface PropertyOrParameterAnnotation /* PropertyOrParameterAnnotation*/ {
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD, java.lang.annotation.ElementType.PARAMETER})
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER})
+@java.lang.annotation.Target()
+@kotlin.annotation.Target(allowedTargets = {})
 public abstract @interface UniversalAnnotation /* UniversalAnnotation*/ {
 }

@@ -1,4 +1,5 @@
 // Class
+// LIBRARY_PLATFORMS: JVM
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable

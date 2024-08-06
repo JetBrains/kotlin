@@ -49,24 +49,23 @@ public enum Direction /* Direction*/ {
   private  Direction();//  .ctor()
 }
 
-public abstract enum IntArithmetics /* IntArithmetics*/ implements java.util.function.BinaryOperator<@org.jetbrains.annotations.NotNull() java.lang.Integer>, java.util.function.IntBinaryOperator {
+public enum IntArithmetics /* IntArithmetics*/ implements BinaryOperator<java.lang.Integer>, IntBinaryOperator {
   PLUS {
    PLUS();//  .ctor()
 
   @java.lang.Override()
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer apply(int, int);//  apply(int, int)
+  public int apply(int, int);//  apply(int, int)
   },
   TIMES {
    TIMES();//  .ctor()
 
   @java.lang.Override()
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer apply(int, int);//  apply(int, int)
+  public int apply(int, int);//  apply(int, int)
   };
 
   @java.lang.Override()
-  public int applyAsInt(int, int);//  applyAsInt(int, int)
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() IntArithmetics applyAsInt(int, int);//  applyAsInt(int, int)
 
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() IntArithmetics @org.jetbrains.annotations.NotNull() [] values();//  values()
@@ -84,16 +83,14 @@ static final class PLUS /* IntArithmetics.PLUS*/ extends IntArithmetics {
    PLUS();//  .ctor()
 
   @java.lang.Override()
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer apply(int, int);//  apply(int, int)
+  public int apply(int, int);//  apply(int, int)
 }
 
 static final class TIMES /* IntArithmetics.TIMES*/ extends IntArithmetics {
    TIMES();//  .ctor()
 
   @java.lang.Override()
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer apply(int, int);//  apply(int, int)
+  public int apply(int, int);//  apply(int, int)
 }
 
 public abstract enum ProtocolState /* ProtocolState*/ {

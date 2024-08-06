@@ -3,9 +3,6 @@ public abstract class C /* C*/<T>  {
   private @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence> constructorParam;
 
   @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.util.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String> sHashSetProp;
-
-  @org.jetbrains.annotations.Nullable()
   private @org.jetbrains.annotations.Nullable() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence> csListProp;
 
   @org.jetbrains.annotations.Nullable()
@@ -16,6 +13,9 @@ public abstract class C /* C*/<T>  {
 
   @org.jetbrains.annotations.Nullable()
   private @org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> sSetProp;
+
+  @org.jetbrains.annotations.Nullable()
+  private @org.jetbrains.annotations.Nullable() kotlin.collections.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String> sHashSetProp;
 
   @org.jetbrains.annotations.NotNull()
   public abstract @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.CharSequence>> nested(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>>);//  nested(@org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>>)
@@ -36,9 +36,6 @@ public abstract class C /* C*/<T>  {
   public final <T extends java.lang.Comparable<? super T>> @org.jetbrains.annotations.Nullable() T max(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.Collection<? extends T>);// <T extends java.lang.Comparable<? super T>>  max(@org.jetbrains.annotations.Nullable() java.util.Collection<? extends T>)
 
   @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.Nullable() java.util.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String> getSHashSetProp();//  getSHashSetProp()
-
-  @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.CharSequence> getCsListProp();//  getCsListProp()
 
   @org.jetbrains.annotations.Nullable()
@@ -50,6 +47,9 @@ public abstract class C /* C*/<T>  {
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> getSSetProp();//  getSSetProp()
 
+  @org.jetbrains.annotations.Nullable()
+  public final @org.jetbrains.annotations.Nullable() kotlin.collections.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String> getSHashSetProp();//  getSHashSetProp()
+
   public  C(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>);//  .ctor(@org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>)
 
   public final <Q extends T> Q getW(@org.jetbrains.annotations.NotNull() Q);// <Q extends T>  getW(Q)
@@ -60,7 +60,7 @@ public abstract class C /* C*/<T>  {
 
   public final void setCsListProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>);//  setCsListProp(@org.jetbrains.annotations.Nullable() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.CharSequence>)
 
-  public final void setSHashSetProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String>);//  setSHashSetProp(@org.jetbrains.annotations.Nullable() java.util.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String>)
+  public final void setSHashSetProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() kotlin.collections.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String>);//  setSHashSetProp(@org.jetbrains.annotations.Nullable() kotlin.collections.HashSet<@org.jetbrains.annotations.NotNull() java.lang.String>)
 
   public final void setSListProp(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>);//  setSListProp(@org.jetbrains.annotations.Nullable() java.util.List<@org.jetbrains.annotations.NotNull() java.lang.String>)
 

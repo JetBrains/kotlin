@@ -253,6 +253,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 containingClass.isAnnotationType,
                 suppressWildcards(),
                 forceValueClassResolution = canHaveValueClassInSignature(),
+                allowNonJvmPlatforms = true,
             )
         } ?: nonExistentType()
     }

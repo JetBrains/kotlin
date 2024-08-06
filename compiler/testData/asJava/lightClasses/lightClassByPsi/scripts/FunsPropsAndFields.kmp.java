@@ -1,6 +1,5 @@
 public final class FunsPropsAndFields /* FunsPropsAndFields*/ extends kotlin.script.templates.standard.ScriptTemplateWithArgs {
-  @kotlin.jvm.JvmField()
-  public final int testField = 42 /* initializer type: int */;
+  private final int testField = 42 /* initializer type: int */;
 
   private final int testPropVal = 42 /* initializer type: int */;
 
@@ -10,6 +9,8 @@ public final class FunsPropsAndFields /* FunsPropsAndFields*/ extends kotlin.scr
   public final @org.jetbrains.annotations.NotNull() java.lang.String testFun(int);//  testFun(int)
 
   public  FunsPropsAndFields(java.lang.String[]);//  .ctor(java.lang.String[])
+
+  public final int getTestField();//  getTestField()
 
   public final int getTestPropVal();//  getTestPropVal()
 

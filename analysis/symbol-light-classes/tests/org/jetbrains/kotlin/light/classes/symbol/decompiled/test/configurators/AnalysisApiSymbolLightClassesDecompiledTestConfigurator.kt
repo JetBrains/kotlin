@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTestConfigurator() {
+class AnalysisApiSymbolLightClassesDecompiledTestConfigurator(
+    override val defaultTargetPlatform: TargetPlatform
+) : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
 

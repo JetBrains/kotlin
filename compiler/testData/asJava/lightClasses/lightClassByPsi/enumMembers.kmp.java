@@ -7,10 +7,6 @@ public enum Event /* Event*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Event.Companion Companion;
 
-  @kotlin.jvm.JvmStatic()
-  @org.jetbrains.annotations.Nullable()
-  public static final @org.jetbrains.annotations.Nullable() Event upTo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() State);//  upTo(@org.jetbrains.annotations.NotNull() State)
-
   @org.jetbrains.annotations.NotNull()
   public static @org.jetbrains.annotations.NotNull() Event @org.jetbrains.annotations.NotNull() [] values();//  values()
 
@@ -26,7 +22,7 @@ public enum Event /* Event*/ {
 }
 
 public static final class Companion /* Event.Companion*/ {
-  @kotlin.jvm.JvmStatic()
+  @<error>()
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() Event upTo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() State);//  upTo(@org.jetbrains.annotations.NotNull() State)
 

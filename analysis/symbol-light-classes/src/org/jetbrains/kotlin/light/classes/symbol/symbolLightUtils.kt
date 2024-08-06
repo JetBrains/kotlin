@@ -49,6 +49,7 @@ internal fun KaSession.mapType(
         allowErrorTypes = true,
         mode = mode,
         forceValueClassResolution = false,
+        allowNonJvmPlatforms = true,
     )
 
     return psiType as? PsiClassType

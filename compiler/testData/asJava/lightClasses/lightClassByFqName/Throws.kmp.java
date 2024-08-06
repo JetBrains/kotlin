@@ -7,17 +7,17 @@ public final class Test /* Test*/ extends Base {
 
   private final int p1;
 
-  @kotlin.jvm.Throws(exceptionClasses = {MyException.class})
+  @kotlin.Throws(exceptionClasses = {MyException.class})
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getBoo() throws MyException;//  getBoo()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getBoo();//  getBoo()
 
-  @kotlin.jvm.Throws(exceptionClasses = {MyException.class})
+  @kotlin.Throws(exceptionClasses = {MyException.class})
   @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String getFoo() throws MyException;//  getFoo()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getFoo();//  getFoo()
 
-  @kotlin.jvm.Throws(exceptionClasses = {MyException.class})
-  public  Test(int) throws MyException;//  .ctor(int)
+  @kotlin.Throws(exceptionClasses = {MyException.class})
+  public  Test(int);//  .ctor(int)
 
-  @kotlin.jvm.Throws(exceptionClasses = {MyException.class})
-  public final void readSomething() throws MyException;//  readSomething()
+  @kotlin.Throws(exceptionClasses = {MyException.class})
+  public final void readSomething();//  readSomething()
 }

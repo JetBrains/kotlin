@@ -97,7 +97,12 @@ internal class SymbolLightFieldForObject private constructor(
     private val _type: PsiType by lazyPub {
         withObjectDeclarationSymbol { objectSymbol ->
             objectSymbol.defaultType
-                .asPsiType(this@SymbolLightFieldForObject, allowErrorTypes = true, forceValueClassResolution = false)
+                .asPsiType(
+                    this@SymbolLightFieldForObject,
+                    allowErrorTypes = true,
+                    forceValueClassResolution = false,
+                    allowNonJvmPlatforms = true,
+                )
         } ?: nonExistentType()
     }
 

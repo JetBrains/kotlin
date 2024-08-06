@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 class C {
     var rwProp: Int
         @JvmName("get_rwProp")

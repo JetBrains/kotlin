@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
+import org.jetbrains.kotlin.test.directives.TargetPlatformEnum
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile
@@ -55,6 +56,7 @@ abstract class TestModuleCompiler : TestService {
     object Directives : SimpleDirectivesContainer() {
         val COMPILER_ARGUMENTS by stringDirective("List of additional compiler arguments")
         val COMPILATION_ERRORS by directive("Is compilation errors expected in the file")
+        val LIBRARY_PLATFORMS by enumDirective<TargetPlatformEnum>("Target platforms allowed for library compilation")
         val BINARY_ROOT by stringDirective("A library root to which a file will be compiled", DirectiveApplicability.File)
     }
 }

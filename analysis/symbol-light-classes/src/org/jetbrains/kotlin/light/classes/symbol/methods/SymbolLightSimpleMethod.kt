@@ -234,6 +234,7 @@ internal class SymbolLightSimpleMethod(
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
                 suppressWildcards = suppressWildcards(),
                 forceValueClassResolution = canHaveValueClassInSignature(),
+                allowNonJvmPlatforms = true,
             )
         } ?: nonExistentType()
     }

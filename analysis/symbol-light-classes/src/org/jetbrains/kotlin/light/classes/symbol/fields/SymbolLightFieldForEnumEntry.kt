@@ -85,7 +85,12 @@ internal class SymbolLightFieldForEnumEntry(
     private val _type: PsiType by lazyPub {
         withEnumEntrySymbol { enumEntrySymbol ->
             enumEntrySymbol.returnType
-                .asPsiType(this@SymbolLightFieldForEnumEntry, allowErrorTypes = true, forceValueClassResolution = false)
+                .asPsiType(
+                    this@SymbolLightFieldForEnumEntry,
+                    allowErrorTypes = true,
+                    forceValueClassResolution = false,
+                    allowNonJvmPlatforms = true,
+                )
                 ?: nonExistentType()
         }
     }

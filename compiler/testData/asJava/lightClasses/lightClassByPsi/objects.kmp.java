@@ -5,45 +5,27 @@ public final class C /* C*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() C.Companion Companion;
 
-  @kotlin.jvm.JvmStatic()
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String getC(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() I);//  getC(@org.jetbrains.annotations.NotNull() I)
-
-  @kotlin.jvm.JvmStatic()
-  public static final void foo();//  foo()
-
-  @kotlin.jvm.JvmStatic()
-  public static final void setC(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(@org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @kotlin.jvm.JvmStatic()
-  public static final void setC1(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String getX();//  getX()
-
   public  C();//  .ctor()
-
-  public static final void setX(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setX(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   class Companion ...
 }
 
 public static final class Companion /* C.Companion*/ {
+  @<error>()
   @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
   public static void getX$annotations();//  getX$annotations()
 
-  @kotlin.jvm.JvmStatic()
+  @<error>()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getC(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() I);//  getC(@org.jetbrains.annotations.NotNull() I)
 
-  @kotlin.jvm.JvmStatic()
+  @<error>()
   public final void foo();//  foo()
 
-  @kotlin.jvm.JvmStatic()
+  @<error>()
   public final void setC(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setC(@org.jetbrains.annotations.NotNull() I, @org.jetbrains.annotations.NotNull() java.lang.String)
 
-  @kotlin.jvm.JvmStatic()
+  @<error>()
   public final void setC1(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setC1(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
@@ -153,20 +135,20 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Obj INSTANCE;
 
+  @<error>()
   @java.lang.Deprecated()
-  @kotlin.jvm.JvmStatic()
   public static void getX$annotations();//  getX$annotations()
+
+  @<error>()
+  public final int zoo();//  zoo()
 
   @java.lang.Override()
   public void run();//  run()
 
-  @kotlin.jvm.JvmStatic()
-  public static final int zoo();//  zoo()
-
   @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String getX();//  getX()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getX();//  getX()
 
   private  Obj();//  .ctor()
 
-  public static final void setX(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setX(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public final void setX(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setX(@org.jetbrains.annotations.NotNull() java.lang.String)
 }

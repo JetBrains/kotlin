@@ -85,6 +85,7 @@ internal abstract class SymbolLightParameterCommon(
                     getTypeMappingMode(ktType),
                     suppressWildcards = parameterSymbol.suppressWildcardMode(),
                     forceValueClassResolution = method.canHaveValueClassInSignature(),
+                    allowNonJvmPlatforms = true,
                 )
             } ?: nonExistentType()
 

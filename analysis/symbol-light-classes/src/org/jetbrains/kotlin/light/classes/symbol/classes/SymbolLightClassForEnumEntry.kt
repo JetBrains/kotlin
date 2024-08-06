@@ -82,6 +82,7 @@ internal class SymbolLightClassForEnumEntry(
                 allowErrorTypes = true,
                 KaTypeMappingMode.SUPER_TYPE,
                 forceValueClassResolution = false,
+                allowNonJvmPlatforms = true,
             ) as? PsiClassType
         } ?: return@lazyPub null
 

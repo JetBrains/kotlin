@@ -82,6 +82,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 allowErrorTypes = true,
                 typeMappingMode,
                 suppressWildcards = propertySymbol.suppressWildcardMode(),
+                allowNonJvmPlatforms = true,
             )
         } ?: nonExistentType()
     }

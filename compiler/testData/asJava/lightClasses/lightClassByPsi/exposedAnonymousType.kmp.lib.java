@@ -7,16 +7,16 @@ public abstract interface B /* B*/ {
 
 public final class C /* C*/ {
   @org.jetbrains.annotations.NotNull()
-  private final C.x1.1 x1;
+  private final @org.jetbrains.annotations.NotNull() java.lang.Object x1;
 
   @org.jetbrains.annotations.NotNull()
-  private final C.x2.1 x2;
+  private final @org.jetbrains.annotations.NotNull() java.lang.Object x2;
 
   @org.jetbrains.annotations.NotNull()
-  private final C.x3.1 x3;
+  private final @org.jetbrains.annotations.NotNull() java.lang.Object x3;
 
   @org.jetbrains.annotations.NotNull()
-  private final C.x4.1 x4;
+  private final @org.jetbrains.annotations.NotNull() java.lang.Object x4;
 
   public  C();//  .ctor()
 }

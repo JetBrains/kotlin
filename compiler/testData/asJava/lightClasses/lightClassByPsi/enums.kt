@@ -1,4 +1,5 @@
 // FULL_JDK
+// LIBRARY_PLATFORMS: JVM
 
 import java.util.function.*
 

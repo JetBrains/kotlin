@@ -1,12 +1,10 @@
 public final class A /* A*/ {
-  @kotlin.jvm.Transient()
-  @kotlin.jvm.Volatile()
   @org.jetbrains.annotations.NotNull()
-  private transient volatile @org.jetbrains.annotations.NotNull() java.lang.String c = "" /* initializer type: java.lang.String */;
+  private @org.jetbrains.annotations.NotNull() java.lang.String c = "" /* initializer type: java.lang.String */;
 
-  @kotlin.jvm.Strictfp()
-  @kotlin.jvm.Synchronized()
-  public final synchronized strictfp void f();//  f()
+  @<error>()
+  @<error>()
+  public final void f();//  f()
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String getC();//  getC()

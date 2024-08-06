@@ -1,3 +1,5 @@
+// LIBRARY_PLATFORMS: JVM
+
 // Foo
 class Foo(
     val z: Boolean = true,

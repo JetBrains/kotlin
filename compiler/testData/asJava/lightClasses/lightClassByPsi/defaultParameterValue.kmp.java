@@ -16,16 +16,16 @@ public enum Em /* Em*/ {
 
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
+  private final @org.jetbrains.annotations.NotNull() Class<?> @org.jetbrains.annotations.NotNull() [] clarr = {} /* initializer type: null */;
+
+  @org.jetbrains.annotations.NotNull()
+  private final @org.jetbrains.annotations.NotNull() Class<?> cl;
+
+  @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() Em @org.jetbrains.annotations.NotNull() [] emarr = {Em.FOO, Em.BAR} /* initializer type: null */;
 
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() Em em = Em.BAR /* initializer type: @org.jetbrains.annotations.NotNull() Em */;
-
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.Class<?> @org.jetbrains.annotations.NotNull() [] clarr = {} /* initializer type: null */;
-
-  @org.jetbrains.annotations.NotNull()
-  private final @org.jetbrains.annotations.NotNull() java.lang.Class<?> cl;
 
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [] empty = {} /* initializer type: null */;
@@ -64,16 +64,16 @@ public final class Foo /* Foo*/ {
   private final short sh = 10 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() Class<?> @org.jetbrains.annotations.NotNull() [] getClarr();//  getClarr()
+
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() Class<?> getCl();//  getCl()
+
+  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() Em @org.jetbrains.annotations.NotNull() [] getEmarr();//  getEmarr()
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() Em getEm();//  getEm()
-
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Class<?> @org.jetbrains.annotations.NotNull() [] getClarr();//  getClarr()
-
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() java.lang.Class<?> getCl();//  getCl()
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [] getEmpty();//  getEmpty()
@@ -95,7 +95,7 @@ public final class Foo /* Foo*/ {
 
   public  Foo();//  .ctor()
 
-  public  Foo(boolean, byte, char, char, short, int, long, float, double, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() int @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() long @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() double @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Class<?>, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Class<?> @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Em, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Em @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() []);//  .ctor(boolean, byte, char, char, short, int, long, float, double, @org.jetbrains.annotations.NotNull() java.lang.String, int @org.jetbrains.annotations.NotNull() [], long @org.jetbrains.annotations.NotNull() [], double @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() java.lang.Class<?>, @org.jetbrains.annotations.NotNull() java.lang.Class<?> @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() Em, @org.jetbrains.annotations.NotNull() Em @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
+  public  Foo(boolean, byte, char, char, short, int, long, float, double, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() int @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() long @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() double @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Class<?>, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Class<?> @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Em, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Em @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() []);//  .ctor(boolean, byte, char, char, short, int, long, float, double, @org.jetbrains.annotations.NotNull() java.lang.String, int @org.jetbrains.annotations.NotNull() [], long @org.jetbrains.annotations.NotNull() [], double @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() Class<?>, @org.jetbrains.annotations.NotNull() Class<?> @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() Em, @org.jetbrains.annotations.NotNull() Em @org.jetbrains.annotations.NotNull() [], @org.jetbrains.annotations.NotNull() java.lang.String @org.jetbrains.annotations.NotNull() [])
 
   public final boolean getZ();//  getZ()
 

@@ -64,7 +64,10 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices,
     ): Path {
+        val allowedLibraryPlatforms = module.directives[Directives.LIBRARY_PLATFORMS].map { it.targetPlatform }
         val compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives
+                || (allowedLibraryPlatforms.isNotEmpty() && module.targetPlatform !in allowedLibraryPlatforms)
+
         val library = try {
             val outputPath = libraryOutputPath(tmpDir, module.name)
             doCompile(
