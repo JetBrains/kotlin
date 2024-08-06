@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.backend.jvm.extensions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
+import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
@@ -41,8 +41,13 @@ val IrDeclaration.descriptorOrigin: JvmIrDeclarationOrigin
 
 private fun IrDeclaration.findPsiElementForDeclarationOrigin(): PsiElement? {
     // For synthetic $annotations methods for properties, use the PSI for the property or the constructor parameter.
-    // It's used in KAPT stub generation to sort the properties correctly based on their source position (see KT-44130).
+    // It's used in KAPT stub generation to sort the properties correctly based on their source position (see KT-44130),
+    // and to put doc comments on $annotations methods.
     if (this is IrFunction && name.asString().endsWith("\$annotations")) {
+        (metadata as? MetadataSource.Property)?.psi?.let { return it }
+
+        // Ideally, `DescriptorMetadataSource.Property` would implement `psi`, but ir.tree doesn't (and probably shouldn't) depend on psi,
+        // and there's no better module for `DescriptorMetadataSource` right now.
         val metadata = metadata as? DescriptorMetadataSource.Property
         if (metadata != null) {
             return metadata.descriptor.psiElement
