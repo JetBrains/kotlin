@@ -457,11 +457,11 @@ inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRow() = pare
 inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRowWithSelf() = parentsWithSelf
     .takeWhile { it is T }.lastOrNull() as? T
 
-fun KtModifierListOwner.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD) || hasModifier(KtTokens.EXPECT_KEYWORD)
-fun KtModifierList.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD) || hasModifier(KtTokens.EXPECT_KEYWORD)
+fun KtModifierListOwner.hasExpectModifier() = hasModifier(KtTokens.EXPECT_KEYWORD)
+fun KtModifierList.hasExpectModifier() = hasModifier(KtTokens.EXPECT_KEYWORD)
 
-fun KtModifierListOwner.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
-fun KtModifierList.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
+fun KtModifierListOwner.hasActualModifier() = hasModifier(KtTokens.ACTUAL_KEYWORD)
+fun KtModifierList.hasActualModifier() = hasModifier(KtTokens.ACTUAL_KEYWORD)
 fun KtModifierList.hasSuspendModifier() = hasModifier(KtTokens.SUSPEND_KEYWORD)
 
 fun KtModifierList.hasFunModifier() = hasModifier(KtTokens.FUN_KEYWORD)

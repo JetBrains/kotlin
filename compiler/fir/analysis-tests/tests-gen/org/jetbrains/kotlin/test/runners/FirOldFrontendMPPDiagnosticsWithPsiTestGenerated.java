@@ -1480,22 +1480,6 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Nested
-  @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/deprecated")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Deprecated {
-    @Test
-    public void testAllFilesPresentInDeprecated() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/deprecated"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), TargetBackend.JVM_IR, true);
-    }
-
-    @Test
-    @TestMetadata("header.kt")
-    public void testHeader() {
-      runTest("compiler/testData/diagnostics/tests/multiplatform/deprecated/header.kt");
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/deprecatedAnnotation")
   @TestDataPath("$PROJECT_ROOT")
   public class DeprecatedAnnotation {
