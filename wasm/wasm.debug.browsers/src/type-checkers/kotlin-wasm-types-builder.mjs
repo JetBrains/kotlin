@@ -160,6 +160,14 @@ export function kotlinNullableString() {
     return ref(KOTLIN_STRING_FQN, true);
 }
 
+export function i8() {
+    return "i8"
+}
+
+export function i16() {
+    return "i16"
+}
+
 export function i32() {
     return "i32"
 }

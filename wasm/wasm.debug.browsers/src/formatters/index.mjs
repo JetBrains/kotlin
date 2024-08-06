@@ -14,6 +14,8 @@ import { array, arrayList, hashMap, hashSet } from "./collections.mjs";
 import entry, { ENTRY_TYPE } from "./entry.mjs";
 import foldedList, { FOLDED_TYPE } from "./folded-list.mjs";
 import {
+    i8,
+    i16,
     i32,
     i64,
     f32,
@@ -56,6 +58,8 @@ const simpleFormatters = new Map([
     [FOLDED_TYPE, foldedList],
     [kotlinString(), string],
     [kotlinNullableString(), string],
+    [i8(), int],
+    [i16(), int],
     [i32(), int],
     [i64(), long],
     [f32(), float],
