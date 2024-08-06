@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -35,11 +37,13 @@ sealed class FirMetadataSource : MetadataSource {
 
     class Property(override val fir: FirProperty) : FirMetadataSource(), MetadataSource.Property {
         override val isConst: Boolean get() = fir.isConst
+        override val psi: PsiElement? get() = fir.psi
     }
 
     class Field(override val fir: FirField) : FirMetadataSource(), MetadataSource.Property {
         override val isConst: Boolean
             get() = fir.isConst
+        override val psi: PsiElement? get() = fir.psi
     }
 
     class Script(override val fir: FirScript) : FirMetadataSource(), MetadataSource.Script
