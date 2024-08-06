@@ -59,6 +59,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("file.kt")
+  public void testFile() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/file.kt");
+  }
+
+  @Test
+  @TestMetadata("fileWithAnnotations.kt")
+  public void testFileWithAnnotations() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/fileWithAnnotations.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithReceiverAnnotation.kt")
   public void testFunctionWithReceiverAnnotation() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionWithReceiverAnnotation.kt");

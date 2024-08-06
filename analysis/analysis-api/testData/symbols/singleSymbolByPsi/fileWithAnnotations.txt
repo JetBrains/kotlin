@@ -1,0 +1,12 @@
+KaFileSymbol:
+  annotations: [
+    kotlin/Suppress(names = ["abc"])
+      psi: KtAnnotationEntry
+    kotlin/jvm/JvmName(name = "myFacade")
+      psi: KtAnnotationEntry
+  ]
+  location: TOP_LEVEL
+  origin: SOURCE
+  getContainingFileSymbol: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
