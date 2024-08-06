@@ -52,9 +52,7 @@ internal class KaFirSymbolProvider(
 
     override val KtScript.symbol: KaScriptSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.buildScriptSymbol(
-                resolveToFirSymbolOfType<FirScriptSymbol>(firResolveSession)
-            )
+            KaFirScriptSymbol(this, analysisSession)
         }
 
     override val KtNamedFunction.symbol: KaFunctionSymbol
