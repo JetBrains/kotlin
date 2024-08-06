@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.FunctionWithJsFuncAnnotationInliner
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.builders.*
@@ -32,8 +33,34 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-// Outlines `kotlin.js.js(code: String)` calls where JS code references Kotlin locals.
-// Makes locals usages explicit.
+/**
+ * Outlines `kotlin.js.js(code: String)` calls where the JavaScript code passed as a string literal references Kotlin locals.
+ * Makes the usages of locals explicit.
+ *
+ * Transforms a call to `kotlin.js.js` into a call to generated local external function annotated with [kotlin.js.JsFun].
+ *
+ * **Before transformation:**
+ * ```kotlin
+ * fun foo(x: Int): Int {
+ *     val theAnswer = 42
+ *     return js("x + theAnswer")
+ * }
+ * ```
+ *
+ * **After transformation:**
+ * ```kotlin
+ * fun foo(x: Int): Int {
+ *
+ *     @kotlin.js.JsFun("function (x, theAnswer) { return x + theAnswer; }")
+ *     /*local*/ external fun foo$outlinedJsCode$(x: Int, theAnswer: Int): dynamic
+ *
+ *     val theAnswer = 42
+ *     return foo$outlinedJsCode$(x, theAnswer)
+ * }
+ * ```
+ *
+ * The outlined functions are inlined again later by [FunctionWithJsFuncAnnotationInliner] during the codegen phase.
+ */
 class JsCodeOutliningLowering(val backendContext: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // Fast path to avoid tracking locals scopes for bodies without js() calls
