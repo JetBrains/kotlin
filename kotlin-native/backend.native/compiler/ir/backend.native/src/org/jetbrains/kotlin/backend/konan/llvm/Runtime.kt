@@ -50,6 +50,7 @@ internal class Runtime(
     val objHeaderPtrType = pointerType(objHeaderType)
     val objHeaderPtrPtrType = pointerType(objHeaderType)
     val arrayHeaderType = getStructType("ArrayHeader")
+    val stringHeaderType = getStructType("StringHeader")
 
     val frameOverlayType = getStructType("FrameOverlay")
 
@@ -125,4 +126,8 @@ internal class Runtime(
 
     // Must match kObjectAlignment in runtime
     val objectAlignment = 8
+
+    val stringHeaderSize: Int by lazy {
+        LLVMABISizeOfType(targetData, stringHeaderType).toInt() / 2
+    }
 }

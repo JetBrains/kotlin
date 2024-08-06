@@ -13,18 +13,43 @@
 
 namespace {
 
+// Header for strings. The extra data added here is counted as part of the array's size;
+// if the array is not large enough to contain this header as well as at least one Char
+// of data, then the header is inferred to be zero. In particular, the only way to encode
+// an empty string is an empty array, while strings shorter than the header have a "short"
+// form without the header and a "long" form with it.
+struct StringHeader {
+    int32_t hashCode_;
+    int32_t flags_;
+
+    enum {
+        HASHCODE_COMPUTED = 1,
+    };
+};
+
+static constexpr const size_t STRING_HEADER_SIZE = (sizeof(StringHeader) + sizeof(KChar) - 1) / sizeof(KChar);
+
+inline size_t StringRawDataOffset(KConstRef kstring) {
+    return kstring->array()->count_ > STRING_HEADER_SIZE ? STRING_HEADER_SIZE : 0;
+}
+
+inline const StringHeader* StringHeaderOf(KConstRef kstring) {
+    return kstring->array()->count_ > STRING_HEADER_SIZE
+        ? reinterpret_cast<const StringHeader*>(CharArrayAddressOfElementAt(kstring->array(), 0)) : nullptr;
+}
+
 // The encoding of this data is undefined unless it is known how the string was constructed,
 // in which case it can be `reinterpret_cast`ed to the appropriate type.
 inline char* StringRawData(KRef kstring) {
-    return reinterpret_cast<char*>(CharArrayAddressOfElementAt(kstring->array(), 0));
+    return reinterpret_cast<char*>(CharArrayAddressOfElementAt(kstring->array(), StringRawDataOffset(kstring)));
 }
 
 inline const char* StringRawData(KConstRef kstring) {
-    return reinterpret_cast<const char*>(CharArrayAddressOfElementAt(kstring->array(), 0));
+    return reinterpret_cast<const char*>(CharArrayAddressOfElementAt(kstring->array(), StringRawDataOffset(kstring)));
 }
 
 inline size_t StringRawSize(KConstRef kstring) {
-    return kstring->array()->count_ * sizeof(KChar);
+    return (kstring->array()->count_ - StringRawDataOffset(kstring)) * sizeof(KChar);
 }
 
 } // namespace

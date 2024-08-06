@@ -48,7 +48,7 @@ const KChar* StringUtf16Data(KConstRef kstring) {
 }
 
 size_t StringUtf16Length(KConstRef kstring) {
-    return kstring->array()->count_;
+    return StringRawSize(kstring) / sizeof(KChar);
 }
 
 template <typename CharCountF /*= uint32_t() */, typename ConvertF /*= void(KChar*) */>
@@ -159,7 +159,7 @@ extern "C" OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t length
 }
 
 extern "C" OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars) {
-    RETURN_RESULT_OF(AllocArrayInstance, theStringTypeInfo, lengthChars);
+    RETURN_RESULT_OF(AllocArrayInstance, theStringTypeInfo, lengthChars + (lengthChars > STRING_HEADER_SIZE ? STRING_HEADER_SIZE : 0));
 }
 
 extern "C" char* CreateCStringFromString(KConstRef kref) {
@@ -180,6 +180,7 @@ extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8)
     //   because the accessed object is off-heap, imitating permanent static objects.
     const char* end = nullTerminatedUTF8 + strlen(nullTerminatedUTF8);
     size_t count = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
+    if (count > STRING_HEADER_SIZE) count += STRING_HEADER_SIZE;
     size_t headerSize = alignUp(sizeof(ArrayHeader), alignof(char16_t));
     size_t arraySize = headerSize + count * sizeof(char16_t);
 
@@ -226,9 +227,9 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
     }
 
     auto result = CreateUninitializedUtf16String(resultLength, OBJ_RESULT);
-    auto resultRaw = StringUtf16Data(result);
-    memcpy(resultRaw, StringUtf16Data(thiz), StringRawSize(thiz));
-    memcpy(resultRaw + thizLength, StringUtf16Data(other), StringRawSize(other));
+    auto resultRaw = StringRawData(result);
+    memcpy(resultRaw, StringRawData(thiz), StringRawSize(thiz));
+    memcpy(resultRaw + StringRawSize(thiz), StringRawData(other), StringRawSize(other));
     RETURN_OBJ(result);
 }
 
@@ -240,7 +241,7 @@ extern "C" OBJ_GETTER(Kotlin_String_unsafeStringFromCharArray, KConstRef thiz, K
     }
 
     auto result = CreateUninitializedUtf16String(size, OBJ_RESULT);
-    memcpy(StringRawData(result), CharArrayAddressOfElementAt(thiz->array(), start), size * sizeof(KChar));
+    memcpy(StringUtf16Data(result), CharArrayAddressOfElementAt(thiz->array(), start), size * sizeof(KChar));
     RETURN_OBJ(result);
 }
 
@@ -402,7 +403,7 @@ extern "C" KInt Kotlin_String_indexOfString(KConstRef thiz, KConstRef other, KIn
     }
 
     auto thizRaw = StringUtf16Data(thiz);
-    auto otherRaw = StringUtf16Data(other);
+    auto otherRaw = StringRawData(other);
     auto otherRawSize = StringRawSize(other);
     while (true) {
         void* result = memmem(thizRaw + fromIndex, (thizLength - fromIndex) * sizeof(KChar),
@@ -441,8 +442,25 @@ extern "C" KInt Kotlin_String_lastIndexOfString(KConstRef thiz, KConstRef other,
 }
 
 extern "C" KInt Kotlin_String_hashCode(KConstRef thiz) {
-    // TODO: consider caching strings hashes.
-    return polyHash(StringUtf16Length(thiz), StringUtf16Data(thiz));
+    int32_t flags = 0;
+    auto header = StringHeaderOf(thiz);
+    if (header != nullptr) {
+        flags = kotlin::std_support::atomic_ref{header->flags_}.load(std::memory_order_acquire);
+        if (flags & StringHeader::HASHCODE_COMPUTED) {
+            // The condition only enforces an ordering with the first thread to write the hash code,
+            // so if two thread concurrently computed the hash, an atomic read is needed to prevent a data race.
+            // The value is always the same, though, so which write is observed is irrelevant.
+            return kotlin::std_support::atomic_ref{header->hashCode_}.load(std::memory_order_relaxed);
+        }
+    }
+    KInt result = polyHash(StringUtf16Length(thiz), StringUtf16Data(thiz));
+    if (header != nullptr) {
+        StringHeader* nonConst = const_cast<StringHeader*>(header);
+        kotlin::std_support::atomic_ref{nonConst->hashCode_}.store(result, std::memory_order_relaxed);
+        // TODO: use fetch_or once atomic_ref has it; for now this is fine since this is the only mutable flag.
+        kotlin::std_support::atomic_ref{nonConst->flags_}.store(flags | StringHeader::HASHCODE_COMPUTED, std::memory_order_release);
+    }
+    return result;
 }
 
 extern "C" const KChar* Kotlin_String_utf16pointer(KConstRef message) {

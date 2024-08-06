@@ -11,6 +11,7 @@
 #include "Exceptions.h"
 #include "MemorySharedRefs.hpp"
 #include "Natives.h"
+#include "KString.h"
 
 #define touchType(type) RUNTIME_EXPORT type touch##type;
 #define touchFunction(function) RUNTIME_EXPORT void* touch##function() { return reinterpret_cast<void*>(&::function); }
@@ -29,6 +30,7 @@ touchType(AssociatedObjectTableRecord)
 
 touchType(ObjHeader)
 touchType(ArrayHeader)
+touchType(StringHeader)
 touchType(FrameOverlay)
 
 touchType(KRefSharedHolder)

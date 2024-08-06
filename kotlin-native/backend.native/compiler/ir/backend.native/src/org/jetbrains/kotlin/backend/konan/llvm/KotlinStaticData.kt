@@ -37,12 +37,25 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         return Struct(runtime.arrayHeaderType, permanentTag(typeInfo), llvm.constInt32(length))
     }
 
-    private fun createRef(objHeaderPtr: ConstPointer) = objHeaderPtr.bitcast(kObjHeaderPtr)
+    private fun createConstant(value: ConstValue): ConstPointer {
+        val global = placeGlobal("", value)
+        global.setUnnamedAddr(true)
+        global.setConstant(true)
+        // value should be of struct type with first element having the object/array header layout
+        return global.pointer.getElementPtr(llvm, global.type, 0).bitcast(kObjHeaderPtr)
+    }
 
     private fun createKotlinStringLiteral(value: String): ConstPointer {
-        val elements = value.toCharArray().map(llvm::constChar16)
-        val objRef = createConstKotlinArray(context.ir.symbols.string.owner, elements)
-        return objRef
+        val arrayClass = context.ir.symbols.string.owner
+        val arrayValue = value.map(llvm::constChar16)
+        if (value.length <= runtime.stringHeaderSize) {
+            return createConstKotlinArray(arrayClass, arrayValue)
+        }
+
+        val flags = 1 // HASHCODE_COMPUTED
+        val arrayHeader = arrayHeader(arrayClass.typeInfoPtr, runtime.stringHeaderSize + value.length)
+        val stringHeader = Struct(runtime.stringHeaderType, llvm.constInt32(value.hashCode()), llvm.constInt32(flags))
+        return createConstant(llvm.struct(arrayHeader, stringHeader, ConstArray(llvm.int16Type, arrayValue)))
     }
 
     fun kotlinStringLiteral(value: String) = stringLiterals.getOrPut(value) { createKotlinStringLiteral(value) }
@@ -51,34 +64,14 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
             createConstKotlinArray(arrayClass, elements.map { constValue(it) }).llvm
 
     fun createConstKotlinArray(arrayClass: IrClass, elements: List<ConstValue>): ConstPointer {
-        val typeInfo = arrayClass.typeInfoPtr
-
-        val bodyElementType: LLVMTypeRef = elements.firstOrNull()?.llvmType ?: llvm.int8Type
+        val arrayHeader = arrayHeader(arrayClass.typeInfoPtr, elements.size)
         // (use [0 x i8] as body if there are no elements)
-        val arrayBody = ConstArray(bodyElementType, elements)
-
-        val compositeType = llvm.structType(runtime.arrayHeaderType, arrayBody.llvmType)
-
-        val global = this.createGlobal(compositeType, "")
-
-        val objHeaderPtr = global.pointer.getElementPtr(llvm, compositeType, 0)
-        val arrayHeader = arrayHeader(typeInfo, elements.size)
-
-        global.setInitializer(Struct(compositeType, arrayHeader, arrayBody))
-        global.setConstant(true)
-        global.setUnnamedAddr(true)
-
-        return createRef(objHeaderPtr)
+        val arrayBody = ConstArray(elements.firstOrNull()?.llvmType ?: llvm.int8Type, elements)
+        return createConstant(llvm.struct(arrayHeader, arrayBody))
     }
 
     fun createConstKotlinObject(type: IrClass, vararg fields: ConstValue): ConstPointer {
-        val global = this.placeGlobal("", createConstKotlinObjectBody(type, *fields))
-        global.setUnnamedAddr(true)
-        global.setConstant(true)
-
-        val objHeaderPtr = global.pointer.bitcast(llvm.runtime.objHeaderPtrType)
-
-        return createRef(objHeaderPtr)
+        return createConstant(createConstKotlinObjectBody(type, *fields))
     }
 
     fun createConstKotlinObjectBody(type: IrClass, vararg fields: ConstValue): ConstValue {
