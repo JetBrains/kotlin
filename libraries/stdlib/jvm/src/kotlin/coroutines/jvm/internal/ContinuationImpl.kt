@@ -121,17 +121,6 @@ internal abstract class ContinuationImpl(
     }
 }
 
-internal object CompletedContinuation : Continuation<Any?> {
-    override val context: CoroutineContext
-        get() = error("This continuation is already complete")
-
-    override fun resumeWith(result: Result<Any?>) {
-        error("This continuation is already complete")
-    }
-
-    override fun toString(): String = "This continuation is already complete"
-}
-
 @SinceKotlin("1.3")
 // To distinguish suspend function types from ordinary function types all suspend function types shall implement this interface
 internal interface SuspendFunction

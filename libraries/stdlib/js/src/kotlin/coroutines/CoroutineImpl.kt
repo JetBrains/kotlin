@@ -78,14 +78,3 @@ internal abstract class CoroutineImpl(
         throw UnsupportedOperationException("create(Any?;Continuation) has not been overridden")
     }
 }
-
-internal object CompletedContinuation : Continuation<Any?> {
-    override val context: CoroutineContext
-        get() = error("This continuation is already complete")
-
-    override fun resumeWith(result: Result<Any?>) {
-        error("This continuation is already complete")
-    }
-
-    override fun toString(): String = "This continuation is already complete"
-}

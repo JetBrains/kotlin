@@ -6,7 +6,6 @@
 package kotlin.coroutines.native.internal
 
 import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.CoroutineSingletons
 import kotlin.coroutines.intrinsics.*
 
 @SinceKotlin("1.3")
@@ -109,15 +108,4 @@ internal abstract class ContinuationImpl(
         }
         this.intercepted = CompletedContinuation // just in case
     }
-}
-
-internal object CompletedContinuation : Continuation<Any?> {
-    override val context: CoroutineContext
-        get() = error("This continuation is already complete")
-
-    override fun resumeWith(result: Result<Any?>) {
-        error("This continuation is already complete")
-    }
-
-    override fun toString(): String = "This continuation is already complete"
 }
