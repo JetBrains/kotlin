@@ -10,6 +10,7 @@ import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
 import utils.OnlyDescriptors
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types") {
@@ -67,6 +68,52 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                     (inner as FunctionalTypeConstructor).dri equals DRI("kotlin", "Function1")
                     (inner as FunctionalTypeConstructor).projections counts 2
                 }
+            }
+        }
+    }
+
+    @Test
+    fun `function types with a parameter name should have implicit @ParameterName annotations with mustBeDocumented=false`() {
+        inlineModelTest(
+            """
+            |val nF: (param: Int) -> String = { _ -> "" }"""
+        ) {
+            with((this / "types" / "nF").cast<DProperty>()) {
+                assertTrue(type is FunctionalTypeConstructor)
+                val parameterType =
+                    ((type as FunctionalTypeConstructor).projections[0] as Invariance<*>).inner as GenericTypeConstructor
+                val annotation = parameterType.extra[Annotations]?.directAnnotations?.values?.single()?.single()
+                assertEquals(
+                    Annotations.Annotation(
+                        dri = DRI("kotlin", "ParameterName"),
+                        params = mapOf("name" to StringValue("param")),
+                        mustBeDocumented = false
+                    ),
+                    annotation
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `explicit @ParameterName annotations should have mustBeDocumented=true`() {
+        inlineModelTest(
+            """
+            |val nF:  (@ParameterName(name="param") Int) -> String = { _ -> "" }"""
+        ) {
+            with((this / "types" / "nF").cast<DProperty>()) {
+                assertTrue(type is FunctionalTypeConstructor)
+                val parameterType =
+                    ((type as FunctionalTypeConstructor).projections[0] as Invariance<*>).inner as GenericTypeConstructor
+                val annotation = parameterType.extra[Annotations]?.directAnnotations?.values?.single()?.single()
+                assertEquals(
+                    Annotations.Annotation(
+                        dri = DRI("kotlin", "ParameterName"),
+                        params = mapOf("name" to StringValue("param")),
+                        mustBeDocumented = true
+                    ),
+                    annotation
+                )
             }
         }
     }
