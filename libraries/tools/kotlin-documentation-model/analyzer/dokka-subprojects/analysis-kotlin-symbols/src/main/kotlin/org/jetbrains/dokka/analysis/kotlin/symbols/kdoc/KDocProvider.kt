@@ -32,8 +32,11 @@ internal fun KaSession.getJavaDocDocumentationFrom(
             javadocParser.parseDocumentation(it)
         }
     } else if (symbol.origin == KaSymbolOrigin.SOURCE && symbol is KaCallableSymbol) {
+        // TODO https://youtrack.jetbrains.com/issue/KT-70326/Analysis-API-Inconsistent-allOverriddenSymbols-and-directlyOverriddenSymbols-for-an-intersection-symbol
+        val allOverriddenSymbolsWithIntersection = symbol.intersectionOverriddenSymbols.asSequence() + symbol.allOverriddenSymbols
+
         // Note: javadocParser searches in overridden JAVA declarations for JAVA method, not Kotlin
-        symbol.allOverriddenSymbols.forEach { overrider ->
+        allOverriddenSymbolsWithIntersection.forEach { overrider ->
             if (overrider.origin == KaSymbolOrigin.JAVA_SOURCE)
                 return@getJavaDocDocumentationFrom (overrider.psi as? PsiNamedElement)?.let {
                     javadocParser.parseDocumentation(it)
@@ -103,7 +106,10 @@ internal fun KaSession.findKDoc(symbol: KaSymbol): KDocContent? {
     }
 
     if (symbol is KaCallableSymbol) {
-        symbol.allOverriddenSymbols.forEach { overrider ->
+        // TODO https://youtrack.jetbrains.com/issue/KT-70326/Analysis-API-Inconsistent-allOverriddenSymbols-and-directlyOverriddenSymbols-for-an-intersection-symbol
+        val allOverriddenSymbolsWithIntersection = symbol.intersectionOverriddenSymbols.filterNot { it == symbol }.asSequence() + symbol.allOverriddenSymbols
+
+        allOverriddenSymbolsWithIntersection.forEach { overrider ->
             findKDoc(overrider)?.let {
                 return it
             }

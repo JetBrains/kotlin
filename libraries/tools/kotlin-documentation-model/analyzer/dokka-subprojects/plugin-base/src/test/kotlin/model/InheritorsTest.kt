@@ -7,6 +7,7 @@ package model
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
+import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.Description
@@ -14,6 +15,7 @@ import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
 import utils.AbstractModelTest
 import utils.assertNotNull
+import utils.comments
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -683,4 +685,30 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
         }
     }
 
+    @Test
+    fun `intersection overridden should have KDoc and correct DRI`() {
+        inlineModelTest(
+            """
+            |open class FirstParent {
+            |    fun basicMethod() = "OK"
+            |    /**
+            |    * Some doc
+            |    */
+            |    override fun toString(): String {
+            |        return super.toString()
+            |    }
+            |}
+            |
+            |interface ISecondParent {}
+            |
+            |class ChildWithOneParent : FirstParent()
+            |class ChildWithTwoParent : FirstParent(), ISecondParent
+        """
+        ) {
+            with((this / "inheritors" / "ChildWithTwoParent" / "toString").cast<DFunction>()) {
+                comments() equals "Some doc\n"
+                dri equals DRI("inheritors", "FirstParent", org.jetbrains.dokka.links.Callable("toString", null, emptyList()) )
+            }
+        }
+    }
 }
