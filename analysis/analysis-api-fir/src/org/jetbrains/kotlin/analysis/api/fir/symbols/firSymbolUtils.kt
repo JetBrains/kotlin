@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.asKaInitializerValue
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -20,11 +21,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.create
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -44,7 +45,7 @@ internal fun FirFunctionSymbol<*>.createKtValueParameters(builder: KaSymbolByFir
 
 internal fun <D> FirBasedSymbol<D>.createKtTypeParameters(
     builder: KaSymbolByFirBuilder
-): List<KaFirTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
+): List<KaTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
     return fir.typeParameters.map { typeParameter ->
         builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol)
     }
@@ -52,7 +53,7 @@ internal fun <D> FirBasedSymbol<D>.createKtTypeParameters(
 
 internal fun <D> FirBasedSymbol<D>.createRegularKtTypeParameters(
     builder: KaSymbolByFirBuilder,
-): List<KaFirTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
+): List<KaTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
     return fir.typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
         builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol)
     }

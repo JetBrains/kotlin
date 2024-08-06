@@ -78,4 +78,7 @@ internal class KaFirSamConstructorSymbol(
         val callableId = firSymbol.callableId
         return KaFirSamConstructorSymbolPointer(ClassId(callableId.packageName, callableId.callableName))
     }
+
+    override fun equals(other: Any?): Boolean = symbolEquals(other)
+    override fun hashCode(): Int = symbolHashCode()
 }

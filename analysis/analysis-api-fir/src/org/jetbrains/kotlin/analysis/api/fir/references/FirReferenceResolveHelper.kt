@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
@@ -137,7 +137,7 @@ internal object FirReferenceResolveHelper {
         expression: KtSimpleNameExpression,
         symbolBuilder: KaSymbolByFirBuilder,
         forQualifiedType: Boolean,
-    ): KaFirPackageSymbol? {
+    ): KaPackageSymbol? {
         return symbolBuilder.createPackageSymbolIfOneExists(getQualifierSelected(expression, forQualifiedType))
     }
 
@@ -308,7 +308,7 @@ internal object FirReferenceResolveHelper {
     private fun getSymbolsForPackageDirective(
         expression: KtSimpleNameExpression,
         symbolBuilder: KaSymbolByFirBuilder,
-    ): List<KaFirPackageSymbol> {
+    ): List<KaPackageSymbol> {
         return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = false))
     }
 

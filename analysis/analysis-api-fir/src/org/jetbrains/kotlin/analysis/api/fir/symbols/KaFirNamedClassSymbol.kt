@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
@@ -76,7 +77,7 @@ internal class KaFirNamedClassSymbol(
 
     override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
 
-    override val companionObject: KaFirNamedClassSymbol? by cached {
+    override val companionObject: KaNamedClassSymbol? by cached {
         firSymbol.companionObjectSymbol?.let {
             builder.classifierBuilder.buildNamedClassOrObjectSymbol(it)
         }
