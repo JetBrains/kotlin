@@ -34,7 +34,7 @@ public enum Em {
 /**
  * public final class Foo : kotlin/Any {
  *
- *   // signature: <init>(ZBCCSIJFDLjava/lang/String;[I[J[D[Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Class;LEm;[LEm;)V
+ *   // signature: <init>(ZBCCSIJFDLjava/lang/String;[I[J[DLkotlin/Array;Ljava/lang/Class;Lkotlin/Array;LEm;Lkotlin/Array;)V
  *   public constructor(z: kotlin/Boolean (* = ... *), b: kotlin/Byte (* = ... *), c: kotlin/Char (* = ... *), c2: kotlin/Char (* = ... *), sh: kotlin/Short (* = ... *), i: kotlin/Int (* = ... *), l: kotlin/Long (* = ... *), f: kotlin/Float (* = ... *), d: kotlin/Double (* = ... *), s: kotlin/String (* = ... *), iarr: kotlin/IntArray (* = ... *), larr: kotlin/LongArray (* = ... *), darr: kotlin/DoubleArray (* = ... *), sarr: kotlin/Array<kotlin/String> (* = ... *), cl: java/lang/Class<*> (* = ... *), clarr: kotlin/Array<java/lang/Class<*>> (* = ... *), em: Em (* = ... *), emarr: kotlin/Array<Em> (* = ... *))
  *
  *   // signature: foo(I)V
