@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractSingleSymbolByPsiTest : AbstractSymbolTest() {
+    override val suppressPsiBasedFilePointerCheck: Boolean get() = false
+
     override fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val declaration = testServices.expressionMarkerProvider.getSelectedElementOrElementAtCaretOfTypeByDirective(
             ktFile, testServices.moduleStructure.modules.first(),
