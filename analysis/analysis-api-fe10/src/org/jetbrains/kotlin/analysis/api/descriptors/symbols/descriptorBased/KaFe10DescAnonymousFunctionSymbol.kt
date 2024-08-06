@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10Neve
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -34,23 +33,11 @@ internal class KaFe10DescAnonymousFunctionSymbol(
     override val valueParameters: List<KaValueParameterSymbol>
         get() = withValidityAssertion { descriptor.valueParameters.map { KaFe10DescValueParameterSymbol(it, analysisContext) } }
 
-    override val hasStableParameterNames: Boolean
-        get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
-
     override val returnType: KaType
         get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtType(analysisContext) }
 
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { descriptor.kaSymbolModality }
-
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
-
-    override val isActual: Boolean
-        get() = withValidityAssertion { descriptor.isActual }
-
-    override val isExpect: Boolean
-        get() = withValidityAssertion { descriptor.isExpect }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }

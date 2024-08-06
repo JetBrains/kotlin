@@ -57,9 +57,13 @@ internal class KaFirSymbolProvider(
 
     override val KtNamedFunction.symbol: KaFunctionSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.functionBuilder.buildFunctionSymbol(
-                resolveToFirSymbolOfType<FirFunctionSymbol<*>>(firResolveSession),
-            )
+            if (isAnonymous) {
+                KaFirAnonymousFunctionSymbol(this, analysisSession)
+            } else {
+                firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(
+                    resolveToFirSymbolOfType<FirNamedFunctionSymbol>(firResolveSession),
+                )
+            }
         }
 
     override val KtConstructor<*>.symbol: KaConstructorSymbol
@@ -92,9 +96,7 @@ internal class KaFirSymbolProvider(
 
     override val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.functionBuilder.buildAnonymousFunctionSymbol(
-                resolveToFirSymbolOfType<FirAnonymousFunctionSymbol>(firResolveSession)
-            )
+            KaFirAnonymousFunctionSymbol(this, analysisSession)
         }
 
     override val KtProperty.symbol: KaVariableSymbol

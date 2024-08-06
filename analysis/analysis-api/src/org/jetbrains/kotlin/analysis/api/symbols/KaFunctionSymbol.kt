@@ -37,6 +37,10 @@ public typealias KtFunctionLikeSymbol = KaFunctionSymbol
 public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val callableId: CallableId? get() = withValidityAssertion { null }
+    final override val isActual: Boolean get() = withValidityAssertion { false }
+    final override val isExpect: Boolean get() = withValidityAssertion { false }
+    final override val hasStableParameterNames: Boolean get() = withValidityAssertion { true }
+    final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     abstract override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol>
 }

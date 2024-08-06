@@ -1,5 +1,5 @@
 // LOOK_UP_FOR_ELEMENT_OF_TYPE: KtParameter
-// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
 
 data class X(val a: Int, val b: Int)
 
