@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.CommonAnalysisResult
-import org.jetbrains.kotlin.cli.metadata.MetadataSerializer
+import org.jetbrains.kotlin.cli.metadata.K1LegacyMetadataSerializer
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 
+/**
+ * Produces legacy metadata artifact for builtins using K1 compiler
+ */
 class K1BuiltInsSerializer(
     configuration: CompilerConfiguration,
     environment: KotlinCoreEnvironment,
     dependOnOldBuiltIns: Boolean
-) : MetadataSerializer(configuration, environment, dependOnOldBuiltIns, BuiltInsBinaryVersion.INSTANCE) {
+) : K1LegacyMetadataSerializer(configuration, environment, dependOnOldBuiltIns, BuiltInsBinaryVersion.INSTANCE) {
     override fun serialize(analysisResult: CommonAnalysisResult, destDir: File): OutputInfo {
         val files = environment.getSourceFiles()
         val module = analysisResult.moduleDescriptor

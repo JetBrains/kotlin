@@ -33,7 +33,10 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
 
-open class MetadataSerializer(
+/**
+ * Produces legacy metadata artifact using K1 compiler
+ */
+open class K1LegacyMetadataSerializer(
     configuration: CompilerConfiguration,
     environment: KotlinCoreEnvironment,
     private val dependOnOldBuiltIns: Boolean,

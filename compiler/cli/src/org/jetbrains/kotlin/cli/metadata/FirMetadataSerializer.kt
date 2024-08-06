@@ -45,6 +45,9 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
 
+/**
+ * Produces metadata klib using K2 compiler
+ */
 internal class FirMetadataSerializer(
     configuration: CompilerConfiguration,
     environment: KotlinCoreEnvironment
