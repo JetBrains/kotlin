@@ -76,7 +76,7 @@ internal class KaSymbolByFirBuilder(
 ) {
     private val firResolveSession: LLFirResolveSession get() = analysisSession.firResolveSession
     private val firProvider: FirSymbolProvider get() = rootSession.symbolProvider
-    val rootSession: LLFirSession = firResolveSession.useSiteFirSession
+    val rootSession: LLFirSession get() = firResolveSession.useSiteFirSession
 
     private val symbolsCache = BuilderCache<FirBasedSymbol<*>, KaSymbol>()
 
