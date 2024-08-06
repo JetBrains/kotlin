@@ -16,9 +16,10 @@ using namespace kotlin;
 
 void checkContentsEquality(const char* input, const char16_t* expected) {
     auto actual = CreatePermanentStringFromCString(input);
-    size_t size = StringRawSize(actual) / sizeof(char16_t);
+    auto header = StringHeader::of(actual);
+    size_t size = header->size() / sizeof(char16_t);
     EXPECT_THAT(size, std::char_traits<char16_t>::length(expected));
-    const char16_t* data = reinterpret_cast<const char16_t*>(StringRawData(actual));
+    const char16_t* data = reinterpret_cast<const char16_t*>(header->data());
     for (size_t i=0; i<size; i++) {
         EXPECT_THAT(data[i], expected[i]);
     }
