@@ -63,7 +63,8 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
 
   auto length = CFStringGetLength(immutableCopyOrSameStr);
   auto result = CreateUninitializedUtf16String(length, OBJ_RESULT);
-  CFStringGetCharacters(immutableCopyOrSameStr, {0, length}, reinterpret_cast<UniChar*>(StringRawData(result)));
+  CFStringGetCharacters(immutableCopyOrSameStr, {0, length},
+    reinterpret_cast<UniChar*>(StringHeader::of(result)->data()));
   result->SetAssociatedObject((void*)immutableCopyOrSameStr);
   RETURN_OBJ(result);
 }

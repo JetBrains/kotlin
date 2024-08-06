@@ -24,7 +24,6 @@ excludedFunctions = LLVMInitializeAllAsmParsers LLVMInitializeAllAsmPrinters LLV
     LLVMX86FP80Type LLVMFP128Type LLVMPPCFP128Type LLVMX86MMXType LLVMStructType LLVMVoidType LLVMLabelType \
     LLVMMDString LLVMMDNode LLVMConstString LLVMConstStruct LLVMAppendBasicBlock LLVMInsertBasicBlock LLVMCreateBuilder \
     LLVMParseBitcode LLVMParseBitcode2 LLVMGetBitcodeModule LLVMGetBitcodeModule2 LLVMGetGlobalContext LLVMModuleCreateWithName \
-    LLVMBuildLoad LLVMBuildGEP LLVMBuildStructGEP LLVMConstGEP LLVMConstInBoundsGEP LLVMAddAlias LLVMBuildInvoke LLVMBuildCall \
-    LLVMGetElementType
+    LLVMBuildLoad LLVMBuildGEP LLVMBuildStructGEP LLVMConstGEP LLVMConstInBoundsGEP LLVMAddAlias LLVMBuildInvoke LLVMBuildCall
 
 strictEnums = LLVMIntPredicate LLVMOpcode LLVMDLLStorageClass LLVMCallConv LLVMThreadLocalMode LLVMAtomicOrdering
