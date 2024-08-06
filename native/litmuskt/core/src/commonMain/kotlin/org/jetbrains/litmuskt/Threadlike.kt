@@ -6,10 +6,11 @@ package org.jetbrains.litmuskt
  */
 interface Threadlike {
     /**
-     * Start running the function in a "thread". Returns a handle that will block when called until
-     * the "thread" has completed.
+     * Start running the function in a "thread". Note that the function should be non-capturing.
      *
      * This function should be only called once.
+     *
+     * @return a "future" handle that will block when called until the "thread" has completed.
      */
     fun <A : Any> start(args: A, function: (A) -> Unit): BlockingFuture
 

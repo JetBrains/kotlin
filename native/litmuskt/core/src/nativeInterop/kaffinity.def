@@ -3,10 +3,12 @@
 #include <pthread.h>
 
 int set_affinity(void* thread, cpu_set_t* set) {
-    return pthread_setaffinity_np(*((pthread_t*) thread), sizeof(*set), set);
+    pthread_t pthread = *((pthread_t*) thread);
+    return pthread_setaffinity_np(pthread, sizeof(*set), set);
 }
 int get_affinity(void* thread, cpu_set_t* set) {
-    return pthread_getaffinity_np(*((pthread_t*) thread), sizeof(*set), set);
+    pthread_t pthread = *((pthread_t*) thread);
+    return pthread_getaffinity_np(pthread, sizeof(*set), set);
 }
 
 void cpu_zero(cpu_set_t* set) {
@@ -16,7 +18,7 @@ void cpu_set(int cpu, cpu_set_t* set) {
     CPU_SET(cpu, set);
 }
 int cpu_isset(int cpu, cpu_set_t* set) {
-    CPU_ISSET(cpu, set);
+    return CPU_ISSET(cpu, set);
 }
 int cpu_setsize() {
     return CPU_SETSIZE;

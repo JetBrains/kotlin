@@ -27,7 +27,7 @@ class JvmThreadRunner : LitmusRunner() {
 
         return {
             threads.forEach { it.join() }
-            calcStats(states, test.outcomeSpec, test.outcomeFinalizer)
+            calcStats(states.asIterable(), test.outcomeSpec, test.outcomeFinalizer)
         }
     }
 }

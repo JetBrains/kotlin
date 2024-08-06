@@ -25,5 +25,6 @@ sealed interface LitmusAutoOutcome {
 
     // for JCStress interop
     fun toList(): List<LitmusOutcome>
+    fun parseOutcome(str: String): LitmusAutoOutcome
 }
 

@@ -7,7 +7,7 @@ enum class LitmusOutcomeType { ACCEPTED, INTERESTING, FORBIDDEN }
 data class LitmusOutcomeStats(
     val outcome: LitmusOutcome,
     val count: Long,
-    val type: LitmusOutcomeType?,
+    val type: LitmusOutcomeType,
 )
 
 data class LitmusOutcomeSpec(
@@ -31,9 +31,7 @@ data class LitmusOutcomeSpec(
  * In other cases, use `accept(setOf(...))` to accept one or many values. Note that to accept an iterable,
  * it has to be wrapped in an extra `setOf()`. All of this applies as well to `interesting()` and `forbid()`.
  *
- * See [LitmusAutoOutcome] file for those extension functions. The generic <S> is used precisely for them.
- *
- * single values are handled differently !!!!!!!!!!!!! TODO
+ * See [LitmusAutoOutcome] file for `accept(r1, ...)` extension functions. The generic <S> is used precisely for them.
  */
 class LitmusOutcomeSpecScope<S : Any> {
     private val accepted = mutableSetOf<LitmusOutcome>()
@@ -62,33 +60,4 @@ class LitmusOutcomeSpecScope<S : Any> {
     }
 
     fun build() = LitmusOutcomeSpec(accepted, interesting, forbidden, default ?: LitmusOutcomeType.FORBIDDEN)
-}
-
-typealias LitmusResult = List<LitmusOutcomeStats>
-
-fun LitmusResult.generateTable(): String {
-    val totalCount = sumOf { it.count }
-    val table = this.sortedByDescending { it.count }.map {
-        val freq = it.count.toDouble() / totalCount
-        listOf(
-            it.outcome.toString(),
-            it.type.toString(),
-            it.count.toString(),
-            if (freq < 1e-5) "<0.001%" else "${(freq * 100).toString().take(6)}%"
-        )
-    }
-    val tableHeader = listOf("outcome", "type", "count", "frequency")
-    return (listOf(tableHeader) + table).tableFormat(true)
-}
-
-fun List<LitmusResult>.mergeResults(): LitmusResult {
-    data class LTOutcomeStatTempData(var count: Long, var type: LitmusOutcomeType?)
-
-    val statMap = mutableMapOf<LitmusOutcome, LTOutcomeStatTempData>()
-    for (stat in this.flatten()) {
-        val tempData = statMap.getOrPut(stat.outcome) { LTOutcomeStatTempData(0L, stat.type) }
-        if (tempData.type != stat.type) error("merging conflicting stats: ${stat.outcome} is both ${stat.type} and ${tempData.type}")
-        tempData.count += stat.count
-    }
-    return statMap.map { (outcome, tempData) -> LitmusOutcomeStats(outcome, tempData.count, tempData.type) }
 }

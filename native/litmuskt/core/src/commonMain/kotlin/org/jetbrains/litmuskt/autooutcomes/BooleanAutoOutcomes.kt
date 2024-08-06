@@ -2,7 +2,11 @@ package org.jetbrains.litmuskt.autooutcomes
 
 import org.jetbrains.litmuskt.LitmusOutcomeSpecScope
 
-// TODO
+/**
+ * "Z" is the name for Boolean outcomes in JCStress.
+ */
+
+// TODO: codegen
 
 open class LitmusZZOutcome(
     var r1: Boolean = false,
@@ -16,6 +20,10 @@ open class LitmusZZOutcome(
     }
 
     final override fun toList() = listOf(r1, r2)
+    final override fun parseOutcome(str: String): LitmusZZOutcome {
+        val rs = str.split(", ").map(String::toBooleanStrict)
+        return LitmusZZOutcome(rs[0], rs[1])
+    }
 }
 
 fun <S : LitmusZZOutcome> LitmusOutcomeSpecScope<S>.accept(r1: Boolean, r2: Boolean) =

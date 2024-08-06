@@ -24,15 +24,18 @@ kotlin {
                     create("barrier") {
                         defFile(project.file("src/nativeInterop/barrier.def"))
                         headers(project.file("src/nativeInterop/barrier.h"))
+                        compilerOpts.addAll(listOf("-Wall", "-Werror"))
                     }
                     if (affinitySupported) {
                         create("affinity") {
                             defFile(project.file("src/nativeInterop/kaffinity.def"))
                             compilerOpts.add("-D_GNU_SOURCE")
+                            compilerOpts.addAll(listOf("-Wall", "-Werror"))
                         }
                     }
                     create("kpthread") {
                         defFile(project.file("src/nativeInterop/kpthread.def"))
+                        compilerOpts.addAll(listOf("-Wall", "-Werror"))
                     }
                 }
             }

@@ -13,6 +13,10 @@ open class LitmusLOutcome(
     }
 
     final override fun toList() = listOf(r1)
+    final override fun parseOutcome(str: String): LitmusLOutcome {
+        val rs = str.split(", ").map(String::toLong)
+        return LitmusLOutcome(rs[0])
+    }
 }
 
 fun <S : LitmusLOutcome> LitmusOutcomeSpecScope<S>.accept(r1: Long) =
@@ -36,6 +40,10 @@ open class LitmusLLOutcome(
     }
 
     final override fun toList() = listOf(r1, r2)
+    final override fun parseOutcome(str: String): LitmusLLOutcome {
+        val rs = str.split(", ").map(String::toLong)
+        return LitmusLLOutcome(rs[0], rs[1])
+    }
 }
 
 fun <S : LitmusLLOutcome> LitmusOutcomeSpecScope<S>.accept(r1: Long, r2: Long) =
@@ -60,6 +68,10 @@ open class LitmusLLLOutcome(
     }
 
     final override fun toList() = listOf(r1, r2, r3)
+    final override fun parseOutcome(str: String): LitmusLLLOutcome {
+        val rs = str.split(", ").map(String::toLong)
+        return LitmusLLLOutcome(rs[0], rs[1], rs[2])
+    }
 }
 
 fun <S : LitmusLLLOutcome> LitmusOutcomeSpecScope<S>.accept(r1: Long, r2: Long, r3: Long) =
@@ -85,6 +97,10 @@ open class LitmusLLLLOutcome(
     }
 
     final override fun toList() = listOf(r1, r2, r3, r4)
+    final override fun parseOutcome(str: String): LitmusLLLLOutcome {
+        val rs = str.split(", ").map(String::toLong)
+        return LitmusLLLLOutcome(rs[0], rs[1], rs[2], rs[3])
+    }
 }
 
 fun <S : LitmusLLLLOutcome> LitmusOutcomeSpecScope<S>.accept(r1: Long, r2: Long, r3: Long, r4: Long) =

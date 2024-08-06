@@ -61,7 +61,7 @@ abstract class LitmusRunner {
     }
 
     protected fun <S : Any> calcStats(
-        states: Array<S>,
+        states: Iterable<S>,
         spec: LitmusOutcomeSpec,
         outcomeFinalizer: (S) -> LitmusOutcome
     ): LitmusResult {
