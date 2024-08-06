@@ -5597,6 +5597,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/classDelegation/generic.kt");
     }
 
+    @TestMetadata("hiddenDelegateAndLateinitVar.kt")
+    public void testHiddenDelegateAndLateinitVar() {
+      runTest("compiler/testData/codegen/box/classDelegation/hiddenDelegateAndLateinitVar.kt");
+    }
+
     @TestMetadata("method.kt")
     public void testMethod() {
       runTest("compiler/testData/codegen/box/classDelegation/method.kt");
