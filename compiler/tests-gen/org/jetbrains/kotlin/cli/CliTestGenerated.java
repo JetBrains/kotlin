@@ -1118,6 +1118,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/newLineInPackage.args");
     }
 
+    @TestMetadata("noJdkAvoidFailure.args")
+    public void testNoJdkAvoidFailure() {
+      runTest("compiler/testData/cli/jvm/noJdkAvoidFailure.args");
+    }
+
     @TestMetadata("noReflect.args")
     public void testNoReflect() {
       runTest("compiler/testData/cli/jvm/noReflect.args");
