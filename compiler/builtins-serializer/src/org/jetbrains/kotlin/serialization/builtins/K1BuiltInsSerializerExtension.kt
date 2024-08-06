@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnresolvedType
 
-class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
+class K1BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     private val shortNameToClassId = mapOf(
         "IntRange" to "kotlin/ranges/IntRange",
         "LongRange" to "kotlin/ranges/LongRange",

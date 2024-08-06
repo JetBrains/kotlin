@@ -54,7 +54,7 @@ class K1BuiltInsSerializer(
         return OutputInfo(totalSize, totalFiles)
     }
 
-    override fun createSerializerExtension(): KotlinSerializerExtensionBase = BuiltInsSerializerExtension()
+    override fun createSerializerExtension(): KotlinSerializerExtensionBase = K1BuiltInsSerializerExtension()
 
     // Serialize metadata for kotlin.Cloneable manually for compatibility with kotlin-reflect 1.0 which expects this metadata to be there.
     // Since Kotlin 1.1, we always discard this class during deserialization (see ClassDeserializer.kt).
