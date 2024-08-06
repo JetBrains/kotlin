@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_K2: JVM_IR
 // ISSUE: KT-70417
+// JVM_ABI_K1_K2_DIFF: difference in name of anonymous parameter `_` of setter
 
 interface A {
     var x: String
