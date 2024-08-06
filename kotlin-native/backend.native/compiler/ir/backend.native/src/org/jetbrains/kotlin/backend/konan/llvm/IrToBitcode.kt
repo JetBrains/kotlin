@@ -472,10 +472,10 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    val ctorFunctionSignature = LlvmFunctionSignature(LlvmRetType(llvm.voidType))
+    val ctorFunctionSignature = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false))
     val kNodeInitType = llvm.runtime.initNodeType
     val kMemoryStateType = llvm.runtime.memoryStateType
-    val kInitFuncType = LlvmFunctionSignature(LlvmRetType(llvm.voidType), listOf(LlvmParamType(llvm.int32Type), LlvmParamType(pointerType(kMemoryStateType))))
+    val kInitFuncType = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false), listOf(LlvmParamType(llvm.int32Type), LlvmParamType(pointerType(kMemoryStateType))))
 
     //-------------------------------------------------------------------------//
 
@@ -1692,7 +1692,7 @@ internal class CodeGeneratorVisitor(
             if (dstClass.isObjCMetaClass()) {
                 val isClass = llvm.externalNativeRuntimeFunction(
                         "object_isClass",
-                        LlvmRetType(llvm.int8Type),
+                        LlvmRetType(llvm.int8Type, isObjectType = false),
                         listOf(LlvmParamType(llvm.int8PtrType))
                 )
                 call(isClass, listOf(objCObject)).let {
@@ -2547,7 +2547,7 @@ internal class CodeGeneratorVisitor(
         val protocolGetterName = annotation.getAnnotationStringValue("protocolGetter")
         val protocolGetterProto = LlvmFunctionProto(
                 protocolGetterName,
-                LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType)),
+                LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType, isObjectType = false)),
                 origin = FunctionOrigin.OwnedBy(irClass),
                 linkage = LLVMLinkage.LLVMExternalLinkage,
                 independent = true // Protocol is header-only declaration.

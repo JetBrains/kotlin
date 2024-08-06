@@ -1283,7 +1283,7 @@ internal abstract class FunctionGenerationContext(
 
                 val getClass = llvm.externalNativeRuntimeFunction(
                         "object_getClass",
-                        LlvmRetType(llvm.int8PtrType),
+                        LlvmRetType(llvm.int8PtrType, isObjectType = false),
                         listOf(LlvmParamType(llvm.int8PtrType))
                 )
                 call(getClass, listOf(objCClass), exceptionHandler = exceptionHandler)

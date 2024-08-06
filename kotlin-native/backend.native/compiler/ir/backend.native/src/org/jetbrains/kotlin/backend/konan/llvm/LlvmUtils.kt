@@ -181,7 +181,7 @@ private fun CodeGenerator.replaceExternalWeakOrCommonGlobal(name: String, value:
         // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
         // Runtime is linked into stdlib module only, so import runtime global from it.
         val global = importGlobal(name, value.llvmType)
-        val initializerProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType)).toProto(
+        val initializerProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false)).toProto(
                 name = "",
                 origin = null,
                 LLVMLinkage.LLVMPrivateLinkage

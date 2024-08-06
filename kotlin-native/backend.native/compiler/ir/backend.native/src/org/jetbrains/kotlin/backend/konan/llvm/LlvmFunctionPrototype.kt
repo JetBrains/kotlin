@@ -107,9 +107,9 @@ private fun addDeclarationAttributesAtIndex(context: LLVMContextRef, function: L
 
 internal fun ContextUtils.getLlvmFunctionReturnType(function: IrFunction): LlvmRetType {
     val returnType = when {
-        function is IrConstructor -> LlvmRetType(llvm.voidType)
+        function is IrConstructor -> LlvmRetType(llvm.voidType, isObjectType = false)
         function.isSuspend -> error("Suspend functions should be lowered out at this point, but ${function.render()} is still here")
-        function.returnType.isVoidAsReturnType() -> LlvmRetType(llvm.voidType)
+        function.returnType.isVoidAsReturnType() -> LlvmRetType(llvm.voidType, isObjectType = false)
         else -> LlvmRetType(
                 function.returnType.toLLVMType(llvm),
                 argumentAbiInfo.defaultParameterAttributesForIrType(function.returnType),

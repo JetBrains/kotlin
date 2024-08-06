@@ -533,7 +533,7 @@ internal class ObjCExportCodeGenerator(
     )
 
     private fun emitSelectorsHolder() {
-        val impProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType)).toProto(
+        val impProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false)).toProto(
                 name = "",
                 origin = null,
                 linkage = LLVMLinkage.LLVMInternalLinkage
@@ -696,7 +696,11 @@ private fun ObjCExportCodeGeneratorBase.buildWritableTypeInfoValue(
 }
 
 private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LlvmFunctionSignature
-    get() = LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType), listOf(LlvmParamType(codegen.kObjHeaderPtr)), isVararg = false)
+    get() = LlvmFunctionSignature(
+            LlvmRetType(llvm.int8PtrType, isObjectType = false),
+            listOf(LlvmParamType(codegen.kObjHeaderPtr)),
+            isVararg = false
+    )
 
 private val ObjCExportCodeGeneratorBase.objCToKotlinFunctionType: LLVMTypeRef
     get() = functionType(codegen.kObjHeaderPtr, false, llvm.int8PtrType, codegen.kObjHeaderPtrPtr)
@@ -740,7 +744,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
         val nsNumberSubclass = genGetLinkedClass(namer.numberBoxName(boxClass.classId!!).binaryName)
         // We consider this function fast enough, so don't switch thread state to Native.
         val instance = callFromBridge(objcAlloc, listOf(nsNumberSubclass))
-        val returnType = LlvmRetType(llvm.int8PtrType)
+        val returnType = LlvmRetType(llvm.int8PtrType, isObjectType = false)
         // We consider these methods fast enough, so don't switch thread state to Native.
         ret(genSendMessage(returnType, valueParameterTypes, instance, nsNumberInitSelector, value))
     }
@@ -1927,9 +1931,12 @@ private fun MethodBridge.ReturnValue.toLlvmRetType(
     val llvm = generationState.llvm
     return when (this) {
         MethodBridge.ReturnValue.Suspend,
-        MethodBridge.ReturnValue.Void -> LlvmRetType(llvm.voidType)
+        MethodBridge.ReturnValue.Void -> LlvmRetType(llvm.voidType, isObjectType = false)
 
-        MethodBridge.ReturnValue.HashCode -> LlvmRetType(if (generationState.is64BitNSInteger()) llvm.int64Type else llvm.int32Type)
+        MethodBridge.ReturnValue.HashCode -> LlvmRetType(
+                if (generationState.is64BitNSInteger()) llvm.int64Type else llvm.int32Type,
+                isObjectType = false
+        )
         is MethodBridge.ReturnValue.Mapped -> this.bridge.toLlvmRetType(llvm)
         MethodBridge.ReturnValue.WithError.Success -> ValueTypeBridge(ObjCValueType.BOOL).toLlvmRetType(llvm)
 
@@ -1946,8 +1953,12 @@ private fun TypeBridge.toLlvmParamType(llvm: CodegenLlvmHelpers): LlvmParamType 
 }
 
 private fun TypeBridge.toLlvmRetType(llvm: CodegenLlvmHelpers): LlvmRetType = when (this) {
-    is ReferenceBridge, is BlockPointerBridge -> LlvmRetType(llvm.int8PtrType)
-    is ValueTypeBridge -> LlvmRetType(this.objCValueType.toLlvmType(llvm), this.objCValueType.defaultParameterAttributes)
+    is ReferenceBridge, is BlockPointerBridge -> LlvmRetType(llvm.int8PtrType, isObjectType = false)
+    is ValueTypeBridge -> LlvmRetType(
+            this.objCValueType.toLlvmType(llvm),
+            this.objCValueType.defaultParameterAttributes,
+            isObjectType = false
+    )
 }
 
 internal fun ObjCExportCodeGenerator.getEncoding(methodBridge: MethodBridge): String {

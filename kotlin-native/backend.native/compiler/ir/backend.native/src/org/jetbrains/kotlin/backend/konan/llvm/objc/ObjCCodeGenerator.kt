@@ -26,35 +26,35 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     }
 
     private val objcMsgSend = llvm.externalNativeRuntimeFunction(
-                    "objc_msgSend",
-                    LlvmRetType(llvm.int8PtrType),
-                    listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType)),
-                    isVararg = true
+            "objc_msgSend",
+            LlvmRetType(llvm.int8PtrType, isObjectType = false),
+            listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType)),
+            isVararg = true
     ).toConstPointer()
 
     val objcRelease = llvm.externalNativeRuntimeFunction(
             "llvm.objc.release",
-            LlvmRetType(llvm.voidType),
+            LlvmRetType(llvm.voidType, isObjectType = false),
             listOf(LlvmParamType(llvm.int8PtrType)),
             listOf(LlvmFunctionAttribute.NoUnwind)
     )
 
     val objcAlloc = llvm.externalNativeRuntimeFunction(
             "objc_alloc",
-            LlvmRetType(llvm.int8PtrType),
+            LlvmRetType(llvm.int8PtrType, isObjectType = false),
             listOf(LlvmParamType(llvm.int8PtrType))
     )
 
     val objcAutoreleaseReturnValue = llvm.externalNativeRuntimeFunction(
             "llvm.objc.autoreleaseReturnValue",
-            LlvmRetType(llvm.int8PtrType),
+            LlvmRetType(llvm.int8PtrType, isObjectType = false),
             listOf(LlvmParamType(llvm.int8PtrType)),
             listOf(LlvmFunctionAttribute.NoUnwind)
     )
 
     val objcRetainAutoreleasedReturnValue = llvm.externalNativeRuntimeFunction(
             "llvm.objc.retainAutoreleasedReturnValue",
-            LlvmRetType(llvm.int8PtrType),
+            LlvmRetType(llvm.int8PtrType, isObjectType = false),
             listOf(LlvmParamType(llvm.int8PtrType)),
             listOf(LlvmFunctionAttribute.NoUnwind)
     )
