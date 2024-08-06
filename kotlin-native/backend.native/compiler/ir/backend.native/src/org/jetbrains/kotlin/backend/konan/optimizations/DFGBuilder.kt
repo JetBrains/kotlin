@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
-import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.backend.konan.lower.volatileField
 import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 
@@ -90,11 +88,10 @@ private class ExpressionValuesExtractor(val context: Context,
                                         val returnableBlockValues: Map<IrReturnableBlock, List<IrExpression>>,
                                         val suspendableExpressionValues: Map<IrSuspendableExpression, List<IrSuspensionPoint>>) {
 
-    val unit = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType, context.ir.symbols.unit)
-
-    val nothing = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            context.irBuiltIns.nothingType, context.ir.symbols.nothing)
+    val unit = IrCallImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            context.irBuiltIns.unitType, context.ir.symbols.theUnitInstance,
+            typeArgumentsCount = 0, valueArgumentsCount = 0)
 
     fun forEachValue(expression: IrExpression, block: (IrExpression) -> Unit) {
         when (expression) {
@@ -137,14 +134,9 @@ private class ExpressionValuesExtractor(val context: Context,
 
             is IrVararg, /* Sometimes, we keep vararg till codegen phase (for constant arrays). */
             is IrMemberAccessExpression<*>, is IrGetValue, is IrGetField, is IrConst,
-            is IrGetObjectValue, is IrFunctionReference, is IrSetField,
-            is IrConstantValue -> block(expression)
+            is IrGetObjectValue, is IrSetField, is IrConstantValue -> block(expression)
 
-            else -> when {
-                expression.type.isUnit() -> unit
-                expression.type.isNothing() -> nothing
-                else -> TODO(ir2stringWhole(expression))
-            }
+            else -> require(expression.type.isUnit() || expression.type.isNothing()) { "Unexpected expression: ${expression.render()}" }
         }
     }
 }
@@ -443,7 +435,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 expressionsScopes[expression] = scope
             }
             expressionsScopes[expressionValuesExtractor.unit] = rootScope
-            expressionsScopes[expressionValuesExtractor.nothing] = rootScope
 
             variableValues.elementData.forEach { (irVariable, variable) ->
                 val loop = variable.loop
@@ -601,23 +592,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                                 else
                                     DataFlowIR.Node.SimpleConst(mapWrappedType(value.value.type, value.type), value.value.value!!)
 
-                            is IrGetObjectValue -> {
-                                val constructor = if (value.type.isNothing()) {
-                                    // <Nothing> is not a singleton though its instance is get with <IrGetObject> operation.
-                                    null
-                                } else {
-                                    val objectClass = value.symbol.owner
-                                    if (objectClass is IrLazyClass) {
-                                        // Singleton has a private constructor which is not deserialized.
-                                        null
-                                    } else {
-                                        symbolTable.mapFunction(objectClass.functions.single { it.originalConstructor != null })
-                                    }
-                                }
-                                DataFlowIR.Node.Singleton(symbolTable.mapType(value.type), constructor, emptyList())
-                            }
-
-                            is IrConstructorCall, is IrDelegatingConstructorCall -> error("Should've been lowered: ${value.render()}")
+                            is IrConstructorCall, is IrDelegatingConstructorCall, is IrGetObjectValue -> error("Should've been lowered: ${value.render()}")
 
                             is IrCall -> when (value.symbol) {
                                 in arrayGetSymbols -> {
