@@ -167,3 +167,45 @@ fun assertClassDeclarationsContain(classesDir: Path, classFqn: String, expectedD
         "$expectedDeclarationsString\n\n$actualDeclarationsString"
     }
 }
+
+/**
+ * Asserts that the given .kt [sources] are compiled and processed by the KAPT.
+ * @param taskPath The path to the Gradle task that invokes the compilation, optional.
+ */
+fun BuildResult.assertCompiledKotlinSourcesHandleKapt3(
+    sources: List<Path>,
+    taskPath: String = ""
+) {
+    assertCompiledKotlinSources(
+        sources,
+        getOutputForTask("$taskPath:kaptGenerateStubsKotlin"),
+        errorMessageSuffix = " in task 'kaptGenerateStubsKotlin"
+    )
+
+    assertCompiledKotlinSources(
+        sources,
+        getOutputForTask("$taskPath:compileKotlin"),
+        errorMessageSuffix = " in task 'compileKotlin'"
+    )
+}
+
+/**
+ * Asserts that the given .kt test [sources] are compiled and processed by the KAPT.
+ * @param taskPath The path to the Gradle task that invokes the compilation, optional.
+ */
+fun BuildResult.assertCompiledKotlinTestSourcesAreHandledByKapt3(
+    sources: List<Path>,
+    taskPath: String = ""
+) {
+    assertCompiledKotlinSources(
+        sources,
+        getOutputForTask("$taskPath:kaptGenerateStubsTestKotlin"),
+        errorMessageSuffix = " in task 'kaptGenerateStubsTestKotlin"
+    )
+
+    assertCompiledKotlinSources(
+        sources,
+        getOutputForTask("$taskPath:compileTestKotlin"),
+        errorMessageSuffix = " in task 'compileTestKotlin'"
+    )
+}

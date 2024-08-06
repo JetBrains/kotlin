@@ -21,6 +21,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.jupiter.api.DisplayName
@@ -229,6 +230,95 @@ class BuildCacheIT : KGPBaseTest() {
                     subProject("app").kotlinSourcesDir().resolve("foo/BB.kt"),
                 )
                 assertIncrementalCompilation(expectedCompiledKotlinFiles = affectedFiles.relativizeTo(projectPath))
+            }
+        }
+    }
+
+    @DisplayName("A compilation error doesn't break kapt incremental compilation after restoring from build cache")
+    @GradleTest
+    fun testKaptIncrementalCompilationAfterCacheHitAndCompilationError(gradleVersion: GradleVersion) {
+        project("kapt2/kaptAvoidance", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+            build("assemble")
+            build("clean", "assemble") {
+                assertTasksFromCache(
+                    ":app:kaptGenerateStubsKotlin",
+                    ":app:kaptKotlin",
+                    ":app:compileKotlin",
+                    ":lib:compileKotlin"
+                )
+            }
+
+            val fileToEdit = projectPath.resolve("app/src/main/kotlin/AppClass.kt")
+            fileToEdit.modify { current ->
+                val lastBrace = current.lastIndexOf("}")
+                current.substring(0, lastBrace) +
+                        """
+                            internal class InternalAppClass {
+                                @example.ExampleAnnotation
+                                fun intFunGen() : InternalAppClass {
+                                    return 
+                                }
+                            }
+                        }  
+                        """.trimIndent()
+            }
+
+            buildAndFail("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertTasksFailed(":app:compileKotlin")
+                assertOutputDoesNotContain("On recompilation full rebuild will be performed")
+                assertCompiledKotlinSources(listOf(projectPath.relativize(fileToEdit)), output)
+            }
+
+            fileToEdit.replaceText("return", "return this")
+
+            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertIncrementalCompilation(expectedCompiledKotlinFiles = listOf(projectPath.relativize(fileToEdit)))
+                assertCompiledKotlinSourcesHandleKapt3(
+                    listOf(projectPath.relativize(fileToEdit)),
+                    ":app"
+                )
+            }
+        }
+    }
+
+    @DisplayName("A compilation error doesn't break kapt incremental compilation in test sources after restoring from build cache")
+    @GradleTest
+    fun testKaptIncrementalCompilationInTestSourcesAfterCacheHit(gradleVersion: GradleVersion) {
+        project("kapt2/kaptAvoidance", gradleVersion) {
+            enableLocalBuildCache(localBuildCacheDir)
+            build("build")
+            build("clean", "build") {
+                assertTasksFromCache(
+                    ":app:kaptGenerateStubsTestKotlin",
+                    ":app:kaptTestKotlin",
+                    ":app:compileTestKotlin"
+                )
+            }
+
+            val fileToEdit = projectPath.resolve("app/src/main/kotlin/AppClass.kt")
+            val testFileToEdit = projectPath.resolve("app/src/test/kotlin/AppClassTest.kt")
+            fileToEdit.modify {
+                it.replace(
+                    "val testVal: String = \"text\"",
+                    "var testVal: String = \"text\".plus()"
+                )
+            }
+
+            buildAndFail("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertTasksFailed(":app:compileKotlin")
+                assertCompiledKotlinSources(listOf(projectPath.relativize(fileToEdit)), output)
+            }
+
+            fileToEdit.modify { it.replace("\"text\".plus()", "\"text\".plus(\"+\")") }
+            testFileToEdit.replaceText("\"text\"", "\"text+\"")
+
+            build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+
+                assertCompiledKotlinTestSourcesAreHandledByKapt3(
+                    listOf(projectPath.relativize(testFileToEdit)),
+                    ":app"
+                )
             }
         }
     }
