@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.extensions.originalCallDataForPluginRefinedCall
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
@@ -153,7 +153,7 @@ private class CalculatorForNestedCall(
     ) {
         val unwrappedType = type.lowerBoundIfFlexible()
         val typeArgumentsCount = unwrappedType.argumentsCount()
-        if (typeArgumentsCount > 0 && !unwrappedType.isError()) {
+        if (typeArgumentsCount > 0 && !unwrappedType.isError() && typeArgumentsCount == unwrappedType.typeConstructor().parametersCount()) {
             for (position in 0 until typeArgumentsCount) {
                 val argument = unwrappedType.getArgument(position)
                 val parameter = unwrappedType.typeConstructor().getParameter(position)
