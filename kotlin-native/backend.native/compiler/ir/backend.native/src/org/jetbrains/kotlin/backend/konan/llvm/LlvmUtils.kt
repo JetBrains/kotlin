@@ -67,15 +67,18 @@ internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue
         } else {
             element.llvm.also {
                 assert(it.type == expectedType) {
-                    "Unexpected type at $index: expected ${LLVMPrintTypeToString(expectedType)!!.toKString()} " +
-                            "got ${LLVMPrintTypeToString(it.type)!!.toKString()}"
+                    "Unexpected type at $index: expected ${LLVMPrintTypeToString(expectedType)!!.toKString()}, " +
+                            "got ${LLVMPrintTypeToString(it.type)!!.toKString()} in ${LLVMPrintTypeToString(type)!!.toKString()}"
                 }
             }
         }
     }.toCValues(), elements.size)!!
 
     init {
-        assert(elements.size == LLVMCountStructElementTypes(type))
+        assert(elements.size == LLVMCountStructElementTypes(type)) {
+            "Should have ${LLVMCountStructElementTypes(type)} elements, have ${elements.size} " +
+                    "for type ${LLVMPrintTypeToString(type)!!.toKString()}"
+        }
     }
 }
 
@@ -100,11 +103,11 @@ internal val RuntimeAware.kTypeInfo: LLVMTypeRef
 internal val RuntimeAware.kObjHeader: LLVMTypeRef
     get() = runtime.objHeaderType
 internal val RuntimeAware.kObjHeaderPtr: LLVMTypeRef
-    get() = pointerType(kObjHeader)
+    get() = runtime.objHeaderPtrType
 internal val RuntimeAware.kObjHeaderPtrReturnType: LlvmRetType
     get() = LlvmRetType(kObjHeaderPtr, isObjectType = true)
 internal val RuntimeAware.kObjHeaderPtrPtr: LLVMTypeRef
-    get() = pointerType(kObjHeaderPtr)
+    get() = runtime.objHeaderPtrPtrType
 internal val RuntimeAware.kArrayHeader: LLVMTypeRef
     get() = runtime.arrayHeaderType
 internal val RuntimeAware.kArrayHeaderPtr: LLVMTypeRef
