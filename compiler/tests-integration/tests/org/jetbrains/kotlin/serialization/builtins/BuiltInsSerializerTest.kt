@@ -38,6 +38,7 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
             srcDirs = listOf(File(source)),
             extraClassPath = listOf(ForTestCompileRuntime.runtimeJarForTests()),
             dependOnOldBuiltIns = true,
+            useK2 = false,
             onComplete = { _, _ -> }
         )
 

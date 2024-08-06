@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 /**
  * Produces metadata klib using K2 compiler
  */
-internal class FirMetadataSerializer(
+internal open class FirMetadataSerializer(
     configuration: CompilerConfiguration,
     environment: KotlinCoreEnvironment
 ) : AbstractMetadataSerializer<List<ModuleCompilerAnalyzedOutput>>(configuration, environment) {
@@ -151,7 +151,7 @@ internal class FirMetadataSerializer(
         val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
 
-        return if (diagnosticsReporter.hasErrors) {
+        return if (messageCollector.hasErrors()) {
             null
         } else {
             outputs

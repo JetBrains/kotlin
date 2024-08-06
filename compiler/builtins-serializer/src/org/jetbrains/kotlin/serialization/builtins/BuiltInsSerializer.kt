@@ -19,8 +19,12 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.metadata.AbstractMetadataSerializer.OutputInfo
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.messageCollector
 import java.io.File
 
@@ -30,6 +34,7 @@ object BuiltInsSerializer {
         srcDirs: List<File>,
         extraClassPath: List<File>,
         dependOnOldBuiltIns: Boolean,
+        useK2: Boolean,
         onComplete: (totalSize: Int, totalFiles: Int) -> Unit
     ) {
         val rootDisposable = Disposer.newDisposable("Disposable for ${K1BuiltInsSerializer::class.simpleName}.analyzeAndSerialize")
@@ -46,11 +51,27 @@ object BuiltInsSerializer {
                 put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, destDir)
                 put(CommonConfigurationKeys.MODULE_NAME, "module for built-ins serialization")
                 put(CLIConfigurationKeys.PERF_MANAGER, performanceManager)
+                put(CommonConfigurationKeys.USE_LIGHT_TREE, true)
+                put(
+                    CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
+                    LanguageVersionSettingsImpl(
+                        LanguageVersion.LATEST_STABLE,
+                        ApiVersion.LATEST_STABLE,
+                        analysisFlags = mapOf(
+                            AnalysisFlags.stdlibCompilation to !dependOnOldBuiltIns,
+                            AnalysisFlags.allowKotlinPackage to true
+                        )
+                    )
+                )
             }
 
             val environment = KotlinCoreEnvironment.Companion.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-            val serializer = K1BuiltInsSerializer(configuration, environment, dependOnOldBuiltIns)
+            val serializer = when (useK2) {
+                false -> K1BuiltInsSerializer(configuration, environment, dependOnOldBuiltIns)
+                true -> FirBuiltInsSerializer(configuration, environment)
+            }
+
             val (totalSize, totalFiles) = serializer.analyzeAndSerialize() ?: OutputInfo(totalSize = 0, totalFiles = 0)
 
             onComplete(totalSize, totalFiles)

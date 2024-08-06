@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBuiltin
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -84,41 +85,74 @@ class FirElementSerializer private constructor(
 ) {
     private val contractSerializer = FirContractSerializer()
     private val providedDeclarationsService = session.providedDeclarationsForMetadataService
+    private val stdLibCompilation = languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)
 
     private var metDefinitelyNotNullType: Boolean = false
 
     fun packagePartProto(file: FirFile, actualizedExpectDeclarations: Set<FirDeclaration>?): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 
-        fun addDeclaration(declaration: FirDeclaration, onUnsupportedDeclaration: (FirDeclaration) -> Unit) {
-            if (declaration is FirMemberDeclaration) {
-                if (!declaration.isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations)) return
-                if (!declaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)) return
-                when (declaration) {
-                    is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
-                    is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
-                    is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
-                    else -> onUnsupportedDeclaration(declaration)
-                }
-            } else {
-                onUnsupportedDeclaration(declaration)
-            }
-        }
-
         extension.processFile(file) {
             for (declaration in file.declarations) {
-                addDeclaration(declaration) {}
+                builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {}
             }
         }
 
-        val packageFqName = file.packageFqName
+        return finalizePackagePartProto(file.packageFqName, builder, actualizedExpectDeclarations)
+    }
 
-        // TODO: figure out how to extract all file dependent processing from `serializePackage`
+    @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+    annotation class SensitiveApi
+
+    /**
+     * This method doesn't use `extension.constValueProvider`, so if there is a provider, then
+     *   constants might be computed incorrectly
+     */
+    @SensitiveApi
+    fun packagePartProto(
+        packageFqName: FqName,
+        declarations: List<FirDeclaration>,
+        actualizedExpectDeclarations: Set<FirDeclaration>?
+    ): ProtoBuf.Package.Builder {
+        require(extension.constValueProvider == null) {
+            "constValueProvider cannot work without file. Please use the `packagePartProto` overload which accepts FirFile"
+        }
+        val builder = ProtoBuf.Package.newBuilder()
+        for (declaration in declarations) {
+            builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {}
+        }
+        return finalizePackagePartProto(packageFqName, builder, actualizedExpectDeclarations)
+    }
+
+    private fun ProtoBuf.Package.Builder.addDeclarationProto(
+        declaration: FirDeclaration,
+        actualizedExpectDeclarations: Set<FirDeclaration>?,
+        onUnsupportedDeclaration: (FirDeclaration) -> Unit,
+    ) {
+        if (declaration is FirMemberDeclaration) {
+            if (!declaration.isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations)) return
+            if (!declaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)) return
+            when (declaration) {
+                is FirProperty -> propertyProto(declaration)?.let { this.addProperty(it) }
+                is FirSimpleFunction -> functionProto(declaration)?.let { this.addFunction(it) }
+                is FirTypeAlias -> typeAliasProto(declaration)?.let { this.addTypeAlias(it) }
+                else -> onUnsupportedDeclaration(declaration)
+            }
+        } else {
+            onUnsupportedDeclaration(declaration)
+        }
+    }
+
+    private fun finalizePackagePartProto(
+        packageFqName: FqName,
+        builder: ProtoBuf.Package.Builder,
+        actualizedExpectDeclarations: Set<FirDeclaration>?,
+    ): ProtoBuf.Package.Builder {
         extension.serializePackage(packageFqName, builder)
         // Next block will process declarations from plugins.
         // Such declarations don't belong to any file, so there is no need to call `extension.processFile`.
         for (declaration in providedDeclarationsService.getProvidedTopLevelDeclarations(packageFqName, scopeSession)) {
-            addDeclaration(declaration) {
+            builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {
                 error("Unsupported top-level declaration type: ${it.render()}")
             }
         }
@@ -794,7 +828,15 @@ class FirElementSerializer private constructor(
     ): ProtoBuf.ValueParameter.Builder = whileAnalysing(session, parameter) {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
-        val declaresDefaultValue = function.itOrExpectHasDefaultParameterValue(index)
+        val declaresDefaultValue = if (
+            stdLibCompilation &&
+            function is FirConstructor &&
+            function.returnTypeRef.coneType.classId == StandardClassIds.Enum
+        ) {
+            false
+        } else {
+            function.itOrExpectHasDefaultParameterValue(index)
+        }
 
         val flags = Flags.getValueParameterFlags(
             additionalAnnotations.isNotEmpty()

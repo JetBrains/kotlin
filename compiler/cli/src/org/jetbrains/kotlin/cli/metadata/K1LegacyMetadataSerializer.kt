@@ -120,13 +120,6 @@ open class K1LegacyMetadataSerializer(
 
     protected open fun createSerializerExtension(): KotlinSerializerExtensionBase = MetadataSerializerExtension(metadataVersion)
 
-    private fun getPackageFilePath(packageFqName: FqName, fileName: String): String =
-        packageFqName.asString().replace('.', '/') + "/" +
-                PackagePartClassUtils.getFilePartShortName(fileName) + DOT_METADATA_FILE_EXTENSION
-
-    private fun getClassFilePath(classId: ClassId): String =
-        classId.asSingleFqName().asString().replace('.', '/') + DOT_METADATA_FILE_EXTENSION
-
     protected inner class PackageSerializer(
         private val classes: Collection<DeclarationDescriptor>,
         private val members: Collection<DeclarationDescriptor>,
@@ -191,3 +184,10 @@ open class K1LegacyMetadataSerializer(
         }
     }
 }
+
+internal fun getClassFilePath(classId: ClassId): String =
+    classId.asSingleFqName().asString().replace('.', '/') + DOT_METADATA_FILE_EXTENSION
+
+internal fun getPackageFilePath(packageFqName: FqName, fileName: String): String =
+    packageFqName.asString().replace('.', '/') + "/" +
+            PackagePartClassUtils.getFilePartShortName(fileName) + DOT_METADATA_FILE_EXTENSION
