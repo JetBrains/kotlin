@@ -7374,6 +7374,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Test
+    @TestMetadata("hiddenDelegateAndLateinitVar.kt")
+    public void testHiddenDelegateAndLateinitVar() {
+      runTest("compiler/testData/codegen/box/classDelegation/hiddenDelegateAndLateinitVar.kt");
+    }
+
+    @Test
     @TestMetadata("method.kt")
     public void testMethod() {
       runTest("compiler/testData/codegen/box/classDelegation/method.kt");
