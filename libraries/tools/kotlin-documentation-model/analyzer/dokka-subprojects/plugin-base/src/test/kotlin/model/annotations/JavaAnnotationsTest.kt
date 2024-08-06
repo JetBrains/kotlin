@@ -4,7 +4,9 @@
 
 package model.annotations
 
+import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import translators.findClasslike
 import kotlin.test.*
@@ -14,7 +16,9 @@ class JavaAnnotationsTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
-                sourceRoots = listOf("src/main/java")
+                analysisPlatform = Platform.jvm.toString()
+                classpath += jvmStdlibPath!!
+                sourceRoots = listOf("src/main/java", "src/main/kotlin")
             }
         }
     }
@@ -192,4 +196,62 @@ class JavaAnnotationsTest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `accessors of a synthetic property or java methods should have annotations`() {
+        testInline(
+            """
+            |/src/main/java/annotation/JavaParent.java
+            |package annotation;
+            |import javax.management.DescriptorKey;
+            |
+            |public class JavaParent {
+            |    private int context = 0;
+            |
+            |    public int getContext() {
+            |        return context;
+            |    }
+            |
+            |    @DescriptorKey(value = "")
+            |    public void setContext(int context) {
+            |        this.context = context;
+            |    }
+            |    @DescriptorKey(value = "")
+            |    public void foo() {
+            |    }
+            |}
+            |
+            |/src/main/kotlin/annotation/TestClass.kt
+            |package annotation
+            |class A : JavaParent()
+            """.trimIndent(),
+            configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                val testClass = module.findClasslike("annotation", "A") as DClass
+                val setter = testClass.properties.find{  it.name == "context" }?.setter
+                assertNotNull(setter)
+                val annotation = setter.extra[Annotations]?.directAnnotations?.values?.single()?.single()
+                assertEquals(
+                    Annotations.Annotation(
+                        dri = DRI("javax.management", "DescriptorKey"),
+                        params = mapOf("value" to StringValue("")),
+                        mustBeDocumented = true
+                    ), annotation
+                )
+
+                val member = testClass.functions.find{  it.name == "foo" }
+                assertNotNull(member)
+                val annotation2 = member.extra[Annotations]?.directAnnotations?.values?.single()?.single()
+                assertEquals(
+                    Annotations.Annotation(
+                        dri = DRI("javax.management", "DescriptorKey"),
+                        params = mapOf("value" to StringValue("")),
+                        mustBeDocumented = true
+                    ), annotation2
+                )
+            }
+        }
+    }
+
 }
