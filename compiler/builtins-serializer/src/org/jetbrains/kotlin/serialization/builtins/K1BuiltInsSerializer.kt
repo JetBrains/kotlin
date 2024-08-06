@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 
-class BuiltInsSerializer(
+class K1BuiltInsSerializer(
     configuration: CompilerConfiguration,
     environment: KotlinCoreEnvironment,
     dependOnOldBuiltIns: Boolean
@@ -47,7 +47,7 @@ class BuiltInsSerializer(
             dependOnOldBuiltIns: Boolean,
             onComplete: (totalSize: Int, totalFiles: Int) -> Unit
         ) {
-            val rootDisposable = Disposer.newDisposable("Disposable for ${BuiltInsSerializer::class.simpleName}.analyzeAndSerialize")
+            val rootDisposable = Disposer.newDisposable("Disposable for ${K1BuiltInsSerializer::class.simpleName}.analyzeAndSerialize")
             val messageCollector = createMessageCollector()
             val performanceManager = object : CommonCompilerPerformanceManager(presentableName = "test") {}
             try {
@@ -65,7 +65,7 @@ class BuiltInsSerializer(
 
                 val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-                val serializer = BuiltInsSerializer(configuration, environment, dependOnOldBuiltIns)
+                val serializer = K1BuiltInsSerializer(configuration, environment, dependOnOldBuiltIns)
                 serializer.analyzeAndSerialize()
 
                 onComplete(serializer.totalSize, serializer.totalFiles)
