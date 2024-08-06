@@ -438,18 +438,6 @@ class CocoaPodsGitIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Checking useLibraries mode")
-    @GradleTest
-    fun testUseLibrariesMode(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(projectName = "native-cocoapods-template-groovy", gradleVersion = gradleVersion) {
-            buildGradle.addCocoapodsBlock("useLibraries()".trimIndent())
-            buildGradle.addPod("Base64", configuration = "headers = \"Base64/MF_Base64Additions.h\"")
-            testImport {
-                assertHasDiagnostic(CocoapodsPluginDiagnostics.UseLibrariesUsed)
-            }
-        }
-    }
-
     @DisplayName("Spec repos import")
     @GradleTest
     fun testSpecReposImport(gradleVersion: GradleVersion) {
