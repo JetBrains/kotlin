@@ -219,7 +219,6 @@ object IrTree : AbstractTreeBuilder() {
         +descriptor("ParameterDescriptor")
         +field("isAssignable", boolean, mutable = false)
         +declaredSymbol(valueParameterSymbol)
-        +field("index", int, mutable = false)
         +field("varargElementType", irTypeType, nullable = true)
         +field("isCrossinline", boolean)
         +field("isNoinline", boolean)
@@ -253,6 +252,17 @@ object IrTree : AbstractTreeBuilder() {
             """.trimIndent()
         }
         +field("defaultValue", expressionBody, nullable = true)
+
+        addImport(ArbitraryImportable(Packages.declarations, "DelicateIrParameterIndexSetter"))
+        generationCallback = {
+            println()
+            printPropertyDeclaration("index", int, VariableKind.VAR, initializer = "-1")
+            println()
+            withIndent {
+                println("@DelicateIrParameterIndexSetter")
+                println("internal set")
+            }
+        }
     }
     val `class`: Element by element(Declaration) {
         parent(declarationBase)
@@ -396,7 +406,6 @@ object IrTree : AbstractTreeBuilder() {
         +field("returnType", irTypeType)
         +field("dispatchReceiverParameter", valueParameter, nullable = true)
         +field("extensionReceiverParameter", valueParameter, nullable = true)
-        +listField("valueParameters", valueParameter, mutability = Var)
         // The first `contextReceiverParametersCount` value parameters are context receivers.
         +field("contextReceiverParametersCount", int)
         +field("body", body, nullable = true)

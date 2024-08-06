@@ -17,8 +17,6 @@ abstract class AbstractIrLazyFunction : IrSimpleFunction(), IrLazyFunctionBase {
 
     override var extensionReceiverParameter: IrValueParameter? = null
 
-    override var valueParameters: List<IrValueParameter> = emptyList()
-
     fun tryLoadIr(): Boolean {
         if (!isInline || isFakeOverride) return false
         if (!isDeserializationEnabled) return false

@@ -89,8 +89,6 @@ class Fir2IrLazyConstructor(
 
     override var contextReceiverParametersCount: Int = fir.contextReceivers.size
 
-    override var valueParameters: List<IrValueParameter> = emptyList()
-
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")

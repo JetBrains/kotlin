@@ -27,7 +27,6 @@ class IrLazyValueParameter(
     override val symbol: IrValueParameterSymbol,
     override val descriptor: ValueParameterDescriptor,
     override var name: Name,
-    override var index: Int,
     kotlinType: KotlinType,
     varargElementKotlinType: KotlinType?,
     override var isCrossinline: Boolean,

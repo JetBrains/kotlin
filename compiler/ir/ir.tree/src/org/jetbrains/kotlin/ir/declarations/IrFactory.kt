@@ -399,6 +399,7 @@ open class IrFactory(
         type: IrType,
         isAssignable: Boolean,
         symbol: IrValueParameterSymbol,
+        @Suppress("unused") // The index is calculated automatically, keep this parameter for backward compatibility only
         index: Int,
         varargElementType: IrType?,
         isCrossinline: Boolean,
@@ -411,7 +412,6 @@ open class IrFactory(
             origin = origin,
             symbol = symbol,
             name = name,
-            index = index,
             type = type,
             varargElementType = varargElementType,
             isCrossinline = isCrossinline,

@@ -33,7 +33,17 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
     abstract var extensionReceiverParameter: IrValueParameter?
 
-    abstract var valueParameters: List<IrValueParameter>
+    @OptIn(DelicateIrParameterIndexSetter::class)
+    var valueParameters: List<IrValueParameter> = emptyList()
+        set(value) {
+            for (parameter in field) {
+                parameter.index = -1
+            }
+            for ((index, parameter) in value.withIndex()) {
+                parameter.index = index
+            }
+            field = value
+        }
 
     abstract var contextReceiverParametersCount: Int
 

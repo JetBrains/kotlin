@@ -257,14 +257,14 @@ abstract class DeclarationStubGenerator(
                 ).apply { parent = this@createValueParameters }
             }
             descriptor.valueParameters.mapTo(result) {
-                stubGenerator.generateValueParameterStub(it, it.index + descriptor.contextReceiverParameters.size)
+                stubGenerator.generateValueParameterStub(it)
                     .apply { parent = this@createValueParameters }
             }
         }
 
-    private fun generateValueParameterStub(descriptor: ValueParameterDescriptor, index: Int): IrValueParameter = with(descriptor) {
+    private fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
         IrLazyValueParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name, index,
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name,
             type, varargElementType,
             isCrossinline = isCrossinline, isNoinline = isNoinline, isHidden = false, isAssignable = false,
             stubGenerator = this@DeclarationStubGenerator, typeTranslator = typeTranslator
