@@ -7,7 +7,7 @@
 # OWNER_LIST: Kotlin
 # OWNER_LIST: "Kotlin Libraries"
 # OWNER_LIST: "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
-# OWNER_LIST: "Kotlin Compiler Core"
+# OWNER_LIST: "Kotlin Frontend"
 # OWNER_LIST: "Kotlin Build Infrastructure" "Kotlin Build Tools"
 # OWNER_LIST: "Kotlin Performance QA"
 # OWNER_LIST: "Kotlin IDE Analysis Core"
@@ -43,15 +43,15 @@
 /analysis/ "Kotlin IDE Analysis Core"
 /analysis/light-classes-base/ Dmitry.Gridin
 /analysis/symbol-light-classes/ Dmitry.Gridin
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnostics.kt "Kotlin Compiler Core"
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnosticsImpl.kt "Kotlin Compiler Core"
-/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDataClassConverters.kt "Kotlin Compiler Core"
+/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnostics.kt "Kotlin Frontend"
+/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDiagnosticsImpl.kt "Kotlin Frontend"
+/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KaFirDataClassConverters.kt "Kotlin Frontend"
 
 # UNKNOWN: /annotations/
 
 /ant/ "Kotlin Build Tools"
 
-/benchmarks/ "Kotlin Compiler Core"
+/benchmarks/ "Kotlin Frontend"
 
 /build-common/ "Kotlin Build Tools"
 
@@ -60,31 +60,31 @@
 /compiler/backend.common.jvm/ "Kotlin JVM"
 /compiler/backend-common/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/build-tools/ "Kotlin Build Tools"
-/compiler/builtins-serializer/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/cli/ "Kotlin Compiler Core" Simon.Ogorodnik
+/compiler/builtins-serializer/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/cli/ "Kotlin Frontend" Simon.Ogorodnik
 /compiler/cli/cli-js/ "Kotlin Common Backend" "Kotlin Wasm"
 /compiler/cli/cli-common/src/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt "Kotlin Native"
 /compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArgumentsCopyGenerated.kt "Kotlin Native"
-/compiler/compiler.version/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/compiler-runner/ "Kotlin Compiler Core" Simon.Ogorodnik
+/compiler/compiler.version/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/compiler-runner/ "Kotlin Frontend" Simon.Ogorodnik
 /compiler/compiler-runner-unshaded/ "Kotlin Build Tools"
-/compiler/config/ "Kotlin Compiler Core" Simon.Ogorodnik
+/compiler/config/ "Kotlin Frontend" Simon.Ogorodnik
 /compiler/config.jvm/ "Kotlin JVM"
-/compiler/container/ "Kotlin Compiler Core" Simon.Ogorodnik
+/compiler/container/ "Kotlin Frontend" Simon.Ogorodnik
 /compiler/daemon/ "Kotlin Build Tools"
-/compiler/fir/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/fir/fir2ir/tests-gen/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
-/compiler/frontend/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/frontend.common/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/frontend.common.jvm/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/frontend.common-psi/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/frontend.java/ "Kotlin Compiler Core" Simon.Ogorodnik
+/compiler/fir/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/fir/fir2ir/tests-gen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/compiler/frontend/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/frontend.common/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/frontend.common.jvm/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/frontend.common-psi/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/frontend.java/ "Kotlin Frontend" Simon.Ogorodnik
 /compiler/incremental-compilation-impl/ "Kotlin Build Tools"
 /compiler/ir/backend.common/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/ir/backend.js/ "Kotlin Common Backend"
 /compiler/ir/backend.jvm/ "Kotlin JVM"
 /compiler/ir/backend.wasm/ "Kotlin Wasm"
-/compiler/ir/ir.actualization/ "Kotlin Compiler Core" "Kotlin Common Backend" Simon.Ogorodnik
+/compiler/ir/ir.actualization/ "Kotlin Frontend" "Kotlin Common Backend" Simon.Ogorodnik
 /compiler/ir/ir.interpreter/ "Kotlin Common Backend"
 /compiler/ir/ir.psi2ir/ "Kotlin JVM"
 /compiler/ir/ir.tree/ "Kotlin Common Backend"
@@ -95,46 +95,46 @@
 /compiler/ir/serialization.jvm/ "Kotlin JVM"
 /compiler/ir/serialization.native/ "Kotlin Native"
 /compiler/ir/ir.inline/ "Kotlin Common Backend"
-/compiler/javac-wrapper/ "Kotlin Compiler Core" Simon.Ogorodnik
+/compiler/javac-wrapper/ "Kotlin Frontend" Simon.Ogorodnik
 /compiler/light-classes/ "Kotlin IDE Analysis Core"
-/compiler/plugin-api/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/preloader/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/psi/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/resolution/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/resolution.common/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/resolution.common.jvm/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/serialization/ "Kotlin Compiler Core" Simon.Ogorodnik
-/compiler/test-infrastructure/ "Kotlin Compiler Core"
-/compiler/test-infrastructure-utils/ "Kotlin Compiler Core"
+/compiler/plugin-api/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/preloader/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/psi/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/resolution/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/resolution.common/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/resolution.common.jvm/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/serialization/ "Kotlin Frontend" Simon.Ogorodnik
+/compiler/test-infrastructure/ "Kotlin Frontend"
+/compiler/test-infrastructure-utils/ "Kotlin Frontend"
 
-/compiler/testData/asJava/findClasses/ "Kotlin Compiler Core"
+/compiler/testData/asJava/findClasses/ "Kotlin Frontend"
 /compiler/testData/asJava/lightClasses/ "Kotlin IDE Analysis Core"
 /compiler/testData/builtin-classes/ "Kotlin Libraries"
-/compiler/testData/capturedTypeApproximation/ "Kotlin Compiler Core"
-/compiler/testData/cfg/ "Kotlin Compiler Core"
-/compiler/testData/cfg-variables/ "Kotlin Compiler Core"
-/compiler/testData/cfgVariablesWithStdLib/ "Kotlin Compiler Core"
-/compiler/testData/cfgWithStdLib/ "Kotlin Compiler Core"
+/compiler/testData/capturedTypeApproximation/ "Kotlin Frontend"
+/compiler/testData/cfg/ "Kotlin Frontend"
+/compiler/testData/cfg-variables/ "Kotlin Frontend"
+/compiler/testData/cfgVariablesWithStdLib/ "Kotlin Frontend"
+/compiler/testData/cfgWithStdLib/ "Kotlin Frontend"
 /compiler/testData/checkLocalVariablesTable/ "Kotlin JVM"
 /compiler/testData/classpathOrder/ "Kotlin JVM"
-/compiler/testData/cli/ "Kotlin Compiler Core"
-/compiler/testData/cli/js/ "Kotlin Common Backend" "Kotlin Compiler Core"
+/compiler/testData/cli/ "Kotlin Frontend"
+/compiler/testData/cli/js/ "Kotlin Common Backend" "Kotlin Frontend"
 /compiler/testData/cli/js-dce/ "Kotlin Common Backend" "Kotlin Compiler Core"
-/compiler/testData/cli/jvm/ "Kotlin JVM" "Kotlin Compiler Core"
-/compiler/testData/cli/metadata/ "Kotlin Compiler Core"
+/compiler/testData/cli/jvm/ "Kotlin JVM" "Kotlin Frontend"
+/compiler/testData/cli/metadata/ "Kotlin Frontend"
 /compiler/testData/codegen/asmLike/ "Kotlin JVM"
-/compiler/testData/codegen/box/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/compiler/testData/codegen/box/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/testData/codegen/box/size/ Zalim.Bashorov
 /compiler/testData/codegen/boxInline/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/testData/codegen/boxKlib/ "Kotlin JVM"
 /compiler/testData/codegen/boxModernJdk/ "Kotlin JVM"
 /compiler/testData/codegen/boxWasmJsInterop/ "Kotlin Wasm"
 /compiler/testData/codegen/boxWasmWasi/ "Kotlin Wasm"
-/compiler/testData/codegen/bytecodeListing/ "Kotlin JVM" "Kotlin Compiler Core"
-/compiler/testData/codegen/bytecodeText/ "Kotlin JVM" "Kotlin Compiler Core"
+/compiler/testData/codegen/bytecodeListing/ "Kotlin JVM" "Kotlin Frontend"
+/compiler/testData/codegen/bytecodeText/ "Kotlin JVM" "Kotlin Frontend"
 /compiler/testData/codegen/composeLike/ "Kotlin JVM"
 /compiler/testData/codegen/composeLikeBytecodeText/ "Kotlin JVM"
-/compiler/testData/codegen/customScript/ "Kotlin Compiler Core"
+/compiler/testData/codegen/customScript/ "Kotlin Frontend"
 /compiler/testData/codegen/defaultArguments/reflection/ "Kotlin JVM"
 /compiler/testData/codegen/helpers/ "Kotlin JVM"
 /compiler/testData/codegen/innerClassInfo/ "Kotlin JVM"
@@ -143,98 +143,98 @@
 /compiler/testData/codegen/outerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/properties/ "Kotlin JVM"
 /compiler/testData/codegen/reflection/ "Kotlin Libraries"
-/compiler/testData/codegen/script/ "Kotlin Compiler Core"
-/compiler/testData/codegen/scriptCustom/ "Kotlin Compiler Core"
+/compiler/testData/codegen/script/ "Kotlin Frontend"
+/compiler/testData/codegen/scriptCustom/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/codegen/sourceInfo/
 /compiler/testData/codegen/topLevelMemberInvocation/ "Kotlin JVM"
-/compiler/testData/compileJavaAgainstKotlin/ "Kotlin Compiler Core" "Kotlin JVM"
-/compiler/testData/compileKotlinAgainstCustomBinaries/ "Kotlin Compiler Core"
-/compiler/testData/compileKotlinAgainstJava/ "Kotlin Compiler Core" "Kotlin JVM"
-/compiler/testData/compiler/smoke/ "Kotlin Compiler Core"
-/compiler/testData/debug/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Wasm"
-/compiler/testData/diagnostics/ "Kotlin Compiler Core"
-/compiler/testData/friendPaths/ "Kotlin Compiler Core"
+/compiler/testData/compileJavaAgainstKotlin/ "Kotlin Frontend" "Kotlin JVM"
+/compiler/testData/compileKotlinAgainstCustomBinaries/ "Kotlin Frontend"
+/compiler/testData/compileKotlinAgainstJava/ "Kotlin Frontend" "Kotlin JVM"
+/compiler/testData/compiler/smoke/ "Kotlin Frontend"
+/compiler/testData/debug/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Wasm"
+/compiler/testData/diagnostics/ "Kotlin Frontend"
+/compiler/testData/friendPaths/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/integration/
 /compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
 /compiler/testData/ir/interpreter/ "Kotlin Common Backend"
-/compiler/testData/ir/irText/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/compiler/testData/ir/irText/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
-/compiler/testData/ir/sourceRanges/ "Kotlin Compiler Core"
+/compiler/testData/ir/sourceRanges/ "Kotlin Frontend"
 /compiler/testData/javaModules/ "Kotlin JVM"
 /compiler/testData/klib/ "Kotlin Common Backend"
-/compiler/testData/kotlinClassFinder/ "Kotlin Compiler Core"
+/compiler/testData/kotlinClassFinder/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/launcher/
-/compiler/testData/lexer/ "Kotlin Compiler Core"
-/compiler/testData/loadJava/ "Kotlin Compiler Core"
-/compiler/testData/loadJava8/ "Kotlin Compiler Core"
-/compiler/testData/loadJava17/ "Kotlin Compiler Core"
-/compiler/testData/loadJavaPackageAnnotations/ "Kotlin Compiler Core"
+/compiler/testData/lexer/ "Kotlin Frontend"
+/compiler/testData/loadJava/ "Kotlin Frontend"
+/compiler/testData/loadJava8/ "Kotlin Frontend"
+/compiler/testData/loadJava17/ "Kotlin Frontend"
+/compiler/testData/loadJavaPackageAnnotations/ "Kotlin Frontend"
 /compiler/testData/mockJDK/ "Kotlin Build Infrastructure"
 /compiler/testData/mockJDK9/ "Kotlin Build Infrastructure"
 /compiler/testData/mockJDKModified/ "Kotlin Build Infrastructure"
 /compiler/testData/moduleProtoBuf/ "Kotlin JVM"
-/compiler/testData/modules.xml/ "Kotlin Compiler Core"
-/compiler/testData/multiModule/ "Kotlin Compiler Core"
+/compiler/testData/modules.xml/ "Kotlin Frontend"
+/compiler/testData/multiModule/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/multiplatform/
-/compiler/testData/parseCodeFragment/ "Kotlin Compiler Core"
-/compiler/testData/psi/ "Kotlin Compiler Core"
-/compiler/testData/psiUtil/ "Kotlin Compiler Core"
-/compiler/testData/recursiveProcessor/ "Kotlin Compiler Core"
+/compiler/testData/parseCodeFragment/ "Kotlin Frontend"
+/compiler/testData/psi/ "Kotlin Frontend"
+/compiler/testData/psiUtil/ "Kotlin Frontend"
+/compiler/testData/recursiveProcessor/ "Kotlin Frontend"
 /compiler/testData/reflection/ "Kotlin Libraries"
-/compiler/testData/repl/ "Kotlin Compiler Core"
-/compiler/testData/resolve/ "Kotlin Compiler Core"
-/compiler/testData/resolveAnnotations/ "Kotlin Compiler Core"
-/compiler/testData/resolveConstructorDelegationCalls/ "Kotlin Compiler Core"
-/compiler/testData/resolvedCalls/ "Kotlin Compiler Core"
-/compiler/testData/serialization/builtinsSerializer/ "Kotlin Compiler Core"
-/compiler/testData/serialization/nonStableParameterNames/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/compiler/testData/repl/ "Kotlin Frontend"
+/compiler/testData/resolve/ "Kotlin Frontend"
+/compiler/testData/resolveAnnotations/ "Kotlin Frontend"
+/compiler/testData/resolveConstructorDelegationCalls/ "Kotlin Frontend"
+/compiler/testData/resolvedCalls/ "Kotlin Frontend"
+/compiler/testData/serialization/builtinsSerializer/ "Kotlin Frontend"
+/compiler/testData/serialization/nonStableParameterNames/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/testData/serialization/klib/ "Kotlin Common Backend"
-/compiler/testData/type/ "Kotlin Compiler Core"
-/compiler/testData/typeQualifierNickname/ "Kotlin Compiler Core"
+/compiler/testData/type/ "Kotlin Frontend"
+/compiler/testData/typeQualifierNickname/ "Kotlin Frontend"
 /compiler/testData/versionRequirement/ "Kotlin JVM"
 /compiler/testData/writeFlags/ "Kotlin JVM"
 /compiler/testData/writeSignature/ "Kotlin JVM"
-/compiler/testData/type-checker-test.kt "Kotlin Compiler Core"
-/compiler/testData/type-substitutor.kt "Kotlin Compiler Core"
-/compiler/tests/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/compiler/testData/type-checker-test.kt "Kotlin Frontend"
+/compiler/testData/type-substitutor.kt "Kotlin Frontend"
+/compiler/tests/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/tests/org/jetbrains/kotlin/klib/ "Kotlin Common Backend"
 /compiler/tests-against-klib/ "Kotlin JVM"
-/compiler/tests-common/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
-/compiler/tests-common-new/ "Kotlin Compiler Core"
-/compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/codegen/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Native" "Kotlin Wasm"
-/compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/ir/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Native" "Kotlin Wasm"
-/compiler/tests-compiler-utils/ "Kotlin Compiler Core"
+/compiler/tests-common/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/compiler/tests-common-new/ "Kotlin Frontend"
+/compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/codegen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Native" "Kotlin Wasm"
+/compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/ir/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Common Backend" "Kotlin Native" "Kotlin Wasm"
+/compiler/tests-compiler-utils/ "Kotlin Frontend"
 /compiler/tests-different-jdk/ "Kotlin JVM"
-/compiler/tests-for-compiler-generator/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
-/compiler/tests-gen/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/compiler/tests-for-compiler-generator/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/compiler/tests-gen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
 /compiler/tests-java8/ "Kotlin JVM"
 /compiler/tests-mutes/ "Kotlin Build Infrastructure"
-/compiler/tests-spec/ "Kotlin Compiler Core"
-/compiler/util/ "Kotlin Compiler Core" Simon.Ogorodnik
+/compiler/tests-spec/ "Kotlin Frontend"
+/compiler/util/ "Kotlin Frontend" Simon.Ogorodnik
 /compiler/util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt "Kotlin Language Evolution"
 /compiler/util-io/ "Kotlin Common Backend"
 /compiler/util-klib/ "Kotlin Common Backend"
 /compiler/util-klib-abi/ "Kotlin Common Backend"
 /compiler/util-klib-metadata/ "Kotlin Common Backend"
 
-/core/builtins/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/compiler.common/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/compiler.common.jvm/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/compiler.common.js/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/compiler.common.native/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/compiler.common.wasm/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/compiler.common.web/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/descriptors/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/descriptors.jvm/ "Kotlin Compiler Core" Simon.Ogorodnik
+/core/builtins/ "Kotlin Frontend" Simon.Ogorodnik
+/core/compiler.common/ "Kotlin Frontend" Simon.Ogorodnik
+/core/compiler.common.jvm/ "Kotlin Frontend" Simon.Ogorodnik
+/core/compiler.common.js/ "Kotlin Frontend" Simon.Ogorodnik
+/core/compiler.common.native/ "Kotlin Frontend" Simon.Ogorodnik
+/core/compiler.common.wasm/ "Kotlin Frontend" Simon.Ogorodnik
+/core/compiler.common.web/ "Kotlin Frontend" Simon.Ogorodnik
+/core/descriptors/ "Kotlin Frontend" Simon.Ogorodnik
+/core/descriptors.jvm/ "Kotlin Frontend" Simon.Ogorodnik
 /core/descriptors.runtime/ "Kotlin Libraries"
-/core/deserialization/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/deserialization.common/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/deserialization.common.jvm/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/metadata/ "Kotlin Compiler Core" Simon.Ogorodnik
+/core/deserialization/ "Kotlin Frontend" Simon.Ogorodnik
+/core/deserialization.common/ "Kotlin Frontend" Simon.Ogorodnik
+/core/deserialization.common.jvm/ "Kotlin Frontend" Simon.Ogorodnik
+/core/metadata/ "Kotlin Frontend" Simon.Ogorodnik
 /core/metadata.jvm/ "Kotlin JVM"
 /core/reflection.jvm/ "Kotlin Libraries"
-/core/script.runtime/ "Kotlin Compiler Core" Simon.Ogorodnik
-/core/util.runtime/ "Kotlin Compiler Core" Simon.Ogorodnik
+/core/script.runtime/ "Kotlin Frontend" Simon.Ogorodnik
+/core/util.runtime/ "Kotlin Frontend" Simon.Ogorodnik
 
 /dependencies/ "Kotlin Build Infrastructure"
 
@@ -244,7 +244,7 @@
 
 /generators/analysis-api-generator/ "Kotlin IDE Analysis Core"
 /generators/builtins/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
-/generators/evaluate/ "Kotlin Compiler Core"
+/generators/evaluate/ "Kotlin Frontend"
 /generators/ide-iml-to-gradle-generator/ "Kotlin Build Infrastructure"
 /generators/interpreter/ "Kotlin Common Backend"
 /generators/main/ "Kotlin Build Infrastructure"
@@ -252,9 +252,9 @@
 /generators/sir-tests-generator/ "Kotlin Native"
 /generators/protobuf/ "Kotlin Build Infrastructure"
 # UNKNOWN: /generators/protobufCompare/
-/generators/test-generator/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
-/generators/tests/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
-/generators/tree-generator-common/ "Kotlin Compiler Core" "Kotlin Common Backend" Wojciech.Litewka
+/generators/test-generator/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/generators/tests/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend"
+/generators/tree-generator-common/ "Kotlin Frontend" "Kotlin Common Backend" Wojciech.Litewka
 /generators/wasm/ "Kotlin Wasm"
 
 /gradle/ "Kotlin Build Infrastructure"
@@ -282,15 +282,15 @@
 /kotlin-native/tools/performance-server "Kotlin Native" "Kotlin Performance QA"
 /kotlin-native/performance "Kotlin Native" "Kotlin Performance QA"
 
-/libraries/examples/annotation-processor-example/ "Kotlin Compiler Core"
-/libraries/examples/kotlin-gradle-subplugin-example/ "Kotlin Compiler Core"
+/libraries/examples/annotation-processor-example/ "Kotlin Frontend"
+/libraries/examples/kotlin-gradle-subplugin-example/ "Kotlin Frontend"
 /libraries/examples/kotlin-java-example/ "Kotlin JVM"
-/libraries/examples/scripting/ "Kotlin Compiler Core"
+/libraries/examples/scripting/ "Kotlin Frontend"
 /libraries/kotlin.test/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
 /libraries/kotlinx-metadata/ Alexander.Udalov A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Leonid.Startsev
 /libraries/lib/ "Kotlin Build Infrastructure"
 /libraries/reflect/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
-/libraries/scripting/ "Kotlin Compiler Core"
+/libraries/scripting/ "Kotlin Frontend"
 /libraries/stdlib/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin
 /libraries/stdlib/wasm/builtins/ "Kotlin Wasm"
 /libraries/stdlib/wasm/internal/ "Kotlin Wasm"
@@ -330,8 +330,8 @@
 /libraries/tools/kotlin-gradle-plugin-tcs-android/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-statistics/ "Kotlin Build Tools"
 /libraries/tools/kotlin-lombok/ "Kotlin Build Tools"
-/libraries/tools/kotlin-main-kts/ "Kotlin Compiler Core"
-/libraries/tools/kotlin-main-kts-test/ "Kotlin Compiler Core"
+/libraries/tools/kotlin-main-kts/ "Kotlin Frontend"
+/libraries/tools/kotlin-main-kts-test/ "Kotlin Frontend"
 /libraries/tools/kotlin-maven-allopen/ "Kotlin Build Tools"
 /libraries/tools/kotlin-maven-lombok/ "Kotlin Build Tools"
 /libraries/tools/kotlin-maven-noarg/ "Kotlin Build Tools"
@@ -358,7 +358,7 @@
 /libraries/tools/kotlinp/klib/ "Kotlin Common Backend"
 /libraries/tools/maven-archetypes/ "Kotlin Build Tools"
 /libraries/tools/mutability-annotations-compat/ "Kotlin Libraries"
-/libraries/tools/script-runtime/ "Kotlin Compiler Core"
+/libraries/tools/script-runtime/ "Kotlin Frontend"
 /libraries/tools/required-reason-finder/ "Kotlin Build Tools"
 
 /libraries/maven-settings.xml "Kotlin Build Infrastructure"
@@ -372,19 +372,19 @@
 
 /native/ "Kotlin Native"
 /native/analysis-api-klib-reader/ "Kotlin Native" "Kotlin in Fleet"
-/native/commonizer/ "Kotlin Compiler Core"
-/native/commonizer-api/ "Kotlin Compiler Core"
-/native/commonizer-embeddable/ "Kotlin Compiler Core"
+/native/commonizer/ "Kotlin Frontend"
+/native/commonizer-api/ "Kotlin Frontend"
+/native/commonizer-embeddable/ "Kotlin Frontend"
 /native/objcexport-header-generator/ "Kotlin Native" "Kotlin in Fleet"
 /native/objcexport-header-generator/impl/analysis-api/ "Kotlin in Fleet"
 
-/plugins/allopen/ "Kotlin Compiler Core"
-/plugins/android-extensions/ "Kotlin Compiler Core"
-/plugins/assign-plugin/ "Kotlin Compiler Core"
+/plugins/allopen/ "Kotlin Frontend"
+/plugins/android-extensions/ "Kotlin Frontend"
+/plugins/assign-plugin/ "Kotlin Frontend"
 /plugins/atomicfu/ "Kotlin Libraries"
 /plugins/compose/ Compose
-/plugins/fir-plugin-prototype/ "Kotlin Compiler Core"
-/plugins/imports-dumper/ "Kotlin Compiler Core"
+/plugins/fir-plugin-prototype/ "Kotlin Frontend"
+/plugins/imports-dumper/ "Kotlin Frontend"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
 /plugins/kapt3/ "Kotlin Compiler Core"
 /plugins/kapt3/kapt3-compiler/test/ "Kotlin Compiler Core" "Kotlin JVM"
@@ -394,14 +394,14 @@
 /plugins/kotlinx-serialization/ Sergey.Shanshin Leonid.Startsev
 /plugins/js-plain-objects/ Artem.Kobzar
 /libraries/tools/js-plain-objects Artem.Kobzar
-/plugins/lombok/ "Kotlin Compiler Core"
-/plugins/noarg/ "Kotlin Compiler Core"
+/plugins/lombok/ "Kotlin Frontend"
+/plugins/noarg/ "Kotlin Frontend"
 /plugins/parcelize/ Parcelize
 /plugins/pill/ Yan.Zhulanow "Kotlin Build Infrastructure"
 /plugins/power-assert/ Brian.Norman "Kotlin Common Backend"
-/plugins/sam-with-receiver/ "Kotlin Compiler Core"
-/plugins/scripting/ "Kotlin Compiler Core"
-/plugins/plugins-interactions-testing/ "Kotlin Compiler Core"
+/plugins/sam-with-receiver/ "Kotlin Frontend"
+/plugins/scripting/ "Kotlin Frontend"
+/plugins/plugins-interactions-testing/ "Kotlin Frontend"
 
 
 /prepare/ "Kotlin Build Infrastructure"
@@ -418,7 +418,7 @@
 
 /tests/ "Kotlin Build Infrastructure"
 
-/third-party/ "Kotlin Compiler Core"
+/third-party/ "Kotlin Frontend"
 
 /wasm/ "Kotlin Wasm"
 
