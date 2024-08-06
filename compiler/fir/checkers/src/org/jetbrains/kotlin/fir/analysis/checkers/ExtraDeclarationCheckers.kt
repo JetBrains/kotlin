@@ -29,8 +29,8 @@ object ExtraDeclarationCheckers : DeclarationCheckers() {
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
             RedundantSetterParameterTypeChecker,
-            RedundantExplicitTypeChecker,
         )
+
     override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker>
         get() = setOf(
             CanBeValChecker,
