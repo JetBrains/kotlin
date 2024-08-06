@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 plugins {
+    id("com.android.library")
     kotlin("multiplatform")
 }
 
@@ -26,6 +27,7 @@ kotlin {
     jvmToolchain(11)
 
     jvm()
+    androidTarget()
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
@@ -90,6 +92,18 @@ kotlin {
                 implementationArtifactOnly("com.google.dagger:dagger:2.40.1")
             }
         }
+    }
+}
+
+android {
+    compileSdk = 34
+    namespace = "compose.compiler.integrationTests"
+    defaultConfig {
+        minSdk = 26
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
