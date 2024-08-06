@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -48,9 +47,7 @@ internal class KaFirSymbolProvider(
 
     override val KtFile.symbol: KaFileSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.buildFileSymbol(
-                getOrBuildFirFile(firResolveSession).symbol
-            )
+            KaFirFileSymbol(this, analysisSession)
         }
 
     override val KtScript.symbol: KaScriptSymbol
