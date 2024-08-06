@@ -59,9 +59,10 @@ fun changeIdToGerritUrl(changeId: String) = "https://android-review.googlesource
 fun issueToBuganizerUrl(issue: String): String = "https://issuetracker.google.com/issues/$issue"
 
 fun Commit.asReleaseNote(): String {
-    val commitLink = "[${commit.substring(0, 7)}](${commitToGitHubUrl(commit)})"
+    val commitLink = "[`${commit.take(7)}`](${commitToGitHubUrl(commit)})"
     val issueLinks = issues.map { issue -> "[`b/$issue`](${issueToBuganizerUrl(issue)})" }.joinToString(", ")
-    return "- $issueLinks ${relnote ?: title}"
+    val link = if (issueLinks.isEmpty()) commitLink else issueLinks
+    return "- $link ${relnote ?: title}"
 }
 
 if (args.isEmpty()) {
