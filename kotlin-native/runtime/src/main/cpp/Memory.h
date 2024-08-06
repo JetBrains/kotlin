@@ -39,8 +39,11 @@ struct ArrayHeader;
 struct MetaObjHeader;
 
 // Header of every object.
-struct ObjHeader {
+#define OBJ_HEADER_FIELDS \
   TypeInfo* typeInfoOrMeta_;
+
+struct ObjHeader {
+  OBJ_HEADER_FIELDS
 
   // Returns `nullptr` if it's not a meta object.
   static MetaObjHeader* AsMetaObject(TypeInfo* typeInfo) noexcept {
@@ -115,19 +118,18 @@ struct ObjHeader {
 };
 static_assert(alignof(ObjHeader) <= kotlin::kObjectAlignment);
 
-// Header of value type array objects. Keep layout in sync with that of object header.
-struct ArrayHeader {
-  TypeInfo* typeInfoOrMeta_;
+// Header of value type array objects.
+// Element size is stored in instanceSize_ field of TypeInfo, negated.
+#define ARRAY_HEADER_FIELDS \
+  OBJ_HEADER_FIELDS \
+  uint32_t count_;
 
-  const TypeInfo* type_info() const {
-    return clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)->typeInfo_;
-  }
+struct ArrayHeader {
+  ARRAY_HEADER_FIELDS
 
   ObjHeader* obj() { return reinterpret_cast<ObjHeader*>(this); }
   const ObjHeader* obj() const { return reinterpret_cast<const ObjHeader*>(this); }
-
-  // Elements count. Element size is stored in instanceSize_ field of TypeInfo, negated.
-  uint32_t count_;
+  const TypeInfo* type_info() const { return obj()->type_info(); }
 };
 static_assert(alignof(ArrayHeader) <= kotlin::kObjectAlignment);
 

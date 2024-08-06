@@ -11,19 +11,36 @@
 #include "Types.h"
 #include "TypeInfo.h"
 
-// The encoding of this data is undefined unless it is known how the string was constructed,
-// in which case it can be `reinterpret_cast`ed to the appropriate type.
-static inline char* StringRawData(KRef kstring) {
-    return reinterpret_cast<char*>(CharArrayAddressOfElementAt(kstring->array(), 0));
-}
+// Strings are effectively this:
+//     class String {
+//         private val hashCode_: Int
+//         private val flags_: Short
+//         private val data_: CharArray
+//     }
+// In order to avoid allocating a separate object for the data array, all other fields are packed
+// into it at the beginning, so a String's ObjHeader is also an ArrayHeader, and the space taken
+// up by other fields is counted in its length.
+struct StringHeader {
+    ARRAY_HEADER_FIELDS
+    int32_t hashCode_; // if ArrayHeader has padding, this will go into it instead of the array's data
+    uint16_t flags_;
+    alignas(KChar) char data_[];
 
-static inline const char* StringRawData(KConstRef kstring) {
-    return reinterpret_cast<const char*>(CharArrayAddressOfElementAt(kstring->array(), 0));
-}
+    enum {
+        HASHCODE_COMPUTED = 1,
+    };
 
-static inline size_t StringRawSize(KConstRef kstring) {
-    return kstring->array()->count_ * sizeof(KChar);
-}
+    ALWAYS_INLINE char *data() { return data_; }
+    ALWAYS_INLINE const char *data() const { return data_; }
+    ALWAYS_INLINE size_t size() const { return count_ * sizeof(KChar) - extraLength(flags_); }
+
+    ALWAYS_INLINE static StringHeader* of(KRef string) { return reinterpret_cast<StringHeader*>(string); }
+    ALWAYS_INLINE static const StringHeader* of(KConstRef string) { return reinterpret_cast<const StringHeader*>(string); }
+
+    ALWAYS_INLINE constexpr static size_t extraLength(int flags) {
+        return offsetof(StringHeader, data_) - sizeof(ArrayHeader);
+    }
+};
 
 extern "C" {
 

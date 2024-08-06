@@ -180,9 +180,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
             constructedType.isString() -> irBuilder.run {
                 require(expression.dispatchReceiver == null) { "A string constructor call cannot have the dispatch receiver: ${expression.render()}" }
                 require(expression.valueArgumentsCount == 0) { "Expected a call to the string constructor with no arguments: ${expression.render()}" }
-                irCall(createUninitializedArray, constructedType, listOf(constructedType)).apply {
-                    putValueArgument(0, irInt(0))
-                }
+                irConstantPrimitive(irString(""))
             }
             constructedType.isAny() -> {
                 require(expression.dispatchReceiver == null) { "A kotlin.Any constructor call cannot have the dispatch receiver: ${expression.render()}" }

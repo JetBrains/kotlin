@@ -524,10 +524,20 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 
-    fun struct(vararg elements: ConstValue) = Struct(structType(elements.map { it.llvmType }), *elements)
+    fun struct(vararg elements: ConstValue, packed: Boolean = false) =
+            Struct(structType(elements.map { it.llvmType }, packed), *elements)
 
-    private fun structType(types: List<LLVMTypeRef>): LLVMTypeRef =
-            LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, 0)!!
+    private fun structType(types: List<LLVMTypeRef>, packed: Boolean = false): LLVMTypeRef =
+            LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, if (packed) 1 else 0)!!
+
+    fun structTypeWithFlexibleArray(original: LLVMTypeRef, newSize: Int): LLVMTypeRef {
+        assert(LLVMGetTypeKind(original) == LLVMTypeKind.LLVMStructTypeKind) { "not a struct" }
+        val types = (0 until LLVMCountStructElementTypes(original)).mapTo(mutableListOf()) { LLVMStructGetTypeAtIndex(original, it) }
+        val array = types.last()
+        assert(LLVMGetTypeKind(array) == LLVMTypeKind.LLVMArrayTypeKind && LLVMGetArrayLength(array) == 0) { "not a flexible array" }
+        types[types.lastIndex] = LLVMArrayType(LLVMGetElementType(array), newSize)
+        return LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, LLVMIsPackedStruct(original))!!
+    }
 
     fun constInt1(value: Boolean) = ConstInt1(this, value)
     fun constInt8(value: Byte) = ConstInt8(this, value)

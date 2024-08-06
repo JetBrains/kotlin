@@ -39,7 +39,19 @@ namespace {
 static constexpr const uint32_t MAX_STRING_SIZE =
     static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
 
-KChar* StringUtf16Data(ObjHeader* kstring) {
+char* StringRawData(KRef kstring) {
+    return StringHeader::of(kstring)->data();
+}
+
+const char* StringRawData(KConstRef kstring) {
+    return StringHeader::of(kstring)->data();
+}
+
+size_t StringRawSize(KConstRef kstring) {
+    return StringHeader::of(kstring)->size();
+}
+
+KChar* StringUtf16Data(KRef kstring) {
     return reinterpret_cast<KChar*>(StringRawData(kstring));
 }
 
@@ -48,7 +60,7 @@ const KChar* StringUtf16Data(KConstRef kstring) {
 }
 
 size_t StringUtf16Length(KConstRef kstring) {
-    return kstring->array()->count_;
+    return StringRawSize(kstring) / sizeof(KChar);
 }
 
 template <typename CharCountF /*= uint32_t(const char*, const char*) */, typename ConvertF /*= void(const char*, const char*, KChar*) */>
@@ -161,7 +173,7 @@ extern "C" OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t length
 }
 
 extern "C" OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars) {
-    RETURN_RESULT_OF(AllocArrayInstance, theStringTypeInfo, lengthChars);
+    RETURN_RESULT_OF(AllocArrayInstance, theStringTypeInfo, lengthChars + StringHeader::extraLength(0) / sizeof(KChar));
 }
 
 extern "C" char* CreateCStringFromString(KConstRef kref) {
@@ -181,7 +193,7 @@ extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8)
     //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
     //   because the accessed object is off-heap, imitating permanent static objects.
     const char* end = nullTerminatedUTF8 + strlen(nullTerminatedUTF8);
-    size_t count = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
+    size_t count = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end) + StringHeader::extraLength(0) / sizeof(KChar);
     size_t headerSize = alignUp(sizeof(ArrayHeader), alignof(char16_t));
     size_t arraySize = headerSize + count * sizeof(char16_t);
 
@@ -443,8 +455,23 @@ extern "C" KInt Kotlin_String_lastIndexOfString(KConstRef thiz, KConstRef other,
 }
 
 extern "C" KInt Kotlin_String_hashCode(KConstRef thiz) {
-    // TODO: consider caching strings hashes.
-    return polyHash(StringUtf16Length(thiz), StringUtf16Data(thiz));
+    auto header = StringHeader::of(thiz);
+    if (header->size() == 0) return 0;
+
+    auto flags = kotlin::std_support::atomic_ref{header->flags_}.load(std::memory_order_acquire);
+    if (flags & StringHeader::HASHCODE_COMPUTED) {
+        // The condition only enforces an ordering with the first thread to write the hash code,
+        // so if two thread concurrently computed the hash, an atomic read is needed to prevent a data race.
+        // The value is always the same, though, so which write is observed is irrelevant.
+        return kotlin::std_support::atomic_ref{header->hashCode_}.load(std::memory_order_relaxed);
+    }
+
+    KInt result = polyHash(StringUtf16Length(thiz), StringUtf16Data(thiz));
+
+    auto nonConst = const_cast<StringHeader*>(header);
+    kotlin::std_support::atomic_ref{nonConst->hashCode_}.store(result, std::memory_order_relaxed);
+    kotlin::std_support::atomic_ref{nonConst->flags_}.fetch_or(StringHeader::HASHCODE_COMPUTED, std::memory_order_release);
+    return result;
 }
 
 extern "C" const KChar* Kotlin_String_utf16pointer(KConstRef message) {
