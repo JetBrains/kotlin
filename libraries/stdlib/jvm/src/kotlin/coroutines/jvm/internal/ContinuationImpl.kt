@@ -16,7 +16,7 @@ internal abstract class BaseContinuationImpl(
     // This is `public val` so that it is private on JVM and cannot be modified by untrusted code, yet
     // it has a public getter (since even untrusted code is allowed to inspect its call stack).
     public val completion: Continuation<Any?>?
-) : Continuation<Any?>, CoroutineStackFrame, Serializable {
+) : InterceptedCoroutine(), CoroutineStackFrame, Serializable {
     // This implementation is final. This fact is used to unroll resumeWith recursion.
     public final override fun resumeWith(result: Result<Any?>) {
         // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
@@ -51,10 +51,6 @@ internal abstract class BaseContinuationImpl(
     }
 
     protected abstract fun invokeSuspend(result: Result<Any?>): Any?
-
-    protected open fun releaseIntercepted() {
-        // does nothing here, overridden in ContinuationImpl
-    }
 
     public open fun create(completion: Continuation<*>): Continuation<Unit> {
         throw UnsupportedOperationException("create(Continuation) has not been overridden")
@@ -91,6 +87,14 @@ internal abstract class RestrictedContinuationImpl(
 
     public override val context: CoroutineContext
         get() = EmptyCoroutineContext
+
+    override var _intercepted: Continuation<Any?>?
+        get() = null
+        set(_) {}
+
+    override fun releaseIntercepted() {
+        // does nothing here
+    }
 }
 
 @SinceKotlin("1.3")
@@ -104,21 +108,7 @@ internal abstract class ContinuationImpl(
     public override val context: CoroutineContext
         get() = _context!!
 
-    @Transient
-    private var intercepted: Continuation<Any?>? = null
-
-    public fun intercepted(): Continuation<Any?> =
-        intercepted
-            ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
-                .also { intercepted = it }
-
-    protected override fun releaseIntercepted() {
-        val intercepted = intercepted
-        if (intercepted != null && intercepted !== this) {
-            context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
-        }
-        this.intercepted = CompletedContinuation // just in case
-    }
+    override var _intercepted: Continuation<Any?>? = null
 }
 
 @SinceKotlin("1.3")
