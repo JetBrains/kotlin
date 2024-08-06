@@ -5,23 +5,13 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
-import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.metadata.CommonAnalysisResult
 import org.jetbrains.kotlin.cli.metadata.MetadataSerializer
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -39,64 +29,13 @@ class K1BuiltInsSerializer(
     environment: KotlinCoreEnvironment,
     dependOnOldBuiltIns: Boolean
 ) : MetadataSerializer(configuration, environment, dependOnOldBuiltIns, BuiltInsBinaryVersion.INSTANCE) {
-    companion object {
-        fun analyzeAndSerialize(
-            destDir: File,
-            srcDirs: List<File>,
-            extraClassPath: List<File>,
-            dependOnOldBuiltIns: Boolean,
-            onComplete: (totalSize: Int, totalFiles: Int) -> Unit
-        ) {
-            val rootDisposable = Disposer.newDisposable("Disposable for ${K1BuiltInsSerializer::class.simpleName}.analyzeAndSerialize")
-            val messageCollector = createMessageCollector()
-            val performanceManager = object : CommonCompilerPerformanceManager(presentableName = "test") {}
-            try {
-                val configuration = CompilerConfiguration().apply {
-                    this.messageCollector = messageCollector
-
-                    addKotlinSourceRoots(srcDirs.map { it.path })
-                    addJvmClasspathRoots(extraClassPath)
-                    configureJdkClasspathRoots()
-
-                    put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, destDir)
-                    put(CommonConfigurationKeys.MODULE_NAME, "module for built-ins serialization")
-                    put(CLIConfigurationKeys.PERF_MANAGER, performanceManager)
-                }
-
-                val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-                val serializer = K1BuiltInsSerializer(configuration, environment, dependOnOldBuiltIns)
-                serializer.analyzeAndSerialize()
-
-                onComplete(serializer.totalSize, serializer.totalFiles)
-            } finally {
-                messageCollector.flush()
-                Disposer.dispose(rootDisposable)
-            }
-        }
-
-        private fun createMessageCollector() = object : GroupingMessageCollector(
-            PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false),
-            false,
-            false,
-        ) {
-            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-                // Only report diagnostics without a particular location because there's plenty of errors in built-in sources
-                // (functions without bodies, incorrect combination of modifiers, etc.)
-                if (location == null) {
-                    super.report(severity, message, location)
-                }
-            }
-        }
-    }
-
-    override fun serialize(analysisResult: CommonAnalysisResult, destDir: File) {
+    override fun serialize(analysisResult: CommonAnalysisResult, destDir: File): OutputInfo {
         val files = environment.getSourceFiles()
         val module = analysisResult.moduleDescriptor
 
         destDir.deleteRecursively()
         if (!destDir.mkdirs()) {
-            throw AssertionError("Could not make directories: " + destDir)
+            error("Could not make directories: $destDir")
         }
 
         files.map { it.packageFqName }.toSet().forEach { fqName ->
@@ -109,6 +48,7 @@ class K1BuiltInsSerializer(
                 environment.configuration.languageVersionSettings,
             ).run()
         }
+        return OutputInfo(totalSize, totalFiles)
     }
 
     override fun createSerializerExtension(): KotlinSerializerExtensionBase = BuiltInsSerializerExtension()

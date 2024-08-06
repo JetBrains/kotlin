@@ -46,7 +46,7 @@ open class MetadataSerializer(
         return runCommonAnalysisForSerialization(environment, dependOnOldBuiltIns, dependencyContainerFactory = { null })
     }
 
-    override fun serialize(analysisResult: CommonAnalysisResult, destDir: File) {
+    override fun serialize(analysisResult: CommonAnalysisResult, destDir: File): OutputInfo {
         val languageVersionSettings = environment.configuration.languageVersionSettings
         val files = environment.getSourceFiles()
         val project = environment.project
@@ -112,6 +112,7 @@ open class MetadataSerializer(
 
         kotlinModuleFile.parentFile.mkdirs()
         kotlinModuleFile.writeBytes(packageTableBytes)
+        return OutputInfo(totalSize, totalFiles)
     }
 
     protected open fun createSerializerExtension(): KotlinSerializerExtensionBase = MetadataSerializerExtension(metadataVersion)

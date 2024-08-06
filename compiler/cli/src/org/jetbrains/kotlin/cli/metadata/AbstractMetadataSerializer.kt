@@ -22,24 +22,31 @@ abstract class AbstractMetadataSerializer<T>(
         definedMetadataVersion ?: configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion
         ?: BuiltInsBinaryVersion.INSTANCE
 
-    fun analyzeAndSerialize() {
+    fun analyzeAndSerialize(): OutputInfo? {
         val destDir = environment.destDir
         if (destDir == null) {
             val configuration = environment.configuration
             val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify destination via -d")
-            return
+            return null
         }
 
-        val analysisResult = analyze() ?: return
+        val analysisResult = analyze() ?: return null
 
         val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
         performanceManager.notifyGenerationStarted()
-        serialize(analysisResult, destDir)
-        performanceManager.notifyGenerationFinished()
+        return serialize(analysisResult, destDir).also {
+            performanceManager.notifyGenerationFinished()
+        }
     }
 
     protected abstract fun analyze(): T?
 
-    protected abstract fun serialize(analysisResult: T, destDir: File)
+    /**
+     * @return number of written bytes and files
+     * The return value is optional and might be omitted in implementations
+     */
+    protected abstract fun serialize(analysisResult: T, destDir: File): OutputInfo?
+
+    data class OutputInfo(val totalSize: Int, val totalFiles: Int)
 }

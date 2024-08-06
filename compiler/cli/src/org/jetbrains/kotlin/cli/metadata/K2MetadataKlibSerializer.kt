@@ -50,7 +50,7 @@ internal class K2MetadataKlibSerializer(
         })
     }
 
-    override fun serialize(analysisResult: CommonAnalysisResult, destDir: File) {
+    override fun serialize(analysisResult: CommonAnalysisResult, destDir: File): OutputInfo? {
         val project = environment.project
         val module = analysisResult.moduleDescriptor
 
@@ -65,6 +65,7 @@ internal class K2MetadataKlibSerializer(
         ).serializeModule(module)
 
         buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)
+        return null
     }
 }
 

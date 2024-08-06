@@ -157,7 +157,7 @@ internal class FirMetadataSerializer(
         }
     }
 
-    override fun serialize(analysisResult: List<ModuleCompilerAnalyzedOutput>, destDir: File) {
+    override fun serialize(analysisResult: List<ModuleCompilerAnalyzedOutput>, destDir: File): OutputInfo? {
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
         for (output in analysisResult) {
@@ -202,5 +202,6 @@ internal class FirMetadataSerializer(
         val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames)
 
         buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)
+        return null
     }
 }

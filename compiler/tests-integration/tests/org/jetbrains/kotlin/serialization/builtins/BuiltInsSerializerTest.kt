@@ -33,7 +33,7 @@ import java.io.FileInputStream
 class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     private fun doTest(fileName: String) {
         val source = "compiler/testData/serialization/builtinsSerializer/$fileName"
-        K1BuiltInsSerializer.analyzeAndSerialize(
+        BuiltInsSerializer.analyzeAndSerialize(
             tmpdir,
             srcDirs = listOf(File(source)),
             extraClassPath = listOf(ForTestCompileRuntime.runtimeJarForTests()),
