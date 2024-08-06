@@ -30,6 +30,9 @@ import kotlin.test.fail
 @NativeGradlePluginTests
 open class CommonizerIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(enableKmpProjectIsolation = true)
+
     companion object {
         private const val commonizerOutput = "Preparing commonized Kotlin/Native libraries"
     }
@@ -39,15 +42,15 @@ open class CommonizerIT : KGPBaseTest() {
     fun testCommonizeNativeDistributionWithIosLinuxWindows(gradleVersion: GradleVersion) {
         nativeProject("commonizeNativeDistributionWithIosLinuxWindows", gradleVersion) {
 
-            build(":cleanNativeDistributionCommonization")
+            build(":p1:cleanNativeDistributionCommonization")
 
             build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":p1:commonizeNativeDistribution")
                 assertOutputContains(commonizerOutput)
             }
 
             build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=true") {
-                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertTasksUpToDate(":p1:commonizeNativeDistribution")
                 assertNativeDistributionCommonizationCacheHit()
                 assertOutputContains("Native Distribution Commonization: All available targets are commonized already")
                 assertOutputContains("Native Distribution Commonization: Lock acquired")
@@ -56,7 +59,7 @@ open class CommonizerIT : KGPBaseTest() {
             }
 
             build("commonize", "-Pkotlin.mpp.enableNativeDistributionCommonizationCache=false") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":p1:commonizeNativeDistribution")
                 assertOutputContains("Native Distribution Commonization: Cache disabled")
                 assertOutputContains(commonizerOutput)
             }
@@ -76,16 +79,16 @@ open class CommonizerIT : KGPBaseTest() {
                 .filter { it.contains(Path(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)) }
                 .count()
 
-            build(":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
-                assertTasksExecuted(":cleanNativeDistributionCommonization")
+            build(":p1:cleanNativeDistributionCommonization", buildOptions = buildOptions) {
+                assertTasksExecuted(":p1:cleanNativeDistributionCommonization")
             }
-            build(":commonizeNativeDistribution", buildOptions = buildOptions) {
-                assertTasksExecuted(":commonizeNativeDistribution")
+            build(":p1:commonizeNativeDistribution", buildOptions = buildOptions) {
+                assertTasksExecuted(":p1:commonizeNativeDistribution")
                 if (commonizationResultFilesCount() == 0) fail("Expected some files after executing commonizeNativeDistribution")
             }
 
-            build(":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
-                assertTasksExecuted(":cleanNativeDistributionCommonization")
+            build(":p1:cleanNativeDistributionCommonization", buildOptions = buildOptions) {
+                assertTasksExecuted(":p1:cleanNativeDistributionCommonization")
                 if (commonizationResultFilesCount() != 1) fail("Expected only .lock file after cleaning")
             }
         }

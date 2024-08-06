@@ -157,3 +157,7 @@ fun Project.mockXcodeVersion(version: XcodeVersion = XcodeVersion.maxTested) {
 fun Project.enableSecondaryJvmClassesVariant(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JVM_ADD_CLASSES_VARIANT, enabled.toString())
 }
+
+fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_PORJECT_ISOLATION_ENABLED, enabled.toString())
+}

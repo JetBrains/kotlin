@@ -16,6 +16,11 @@ import org.junit.jupiter.api.DisplayName
 @NativeGradlePluginTests
 open class CommonizerHierarchicalIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions
+            .disableConfigurationCache_KT70416()
+            .copy(enableKmpProjectIsolation = true)
+
     @DisplayName("Commonize hierarchically metadata compilations")
     @GradleTest
     fun testCommonizeHierarchicallyMetadataCompilations(gradleVersion: GradleVersion) {
@@ -116,12 +121,14 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-50592 - isolated jvm subproject - should not fail commonization")
+
+    @DisplayName("jvm subproject should not have commonization task")
     @GradleTest
-    fun testIsolatedJvmSubprojectShouldNotFailCommonization(gradleVersion: GradleVersion) {
-        nativeProject("commonize-kt-50592-withIsolatedJvmSubproject", gradleVersion = gradleVersion) {
+    fun testJvmSubprojectShouldNotHaveCommonizationTask(gradleVersion: GradleVersion) {
+        nativeProject("commonize-withJvmSubproject", gradleVersion = gradleVersion) {
             build("commonize") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":multiplatform:commonizeNativeDistribution")
+                assertTasksAreNotInTaskGraph(":jvm:commonizeNativeDistribution")
             }
         }
     }

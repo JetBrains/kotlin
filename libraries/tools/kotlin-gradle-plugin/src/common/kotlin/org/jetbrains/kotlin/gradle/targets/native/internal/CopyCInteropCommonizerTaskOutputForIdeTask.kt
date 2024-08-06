@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.utils.kotlinMetadataDir
 import org.jetbrains.kotlin.gradle.utils.property
@@ -41,13 +42,17 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
     val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
-    private val allInteropGroups: List<Pair<CInteropCommonizerGroup, File>> = run {
+    private val allInteropGroups: MutableList<Pair<CInteropCommonizerGroup, File>> = mutableListOf()
+
+    init {
         val commonizerTask = commonizeCInteropTask.get()
-        commonizerTask.allInteropGroups
-            .getOrThrow()
-            .map { group ->
-                group to commonizerTask.outputDirectory(group)
-            }
+        project.launch {
+            commonizerTask.allInteropGroups
+                .await()
+                .forEach { group ->
+                    allInteropGroups += group to commonizerTask.outputDirectory(group)
+                }
+        }
     }
 
     @TaskAction

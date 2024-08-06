@@ -19,6 +19,9 @@ import java.nio.file.Path
 @DisplayName("Configuration cache")
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(enableKmpProjectIsolation = true)
+
     @DisplayName("works in simple Kotlin project")
     @GradleTest
     @JvmGradlePluginTests
@@ -93,21 +96,21 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            build(":cleanNativeDistributionCommonization")
+            build(":lib:cleanNativeDistributionCommonization")
 
             build(":lib:compileCommonMainKotlinMetadata") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":lib:commonizeNativeDistribution")
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertConfigurationCacheStored()
             }
 
-            build("clean", ":cleanNativeDistributionCommonization") {
-                assertTasksExecuted(":cleanNativeDistributionCommonization")
+            build("clean", ":lib:cleanNativeDistributionCommonization") {
+                assertTasksExecuted(":lib:cleanNativeDistributionCommonization")
                 assertConfigurationCacheStored()
             }
 
             build(":lib:compileCommonMainKotlinMetadata") {
-                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":lib:commonizeNativeDistribution")
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertConfigurationCacheReused()
             }
