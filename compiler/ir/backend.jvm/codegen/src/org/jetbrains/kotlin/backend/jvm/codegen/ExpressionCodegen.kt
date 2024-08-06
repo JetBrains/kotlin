@@ -971,9 +971,6 @@ class ExpressionCodegen(
             val childCodegen = ClassCodegen.getOrCreate(declaration, context, enclosingFunctionForLocalObjects)
             childCodegen.generate()
             closureReifiedMarkers[declaration] = childCodegen.reifiedTypeParametersUsages
-            if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
-                context.typeToCachedSMAP[childCodegen.type] = SMAP(childCodegen.smap.resultMappings)
-            }
         }
         return unitValue
     }
@@ -1424,17 +1421,15 @@ class ExpressionCodegen(
     ) {
         val gapStart = markNewLinkedLabel()
         data.localGapScope(tryWithFinallyInfo) {
-            lineNumberMapper.stashSmapForGivenTry(tryWithFinallyInfo) {
-                finallyDepth++
-                if (isFinallyMarkerRequired) {
-                    generateFinallyMarker(mv, finallyDepth, true)
-                }
-                tryWithFinallyInfo.onExit.accept(this, data).discard()
-                if (isFinallyMarkerRequired) {
-                    generateFinallyMarker(mv, finallyDepth, false)
-                }
-                finallyDepth--
+            finallyDepth++
+            if (isFinallyMarkerRequired) {
+                generateFinallyMarker(mv, finallyDepth, true)
             }
+            tryWithFinallyInfo.onExit.accept(this, data).discard()
+            if (isFinallyMarkerRequired) {
+                generateFinallyMarker(mv, finallyDepth, false)
+            }
+            finallyDepth--
             if (tryCatchBlockEnd != null) {
                 tryWithFinallyInfo.onExit.markLineNumber(startOffset = false)
                 mv.goTo(tryCatchBlockEnd)
