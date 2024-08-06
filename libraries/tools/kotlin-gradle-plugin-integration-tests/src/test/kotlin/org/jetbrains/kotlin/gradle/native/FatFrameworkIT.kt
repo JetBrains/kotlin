@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FrameworkLayout
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
@@ -153,15 +154,11 @@ class FatFrameworkIT : KGPBaseTest() {
     @GradleTest
     fun testIncorrectFamily(gradleVersion: GradleVersion) {
         nativeProject("native-fat-framework/smoke", gradleVersion) {
-            buildGradleKts.modify {
-                it +
-                        //language=kotlin
-                        """
-                        val macos = kotlin.macosX64 {
-                            binaries.framework("DEBUG")
-                        }
-                        fat.from(macos.binaries.getFramework("DEBUG"))
-                        """.trimIndent()
+            buildGradleKtsInjection {
+                val macos = kotlinMultiplatform.macosX64()
+                macos.binaries.framework("DEBUG")
+                val fat = project.tasks.getByName("fat") as FatFrameworkTask
+                fat.from(macos.binaries.getFramework("DEBUG"))
             }
             buildAndFail("fat") {
                 assertOutputContains("Cannot add a binary with platform family 'osx' to the fat framework")

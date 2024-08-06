@@ -678,7 +678,7 @@ private fun String.wrapWithAllProjectBlock(): String =
     |
     """.trimMargin()
 
-private fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert: String): String {
+internal fun String.insertBlockToBuildScriptAfterPluginsAndImports(blockToInsert: String): String {
     val importsPattern = Regex("^import.*$", RegexOption.MULTILINE)
     val pluginsBlockPattern = Regex("plugins\\s*\\{[^}]*}", RegexOption.DOT_MATCHES_ALL)
 
