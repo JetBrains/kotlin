@@ -168,7 +168,11 @@ internal fun SymbolLightClassBase.createConstructors(
     val primaryConstructor = constructors.singleOrNull { it.isPrimary }
     if (primaryConstructor != null && shouldGenerateNoArgOverload(primaryConstructor, constructors)) {
         result.add(
-            noArgConstructor(primaryConstructor.compilerVisibility.externalDisplayName, METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR)
+            noArgConstructor(
+                primaryConstructor.compilerVisibility.externalDisplayName,
+                primaryConstructor.sourcePsiSafe(),
+                METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR
+            )
         )
     }
 }
@@ -198,14 +202,15 @@ private fun SymbolLightClassBase.defaultConstructor(): KtLightMethod {
         else -> PsiModifier.PUBLIC
     }
 
-    return noArgConstructor(visibility, METHOD_INDEX_FOR_DEFAULT_CTOR)
+    return noArgConstructor(visibility, classOrObject, METHOD_INDEX_FOR_DEFAULT_CTOR)
 }
 
 private fun SymbolLightClassBase.noArgConstructor(
     visibility: String,
+    declaration: KtDeclaration?,
     methodIndex: Int,
 ): KtLightMethod = SymbolLightNoArgConstructor(
-    kotlinOrigin?.let {
+    declaration?.let {
         LightMemberOriginForDeclaration(
             originalElement = it,
             originKind = JvmDeclarationOriginKind.OTHER,
