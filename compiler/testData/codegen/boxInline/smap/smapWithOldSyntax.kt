@@ -1,7 +1,7 @@
+// IGNORE_INLINER: IR
 // LANGUAGE: -CorrectSourceMappingSyntax
 // FILE: 1.kt
 package test
-
 public inline fun inlineFun2(x: () -> String): String {
     return x()
 }
