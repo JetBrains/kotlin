@@ -79,7 +79,7 @@ class Fir2IrLazyField(
         val field = fir.unwrapFakeOverrides()
         val evaluatedInitializer = (field.propertyIfBackingField as? FirProperty)?.evaluatedInitializer?.unwrapOr<FirExpression> {}
         when (val initializer = evaluatedInitializer ?: field.initializer) {
-            is FirLiteralExpression -> factory.createExpressionBody(initializer.toIrConst<Any?>(type))
+            is FirLiteralExpression -> factory.createExpressionBody(initializer.toIrConst(type))
             else -> null
         }
     }

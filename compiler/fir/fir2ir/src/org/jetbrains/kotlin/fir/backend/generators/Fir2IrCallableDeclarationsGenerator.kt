@@ -306,7 +306,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                             ).also { field ->
                                 if (initializer is FirLiteralExpression) {
                                     val constType = initializer.resolvedType.toIrType(c)
-                                    field.initializer = factory.createExpressionBody(initializer.toIrConst<Any?>(constType))
+                                    field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
                                 }
                             }
                         }
@@ -548,7 +548,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                 metadata = FirMetadataSource.Field(field)
                 val initializer = field.unwrapFakeOverrides().initializer
                 if (initializer is FirLiteralExpression) {
-                    this.initializer = factory.createExpressionBody(initializer.toIrConst<Any?>(irType))
+                    this.initializer = factory.createExpressionBody(initializer.toIrConst(irType))
                 }
                 /*
                  * fields of regular properties are stored inside IrProperty

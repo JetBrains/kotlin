@@ -134,7 +134,7 @@ class Fir2IrLazyProperty(
             initializer is FirLiteralExpression -> {
                 fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 val constType = fir.initializer?.resolvedType?.toIrType(c) ?: initializer.resolvedType.toIrType(c)
-                factory.createExpressionBody(initializer.toIrConst<Any?>(constType))
+                factory.createExpressionBody(initializer.toIrConst(constType))
             }
             else -> null
         }
