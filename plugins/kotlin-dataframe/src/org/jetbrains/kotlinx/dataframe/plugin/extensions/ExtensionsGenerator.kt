@@ -2,11 +2,13 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
 import org.jetbrains.kotlinx.dataframe.plugin.utils.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.types.toTypeProjection
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 
@@ -77,7 +80,9 @@ class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtensi
         return when (owner) {
             null -> fields.filter { it.callableId == callableId }.flatMap { (owner, property, callableId) ->
                 var resolvedReturnTypeRef = property.resolvedReturnTypeRef
-
+                val columnName = property.getAnnotationByClassId(Names.COLUMN_NAME_ANNOTATION, session)?.let { annotation ->
+                    (annotation.argumentMapping.mapping[Names.COLUMN_NAME_ARGUMENT] as? FirLiteralExpression)?.value as? String?
+                }
                 val propertyName = property.name
                 val marker = owner.constructType(arrayOf(), isNullable = false).toTypeProjection(Variance.INVARIANT)
 
@@ -109,7 +114,9 @@ class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtensi
                         ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
                         typeArguments = arrayOf(marker),
                         isNullable = false
-                    ), propertyName = propertyName,
+                    ),
+                    propertyName = propertyName,
+                    columnName = columnName,
                     returnTypeRef = resolvedReturnTypeRef
                 )
 
@@ -132,6 +139,7 @@ class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtensi
                         isNullable = false
                     ),
                     propertyName = propertyName,
+                    columnName = columnName,
                     returnTypeRef = columnReturnType
                 )
                 listOf(rowExtension.symbol, columnsContainerExtension.symbol)

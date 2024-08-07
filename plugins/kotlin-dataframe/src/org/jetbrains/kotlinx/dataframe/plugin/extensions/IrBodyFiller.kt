@@ -134,7 +134,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
     override fun visitClass(declaration: IrClass): IrStatement {
         val origin = declaration.origin
-        return if (origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin) {
+        return if (origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is DataFramePlugin) {
             declaration.transformChildren(this, null)
             declaration
         } else {
@@ -144,7 +144,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         val origin = declaration.origin
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin)) return declaration
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is TokenGenerator.Key)) return declaration
         declaration.body = generateBodyForDefaultConstructor(declaration)
         return declaration
     }
@@ -176,7 +176,8 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitProperty(declaration: IrProperty): IrStatement {
         val origin = declaration.origin
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin)) {
+        val pluginKey = (origin as? IrDeclarationOrigin.GeneratedByPlugin)?.pluginKey as? DataFramePlugin
+        if (pluginKey == null) {
             declaration.transformChildren(this, null)
             return declaration
         }
@@ -214,7 +215,8 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val call = IrCallImpl(-1, -1, context.irBuiltIns.anyNType, get, 0, 1).also {
             val thisSymbol: IrValueSymbol = getter.extensionReceiverParameter?.symbol!!
             it.dispatchReceiver = IrGetValueImpl(-1, -1, thisSymbol)
-            it.putValueArgument(0, IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, declaration.name.identifier))
+            val columName = pluginKey.columnName ?: declaration.name.identifier
+            it.putValueArgument(0, IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, columName))
         }
 
         val typeOp = IrTypeOperatorCallImpl(-1, -1, returnType, IrTypeOperator.CAST, returnType, call)
@@ -229,7 +231,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
         val origin = (expression.type.classifierOrNull?.owner as? IrClass)?.origin ?: return expression
-        val fromPlugin = origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin
+        val fromPlugin = origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is DataFramePlugin
         val scopeReference = expression.type.classFqName?.shortName()?.asString()?.startsWith("Scope") ?: false
         if (!(fromPlugin || scopeReference)) {
             return expression
