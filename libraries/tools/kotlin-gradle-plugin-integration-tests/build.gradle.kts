@@ -14,11 +14,9 @@ testsJar()
 kotlin {
     compilerOptions {
         optIn.addAll(
-            listOf(
-                "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
-                "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
-                "kotlin.io.path.ExperimentalPathApi",
-            )
+            "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
+            "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
+            "kotlin.io.path.ExperimentalPathApi",
         )
     }
 }
@@ -130,21 +128,23 @@ tasks.register<Delete>("cleanTestKitCache") {
     delete(layout.buildDirectory.dir("testKitCache"))
 }
 
-tasks.register<Delete>("cleanUserHomeKonanDir") {
-    description =
-        "Deletes ~/.konan dir before tests. This step is necessary to ensure that no test inadvertently creates this directory during execution."
+val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
+    description = "Only runs on CI. " +
+            "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
+
+    val isTeamCityBuild = project.kotlinBuildProperties.isTeamcityBuild
+    onlyIf("Build is running on TeamCity") { isTeamCityBuild }
 
     val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
-
     delete(userHomeKonanDir)
 
     doLast {
         logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
     }
 }
-tasks.register<Task>("prepareNativeBundleForGradleIT") {
 
-    description = "This task adds dependency on :kotlin-native:bundle"
+val prepareNativeBundleForGradleIT by tasks.registering {
+    description = "This task adds dependency on :kotlin-native:install"
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
         // Build full Kotlin Native bundle
@@ -152,17 +152,13 @@ tasks.register<Task>("prepareNativeBundleForGradleIT") {
     }
 }
 
-tasks.register<Task>("createProvisionedOkFiles") {
+val createProvisionedOkFiles by tasks.registering {
 
     description = "This task creates `provisioned.ok` file for each preconfigured k/n native bundle." +
             "Kotlin/Native bundle can be prepared in two ways:" +
             "`prepareNativeBundleForGradleIT` task for local environment and `Compiler Dist: full bundle` build for CI environment."
 
-    val prepareNativeBundleTaskName = ":kotlin-gradle-plugin-integration-tests:prepareNativeBundleForGradleIT"
-    val taskExists = project.tasks.findByPath(prepareNativeBundleTaskName) != null
-    if (taskExists) {
-        mustRunAfter(prepareNativeBundleTaskName)
-    }
+    mustRunAfter(prepareNativeBundleForGradleIT)
 
     val konanDistributions = File(konanDataDir)
 
@@ -176,7 +172,6 @@ tasks.register<Task>("createProvisionedOkFiles") {
                 File(it, "provisioned.ok").createNewFile()
             }
     }
-
 }
 
 fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
@@ -185,7 +180,7 @@ fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
 
     //add native bundle dependencies for local test run
     if (kotlinNativeFromMasterEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
-        dependsOn(":kotlin-gradle-plugin-integration-tests:prepareNativeBundleForGradleIT")
+        dependsOn(prepareNativeBundleForGradleIT)
     }
 
     // Providing necessary properties for running tests with k/n built from master on the local environment
@@ -202,17 +197,18 @@ fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
         }
         systemProperty("konanDataDirForIntegrationTests", konanDataDir)
     }
-    dependsOn(":kotlin-gradle-plugin-integration-tests:createProvisionedOkFiles")
-}
-
-// Disabling test task as it does nothing
-tasks.named("test") {
-    enabled = false
-    group = null
-    description = null
+    dependsOn(createProvisionedOkFiles)
 }
 
 val KGP_TEST_TASKS_GROUP = "Kotlin Gradle Plugin Verification"
+
+// Disabling test task as it does nothing
+tasks.test {
+    enabled = false
+    group = null
+    description = "Disabled - use KGP specific tasks in the '$KGP_TEST_TASKS_GROUP' group instead."
+}
+
 val memoryPerGradleTestWorkerMb = 6000
 val maxParallelTestForks =
     (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
@@ -375,7 +371,7 @@ tasks.named<Task>("check") {
     )
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
     environment.remove("KONAN_DATA_DIR")
@@ -390,9 +386,7 @@ tasks.withType<Test> {
     dependsOn(":gradle:kotlin-compiler-args-properties:install")
     dependsOn(":examples:annotation-processor-example:install")
     dependsOn(":kotlin-dom-api-compat:install")
-    if (project.kotlinBuildProperties.isTeamcityBuild) {
-        dependsOn(":kotlin-gradle-plugin-integration-tests:cleanUserHomeKonanDir")
-    }
+    dependsOn(cleanUserHomeKonanDir)
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
@@ -414,6 +408,9 @@ tasks.withType<Test> {
         task as AbstractKotlinCompile<*>
         task.destinationDirectory
     }
+    doFirst {
+        systemProperty("buildGradleKtsInjectionsClasspath", compileTestDestination.get().asFile.absolutePath)
+    }
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
     // names should follow "jdk\\d+Home" regex where number is a major JDK version
@@ -425,7 +422,6 @@ tasks.withType<Test> {
         if (mavenLocalRepo != null) {
             systemProperty("maven.repo.local", mavenLocalRepo)
         }
-        systemProperty("buildGradleKtsInjectionsClasspath", compileTestDestination.get().asFile.absolutePath)
     }
 
     androidSdkProvisioner {
