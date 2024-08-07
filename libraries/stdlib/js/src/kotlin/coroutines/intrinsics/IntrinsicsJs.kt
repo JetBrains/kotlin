@@ -308,16 +308,18 @@ internal fun <R, T, P> (suspend R.(P) -> T).createCoroutineUninterceptedGenerato
     }
 
 
-internal fun suspendOrReturn(value: Any?, continuation: Continuation<Any?>): Any? {
+internal fun suspendOrReturn(generator: (continuation: Continuation<Any?>) -> dynamic, continuation: Continuation<Any?>): Any? {
+    val generatorCoroutineImpl = if (continuation.asDynamic().constructor === GeneratorCoroutineImpl::class.js) {
+        continuation.unsafeCast<GeneratorCoroutineImpl>()
+    } else {
+        GeneratorCoroutineImpl(continuation)
+    }
+
+    val value = generator(generatorCoroutineImpl)
+
     if (!isGeneratorSuspendStep(value)) return value
 
     val iterator = value.unsafeCast<JsIterator<Any?>>()
-
-    if (continuation.asDynamic().constructor !== GeneratorCoroutineImpl::class.js) {
-        return iterator.next().value
-    }
-
-    val generatorCoroutineImpl = continuation.unsafeCast<GeneratorCoroutineImpl>()
 
     generatorCoroutineImpl.addNewIterator(iterator)
     try {
