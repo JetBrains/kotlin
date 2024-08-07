@@ -121,7 +121,16 @@ open class SpecialGenericSignatures {
                 javaLang("Number").method("toDouble", "", JvmPrimitiveType.DOUBLE.desc) to Name.identifier("doubleValue"),
                 REMOVE_AT_NAME_AND_SIGNATURE to Name.identifier("remove"),
                 javaLang("CharSequence")
-                    .method("get", JvmPrimitiveType.INT.desc, JvmPrimitiveType.CHAR.desc) to Name.identifier("charAt")
+                    .method("get", JvmPrimitiveType.INT.desc, JvmPrimitiveType.CHAR.desc) to Name.identifier("charAt"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("load", "", JvmPrimitiveType.INT.desc) to Name.identifier("get"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("store", JvmPrimitiveType.INT.desc, "V") to Name.identifier("set"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("exchange", JvmPrimitiveType.INT.desc, JvmPrimitiveType.INT.desc) to Name.identifier("getAndSet"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("fetchAndAdd", JvmPrimitiveType.INT.desc, JvmPrimitiveType.INT.desc) to Name.identifier("getAndAdd"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("addAndFetch", JvmPrimitiveType.INT.desc, JvmPrimitiveType.INT.desc) to Name.identifier("addAndGet"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("fetchAndIncrement", "", JvmPrimitiveType.INT.desc) to Name.identifier("getAndIncrement"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("incrementAndFetch", "", JvmPrimitiveType.INT.desc) to Name.identifier("incrementAndGet"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("decrementAndFetch", "", JvmPrimitiveType.INT.desc) to Name.identifier("decrementAndGet"),
+                javaUtilConcurrentAtomic("AtomicInteger").method("fetchAndDecrement", "", JvmPrimitiveType.INT.desc) to Name.identifier("getAndDecrement"),
             )
         }
 

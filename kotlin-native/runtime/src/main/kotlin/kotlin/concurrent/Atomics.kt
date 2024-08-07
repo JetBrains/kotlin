@@ -17,62 +17,32 @@ import kotlin.native.concurrent.*
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
 @SinceKotlin("1.9")
-public class AtomicInt(@Volatile public var value: Int) {
-    /**
-     * Atomically sets the value to the given [new value][newValue] and returns the old value.
-     */
-    public fun getAndSet(newValue: Int): Int = this::value.getAndSetField(newValue)
+// TODO: old API should be deprecated
+public actual class AtomicInt(@Volatile public var value: Int) {
 
-    /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected],
-     * returns true if the operation was successful and false only if the current value was not equal to the expected value.
-     *
-     * Provides sequential consistent ordering guarantees and cannot fail spuriously.
-     */
-    public fun compareAndSet(expected: Int, newValue: Int): Boolean = this::value.compareAndSetField(expected, newValue)
+    public actual fun load(): Int = this::value.atomicGetField()
 
-    /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]
-     * and returns the old value in any case.
-     *
-     * Provides sequential consistent ordering guarantees and cannot fail spuriously.
-     */
-    public fun compareAndExchange(expected: Int, newValue: Int): Int = this::value.compareAndExchangeField(expected, newValue)
+    public actual fun store(newValue: Int) { this::value.atomicSetField(value) }
 
-    /**
-     * Atomically adds the [given value][delta] to the current value and returns the old value.
-     */
-    public fun getAndAdd(delta: Int): Int = this::value.getAndAddField(delta)
+    public actual fun exchange(newValue: Int): Int = this::value.getAndSetField(newValue)
 
-    /**
-     * Atomically adds the [given value][delta] to the current value and returns the new value.
-     */
-    public fun addAndGet(delta: Int): Int = this::value.getAndAddField(delta) + delta
+    public actual fun compareAndSet(expected: Int, newValue: Int): Boolean = this::value.compareAndSetField(expected, newValue)
 
-    /**
-     * Atomically increments the current value by one and returns the old value.
-     */
-    public fun getAndIncrement(): Int = this::value.getAndAddField(1)
+    public actual fun compareAndExchange(expected: Int, newValue: Int): Int = this::value.compareAndExchangeField(expected, newValue)
 
-    /**
-     * Atomically increments the current value by one and returns the new value.
-     */
-    public fun incrementAndGet(): Int = this::value.getAndAddField(1) + 1
+    public actual fun fetchAndAdd(delta: Int): Int = this::value.getAndAddField(delta)
 
-    /**
-     * Atomically decrements the current value by one and returns the new value.
-     */
-    public fun decrementAndGet(): Int = this::value.getAndAddField(-1) - 1
+    public actual fun addAndFetch(delta: Int): Int = this::value.getAndAddField(delta) + delta
 
-    /**
-     * Atomically decrements the current value by one and returns the old value.
-     */
-    public fun getAndDecrement(): Int = this::value.getAndAddField(-1)
+    public actual fun fetchAndIncrement(): Int = this::value.getAndAddField(1)
 
-    /**
-     * Returns the string representation of the current [value].
-     */
-    public override fun toString(): String = value.toString()
+    public actual fun incrementAndFetch(): Int = this::value.getAndAddField(1) + 1
+
+    public actual fun decrementAndFetch(): Int = this::value.getAndAddField(-1) - 1
+
+    public actual fun fetchAndDecrement(): Int = this::value.getAndAddField(-1)
+
+    public actual override fun toString(): String = value.toString()
 }
 
 /**
