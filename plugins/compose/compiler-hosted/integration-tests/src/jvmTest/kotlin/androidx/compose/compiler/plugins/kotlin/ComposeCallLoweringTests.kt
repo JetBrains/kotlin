@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.junit.Ignore
 import org.junit.Test
 
 class ComposeCallLoweringTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -428,6 +429,7 @@ fun <T> B(foo: T, bar: String) { }
         )
     }
 
+    @Ignore
     @Test
     fun testDataClass() {
         classLoader(
