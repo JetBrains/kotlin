@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 
@@ -49,7 +50,9 @@ import java.io.File
  * It is supposed to replace the old AA-based implementation ([Kapt4AnalysisHandlerExtension]) once we ensure that there are no critical
  * problems with it.
  */
-internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
+open class FirKaptAnalysisHandlerExtension(
+    private val kaptLogger: MessageCollectorBackedKaptLogger? = null,
+) : FirAnalysisHandlerExtension() {
     lateinit var logger: MessageCollectorBackedKaptLogger
     lateinit var options: KaptOptions
 
@@ -59,12 +62,13 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
     override fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean {
         val optionsBuilder = configuration[KAPT_OPTIONS]!!
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        logger = MessageCollectorBackedKaptLogger(
-            KaptFlag.VERBOSE in optionsBuilder.flags,
-            KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
-            messageCollector
-        )
+        logger = kaptLogger
+            ?: MessageCollectorBackedKaptLogger(
+                KaptFlag.VERBOSE in optionsBuilder.flags,
+                KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
+                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            )
+        val messageCollector = logger.messageCollector
 
         if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
             logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
@@ -183,6 +187,15 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         }
     }
 
+    protected open fun getSourceFiles(
+        disposable: Disposable,
+        projectEnvironment: VfsBasedProjectEnvironment,
+        configuration: CompilerConfiguration,
+    ): List<KtFile> {
+        val environment = KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return environment.getSourceFiles()
+    }
+
     private fun contextForStubGeneration(
         disposable: Disposable,
         projectEnvironment: VfsBasedProjectEnvironment,
@@ -193,9 +206,8 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             ?: error("Single module expected: ${configuration[JVMConfigurationKeys.MODULES]}")
 
         val (analysisTime, analysisResults) = measureTimeMillis {
-            val environment = KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-            runFrontendForAnalysis(projectEnvironment, configuration, messageCollector, environment.getSourceFiles(), null, module)
+            val sourceFiles = getSourceFiles(disposable, projectEnvironment, configuration)
+            runFrontendForAnalysis(projectEnvironment, configuration, messageCollector, sourceFiles, null, module)
         }
 
         logger.info { "Initial analysis took $analysisTime ms" }
@@ -233,10 +245,10 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         logger.info { "Stubs for Kotlin classes: " + kaptStubs.joinToString { it.file.sourcefile.name } }
 
         saveStubs(kaptContext, kaptStubs, logger.messageCollector)
-        saveIncrementalData(kaptContext, logger.messageCollector)
+        saveIncrementalData(kaptContext, logger.messageCollector, converter)
     }
 
-    private fun saveStubs(
+    protected open fun saveStubs(
         kaptContext: KaptContextForStubGeneration,
         stubs: List<KaptStub>,
         messageCollector: MessageCollector,
@@ -283,9 +295,10 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         logger.info { "Source files: ${sourceFiles}" }
     }
 
-    private fun saveIncrementalData(
+    protected open fun saveIncrementalData(
         kaptContext: KaptContextForStubGeneration,
-        messageCollector: MessageCollector
+        messageCollector: MessageCollector,
+        converter: KaptStubConverter,
     ) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
@@ -298,7 +311,7 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         )
     }
 
-    private fun loadProcessors(): LoadedProcessors {
+    protected open fun loadProcessors(): LoadedProcessors {
         return EfficientProcessorLoader(options, logger).loadProcessors()
     }
 
