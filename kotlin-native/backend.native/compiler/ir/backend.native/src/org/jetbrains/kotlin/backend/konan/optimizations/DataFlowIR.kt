@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
-import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 internal object DataFlowIR {
     abstract class Type(
@@ -590,16 +589,9 @@ internal object DataFlowIR {
             }
             val symbol = when {
                 it.isExternal || it.isBuiltInOperator -> {
-                    val escapesAnnotation = it.annotations.findAnnotation(NativeRuntimeNames.Annotations.Escapes.asSingleFqName())
-                    val escapesNothingAnnotation = it.annotations.findAnnotation(NativeRuntimeNames.Annotations.EscapesNothing.asSingleFqName())
-                    val pointsToAnnotation = it.annotations.findAnnotation(NativeRuntimeNames.Annotations.PointsTo.asSingleFqName())
-                    @Suppress("UNCHECKED_CAST")
-                    val escapesBitMask = (escapesAnnotation?.getValueArgument(0) as? IrConst<Int>)?.value ?: escapesNothingAnnotation?.let { 0 }
-                    @Suppress("UNCHECKED_CAST")
-                    val pointsToBitMask = (pointsToAnnotation?.getValueArgument(0) as? IrVararg)?.elements?.map { (it as IrConst<Int>).value }
                     FunctionSymbol.External(localHash(name.toByteArray()), attributes, it, takeName { name }, it.isExported()).apply {
-                        escapes  = escapesBitMask
-                        pointsTo = pointsToBitMask?.toIntArray()
+                        escapes  = it.escapesMask
+                        pointsTo = it.pointsToMasks
                     }
                 }
 

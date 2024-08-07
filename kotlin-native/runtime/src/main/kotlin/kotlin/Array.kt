@@ -71,7 +71,7 @@ public final class Array<T> {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_Array_set")
-    @PointsTo(0x300, 0x000, 0x000) // this.intestines -> value
+    @PointsTo(0x0300, 0x0000, 0x0000, 0x0000) // this.intestines -> value
     external public operator fun set(index: Int, value: T): Unit
 
     /**

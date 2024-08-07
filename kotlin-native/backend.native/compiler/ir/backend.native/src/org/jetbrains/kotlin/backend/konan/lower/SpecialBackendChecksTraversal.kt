@@ -17,6 +17,10 @@ import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
+import org.jetbrains.kotlin.backend.konan.optimizations.escapesAt
+import org.jetbrains.kotlin.backend.konan.optimizations.escapesMask
+import org.jetbrains.kotlin.backend.konan.optimizations.isValidEscapesMask
+import org.jetbrains.kotlin.backend.konan.optimizations.isValidPointsToElement
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -655,6 +659,71 @@ private class BackendChecker(
                 && !startsWith(kotlinPackageFqn.child(Name.identifier("concurrent")))
                 && !startsWith(kotlinPackageFqn.child(Name.identifier("native")).child(Name.identifier("concurrent")))
 
+    val IrFunction.isLoweredIntrinsic: Boolean
+        get() = tryGetIntrinsicType(this)?.mustBeLowered == true
+
+    val IrType.isPrimitiveForEA: Boolean
+        get() = isUnit() || isNothing() || computeBinaryType() is BinaryType.Primitive
+
+    data class FunctionSignatureElement(val name: String, val type: IrType)
+
+    val IrFunction.signatureElements: List<FunctionSignatureElement>
+        get() = buildList {
+            allParameters.mapTo(this) {
+                FunctionSignatureElement(it.name.asString(), it.type)
+            }
+            add(FunctionSignatureElement("<return>", returnType))
+        }
+
+    private fun checkEscapesAnnotationValue(declaration: IrFunction, signatureElements: List<FunctionSignatureElement>, value: Int) {
+        if (value == 0)
+            return
+        val escapesName = NativeRuntimeNames.Annotations.Escapes.asFqNameString()
+        if (!value.isValidEscapesMask(signatureElements.size)) {
+            reportNonFatalError(declaration, "@$escapesName value 0b${value.toString(2)} is not valid: must not be negative and not have bits higher than ${signatureElements.size}")
+            return
+        }
+        signatureElements.forEachIndexed { index, element ->
+            if (value.escapesAt(index) && element.type.isPrimitiveForEA) {
+                reportNonFatalError(declaration, "${element.name} is marked as escaping by @$escapesName, but is not of a reference type")
+            }
+        }
+    }
+
+    private fun checkPointsToSingleAnnotationValue(declaration: IrFunction, signatureElements: List<FunctionSignatureElement>, targetSignatureElement: FunctionSignatureElement, value: Int) {
+        if (value == 0)
+            return
+        val pointsToName = NativeRuntimeNames.Annotations.PointsTo.asFqNameString()
+        if (!value.isValidPointsToElement(signatureElements.size)) {
+            reportNonFatalError(declaration, "@$pointsToName value 0x${value.toString(16)} for ${targetSignatureElement.name} is not valid: must not be negative and not have nibbles higher than ${signatureElements.size}")
+            return
+        }
+        if (targetSignatureElement.type.isPrimitiveForEA) {
+            reportNonFatalError(declaration, "@$pointsToName value 0x${value.toString(16)} for ${targetSignatureElement.name} is not zero, but ${targetSignatureElement.name} is not of a reference type")
+            return
+        }
+        signatureElements.forEachIndexed { index, element ->
+            val kind = value.pointsToKindAt(index)
+            if (kind > 4) {
+                reportNonFatalError(declaration, "@$pointsToName makes ${targetSignatureElement.name} point to ${element.name} with invalid kind ${kind.toString(16)}, expected 0-4")
+            }
+            if (kind != 0 && element.type.isPrimitiveForEA) {
+                reportNonFatalError(declaration, "@$pointsToName makes ${targetSignatureElement.name} point to ${element.name} with kind ${kind.toString(16)}, but ${element.name} is not of a reference type")
+            }
+        }
+    }
+
+    private fun checkPointsToAnnotationValue(declaration: IrFunction, signatureElements: List<FunctionSignatureElement>, values: IntArray) {
+        val pointsToName = NativeRuntimeNames.Annotations.PointsTo.asFqNameString()
+        if (values.size != signatureElements.size) {
+            reportNonFatalError(declaration, "@$pointsToName value has ${values.size} elements, expected equal to the signature size ${signatureElements.size}")
+            return
+        }
+        values.forEachIndexed { valueIndex, value ->
+            checkPointsToSingleAnnotationValue(declaration, signatureElements, signatureElements[valueIndex], value)
+        }
+    }
+
     private fun checkEscapeAnalysisAnnotations(declaration: IrFunction) {
         val hasEscapes = declaration.annotations.hasAnnotation(NativeRuntimeNames.Annotations.Escapes)
         val escapesName = NativeRuntimeNames.Annotations.Escapes.asFqNameString()
@@ -667,13 +736,13 @@ private class BackendChecker(
             if (!condition)
                 return Unit
             if (hasEscapes) {
-                reportWarning(declaration, "Unused @$escapesName: $message")
+                reportWarning(declaration, "Unused @$escapesName: ${message()}")
             }
             if (hasEscapesNothing) {
-                reportWarning(declaration, "Unused @$escapesNothingName: $message")
+                reportWarning(declaration, "Unused @$escapesNothingName: ${message()}")
             }
             if (hasPointsTo) {
-                reportWarning(declaration, "Unused @$pointsToName: $message")
+                reportWarning(declaration, "Unused @$pointsToName: ${message()}")
             }
             // condition satisfied, potential unused warning emitted, no need to go on with other checks
             return null
@@ -682,11 +751,11 @@ private class BackendChecker(
         warnUnusedIf(!declaration.isExternal) { "non-external function" } ?: return
         warnUnusedIf(!declaration.parent.fqNameForIrSerialization.isSupportedPackageByEA) { "package outside EA annotation checks" } ?: return
         warnUnusedIf(declaration.symbol.handledByDFG) { "function handled manually in DFGBuilder" } ?: return
-        fun IrFunction.isLoweredIntrinsic() = tryGetIntrinsicType(this)?.mustBeLowered == true
-        warnUnusedIf(declaration.isLoweredIntrinsic()) { "function is lowered in the compiler" } ?: return
-        fun IrType.canSkipEAAnnotation() = isUnit() || isNothing() || computeBinaryType() is BinaryType.Primitive
-        fun IrFunction.canSkipEAAnnotation() = allParameters.all { it.type.canSkipEAAnnotation() } && returnType.canSkipEAAnnotation()
-        warnUnusedIf(declaration.canSkipEAAnnotation()) { "function has neither reference parameters nor a reference return value" } ?: return
+        warnUnusedIf(declaration.isLoweredIntrinsic) { "function is lowered in the compiler" } ?: return
+
+        val signatureElements = declaration.signatureElements
+
+        warnUnusedIf(signatureElements.all { it.type.isPrimitiveForEA }) { "function has neither reference parameters nor a reference return value" } ?: return
 
         // All the unused checks have passed.
         // This also means, that we now know the declaration is external, in the correct package and so on.
@@ -696,6 +765,9 @@ private class BackendChecker(
         if (!hasEscapes && !hasEscapesNothing && !hasPointsTo) {
             reportNonFatalError(declaration, "External function with reference parameters requires @$escapesName or @$escapesNothingName or @$pointsToName")
         }
+
+        declaration.escapesMask?.let { checkEscapesAnnotationValue(declaration, signatureElements, it) }
+        declaration.pointsToMasks?.let { checkPointsToAnnotationValue(declaration, signatureElements, it) }
     }
 
     override fun visitFunction(declaration: IrFunction) {

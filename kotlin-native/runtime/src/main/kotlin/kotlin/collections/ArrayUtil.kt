@@ -35,7 +35,7 @@ internal actual fun <E> Array<E>.resetAt(index: Int) {
 }
 
 @GCUnsafeCall("Kotlin_Array_fillImpl")
-@PointsTo(0x3000, 0x0000, 0x0000, 0x0000) // array.intestines -> value
+@PointsTo(0x03000, 0x00000, 0x00000, 0x00000, 0x00000) // array.intestines -> value
 internal external fun <T> arrayFill(array: Array<T>, fromIndex: Int, toIndex: Int, value: T)
 
 @GCUnsafeCall("Kotlin_ByteArray_fillImpl")
@@ -92,7 +92,7 @@ internal actual fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
 }
 
 @GCUnsafeCall("Kotlin_Array_copyImpl")
-@PointsTo(0x00000, 0x00000, 0x00004, 0x00000, 0x00000) // destination.intestines -> array.intestines
+@PointsTo(0x000000, 0x000000, 0x000004, 0x000000, 0x000000, 0x000000) // destination.intestines -> array.intestines
 internal external fun arrayCopy(array: Array<Any?>, fromIndex: Int, destination: Array<Any?>, toIndex: Int, count: Int)
 
 @GCUnsafeCall("Kotlin_ByteArray_copyImpl")

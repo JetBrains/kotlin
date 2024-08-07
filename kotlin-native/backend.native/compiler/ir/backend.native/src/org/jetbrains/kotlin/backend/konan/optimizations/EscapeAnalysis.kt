@@ -326,15 +326,16 @@ internal object EscapeAnalysis {
         companion object {
             fun fromBits(escapesMask: Int, pointsToMasks: List<Int>): FunctionEscapeAnalysisResult {
                 val paramCount = pointsToMasks.size
+                require(escapesMask.isValidEscapesMask(paramCount))
                 val edges = mutableListOf<CompressedPointsToGraph.Edge>()
                 val escapes = mutableListOf<CompressedPointsToGraph.Node>()
                 for (param1 in pointsToMasks.indices) {
-                    if (escapesMask and (1 shl param1) != 0)
+                    if (escapesMask.escapesAt(param1))
                         escapes.add(CompressedPointsToGraph.Node.parameter(param1, paramCount))
                     val curPointsToMask = pointsToMasks[param1]
+                    require(curPointsToMask.isValidPointsToElement(paramCount))
                     for (param2 in pointsToMasks.indices) {
-                        // Read a nibble at position [param2].
-                        val pointsTo = (curPointsToMask shr (4 * param2)) and 15
+                        val pointsTo = curPointsToMask.pointsToKindAt(param2)
                         if (pointsTo != 0)
                             edges.add(CompressedPointsToGraph.Edge.pointsTo(param1, param2, paramCount, pointsTo))
                     }
@@ -943,9 +944,9 @@ internal object EscapeAnalysis {
                     val parameters = function.body.rootScope.nodes
                             .filterIsInstance<DataFlowIR.Node.Parameter>()
                     for (parameter in parameters)
-                        if (escapes and (1 shl parameter.index) != 0)
+                        if (escapes.escapesAt(parameter.index))
                             escapeOrigins += nodes[parameter]!!
-                    if (escapes and (1 shl parameters.size) != 0)
+                    if (escapes.escapesAt(parameters.size))
                         escapeOrigins += returnsNode
                 }
             }
