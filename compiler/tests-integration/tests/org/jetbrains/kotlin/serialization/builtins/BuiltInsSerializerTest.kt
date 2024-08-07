@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInsLoaderImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
@@ -35,12 +34,16 @@ import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.io.FileInputStream
 
-class BuiltInsSerializerTest {
+abstract class BuiltInsSerializerTest(val useK2: Boolean) {
     companion object {
         private val TEST_PACKAGE_FQNAME: FqName = FqName.topLevel(Name.identifier("test"))
-        private val assertions: Assertions
-            get() = JUnit5Assertions
     }
+
+    @Suppress("JUnitTestCaseWithNoTests")
+    class K1BuiltInsSerializerTest : BuiltInsSerializerTest(useK2 = false)
+
+    @Suppress("JUnitTestCaseWithNoTests")
+    class K2BuiltInsSerializerTest : BuiltInsSerializerTest(useK2 = true)
 
     private lateinit var tmpDir: File
 
@@ -56,7 +59,7 @@ class BuiltInsSerializerTest {
             srcDirs = listOf(File(source)),
             extraClassPath = listOf(ForTestCompileRuntime.runtimeJarForTests()),
             dependOnOldBuiltIns = true,
-            useK2 = false,
+            useK2 = useK2,
             onComplete = { _, _ -> }
         )
 
@@ -77,12 +80,33 @@ class BuiltInsSerializerTest {
         module.initialize(packageFragmentProvider)
         module.setDependencies(module, module.builtIns.builtInsModule)
 
+        val firDifference = File(source).readText().contains("// FIR_DIFFERENCE")
+
+        val expectedK1File = File(source.replace(".kt", ".txt"))
+        val expectedK2File = File(source.replace(".kt", ".fir.txt"))
+
+        val expectedFile = when {
+            useK2 == false -> expectedK1File
+            firDifference -> expectedK2File
+            else -> expectedK1File
+        }
+
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
             module.getPackage(TEST_PACKAGE_FQNAME),
             RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
-            File(source.replace(".kt", ".txt")),
-            assertions
+            expectedFile,
+            JUnit5Assertions
         )
+
+        if (useK2 && firDifference && expectedK1File.exists()) {
+            val k1Dump = expectedK1File.readText().trim()
+            val k2Dump = expectedK2File.readText().trim()
+            if (k1Dump == k2Dump) {
+                JUnit5Assertions.fail {
+                    "K1 and K2 dumps are identical. Remove `// FIR_DIFFERENCE` directive and $expectedK2File"
+                }
+            }
+        }
     }
 
     private fun createEmptyModule(): ModuleDescriptorImpl {

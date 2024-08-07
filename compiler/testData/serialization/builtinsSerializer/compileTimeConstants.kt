@@ -1,3 +1,4 @@
+// FIR_DIFFERENCE
 package test
 
 enum class Weapon {
