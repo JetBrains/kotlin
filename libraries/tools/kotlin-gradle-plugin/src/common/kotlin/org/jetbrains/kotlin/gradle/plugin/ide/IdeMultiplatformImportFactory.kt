@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.*
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyTransformers.IdePlatformStdlibCommonDependencyFilter
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 
 internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMultiplatformImport {
@@ -72,6 +74,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             priority = IdeMultiplatformImport.Priority.normal
         )
 
+        // Не понимаю зачем это нужно если есть верхний матчер
         registerDependencyResolver(
             resolver = IdeOriginalMetadataDependencyResolver,
             constraint = !SourceSetConstraint.isLeaf,
@@ -81,7 +84,23 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdeBinaryDependencyResolver(),
+            // FIXME: Why is this single platform and not target?
             constraint = SourceSetConstraint.isSinglePlatformType,
+            phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
+            priority = IdeMultiplatformImport.Priority.normal
+        )
+
+        // Just transfer unpacked metadata libraries from compiledDependencyConfiguration to IDE
+        registerDependencyResolver(
+            resolver = IdeBinaryDependencyResolver(
+                artifactResolutionStrategy = IdeBinaryDependencyResolver.ArtifactResolutionStrategy.Compilation(
+                    compilationSelector = { ss -> ss.internal.compilations.filterNot {
+                        // FIXME: What is this arcana? Do we just filter out main? Why does it even exist?
+                        it is KotlinCommonCompilation && !it.isKlibCompilation
+                    }.singleOrNull { it.defaultSourceSet == ss } }
+                )
+            ),
+            constraint = !SourceSetConstraint.isSingleKotlinTarget,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             priority = IdeMultiplatformImport.Priority.normal
         )

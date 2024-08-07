@@ -234,10 +234,11 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         Prevent case where this resolver was configured to resolve dependencies for a metadata compilation:
         Refuse resolution. Write your own code if you really want to do this!
          */
-        if (compilation is KotlinMetadataCompilation<*>) {
-            logger.warn("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
-            return null
-        }
+        // FIXME: Why?
+//        if (compilation is KotlinMetadataCompilation<*>) {
+//            logger.warn("Unexpected ${KotlinMetadataCompilation::class.java}(${compilation.name}) for $sourceSet")
+//            return null
+//        }
 
         return createArtifactViewFromConfiguration(sourceSet, compilation.internal.configurations.compileDependencyConfiguration)
     }

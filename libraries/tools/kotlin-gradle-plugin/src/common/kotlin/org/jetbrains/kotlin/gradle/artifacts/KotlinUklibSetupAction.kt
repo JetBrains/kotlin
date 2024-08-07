@@ -117,7 +117,10 @@ private suspend fun Project.setupConsumption() {
                     }
                 }
             }
-            compilation.compileDependencyFiles += files(fragmentFileForPlatformCompilation)
+            //compilation.compileDependencyFiles += files(fragmentFileForPlatformCompilation)
+            compilation.internal.configurations.compileDependencyConfiguration.dependencies.addLater(
+                fragmentFileForPlatformCompilation.map { project.dependencies.create(files(it)) }
+            )
         }
     }
 }
@@ -158,7 +161,13 @@ private fun Project.setupMetadataCompilationsUklibConsumption(
                 }
             }
         }
+
         compilation.compileDependencyFiles += files(fragmentFilesForMetadataCompilation)
+
+        // FIXME: Do we not pass compileDependencyConfiguration to metadata compilation?
+        compilation.internal.configurations.compileDependencyConfiguration.dependencies.addLater(
+            fragmentFilesForMetadataCompilation.map { project.dependencies.create(files(it)) }
+        )
     }
 }
 
