@@ -86,9 +86,11 @@ class K2JSCompilerArguments : CommonKlibBasedCompilerArguments() {
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
     )
-    @Argument(value = "-debugger-custom-formatters", description = "Add custom formatters to devtools")
+    @Argument(
+        value = "-Xwasm-debugger-custom-formatters",
+        description = "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values"
+    )
     var debuggerCustomFormatters = false
         set(value) {
             checkFrozen()

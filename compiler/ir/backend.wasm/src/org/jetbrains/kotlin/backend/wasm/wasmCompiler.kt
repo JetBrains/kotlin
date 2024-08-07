@@ -36,6 +36,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 class WasmCompilerResult(
     val wat: String?,
@@ -438,7 +439,7 @@ fun writeCompilationResult(
         val systemClassLoader = ClassLoader.getSystemClassLoader()
         val customFormattersInputStream = systemClassLoader.getResourceAsStream(fileName)
 
-        Files.copy(customFormattersInputStream, Paths.get(dir.path, fileName))
+        Files.copy(customFormattersInputStream, Paths.get(dir.path, fileName), StandardCopyOption.REPLACE_EXISTING)
     }
 
     if (result.dts != null) {

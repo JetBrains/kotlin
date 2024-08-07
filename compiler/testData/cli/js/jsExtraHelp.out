@@ -1,6 +1,8 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
   -Xcache-directory=<path>   Path to the cache directory.
+  -Xwasm-debugger-custom-formatters
+                             Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
   -Xenable-js-scripting      Enable experimental support for .kts files using K/JS (with '-Xir' only).
   -Xenable-extension-functions-in-externals
                              Enable extension function members in external interfaces.

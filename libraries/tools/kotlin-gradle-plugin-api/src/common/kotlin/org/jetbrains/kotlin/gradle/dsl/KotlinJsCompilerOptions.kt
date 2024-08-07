@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions {
 
     /**
-     * Add custom formatters to devtools
+     * Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
      *
      * Default value: false
      */
