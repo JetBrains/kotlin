@@ -71,6 +71,14 @@ class KaptEnvironmentConfigurator(
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
             if (module.frontendKind == FrontendKinds.FIR) {
                 mode = AptMode.STUBS_AND_APT
+
+                if (processingClasspath.isEmpty()) {
+                    // Workaround for a difference in K1/K2 kapt setup code. In K2 kapt, `checkOptions` skips stub generation if processing
+                    // classpath is empty, which makes integration tests fail.
+                    // Note that K1 kapt also has `checkOptions` but it's not called from integration tests because those tests create kapt
+                    // extension manually (see `KaptIntegrationEnvironmentConfigurator`) instead of going through `Kapt3ComponentRegistrar`.
+                    processingClasspath.add(File("."))
+                }
             }
             configuration.put(KAPT_OPTIONS, this)
         }
