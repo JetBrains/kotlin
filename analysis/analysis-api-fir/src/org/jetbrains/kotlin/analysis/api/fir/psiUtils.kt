@@ -6,10 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -17,6 +22,12 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 private val allowedFakeElementKinds = setOf(
     KtFakeSourceElementKind.FromUseSiteTarget,
@@ -59,3 +70,67 @@ internal fun FirDeclaration.findReferencePsi(): PsiElement? {
         psi
     } ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(this)
 }
+
+/**
+ * Not null [CallableId] for functions which are not local and are not a member of a local class.
+ */
+internal val KtNamedFunction.callableId: CallableId?
+    get() {
+        if (isLocal) return null
+        val containingClassOrObject = containingClassOrObject
+        if (containingClassOrObject != null) {
+            return containingClassOrObject.getClassId()?.let { classId ->
+                CallableId(classId = classId, callableName = nameAsSafeName)
+            }
+        }
+
+        return CallableId(packageName = containingKtFile.packageFqName, callableName = nameAsSafeName)
+    }
+
+internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
+    get() = kaSymbolModalityByModifiers ?: when {
+        isTopLevel || isLocal -> KaSymbolModality.FINAL
+
+        // Green code cannot have those modifiers with other modalities
+        hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
+
+        else -> null
+    }
+
+internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
+    get() = when {
+        hasModifier(KtTokens.FINAL_KEYWORD) -> KaSymbolModality.FINAL
+        hasModifier(KtTokens.ABSTRACT_KEYWORD) -> KaSymbolModality.ABSTRACT
+        hasModifier(KtTokens.OPEN_KEYWORD) -> KaSymbolModality.OPEN
+        this is KtClassOrObject && hasModifier(KtTokens.SEALED_KEYWORD) -> KaSymbolModality.SEALED
+        else -> null
+    }
+
+internal val KtNamedFunction.visibility: Visibility?
+    get() = when {
+        isLocal -> Visibilities.Local
+        hasModifier(KtTokens.PRIVATE_KEYWORD) -> Visibilities.Private
+        hasModifier(KtTokens.INTERNAL_KEYWORD) -> Visibilities.Internal
+        hasModifier(KtTokens.PROTECTED_KEYWORD) -> Visibilities.Protected
+        hasModifier(KtTokens.PUBLIC_KEYWORD) -> Visibilities.Public
+        else -> null
+    }
+
+internal val KtDeclaration.location: KaSymbolLocation
+    get() {
+        val parentDeclaration = parentOfType<KtDeclaration>()
+        if (this is KtTypeParameter) {
+            return if (parentDeclaration is KtClassOrObject) KaSymbolLocation.CLASS else KaSymbolLocation.LOCAL
+        }
+
+        return when (parentDeclaration) {
+            null, is KtScript -> KaSymbolLocation.TOP_LEVEL
+            is KtClassOrObject -> KaSymbolLocation.CLASS
+            is KtProperty -> KaSymbolLocation.PROPERTY
+            is KtDeclarationWithBody, is KtDeclarationWithInitializer, is KtAnonymousInitializer -> KaSymbolLocation.LOCAL
+            else -> errorWithAttachment("Unexpected parent declaration: ${parentDeclaration::class.simpleName}") {
+                withPsiEntry("parentDeclaration", parentDeclaration)
+                withPsiEntry("psi", this@location)
+            }
+        }
+    }

@@ -60,9 +60,7 @@ internal class KaFirSymbolProvider(
             if (isAnonymous) {
                 KaFirAnonymousFunctionSymbol(this, analysisSession)
             } else {
-                firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(
-                    resolveToFirSymbolOfType<FirNamedFunctionSymbol>(firResolveSession),
-                )
+                KaFirNamedFunctionSymbol(this, analysisSession)
             }
         }
 
