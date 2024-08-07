@@ -47,15 +47,31 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 
     private fun createKotlinStringLiteral(value: String): ConstPointer {
         val arrayClass = context.ir.symbols.string.owner
-        val arrayValue = value.map(llvm::constChar16)
-        if (value.length <= runtime.stringHeaderSize) {
-            return createConstKotlinArray(arrayClass, arrayValue)
+        val useLatin1 = value.isNotEmpty() && value.all { it.code in 0..255 }
+        // 1. Empty strings only have one encoding (empty char array).
+        // 2. Short strings have an extra alternate encoding (UTF-16 without a header).
+        //   This is shorter than any other possible encoding, but the runtime prefers
+        //   to keep the existing encoding rather than recompute on every string
+        //   construction, so using some more space for Latin-1 strings right now may
+        //   pay off if these strings end up being concatenated.
+        if (!useLatin1 && value.length <= runtime.stringHeaderSize) {
+            return createConstKotlinArray(arrayClass, value.map(llvm::constChar16))
         }
 
-        val flags = 1 // HASHCODE_COMPUTED
-        val arrayHeader = arrayHeader(arrayClass.typeInfoPtr, runtime.stringHeaderSize + value.length)
+        // See KString.h for the native equivalents of these constants.
+        // 1 = HASHCODE_COMPUTED; 1 shl 6 = ENCODING_LATIN1; 1 shl 1 = IGNORE_LAST_BYTE.
+        val flags = 1 or (if (useLatin1) (1 shl 6) or ((value.length % 2) shl 1) else 0)
+        val length = if (useLatin1) (value.length + 1) / 2 else value.length
+        val arrayHeader = arrayHeader(arrayClass.typeInfoPtr, runtime.stringHeaderSize + length)
         val stringHeader = Struct(runtime.stringHeaderType, llvm.constInt32(value.hashCode()), llvm.constInt32(flags))
-        return createConstant(llvm.struct(arrayHeader, stringHeader, ConstArray(llvm.int16Type, arrayValue)))
+        val arrayValue = if (useLatin1) {
+            val encoded = value.map { llvm.constInt8(it.code.toByte()) }
+            val padding = List(value.length % 2) { llvm.constInt8(0) }
+            ConstArray(llvm.int8Type, encoded + padding)
+        } else {
+            ConstArray(llvm.int16Type, value.map(llvm::constChar16))
+        }
+        return createConstant(llvm.struct(arrayHeader, stringHeader, arrayValue))
     }
 
     fun kotlinStringLiteral(value: String) = stringLiterals.getOrPut(value) { createKotlinStringLiteral(value) }
