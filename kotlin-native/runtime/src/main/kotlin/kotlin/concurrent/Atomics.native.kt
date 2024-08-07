@@ -16,12 +16,18 @@ import kotlin.native.concurrent.*
  * An [Int] value that is always updated atomically.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  */
+@Suppress("DEPRECATION")
 @SinceKotlin("1.9")
-public class AtomicInt(@Volatile public var value: Int) {
-    /**
-     * Atomically sets the value to the given [new value][newValue] and returns the old value.
-     */
-    public fun getAndSet(newValue: Int): Int = this::value.getAndSetField(newValue)
+public actual class AtomicInt public actual constructor(
+        @Deprecated("To read the atomic value use load(). To atomically set the new value use store(newValue: Int).")
+        public @Volatile var value: Int
+) {
+
+    public actual fun load(): Int = this::value.atomicGetField()
+
+    public actual fun store(newValue: Int) { this::value.atomicSetField(value) }
+
+    public actual fun exchange(newValue: Int): Int = this::value.getAndSetField(newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected],
@@ -29,7 +35,25 @@ public class AtomicInt(@Volatile public var value: Int) {
      *
      * Provides sequential consistent ordering guarantees and cannot fail spuriously.
      */
-    public fun compareAndSet(expected: Int, newValue: Int): Boolean = this::value.compareAndSetField(expected, newValue)
+    public actual fun compareAndSet(expected: Int, newValue: Int): Boolean = this::value.compareAndSetField(expected, newValue)
+
+    public actual fun fetchAndAdd(delta: Int): Int = this::value.getAndAddField(delta)
+
+    public actual fun addAndFetch(delta: Int): Int = this::value.getAndAddField(delta) + delta
+
+    public actual fun fetchAndIncrement(): Int = this::value.getAndAddField(1)
+
+    public actual fun incrementAndFetch(): Int = this::value.getAndAddField(1) + 1
+
+    public actual fun decrementAndFetch(): Int = this::value.getAndAddField(-1) - 1
+
+    public actual fun fetchAndDecrement(): Int = this::value.getAndAddField(-1)
+
+    /**
+     * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     */
+    @Deprecated("Use exchange(newValue: Int) instead.", ReplaceWith("this.exchange(newValue)"))
+    public fun getAndSet(newValue: Int): Int = this::value.getAndSetField(newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]
@@ -42,37 +66,43 @@ public class AtomicInt(@Volatile public var value: Int) {
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
      */
+    @Deprecated("Use fetchAndAdd(newValue: Int) instead.", ReplaceWith("this.fetchAndAdd(newValue)"))
     public fun getAndAdd(delta: Int): Int = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
      */
+    @Deprecated("Use addAndFetch(newValue: Int) instead.", ReplaceWith("this.addAndFetch(newValue)"))
     public fun addAndGet(delta: Int): Int = this::value.getAndAddField(delta) + delta
 
     /**
      * Atomically increments the current value by one and returns the old value.
      */
+    @Deprecated("Use fetchAndIncrement() instead.", ReplaceWith("this.fetchAndIncrement()"))
     public fun getAndIncrement(): Int = this::value.getAndAddField(1)
 
     /**
      * Atomically increments the current value by one and returns the new value.
      */
+    @Deprecated("Use incrementAndFetch() instead.", ReplaceWith("this.incrementAndFetch()"))
     public fun incrementAndGet(): Int = this::value.getAndAddField(1) + 1
 
     /**
      * Atomically decrements the current value by one and returns the new value.
      */
+    @Deprecated("Use decrementAndFetch() instead.", ReplaceWith("this.decrementAndFetch()"))
     public fun decrementAndGet(): Int = this::value.getAndAddField(-1) - 1
 
     /**
      * Atomically decrements the current value by one and returns the old value.
      */
+    @Deprecated("Use fetchAndDecrement() instead.", ReplaceWith("this.fetchAndDecrement()"))
     public fun getAndDecrement(): Int = this::value.getAndAddField(-1)
 
     /**
      * Returns the string representation of the current [value].
      */
-    public override fun toString(): String = value.toString()
+    public actual override fun toString(): String = value.toString()
 }
 
 /**
@@ -80,12 +110,17 @@ public class AtomicInt(@Volatile public var value: Int) {
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
  */
+@Suppress("DEPRECATION")
 @SinceKotlin("1.9")
-public class AtomicLong(@Volatile public var value: Long)  {
-    /**
-     * Atomically sets the value to the given [new value][newValue] and returns the old value.
-     */
-    public fun getAndSet(newValue: Long): Long = this::value.getAndSetField(newValue)
+public actual class AtomicLong public actual constructor(
+        @Deprecated("To read the atomic value use load(). To atomically set the new value use store(newValue: Long).")
+        public @Volatile var value: Long
+)  {
+    public actual fun load(): Long = this::value.atomicGetField()
+
+    public actual fun store(newValue: Long) { this::value.atomicSetField(value) }
+
+    public actual fun exchange(newValue: Long): Long = this::value.getAndSetField(newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected],
@@ -93,7 +128,25 @@ public class AtomicLong(@Volatile public var value: Long)  {
      *
      * Provides sequential consistent ordering guarantees and cannot fail spuriously.
      */
-    public fun compareAndSet(expected: Long, newValue: Long): Boolean = this::value.compareAndSetField(expected, newValue)
+    public actual fun compareAndSet(expected: Long, newValue: Long): Boolean = this::value.compareAndSetField(expected, newValue)
+
+    public actual fun fetchAndAdd(delta: Long): Long = this::value.getAndAddField(delta)
+
+    public actual fun addAndFetch(delta: Long): Long = this::value.getAndAddField(delta) + delta
+
+    public actual fun fetchAndIncrement(): Long = this::value.getAndAddField(1L)
+
+    public actual fun incrementAndFetch(): Long = this::value.getAndAddField(1L) + 1L
+
+    public actual fun decrementAndFetch(): Long = this::value.getAndAddField(-1L) - 1L
+
+    public actual fun fetchAndDecrement(): Long = this::value.getAndAddField(-1L)
+
+    /**
+     * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     */
+    @Deprecated("Use exchange(newValue: Long) instead.", ReplaceWith("this.exchange(newValue)"))
+    public fun getAndSet(newValue: Long): Long = this::value.getAndSetField(newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]
@@ -106,49 +159,89 @@ public class AtomicLong(@Volatile public var value: Long)  {
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
      */
+    @Deprecated("Use fetchAndAdd(newValue: Long) instead.", ReplaceWith("this.fetchAndAdd(newValue)"))
     public fun getAndAdd(delta: Long): Long = this::value.getAndAddField(delta)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
      */
+    @Deprecated("Use addAndFetch(newValue: Long) instead.", ReplaceWith("this.addAndFetch(newValue)"))
     public fun addAndGet(delta: Long): Long = this::value.getAndAddField(delta) + delta
 
     /**
      * Atomically increments the current value by one and returns the old value.
      */
+    @Deprecated("Use fetchAndIncrement() instead.", ReplaceWith("this.fetchAndIncrement()"))
     public fun getAndIncrement(): Long = this::value.getAndAddField(1L)
 
     /**
      * Atomically increments the current value by one and returns the new value.
      */
+    @Deprecated("Use incrementAndFetch() instead.", ReplaceWith("this.incrementAndFetch()"))
     public fun incrementAndGet(): Long = this::value.getAndAddField(1L) + 1L
 
     /**
      * Atomically decrements the current value by one and returns the new value.
      */
+    @Deprecated("Use decrementAndFetch() instead.", ReplaceWith("this.decrementAndFetch()"))
     public fun decrementAndGet(): Long = this::value.getAndAddField(-1L) - 1L
 
     /**
      * Atomically decrements the current value by one and returns the old value.
      */
+    @Deprecated("Use fetchAndDecrement() instead.", ReplaceWith("this.fetchAndDecrement()"))
     public fun getAndDecrement(): Long = this::value.getAndAddField(-1L)
 
     /**
      * Returns the string representation of the current [value].
      */
-    public override fun toString(): String = value.toString()
+    public actual override fun toString(): String = value.toString()
+}
+
+public actual class AtomicBoolean actual constructor(private var value: Boolean) {
+
+    public actual fun load(): Boolean = this::value.atomicGetField()
+
+    public actual fun store(newValue: Boolean) { this::value.atomicSetField(newValue) }
+
+    public actual fun exchange(newValue: Boolean): Boolean = this::value.getAndSetField(newValue)
+
+    /**
+     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected],
+     * returns true if the operation was successful and false only if the current value was not equal to the expected value.
+     *
+     * Provides sequential consistent ordering guarantees and cannot fail spuriously.
+     *
+     * Comparison of values is done by reference.
+     */
+    public actual fun compareAndSet(expected: Boolean, newValue: Boolean): Boolean = this::value.compareAndSetField(expected, newValue)
+
+    /**
+     * Returns the string representation of the current [value].
+     */
+    public actual override fun toString(): String = value.toString()
 }
 
 /**
  * An object reference that is always updated atomically.
  */
 @SinceKotlin("1.9")
-@Suppress("ACTUAL_WITHOUT_EXPECT") // actual visibility mismatch
-public actual class AtomicReference<T> actual constructor(public @Volatile actual var value: T) {
+@Suppress("ACTUAL_WITHOUT_EXPECT", "DEPRECATION") // actual visibility mismatch
+public actual class AtomicReference<T> actual constructor(
+        @Deprecated("To read the atomic value use load(). To atomically set the new value use store(newValue: T).")
+        public @Volatile actual var value: T
+) {
+
+    public actual fun load(): T = this::value.atomicGetField()
+
+    public actual fun store(newValue: T) { this::value.atomicSetField(newValue) }
+
+    public actual fun exchange(newValue: T): T = this::value.getAndSetField(newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
+    @Deprecated("Use exchange(newValue: T) instead.", ReplaceWith("this.exchange(newValue)"))
     public fun getAndSet(newValue: T): T = this::value.getAndSetField(newValue)
 
     /**
@@ -169,12 +262,12 @@ public actual class AtomicReference<T> actual constructor(public @Volatile actua
      *
      * Comparison of values is done by reference.
      */
-    public actual fun compareAndExchange(expected: T, newValue: T): T = this::value.compareAndExchangeField(expected, newValue)
+    public fun compareAndExchange(expected: T, newValue: T): T = this::value.compareAndExchangeField(expected, newValue)
 
     /**
      * Returns the string representation of the current [value].
      */
-    public override fun toString(): String =
+    public actual override fun toString(): String =
             "${debugString(this)} -> ${debugString(value)}"
 }
 

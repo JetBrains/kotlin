@@ -182,6 +182,13 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongCompare", 2, java8ULongCompare);
 
         intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "toString", 0, new Java8ULongToString());
+
+        declareAtomicMethods();
+    }
+
+    private void declareAtomicMethods() {
+        //intrinsicsMap.registerIntrinsic(CONCURRENT_PACKAGE_FQ_NAME, FqNames.atomicInt.toUnsafe(), "asJavaAtomic", 0, new AsJavaAtomic());
+        //intrinsicsMap.registerIntrinsic(CONCURRENT_PACKAGE_FQ_NAME, FqNames.atomicInt.toUnsafe(), "asKotlinAtomic", 0, new AsJavaAtomic());
     }
 
     private void declareArrayMethods() {

@@ -39,7 +39,8 @@ object StandardClassIds {
         BASE_ANNOTATION_PACKAGE,
         BASE_REFLECT_PACKAGE,
         BASE_INTERNAL_PACKAGE,
-        BASE_COROUTINES_PACKAGE
+        BASE_COROUTINES_PACKAGE,
+        BASE_CONCURRENT_PACKAGE
     )
 
     val Nothing = "Nothing".baseId()
@@ -57,6 +58,8 @@ object StandardClassIds {
     val Long = "Long".baseId()
     val Float = "Float".baseId()
     val Double = "Double".baseId()
+
+    val AtomicInt = "AtomicInt".concurrentId()
 
     val UByte = Byte.unsignedId()
     val UShort = Short.unsignedId()
@@ -91,6 +94,7 @@ object StandardClassIds {
     fun reflectByName(name: String) = name.reflectId()
 
     val primitiveTypes = setOf(Boolean, Char, Byte, Short, Int, Long, Float, Double)
+    val atomicTypes = setOf(AtomicInt)
     val signedIntegerTypes = setOf(Byte, Short, Int, Long)
 
     val primitiveArrayTypeByElementType = primitiveTypes.associateWith { id -> id.shortClassName.primitiveArrayId() }
@@ -262,7 +266,7 @@ object StandardClassIds {
             baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
     }
 
-    val allBuiltinTypes = primitiveTypes + unsignedTypes + this.String + this.Unit + this.Any + this.Enum
+    val allBuiltinTypes = primitiveTypes + atomicTypes + unsignedTypes + this.String + this.Unit + this.Any + this.Enum
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))

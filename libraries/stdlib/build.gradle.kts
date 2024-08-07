@@ -427,6 +427,8 @@ kotlin {
                 val unimplementedNativeBuiltIns =
                     (file(jvmBuiltinsDir).list()!!.toSortedSet() - file("$jsDir/builtins/").list()!!)
                         .map { "$jvmBuiltinsRelativeDir/$it" }
+                        .filterNot { it == "$jvmBuiltinsRelativeDir/Atomics.jvm.kt" || it == "$jvmBuiltinsRelativeDir/AtomicArrays.jvm.kt" }
+                println("AAAAA" + buildString { unimplementedNativeBuiltIns.forEach { appendLine(it) } })
 
                 val sources = unimplementedNativeBuiltIns
 
@@ -491,7 +493,7 @@ kotlin {
 
                 val excluded = listOf(
                     // Included with K/N collections
-                    "Collections.kt", "Iterator.kt"
+                    "Collections.kt", "Iterator.kt", "Atomics.jvm.kt", "AtomicArrays.jvm.kt"
                 )
 
                 sources.forEach { path ->
@@ -695,6 +697,7 @@ tasks {
             }
             from("$jsBuiltinsSrcDir/libraries/stdlib/jvm") {
                 exclude("builtins/Comparable.kt")
+//                exclude("builtins/Atomics.jvm.kt")
             }
             from("$jsBuiltinsSrcDir/libraries/stdlib/js/src")
             from("$jsDir/builtins") {
