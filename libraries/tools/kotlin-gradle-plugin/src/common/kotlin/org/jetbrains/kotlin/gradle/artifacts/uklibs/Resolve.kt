@@ -26,6 +26,7 @@ inline fun <Compilation, Target, reified SourceSet> transformKGPModelToUklibMode
     target: Compilation.() -> Target,
     dependsOn: SourceSet.() -> Set<SourceSet>,
     identifier: SourceSet.() -> String,
+//    sourceSetArtifact: SourceSet.() -> Compilation,
 ): Uklib<Target> {
     /**
      * 1. No parts of the graph are isolated
