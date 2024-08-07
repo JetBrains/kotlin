@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.inlineDeclaration
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.util.isLambdaInlining
@@ -199,15 +197,8 @@ private class FunctionParametersProcessor : IrElementVisitorVoid {
 }
 
 private class ScopeNumberVariableProcessor : IrElementVisitorVoid {
-    private val inlinedStack = mutableListOf<Pair<IrInlinedFunctionBlock, Int>>()
+    private val notProcessedVars = mutableListOf<IrVariable>()
     private var lastInlineScopeNumber = 0
-
-    private inline fun IrInlinedFunctionBlock.insertInStackAndProcess(block: IrInlinedFunctionBlock.() -> Unit) {
-        lastInlineScopeNumber += 1
-        inlinedStack += Pair(this, lastInlineScopeNumber)
-        block()
-        inlinedStack.removeLast()
-    }
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -218,22 +209,22 @@ private class ScopeNumberVariableProcessor : IrElementVisitorVoid {
         declaration.acceptChildrenVoid(processor)
     }
 
-    override fun visitBlock(expression: IrBlock) {
-        val inlinedBlock = expression.statements.lastOrNull() as? IrInlinedFunctionBlock ?: return super.visitBlock(expression)
-        inlinedBlock.insertInStackAndProcess {
-            super.visitBlock(expression)
-        }
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        notProcessedVars.forEach { it.process(inlinedBlock, ++lastInlineScopeNumber) }
+        notProcessedVars.clear()
+        super.visitInlinedFunctionBlock(inlinedBlock)
     }
 
     override fun visitVariable(declaration: IrVariable) {
-        if (inlinedStack.isEmpty()) {
-            return super.visitVariable(declaration)
+        if (declaration.isTmpForInline) {
+            notProcessedVars.add(declaration)
         }
-
-        val (inlinedBlock, scopeNumber) = inlinedStack.last()
-        val newName = declaration.calculateNewName(inlinedBlock)
-        declaration.name = Name.identifier(addInlineScopeInfo(newName, scopeNumber))
         super.visitVariable(declaration)
+    }
+
+    private fun IrVariable.process(inlinedBlock: IrInlinedFunctionBlock, scopeNumber: Int) {
+        val newName = this.calculateNewName(inlinedBlock)
+        this.name = Name.identifier(addInlineScopeInfo(newName, scopeNumber))
     }
 }
 
