@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.parcelize
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.functions
@@ -26,8 +29,9 @@ import org.jetbrains.kotlin.parcelize.fir.ParcelizePluginKey
 class ParcelizeFirIrTransformer(
     context: IrPluginContext,
     androidSymbols: AndroidSymbols,
-    parcelizeAnnotations: List<FqName>
-) : ParcelizeIrTransformerBase(context, androidSymbols, parcelizeAnnotations) {
+    parcelizeAnnotations: List<FqName>,
+    experimentalCodeGeneration: Boolean,
+) : ParcelizeIrTransformerBase(context, androidSymbols, parcelizeAnnotations, experimentalCodeGeneration) {
 
     fun transform(moduleFragment: IrModuleFragment) {
         moduleFragment.accept(this, null)
@@ -55,7 +59,7 @@ class ParcelizeFirIrTransformer(
 
         // Sealed classes can be annotated with `@Parcelize`, but that only implies that we
         // should process their immediate subclasses.
-        if (!declaration.isParcelize(parcelizeAnnotations) || declaration.modality == Modality.SEALED)
+        if (!declaration.isParcelize(parcelizeAnnotations))
             return
 
         val parcelableProperties = declaration.parcelableProperties
@@ -64,6 +68,30 @@ class ParcelizeFirIrTransformer(
         val parcelerObject = declaration.companionObject()?.takeIf {
             it.isSubclassOfFqName(PARCELER_FQN.asString())
         }
+        val generateInheritanceConstructor = declaration.canGenerateInheritanceConstructor()
+        if (generateInheritanceConstructor) {
+            // The signature for this constructor is not generated in [FirParcelizeDeclarationGenerator] so the checks
+            // need to be repeated here. This is on purpose. The declaration generator does not see through `expect` and `actual`
+            // which prevents us from checking if the construct's property has been marked with `IgnoredOnParcel` and should
+            // not be part of this specialized constructor.
+            declaration.addConstructor {}.apply {
+                origin = GeneratedByPlugin(ParcelizePluginKey)
+                val constructorArguments = declaration.inheritanceConstructorArguments()
+                constructorArguments.forEach {
+                    addValueParameter(it.field.name, it.field.type)
+                }
+                addValueParameter(ParcelizeNames.MARKER_NAME, androidSymbols.directInitializerMarker.defaultType)
+                // Might reference constructors from super classes and those might not be yet generated.
+                // This is why defer here is needed. We will have signature but not body.
+                defer {
+                    generateInheritanceConstructor(declaration, parcelableProperties, constructorArguments)
+                }
+            }
+        }
+
+        // At this point we generated constructor for the sealed class and there is nothing more to do.
+        if (declaration.modality == Modality.SEALED)
+            return
 
         for (function in declaration.functions) {
             val origin = function.origin
@@ -80,14 +108,24 @@ class ParcelizeFirIrTransformer(
                         // We need to defer the construction of the writer, since it may refer to the [writeToParcel] methods in other
                         // @Parcelize classes in the current module, which might not be constructed yet at this point.
                         defer {
-                            generateWriteToParcelBody(
-                                declaration,
-                                parcelerObject,
-                                parcelableProperties,
-                                receiverParameter,
-                                parcelParameter,
-                                flagsParameter
-                            )
+                            if (generateInheritanceConstructor) {
+                                generateWriteToParcelBodyForInheritanceConstructor(
+                                    declaration,
+                                    parcelableProperties,
+                                    receiverParameter,
+                                    parcelParameter,
+                                    flagsParameter
+                                )
+                            } else {
+                                generateWriteToParcelBody(
+                                    declaration,
+                                    parcelerObject,
+                                    parcelableProperties,
+                                    receiverParameter,
+                                    parcelParameter,
+                                    flagsParameter
+                                )
+                            }
                         }
                     }
                 }

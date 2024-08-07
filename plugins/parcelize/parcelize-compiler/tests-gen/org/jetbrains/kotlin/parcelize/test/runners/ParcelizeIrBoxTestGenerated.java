@@ -73,6 +73,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
   }
 
   @Test
+  @TestMetadata("changingBaseClassProperty.kt")
+  public void testChangingBaseClassProperty() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/changingBaseClassProperty.kt");
+  }
+
+  @Test
   @TestMetadata("charSequence.kt")
   public void testCharSequence() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/charSequence.kt");
@@ -448,6 +454,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
   @TestMetadata("overriddenDescribeContents.kt")
   public void testOverriddenDescribeContents() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/overriddenDescribeContents.kt");
+  }
+
+  @Test
+  @TestMetadata("overridingBaseValue.kt")
+  public void testOverridingBaseValue() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/overridingBaseValue.kt");
   }
 
   @Test

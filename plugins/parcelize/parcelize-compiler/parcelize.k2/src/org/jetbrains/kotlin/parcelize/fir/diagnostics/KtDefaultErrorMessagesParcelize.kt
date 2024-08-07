@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELER
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELER_TYPE_INCOMPATIBLE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PROPERTY_WONT_BE_SERIALIZED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.REDUNDANT_TYPE_PARCELER
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.VALUE_PARAMETER_USED_IN_CLASS_BODY
 
 object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("Parcelize").also { map ->
@@ -177,6 +178,11 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
         map.put(
             DEPRECATED_PARCELER,
             "'kotlinx.android.parcel.Parceler' is deprecated. Use 'kotlinx.parcelize.Parceler' instead."
+        )
+
+        map.put(
+            VALUE_PARAMETER_USED_IN_CLASS_BODY,
+            "Parcelized class non-property arguments can only be used as arguments to the super classes constructor."
         )
     }
 }

@@ -13,11 +13,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -53,6 +49,7 @@ class AndroidSymbols(
     private val androidOs: IrPackageFragment = createPackage("android.os")
     private val androidUtil: IrPackageFragment = createPackage("android.util")
     private val androidText: IrPackageFragment = createPackage("android.text")
+    private val runtimePackage: IrPackageFragment = createPackage("kotlinx.parcelize")
 
     private val androidOsBundle: IrClassSymbol =
         createClass(androidOs, "Bundle", ClassKind.CLASS, Modality.FINAL)
@@ -62,6 +59,9 @@ class AndroidSymbols(
 
     val androidOsParcel: IrClassSymbol =
         createClass(androidOs, "Parcel", ClassKind.CLASS, Modality.FINAL)
+
+    val directInitializerMarker: IrClassSymbol =
+        createClass(runtimePackage,"DirectInitializerMarker", ClassKind.OBJECT, Modality.FINAL)
 
     private val androidOsParcelFileDescriptor: IrClassSymbol =
         createClass(androidOs, "ParcelFileDescriptor", ClassKind.CLASS, Modality.OPEN)

@@ -52,6 +52,7 @@ object KtErrorsParcelize {
     val DEPRECATED_PARCELER by error0<PsiElement>()
     val INAPPLICABLE_IGNORED_ON_PARCEL by warning0<PsiElement>()
     val INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY by warning0<PsiElement>()
+    val VALUE_PARAMETER_USED_IN_CLASS_BODY by error0<PsiElement>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultErrorMessagesParcelize)

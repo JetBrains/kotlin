@@ -97,6 +97,12 @@ public class ParcelizeIrBytecodeListingTestGenerated extends AbstractParcelizeIr
   }
 
   @Test
+  @TestMetadata("inheritance.kt")
+  public void testInheritance() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/codegen/inheritance.kt");
+  }
+
+  @Test
   @TestMetadata("kt25839.kt")
   public void testKt25839() {
     runTest("plugins/parcelize/parcelize-compiler/testData/codegen/kt25839.kt");

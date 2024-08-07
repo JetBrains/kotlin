@@ -25,24 +25,35 @@ class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
         fun registerParcelizeComponents(
             extensionStorage: ExtensionStorage,
             additionalAnnotation: List<String>,
+            experimentalCodeGeneration: Boolean,
             useFir: Boolean
         ) = with(extensionStorage) {
             val parcelizeAnnotations = ParcelizeNames.PARCELIZE_CLASS_FQ_NAMES.toMutableList()
             additionalAnnotation.mapTo(parcelizeAnnotations) { FqName(it) }
             if (useFir) {
-                IrGenerationExtension.registerExtension(ParcelizeFirIrGeneratorExtension(parcelizeAnnotations))
+                IrGenerationExtension.registerExtension(ParcelizeFirIrGeneratorExtension(parcelizeAnnotations, experimentalCodeGeneration))
             } else {
-                IrGenerationExtension.registerExtension(ParcelizeIrGeneratorExtension(parcelizeAnnotations))
+                IrGenerationExtension.registerExtension(ParcelizeIrGeneratorExtension(parcelizeAnnotations, experimentalCodeGeneration))
             }
             SyntheticResolveExtension.registerExtension(ParcelizeResolveExtension(parcelizeAnnotations))
-            StorageComponentContainerContributor.registerExtension(ParcelizeDeclarationCheckerComponentContainerContributor(parcelizeAnnotations))
-            FirExtensionRegistrarAdapter.registerExtension(FirParcelizeExtensionRegistrar(parcelizeAnnotations))
+            StorageComponentContainerContributor.registerExtension(
+                ParcelizeDeclarationCheckerComponentContainerContributor(
+                    parcelizeAnnotations,
+                    experimentalCodeGeneration
+                )
+            )
+            FirExtensionRegistrarAdapter.registerExtension(FirParcelizeExtensionRegistrar(parcelizeAnnotations, experimentalCodeGeneration))
         }
     }
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val additionalAnnotation = configuration.get(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION) ?: emptyList()
-        registerParcelizeComponents(this, additionalAnnotation, configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
+        registerParcelizeComponents(
+            this,
+            additionalAnnotation,
+            configuration.getBoolean(ParcelizeConfigurationKeys.EXPERIMENTAL_CODE_GENERATION),
+            configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
+        )
     }
 
     override val supportsK2: Boolean
@@ -50,7 +61,8 @@ class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
 }
 
 class ParcelizeDeclarationCheckerComponentContainerContributor(
-    private val parcelizeAnnotations: List<FqName>
+    private val parcelizeAnnotations: List<FqName>,
+    private val experimentalCodeGeneration: Boolean,
 ) : StorageComponentContainerContributor {
     override fun registerModuleComponents(
         container: StorageComponentContainer,
@@ -58,7 +70,7 @@ class ParcelizeDeclarationCheckerComponentContainerContributor(
         moduleDescriptor: ModuleDescriptor,
     ) {
         if (platform.isJvm()) {
-            container.useInstance(ParcelizeDeclarationChecker(parcelizeAnnotations))
+            container.useInstance(ParcelizeDeclarationChecker(parcelizeAnnotations, experimentalCodeGeneration))
             container.useInstance(ParcelizeAnnotationChecker(parcelizeAnnotations))
         }
     }

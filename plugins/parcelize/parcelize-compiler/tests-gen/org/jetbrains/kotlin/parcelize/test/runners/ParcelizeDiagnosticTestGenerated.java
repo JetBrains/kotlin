@@ -126,6 +126,12 @@ public class ParcelizeDiagnosticTestGenerated extends AbstractParcelizeDiagnosti
   }
 
   @Test
+  @TestMetadata("valueParameterUsedInClassBody.kt")
+  public void testValueParameterUsedInClassBody() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/valueParameterUsedInClassBody.kt");
+  }
+
+  @Test
   @TestMetadata("withoutParcelableSupertype.kt")
   public void testWithoutParcelableSupertype() {
     runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/withoutParcelableSupertype.kt");

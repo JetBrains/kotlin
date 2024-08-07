@@ -34,6 +34,8 @@ object ParcelizeNames {
     val RAW_VALUE_ANNOTATION_CLASS_IDS = createClassIds("RawValue")
     val DATA_CLASS_ANNOTATION_CLASS_ID = ClassId(RUNTIME_PACKAGE, Name.identifier("DataClass"))
 
+    val DIRECT_INITIALIZER_MARKER = ClassId(RUNTIME_PACKAGE, Name.identifier("DirectInitializerMarker"))
+
     // -------------------- FQNs --------------------
 
     val PARCELABLE_FQN = PARCELABLE_ID.asSingleFqName()
@@ -58,6 +60,7 @@ object ParcelizeNames {
 
     val DEST_NAME = Name.identifier("dest")
     val FLAGS_NAME = Name.identifier("flags")
+    val MARKER_NAME = Name.identifier("\$marker")
 
     val CREATOR_NAME = Name.identifier("CREATOR")
 

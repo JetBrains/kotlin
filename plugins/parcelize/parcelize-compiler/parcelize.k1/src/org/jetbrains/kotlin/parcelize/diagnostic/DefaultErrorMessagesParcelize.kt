@@ -157,5 +157,10 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
             ErrorsParcelize.DEPRECATED_PARCELER,
             "'kotlinx.android.parcel.Parceler' is deprecated. Use 'kotlinx.parcelize.Parceler' instead"
         )
+
+        MAP.put(
+            ErrorsParcelize.VALUE_PARAMETER_USED_IN_CLASS_BODY,
+            "Parcelized class non-property arguments can only be used as arguments to the super classes constructor."
+        )
     }
 }
