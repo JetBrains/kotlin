@@ -61,6 +61,11 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
+            ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
+            "Open Composable functions with default values are not currently supported"
+        )
+
+        map.put(
             ComposeErrors.COMPOSABLE_SUSPEND_FUN,
             "Composable function cannot be annotated as suspend"
         )

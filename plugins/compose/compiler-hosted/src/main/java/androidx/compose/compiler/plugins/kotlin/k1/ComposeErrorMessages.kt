@@ -90,6 +90,10 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
             "Composable function cannot be annotated as suspend"
         )
         MAP.put(
+            ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
+            "Open Composable functions with default values are not currently supported"
+        )
+        MAP.put(
             ComposeErrors.COMPOSABLE_FUN_MAIN,
             "Composable main functions are not currently supported"
         )
