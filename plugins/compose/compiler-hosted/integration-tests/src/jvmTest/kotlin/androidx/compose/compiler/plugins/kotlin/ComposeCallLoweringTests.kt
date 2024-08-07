@@ -429,7 +429,6 @@ fun <T> B(foo: T, bar: String) { }
         )
     }
 
-    @Ignore
     @Test
     fun testDataClass() {
         classLoader(
@@ -460,6 +459,11 @@ fun <T> B(foo: T, bar: String) { }
             }
             """
                 ),
+            ),
+            additionalPaths = listOf(
+                Classpath.composeFoundationJar(),
+                Classpath.composeUiJar(),
+                Classpath.composeUiGraphicsJar(),
             )
         )
     }

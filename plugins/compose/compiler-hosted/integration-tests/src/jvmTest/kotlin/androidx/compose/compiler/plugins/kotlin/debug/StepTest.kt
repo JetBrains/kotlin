@@ -17,9 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.debug
 
 import org.junit.Test
-import kotlin.test.Ignore
 
-@Ignore // The tests cannot be run against jvmstubs
 class StepTest(useFir: Boolean) : AbstractDebuggerTest(useFir) {
     @Test
     fun testSteppingIntoIf() {

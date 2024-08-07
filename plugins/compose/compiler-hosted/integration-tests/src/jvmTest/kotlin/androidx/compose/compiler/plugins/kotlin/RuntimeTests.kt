@@ -22,7 +22,6 @@ private const val RUNTIME_TEST_ROOT = "plugins/compose/compiler-hosted/runtime-t
 /**
  * Takes Compose tests from runtime-tests module and runs them on compiler + plugin built from source.
  */
-@Ignore // The tests cannot be run against jvmstubs
 @RunWith(RuntimeTestsK1.RuntimeTestRunner::class)
 class RuntimeTestsK1 {
     class RuntimeTestRunner(cls: Class<*>) : Suite(
@@ -31,7 +30,6 @@ class RuntimeTestsK1 {
     )
 }
 
-@Ignore // The tests cannot be run against jvmstubs
 @RunWith(RuntimeTestsK2.RuntimeTestRunner::class)
 class RuntimeTestsK2 {
     class RuntimeTestRunner(cls: Class<*>) : Suite(
