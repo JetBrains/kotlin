@@ -2,7 +2,6 @@ package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.tooling.core.withClosure
 import java.io.File
-import kotlin.collections.ArrayDeque
 
 /**
  * f1, f2, ... fN
@@ -63,26 +62,48 @@ inline fun <Compilation, Target, reified SourceSet> transformKGPModelToUklibMode
 }
 
 
+class ResolvedModuleClasspath<Target>(
+    val fullFragmentClasspath: Map<Fragment<Target>, List<File>>,
+    val exactlyMatchingFragmentClasspath: Map<Fragment<Target>, List<File>>,
+)
+
 
 fun <Target> resolveModuleFragmentClasspath(
     module: Uklib<Target>,
     dependencies: Set<Uklib<Target>>,
-): Map<Fragment<Target>, List<File>> {
+): ResolvedModuleClasspath<Target> {
     val moduleFragments = module.module.fragments.toList()
-    val fragmentClasspath = mutableMapOf<Fragment<Target>, MutableList<File>>()
-
-    resolveFragmentRefinersWithinModule(moduleFragments).forEach { (fragment, refiners) ->
-        fragmentClasspath.getOrPut(fragment, { mutableListOf() }).addAll(
-            refiners.map { module.fragmentToArtifact[it.identifier]!! }
-        )
+    val fullFragmentClasspath = mutableMapOf<Fragment<Target>, MutableList<File>>()
+    val exactFragmentClasspath = mutableMapOf<Fragment<Target>, MutableList<File>>()
+    moduleFragments.forEach {
+        fullFragmentClasspath[it] = mutableListOf()
+        exactFragmentClasspath[it] = mutableListOf()
     }
 
+    // FIXME: Do we ever want to resolve self fragments? Maybe we could refactor some KGP parts to better reflect this model, but not right now
+//    resolveFragmentRefinersWithinModule(moduleFragments).forEach { (fragment, refiners) ->
+//        fullFragmentClasspath.getOrPut(fragment, { mutableListOf() }).addAll(
+//            refiners.map { module.fragmentToArtifact[it.identifier]!! }
+//        )
+//    }
+
     dependencies.forEach { dependency ->
+        val dependencyFragments = dependency.module.fragments.toList()
         resolveFragmentDependencies(
             targetFragments = moduleFragments,
-            dependencyFragments = dependency.module.fragments.toList(),
+            dependencyFragments = dependencyFragments,
         ).forEach { (fragment, dependencies) ->
-            fragmentClasspath[fragment]!!.addAll(
+            fullFragmentClasspath[fragment]!!.addAll(
+                dependencies.map {
+                    dependency.fragmentToArtifact[it.identifier]!!
+                }
+            )
+        }
+        resolvePlatformFragmentDependencies(
+            targetPlatformFragments = moduleFragments,
+            dependencyFragments = dependencyFragments,
+        ).forEach { (fragment, dependencies) ->
+            exactFragmentClasspath[fragment]!!.addAll(
                 dependencies.map {
                     dependency.fragmentToArtifact[it.identifier]!!
                 }
@@ -90,7 +111,11 @@ fun <Target> resolveModuleFragmentClasspath(
         }
     }
 
-    return fragmentClasspath
+
+    return ResolvedModuleClasspath(
+        fullFragmentClasspath = fullFragmentClasspath,
+        exactlyMatchingFragmentClasspath = exactFragmentClasspath,
+    )
 }
 
 /**
@@ -117,6 +142,20 @@ fun <Target> resolveFragmentDependencies(
     targetFragments = targetFragments,
     dependencyFragments = dependencyFragments,
     canSee = { attributes.isSubsetOf(it.attributes) }
+)
+
+/**
+ * This function takes fragments [targetPlatformFragments] that depend on another module's fragments [dependencyFragments] and
+ * outputs a map where the keys are [targetPlatformFragments] and the values are empty of single element lists of [dependencyFragments]
+ * matching
+ */
+fun <Target> resolvePlatformFragmentDependencies(
+    targetPlatformFragments: List<Fragment<Target>>,
+    dependencyFragments: List<Fragment<Target>>,
+) = resolveFragmentDependencies(
+    targetFragments = targetPlatformFragments,
+    dependencyFragments = dependencyFragments,
+    canSee = { attributes == it.attributes }
 )
 
 fun <Target> resolveFragmentDependencies(

@@ -67,7 +67,7 @@ abstract class KotlinNativeTarget @Inject constructor(
                         mainCompilation,
                         KotlinUsageContext.MavenScope.COMPILE,
                         hostSpecificMetadataElementsConfigurationName,
-                        includeIntoProjectStructureMetadata = false
+                        includeIntoProjectStructureMetadata = false,
                     )
                 )
             }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.artifacts
 
-import com.android.tools.r8.internal.UK
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -84,7 +83,7 @@ private suspend fun Project.setupConsumption() {
     val thisModuleUklib = uklibFromKGPModel(targets.toList())
     val dependenciesAsUklibs = lazy {
         // FIXME: Do configurations have stable order in terms of dependencies and in terms of files that you put into them?
-        uklibsPath.map { unzippedKlib ->
+        uklibsPath.incoming.artifactView { it.isLenient = true }.artifacts.artifactFiles.map { unzippedKlib ->
             Uklib.deserializeFromDirectory(unzippedKlib)
         }
     }
@@ -96,24 +95,70 @@ private suspend fun Project.setupConsumption() {
     }
 
     // Резолвить фрагменты зависимостей нужно только для метадатных компиляций
-    multiplatformExtension.targets.configureEach { target ->
-        if (target !is KotlinMetadataTarget) return@configureEach
-        target.compilations.configureEach { compilation ->
-            compilation.internal.configurations.compileDependencyConfiguration.dependencies.addLater(
-                provider {
-                    val key = Fragment(
-                        compilation.defaultSourceSet.name,
-                        sourceSetToTargets[compilation.defaultSourceSet]!!,
-                    )
-
-                    kotlinPluginLifecycle.project.dependencies.create(
-                        kotlinPluginLifecycle.project.files(
-                            resolvedFragments.value[key]!!
-                        )
-                    )
+    multiplatformExtension.targets.all { target ->
+        if (target is KotlinMetadataTarget) {
+            setupMetadataCompilationsUklibConsumption(target, sourceSetToTargets, lazy { resolvedFragments.value.fullFragmentClasspath })
+        } else {
+            val compilation = target.compilations.getByName(MAIN_COMPILATION_NAME)
+            uklibsPath.extendsFrom(
+                compilation.internal.configurations.apiConfiguration,
+                compilation.internal.configurations.implementationConfiguration,
+            )
+            val fragmentFileForPlatformCompilation = provider {
+                compilation.fragmentFiles(
+                    sourceSetToTargets = sourceSetToTargets,
+                    resolvedFragments = resolvedFragments.value.exactlyMatchingFragmentClasspath,
+                )
+            }
+            project.tasks.register("_resolveUklibsFor${compilation.defaultSourceSet.name}") {
+                it.doLast {
+                    fragmentFileForPlatformCompilation.get().forEach {
+                        println(it)
+                    }
                 }
+            }
+            compilation.compileDependencyFiles += files(fragmentFileForPlatformCompilation)
+        }
+    }
+}
+
+private fun KotlinCompilation<*>.fragmentFiles(
+    sourceSetToTargets: MutableMap<KotlinSourceSet, MutableSet<String>>,
+    resolvedFragments: Map<Fragment<String>, List<File>>,
+): List<File> = resolvedFragments[
+    Fragment(
+        defaultSourceSet.name,
+        sourceSetToTargets[defaultSourceSet]!!,
+    )
+]!!
+
+private fun Project.setupMetadataCompilationsUklibConsumption(
+    target: KotlinTarget,
+    sourceSetToTargets: MutableMap<KotlinSourceSet, MutableSet<String>>,
+    resolvedFragments: Lazy<Map<Fragment<String>, List<File>>>,
+) {
+    target.compilations.all { compilation ->
+        uklibsPath.extendsFrom(
+            compilation.internal.configurations.apiConfiguration,
+            compilation.internal.configurations.implementationConfiguration,
+        )
+
+        if (compilation is KotlinCommonCompilation && !compilation.isKlibCompilation) return@all
+
+        val fragmentFilesForMetadataCompilation = provider {
+            compilation.fragmentFiles(
+                sourceSetToTargets = sourceSetToTargets,
+                resolvedFragments = resolvedFragments.value,
             )
         }
+        project.tasks.register("_resolveUklibsFor${compilation.defaultSourceSet.name}") {
+            it.doLast {
+                fragmentFilesForMetadataCompilation.get().forEach {
+                    println(it)
+                }
+            }
+        }
+        compilation.compileDependencyFiles += files(fragmentFilesForMetadataCompilation)
     }
 }
 
@@ -184,7 +229,7 @@ private fun uklibFromKGPModel(
     }
 
     return transformKGPModelToUklibModel(
-        "foo",
+        "stub",
         publishedCompilations = compilationToArtifact.keys.toList(),
         publishedArtifact = { compilationToArtifact[this]!!.single() },
         defaultSourceSet = { this.defaultSourceSet },

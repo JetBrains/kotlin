@@ -199,10 +199,13 @@ class DefaultKotlinUsageContext(
     override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> =
         configuration.incoming.dependencyConstraints
 
-    override fun getArtifacts(): Set<PublishArtifact> =
-        overrideConfigurationArtifacts?.get()?.toSet() ?:
+    override fun getArtifacts(): Set<PublishArtifact> {
+        // Don't publish anything except the uklib
+        if (configuration.name != "metadataUklibElements") return emptySet()
+        return overrideConfigurationArtifacts?.get()?.toSet() ?:
         // TODO Gradle Java plugin does that in a different way; check whether we can improve this
         configuration.artifacts
+    }
 
     override fun getAttributes(): AttributeContainer {
         val configurationAttributes = overrideConfigurationAttributes ?: configuration.attributes
