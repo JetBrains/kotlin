@@ -118,16 +118,21 @@ extern "C" id Kotlin_ObjCExport_convertUnitToRetained(ObjHeader* unitInstance) {
 
 extern "C" id Kotlin_ObjCExport_CreateRetainedNSStringFromKString(ObjHeader* str) {
   auto header = StringHeader::of(str);
+  auto encoding = header->encoding();
+  auto nsEncoding =
+    encoding == StringHeader::ENCODING_UTF16 ? NSUTF16LittleEndianStringEncoding :
+    encoding == StringHeader::ENCODING_LATIN1 ? NSISOLatin1StringEncoding :
+    NSASCIIStringEncoding; // invalid value, not sure what to do
   if (str->permanent()) {
     return [[NSString alloc] initWithBytesNoCopy:header->data()
         length:header->size()
-        encoding:NSUTF16LittleEndianStringEncoding
+        encoding:nsEncoding
         freeWhenDone:NO];
   } else {
     // TODO: consider making NSString subclass to avoid copying here.
     NSString* candidate = [[NSString alloc] initWithBytes:header->data()
       length:header->size()
-      encoding:NSUTF16LittleEndianStringEncoding];
+      encoding:nsEncoding];
 
     if (id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate)) {
       objc_release(candidate);
