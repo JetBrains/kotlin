@@ -472,7 +472,7 @@ GCHandle::GCThreadRootSetScope::~GCThreadRootSetScope(){
     if (!handle_.isValid()) return;
     handle_.threadRootSetCollected(threadData_, threadLocalRoots_, stackRoots_);
     GCLogDebug(
-            handle_.getEpoch(), "Collected root set for thread #%d: stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
+            handle_.getEpoch(), "Collected root set for thread #%" PRIuPTR ": stack=%" PRIu64 " tls=%" PRIu64 " in %" PRIu64 " microseconds.",
             threadData_.threadId(), stackRoots_, threadLocalRoots_, getStageTime());
 }
 

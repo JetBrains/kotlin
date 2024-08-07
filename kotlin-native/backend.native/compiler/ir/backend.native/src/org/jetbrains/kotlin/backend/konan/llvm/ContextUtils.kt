@@ -511,6 +511,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val int16Type = LLVMInt16TypeInContext(llvmContext)!!
     val int32Type = LLVMInt32TypeInContext(llvmContext)!!
     val int64Type = LLVMInt64TypeInContext(llvmContext)!!
+    val intptrType = LLVMIntPtrTypeInContext(llvmContext, runtime.targetData)!!
     val floatType = LLVMFloatTypeInContext(llvmContext)!!
     val doubleType = LLVMDoubleTypeInContext(llvmContext)!!
     val vector128Type = LLVMVectorType(floatType, 4)!!
@@ -540,11 +541,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     fun char16(value: Char): LLVMValueRef = constChar16(value).llvm
     fun int32(value: Int): LLVMValueRef = constInt32(value).llvm
     fun int64(value: Long): LLVMValueRef = constInt64(value).llvm
+    fun intptr(value: Int): LLVMValueRef = LLVMConstInt(intptrType, value.toLong(), 1)!!
     fun float32(value: Float): LLVMValueRef = constFloat32(value).llvm
     fun float64(value: Double): LLVMValueRef = constFloat64(value).llvm
 
     val kNullInt8Ptr by lazy { LLVMConstNull(int8PtrType)!! }
     val kNullInt32Ptr by lazy { LLVMConstNull(pointerType(int32Type))!! }
+    val kNullIntptrPtr by lazy { LLVMConstNull(pointerType(intptrType))!! }
     val kImmInt32Zero by lazy { int32(0) }
     val kImmInt32One by lazy { int32(1) }
 
