@@ -132,16 +132,6 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         irFile.transformChildren(this, null)
     }
 
-    override fun visitClass(declaration: IrClass): IrStatement {
-        val origin = declaration.origin
-        return if (origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is DataFramePlugin) {
-            declaration.transformChildren(this, null)
-            declaration
-        } else {
-            super.visitClass(declaration)
-        }
-    }
-
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         val origin = declaration.origin
         if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is TokenGenerator.Key)) return declaration
