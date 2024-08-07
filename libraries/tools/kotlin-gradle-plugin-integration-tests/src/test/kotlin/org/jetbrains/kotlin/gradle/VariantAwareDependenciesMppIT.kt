@@ -204,7 +204,9 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_7)
     @GradleTest
     fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations(gradleVersion: GradleVersion) {
-        project("new-mpp-jvm-with-java-multi-module", gradleVersion) {
+        val buildOptions = defaultBuildOptions
+            .copy(enableKmpProjectIsolation = false) // TODO: Fix with KT-64998
+        project("new-mpp-jvm-with-java-multi-module", gradleVersion, buildOptions) {
             testResolveAllConfigurations("app")
         }
     }

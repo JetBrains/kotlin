@@ -72,9 +72,13 @@ class MppMetadataResolutionIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app")
     fun testResolveMppProjectDependencyToMetadata(gradleVersion: GradleVersion) {
+        val buildOptions = defaultBuildOptions
+            .copy(enableKmpProjectIsolation = false) // TODO: Fix with KT-64998
+
         project(
             projectName = "new-mpp-lib-and-app/sample-app",
             gradleVersion = gradleVersion,
+            buildOptions = buildOptions,
         ) {
 
             includeOtherProjectAsSubmodule(

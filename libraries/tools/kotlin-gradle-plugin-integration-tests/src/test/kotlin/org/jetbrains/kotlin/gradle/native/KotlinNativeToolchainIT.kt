@@ -13,14 +13,14 @@ import org.junit.jupiter.api.DisplayName
 @NativeGradlePluginTests
 class KotlinNativeToolchainIT : KGPBaseTest() {
 
-
     @DisplayName(
         "KT-66750: check that disabled native toolchain flag in subproject does not affect root project"
     )
     @GradleTest
     fun checkCommonizeNativeDistributionWithPlatform(gradleVersion: GradleVersion) {
         nativeProject("commonize-kt-66750-with-subproject", gradleVersion) {
-            build(":commonizeNativeDistribution")
+            val buildOptions = defaultBuildOptions.copy(enableKmpProjectIsolation = false)
+            build(":commonizeNativeDistribution", buildOptions = buildOptions)
         }
     }
 
