@@ -19,6 +19,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.friendModulesDisabled = from.friendModulesDisabled
     to.generateDts = from.generateDts
     to.generatePolyfills = from.generatePolyfills
+    to.includeUnavailableSourcesIntoSourceMap = from.includeUnavailableSourcesIntoSourceMap
     to.includes = from.includes
     to.irBaseClassInMetadata = from.irBaseClassInMetadata
     to.irBuildCache = from.irBuildCache

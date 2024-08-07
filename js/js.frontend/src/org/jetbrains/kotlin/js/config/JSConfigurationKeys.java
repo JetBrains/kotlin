@@ -41,6 +41,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<SourceMapNamesPolicy> SOURCEMAP_NAMES_POLICY = CompilerConfigurationKey.create(
             "a policy to generate a mapping from generated identifiers to their corresponding original names");
 
+    public static final CompilerConfigurationKey<Boolean> SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES = CompilerConfigurationKey.create(
+            "insert source mappings from libraries even if their sources are unavailable on the end-user machine");
+
     public static final CompilerConfigurationKey<Boolean> META_INFO =
             CompilerConfigurationKey.create("generate .meta.js and .kjsm files");
 
