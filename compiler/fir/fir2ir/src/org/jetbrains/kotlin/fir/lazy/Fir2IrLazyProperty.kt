@@ -9,19 +9,18 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
-import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
-import org.jetbrains.kotlin.fir.backend.utils.asCompileTimeIrInitializer
-import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
-import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
-import org.jetbrains.kotlin.fir.backend.utils.toIrConst
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.PropertySymbols
+import org.jetbrains.kotlin.fir.backend.lazyMappedPropertyListVar
+import org.jetbrains.kotlin.fir.backend.toIrType
+import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
@@ -175,6 +174,7 @@ class Fir2IrLazyProperty(
             )
         }
         origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
+            fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             callablesGenerator.createBackingField(
                 this@Fir2IrLazyProperty,
                 fir,
