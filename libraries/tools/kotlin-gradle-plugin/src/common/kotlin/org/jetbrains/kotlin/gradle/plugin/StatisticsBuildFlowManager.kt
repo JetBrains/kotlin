@@ -11,7 +11,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
-import org.jetbrains.kotlin.gradle.fus.internal.GradleBuildFusStatisticsBuildService
+import org.jetbrains.kotlin.gradle.fus.internal.InternalGradleBuildFusStatisticsService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildScanExtensionHolder
@@ -66,7 +66,7 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
         val buildUidServiceProperty: Property<BuildUidService?>?
 
         @get:ServiceReference
-        val customFusServiceProperty: Property<GradleBuildFusStatisticsBuildService?>?
+        val customFusServiceProperty: Property<InternalGradleBuildFusStatisticsService?>?
 
         @get:Input
         val buildFailed: Property<Boolean>
@@ -74,10 +74,10 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
     }
 
     override fun execute(parameters: Parameters) {
-        parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
+       parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.buildFailed.get(),
             parameters.buildUidServiceProperty?.orNull?.buildId ?: "unknown_id",
-            parameters.customFusServiceProperty?.orNull?.parameters?.configurationMetrics?.orNull ?: emptyList()
+            parameters.customFusServiceProperty?.orNull?.getAllReportedMetrics() ?: emptyList()
         )
     }
 }

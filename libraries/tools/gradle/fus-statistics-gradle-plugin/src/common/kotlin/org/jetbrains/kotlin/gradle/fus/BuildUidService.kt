@@ -13,7 +13,7 @@ import org.gradle.api.services.BuildServiceParameters
 import java.util.UUID.randomUUID
 
 abstract class BuildUidService : BuildService<BuildServiceParameters.None>, AutoCloseable {
-    public val buildId = randomUUID().toString()
+    val buildId = randomUUID().toString()
     private val log = Logging.getLogger(this.javaClass)
 
     init {

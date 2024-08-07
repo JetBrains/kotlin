@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.fus.internal
 
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
+
 /**
- * Dummy service is used to avoid data collection without user's consent
+ * NoConsent build service is used to avoid data collection without user's consent
  */
-internal abstract class DummyGradleBuildFusStatisticsService : GradleBuildFusStatisticsBuildService() {
+internal abstract class NoConsentGradleBuildFusService : GradleBuildFusStatisticsBuildService(), BuildService<BuildServiceParameters.None> {
     override fun reportMetric(name: String, value: Boolean, subprojectName: String?) {}
 
     override fun reportMetric(name: String, value: Number, subprojectName: String?) {}
