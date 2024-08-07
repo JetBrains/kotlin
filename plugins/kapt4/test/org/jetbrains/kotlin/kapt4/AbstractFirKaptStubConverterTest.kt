@@ -23,7 +23,7 @@ open class AbstractFirKaptStubConverterTest : AbstractKaptStubConverterTest() {
     override val frontendKind: FrontendKind<*> get() = FrontendKinds.FIR
 
     override val kaptFacade: Constructor<AbstractTestFacade<ResultingArtifact.Source, KaptContextBinaryArtifact>>
-        get() = { FirJvmCompilerWithKaptFacade(it) }
+        get() = { FirClassFileToSourceStubHandler(it) }
 }
 
 /**
