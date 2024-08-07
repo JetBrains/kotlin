@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.createTypePointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -31,9 +30,10 @@ internal class KaFirCapturedType(
     override val projection: KaTypeProjection
         get() = withValidityAssertion { builder.typeBuilder.buildTypeProjection(coneType.constructor.projection) }
 
-    override val annotations: KaAnnotationList by cached {
-        KaFirAnnotationListForType.create(coneType, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForType.create(coneType, builder)
+        }
 
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }

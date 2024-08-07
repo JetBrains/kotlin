@@ -16,16 +16,16 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
 import org.jetbrains.kotlin.name.FqName
 
 internal class KaFirPackageSymbol(
     override val fqName: FqName,
     private val project: Project,
-    override val token: KaLifetimeToken
+    override val token: KaLifetimeToken,
 ) : KaPackageSymbol(), KaLifetimeOwner {
     override val psi: PsiElement? by cached {
         JavaPsiFacade.getInstance(project).findPackage(fqName.asString())
@@ -59,7 +59,7 @@ internal class KaFirPackageSymbol(
 class KtPackage(
     manager: PsiManager,
     private val fqName: FqName,
-    private val scope: GlobalSearchScope
+    private val scope: GlobalSearchScope,
 ) : PsiPackageImpl(manager, fqName.asString().replace('/', '.')) {
     override fun copy() = KtPackage(manager, fqName, scope)
 

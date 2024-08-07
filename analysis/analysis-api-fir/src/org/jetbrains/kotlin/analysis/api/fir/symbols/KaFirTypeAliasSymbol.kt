@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -36,7 +36,7 @@ internal class KaFirTypeAliasSymbol(
     override val firSymbol: FirTypeAliasSymbol,
     override val analysisSession: KaFirSession,
 ) : KaTypeAliasSymbol(), KaFirSymbol<FirTypeAliasSymbol> {
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
     override val name: Name get() = withValidityAssertion { firSymbol.name }
     override val classId: ClassId? get() = withValidityAssertion { firSymbol.getClassId() }
 
@@ -52,14 +52,15 @@ internal class KaFirTypeAliasSymbol(
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { firSymbol.visibility }
 
-    override val typeParameters by cached { firSymbol.createKtTypeParameters(builder) }
+    override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
 
-    override val expandedType: KaType by cached { builder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
+    override val expandedType: KaType get() = withValidityAssertion { builder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
     override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
 
-    override val annotations: KaAnnotationList by cached {
-        KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+        }
 
     override val location: KaSymbolLocation get() = withValidityAssertion { getSymbolKind() }
 

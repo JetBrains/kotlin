@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.correspondingProperty
@@ -37,7 +38,7 @@ internal class KaFirValueParameterSymbol(
     override val firSymbol: FirValueParameterSymbol,
     override val analysisSession: KaFirSession,
 ) : KaValueParameterSymbol(), KaFirSymbol<FirValueParameterSymbol> {
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
@@ -55,30 +56,33 @@ internal class KaFirValueParameterSymbol(
     override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
     override val isNoinline: Boolean get() = withValidityAssertion { firSymbol.isNoinline }
 
-    override val returnType by cached {
-        val returnType = firSymbol.resolvedReturnType
-        if (firSymbol.isVararg) {
-            builder.typeBuilder.buildKtType(returnType.varargElementType())
-        } else {
-            builder.typeBuilder.buildKtType(returnType)
+    override val returnType: KaType
+        get() = withValidityAssertion {
+            val returnType = firSymbol.resolvedReturnType
+            if (firSymbol.isVararg) {
+                builder.typeBuilder.buildKtType(returnType.varargElementType())
+            } else {
+                builder.typeBuilder.buildKtType(returnType)
+            }
         }
-    }
 
     override val hasDefaultValue: Boolean get() = withValidityAssertion { firSymbol.hasDefaultValue }
 
-    override val annotations by cached {
-        KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-    }
-
-    override val generatedPrimaryConstructorProperty: KaKotlinPropertySymbol? by cached {
-        val propertySymbol = firSymbol.fir.correspondingProperty?.symbol ?: return@cached null
-        val ktPropertySymbol = builder.variableBuilder.buildPropertySymbol(propertySymbol)
-        check(ktPropertySymbol is KaKotlinPropertySymbol) {
-            "Unexpected symbol for primary constructor property ${ktPropertySymbol.javaClass} for fir: ${firSymbol.fir.renderWithType()}"
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
-        ktPropertySymbol
-    }
+    override val generatedPrimaryConstructorProperty: KaKotlinPropertySymbol?
+        get() = withValidityAssertion {
+            val propertySymbol = firSymbol.fir.correspondingProperty?.symbol ?: return@withValidityAssertion null
+            val ktPropertySymbol = builder.variableBuilder.buildPropertySymbol(propertySymbol)
+            check(ktPropertySymbol is KaKotlinPropertySymbol) {
+                "Unexpected symbol for primary constructor property ${ktPropertySymbol.javaClass} for fir: ${firSymbol.fir.renderWithType()}"
+            }
+
+            ktPropertySymbol
+        }
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaValueParameterSymbol>(this)?.let { return it }

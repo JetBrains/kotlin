@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForD
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirJavaFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaJavaFieldSymbol
@@ -33,7 +32,7 @@ internal class KaFirJavaFieldSymbol(
     override val analysisSession: KaFirSession,
 ) : KaJavaFieldSymbol(), KaFirSymbol<FirFieldSymbol> {
     override val token: KaLifetimeToken get() = builder.token
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {

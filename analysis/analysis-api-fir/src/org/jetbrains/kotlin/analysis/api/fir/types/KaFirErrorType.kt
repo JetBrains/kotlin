@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -52,9 +51,10 @@ internal class KaFirErrorType(
             }
         }
 
-    override val annotations: KaAnnotationList by cached {
-        KaFirAnnotationListForType.create(coneType, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForType.create(coneType, builder)
+        }
 
     override val abbreviation: KaUsualClassType?
         get() = withValidityAssertion { null }
@@ -72,7 +72,7 @@ internal class KaFirErrorType(
 private class KaFirErrorTypePointer(
     coneType: ConeErrorType,
     builder: KaSymbolByFirBuilder,
-    private val coneNullability: ConeNullability
+    private val coneNullability: ConeNullability,
 ) : KaTypePointer<KaErrorType> {
     private val coneTypePointer = coneType.createPointer(builder)
 

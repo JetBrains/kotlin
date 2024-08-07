@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirMemberFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTopLevelFunctionSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -43,33 +44,35 @@ internal class KaFirNamedFunctionSymbol(
     override val firSymbol: FirNamedFunctionSymbol,
     override val analysisSession: KaFirSession,
 ) : KaNamedFunctionSymbol(), KaFirSymbol<FirNamedFunctionSymbol> {
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
     override val isBuiltinFunctionInvoke: Boolean
         get() = withValidityAssertion { callableId in kotlinFunctionInvokeCallableIds }
 
-    override val contractEffects: List<KaContractEffectDeclaration> by cached {
-        firSymbol.resolvedContractDescription?.effects
-            ?.map(FirEffectDeclaration::effect)
-            ?.map { it.coneEffectDeclarationToAnalysisApi(builder, this) }
-            .orEmpty()
-    }
+    override val contractEffects: List<KaContractEffectDeclaration>
+        get() = withValidityAssertion {
+            firSymbol.resolvedContractDescription?.effects
+                ?.map(FirEffectDeclaration::effect)
+                ?.map { it.coneEffectDeclarationToAnalysisApi(builder, this) }
+                .orEmpty()
+        }
 
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
 
-    override val contextReceivers: List<KaContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
+    override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
 
-    override val typeParameters by cached { firSymbol.createKtTypeParameters(builder) }
-    override val valueParameters: List<KaValueParameterSymbol> by cached { firSymbol.createKtValueParameters(builder) }
+    override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
+    override val valueParameters: List<KaValueParameterSymbol> get() = withValidityAssertion { firSymbol.createKtValueParameters(builder) }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { firSymbol.fir.hasStableParameterNames }
 
-    override val annotations by cached {
-        KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+        }
 
     override val isSuspend: Boolean get() = withValidityAssertion { firSymbol.isSuspend }
     override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }

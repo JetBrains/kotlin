@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.createTypePointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -29,9 +28,11 @@ internal class KaFirFlexibleType(
 
     override val lowerBound: KaType get() = withValidityAssertion { builder.typeBuilder.buildKtType(coneType.lowerBound) }
     override val upperBound: KaType get() = withValidityAssertion { builder.typeBuilder.buildKtType(coneType.upperBound) }
-    override val annotations: KaAnnotationList by cached {
-        KaFirAnnotationListForType.create(coneType, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForType.create(coneType, builder)
+        }
+
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
     override val abbreviation: KaUsualClassType?

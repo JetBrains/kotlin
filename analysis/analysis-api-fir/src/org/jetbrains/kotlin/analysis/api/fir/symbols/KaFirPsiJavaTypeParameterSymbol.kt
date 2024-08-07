@@ -27,7 +27,7 @@ internal class KaFirPsiJavaTypeParameterSymbol(
     override val psi: PsiTypeParameter,
     override val analysisSession: KaFirSession,
     origin: KaSymbolOrigin,
-    private val computeFirSymbol: () -> FirTypeParameterSymbol,
+    computeFirSymbol: () -> FirTypeParameterSymbol,
 ) : KaFirTypeParameterSymbolBase(), KaFirPsiSymbol<PsiTypeParameter, FirTypeParameterSymbol> {
     override val name: Name = withValidityAssertion {
         psi.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
@@ -50,7 +50,5 @@ internal class KaFirPsiJavaTypeParameterSymbol(
             }
         }
 
-    override val firSymbol: FirTypeParameterSymbol by cached {
-        computeFirSymbol()
-    }
+    override val firSymbol: FirTypeParameterSymbol by cached(computeFirSymbol)
 }

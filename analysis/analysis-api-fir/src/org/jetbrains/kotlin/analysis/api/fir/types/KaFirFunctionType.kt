@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -36,25 +35,30 @@ internal class KaFirFunctionType(
 
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
 
-    override val symbol: KaClassLikeSymbol by cached {
-        builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
-            ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
-    }
+    override val symbol: KaClassLikeSymbol
+        get() = withValidityAssertion {
+            builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
+                ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
+        }
+
     override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
 
-    override val qualifiers: List<KaResolvedClassTypeQualifier> by cached {
-        UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
-    }
+    override val qualifiers: List<KaResolvedClassTypeQualifier>
+        get() = withValidityAssertion {
+            UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
+        }
 
-    override val annotations: KaAnnotationList by cached {
-        KaFirAnnotationListForType.create(coneType, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForType.create(coneType, builder)
+        }
 
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override val abbreviation: KaUsualClassType? by cached {
-        builder.buildAbbreviatedType(coneType)
-    }
+    override val abbreviation: KaUsualClassType?
+        get() = withValidityAssertion {
+            builder.buildAbbreviatedType(coneType)
+        }
 
     override val isSuspend: Boolean get() = withValidityAssertion { coneType.isSuspendOrKSuspendFunctionType(builder.rootSession) }
 
@@ -64,29 +68,33 @@ internal class KaFirFunctionType(
     override val arity: Int get() = withValidityAssertion { parameterTypes.size }
 
     @KaExperimentalApi
-    override val contextReceivers: List<KaContextReceiver> by cached {
-        coneType.contextReceiversTypes(builder.rootSession)
-            .map {
-                // Context receivers in function types may not have labels, hence the `null` label.
-                KaBaseContextReceiver(it.buildKtType(), label = null, token)
-            }
-    }
+    override val contextReceivers: List<KaContextReceiver>
+        get() = withValidityAssertion {
+            coneType.contextReceiversTypes(builder.rootSession)
+                .map {
+                    // Context receivers in function types may not have labels, hence the `null` label.
+                    KaBaseContextReceiver(it.buildKtType(), label = null, token)
+                }
+        }
 
     override val hasContextReceivers: Boolean get() = withValidityAssertion { contextReceivers.isNotEmpty() }
 
-    override val receiverType: KaType? by cached {
-        coneType.receiverType(builder.rootSession)?.buildKtType()
-    }
+    override val receiverType: KaType?
+        get() = withValidityAssertion {
+            coneType.receiverType(builder.rootSession)?.buildKtType()
+        }
 
     override val hasReceiver: Boolean get() = withValidityAssertion { receiverType != null }
 
-    override val parameterTypes: List<KaType> by cached {
-        coneType.valueParameterTypesWithoutReceivers(builder.rootSession).map { it.buildKtType() }
-    }
+    override val parameterTypes: List<KaType>
+        get() = withValidityAssertion {
+            coneType.valueParameterTypesWithoutReceivers(builder.rootSession).map { it.buildKtType() }
+        }
 
-    override val returnType: KaType by cached {
-        coneType.returnType(builder.rootSession).buildKtType()
-    }
+    override val returnType: KaType
+        get() = withValidityAssertion {
+            coneType.returnType(builder.rootSession).buildKtType()
+        }
 
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
@@ -102,7 +110,7 @@ internal class KaFirFunctionType(
 
 private class KaFirFunctionalClassTypePointer(
     coneType: ConeClassLikeTypeImpl,
-    builder: KaSymbolByFirBuilder
+    builder: KaSymbolByFirBuilder,
 ) : KaTypePointer<KaFunctionType> {
     private val coneTypePointer = coneType.createPointer(builder)
 

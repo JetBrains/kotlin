@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForReceiverParameter
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirReceiverParameterSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -44,14 +43,18 @@ internal class KaFirReceiverParameterSymbol(
         }
     }
 
-    override val returnType: KaType by cached {
-        firSymbol.receiverType(analysisSession.firSymbolBuilder)
-            ?: errorWithAttachment("${firSymbol::class} doesn't have an extension receiver") {
-                withFirEntry("callable", firSymbol.fir)
-            }
-    }
+    override val returnType: KaType
+        get() = withValidityAssertion {
+            firSymbol.receiverType(analysisSession.firSymbolBuilder)
+                ?: errorWithAttachment("${firSymbol::class} doesn't have an extension receiver") {
+                    withFirEntry("callable", firSymbol.fir)
+                }
+        }
 
-    override val owningCallableSymbol: KaCallableSymbol by cached { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol) }
+    override val owningCallableSymbol: KaCallableSymbol
+        get() = withValidityAssertion {
+            analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol)
+        }
 
     override val origin: KaSymbolOrigin = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
 
@@ -75,9 +78,10 @@ internal class KaFirReceiverParameterSymbol(
         KaFirReceiverParameterSymbolPointer(owningCallableSymbol.createPointer())
     }
 
-    override val annotations: KaAnnotationList by cached {
-        KaFirAnnotationListForReceiverParameter.create(firSymbol, builder = analysisSession.firSymbolBuilder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForReceiverParameter.create(firSymbol, builder = analysisSession.firSymbolBuilder)
+        }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

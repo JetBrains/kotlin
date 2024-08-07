@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaPropertyGetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -38,7 +38,7 @@ internal class KaFirPropertyGetterSymbol(
         require(firSymbol.isGetter)
     }
 
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
 
     override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
     override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
@@ -59,20 +59,22 @@ internal class KaFirPropertyGetterSymbol(
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.fir.propertySymbol.receiver(builder) }
 
-    override val annotations by cached {
-        KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-    }
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+        }
 
     /**
      * Returns [CallableId] of the delegated Java method if the corresponding property of this setter is a synthetic Java property.
      * Otherwise, returns `null`
      */
-    override val callableId: CallableId? by cached {
-        val fir = firSymbol.fir
-        if (fir is FirSyntheticPropertyAccessor) {
-            fir.delegate.symbol.callableId
-        } else null
-    }
+    override val callableId: CallableId?
+        get() = withValidityAssertion {
+            val fir = firSymbol.fir
+            if (fir is FirSyntheticPropertyAccessor) {
+                fir.delegate.symbol.callableId
+            } else null
+        }
 
     override val valueParameters: List<KaValueParameterSymbol> get() = withValidityAssertion { emptyList() }
 

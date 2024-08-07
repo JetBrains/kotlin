@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForD
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirEnumEntrySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
@@ -34,7 +33,7 @@ internal class KaFirEnumEntrySymbol(
     override val firSymbol: FirEnumEntrySymbol,
     override val analysisSession: KaFirSession,
 ) : KaEnumEntrySymbol(), KaFirSymbol<FirEnumEntrySymbol> {
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
@@ -51,22 +50,23 @@ internal class KaFirEnumEntrySymbol(
 
     override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
-    override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol? by cached {
-        if (firSymbol.fir.initializer == null) {
-            return@cached null
+    override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol?
+        get() = withValidityAssertion {
+            if (firSymbol.fir.initializer == null) {
+                return@withValidityAssertion null
+            }
+
+            firSymbol.fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+            val initializerExpression = firSymbol.fir.initializer
+            check(initializerExpression is FirAnonymousObjectExpression) {
+                "Unexpected enum entry initializer: ${initializerExpression?.javaClass}"
+            }
+
+            val classifierBuilder = analysisSession.firSymbolBuilder.classifierBuilder
+            classifierBuilder.buildAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol) as? KaFirEnumEntryInitializerSymbol
+                ?: error("The anonymous object symbol for an enum entry initializer should be a ${KaFirEnumEntryInitializerSymbol::class.simpleName}")
         }
-
-        firSymbol.fir.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-
-        val initializerExpression = firSymbol.fir.initializer
-        check(initializerExpression is FirAnonymousObjectExpression) {
-            "Unexpected enum entry initializer: ${initializerExpression?.javaClass}"
-        }
-
-        val classifierBuilder = analysisSession.firSymbolBuilder.classifierBuilder
-        classifierBuilder.buildAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol) as? KaFirEnumEntryInitializerSymbol
-            ?: error("The anonymous object symbol for an enum entry initializer should be a ${KaFirEnumEntryInitializerSymbol::class.simpleName}")
-    }
 
     override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaEnumEntrySymbol>(this)

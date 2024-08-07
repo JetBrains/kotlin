@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -51,9 +50,10 @@ internal sealed class KaFirNamedClassSymbolBase : KaNamedClassSymbol(), KaFirSym
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Shared Operations
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    override val superTypes: List<KaType> by cached {
-        firSymbol.superTypesList(builder)
-    }
+    override val superTypes: List<KaType>
+        get() = withValidityAssertion {
+            firSymbol.superTypesList(builder)
+        }
 
     override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedClassSymbol>(this)?.let { return it }
