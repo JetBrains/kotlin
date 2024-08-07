@@ -8,7 +8,7 @@ fun test() {
             fun targetTypeMemberFunction() {}
         }
         setTypeVariableProducerFunction { TargetType() }
-        setTypeVariableConsumerFunction { it.<!UNRESOLVED_REFERENCE!>consumeConcreteType<!>(ConcreteType()) }
+        setTypeVariableConsumerFunction { it.consumeConcreteType(ConcreteType()) }
     }
     // local class equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

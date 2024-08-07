@@ -24,7 +24,7 @@ fun main() {
     generate {
         prop.call("")
 
-        get().<!UNRESOLVED_REFERENCE!>length<!>
+        get().length
 
         id(get()).length
     }.length

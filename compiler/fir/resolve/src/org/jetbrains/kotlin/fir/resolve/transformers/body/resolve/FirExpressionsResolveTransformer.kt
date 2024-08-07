@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedT
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -405,7 +404,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         whileAnalysing(session, safeCallExpression) {
             withContainingSafeCallExpression(safeCallExpression) {
                 safeCallExpression.transformAnnotations(this, ResolutionMode.ContextIndependent)
-                safeCallExpression.transformReceiver(this, ResolutionMode.ContextIndependent)
+                safeCallExpression.transformReceiver(this, ResolutionMode.ReceiverResolution)
 
                 val receiver = safeCallExpression.receiver
 

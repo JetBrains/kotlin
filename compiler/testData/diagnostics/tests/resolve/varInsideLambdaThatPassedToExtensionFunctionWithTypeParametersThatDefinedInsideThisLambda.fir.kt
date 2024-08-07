@@ -10,8 +10,8 @@ fun test(){
         val x = put("key", "value")
         if (x != null) {
             "Error: $x"
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
     }
 }

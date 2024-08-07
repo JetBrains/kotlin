@@ -8,7 +8,7 @@ fun test() {
     val targetTypeBuildee = build {
         var variable = getTypeVariable()
         variable = TargetType()
-        variable.<!UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
+        variable.targetTypeMemberFunction()
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
@@ -26,15 +26,15 @@ fun test() {
     val anyBuildee = build {
         var variable = getTypeVariable()
         variable = TargetType()
-        variable.<!UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
-        variable = DifferentType()
-        variable.<!UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
+        variable.targetTypeMemberFunction()
+        variable = <!ASSIGNMENT_TYPE_MISMATCH!>DifferentType()<!>
+        variable.targetTypeMemberFunction()
         variable = TargetType()
-        variable.<!UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
+        variable.targetTypeMemberFunction()
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<Any>>(anyBuildee)
+    checkExactType<Buildee<Any>>(<!ARGUMENT_TYPE_MISMATCH!>anyBuildee<!>)
 }
 
 

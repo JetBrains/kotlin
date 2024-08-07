@@ -13,7 +13,7 @@ fun main() {
 
     buildList {
         add(Bar())
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>this.get(0)<!>.test() // resolved to Any?.test
+        this.get(0).test() // resolved to Any?.test
     }
     buildList<Bar> {
         add(Bar())
