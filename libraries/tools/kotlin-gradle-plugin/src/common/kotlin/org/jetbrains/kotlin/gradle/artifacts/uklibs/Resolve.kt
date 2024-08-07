@@ -37,9 +37,10 @@ inline fun <Compilation, Target, reified SourceSet> transformKGPModelToUklibMode
 
     val sourceSetToTargets = mutableMapOf<SourceSet, MutableSet<Target>>()
     val fragmentToArtifact = mutableMapOf<String, File>()
+    val publishedSourceSets = publishedCompilations.map { it.defaultSourceSet() }.toSet()
     publishedCompilations.forEach { compilation ->
         val compilationTarget = compilation.target()
-        compilation.defaultSourceSet().withClosure(dependsOn).forEach { sourceSet ->
+        compilation.defaultSourceSet().withClosure(dependsOn).filter { it in publishedSourceSets }.forEach { sourceSet ->
             sourceSetToTargets.getOrPut(
                 sourceSet, { mutableSetOf() }
             ).add(compilationTarget)

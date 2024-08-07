@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.artifacts.UklibArchiveTask
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableUklibs
@@ -21,16 +22,17 @@ class UklibTests {
             }
         ) {
             kotlin {
-                jvm()
                 iosArm64()
                 iosX64()
+                macosArm64()
+                linuxArm64()
+                linuxX64()
+                jvm()
             }
         }.evaluate()
 
-        val apiElements = project.configurations.getByName(
-            project.multiplatformExtension.metadata().apiElementsConfigurationName
-        )
-        println(apiElements)
+        val model = (project.tasks.getByName("packUklib") as UklibArchiveTask).model.get()
+        println(model)
     }
 
 }

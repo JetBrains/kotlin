@@ -19,7 +19,8 @@ data class Uklib<Target>(
         val manifest = gson.toJson(
             mapOf(
                 "identifier" to module.identifier,
-                "fragments" to module.fragments.map {
+                // FIXME: How are we actually going to handle default target hierarchy cause bamboos?
+                "fragments" to module.fragments.filter { fragmentToArtifact[it.identifier]!!.exists() }.map {
                     mapOf(
                         "identifier" to it.identifier,
                         "targets" to it.attributes.map(serializeTarget),
