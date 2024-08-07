@@ -8,11 +8,16 @@
 
 #include <cstdint>
 
-inline int polyHash_naive(int length, uint16_t const* str) {
+template <typename It>
+inline int polyHash_naive(It begin, It end) {
     uint32_t res = 0;
-    for (int i = 0; i < length; ++i)
-        res = res * 31 + str[i];
+    while (begin != end)
+        res = res * 31 + static_cast<uint16_t>(*begin++);
     return res;
+}
+
+inline int polyHash_naive(int length, uint16_t const* str) {
+    return polyHash_naive(str, str + length);
 }
 
 #endif  // RUNTIME_POLYHASH_NAIVE_H

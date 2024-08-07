@@ -23,12 +23,28 @@
 struct StringHeader {
     ARRAY_HEADER_FIELDS
     int32_t hashCode_; // if ArrayHeader has padding, this will go into it instead of the array's data
+    /**
+     * Layout:     | Encoding | <unused> | Ignore last byte | HC computed |
+     * bit number: | 15 .. 12 |          |                1 |           0 |
+     */
     uint16_t flags_;
     alignas(KChar) char data_[];
 
     enum {
+        // Set on first hashcode computation if the result is 0. Unlike having a "hashcode computed" flag,
+        // this means there's always exactly one atomic write, so it needs no synchronization.
         HASHCODE_IS_ZERO = 1 << 0,
+        // Set if the string's encoding has 1-byte characters and the string encodes to an odd-length
+        // byte sequence (the byte sequence has to be padded to an even length to become a Char array).
+        IGNORE_LAST_BYTE = 1 << 1,
+
+        ENCODING_OFFSET = 12,
+        ENCODING_UTF16 = 0,
+        ENCODING_LATIN1 = 1,
+        // ENCODING_UTF8 = 2 ?
     };
+
+    ALWAYS_INLINE int encoding() const { return flags_ >> ENCODING_OFFSET; }
 
     ALWAYS_INLINE char *data() { return data_; }
     ALWAYS_INLINE const char *data() const { return data_; }
@@ -45,7 +61,7 @@ struct StringHeader {
     }
 
     ALWAYS_INLINE constexpr static size_t extraLength(int flags) {
-        return offsetof(StringHeader, data_) - sizeof(ArrayHeader);
+        return (offsetof(StringHeader, data_) - sizeof(ArrayHeader)) + !!(flags & IGNORE_LAST_BYTE);
     }
 };
 
@@ -54,13 +70,12 @@ static_assert(StringHeader::extraLength(0) % 2 == 0, "String's data is not align
 extern "C" {
 
 OBJ_GETTER(CreateStringFromCString, const char* cstring);
-OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes);
-OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t lengthBytes);
-OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t lengthChars);
+OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t length);
+OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t length);
+OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t length);
 
-// The string returned by this method contains undefined data; users should fill the array
-// returned by `StringRawData`, which is guaranteed to have a size of `lengthChars * 2`.
-OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars);
+OBJ_GETTER(CreateUninitializedUtf16String, uint32_t length);
+OBJ_GETTER(CreateUninitializedLatin1String, uint32_t length);
 
 char* CreateCStringFromString(KConstRef kstring);
 void DisposeCString(char* cstring);
