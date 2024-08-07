@@ -44,6 +44,11 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES by directive(
+        description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine",
+        applicability = DirectiveApplicability.Global
+    )
+
     val RUN_THIRD_PARTY_OPTIMIZER by directive(
         description = "Also run third-party optimizer (for now, only binaryen is supported) after the main compilation",
     )

@@ -39,8 +39,12 @@ class SourceMapGenerator(
         val sourceMapBuilder =
             SourceMap3Builder(null, { error("This should not be called for Kotlin/Wasm") }, sourceMapsInfo.sourceMapPrefix)
 
-        val pathResolver =
-            SourceFilePathResolver.create(sourceMapsInfo.sourceRoots, sourceMapsInfo.sourceMapPrefix, sourceMapsInfo.outputDir)
+        val pathResolver = SourceFilePathResolver.create(
+            sourceMapsInfo.sourceRoots,
+            sourceMapsInfo.sourceMapPrefix,
+            sourceMapsInfo.outputDir,
+            sourceMapsInfo.includeUnavailableSourcesIntoSourceMap
+        )
 
         var prev: SourceLocation.Location? = null
         var prevGeneratedLine = 0
@@ -62,12 +66,21 @@ class SourceMapGenerator(
                 // TODO: add the ignored location into "ignoreList" in future
                 is SourceLocation.NoLocation, is SourceLocation.IgnoredLocation -> sourceMapBuilder.addEmptyMapping(generatedLocation.column)
                 is SourceLocation.Location -> {
-                    sourceLocation.apply {
-                        // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
-                        val relativePath = pathResolver.getPathRelativeToSourceRoots(File(file)).replace(Regex("^\\.\\./"), "")
-                        sourceMapBuilder.addMapping(relativePath, null, { null }, line, column, null, generatedLocation.column)
-                        prev = this
-                    }
+                    // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
+                    val relativePath = pathResolver
+                        .getPathRelativeToSourceRootsIfExists(sourceLocation.module, File(sourceLocation.file))
+                        ?.replace(Regex("^\\.\\./"), "") ?: continue
+
+                    sourceMapBuilder.addMapping(
+                        relativePath,
+                        null,
+                        { null },
+                        sourceLocation.line,
+                        sourceLocation.column,
+                        null,
+                        generatedLocation.column
+                    )
+                    prev = sourceLocation
                 }
             }
 
