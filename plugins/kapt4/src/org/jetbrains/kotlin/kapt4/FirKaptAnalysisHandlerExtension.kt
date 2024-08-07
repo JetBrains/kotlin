@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
-import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler
@@ -47,6 +46,7 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 
@@ -56,7 +56,9 @@ import java.io.File
  * It is supposed to replace the old AA-based implementation ([Kapt4AnalysisHandlerExtension]) once we ensure that there are no critical
  * problems with it.
  */
-internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
+open class FirKaptAnalysisHandlerExtension(
+    private val kaptLogger: MessageCollectorBackedKaptLogger? = null,
+) : FirAnalysisHandlerExtension() {
     lateinit var logger: MessageCollectorBackedKaptLogger
     lateinit var options: KaptOptions
 
@@ -66,12 +68,13 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
     override fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean {
         val optionsBuilder = configuration[KAPT_OPTIONS]!!
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        logger = MessageCollectorBackedKaptLogger(
-            KaptFlag.VERBOSE in optionsBuilder.flags,
-            KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
-            messageCollector
-        )
+        logger = kaptLogger
+            ?: MessageCollectorBackedKaptLogger(
+                KaptFlag.VERBOSE in optionsBuilder.flags,
+                KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
+                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            )
+        val messageCollector = logger.messageCollector
 
         if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
             logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
@@ -107,6 +110,8 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
         val module = configuration[JVMConfigurationKeys.MODULES]?.single()
             ?: error("Single module expected: ${configuration[JVMConfigurationKeys.MODULES]}")
+        // TODO: Looks like we can use whatever compiler input we want - groupedSources are not checked anyway
+        // See [getSourceFiles] - where we just pass a list of files from tests
         val compilerInput = ModuleCompilerInput(
             TargetId(module),
             groupedSources,
@@ -200,6 +205,16 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         }
     }
 
+    protected open fun getSourceFiles(
+        disposable: Disposable,
+        projectEnvironment: VfsBasedProjectEnvironment,
+        compilerInput: ModuleCompilerInput,
+    ): List<KtFile> {
+        val environment = KotlinCoreEnvironment.createForProduction(disposable, compilerInput.configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+
+        return environment.getSourceFiles()
+    }
+
     private fun contextForStubGeneration(
         disposable: Disposable,
         projectEnvironment: VfsBasedProjectEnvironment,
@@ -210,9 +225,8 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         val (analysisTime, analysisResults) = measureTimeMillis {
-            val environment = KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-            runFrontendForAnalysis(projectEnvironment, configuration, messageCollector, environment.getSourceFiles(), null, module)
+            val sourceFiles = getSourceFiles(disposable, projectEnvironment, compilerInput)
+            runFrontendForAnalysis(projectEnvironment, configuration, messageCollector, sourceFiles, null, module)
         }
 
         logger.info { "Initial analysis took $analysisTime ms" }
@@ -250,10 +264,10 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         logger.info { "Stubs for Kotlin classes: " + kaptStubs.joinToString { it.file.sourcefile.name } }
 
         saveStubs(kaptContext, kaptStubs, logger.messageCollector)
-        saveIncrementalData(kaptContext, logger.messageCollector)
+        saveIncrementalData(kaptContext, logger.messageCollector, converter)
     }
 
-    private fun saveStubs(
+    protected open fun saveStubs(
         kaptContext: KaptContextForStubGeneration,
         stubs: List<KaptStub>,
         messageCollector: MessageCollector,
@@ -300,9 +314,10 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         logger.info { "Source files: ${sourceFiles}" }
     }
 
-    private fun saveIncrementalData(
+    protected open fun saveIncrementalData(
         kaptContext: KaptContextForStubGeneration,
-        messageCollector: MessageCollector
+        messageCollector: MessageCollector,
+        converter: KaptStubConverter,
     ) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
@@ -315,19 +330,13 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         )
     }
 
-    private fun loadProcessors(): LoadedProcessors {
+    protected open fun loadProcessors(): LoadedProcessors {
         return EfficientProcessorLoader(options, logger).loadProcessors()
     }
 
     private fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean {
         if (classesOutputDir == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
             logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
-            return false
-        }
-
-        if (processingClasspath.isEmpty()) {
-            // Skip annotation processing if no annotation processors were provided
-            logger.info("No annotation processors provided. Skip KAPT processing.")
             return false
         }
 

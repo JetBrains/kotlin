@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar
+import org.jetbrains.kotlin.kapt3.base.AptMode
 import org.jetbrains.kotlin.kapt3.base.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.kapt3.base.KaptFlag
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
@@ -65,6 +68,10 @@ class KaptEnvironmentConfigurator(
 
             processingOptions.putAll(processorOptions)
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
+            if (configuration.getBoolean(USE_FIR)) {
+                mode = AptMode.STUBS_AND_APT
+            }
+            configuration.put(KAPT_OPTIONS, this)
         }
 
         val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, "kotlin-annotation-processing-runtime.jar")
