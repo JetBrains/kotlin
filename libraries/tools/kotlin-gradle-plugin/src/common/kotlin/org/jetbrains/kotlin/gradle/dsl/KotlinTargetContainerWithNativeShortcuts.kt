@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
 
 
@@ -82,10 +85,17 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
             iosArm64("${namePrefix}Arm64"),
             iosX64("${namePrefix}X64")
         )
+        val trace = NativeTargetShortcutTrace("ios")
         createIntermediateSourceSets(
-            NativeTargetShortcutTrace("ios"), namePrefix, targets.defaultSourceSets(), mostCommonSourceSets()
+            trace,
+            namePrefix,
+            targets.defaultSourceSets(),
+            mostCommonSourceSets()
         )
-        targets.forEach { it.configure() }
+        targets.forEach {
+            it.configure()
+            it.reportUnsupportedTargetShortcutError(UnsupportedTargetShortcut.IOS, trace)
+        }
     }
 
     /**
@@ -124,11 +134,15 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
             tvosArm64("${namePrefix}Arm64"),
             tvosX64("${namePrefix}X64")
         )
+        val trace = NativeTargetShortcutTrace("tvos")
         createIntermediateSourceSets(
-            NativeTargetShortcutTrace("tvos"),
+            trace,
             namePrefix, targets.defaultSourceSets(), mostCommonSourceSets()
         )
-        targets.forEach { it.configure() }
+        targets.forEach {
+            it.configure()
+            it.reportUnsupportedTargetShortcutError(UnsupportedTargetShortcut.TVOS, trace)
+        }
     }
 
     /**
@@ -183,7 +197,10 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
             mostCommonSourceSets()
         )
 
-        listOf(device32, device64, simulatorX64).forEach { it.configure() }
+        listOf(device32, device64, simulatorX64).forEach {
+            it.configure()
+            it.reportUnsupportedTargetShortcutError(UnsupportedTargetShortcut.WATCHOS, trace)
+        }
     }
 
     /**
@@ -195,6 +212,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
      *
      *     watchosArm64()
      *     watchosX64()
+     *     watchosDeviceArm64() // <- Note: This target was previously not registered by the watchos() shortcut!
      *     watchosSimulatorArm64() // <- Note: This target was previously not registered by the watchos() shortcut!
      *     watchosArm32() //<- Note: This target was previously applied, but is likely not needed anymore
      *
@@ -214,6 +232,52 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
 
     @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
     fun watchos(configure: Action<KotlinNativeTarget>) = watchos { configure.execute(this) }
+}
+
+private enum class UnsupportedTargetShortcut {
+    IOS,
+    WATCHOS,
+    TVOS;
+
+    fun shortcutName() = when (this) {
+        IOS -> "ios()"
+        WATCHOS -> "watchos()"
+        TVOS -> "tvos()"
+    }
+
+    fun declareTargets() = when (this) {
+        IOS -> """
+        kotlin {
+            iosArm64()
+            iosSimulatorArm64()
+        }
+        """.trimIndent()
+        WATCHOS -> """
+        kotlin {
+            watchosDeviceArm64()
+            watchosSimulatorArm64()
+        }
+        """.trimIndent()
+        TVOS -> """
+        kotlin {
+            tvosArm64()
+            tvosSimulatorArm64()
+        }
+        """.trimIndent()
+    }
+}
+
+private fun KotlinNativeTarget.reportUnsupportedTargetShortcutError(
+    shortcut: UnsupportedTargetShortcut,
+    trace: Throwable,
+) {
+    project.reportDiagnosticOncePerProject(
+        KotlinToolingDiagnostics.UnsupportedTargetShortcutError(
+            shortcut.shortcutName(),
+            shortcut.declareTargets(),
+            trace
+        )
+    )
 }
 
 internal class NativeTargetShortcutTrace(val shortcut: String) : Throwable() {
