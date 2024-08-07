@@ -46,16 +46,25 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
     }
 
     private fun createKotlinStringLiteral(value: String): ConstPointer {
-        // The data is technically not always UTF-16 because we could have unpaired surrogates,
-        // so `toByteArray(Charsets.UTF_16{LE,BE})` is wrong...
-        val high = if (runtime.isBigEndian) 0 else 1
-        val data = ByteArray(value.length * 2) { (value[it / 2].code shr if (it % 2 == high) 8 else 0).toByte() }
+        val (encodingFlag, encoded) = if (value.all { it.code in 0..255 }) {
+            // Technically it's not *really* Latin-1 because real Latin-1 has unassigned codepoints,
+            // so `toByteArray(Charsets.ISO_8859_1)` does not produce the same result - it can replace
+            // some of the characters with placeholders.
+            1 to ByteArray(value.length) { value[it].code.toByte() }
+        } else {
+            // And here it's technically not always UTF-16 either because we could have unpaired surrogates,
+            // so `toByteArray(Charsets.UTF_16{LE,BE})` is also wrong...
+            val high = if (runtime.isBigEndian) 0 else 1
+            0 to ByteArray(value.length * 2) { (value[it / 2].code shr if (it % 2 == high) 8 else 0).toByte() }
+        }
+        val data = encoded + ByteArray(encoded.size % 2) { 0 }
         val header = Struct(
                 llvm.structTypeWithFlexibleArray(runtime.stringHeaderType, data.size),
                 permanentTag(context.ir.symbols.string.owner.typeInfoPtr), // = Char
                 llvm.constInt32((runtime.stringHeaderExtraSize + data.size) / 2), // array size in Chars
                 llvm.constInt32(value.hashCode()),
-                llvm.constInt16(1.toShort()), // HASHCODE_COMPUTED
+                // flags = HASHCODE_COMPUTED or IGNORE_LAST_BYTE or (encoding shl ENCODING_OFFSET)
+                llvm.constInt16((1 or (2 * (encoded.size % 2)) or (encodingFlag shl 12)).toShort()),
                 ConstArray(llvm.int8Type, data.map(llvm::constInt8))
         )
         return createConstant(header)

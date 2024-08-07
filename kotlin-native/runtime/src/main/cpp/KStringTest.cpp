@@ -14,12 +14,14 @@
 
 using namespace kotlin;
 
-void checkContentsEquality(const char* input, const char16_t* expected) {
-    auto actual = CreatePermanentStringFromCString(input);
+template <typename Unit>
+void checkContentsEquality(const char* ascii, const Unit* expected) {
+    auto actual = CreatePermanentStringFromCString(ascii);
     auto header = StringHeader::of(actual);
-    size_t size = header->size() / sizeof(char16_t);
-    EXPECT_THAT(size, std::char_traits<char16_t>::length(expected));
-    const char16_t* data = reinterpret_cast<const char16_t*>(header->data());
+    EXPECT_THAT(header->encoding(), sizeof(Unit) == 1 ? StringHeader::ENCODING_LATIN1 : StringHeader::ENCODING_UTF16);
+    size_t size = header->size() / sizeof(Unit);
+    EXPECT_THAT(size, std::char_traits<Unit>::length(expected));
+    const Unit* data = reinterpret_cast<const Unit*>(header->data());
     for (size_t i=0; i<size; i++) {
         EXPECT_THAT(data[i], expected[i]);
     }
@@ -30,9 +32,7 @@ void checkContentsEquality(const char* input, const char16_t* expected) {
 TEST(KStringTest, CreatePermanentStringFromCString_ascii) {
     const char* ascii = "Ascii";
     EXPECT_THAT(strlen(ascii), 5);
-    const char16_t* expected = u"Ascii";
-    EXPECT_THAT(std::char_traits<char16_t>::length(expected), 5);
-    checkContentsEquality(ascii, expected);
+    checkContentsEquality(ascii, ascii);
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_misc) {
@@ -54,9 +54,7 @@ TEST(KStringTest, CreatePermanentStringFromCString_surrogates) {
 TEST(KStringTest, CreatePermanentStringFromCString_empty) {
     const char* empty = "";
     EXPECT_THAT(strlen(empty), 0);
-    const char16_t* expected = u"";
-    EXPECT_THAT(std::char_traits<char16_t>::length(expected), 0);
-    checkContentsEquality(empty, expected);
+    checkContentsEquality(empty, empty);
 }
 
 TEST(KStringTest, CreatePermanentStringFromCString_impossible) {
