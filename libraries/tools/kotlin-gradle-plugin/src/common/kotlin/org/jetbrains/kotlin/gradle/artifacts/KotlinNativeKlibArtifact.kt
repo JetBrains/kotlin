@@ -61,6 +61,7 @@ internal fun createKlibArtifact(
             artifact.classifier = classifier
             artifact.builtBy(producingTask)
         }
+        // FIXME: Что такое DefaultArtifactPublicationSet?
         compilation.project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
         artifacts.add(klibArtifact)
         attributes.setAttribute(compilation.project.artifactTypeAttribute, NativeArtifactFormat.KLIB)

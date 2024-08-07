@@ -20,6 +20,7 @@ object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     const val KOTLIN_METADATA = "kotlin-metadata"
+    const val KOTLIN_UKLIB = "kotlin-uklib"
 
     /**
      * Platform CInterop usage:

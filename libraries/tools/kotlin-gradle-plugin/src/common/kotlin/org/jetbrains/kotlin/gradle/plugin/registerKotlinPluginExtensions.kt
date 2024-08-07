@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
@@ -101,6 +102,9 @@ internal fun Project.registerKotlinPluginExtensions() {
             if (isKmpProjectIsolationEnabled) {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
             }
+            if (!project.kotlinPropertiesProvider.enableUklibs) {
+                register(project, KotlinUklibPublicationSetupAction)
+            }
         }
 
     }
@@ -129,13 +133,16 @@ internal fun Project.registerKotlinPluginExtensions() {
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
-        register(project, KotlinMetadataArtifact)
-        register(project, KotlinLegacyCompatibilityMetadataArtifact)
-        register(project, KotlinLegacyMetadataArtifact)
-        register(project, KotlinJvmJarArtifact)
-        register(project, KotlinJsKlibArtifact)
-        register(project, KotlinNativeKlibArtifact)
-        register(project, KotlinNativeHostSpecificMetadataArtifact)
+        // FIXME: This isn't mpp only
+        if (!project.kotlinPropertiesProvider.enableUklibs) {
+            register(project, KotlinMetadataArtifact)
+            register(project, KotlinLegacyCompatibilityMetadataArtifact)
+            register(project, KotlinLegacyMetadataArtifact)
+            register(project, KotlinJvmJarArtifact)
+            register(project, KotlinJsKlibArtifact)
+            register(project, KotlinNativeKlibArtifact)
+            register(project, KotlinNativeHostSpecificMetadataArtifact)
+        }
     }
 
     KotlinGradleProjectChecker.extensionPoint.apply {
