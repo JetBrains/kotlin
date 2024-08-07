@@ -49,7 +49,14 @@ private fun IrDeclaration.findPsiElementForDeclarationOrigin(): PsiElement? {
         }
     }
 
-    val element = PsiSourceManager.findPsiElement(this)
+    // In K2, default property accessors have end offset at the end of the property's type (before the `=`). There's no PSI element with
+    // such endOffset, so we take the corresponding property instead. In K1, it worked automatically because property accessors' end offset
+    // was at the end of the property initializers, but that led to problems with debugging (KT-69911).
+    val anchor = if (this is IrSimpleFunction && origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+        correspondingPropertySymbol?.owner ?: this
+    } else this
+
+    val element = PsiSourceManager.findPsiElement(anchor)
 
     // Offsets for accessors and field of delegated property in IR point to the 'by' keyword, so the closest PSI element is the
     // KtPropertyDelegate (`by ...` expression). However, old JVM backend passed the PSI element of the property instead.
