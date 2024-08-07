@@ -67,7 +67,7 @@ class RhizomedbPredicateMatcher(session: FirSession) : FirExtensionSessionCompon
         symbol.fir.constructors(session).any {
             val valueParam = it.valueParameterSymbols.singleOrNull() ?: return@any false
             val type = valueParam.resolvedReturnType.type.classId
-            type == RhizomedbSymbolNames.eidClassId
+            type == session.builtinTypes.intType.id || type == RhizomedbSymbolNames.eidClassId // TODO: remove EID as it is an alias?
         }
     }
 

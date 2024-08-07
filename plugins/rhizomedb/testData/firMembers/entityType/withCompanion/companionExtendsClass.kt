@@ -10,7 +10,7 @@ data class MyEntity(override val eid: EID) : Entity {
 }
 
 fun foo() {
-    MyEntity.all()
-    MyEntity.single()
-    MyEntity.singleOrNull()
+    MyEntity.<!NONE_APPLICABLE!>all<!>()
+    MyEntity.<!NONE_APPLICABLE!>single<!>()
+    MyEntity.<!NONE_APPLICABLE!>singleOrNull<!>()
 }

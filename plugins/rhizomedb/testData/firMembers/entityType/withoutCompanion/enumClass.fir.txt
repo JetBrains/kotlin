@@ -1,11 +1,11 @@
 FILE: enumClass.kt
     @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final enum class MyEntity : R|com/jetbrains/rhizomedb/Entity|, R|kotlin/Enum<MyEntity>| {
-        private constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
+        private constructor(eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|): R|MyEntity| {
             super<R|kotlin/Enum<MyEntity>|>()
         }
 
-        public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
-            public get(): R|com/jetbrains/rhizomedb/EID|
+        public open override val eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = R|<local>/eid|
+            public get(): R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|
 
         @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final static enum entry A: R|MyEntity| = object : R|MyEntity| {
             private constructor(): R|<anonymous>| {

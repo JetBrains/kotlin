@@ -1,15 +1,15 @@
 FILE: noAnnotation.kt
     public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
-        public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
+        public constructor(eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|): R|MyEntity| {
             super<R|kotlin/Any|>()
         }
 
-        public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
-            public get(): R|com/jetbrains/rhizomedb/EID|
+        public open override val eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = R|<local>/eid|
+            public get(): R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|
 
-        public final operator fun component1(): R|com/jetbrains/rhizomedb/EID|
+        public final operator fun component1(): R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|
 
-        public final fun copy(eid: R|com/jetbrains/rhizomedb/EID| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
+        public final fun copy(eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
 
     }
     public final fun foo(): R|kotlin/Unit| {

@@ -26,7 +26,7 @@ class RhizomedbFirAttributesProvider(session: FirSession) : FirExtensionSessionC
     }
 
     private fun createAttributeForProperty(property: FirPropertySymbol): RhizomedbAttribute? {
-        val klass = property.getContainingClassSymbol(session) ?: return null
+        val klass = property.getContainingClassSymbol() ?: return null
         val propertyType = property.resolvedReturnType
         val (valueKType, kind) = when {
             property.hasAnnotation(RhizomedbAnnotations.manyAnnotationClassId, session) -> {

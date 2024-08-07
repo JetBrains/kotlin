@@ -5,6 +5,9 @@
 
 package org.jetbrains.rhizomedb.fir.extensions
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
@@ -18,6 +21,7 @@ import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension.TypeR
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
@@ -41,12 +45,12 @@ class RhizomedbFirSupertypesExtension(session: FirSession) : FirSupertypeGenerat
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService,
-    ): List<FirResolvedTypeRef> {
-        if (resolvedSupertypes.any { it.isEntityType(typeResolver) }) {
+    ): List<ConeKotlinType> {
+        if (resolvedSupertypes.any { it.isEntityType(typeResolver) || it.isClass() }) {
             // Already EntityType subclass
             return emptyList()
         }
-        return computeEntityTypeSupertypes(classLikeDeclaration, typeResolver)
+        return computeEntityTypeSupertypes(classLikeDeclaration, typeResolver).map { it.coneType }
     }
 
     @ExperimentalSupertypesGenerationApi
@@ -71,6 +75,10 @@ class RhizomedbFirSupertypesExtension(session: FirSession) : FirSupertypeGenerat
         return listOf(def.toFirResolvedTypeRef())
     }
 
+    private fun FirResolvedTypeRef.isClass(): Boolean {
+        return source?.kind is KtRealSourceElementKind && coneType.toClassSymbol(session)?.classKind == ClassKind.CLASS
+    }
+
     private fun FirClassLikeSymbol<*>.isEntity(typeResolver: TypeResolveService): Boolean {
         return isSubclassOf(RhizomedbSymbolNames.entityClassId, typeResolver)
     }
@@ -86,22 +94,22 @@ class RhizomedbFirSupertypesExtension(session: FirSession) : FirSupertypeGenerat
     }
 
     private fun FirResolvedTypeRef.isSubclassOf(classId: ClassId, typeResolver: TypeResolveService): Boolean {
-        return type.classId == classId || type.toClassSymbol(session)?.isSubclassOf(classId, typeResolver) ?: false
+        return coneType.classId == classId || coneType.toClassSymbol(session)?.isSubclassOf(classId, typeResolver) ?: false
     }
 }
 
 private fun typeResolveSupplier(typeResolver: TypeResolveService): SupertypeSupplier = object : SupertypeSupplier() {
     override fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType> {
         return firClass.superTypeRefs.mapNotNull { ref ->
-            ref.coneTypeSafe<ConeClassLikeType>() ?: (ref as? FirUserTypeRef)?.let {
-                typeResolver.resolveUserType(it).type as? ConeClassLikeType
+            (ref.coneTypeOrNull as? ConeClassLikeType) ?: (ref as? FirUserTypeRef)?.let {
+                typeResolver.resolveUserType(it).coneType as? ConeClassLikeType
             }
         }
     }
 
     override fun expansionForTypeAlias(typeAlias: FirTypeAlias, useSiteSession: FirSession): ConeClassLikeType? {
         return typeAlias.expandedConeType ?: (typeAlias.expandedTypeRef as? FirUserTypeRef)?.let {
-            typeResolver.resolveUserType(it).type as? ConeClassLikeType
+            typeResolver.resolveUserType(it).coneType as? ConeClassLikeType
         }
     }
 }

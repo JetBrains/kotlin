@@ -1,5 +1,7 @@
-FILE: noAnnotation.kt
-    public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+FILE: companionImplementsInterface.kt
+    public abstract interface MarkerInterface : R|kotlin/Any| {
+    }
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
         public constructor(eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|): R|MyEntity| {
             super<R|kotlin/Any|>()
         }
@@ -7,9 +9,9 @@ FILE: noAnnotation.kt
         public open override val eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = R|<local>/eid|
             public get(): R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|
 
-        public final companion object Companion : R|kotlin/Any| {
+        public final companion object Companion : R|MarkerInterface|, R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
             private constructor(): R|MyEntity.Companion| {
-                super<R|kotlin/Any|>()
+                super<R|com/jetbrains/rhizomedb/EntityType<MyEntity>|>()
             }
 
             public final val X: R|kotlin/Int| = Int(42)
@@ -21,9 +23,4 @@ FILE: noAnnotation.kt
 
         public final fun copy(eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
 
-    }
-    public final fun foo(): R|kotlin/Unit| {
-        Q|MyEntity|.<Ambiguity: all, [com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all]>#()
-        Q|MyEntity|.<Ambiguity: single, [com/jetbrains/rhizomedb/single, com/jetbrains/rhizomedb/single]>#()
-        Q|MyEntity|.<Ambiguity: singleOrNull, [com/jetbrains/rhizomedb/singleOrNull, com/jetbrains/rhizomedb/singleOrNull]>#()
     }

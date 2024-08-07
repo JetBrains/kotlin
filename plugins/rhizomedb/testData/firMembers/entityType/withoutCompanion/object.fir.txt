@@ -4,8 +4,8 @@ FILE: object.kt
             super<R|kotlin/Any|>()
         }
 
-        public open override val eid: R|com/jetbrains/rhizomedb/EID| = Int(0)
-            public get(): R|com/jetbrains/rhizomedb/EID|
+        public open override val eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = Int(0)
+            public get(): R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|
 
     }
     public final fun foo(): R|kotlin/Unit| {

@@ -9,14 +9,14 @@ FILE: companionExtendsClass.kt
 
     }
     @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
-        public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
+        public constructor(eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|): R|MyEntity| {
             super<R|kotlin/Any|>()
         }
 
-        public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
-            public get(): R|com/jetbrains/rhizomedb/EID|
+        public open override val eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = R|<local>/eid|
+            public get(): R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|
 
-        public final companion object Companion : R|MyBaseClass|, R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
+        public final companion object Companion : R|MyBaseClass| {
             private constructor(): R|MyEntity.Companion| {
                 super<R|MyBaseClass|>(String(MyEntity))
             }
@@ -26,13 +26,13 @@ FILE: companionExtendsClass.kt
 
         }
 
-        public final operator fun component1(): R|com/jetbrains/rhizomedb/EID|
+        public final operator fun component1(): R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|
 
-        public final fun copy(eid: R|com/jetbrains/rhizomedb/EID| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
+        public final fun copy(eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
 
     }
     public final fun foo(): R|kotlin/Unit| {
-        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.all: R|kotlin/collections/Set<MyEntity>|>|()
-        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.single: R|MyEntity|>|()
-        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.singleOrNull: R|MyEntity?|>|()
+        Q|MyEntity|.<Ambiguity: all, [com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all]>#()
+        Q|MyEntity|.<Ambiguity: single, [com/jetbrains/rhizomedb/single, com/jetbrains/rhizomedb/single]>#()
+        Q|MyEntity|.<Ambiguity: singleOrNull, [com/jetbrains/rhizomedb/singleOrNull, com/jetbrains/rhizomedb/singleOrNull]>#()
     }

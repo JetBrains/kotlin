@@ -5,6 +5,7 @@
 
 package org.jetbrains.rhizomedb.fir.checkers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -32,7 +33,10 @@ object RhizomedbFirEntityTypeChecker : FirRegularClassChecker(MppCheckerKind.Com
             !predicateMatcher.hasFromEidConstructor(declaration.symbol) -> WrongEntityTypeTarget.NO_CONSTRUCTOR
             else -> {
                 val companion = declaration.companionObjectSymbol ?: return
-                val superclasses = companion.resolvedSuperTypeRefs.filter { it.source != null }
+                val superclasses = companion.resolvedSuperTypeRefs.filter {
+                    val source = it.source
+                    source != null && source.kind != KtFakeSourceElementKind.PluginGenerated
+                }
                 if (superclasses.any { it.toRegularClassSymbol(session)?.isInterface == false }) {
                     WrongEntityTypeTarget.ALREADY_EXTENDS
                 } else {

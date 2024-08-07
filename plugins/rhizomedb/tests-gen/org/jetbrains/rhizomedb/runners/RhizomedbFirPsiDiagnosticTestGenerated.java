@@ -263,6 +263,12 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
       }
 
       @Test
+      @TestMetadata("companionImplementsInterface.kt")
+      public void testCompanionImplementsInterface() {
+        runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/companionImplementsInterface.kt");
+      }
+
+      @Test
       @TestMetadata("companionIsEntityTypeEventually.kt")
       public void testCompanionIsEntityTypeEventually() {
         runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/companionIsEntityTypeEventually.kt");

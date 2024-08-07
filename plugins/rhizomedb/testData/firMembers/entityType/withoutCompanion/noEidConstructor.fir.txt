@@ -1,20 +1,20 @@
 FILE: noEidConstructor.kt
     @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
-        public constructor(eid: R|com/jetbrains/rhizomedb/EID|, data: R|kotlin/Any|): R|MyEntity| {
+        public constructor(eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|, data: R|kotlin/Any|): R|MyEntity| {
             super<R|kotlin/Any|>()
         }
 
-        public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
-            public get(): R|com/jetbrains/rhizomedb/EID|
+        public open override val eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = R|<local>/eid|
+            public get(): R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|
 
         public final val data: R|kotlin/Any| = R|<local>/data|
             public get(): R|kotlin/Any|
 
-        public final operator fun component1(): R|com/jetbrains/rhizomedb/EID|
+        public final operator fun component1(): R|{com/jetbrains/rhizomedb/EID=} kotlin/Int|
 
         public final operator fun component2(): R|kotlin/Any|
 
-        public final fun copy(eid: R|com/jetbrains/rhizomedb/EID| = this@R|/MyEntity|.R|/MyEntity.eid|, data: R|kotlin/Any| = this@R|/MyEntity|.R|/MyEntity.data|): R|MyEntity|
+        public final fun copy(eid: R|{com/jetbrains/rhizomedb/EID=} kotlin/Int| = this@R|/MyEntity|.R|/MyEntity.eid|, data: R|kotlin/Any| = this@R|/MyEntity|.R|/MyEntity.data|): R|MyEntity|
 
         public final companion object Companion : R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
         }

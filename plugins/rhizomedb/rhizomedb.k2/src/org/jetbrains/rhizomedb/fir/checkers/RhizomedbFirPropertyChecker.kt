@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.rhizomedb.fir.KotlinStdlib
 import org.jetbrains.rhizomedb.fir.RhizomedbAnnotations
@@ -87,14 +88,14 @@ object RhizomedbFirPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     private fun FirProperty.getTargetAttributeType(session: FirSession): ConeKotlinType? {
         val returnType = returnTypeRef
         return if (returnType is FirResolvedTypeRef && returnType.isSet() && session.rhizomedbPredicateMatcher.isManyAnnotated(symbol)) {
-            returnType.type.typeArguments.singleOrNull()?.type ?: returnType.coneTypeSafe()
+            returnType.coneType.typeArguments.singleOrNull()?.type ?: returnType.coneType
         } else {
-            returnType.coneTypeSafe()
+            returnType.coneTypeOrNull
         }
     }
 
     private fun isAssociatedEntityTypeExists(declaration: FirProperty, session: FirSession): Boolean {
-        val entity = declaration.getContainingClass(session) ?: return false
+        val entity = declaration.getContainingClass() ?: return false
         val companion = entity.companionObjectSymbol ?: return false
         return session.rhizomedbPredicateMatcher.isEntityType(companion)
     }
@@ -121,6 +122,6 @@ enum class AttributeAnnotationKind {
 private data class AttributeAnnotation(val element: FirAnnotation, val kind: AttributeAnnotationKind)
 
 private fun FirTypeRef.isSet(): Boolean {
-    val type = (this as? FirResolvedTypeRef)?.type ?: return false
+    val type = (this as? FirResolvedTypeRef)?.coneType ?: return false
     return (type as? ConeClassLikeType)?.lookupTag?.classId == KotlinStdlib.setClassId && !type.isNullable
 }

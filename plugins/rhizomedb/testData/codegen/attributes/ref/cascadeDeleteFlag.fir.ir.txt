@@ -18,7 +18,7 @@ FILE fqName:test fileName:/cascadeDeleteFlag.kt
               receiver: GET_VAR '<this>: test.MyEntity declared in test.MyEntity.<get-eid>' type=test.MyEntity origin=null
     PROPERTY name:parent visibility:public modality:FINAL [delegated,val]
       annotations:
-        RefAttribute(flags = [GET_ENUM 'ENUM_ENTRY name:CASCADE_DELETE' type=com.jetbrains.rhizomedb.RefFlags])
+        RefAttribute(flags = [GET_ENUM 'ENUM_ENTRY name:CASCADE_DELETE' type=com.jetbrains.rhizomedb.RefFlags] type=kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> varargElementType=com.jetbrains.rhizomedb.RefFlags)
       FIELD PROPERTY_DELEGATE name:parent$delegate type:com.jetbrains.rhizomedb.Attributes.Required<test.MyEntity, test.MyEntity> visibility:private [final]
         EXPRESSION_BODY
           CALL 'public final fun <get-parentAttr> (): com.jetbrains.rhizomedb.Attributes.Required<test.MyEntity, test.MyEntity> declared in test.MyEntity.Companion' type=com.jetbrains.rhizomedb.Attributes.Required<test.MyEntity, test.MyEntity> origin=GET_PROPERTY
@@ -177,7 +177,7 @@ FILE fqName:test fileName:/cascadeDeleteFlag.kt
           $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<test.MyEntity>
       PROPERTY FAKE_OVERRIDE name:entityClass visibility:public modality:OPEN [fake_override,val]
         annotations:
-          Deprecated(message = "use EntityType", replaceWith = ReplaceWith(expression = "entityType", imports = []), level = <null>)
+          Deprecated(message = "use EntityType", replaceWith = ReplaceWith(expression = "entityType", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = <null>)
         overridden:
           public open entityClass: kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> declared in com.jetbrains.rhizomedb.EntityType
         FUN FAKE_OVERRIDE name:<get-entityClass> visibility:public modality:OPEN <> ($this:com.jetbrains.rhizomedb.EntityType<test.MyEntity>) returnType:kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> [fake_override]
@@ -237,7 +237,7 @@ FILE fqName:test fileName:/cascadeDeleteFlag.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:entityClass visibility:public modality:OPEN [fake_override,val]
       annotations:
-        Deprecated(message = "use EntityType", replaceWith = ReplaceWith(expression = "entityType", imports = []), level = <null>)
+        Deprecated(message = "use EntityType", replaceWith = ReplaceWith(expression = "entityType", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = <null>)
       overridden:
         public open entityClass: kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> declared in com.jetbrains.rhizomedb.Entity
       FUN FAKE_OVERRIDE name:<get-entityClass> visibility:public modality:OPEN <> ($this:com.jetbrains.rhizomedb.Entity) returnType:kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> [fake_override]
@@ -249,7 +249,7 @@ FILE fqName:com.jetbrains.rhizomedb fileName:/common.kt
   CLASS ANNOTATION_CLASS name:EntityConstructor modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
       Retention(value = GET_ENUM 'ENUM_ENTRY name:SOURCE' type=kotlin.annotation.AnnotationRetention)
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:CLASS' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:CLASS' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.EntityConstructor
     CONSTRUCTOR visibility:public <> () returnType:com.jetbrains.rhizomedb.EntityConstructor [primary]
       BLOCK_BODY
@@ -271,7 +271,7 @@ FILE fqName:com.jetbrains.rhizomedb fileName:/common.kt
   CLASS ANNOTATION_CLASS name:GeneratedEntityType modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
       Retention(value = GET_ENUM 'ENUM_ENTRY name:SOURCE' type=kotlin.annotation.AnnotationRetention)
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:CLASS' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:CLASS' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.GeneratedEntityType
     PROPERTY name:mixins visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:mixins type:kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>> visibility:private [final]
@@ -305,7 +305,7 @@ FILE fqName:com.jetbrains.rhizomedb fileName:/common.kt
   CLASS ANNOTATION_CLASS name:RefAttribute modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
       Retention(value = GET_ENUM 'ENUM_ENTRY name:SOURCE' type=kotlin.annotation.AnnotationRetention)
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:PROPERTY' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.RefAttribute
     PROPERTY name:flags visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:flags type:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> visibility:private [final]
@@ -339,7 +339,7 @@ FILE fqName:com.jetbrains.rhizomedb fileName:/common.kt
   CLASS ANNOTATION_CLASS name:TransientAttribute modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
       Retention(value = GET_ENUM 'ENUM_ENTRY name:SOURCE' type=kotlin.annotation.AnnotationRetention)
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:PROPERTY' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.TransientAttribute
     PROPERTY name:flags visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:flags type:com.jetbrains.rhizomedb.Indexing visibility:private [final]
@@ -375,7 +375,7 @@ FILE fqName:com.jetbrains.rhizomedb fileName:/common.kt
   CLASS ANNOTATION_CLASS name:ValueAttribute modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
       Retention(value = GET_ENUM 'ENUM_ENTRY name:SOURCE' type=kotlin.annotation.AnnotationRetention)
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:PROPERTY' type=kotlin.annotation.AnnotationTarget] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.ValueAttribute
     PROPERTY name:flags visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:flags type:com.jetbrains.rhizomedb.Indexing visibility:private [final]
