@@ -12,9 +12,10 @@ data class Uklib<Target>(
 ) {
     fun serializeUklibToArchive(
         outputZip: File,
+        temporariesDirectory: File,
         serializeTarget: Target.() -> String = { this.toString() },
     ) {
-        val gson = GsonBuilder().create()
+        val gson = GsonBuilder().setPrettyPrinting().create()
         val manifest = gson.toJson(
             mapOf(
                 "identifier" to module.identifier,
@@ -28,8 +29,9 @@ data class Uklib<Target>(
         )
         zipFragments(
             manifest = manifest,
-            fragmentToArtifact = fragmentToArtifact,
+            fragmentToArtifact = fragmentToArtifact.filter { it.value.exists() },
             outputZip = outputZip,
+            temporariesDirectory = temporariesDirectory,
         )
     }
 
@@ -90,7 +92,7 @@ fun main() {
             "b" to File("/Users/Timofey.Solonin/UberKlibs/b")
         )
     )
-    initial.serializeUklibToArchive(output)
+//    initial.serializeUklibToArchive(output)
 
     val final = Uklib.deserializeFromArchive(
         output,

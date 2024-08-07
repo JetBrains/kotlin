@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.artifacts
 import org.gradle.api.DefaultTask
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
@@ -28,6 +29,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.utils.directoryProperty
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.transformKGPModelToUklibModel
 import java.io.File
@@ -41,6 +45,7 @@ internal val KotlinUklibPublicationSetupAction = KotlinProjectSetupAction {
 
         // FIXME: How do we handle that there are multiple classesDir?
         val compilationToArtifact = mutableMapOf<KotlinCompilation<*>, Iterable<File>>()
+        val packUklib = tasks.register("packUklib", UklibArchiveTask::class.java)
 
         targets.forEach { target ->
             when (target) {
@@ -52,17 +57,20 @@ internal val KotlinUklibPublicationSetupAction = KotlinProjectSetupAction {
                 is KotlinJvmTarget -> {
                     val mainComp = target.compilations.getByName(MAIN_COMPILATION_NAME)
                     compilationToArtifact[mainComp] = mainComp.output.classesDirs
+                    packUklib.dependsOn(mainComp.compileTaskProvider)
                 }
                 is KotlinNativeTarget -> {
                     val mainComp = target.compilations.getByName(MAIN_COMPILATION_NAME)
                     compilationToArtifact[mainComp] = listOf(
                         // FIXME: Make this lazy
                         // FIXME: We have to unzip this
-                        target.compilations.getByName(MAIN_COMPILATION_NAME).compileTaskProvider.flatMap {
+                        mainComp.compileTaskProvider.flatMap {
                             it.outputFile
                         }.get()
                     )
+                    packUklib.dependsOn(mainComp.compileTaskProvider)
                 }
+                // FIXME: Metadata target forms a natural bamboo with default target hierarchy
                 is KotlinMetadataTarget -> {
                     target.compilations
                         // Probably this is not needed
@@ -70,6 +78,7 @@ internal val KotlinUklibPublicationSetupAction = KotlinProjectSetupAction {
                         .forEach { compilation ->
                             // FIXME: Aren't test compilations going to be here?
                             compilationToArtifact[compilation] = compilation.output.classesDirs
+                            packUklib.dependsOn(compilation.compileTaskProvider)
                         }
                 }
             }
@@ -89,7 +98,7 @@ internal val KotlinUklibPublicationSetupAction = KotlinProjectSetupAction {
             identifier = { this.name }
         )
 
-        val packUklib = tasks.register("packUklib", UklibArchiveTask::class.java) {
+        packUklib.configure {
             it.model.set(kgpModel)
         }
         artifacts.add(apiElements.name, packUklib)
@@ -102,13 +111,19 @@ internal abstract class UklibArchiveTask : DefaultTask() {
 
     @get:OutputFile
     val outputZip: RegularFileProperty = project.objects.fileProperty().convention(
-        project.layout.buildDirectory.file("output.uklib")
+        project.layout.buildDirectory.file("output.uklib.zip")
+    )
+
+    @get:Internal
+    val temporariesDirectory: DirectoryProperty = project.objects.directoryProperty().convention(
+        project.layout.buildDirectory.dir("uklibTemp")
     )
 
     @TaskAction
     fun run() {
         model.get().serializeUklibToArchive(
-            outputZip = outputZip.get().asFile,
+            outputZip = outputZip.getFile(),
+            temporariesDirectory = temporariesDirectory.getFile(),
         )
     }
 }

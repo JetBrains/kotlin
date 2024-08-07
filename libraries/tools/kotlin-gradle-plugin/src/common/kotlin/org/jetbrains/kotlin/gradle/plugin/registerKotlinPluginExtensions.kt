@@ -102,7 +102,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             if (isKmpProjectIsolationEnabled) {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
             }
-            if (!project.kotlinPropertiesProvider.enableUklibs) {
+            if (project.kotlinPropertiesProvider.enableUklibs) {
                 register(project, KotlinUklibPublicationSetupAction)
             }
         }
@@ -134,7 +134,8 @@ internal fun Project.registerKotlinPluginExtensions() {
 
     KotlinTargetArtifact.extensionPoint.apply {
         // FIXME: This isn't mpp only
-        if (!project.kotlinPropertiesProvider.enableUklibs) {
+        // FIXME: Disabling this breaks KotlinTargetSoftwareComponentImpl
+//        if (!project.kotlinPropertiesProvider.enableUklibs) {
             register(project, KotlinMetadataArtifact)
             register(project, KotlinLegacyCompatibilityMetadataArtifact)
             register(project, KotlinLegacyMetadataArtifact)
@@ -142,7 +143,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, KotlinJsKlibArtifact)
             register(project, KotlinNativeKlibArtifact)
             register(project, KotlinNativeHostSpecificMetadataArtifact)
-        }
+//        }
     }
 
     KotlinGradleProjectChecker.extensionPoint.apply {
