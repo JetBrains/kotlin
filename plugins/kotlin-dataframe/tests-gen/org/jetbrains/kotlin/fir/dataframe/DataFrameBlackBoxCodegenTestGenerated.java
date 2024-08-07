@@ -35,6 +35,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("columnName.kt")
+  public void testColumnName() {
+    runTest("testData/box/columnName.kt");
+  }
+
+  @Test
   @TestMetadata("columnWithStarProjection.kt")
   public void testColumnWithStarProjection() {
     runTest("testData/box/columnWithStarProjection.kt");

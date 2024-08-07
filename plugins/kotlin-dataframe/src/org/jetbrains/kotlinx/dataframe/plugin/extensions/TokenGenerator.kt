@@ -140,6 +140,6 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        return listOf(createConstructor(context.owner, DataFramePlugin, isPrimary = true).symbol)
+        return listOf(createConstructor(context.owner, Key, isPrimary = true).symbol)
     }
 }

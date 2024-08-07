@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.utils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.dataframe.annotations.ColumnName
 import org.jetbrains.kotlinx.dataframe.annotations.Order
 import org.jetbrains.kotlinx.dataframe.annotations.ScopeProperty
 import kotlin.reflect.KClass
@@ -37,6 +38,8 @@ object Names {
     val ORDER_ANNOTATION = ClassId(annotationsPackage, Name.identifier(Order::class.simpleName!!))
     val ORDER_ARGUMENT = Name.identifier(Order::order.name)
     val SCOPE_PROPERTY_ANNOTATION = ClassId(annotationsPackage, Name.identifier(ScopeProperty::class.simpleName!!))
+    val COLUMN_NAME_ANNOTATION = ClassId(annotationsPackage, Name.identifier(ColumnName::class.simpleName!!))
+    val COLUMN_NAME_ARGUMENT = Name.identifier(ColumnName::name.name)
 
     val DATA_SCHEMA_CLASS_ID = ClassId(annotationsPackage, Name.identifier("DataSchema"))
     val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))

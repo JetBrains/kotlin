@@ -29,6 +29,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     receiverType: ConeClassLikeTypeImpl,
     propertyName: Name,
     returnTypeRef: FirResolvedTypeRef,
+    columnName: String? = null,
     symbol: FirClassSymbol<*>? = null,
     effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public
 ): FirProperty {
@@ -36,7 +37,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     return buildProperty {
         moduleData = session.moduleData
         resolvePhase = FirResolvePhase.BODY_RESOLVE
-        origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
+        origin = FirDeclarationOrigin.Plugin(DataFramePlugin(columnName))
         status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
@@ -66,7 +67,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         getter = buildPropertyAccessor {
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin(columnName))
             this.returnTypeRef = returnTypeRef
             dispatchReceiverType = receiverType
             this.symbol = firPropertyAccessorSymbol
