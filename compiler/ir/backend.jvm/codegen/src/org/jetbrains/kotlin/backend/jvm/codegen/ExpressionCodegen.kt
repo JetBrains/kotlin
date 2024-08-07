@@ -489,18 +489,7 @@ class ExpressionCodegen(
                 mv.nop()
             }
 
-            // Evaluate DEFAULT arguments from inline function call
-            inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
-                exp.accept(this, info).discard()
-            }
-
-            if (inlineCall.usesDefaultArguments()) {
-                // we must reset LN because at this point in original inliner we will inline non default call
-                lineNumberMapper.resetLineNumber()
-            }
-
-            // Evaluate statements from inline function body
-            val result = inlinedBlock.getOriginalStatementsFromInlinedBlock().fold(unitValue) { prev, exp ->
+            val result = inlinedBlock.statements.fold(unitValue) { prev, exp ->
                 prev.discard()
                 exp.accept(this, info)
             }
