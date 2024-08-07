@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.artifacts
 
+import com.android.tools.r8.internal.UK
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -22,7 +23,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.Uklib
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -39,10 +40,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.setAttribute
-import org.jetbrains.kotlin.resolveFragmentRefinersWithinModule
-import org.jetbrains.kotlin.resolveModuleFragmentClasspath
 import org.jetbrains.kotlin.tooling.core.withClosure
-import org.jetbrains.kotlin.transformKGPModelToUklibModel
 import java.io.File
 import javax.inject.Inject
 
@@ -63,66 +61,62 @@ internal val KotlinUklibSetupAction = KotlinProjectSetupAction {
     }
 
     project.launch {
-        val sourceSets = multiplatformExtension.awaitSourceSets()
-        val metadataTarget = multiplatformExtension.awaitMetadataTarget()
-        val targets = multiplatformExtension.awaitTargets()
-        AfterFinaliseCompilations.await()
+        setupConsumption()
+    }
+}
 
-        // Это точно ок работает с тестовыми сорсетами?
-        val sourceSetToTargets = mutableMapOf<KotlinSourceSet, MutableSet<String>>()
-        targets.flatMap { it.compilations.toList() }.forEach { compilation ->
-            compilation.defaultSourceSet.withClosure { it.dependsOn }.forEach { sourceSet ->
-                sourceSetToTargets.getOrPut(
-                    sourceSet, { mutableSetOf() }
-                ).add(compilation.target.targetName)
-            }
+private suspend fun Project.setupConsumption() {
+    val sourceSets = multiplatformExtension.awaitSourceSets()
+    val metadataTarget = multiplatformExtension.awaitMetadataTarget()
+    val targets = multiplatformExtension.awaitTargets()
+    AfterFinaliseCompilations.await()
+
+    // Это точно ок работает с тестовыми сорсетами?
+    val sourceSetToTargets = mutableMapOf<KotlinSourceSet, MutableSet<String>>()
+    targets.flatMap { it.compilations.toList() }.forEach { compilation ->
+        compilation.defaultSourceSet.withClosure { it.dependsOn }.forEach { sourceSet ->
+            sourceSetToTargets.getOrPut(
+                sourceSet, { mutableSetOf() }
+            ).add(compilation.target.targetName)
         }
+    }
 
-//        val kgpModel = transformKGPModelToUklibModel(
-//            "foo",
-//            publishedCompilations = compilationToArtifact.keys.toList(),
-//            publishedArtifact = { compilationToArtifact[this]!!.single() },
-//            defaultSourceSet = { this.defaultSourceSet },
-//            target = { this.target.targetName },
-//            dependsOn = { this.dependsOn },
-//            identifier = { this.name }
-//        )
-//
-//        resolveModuleFragmentClasspath
-        val dependenciesAsUklibs = lazy {
-            uklibsPath.map { unzippedKlib ->
-                Uklib.deserializeFromDirectory(unzippedKlib)
-            }
+    val thisModuleUklib = uklibFromKGPModel(targets.toList())
+    val dependenciesAsUklibs = lazy {
+        // FIXME: Do configurations have stable order in terms of dependencies and in terms of files that you put into them?
+        uklibsPath.map { unzippedKlib ->
+            Uklib.deserializeFromDirectory(unzippedKlib)
         }
+    }
+    val resolvedFragments = lazy {
+        resolveModuleFragmentClasspath(
+            module = thisModuleUklib,
+            dependencies = dependenciesAsUklibs.value.toHashSet(),
+        )
+    }
 
-        multiplatformExtension.targets.configureEach { target ->
-            target.compilations.configureEach { compilation ->
-                compilation.internal.configurations.compileDependencyConfiguration.dependencies.addLater(
-                    provider {
-                        project.dependencies.create(
-                            project.files(
-                                // Uklibs path are
-                                uklibsPath.map { unzippedKlib ->
-                                    Uklib.deserializeFromDirectory(unzippedKlib)
-                                }
-                            )
+    // Резолвить фрагменты зависимостей нужно только для метадатных компиляций
+    multiplatformExtension.targets.configureEach { target ->
+        if (target !is KotlinMetadataTarget) return@configureEach
+        target.compilations.configureEach { compilation ->
+            compilation.internal.configurations.compileDependencyConfiguration.dependencies.addLater(
+                provider {
+                    val key = Fragment(
+                        compilation.defaultSourceSet.name,
+                        sourceSetToTargets[compilation.defaultSourceSet]!!,
+                    )
+
+                    kotlinPluginLifecycle.project.dependencies.create(
+                        kotlinPluginLifecycle.project.files(
+                            resolvedFragments.value[key]!!
                         )
-                    }
-                )
-            }
+                    )
+                }
+            )
         }
     }
 }
 
-private fun resolveUklibClasspath(
-    unzippedUklib: File,
-    targets: Set<String>,
-): List<File> {
-    resolveModuleFragmentClasspath(
-
-    )
-    Uklib.deserializeFromDirectory(unzippedUklib)
-}
 
 private suspend fun Project.setupPublication() {
     val sourceSets = multiplatformExtension.awaitSourceSets()
@@ -130,9 +124,26 @@ private suspend fun Project.setupPublication() {
     val targets = multiplatformExtension.awaitTargets()
     AfterFinaliseCompilations.await()
 
-    // FIXME: How do we handle that there are multiple classesDir?
-    val compilationToArtifact = mutableMapOf<KotlinCompilation<*>, Iterable<File>>()
     val packUklib = tasks.register("packUklib", UklibArchiveTask::class.java)
+
+    val kgpModel = uklibFromKGPModel(
+        targets = targets.toList(),
+        onPublishCompilation = {
+            packUklib.dependsOn(it.compileTaskProvider)
+        }
+    )
+
+    packUklib.configure {
+        it.model.set(kgpModel)
+    }
+    artifacts.add(metadataTarget.uklibElementsConfigurationName, packUklib)
+}
+
+private fun uklibFromKGPModel(
+    targets: List<KotlinTarget>,
+    onPublishCompilation: (KotlinCompilation<*>) -> Unit = {}
+): Uklib<String> {
+    val compilationToArtifact = mutableMapOf<KotlinCompilation<*>, Iterable<File>>()
 
     targets.forEach { target ->
         when (target) {
@@ -143,8 +154,9 @@ private suspend fun Project.setupPublication() {
             }
             is KotlinJvmTarget -> {
                 val mainComp = target.compilations.getByName(MAIN_COMPILATION_NAME)
+                // FIXME: How do we handle that there are multiple classesDir?
                 compilationToArtifact[mainComp] = mainComp.output.classesDirs
-                packUklib.dependsOn(mainComp.compileTaskProvider)
+                onPublishCompilation(mainComp)
             }
             is KotlinNativeTarget -> {
                 val mainComp = target.compilations.getByName(MAIN_COMPILATION_NAME)
@@ -155,7 +167,7 @@ private suspend fun Project.setupPublication() {
                         it.outputFile
                     }.get()
                 )
-                packUklib.dependsOn(mainComp.compileTaskProvider)
+                onPublishCompilation(mainComp)
             }
             // FIXME: Metadata target forms a natural bamboo with default target hierarchy
             is KotlinMetadataTarget -> {
@@ -165,15 +177,13 @@ private suspend fun Project.setupPublication() {
                     .forEach { compilation ->
                         // FIXME: Aren't test compilations going to be here?
                         compilationToArtifact[compilation] = compilation.output.classesDirs
-                        packUklib.dependsOn(compilation.compileTaskProvider)
+                        onPublishCompilation(compilation)
                     }
             }
         }
     }
 
-    val uklibElements = configurations.getByName(metadataTarget.uklibElementsConfigurationName)
-
-    val kgpModel = transformKGPModelToUklibModel(
+    return transformKGPModelToUklibModel(
         "foo",
         publishedCompilations = compilationToArtifact.keys.toList(),
         publishedArtifact = { compilationToArtifact[this]!!.single() },
@@ -182,11 +192,6 @@ private suspend fun Project.setupPublication() {
         dependsOn = { this.dependsOn },
         identifier = { this.name }
     )
-
-    packUklib.configure {
-        it.model.set(kgpModel)
-    }
-    artifacts.add(uklibElements.name, packUklib)
 }
 
 internal abstract class UklibArchiveTask : DefaultTask() {

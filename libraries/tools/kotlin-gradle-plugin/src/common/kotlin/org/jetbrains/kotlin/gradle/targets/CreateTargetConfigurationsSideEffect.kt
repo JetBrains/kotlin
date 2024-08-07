@@ -137,7 +137,7 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
             description = "Resource files of main compilation of ${target.name}."
             isVisible = false
             // FIXME: Inherit from whatever: commonMain maybe?
-            configureUklibConfigurationAttributes()
+            configureUklibConfigurationAttributes(project)
 
             // FIXME: Do we even want "setUsesPlatformOf" and should we really create this configuration here?
             // setUsesPlatformOf(target)

@@ -65,22 +65,28 @@ inline fun <Compilation, Target, reified SourceSet> transformKGPModelToUklibMode
 
 
 fun <Target> resolveModuleFragmentClasspath(
-    module: Module<Target>,
-    dependencies: Set<Module<Target>>,
-): Map<Fragment<Target>, List<Fragment<Target>>> {
-    val moduleFragments = module.fragments.toList()
-    val fragmentClasspath = mutableMapOf<Fragment<Target>, MutableList<Fragment<Target>>>()
+    module: Uklib<Target>,
+    dependencies: Set<Uklib<Target>>,
+): Map<Fragment<Target>, List<File>> {
+    val moduleFragments = module.module.fragments.toList()
+    val fragmentClasspath = mutableMapOf<Fragment<Target>, MutableList<File>>()
 
     resolveFragmentRefinersWithinModule(moduleFragments).forEach { (fragment, refiners) ->
-        fragmentClasspath.getOrPut(fragment, { mutableListOf() }).addAll(refiners)
+        fragmentClasspath.getOrPut(fragment, { mutableListOf() }).addAll(
+            refiners.map { module.fragmentToArtifact[it.identifier]!! }
+        )
     }
 
     dependencies.forEach { dependency ->
         resolveFragmentDependencies(
             targetFragments = moduleFragments,
-            dependencyFragments = dependency.fragments.toList(),
+            dependencyFragments = dependency.module.fragments.toList(),
         ).forEach { (fragment, dependencies) ->
-            (fragmentClasspath[fragment] ?: error("??")).addAll(dependencies)
+            fragmentClasspath[fragment]!!.addAll(
+                dependencies.map {
+                    dependency.fragmentToArtifact[it.identifier]!!
+                }
+            )
         }
     }
 
@@ -152,16 +158,16 @@ data class Module<Target>(
     val identifier: String,
     val fragments: Set<Fragment<Target>>,
 ) {
-    override fun hashCode(): Int = identifier.hashCode()
-    override fun equals(other: Any?): Boolean = identifier.equals(other?.toString())
+//    override fun hashCode(): Int = identifier.hashCode()
+//    override fun equals(other: Any?): Boolean = identifier.equals(other?.toString())
 }
 
 data class Fragment<Target>(
     val identifier: String,
     val attributes: Set<Target>,
 ) {
-    override fun hashCode(): Int = identifier.hashCode()
-    override fun equals(other: Any?): Boolean = identifier.equals(other?.toString())
+//    override fun hashCode(): Int = attributes.hashCode()
+//    override fun equals(other: Any?): Boolean = other is Fragment<*> && attributes.equals(other.attributes)
 }
 
 fun <E> Set<E>.isProperSubsetOf(another: Set<E>): Boolean = another.size > size && isSubsetOf(another)
