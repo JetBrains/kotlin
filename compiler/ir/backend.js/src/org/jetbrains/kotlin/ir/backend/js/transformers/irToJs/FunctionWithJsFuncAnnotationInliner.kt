@@ -42,6 +42,9 @@ private class JsNameRemappingTransformer(private val replacements: Map<JsName, J
         super.visit(nameRef, ctx)
         if (nameRef.qualifier != null) return true
         val replacement = nameRef.name?.replacement ?: return true
+        if (replacement.source == null) {
+            replacement.source = nameRef.source
+        }
         ctx.replaceMe(replacement)
         return false
     }
