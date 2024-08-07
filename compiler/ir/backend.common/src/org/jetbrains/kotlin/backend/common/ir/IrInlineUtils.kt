@@ -135,11 +135,6 @@ fun IrInlinedFunctionBlock.getOriginalStatementsFromInlinedBlock(): List<IrState
     return this.statements.filterNot { it is IrVariable && it.isTmpForInline }
 }
 
-fun IrInlinedFunctionBlock.putStatementsInFrontOfInlinedFunction(statements: List<IrStatement>) {
-    val insertAfter = this.statements.indexOfLast { it is IrVariable && it.isTmpForInline }
-    this.statements.addAll(if (insertAfter == -1) 0 else insertAfter + 1, statements)
-}
-
 fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(inlinedElement: IrElement): IrDeclaration? {
     fun IrAttributeContainer.unwrapInlineLambdaIfAny(): IrAttributeContainer = when (this) {
         is IrBlock -> (statements.lastOrNull() as? IrAttributeContainer)?.unwrapInlineLambdaIfAny() ?: this

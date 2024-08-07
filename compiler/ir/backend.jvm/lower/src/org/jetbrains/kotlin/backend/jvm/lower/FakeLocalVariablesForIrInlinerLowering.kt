@@ -100,7 +100,7 @@ internal class FakeLocalVariablesForIrInlinerLowering(
             val tmpVar = scope.createTmpVariable(
                 irInt(0), name.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED
             )
-            this@addFakeLocalVariable.putStatementsInFrontOfInlinedFunction(listOf(tmpVar))
+            this@addFakeLocalVariable.statements.add(0, tmpVar)
         }
     }
 }
