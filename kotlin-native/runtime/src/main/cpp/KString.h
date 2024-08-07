@@ -27,7 +27,17 @@ struct StringHeader {
 
     enum {
         HASHCODE_COMPUTED = 1,
+        IGNORE_LAST_BYTE = 2,
+
+        ENCODING_OFFSET = 6,
+        ENCODING_UTF16 = 0,
+        ENCODING_LATIN1 = 1,
+        // ENCODING_UTF8 = 2 ?
     };
+
+    int encoding() const {
+        return flags_ >> ENCODING_OFFSET;
+    }
 };
 
 static constexpr const size_t STRING_HEADER_SIZE = (sizeof(StringHeader) + sizeof(KChar) - 1) / sizeof(KChar);
@@ -67,6 +77,7 @@ OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t lengthChars);
 // The string returned by this method contains undefined data; users should fill the array
 // returned by `StringRawData`, which is guaranteed to have a size of `lengthChars * 2`.
 OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars);
+OBJ_GETTER(CreateUninitializedLatin1String, uint32_t lengthBytes);
 
 char* CreateCStringFromString(KConstRef kstring);
 void DisposeCString(char* cstring);
