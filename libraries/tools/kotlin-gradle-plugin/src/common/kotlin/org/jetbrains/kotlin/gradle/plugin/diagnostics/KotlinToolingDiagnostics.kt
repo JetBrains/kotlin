@@ -1010,6 +1010,20 @@ object KotlinToolingDiagnostics {
             )
         }
     }
+
+    object UnsupportedTargetShortcutError : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(shortcutName: String, explicitTargets: String, trace: Throwable) = build(
+            """
+            The $shortcutName target shortcut is deprecated and no longer supported.
+            Please explicitly declare your targets using:
+            
+            """.trimIndent() + explicitTargets + """
+                
+            For a complete list of supported targets, refer to the documentation: https://kotl.in/6ixl2f
+            """.trimIndent(),
+            throwable = trace
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
