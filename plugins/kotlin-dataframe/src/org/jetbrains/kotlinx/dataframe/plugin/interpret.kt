@@ -90,32 +90,38 @@ fun <T> KotlinTypeFacade.interpret(
     val defaultArguments = processor.expectedArguments.filter { it.defaultValue is Present }.map { it.name }.toSet()
     val actualArgsMap = refinedArguments.associateBy { it.name.identifier }.toSortedMap()
     val conflictingKeys = additionalArguments.keys intersect actualArgsMap.keys
-    if (conflictingKeys.isNotEmpty() && isTest) {
-        interpretationFrameworkError("Conflicting keys: $conflictingKeys")
+    if (conflictingKeys.isNotEmpty()) {
+        if (isTest) {
+            interpretationFrameworkError("Conflicting keys: $conflictingKeys")
+        }
+        return null
     }
     val expectedArgsMap = processor.expectedArguments
         .filterNot { it.name.startsWith("typeArg") }
         .associateBy { it.name }.toSortedMap().minus(additionalArguments.keys)
 
     val unexpectedArguments = expectedArgsMap.keys - defaultArguments != actualArgsMap.keys - defaultArguments
-    if (unexpectedArguments && isTest) {
-        val message = buildString {
-            appendLine("ERROR: Different set of arguments")
-            appendLine("Implementation class: $processor")
-            appendLine("Not found in actual: ${expectedArgsMap.keys - actualArgsMap.keys}")
-            val diff = actualArgsMap.keys - expectedArgsMap.keys
-            appendLine("Passed, but not expected: ${diff}")
-            appendLine("add arguments to an interpeter:")
-            appendLine(diff.map { actualArgsMap[it] })
+    if (unexpectedArguments) {
+        if (isTest) {
+            val message = buildString {
+                appendLine("ERROR: Different set of arguments")
+                appendLine("Implementation class: $processor")
+                appendLine("Not found in actual: ${expectedArgsMap.keys - actualArgsMap.keys}")
+                val diff = actualArgsMap.keys - expectedArgsMap.keys
+                appendLine("Passed, but not expected: ${diff}")
+                appendLine("add arguments to an interpeter:")
+                appendLine(diff.map { actualArgsMap[it] })
+            }
+            interpretationFrameworkError(message)
         }
-        interpretationFrameworkError(message)
+        return null
     }
 
     val arguments = mutableMapOf<String, Interpreter.Success<Any?>>()
     arguments += additionalArguments
     val interpretationResults = refinedArguments.refinedArguments.mapNotNull {
         val name = it.name.identifier
-        val expectedArgument = expectedArgsMap[name]!!
+        val expectedArgument = expectedArgsMap[name] ?: error("$processor $name")
         val expectedReturnType = expectedArgument.klass
         val value: Interpreter.Success<Any?>? = when (expectedArgument.lens) {
             is Interpreter.Value -> {
