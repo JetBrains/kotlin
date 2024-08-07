@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -57,15 +58,15 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
     ) {
         when {
             declaration is KtProperty &&
-                descriptor is PropertyDescriptor -> checkProperty(declaration, descriptor, context)
+                    descriptor is PropertyDescriptor -> checkProperty(declaration, descriptor, context)
             declaration is KtPropertyAccessor &&
-                descriptor is PropertyAccessorDescriptor -> checkPropertyAccessor(
+                    descriptor is PropertyAccessorDescriptor -> checkPropertyAccessor(
                 declaration,
                 descriptor,
                 context
             )
             declaration is KtFunction &&
-                descriptor is FunctionDescriptor -> checkFunction(declaration, descriptor, context)
+                    descriptor is FunctionDescriptor -> checkFunction(declaration, descriptor, context)
         }
     }
 
@@ -84,8 +85,8 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
                         cls?.run {
                             defaultType.supertypes().any {
                                 it.isFunctionType &&
-                                    it.arguments.size == descriptor.arity + 1 &&
-                                    it.hasComposableAnnotation()
+                                        it.arguments.size == descriptor.arity + 1 &&
+                                        it.hasComposableAnnotation()
                             }
                         } ?: false
                     }
@@ -140,6 +141,18 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
             }
         }
 
+        if (
+            hasComposableAnnotation && descriptor.modality == Modality.OPEN
+        ) {
+            declaration.valueParameters.forEach {
+                val defaultValue = it.defaultValue
+                if (defaultValue != null) {
+                    context.trace.report(
+                        ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE.on(defaultValue)
+                    )
+                }
+            }
+        }
         val params = descriptor.valueParameters
         val ktparams = declaration.valueParameters
         if (params.size == ktparams.size) {
@@ -155,9 +168,9 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         if (hasComposableAnnotation &&
             descriptor.name.asString() == "main" &&
             MainFunctionDetector(
-                    context.trace.bindingContext,
-                    context.languageVersionSettings
-                ).isMain(descriptor)
+                context.trace.bindingContext,
+                context.languageVersionSettings
+            ).isMain(descriptor)
         ) {
             context.trace.report(
                 ComposeErrors.COMPOSABLE_FUN_MAIN.on(
@@ -255,7 +268,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
     }
 
     private val FunctionDescriptor.arity get(): Int =
-        if (extensionReceiverParameter != null) 1 else 0 +
-            contextReceiverParameters.size +
-            valueParameters.size
+            if (extensionReceiverParameter != null) 1 else 0 +
+                    contextReceiverParameters.size +
+                    valueParameters.size
 }

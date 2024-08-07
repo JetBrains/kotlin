@@ -192,10 +192,10 @@ class ComposableDefaultParamLowering(
 
     private fun IrSimpleFunction.isVirtualFunctionWithDefaultParam() =
         hasComposableAnnotation() &&
-            !isExpect &&
-            (modality == Modality.OPEN || modality == Modality.ABSTRACT) && // virtual function
-            overriddenSymbols.isEmpty() && // first in the chain of overrides
-            valueParameters.any { it.defaultValue != null } // has a default parameter
+                !isExpect &&
+                modality == Modality.ABSTRACT && // virtual function
+                overriddenSymbols.isEmpty() && // first in the chain of overrides
+                valueParameters.any { it.defaultValue != null } // has a default parameter
 
     private fun makeDefaultParameterWrapper(
         source: IrSimpleFunction
