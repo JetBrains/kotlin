@@ -1,5 +1,3 @@
-import org.gradle.api.artifacts.dsl.DependencyHandler
-
 plugins {
     kotlin("jvm")
 }
@@ -10,6 +8,7 @@ repositories {
     }
     androidxSnapshotRepo(libs.versions.compose.snapshot.id.get())
     composeGoogleMaven(libs.versions.compose.stable.get())
+    realWorldComposeLibrariesFromGoogleMaven(libs.versions.compose.stable.get())
 }
 
 fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
@@ -58,6 +57,9 @@ dependencies {
     testImplementationArtifactOnly(compose("ui", "ui-graphics"))
     testImplementationArtifactOnly(compose("ui", "ui-text"))
     testImplementationArtifactOnly(compose("ui", "ui-unit"))
+    testImplementationArtifactOnly(compose("ui", "ui-tooling-preview"))
+    testImplementationArtifactOnly(compose("material", "material"))
+    testImplementationArtifactOnly(compose("runtime", "runtime-saveable"))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())

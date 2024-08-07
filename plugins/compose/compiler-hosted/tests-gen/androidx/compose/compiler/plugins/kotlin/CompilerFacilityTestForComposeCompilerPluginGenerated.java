@@ -70,4 +70,10 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   public void testPropertyWithDelegateBackingField() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/propertyWithDelegateBackingField.kt");
   }
+
+  @Test
+  @TestMetadata("valueArgumentForLibraryConstructor.kt")
+  public void testValueArgumentForLibraryConstructor() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/valueArgumentForLibraryConstructor.kt");
+  }
 }

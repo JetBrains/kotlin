@@ -948,6 +948,7 @@ class CallAndReferenceGenerator(
         }
         return visitor.withAnnotationMode {
             val annotationCall = annotation.toAnnotationCall()
+            annotationCall?.containingDeclarationSymbol?.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             irConstructorCall
                 .applyCallArguments(annotationCall)
                 .applyTypeArgumentsWithTypealiasConstructorRemapping(firConstructorSymbol?.fir, annotationCall?.typeArguments.orEmpty())

@@ -57,6 +57,23 @@ fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String) {
     }
 }
 
+/**
+ * This function will trigger loading additional compose libraries to simulate real-world compose apps with rich UI.
+ * Calling this function on gradle build script can cause the heavy workload. Use this only when it is really needed.
+ */
+fun RepositoryHandler.realWorldComposeLibrariesFromGoogleMaven(composeStableVersion: String) {
+    google {
+        content {
+            includeVersion("androidx.compose.ui", "ui-tooling-preview", composeStableVersion)
+            includeVersion("androidx.compose.ui", "ui-tooling-preview-desktop", composeStableVersion)
+            includeVersion("androidx.compose.material", "material", composeStableVersion)
+            includeVersion("androidx.compose.material", "material-desktop", composeStableVersion)
+            includeVersion("androidx.compose.runtime", "runtime-saveable", composeStableVersion)
+            includeVersion("androidx.compose.runtime", "runtime-saveable-desktop", composeStableVersion)
+        }
+    }
+}
+
 fun Project.composeRuntime() = compose("runtime", "runtime", composeSnapshotVersion())
 fun Project.composeRuntimeTestUtils() = compose("runtime", "runtime-test-utils", composeSnapshotVersion())
 fun Project.compose(group: String, module: String, version: String = composeStableVersion()) =
