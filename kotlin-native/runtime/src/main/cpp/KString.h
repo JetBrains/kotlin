@@ -24,7 +24,17 @@ struct StringHeader {
 
     enum {
         HASHCODE_COMPUTED = 1,
+        IGNORE_LAST_BYTE = 2,
+
+        ENCODING_OFFSET = 6,
+        ENCODING_UTF16 = 0,
+        ENCODING_LATIN1 = 1,
+        // ENCODING_UTF8 = 2 ?
     };
+
+    int encoding() const {
+        return flags_ >> ENCODING_OFFSET;
+    }
 };
 
 static constexpr const size_t STRING_HEADER_SIZE = (sizeof(StringHeader) + sizeof(KChar) - 1) / sizeof(KChar);
@@ -38,8 +48,6 @@ inline const StringHeader* StringHeaderOf(KConstRef kstring) {
         ? reinterpret_cast<const StringHeader*>(CharArrayAddressOfElementAt(kstring->array(), 0)) : nullptr;
 }
 
-// The encoding of this data is undefined unless it is known how the string was constructed,
-// in which case it can be `reinterpret_cast`ed to the appropriate type.
 inline char* StringRawData(KRef kstring) {
     return reinterpret_cast<char*>(CharArrayAddressOfElementAt(kstring->array(), StringRawDataOffset(kstring)));
 }
@@ -61,9 +69,8 @@ OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes);
 OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t lengthBytes);
 OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t lengthChars);
 
-// The string returned by this method contains undefined data; users should fill the array
-// returned by `StringRawData`, which is guaranteed to have a size of `lengthChars * 2`.
 OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars);
+OBJ_GETTER(CreateUninitializedLatin1String, uint32_t lengthBytes);
 
 char* CreateCStringFromString(KConstRef kstring);
 void DisposeCString(char* cstring);
