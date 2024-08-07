@@ -86,13 +86,18 @@ class Demo(
         set(value) = TODO()
 }
 
+// FILE: inheritance.kt
+
+open class OPEN_CLASS
+
+fun recieve_OPEN_CLASS(x: OPEN_CLASS): Unit = TODO()
+fun produce_OPEN_CLASS(): OPEN_CLASS = TODO()
 
 // FILE: ingored.kt
 package ignored
 
 data class DATA_CLASS(val a: Int)
 value class VALUE_CLASS(val a: Int)
-open class OPEN_CLASS
 abstract class ABSTRACT_CLASS
 interface INTERFACE
 
@@ -108,9 +113,6 @@ fun produce_DATA_CLASS(): DATA_CLASS = TODO()
 
 fun recieve_VALUE_CLASS(x: VALUE_CLASS): Unit = TODO()
 fun produce_VALUE_CLASS(): VALUE_CLASS = TODO()
-
-fun recieve_OPEN_CLASS(x: OPEN_CLASS): Unit = TODO()
-fun produce_OPEN_CLASS(): OPEN_CLASS = TODO()
 
 fun recieve_ABSTRACT_CLASS(x: ABSTRACT_CLASS): Unit = TODO()
 fun produce_ABSTRACT_CLASS(): ABSTRACT_CLASS = TODO()

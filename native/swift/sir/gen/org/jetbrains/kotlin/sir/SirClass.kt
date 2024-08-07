@@ -19,4 +19,5 @@ abstract class SirClass : SirDeclarationContainer(), SirNamedDeclaration {
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>
     abstract val superClass: SirType?
+    abstract val modality: SirClassModality
 }

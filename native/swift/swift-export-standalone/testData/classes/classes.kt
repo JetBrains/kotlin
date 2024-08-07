@@ -210,6 +210,14 @@ fun foo() = CLASS_WITH_SAME_NAME()
  */
 fun bar() = foo().foo()
 
+// FILE: inheritance.kt
+
+open class OPEN_CLASS
+
+class INHERITANCE_SINGLE_CLASS : OPEN_CLASS()
+
+object OBJECT_WITH_CLASS_INHERITANCE: OPEN_CLASS()
+
 // FILE: should_be_ignored.kt
 public annotation class OptIn
 
@@ -225,10 +233,6 @@ interface OUTSIDE_PROTO {
 class INHERITANCE_COUPLE : OUTSIDE_PROTO.INSIDE_PROTO(), OUTSIDE_PROTO
 class INHERITANCE_SINGLE_PROTO : OUTSIDE_PROTO.INSIDE_PROTO()
 
-open class OPEN_CLASS
-
-class INHERITANCE_SINGLE_CLASS : OPEN_CLASS()
-
 data class DATA_CLASS(val a: Int)
 
 data class DATA_CLASS_WITH_REF(val o: Any)
@@ -242,8 +246,6 @@ abstract class ABSTRACT_CLASS
 sealed class SEALED {
     object O : SEALED()
 }
-
-object OBJECT_WITH_CLASS_INHERITANCE: OPEN_CLASS()
 
 object OBJECT_WITH_INTERFACE_INHERITANCE: OUTSIDE_PROTO
 

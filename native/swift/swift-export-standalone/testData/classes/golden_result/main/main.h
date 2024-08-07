@@ -63,6 +63,10 @@ void __root___Foo_init_initialize__TypesOfArguments__uintptr_t_float__(uintptr_t
 
 uintptr_t __root___OBJECT_NO_PACKAGE_get();
 
+uintptr_t __root___OPEN_CLASS_init_allocate();
+
+void __root___OPEN_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
 uintptr_t namespace_Foo_INSIDE_CLASS_init_allocate();
 
 void namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);

@@ -1,7 +1,7 @@
 import KotlinRuntime
 @_implementationOnly import KotlinBridges_main
 
-public class MyObject : KotlinRuntime.KotlinBase {
+public final class MyObject : KotlinRuntime.KotlinBase {
     public static var shared: main.MyObject {
         get {
             return main.MyObject(__externalRCRef: __root___MyObject_get())

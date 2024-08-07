@@ -8,6 +8,8 @@ package org.jetbrains.sir.lightclasses.nodes
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
@@ -35,6 +37,14 @@ internal class SirClassFromKtSymbol(
     override val visibility: SirVisibility by lazy {
         SirVisibility.PUBLIC
     }
+    override val modality: SirClassModality by lazy {
+        when (ktSymbol.modality) {
+            KaSymbolModality.OPEN -> SirClassModality.OPEN
+            KaSymbolModality.FINAL -> SirClassModality.FINAL
+            KaSymbolModality.SEALED, KaSymbolModality.ABSTRACT -> SirClassModality.UNSPECIFIED
+        }
+    }
+
     override val documentation: String? by lazy {
         ktSymbol.documentation()
     }
