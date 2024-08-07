@@ -347,7 +347,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     // TODO move to IntrinsifyCallsLowering
     val doNotIntrinsifyAnnotationSymbol =
         context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("DoNotIntrinsify"))
-    val jsFunAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsFun"))
+    val jsOutlinedFunctionAnnotationSymbol =
+        context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsOutlinedFunction"))
     val jsNameAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsName"))
     val jsExportAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsExport"))
     val jsGeneratorAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsGenerator"))

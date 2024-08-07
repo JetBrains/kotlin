@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -33,6 +34,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.*
@@ -44,12 +47,14 @@ import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
 import java.util.*
@@ -400,25 +405,66 @@ class JsIrBackendContext(
     fun getFunctions(fqName: FqName): List<SimpleFunctionDescriptor> =
         findFunctions(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
 
-    private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
+    private fun parseJsFromAnnotation(declaration: IrDeclaration, annotationClassId: ClassId): Pair<IrConstructorCall, JsFunction>? {
+        val annotation = declaration.getAnnotation(annotationClassId.asSingleFqName())
+            ?: return null
+        val jsCode = annotation.getValueArgument(0)
+            ?: compilationException("@${annotationClassId.shortClassName} annotation must contain the JS code argument", annotation)
+        val statements = translateJsCodeIntoStatementList(jsCode, this, declaration)
+            ?: compilationException("Could not parse JS code", annotation)
+        val parsedJsFunction = statements.singleOrNull()
+            ?.safeAs<JsExpressionStatement>()
+            ?.expression
+            ?.safeAs<JsFunction>()
+            ?: compilationException("Provided JS code is not a js function", annotation)
+        return annotation to parsedJsFunction
+    }
 
+    private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
     fun getJsCodeForFunction(symbol: IrFunctionSymbol): JsFunction? {
         val originalSymbol = symbol.owner.originalFunction.symbol
         val jsFunction = outlinedJsCodeFunctions[originalSymbol]
         if (jsFunction != null) return jsFunction
 
-        val jsFunAnnotation = originalSymbol.owner.getAnnotation(JsAnnotations.jsFunFqn) ?: return null
-        val jsCode = jsFunAnnotation.getValueArgument(0)
-            ?: compilationException("@JsFun annotation must contain an argument", jsFunAnnotation)
-        val statements = translateJsCodeIntoStatementList(jsCode, this, originalSymbol.owner)
-            ?: compilationException("Could not parse JS code", jsFunAnnotation)
-        val parsedJsFunction = statements.singleOrNull()
-            ?.safeAs<JsExpressionStatement>()
-            ?.expression
-            ?.safeAs<JsFunction>()
-            ?: compilationException("Provided JS code is not a js function", jsFunAnnotation)
-        outlinedJsCodeFunctions[originalSymbol] = parsedJsFunction
-        return parsedJsFunction
+        parseJsFromAnnotation(originalSymbol.owner, JsStandardClassIds.Annotations.JsOutlinedFunction)
+            ?.let { (annotation, parsedJsFunction) ->
+                val sourceMap = (annotation.getValueArgument(1) as? IrConst)?.value as? String
+                val parsedSourceMap = sourceMap?.let { parseSourceMap(it, originalSymbol.owner.fileOrNull, annotation) }
+                if (parsedSourceMap != null) {
+                    val remapper = SourceMapLocationRemapper(parsedSourceMap)
+                    remapper.remap(parsedJsFunction)
+                }
+                outlinedJsCodeFunctions[originalSymbol] = parsedJsFunction
+                return parsedJsFunction
+            }
+
+        parseJsFromAnnotation(originalSymbol.owner, JsStandardClassIds.Annotations.JsFun)
+            ?.let { (_, parsedJsFunction) ->
+                outlinedJsCodeFunctions[originalSymbol] = parsedJsFunction
+                return parsedJsFunction
+            }
+        return null
+    }
+
+    private fun parseSourceMap(sourceMap: String, file: IrFile?, annotation: IrConstructorCall): SourceMap? {
+        if (sourceMap.isEmpty()) return null
+        return when (val result = SourceMapParser.parse(sourceMap)) {
+            is SourceMapSuccess -> result.value
+            is SourceMapError -> {
+                reportWarning(
+                    """
+                    Invalid source map in annotation:
+                    ${annotation.dumpKotlinLike()}
+                    ${result.message.replaceFirstChar(Char::uppercase)}.
+                    Some debug information may be unavailable.
+                    If you believe this is not your fault, please create an issue: https://kotl.in/issue
+                    """.trimIndent(),
+                    file,
+                    annotation,
+                )
+                null
+            }
+        }
     }
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(

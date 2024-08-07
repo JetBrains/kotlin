@@ -14017,6 +14017,16 @@ open annotation class kotlin.js/JsNonModule : kotlin/Annotation { // kotlin.js/J
 }
 
 // Targets: [js]
+open annotation class kotlin.js/JsOutlinedFunction : kotlin/Annotation { // kotlin.js/JsOutlinedFunction|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // kotlin.js/JsOutlinedFunction.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val jsFunctionExpression // kotlin.js/JsOutlinedFunction.jsFunctionExpression|{}jsFunctionExpression[0]
+        final fun <get-jsFunctionExpression>(): kotlin/String // kotlin.js/JsOutlinedFunction.jsFunctionExpression.<get-jsFunctionExpression>|<get-jsFunctionExpression>(){}[0]
+    final val sourceMap // kotlin.js/JsOutlinedFunction.sourceMap|{}sourceMap[0]
+        final fun <get-sourceMap>(): kotlin/String // kotlin.js/JsOutlinedFunction.sourceMap.<get-sourceMap>|<get-sourceMap>(){}[0]
+}
+
+// Targets: [js]
 open annotation class kotlin.js/JsStatic : kotlin/Annotation { // kotlin.js/JsStatic|null[0]
     constructor <init>() // kotlin.js/JsStatic.<init>|<init>(){}[0]
 }

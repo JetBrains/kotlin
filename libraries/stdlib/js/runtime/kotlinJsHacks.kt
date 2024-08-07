@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,20 +30,34 @@ internal fun safePropertySet(self: dynamic, setterName: String, propName: String
 }
 
 /**
- * Implements annotated function in JavaScript.
- * [code] string must contain JS expression that evaluates to JS function with signature that matches annotated kotlin function
+ * Implements the annotated function in JavaScript.
+ * [code] must contain a JS expression that evaluates to JS function with signature that matches the annotated Kotlin function.
  *
  * For example, a function that adds two Doubles:
  *
- *      @JsFun("(x, y) => x + y")
- *      fun jsAdd(x: Double, y: Double): Double =
- *          error("...")
+ * ```kotlin
+ * @JsFun("function (x, y) { return x + y; }")
+ * external fun jsAdd(x: Double, y: Double): Double
+ * ```
  *
- * Code gets inserted as is without syntax verification.
+ * @property code The JavaScript code
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 internal annotation class JsFun(val code: String)
 
+/**
+ * The same as [JsFun], but is intended only for use by the compiler (to be precise, by `JsCodeOutliningLowering`).
+ *
+ * Unlike [JsFun], this annotation contains the debug information in the Source Map 3 format which maps offsets in [jsFunctionExpression]
+ * to the offsets in the original Kotlin file with the [js] call from which this annotation was generated.
+ *
+ * This annotation was introduced so that we didn't have to consider any compatibility implications of potentially publicizing [JsFun].
+ * For that reason, [kotlin.js.JsOutlinedFunction] will forever remain internal.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@PublishedApi
+@Suppress("unused") // used by JsCodeOutliningLowering
+internal annotation class JsOutlinedFunction(val jsFunctionExpression: String, val sourceMap: String)
 
 /**
  * The annotation is needed for annotating function declarations that should be compiled as ES6 generators
