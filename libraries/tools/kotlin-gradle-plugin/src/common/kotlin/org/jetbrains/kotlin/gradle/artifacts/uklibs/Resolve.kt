@@ -147,8 +147,6 @@ fun <Target> resolveFragmentDependencies(
     return modulesFragmentClasspath
 }
 
-
-
 data class Module<Target>(
     // Do we even need this identifier
     val identifier: String,

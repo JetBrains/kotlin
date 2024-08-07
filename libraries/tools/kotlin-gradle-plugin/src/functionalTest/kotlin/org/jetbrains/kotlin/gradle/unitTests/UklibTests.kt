@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableUklibs
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -14,7 +15,7 @@ class UklibTests {
 
     @Test
     fun test() {
-        buildProjectWithMPP(
+        val project = buildProjectWithMPP(
             preApplyCode = {
                 enableUklibs()
             }
@@ -25,6 +26,11 @@ class UklibTests {
                 iosX64()
             }
         }.evaluate()
+
+        val apiElements = project.configurations.getByName(
+            project.multiplatformExtension.metadata().apiElementsConfigurationName
+        )
+        println(apiElements)
     }
 
 }

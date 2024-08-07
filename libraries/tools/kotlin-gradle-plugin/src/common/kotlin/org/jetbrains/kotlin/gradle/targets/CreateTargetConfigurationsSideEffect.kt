@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets
 
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.jetbrains.kotlin.gradle.artifacts.configureUklibConfigurationAttributes
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isSourcesPublishableFuture
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.addSecondaryOutgoingJvmClassesVariant
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
@@ -127,6 +129,18 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
             isVisible = false
             attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
             attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+        }
+    }
+
+    if (target is KotlinMetadataTarget) {
+        configurations.maybeCreateConsumable(target.internal.uklibElementsConfigurationName).apply {
+            description = "Resource files of main compilation of ${target.name}."
+            isVisible = false
+            // FIXME: Inherit from whatever: commonMain maybe?
+            configureUklibConfigurationAttributes()
+
+            // FIXME: Do we even want "setUsesPlatformOf" and should we really create this configuration here?
+            // setUsesPlatformOf(target)
         }
     }
 }

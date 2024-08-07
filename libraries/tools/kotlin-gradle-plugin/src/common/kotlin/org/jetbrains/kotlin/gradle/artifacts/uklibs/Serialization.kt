@@ -53,7 +53,6 @@ data class Uklib<Target>(
             val manifest = directory.resolve("umanifest")
             if (!manifest.exists()) error("manifest doesn't exist")
             val gson = Gson()
-//            val type = object : TypeToken<Map<String, Any>>() {}.type
             val map = gson.fromJson(manifest.readText(), Map::class.java) as Map<String, Any>
             val identifier = map["identifier"] as String
             val fragmentTokens = map["fragments"] as List<Map<String, Any>>

@@ -273,6 +273,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
                 compilation,
                 mavenScope,
                 dependencyConfigurationName,
+                // !!!
                 overrideConfigurationArtifacts = project.setProperty { listOf(artifact) },
                 overrideConfigurationAttributes = configuration.attributes.filterOutAndroidVariantAttributes()
             )

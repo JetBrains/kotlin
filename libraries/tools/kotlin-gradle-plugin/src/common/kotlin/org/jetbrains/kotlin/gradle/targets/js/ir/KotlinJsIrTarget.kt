@@ -122,6 +122,7 @@ constructor(
                     compilation = compilations.getByName(MAIN_COMPILATION_NAME),
                     mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                     dependencyConfigurationName = commonFakeApiElementsConfigurationName,
+                    // !!!
                     overrideConfigurationArtifacts = project.setProperty { emptyList() }
                 )
     }

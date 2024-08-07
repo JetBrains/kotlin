@@ -103,7 +103,7 @@ internal fun Project.registerKotlinPluginExtensions() {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
             }
             if (project.kotlinPropertiesProvider.enableUklibs) {
-                register(project, KotlinUklibPublicationSetupAction)
+                register(project, KotlinUklibSetupAction)
             }
         }
 
