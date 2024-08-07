@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.makeSnapshotTo
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.commonizerTarget
 import org.jetbrains.kotlin.library.resolveSingleFileKlib

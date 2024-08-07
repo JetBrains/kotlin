@@ -29,10 +29,6 @@ import kotlin.test.fail
 @DisplayName("K/N tests for commonizer")
 @NativeGradlePluginTests
 open class CommonizerIT : KGPBaseTest() {
-
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(enableKmpProjectIsolation = true)
-
     companion object {
         private const val commonizerOutput = "Preparing commonized Kotlin/Native libraries"
     }

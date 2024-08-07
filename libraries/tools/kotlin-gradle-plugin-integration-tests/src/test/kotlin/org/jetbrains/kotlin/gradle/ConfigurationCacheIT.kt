@@ -19,9 +19,6 @@ import java.nio.file.Path
 @DisplayName("Configuration cache")
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(enableKmpProjectIsolation = true)
-
     @DisplayName("works in simple Kotlin project")
     @GradleTest
     @JvmGradlePluginTests

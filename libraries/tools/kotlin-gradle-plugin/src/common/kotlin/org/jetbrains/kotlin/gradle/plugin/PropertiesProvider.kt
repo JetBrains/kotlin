@@ -544,7 +544,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: false
 
     val kotlinKmpProjectIsolationEnabled: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_KMP_PORJECT_ISOLATION_ENABLED) ?: false
+        get() = booleanProperty(PropertyNames.KOTLIN_KMP_PORJECT_ISOLATION_ENABLED) ?: true
 
     /**
      * Enable workaround for KT-64115, where both main compilation exploded klib and the same compressed klib
