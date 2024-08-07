@@ -18,6 +18,7 @@ object LoweredStatementOrigins {
     val INLINED_FUNCTION_DEFAULT_ARGUMENTS by IrStatementOriginImpl
 
     val INLINE_LAMBDA by IrStatementOriginImpl
+    val INLINE_ARGS_CONTAINER by IrStatementOriginImpl
 }
 
 object LoweredDeclarationOrigins {
