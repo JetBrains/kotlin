@@ -182,11 +182,11 @@ pluginManagement {
 ## build.gradle.kts injections from main test code
 
 It is possible to inject code from IT test directly into the build files of the test project.
-To do that use `buildGradleKtsInjection` DSL function as follows:
+To do that use `buildScriptInjection` DSL function as follows:
 
 ```kotlin
 nativeProject("native-fat-framework/smoke", gradleVersion) {
-    buildGradleKtsInjection {
+    buildScriptInjection {
         // This code will be executed inside build.gradle.kts during project evaluation
         val macos = kotlinMultiplatform.macosX64()
         macos.binaries.framework("DEBUG")
@@ -197,5 +197,7 @@ nativeProject("native-fat-framework/smoke", gradleVersion) {
 }
 ```
 
+It is possible to inject the same code to both groovy and kts buildscript files. 
+
 Invocation of `buildGradleKtsInjection` adds  to the build script classpath classes from test. And injects in build script this line:
-`org.jetbrains.kotlin.gradle.testbase.invokeBuildGradleKtsInjection(project, "<FQN to class produced from lambda>")`
+`org.jetbrains.kotlin.gradle.testbase.invokeBuildScriptInjection(project, "<FQN to class produced from lambda>")`

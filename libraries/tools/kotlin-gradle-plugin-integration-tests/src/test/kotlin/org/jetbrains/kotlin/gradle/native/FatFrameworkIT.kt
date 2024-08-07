@@ -154,7 +154,7 @@ class FatFrameworkIT : KGPBaseTest() {
     @GradleTest
     fun testIncorrectFamily(gradleVersion: GradleVersion) {
         nativeProject("native-fat-framework/smoke", gradleVersion) {
-            buildGradleKtsInjection {
+            buildScriptInjection {
                 val macos = kotlinMultiplatform.macosX64()
                 macos.binaries.framework("DEBUG")
                 val fat = project.tasks.getByName("fat") as FatFrameworkTask
