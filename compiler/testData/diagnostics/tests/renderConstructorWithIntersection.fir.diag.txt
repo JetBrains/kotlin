@@ -1,0 +1,3 @@
+/Main.kt:(119,156): error: Initializer type mismatch: expected 'kotlin.Int', actual 'it(A & B)!'.
+
+/Main.kt:(119,156): error: Type mismatch: inferred type is 'it(A & B)!', but 'kotlin.Int!' was expected.
