@@ -74,7 +74,7 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
     }
 
     override fun execute(parameters: Parameters) {
-       parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
+        parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.buildFailed.get(),
             parameters.buildUidServiceProperty?.orNull?.buildId ?: "unknown_id",
             parameters.customFusServiceProperty?.orNull?.getAllReportedMetrics() ?: emptyList()

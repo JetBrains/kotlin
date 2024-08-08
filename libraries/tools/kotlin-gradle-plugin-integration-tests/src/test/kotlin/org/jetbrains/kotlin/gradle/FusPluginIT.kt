@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -84,7 +85,13 @@ class FusPluginIT : KGPBaseTest() {
 
     @DisplayName("test invalid fus report directory")
     @GradleTest
+    //Since Gradle 8.1 `kotlin.fus.statistics.path` property is not red, `kotlin.session.logger.root.path` property is used instead
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_0)
+    // It is allowed to create a `/kotlin-fus` folder on WINDOWS
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC],
+        enabledOnCI = [OS.LINUX, OS.MAC],
+    )
     fun testInvalidFusReportDir(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             buildGradle.modify {
