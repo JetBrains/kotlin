@@ -14,6 +14,7 @@ import org.jetbrains.kotlinx.lincheck.paramgen.StringGen
 import org.jetbrains.kotlinx.lincheck.strategy.managed.modelchecking.ModelCheckingOptions
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 import java.io.Serializable
 
 /**
@@ -35,6 +36,7 @@ import java.io.Serializable
  * - [CleanableSoftValueCache.keys] is not checked for linearizability because it is only weakly consistent via the underlying concurrent
  *   hash map implementation.
  */
+@Isolated
 @Param(name = "value", gen = ValueWithCleanupGenerator::class)
 class CleanableSoftValueCacheLincheckTest {
     private val cache = CleanableSoftValueCache<Int, ValueWithCleanup> { it.cleanupMarker }

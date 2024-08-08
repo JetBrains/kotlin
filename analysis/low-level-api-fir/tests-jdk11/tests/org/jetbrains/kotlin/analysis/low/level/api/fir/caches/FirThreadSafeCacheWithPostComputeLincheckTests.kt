@@ -16,9 +16,11 @@ import org.jetbrains.kotlinx.lincheck.paramgen.ParameterGenerator
 import org.jetbrains.kotlinx.lincheck.strategy.managed.modelchecking.ModelCheckingOptions
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 import java.io.Serializable
 import java.util.concurrent.locks.ReentrantLock
 
+@Isolated
 @Param(name = "context", gen = ContextGenerator::class)
 class SingleFirThreadSafeCacheWithPostComputeLincheckTest {
     private val cache: FirCache<Int, Value, Context?> = FirThreadSafeCachesFactory.createCacheWithPostCompute(
@@ -51,6 +53,7 @@ class SingleFirThreadSafeCacheWithPostComputeLincheckTest {
  * express this difference sequentially. The Lincheck test simply checks if the concurrent result could be expressed using any valid
  * sequential order.
  */
+@Isolated
 @Param(name = "key", gen = IntGen::class, conf = "1:2")
 class RecursiveSingleFirThreadSafeCacheWithPostComputeLincheckTest {
     private val cache: FirCache<Int, Value, Any?> = FirThreadSafeCachesFactory.createCacheWithPostCompute(
@@ -97,6 +100,7 @@ class RecursiveSingleFirThreadSafeCacheWithPostComputeLincheckTest {
  * Since the deadlock may appear across different caches, solutions which lock post-computations into a single thread per cache aren't
  * sufficient, and the test makes sure that we don't build such a solution.
  */
+@Isolated
 class RecursiveMultiFirThreadSafeCacheWithPostComputeLincheckTest {
     private val sharedComputationLock = ReentrantLock()
 
