@@ -10,6 +10,7 @@ import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.setAttribute
+import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -47,10 +48,7 @@ class FrameworkBinariesTests {
     }
 
     @Test
-    fun `consumable framework configurations - have correct outgoing framework artifact and attributes - when attributes are applied at target and framework level`() {
-        val disambiguation1Attribute = Attribute.of("myDisambiguation1Attribute", String::class.java)
-        val disambiguation2Attribute = Attribute.of("myDisambiguation2Attribute", String::class.java)
-
+    fun `thin framework configurations - apply attributes at target and binary levels separately`() {
         val frameworkProducer = buildProjectWithMPP {
             kotlin {
                 iosArm64 {
@@ -64,122 +62,124 @@ class FrameworkBinariesTests {
                 }
 
                 iosX64 {
-                    binaries {
-                        framework("main")
-                    }
+                    binaries.framework("main")
                 }
             }
         }.evaluate()
 
-        val frameworkTargets = Attribute.of(
-            "org.jetbrains.kotlin.native.framework.targets",
-            Set::class.java
-        )
-        val kotlinNativeBuildTypeAttribute = Attribute.of(
-            "org.jetbrains.kotlin.native.build.type",
-            String::class.java
+        data class ThinFrameworkTestCase(
+            val target: String,
+            val targetAttribute: String,
+            val expectedDisambiguation1Attribute: String?,
+            val expectedDisambiguation2Attribute: String?,
         )
 
-        fun Configuration.validateOutgoing(
-            expectedBuildType: String,
-            expectedFrameworkAttributes: Set<String>,
-            expectedFrameworkName: String,
-            expectedDisambiguation1Attribute: String?,
-            expectedDisambiguation2Attribute: String?,
-        ) {
-            val framework = outgoing.artifacts.single()
-            assertEquals(
-                expectedFrameworkName,
-                framework.file.name,
-            )
-            assertEquals(
-                expectedFrameworkAttributes,
-                outgoing.attributes.getAttribute(frameworkTargets)
-            )
-            assertEquals(
-                expectedBuildType,
-                outgoing.attributes.getAttribute(kotlinNativeBuildTypeAttribute)
-            )
-            assertEquals(
-                expectedDisambiguation1Attribute,
-                outgoing.attributes.getAttribute(disambiguation1Attribute),
-            )
-            assertEquals(
-                expectedDisambiguation2Attribute,
-                outgoing.attributes.getAttribute(disambiguation2Attribute),
-            )
-        }
-
-        // Check that outgoing framework configurations per target are valid
-        run {
-            data class ThinFrameworkTestCase(
-                val target: String,
-                val targetAttribute: String,
-                val expectedDisambiguation1Attribute: String?,
-                val expectedDisambiguation2Attribute: String?,
-            )
-
-            val targets = listOf(
-                ThinFrameworkTestCase(
-                    "iosArm64", "ios_arm64",
-                    expectedDisambiguation1Attribute = "someValue",
-                    expectedDisambiguation2Attribute = null,
-                ),
-                ThinFrameworkTestCase(
-                    "iosX64", "ios_x64",
-                    expectedDisambiguation1Attribute = null,
-                    expectedDisambiguation2Attribute = null,
-                ),
-            )
-            val buildTypes = listOf("release", "debug")
-            targets.forEach { testCase ->
-                buildTypes.forEach { buildType ->
-                    val targetFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}Framework${testCase.target.capitalize()}")
-                    targetFrameworkConfiguration.validateOutgoing(
-                        expectedBuildType = buildType.toUpperCase(),
-                        expectedFrameworkAttributes = setOf(testCase.targetAttribute),
-                        expectedFrameworkName = "main.framework",
-                        expectedDisambiguation1Attribute = testCase.expectedDisambiguation1Attribute,
-                        expectedDisambiguation2Attribute = testCase.expectedDisambiguation2Attribute,
-                    )
-                }
-            }
-        }
-
-        // Check that outgoing universal framework configurations are valid
-        run {
-            val buildTypes = listOf("release", "debug")
+        val testCases = listOf(
+            ThinFrameworkTestCase(
+                "iosArm64", "ios_arm64",
+                expectedDisambiguation1Attribute = "someValue",
+                expectedDisambiguation2Attribute = null,
+            ),
+            ThinFrameworkTestCase(
+                "iosX64", "ios_x64",
+                expectedDisambiguation1Attribute = null,
+                expectedDisambiguation2Attribute = null,
+            ),
+        )
+        val buildTypes = listOf("release", "debug")
+        testCases.forEach { testCase ->
             buildTypes.forEach { buildType ->
-                val universalFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}FrameworkIosFat")
-                universalFrameworkConfiguration.validateOutgoing(
-                    expectedBuildType = buildType.toUpperCase(),
-                    expectedFrameworkAttributes = setOf("ios_x64", "ios_arm64"),
-                    expectedFrameworkName = "main.framework",
-                    expectedDisambiguation1Attribute = null,
-                    expectedDisambiguation2Attribute = null,
+                val mainFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}Framework${testCase.target.capitalize()}")
+                mainFrameworkConfiguration.validateOutgoing(
+                    OutgoingArtifactCheck(
+                        buildType = buildType.toUpperCase(),
+                        frameworkTargets = setOf(testCase.targetAttribute),
+                        frameworkName = "main.framework",
+                        disambiguation1Attribute = testCase.expectedDisambiguation1Attribute,
+                        disambiguation2Attribute = testCase.expectedDisambiguation2Attribute,
+                    )
                 )
             }
         }
 
-        // Also check that outgoing custom framework configuration is valid
-        run {
-            val customFrameworkConfiguration = frameworkProducer.configurations.getByName("customReleaseFrameworkIosArm64")
-            assertEquals(
-                "someValue",
-                customFrameworkConfiguration.outgoing.attributes.getAttribute(disambiguation1Attribute)
+        val customFrameworkConfiguration = frameworkProducer.configurations.getByName("customReleaseFrameworkIosArm64")
+        customFrameworkConfiguration.validateOutgoing(
+            OutgoingArtifactCheck(
+                buildType = "RELEASE",
+                frameworkTargets = setOf("ios_arm64"),
+                frameworkName = "custom.framework",
+                disambiguation1Attribute = "someValue",
+                disambiguation2Attribute = "someValue2",
             )
-            assertEquals(
-                "someValue2",
-                customFrameworkConfiguration.outgoing.attributes.getAttribute(disambiguation2Attribute)
-            )
-            customFrameworkConfiguration.validateOutgoing(
-                expectedBuildType = "RELEASE",
-                expectedFrameworkAttributes = setOf("ios_arm64"),
-                expectedFrameworkName = "custom.framework",
-                expectedDisambiguation1Attribute = "someValue",
-                expectedDisambiguation2Attribute = "someValue2",
+        )
+    }
+
+    @Test
+    fun `universal framework configurations - output a single artifact with underlying targets as attributes`() {
+        val frameworkProducer = buildProjectWithMPP {
+            kotlin {
+                iosArm64 {
+                    // Applying attributes at either target or framework level doesn't affect outgoing universal framework configuration
+                    attributes.setAttribute(disambiguation1Attribute, "someValue")
+                    binaries.framework("main") {
+                        attributes.setAttribute(disambiguation2Attribute, "someValue2")
+                    }
+                }
+                iosX64 {
+                    binaries.framework("main")
+                }
+            }
+        }.evaluate()
+
+        val buildTypes = listOf("release", "debug")
+        buildTypes.forEach { buildType ->
+            val universalFrameworkConfiguration = frameworkProducer.configurations.getByName("main${buildType.capitalize()}FrameworkIosFat")
+            universalFrameworkConfiguration.validateOutgoing(
+                OutgoingArtifactCheck(
+                    buildType = buildType.toUpperCase(),
+                    frameworkTargets = setOf("ios_x64", "ios_arm64"),
+                    frameworkName = "main.framework",
+                    disambiguation1Attribute = null,
+                    disambiguation2Attribute = null,
+                )
             )
         }
     }
 
+    private data class OutgoingArtifactCheck(
+        val frameworkName: String,
+        val frameworkTargets: Set<String>?,
+        val buildType: String?,
+        val disambiguation1Attribute: String?,
+        val disambiguation2Attribute: String?,
+    )
+
+    private val disambiguation1Attribute = Attribute.of("myDisambiguation1Attribute", String::class.java)
+    private val disambiguation2Attribute = Attribute.of("myDisambiguation2Attribute", String::class.java)
+    private val frameworkTargets = Attribute.of(
+        "org.jetbrains.kotlin.native.framework.targets",
+        Set::class.java
+    )
+    private val kotlinNativeBuildTypeAttribute = Attribute.of(
+        "org.jetbrains.kotlin.native.build.type",
+        String::class.java
+    )
+
+    private fun Configuration.validateOutgoing(
+        expectedArtifact: OutgoingArtifactCheck,
+    ) {
+        assertEquals(
+            listOf(expectedArtifact),
+            outgoing.artifacts.map { framework ->
+                OutgoingArtifactCheck(
+                    frameworkName = framework.file.name,
+                    frameworkTargets = outgoing.attributes.getAttribute(frameworkTargets)?.assertedCast<Set<String>> { "Couldn't cast framework targets" },
+                    buildType = outgoing.attributes.getAttribute(kotlinNativeBuildTypeAttribute)?.assertedCast<String> { "Couldn't cast built type" },
+                    disambiguation1Attribute = outgoing.attributes.getAttribute(disambiguation1Attribute)?.assertedCast<String> { "Couldn't cast disambiguation1Attribute" },
+                    disambiguation2Attribute = outgoing.attributes.getAttribute(disambiguation2Attribute)?.assertedCast<String> { "Couldn't cast disambiguation2Attribute" },
+                )
+            },
+            "Configuration ${name} has an unexpected outgoing artifact"
+        )
+    }
 }
