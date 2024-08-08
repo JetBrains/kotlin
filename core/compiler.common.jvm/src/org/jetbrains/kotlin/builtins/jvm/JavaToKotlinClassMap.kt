@@ -104,6 +104,7 @@ object JavaToKotlinClassMap {
         }
 
         addKotlinToJava(FqName("kotlin.concurrent.AtomicInt"), classId(AtomicInteger::class.java))
+        addJavaToKotlin(classId(AtomicInteger::class.java), ClassId(FqName.topLevel(Name.identifier("kotlin.concurrent")), Name.identifier("AtomicInt")))
 
         addKotlinToJava(FqNames.nothing.toSafe(), classId(Void::class.java))
     }
