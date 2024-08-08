@@ -1,0 +1,5 @@
+FILE: falseOperatorAssignmentWithBooleanNot.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lvar boolean: R|kotlin/Boolean| = Boolean(false)
+        R|<local>/boolean| = R|<local>/boolean|.R|kotlin/Boolean.not|()
+    }

@@ -249,6 +249,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
     }
 
     @Test
+    @TestMetadata("falseOperatorAssignmentWithBooleanNot.kt")
+    public void testFalseOperatorAssignmentWithBooleanNot() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/falseOperatorAssignmentWithBooleanNot.kt");
+    }
+
+    @Test
     @TestMetadata("fib.kt")
     public void testFib() {
       runTest("compiler/fir/analysis-tests/testData/resolve/fib.kt");
