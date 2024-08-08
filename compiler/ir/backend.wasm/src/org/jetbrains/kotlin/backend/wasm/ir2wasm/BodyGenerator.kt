@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
@@ -753,7 +754,7 @@ class BodyGenerator(
         val inlineFunction = when (val inlineDeclaration = inlinedBlock.inlineDeclaration) {
             is IrProperty -> inlineDeclaration.getter
             else -> inlineDeclaration as? IrFunction
-        } ?: error("Function was expected, but got ${inlinedBlock.inlineDeclaration.render()}")
+        } ?: compilationException("Function was expected", inlinedBlock.inlineDeclaration)
 
         functionContext.stepIntoInlinedFunction(inlineFunction)
         super.visitInlinedFunctionBlock(inlinedBlock)
