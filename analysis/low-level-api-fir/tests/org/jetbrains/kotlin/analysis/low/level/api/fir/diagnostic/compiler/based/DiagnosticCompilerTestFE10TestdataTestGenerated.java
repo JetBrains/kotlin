@@ -26365,6 +26365,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("delegationToTypeParameterWithBond.kt")
+      public void testDelegationToTypeParameterWithBond() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/delegationToTypeParameterWithBond.kt");
+      }
+
+      @Test
       @TestMetadata("delegationWithIntersectionAndTypeParameters.kt")
       public void testDelegationWithIntersectionAndTypeParameters() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/delegationWithIntersectionAndTypeParameters.kt");

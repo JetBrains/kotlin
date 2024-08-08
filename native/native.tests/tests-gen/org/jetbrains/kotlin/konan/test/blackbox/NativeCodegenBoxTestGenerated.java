@@ -4781,9 +4781,33 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("delegationToInOutTypeParameters.kt")
+      public void testDelegationToInOutTypeParameters() {
+        runTest("compiler/testData/codegen/box/classDelegation/delegationToInOutTypeParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("delegationToInTypeParameter.kt")
+      public void testDelegationToInTypeParameter() {
+        runTest("compiler/testData/codegen/box/classDelegation/delegationToInTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("delegationToOutTypeParameter.kt")
+      public void testDelegationToOutTypeParameter() {
+        runTest("compiler/testData/codegen/box/classDelegation/delegationToOutTypeParameter.kt");
+      }
+
+      @Test
       @TestMetadata("delegationToTypeParameter.kt")
       public void testDelegationToTypeParameter() {
         runTest("compiler/testData/codegen/box/classDelegation/delegationToTypeParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("delegationToTypeParameterWithRecursiveBond.kt")
+      public void testDelegationToTypeParameterWithRecursiveBond() {
+        runTest("compiler/testData/codegen/box/classDelegation/delegationToTypeParameterWithRecursiveBond.kt");
       }
 
       @Test
