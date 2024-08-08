@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun invokeLater(x: () -> Unit) {
     x()
 }
