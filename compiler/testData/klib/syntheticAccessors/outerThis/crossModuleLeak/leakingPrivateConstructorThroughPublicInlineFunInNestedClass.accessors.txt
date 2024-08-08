@@ -8,6 +8,6 @@ public class Outer
         /* TARGET use-site */ Outer(s = "")
     public class Nested
         public inline fun copy(s: String): Outer
-            /* ACCESSOR use-site */ Outer(s = s, $constructor_marker = null)
-    /* ACCESSOR declaration */ public constructor(s: String, $constructor_marker: DefaultConstructorMarker?)
+            /* ACCESSOR use-site */ access$<init>(s = s)
+    /* ACCESSOR declaration */ public /* static */ fun access$<init>(s: String): Outer
         /* TARGET use-site */ Outer(s = s)

@@ -6,14 +6,23 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.inline.SyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -26,7 +35,51 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
         const val SUPER_QUALIFIER_SUFFIX_MARKER = "s"
         const val JVM_DEFAULT_MARKER = "jd"
         const val COMPANION_PROPERTY_MARKER = "cp"
+        const val CONSTRUCTOR_MARKER_PARAMETER_NAME = "constructor_marker"
     }
+
+    override fun IrConstructor.makeConstructorAccessor(originForConstructorAccessor: IrDeclarationOrigin): IrConstructor {
+        val source = this
+
+        return factory.buildConstructor {
+            origin = originForConstructorAccessor
+            name = source.name
+            visibility = DescriptorVisibilities.PUBLIC
+        }.also { accessor ->
+            accessor.parent = source.parent
+
+            accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            if (source.constructedClass.modality == Modality.SEALED) {
+                for (accessorValueParameter in accessor.valueParameters) {
+                    accessorValueParameter.annotations = emptyList()
+                }
+            }
+
+            accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
+
+            accessor.addValueParameter(
+                CONSTRUCTOR_MARKER_PARAMETER_NAME.synthesizedString,
+                context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable(),
+                IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER,
+            )
+
+            accessor.body = context.irFactory.createBlockBody(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                listOf(createDelegatingConstructorCall(accessor, source.symbol))
+            )
+        }
+    }
+
+    protected fun createDelegatingConstructorCall(accessor: IrFunction, targetSymbol: IrConstructorSymbol) =
+        IrDelegatingConstructorCallImpl.fromSymbolOwner(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            context.irBuiltIns.unitType,
+            targetSymbol, targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
+        ).also {
+            copyAllParamsToArgs(it, accessor)
+        }
+
 
     override fun accessorModality(parent: IrDeclarationParent): Modality =
         if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL

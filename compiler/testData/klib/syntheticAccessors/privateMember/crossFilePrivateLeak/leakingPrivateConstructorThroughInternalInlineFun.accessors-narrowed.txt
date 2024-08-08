@@ -7,6 +7,6 @@ public class A
     public constructor()
         /* TARGET use-site */ A(s = "")
     internal inline fun copy(s: String): A
-        /* ACCESSOR use-site */ A(s = s, $constructor_marker = null)
-    /* ACCESSOR declaration */ internal constructor(s: String, $constructor_marker: DefaultConstructorMarker?)
+        /* ACCESSOR use-site */ access$<init>(s = s)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<init>(s: String): A
         /* TARGET use-site */ A(s = s)

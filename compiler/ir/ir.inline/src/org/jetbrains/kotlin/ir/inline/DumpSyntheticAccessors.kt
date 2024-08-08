@@ -87,6 +87,10 @@ class DumpSyntheticAccessors(context: CommonBackendContext) : ModuleLoweringPass
                         val accessorTargetSymbol: IrValueSymbol = expression.symbol
                         accessorTargetSymbol
                     }
+                    is IrConstructorCall -> {
+                        val accessorTargetSymbol: IrConstructorSymbol = accessor.getSingleExpression<IrConstructorCall>().symbol
+                        accessorTargetSymbol
+                    }
                     else -> error("Unexpected type of expression in accessor ${accessor.id()}, ${expression.render()}")
                 }
                 else -> error("Unexpected accessor type: ${accessor.id()}")
