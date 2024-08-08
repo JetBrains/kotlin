@@ -97,10 +97,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "1/cache-test",
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
-            buildJdk = getJdk11().javaHome!!
+            buildJdk = getJdk17().javaHome!!
         ) {
             enableLocalBuildCache(buildCache)
-            useToolchainExtension(17)
+            useToolchainExtension(11)
 
             build("assemble")
         }
@@ -110,10 +110,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             projectPathAdditionalSuffix = "2/cache-test",
             buildOptions = defaultBuildOptions.copy(buildCacheEnabled = true),
-            buildJdk = getJdk11().javaHome!!
+            buildJdk = getJdk17().javaHome!!
         ) {
             enableLocalBuildCache(buildCache)
-            useToolchainExtension(17)
+            useToolchainExtension(11)
 
             build("assemble") {
                 assertTasksFromCache(":compileKotlin")
@@ -334,7 +334,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build("build") {
                 assertOutputContains("-jvm-target 11")
-                assertOutputDoesNotContain("-jvm-target 1.8")
+                assertOutputDoesNotContain("-jvm-target 17")
             }
         }
     }
@@ -348,7 +348,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            setJvmTarget("1.8")
+            setJvmTarget("17")
 
             useJdkToCompile(
                 getJdk11Path(),
@@ -356,7 +356,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             )
 
             build("build") {
-                assertOutputContains("-jvm-target 1.8")
+                assertOutputContains("-jvm-target 17")
                 assertOutputDoesNotContain("-jvm-target 11")
             }
         }
@@ -375,7 +375,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
             build("build") {
                 assertOutputContains("-jvm-target 11")
-                assertOutputDoesNotContain("-jvm-target 1.8")
+                assertOutputDoesNotContain("-jvm-target 17")
             }
         }
     }
@@ -389,7 +389,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
-            setJvmTarget("1.8")
+            setJvmTarget("17")
             useToolchainToCompile(11)
 
             //language=properties
@@ -401,7 +401,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             )
 
             build("build") {
-                assertOutputContains("-jvm-target 1.8")
+                assertOutputContains("-jvm-target 17")
                 assertOutputDoesNotContain("-jvm-target 11")
             }
         }
@@ -520,13 +520,13 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("Toolchain should not make an exception when build is running on JDK 11, but toolchain is set to JDK 1.8")
+    @DisplayName("Toolchain should not make an exception when build is running on JDK 17, but toolchain is set to JDK 1.8")
     @GradleTest
     internal fun shouldNotRaiseErrorOnJDK11withJDK1_8Toolchain(gradleVersion: GradleVersion) {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome
+            buildJdk = getJdk17().javaHome
         ) {
             useToolchainExtension(8)
 
@@ -584,7 +584,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
-            useToolchainExtension(17)
+            useToolchainExtension(11)
 
             build("assemble")
             build("assemble") {
@@ -614,7 +614,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
         project(
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion,
-            buildJdk = getJdk11().javaHome
+            buildJdk = getJdk17().javaHome
         ) {
             //language=Groovy
             buildGradle.append(
@@ -679,7 +679,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             )
 
             build(":lib:compileKotlin") {
-                assertOutputDoesNotContain("-jvm-target 1.8")
+                assertOutputDoesNotContain("-jvm-target 17")
                 assertOutputContains("-jvm-target 11")
             }
         }
@@ -762,8 +762,10 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
 
     private fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getProperty("java.home")))
     private fun getJdk11(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk11Home")))
+    private fun getJdk17(): JavaInfo = Jvm.forHome(File(System.getProperty("jdk17Home")))
     // replace required for windows paths so Groovy will not complain about unexpected char '\'
     private fun getJdk11Path(): String = getJdk11().javaHome.absolutePath.replace("\\", "\\\\")
+    private fun getJdk17Path(): String = getJdk17().javaHome.absolutePath.replace("\\", "\\\\")
     private val JavaInfo.javaHomeRealPath
         get() = javaHome
             .toPath()

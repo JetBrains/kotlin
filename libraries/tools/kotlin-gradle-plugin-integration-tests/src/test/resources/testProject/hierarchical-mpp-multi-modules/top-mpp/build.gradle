@@ -21,6 +21,7 @@ repositories {
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
 kotlin {
+    jvmToolchain(8)
     jvm("jvm18") {
         withJava()
         attributes { attribute(complexLibAttribute, 'jvmWithJava') }

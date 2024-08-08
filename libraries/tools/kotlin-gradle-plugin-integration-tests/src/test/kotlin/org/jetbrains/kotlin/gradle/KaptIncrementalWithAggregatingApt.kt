@@ -222,7 +222,7 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     }
 
     @DisplayName("Incremental binary aggregating changes")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11])
+    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11, JavaVersion.VERSION_17, JavaVersion.VERSION_21])
     @GradleWithJdkTest
     fun testIncrementalBinaryAggregatingChanges(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
         doIncrementalAggregatingChanges(
@@ -247,14 +247,14 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         project(
             "kaptIncrementalAggregatingProcessorProject",
             gradleVersion,
-            buildJdk = jdk.location
+            buildJdk = jdk.location,
         ) {
             setupIncrementalAptProject(
                 "ISOLATING" to if (isBinary) IncrementalBinaryIsolatingProcessor::class.java else IncrementalIsolatingProcessor::class.java,
                 "AGGREGATING" to IncrementalAggregatingProcessor::class.java
             )
 
-            build("clean", "assemble") {
+            build("assemble") {
                 assertEquals(
                     listOf(
                         "$KAPT3_STUBS_PATH/bar/WithAnnotation.java",

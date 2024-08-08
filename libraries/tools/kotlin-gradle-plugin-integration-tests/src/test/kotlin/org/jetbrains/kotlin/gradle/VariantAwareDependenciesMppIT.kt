@@ -110,19 +110,23 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
             subProject("simpleProject").buildGradle.modify {
                 // In Gradle 5.3+, the variants of a Kotlin MPP can't be disambiguated in a pure Java project's deprecated
                 // configurations that don't have a proper 'org.gradle.usage' attribute value, see KT-30378
-                it.checkedReplace("id \"org.jetbrains.kotlin.jvm\"", "") +
+                it
+                    .checkedReplace("id \"org.jetbrains.kotlin.jvm\"", "")
+                    .checkedReplace("kotlin.jvmToolchain(8)", "")
+                    .plus(
                         """
-                    |
-                    |configurations {
-                    |    configure([compile, runtime, deployCompile, deployCompileOnly, deployRuntime,
-                    |        testCompile, testRuntime, getByName('default')]) {
-                    |        canBeResolved = false
-                    |    }
-                    |}
-                    |
-                    |dependencies { implementation rootProject }
-                    |
-                    """.trimMargin()
+                        |
+                        |configurations {
+                        |    configure([compile, runtime, deployCompile, deployCompileOnly, deployRuntime,
+                        |        testCompile, testRuntime, getByName('default')]) {
+                        |        canBeResolved = false
+                        |    }
+                        |}
+                        |
+                        |dependencies { implementation rootProject }
+                        |
+                        """.trimMargin()
+                    )
             }
 
             testResolveAllConfigurations("simpleProject")

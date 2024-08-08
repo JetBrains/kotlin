@@ -4,6 +4,8 @@ plugins {
     id "org.jetbrains.kotlin.kapt"
 }
 
+kotlin.jvmToolchain(8)
+
 repositories {
     mavenLocal()
     mavenCentral()

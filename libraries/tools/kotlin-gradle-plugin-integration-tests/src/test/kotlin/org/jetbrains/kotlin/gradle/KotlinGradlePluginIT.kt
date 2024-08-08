@@ -658,7 +658,7 @@ class KotlinGradleIT : KGPBaseTest() {
                         val expectedLine = output.lines().find {
                             it.contains(
                                 "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "compatible with Java 17, preferably in the form of class files, " +
                                         "preferably optimized for standard JVMs, " +
                                         "and its dependencies declared externally, " +
                                         "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', "
@@ -681,7 +681,7 @@ class KotlinGradleIT : KGPBaseTest() {
                             it.trimStart().startsWith(
                                 "> No matching variant of project :projA was found. " +
                                         "The consumer was configured to find a library for use during compile-time, " +
-                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "compatible with Java 17, preferably in the form of class files, " +
                                         "preferably optimized for standard JVMs, and its dependencies declared externally, "
                             )
                         }
@@ -708,7 +708,7 @@ class KotlinGradleIT : KGPBaseTest() {
                         val expectedLine = output.lines().find {
                             it.contains(
                                 "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "compatible with Java 17, preferably in the form of class files, " +
                                         "preferably optimized for standard JVMs, " +
                                         "and its dependencies declared externally, " +
                                         "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', "
@@ -731,7 +731,7 @@ class KotlinGradleIT : KGPBaseTest() {
                             it.contains(
                                 "No matching variant of project :projA was found. " +
                                         "The consumer was configured to find a library for use during compile-time, " +
-                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "compatible with Java 17, preferably in the form of class files, " +
                                         "preferably optimized for standard JVMs, and its dependencies declared externally, "
                             )
                         }

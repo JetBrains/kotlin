@@ -10,14 +10,11 @@ repositories {
 }
 
 kotlin {
+    jvmToolchain(8)
+
     jvm("jvmWithJava") {
         withJava()
-
-        compilations.configureEach {
-            kotlinOptions.jvmTarget = "1.8"
-        }
     }
-
 }
 
 

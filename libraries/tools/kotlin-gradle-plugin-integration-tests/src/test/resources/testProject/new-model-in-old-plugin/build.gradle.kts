@@ -11,6 +11,7 @@ repositories {
     mavenCentral()
 }
 
+kotlin.jvmToolchain(8)
 kotlin.target.compilations {
     all {
         kotlinOptions {

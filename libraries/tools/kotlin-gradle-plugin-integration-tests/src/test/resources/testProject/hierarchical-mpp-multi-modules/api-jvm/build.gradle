@@ -10,6 +10,8 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 
+kotlin.jvmToolchain(8)
+
 [compileKotlin, compileTestKotlin]*.configure {
     kotlinOptions {
         kotlinOptions.jvmTarget = "1.8"

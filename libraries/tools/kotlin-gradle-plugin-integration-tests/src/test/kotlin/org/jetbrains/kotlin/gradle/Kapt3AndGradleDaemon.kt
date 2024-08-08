@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.testkit.runner.BuildResult
-import org.gradle.tooling.internal.consumer.ConnectorServices
+import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Kapt caching inside Gradle daemon")
@@ -25,9 +24,19 @@ class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
         )
 
     @DisplayName("Javac should be loaded only once")
-    @GradleTest
-    fun testJavacIsLoadedOnce(gradleVersion: GradleVersion) {
-        project("javacIsLoadedOnce".withPrefix, gradleVersion) {
+    // "com.sun.tools.javac.util.Context" is only available in JDK 1.8
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_9)
+    @JdkVersions(versions = [JavaVersion.VERSION_1_8])
+    @GradleWithJdkTest
+    fun testJavacIsLoadedOnce(
+        gradleVersion: GradleVersion,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "javacIsLoadedOnce".withPrefix,
+            gradleVersion,
+            buildJdk = providedJdk.location,
+        ) {
             build("assemble") {
                 val loadsCount = "Loaded com.sun.tools.javac.util.Context from"
                     .toRegex(RegexOption.LITERAL)
@@ -38,7 +47,7 @@ class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
                     """
                     |${printBuildOutput()}
                     |
-                    | 'javac' is loaded more than once
+                    | 'javac' is loaded not only once: $loadsCount times.
                     """.trimMargin()
                 }
             }
@@ -50,8 +59,12 @@ class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
     // Which forces Kapt tasks to run using workers with process isolation,
     // which is not compatible with classloaders caching.
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
-    @GradleTest
-    fun testAnnotationProcessorClassIsLoadedOnce(gradleVersion: GradleVersion) {
+    @JdkVersions(versions = [JavaVersion.VERSION_1_8])
+    @GradleWithJdkTest
+    fun testAnnotationProcessorClassIsLoadedOnce(
+        gradleVersion: GradleVersion,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
         project(
             "javacIsLoadedOnce".withPrefix,
             gradleVersion,
@@ -59,7 +72,8 @@ class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
                 kaptOptions = defaultBuildOptions.kaptOptions!!.copy(
                     classLoadersCacheSize = 10
                 )
-            )
+            ),
+            buildJdk = providedJdk.location,
         ) {
             val loadPattern = ("Loaded example.ExampleAnnotationProcessor from").toRegex(RegexOption.LITERAL)
             fun BuildResult.classLoadingCount() = loadPattern.findAll(output).count()

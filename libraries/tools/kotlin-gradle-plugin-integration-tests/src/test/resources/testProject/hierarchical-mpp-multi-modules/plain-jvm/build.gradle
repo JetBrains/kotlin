@@ -12,6 +12,8 @@ dependencies {
     api project(":bottom-mpp")
 }
 
+kotlin.jvmToolchain(8)
+
 [compileKotlin, compileTestKotlin]*.configure {
     kotlinOptions {
         kotlinOptions.jvmTarget = "1.8"

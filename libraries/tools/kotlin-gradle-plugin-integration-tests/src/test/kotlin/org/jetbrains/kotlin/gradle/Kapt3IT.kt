@@ -353,6 +353,9 @@ open class Kapt3IT : Kapt3BaseIT() {
                 """.trimIndent()
             )
 
+            // Toolchain will force "process" mode
+            buildGradle.modify { it.checkedReplace("kotlin.jvmToolchain(8)", "") }
+
             buildGradle.append(
                 //language=Groovy
                 """
@@ -1095,7 +1098,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("should do annotation processing when 'sourceCompatibility = 8' and JDK is 11+")
-    @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
     fun testSimpleWithJdk11AndSourceLevel8(
         gradleVersion: GradleVersion,
@@ -1106,9 +1109,10 @@ open class Kapt3IT : Kapt3BaseIT() {
             gradleVersion,
             buildJdk = jdk.location
         ) {
-            buildGradle.append(
-                "\njava.sourceCompatibility = JavaVersion.VERSION_1_8"
-            )
+            buildGradle.modify {
+                it.replace("kotlin.jvmToolchain(8)", "") +
+                        "\njava.sourceCompatibility = JavaVersion.VERSION_1_8"
+            }
 
             // because Java sourceCompatibility is fixed JVM target will different with JDK 11 on Gradle 8
             // as the toolchain by default will use the Gradle JDK version
@@ -1120,7 +1124,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             build("assemble") {
                 assertTasksExecuted(":kaptKotlin", ":kaptGenerateStubsKotlin")
-                assertOutputContains("Javac options: {-source=1.8}")
+                assertOutputContains("Javac options: {--source=1.8}")
             }
         }
     }

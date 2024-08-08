@@ -231,7 +231,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @DisplayName("KT-54703: JPMS projects with dependency on kotlin.stdlib.jdk8 work as expected")
-    @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
     fun alignmentWorksCorrectlyForJPMS(
         gradleVersion: GradleVersion,

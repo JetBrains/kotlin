@@ -207,7 +207,7 @@ class SubpuginsIT : KGPBaseTest() {
             ).forEach { buildGradle ->
                 buildGradle.modify {
                     val freefairLombokVersion = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-                        "5.3.0"
+                        "5.3.3.3"
                     } else {
                         "8.4"
                     }
