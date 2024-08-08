@@ -343,9 +343,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @DisplayName("with native dependencies downloader")
     @NativeGradlePluginTests
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_6],
-    )
     @GradleTest
     fun testNativeBundleDownloadForConfigurationCache(gradleVersion: GradleVersion, @TempDir konanDirTemp: Path) {
         nativeProject(

@@ -425,15 +425,25 @@ internal constructor(
     )
     // endregion.
 
+    @get:Internal
+    internal val isMetadataCompilation: Boolean = when (compilation) {
+        is KotlinCompilationInfo.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
+    }
+
     /**
      * This is utility property that contains list of native platform dependencies that are present in [compileDependencyFiles]
      * but should be excluded from actual classpath because they are included by default by Kotlin Native Compiler.
      * this behaviour will be fixed as part of KT-65232
      */
-    @get:InputFiles
-    @get:Optional
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal var excludeOriginalPlatformLibraries: FileCollection? = null
+//    @get:InputFiles
+//    @get:Optional
+//    @get:PathSensitive(PathSensitivity.RELATIVE)
+//    @get:Internal
+//    private val excludeOriginalPlatformLibraries: FileCollection? = if (isMetadataCompilation) {
+//        null
+//    } else {
+//            objectFactory.fileCollection().from(project.getOriginalPlatformLibrariesFor(konanTarget))
+//        }
 
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
@@ -486,7 +496,7 @@ internal constructor(
 
         dependencyClasspath { args ->
             args.libraries = runSafe {
-                libraries.exclude(excludeOriginalPlatformLibraries).files.filterKlibsPassedToCompiler().toPathsArray()
+                libraries/*.exclude(excludeOriginalPlatformLibraries)*/.files.filterKlibsPassedToCompiler().toPathsArray()
             }
             args.friendModules = runSafe {
                 friendModule.files.takeIf { it.isNotEmpty() }?.map { it.absolutePath }?.joinToString(File.pathSeparator)
@@ -506,11 +516,6 @@ internal constructor(
 
             args.freeArgs += sources.asFileTree.map { it.absolutePath }
         }
-    }
-
-    @get:Internal
-    internal val isMetadataCompilation: Boolean = when (compilation) {
-        is KotlinCompilationInfo.TCS -> compilation.compilation is KotlinMetadataCompilation<*>
     }
 
     private fun createSharedCompilationDataOrNull(): SharedCompilationData? {

@@ -68,8 +68,13 @@ constructor(
 
     override val destinationDirectory: DirectoryProperty = binary.outputDirectoryProperty
 
+    @Suppress("DEPRECATION")
     @get:Internal
-    internal val nativeDistributionDependencies = project.provider { project.getOriginalPlatformLibrariesFor(binary.compilation.konanTarget)}
+    internal val konanTarget = compilation.konanTarget
+
+    @get:Internal
+    internal val nativeDistributionDependencies =
+        project.provider { project.getOriginalPlatformLibrariesFor(binary.compilation.konanTarget) }
 
     @get:Classpath
     override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
@@ -84,10 +89,13 @@ constructor(
         }
     )
 
-    @get:InputFiles
-    @get:Optional
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal var excludeOriginalPlatformLibraries: FileCollection? = null
+//    @get:InputFiles
+//    @get:Optional
+//    @get:PathSensitive(PathSensitivity.RELATIVE)
+
+//    @get:Internal
+//    private val excludeOriginalPlatformLibraries: FileCollection? =
+//        objectFactory.fileCollection().from(project.getOriginalPlatformLibrariesFor(konanTarget))
 
     @get:Input
     val outputKind: CompilerOutputKind by lazyConvention { binary.outputKind.compilerOutputKind }
@@ -103,10 +111,6 @@ constructor(
 
     @get:Input
     internal val binaryName: String by lazyConvention { binary.name }
-
-    @Suppress("DEPRECATION")
-    @get:Internal
-    internal val konanTarget = compilation.konanTarget
 
     @Suppress("DEPRECATION")
     @Deprecated("Use toolOptions to configure the task")
@@ -262,7 +266,7 @@ constructor(
 
         dependencyClasspath { args ->
             args.libraries = runSafe {
-                libraries.exclude(excludeOriginalPlatformLibraries).files.filterKlibsPassedToCompiler()
+                libraries/*.exclude(excludeOriginalPlatformLibraries)*/.files.filterKlibsPassedToCompiler()
             }?.toPathsArray()
             args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
             args.friendModules = runSafe { friendModule.files.toList().takeIf { it.isNotEmpty() } }
