@@ -277,29 +277,29 @@ public final class Test<G extends java.lang.Object> {
     @org.jetbrains.annotations.Nullable()
     private final ABC b = null;
     @org.jetbrains.annotations.Nullable()
-    private final List<ABC> c = null;
+    private final java.util.List<ABC> c = null;
     @org.jetbrains.annotations.Nullable()
-    private final List<Map<BCD, ABC<List<BCD>>>> d = null;
-    public List<? extends Map<? extends ABC, ? extends BCD>> e;
+    private final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> d = null;
+    public java.util.List<java.util.Map<? extends ABC, BCD>> e;
     public ABC<?> f;
     public java.util.List<?> g;
-    public ABC<Int, String> h;
-    public Function2<ABC, List<BCD>, CDE> i;
+    public ABC<java.lang.Integer, java.lang.String> h;
+    public Function2<ABC, java.util.List<BCD>, CDE> i;
     public Function0<CDE> j;
-    public Function2<ABC, List<BCD>, CDE> k;
+    public Function2<ABC, java.util.List<BCD>, CDE> k;
     public ABC.BCD.EFG l;
-    public Coocoo coocoo;
-    public Coocoo2<String> coocoo2;
-    public Coocoo2<Coocoo> coocoo21;
-    public Coocoo3<String> coocoo3;
-    public Coocoo3<Coocoo2<Coocoo>> coocoo31;
-    public Nested2 nested;
+    public ABC coocoo;
+    public ABC<java.lang.String> coocoo2;
+    public ABC<ABC> coocoo21;
+    public ABC<java.lang.String, java.lang.String> coocoo3;
+    public ABC<java.lang.String, ABC<ABC>> coocoo31;
+    public ABC nested;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Object m = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String n = "";
     public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<error.NonExistentClass>>>>>>>>>> o11;
-    public List<List<List<List<List<List<List<List<List<ABC>>>>>>>>> o10;
+    public java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> o10;
     public java.util.Calendar.Builder p;
 
     public Test() {
@@ -321,22 +321,22 @@ public final class Test<G extends java.lang.Object> {
     }
 
     @org.jetbrains.annotations.Nullable()
-    public final List<ABC> getC() {
+    public final java.util.List<ABC> getC() {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
-    public final List<Map<BCD, ABC<List<BCD>>>> getD() {
+    public final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> getD() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final List<? extends Map<? extends ABC, ? extends BCD>> getE() {
+    public final java.util.List<java.util.Map<? extends ABC, BCD>> getE() {
         return null;
     }
 
     public final void setE(@org.jetbrains.annotations.NotNull()
-    List<? extends Map<? extends ABC, ? extends BCD>> p0) {
+    java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -358,21 +358,21 @@ public final class Test<G extends java.lang.Object> {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final ABC<Int, String> getH() {
+    public final ABC<java.lang.Integer, java.lang.String> getH() {
         return null;
     }
 
     public final void setH(@org.jetbrains.annotations.NotNull()
-    ABC<Int, String> p0) {
+    ABC<java.lang.Integer, java.lang.String> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Function2<ABC, List<BCD>, CDE> getI() {
+    public final Function2<ABC, java.util.List<BCD>, CDE> getI() {
         return null;
     }
 
     public final void setI(@org.jetbrains.annotations.NotNull()
-    Function2<ABC, List<BCD>, CDE> p0) {
+    Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -385,12 +385,12 @@ public final class Test<G extends java.lang.Object> {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Function2<ABC, List<BCD>, CDE> getK() {
+    public final Function2<ABC, java.util.List<BCD>, CDE> getK() {
         return null;
     }
 
     public final void setK(@org.jetbrains.annotations.NotNull()
-    Function2<ABC, List<BCD>, CDE> p0) {
+    Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -403,57 +403,57 @@ public final class Test<G extends java.lang.Object> {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Coocoo getCoocoo() {
+    public final ABC getCoocoo() {
         return null;
     }
 
     public final void setCoocoo(@org.jetbrains.annotations.NotNull()
-    Coocoo p0) {
+    ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Coocoo2<String> getCoocoo2() {
+    public final ABC<java.lang.String> getCoocoo2() {
         return null;
     }
 
     public final void setCoocoo2(@org.jetbrains.annotations.NotNull()
-    Coocoo2<String> p0) {
+    ABC<java.lang.String> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Coocoo2<Coocoo> getCoocoo21() {
+    public final ABC<ABC> getCoocoo21() {
         return null;
     }
 
     public final void setCoocoo21(@org.jetbrains.annotations.NotNull()
-    Coocoo2<Coocoo> p0) {
+    ABC<ABC> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Coocoo3<String> getCoocoo3() {
+    public final ABC<java.lang.String, java.lang.String> getCoocoo3() {
         return null;
     }
 
     public final void setCoocoo3(@org.jetbrains.annotations.NotNull()
-    Coocoo3<String> p0) {
+    ABC<java.lang.String, java.lang.String> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Coocoo3<Coocoo2<Coocoo>> getCoocoo31() {
+    public final ABC<java.lang.String, ABC<ABC>> getCoocoo31() {
         return null;
     }
 
     public final void setCoocoo31(@org.jetbrains.annotations.NotNull()
-    Coocoo3<Coocoo2<Coocoo>> p0) {
+    ABC<java.lang.String, ABC<ABC>> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Nested2 getNested() {
+    public final ABC getNested() {
         return null;
     }
 
     public final void setNested(@org.jetbrains.annotations.NotNull()
-    Nested2 p0) {
+    ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -476,12 +476,12 @@ public final class Test<G extends java.lang.Object> {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final List<List<List<List<List<List<List<List<List<ABC>>>>>>>>> getO10() {
+    public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> getO10() {
         return null;
     }
 
     public final void setO10(@org.jetbrains.annotations.NotNull()
-    List<List<List<List<List<List<List<List<List<ABC>>>>>>>>> p0) {
+    java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends ABC>>>>>>>>> p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -500,7 +500,7 @@ public final class Test<G extends java.lang.Object> {
     }
 
     public final <T extends java.lang.Object>void f2(@org.jetbrains.annotations.NotNull()
-    ABC<String, Int, Function0<BCD>> a) {
+    ABC<java.lang.String, java.lang.Integer, Function0<BCD>> a) {
     }
 
     public final <T extends java.lang.Object>long f3(@org.jetbrains.annotations.NotNull()
