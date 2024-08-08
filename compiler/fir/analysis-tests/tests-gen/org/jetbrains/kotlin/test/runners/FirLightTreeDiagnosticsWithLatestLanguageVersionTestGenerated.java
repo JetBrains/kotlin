@@ -249,6 +249,18 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
     }
 
     @Test
+    @TestMetadata("falseOperatorAssignmentWithBooleanNot.kt")
+    public void testFalseOperatorAssignmentWithBooleanNot() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/falseOperatorAssignmentWithBooleanNot.kt");
+    }
+
+    @Test
+    @TestMetadata("falseRedundantConversionMethodOnThisProperty.kt")
+    public void testFalseRedundantConversionMethodOnThisProperty() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/falseRedundantConversionMethodOnThisProperty.kt");
+    }
+
+    @Test
     @TestMetadata("fib.kt")
     public void testFib() {
       runTest("compiler/fir/analysis-tests/testData/resolve/fib.kt");
