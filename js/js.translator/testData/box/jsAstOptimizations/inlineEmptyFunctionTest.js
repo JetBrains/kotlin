@@ -1,8 +1,8 @@
 function box() {
   sep('Simple call');
   // Inline function 'inlineFunction' call
-  // Inline function 'inlineFunction' call
   setOK();
+  // Inline function 'inlineFunction' call
   sep('Call in if');
   if (!(flag1 === 0)) {
     var tmp;
@@ -54,6 +54,8 @@ function box() {
     // Inline function 'inlineFunction' call
   } else {
     if (isNumber(tmp0_subject)) {
+      // Inline function 'inlineFunction' call
+    } else {
       // Inline function 'inlineFunction' call
     }
   }
