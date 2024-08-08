@@ -11,6 +11,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import "Memory.h"
+#import "KString.h"
 #import "ObjCInteropUtils.h"
 #import "ObjCInteropUtilsPrivate.h"
 

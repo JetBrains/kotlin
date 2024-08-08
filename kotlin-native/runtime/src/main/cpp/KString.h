@@ -32,9 +32,8 @@ struct StringHeader {
         // ENCODING_UTF8 = 2 ?
     };
 
-    int encoding() const {
-        return flags_ >> ENCODING_OFFSET;
-    }
+    bool ignoreLastByte() const { return (flags_ & IGNORE_LAST_BYTE) != 0; }
+    int encoding() const { return flags_ >> ENCODING_OFFSET; }
 };
 
 static constexpr const size_t STRING_HEADER_SIZE = (sizeof(StringHeader) + sizeof(KChar) - 1) / sizeof(KChar);
@@ -56,8 +55,8 @@ inline const char* StringRawData(KConstRef kstring) {
     return reinterpret_cast<const char*>(CharArrayAddressOfElementAt(kstring->array(), StringRawDataOffset(kstring)));
 }
 
-inline size_t StringRawSize(KConstRef kstring) {
-    return (kstring->array()->count_ - StringRawDataOffset(kstring)) * sizeof(KChar);
+inline size_t StringRawSize(KConstRef kstring, bool ignoreLastByte) {
+    return (kstring->array()->count_ - StringRawDataOffset(kstring)) * sizeof(KChar) - ignoreLastByte;
 }
 
 } // namespace
