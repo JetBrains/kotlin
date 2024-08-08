@@ -14010,6 +14010,16 @@ open annotation class kotlin.js/JsFileName : kotlin/Annotation { // kotlin.js/Js
 }
 
 // Targets: [js]
+open annotation class kotlin.js/JsFun : kotlin/Annotation { // kotlin.js/JsFun|null[0]
+    constructor <init>(kotlin/String, kotlin/String = ...) // kotlin.js/JsFun.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val code // kotlin.js/JsFun.code|{}code[0]
+        final fun <get-code>(): kotlin/String // kotlin.js/JsFun.code.<get-code>|<get-code>(){}[0]
+    final val sourceMap // kotlin.js/JsFun.sourceMap|{}sourceMap[0]
+        final fun <get-sourceMap>(): kotlin/String // kotlin.js/JsFun.sourceMap.<get-sourceMap>|<get-sourceMap>(){}[0]
+}
+
+// Targets: [js]
 open annotation class kotlin.js/JsNonModule : kotlin/Annotation { // kotlin.js/JsNonModule|null[0]
     constructor <init>() // kotlin.js/JsNonModule.<init>|<init>(){}[0]
 }
