@@ -59,11 +59,25 @@ OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
     RETURN_OBJ(nullptr);
   }
 
-  CFStringRef immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
-
+  KRef result;
+  auto immutableCopyOrSameStr = CFStringCreateCopy(nullptr, (CFStringRef)str);
   auto length = CFStringGetLength(immutableCopyOrSameStr);
-  auto result = CreateUninitializedUtf16String(length, OBJ_RESULT);
-  CFStringGetCharacters(immutableCopyOrSameStr, {0, length}, reinterpret_cast<UniChar*>(StringRawData(result)));
+  auto encoding = CFStringGetFastestEncoding(immutableCopyOrSameStr);
+  switch (encoding) {
+    // TODO? if UTF-8, could check character values...doesn't seem like CFString has that API though
+    case kCFStringEncodingASCII:
+    case kCFStringEncodingNonLossyASCII:
+    case kCFStringEncodingISOLatin1:
+      result = CreateUninitializedLatin1String(length, OBJ_RESULT);
+      CFStringGetBytes(immutableCopyOrSameStr, {0, length}, encoding, '?', false,
+        reinterpret_cast<UInt8*>(StringRawData(result)), length, nullptr);
+      break;
+    default:
+      result = CreateUninitializedUtf16String(length, OBJ_RESULT);
+      CFStringGetCharacters(immutableCopyOrSameStr, {0, length},
+        reinterpret_cast<UniChar*>(StringRawData(result)));
+      break;
+  }
   result->SetAssociatedObject((void*)immutableCopyOrSameStr);
   RETURN_OBJ(result);
 }
