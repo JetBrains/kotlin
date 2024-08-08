@@ -145,9 +145,9 @@ class SyntheticAccessorLowering(context: CommonBackendContext) : FileLoweringPas
         }
     }
 
-    private class TransformerData(val currentInlineFunction: IrFunction)
+    private inner class Transformer(irFile: IrFile) : IrElementTransformer<Transformer.TransformerData?> {
+        private inner class TransformerData(val currentInlineFunction: IrFunction)
 
-    private inner class Transformer(irFile: IrFile) : IrElementTransformer<TransformerData?> {
         val generatedAccessors = irFile::generatedAccessors.getOrSetIfNull(::GeneratedAccessors)
 
         override fun visitFunction(declaration: IrFunction, data: TransformerData?): IrStatement {
