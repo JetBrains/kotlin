@@ -167,9 +167,11 @@ object FirDiagnosticRenderers {
 
                 val constructors = buildSet {
                     coneTypes.forEach {
-                        it.forEachType {
-                            if (it !is ConeIntersectionType) {
-                                add(it.lowerBoundIfFlexible().getConstructor())
+                        it.forEachType { typeWithinIt ->
+                            val lowerBound = typeWithinIt.lowerBoundIfFlexible()
+
+                            if (lowerBound !is ConeIntersectionType) {
+                                add(lowerBound.getConstructor())
                             }
                         }
                     }
