@@ -10,15 +10,12 @@ import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -228,20 +225,6 @@ private val localClassesInInlineLambdasPhase = makeIrModulePhase(
     prerequisite = setOf()
 )
 
-private val localClassesInInlineFunctionsPhase = makeIrModulePhase(
-    ::LocalClassesInInlineFunctionsLowering,
-    name = "LocalClassesInInlineFunctionsPhase",
-    description = "Extract local classes from inline functions",
-    prerequisite = setOf()
-)
-
-private val localClassesExtractionFromInlineFunctionsPhase = makeIrModulePhase(
-    { context -> LocalClassesExtractionFromInlineFunctionsLowering(context) },
-    name = "localClassesExtractionFromInlineFunctionsPhase",
-    description = "Move local classes from inline functions into nearest declaration container",
-    prerequisite = setOf(localClassesInInlineFunctionsPhase)
-)
-
 private val legacySyntheticAccessorLoweringPhase = makeIrModulePhase(
     ::LegacySyntheticAccessorLowering,
     name = "LegacySyntheticAccessorLowering",
@@ -289,7 +272,7 @@ private val cacheInlineFunctionsBeforeInliningOnlyPrivateFunctionsPhase = makeIr
     description = "Cache copies of inline functions before InlineOnlyPrivateFunctions phase",
     prerequisite = setOf(
         sharedVariablesLoweringPhase,
-        localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
+        localClassesInInlineLambdasPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
 )
@@ -303,7 +286,7 @@ private val cacheInlineFunctionsBeforeInliningAllFunctionsPhase = makeIrModulePh
     description = "Cache copies of inline functions before InlineAllFunctions phase",
     prerequisite = setOf(
         sharedVariablesLoweringPhase,
-        localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
+        localClassesInInlineLambdasPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
 )
@@ -887,8 +870,6 @@ fun getJsLowerings(
     sharedVariablesLoweringPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
-    localClassesInInlineFunctionsPhase,
-    localClassesExtractionFromInlineFunctionsPhase,
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
     legacySyntheticAccessorLoweringPhase.takeUnless { configuration.getBoolean(KlibConfigurationKeys.EXPERIMENTAL_DOUBLE_INLINING) },
