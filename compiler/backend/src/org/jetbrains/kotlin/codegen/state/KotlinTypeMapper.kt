@@ -1447,10 +1447,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return false
         }
 
-        fun getVarianceForWildcard(parameter: TypeParameterDescriptor, projection: TypeProjection, mode: TypeMappingMode): Variance =
-            SimpleClassicTypeSystemContext.getVarianceForWildcard(parameter, projection, mode)
-
-        private fun TypeSystemCommonBackendContext.getVarianceForWildcard(
+        fun TypeSystemCommonBackendContext.getVarianceForWildcard(
             parameter: TypeParameterMarker?, projection: TypeArgumentMarker, mode: TypeMappingMode
         ): Variance {
             val projectionKind = projection.getVariance().convertVariance()

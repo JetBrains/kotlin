@@ -1108,7 +1108,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             val ktFile = typeFromSource?.containingKtFile
             if (ktFile != null) {
                 @Suppress("UNCHECKED_CAST")
-                return ErrorTypeCorrector(this, kind, ktFile).convert(typeFromSource, emptyMap()) as T
+                return ErrorTypeCorrector(this, kind, ktFile).convert(typeFromSource) as T
             }
         }
 

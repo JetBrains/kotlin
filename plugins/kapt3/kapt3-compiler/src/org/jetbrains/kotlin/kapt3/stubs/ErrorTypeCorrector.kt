@@ -35,6 +35,9 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import com.sun.tools.javac.util.List as JavacList
 
 private typealias SubstitutionMap = Map<String, Pair<KtTypeParameter, KtTypeProjection>>
 
@@ -68,7 +71,11 @@ class ErrorTypeCorrector(
         RETURN_TYPE, METHOD_PARAMETER_TYPE, SUPER_TYPE, ANNOTATION
     }
 
-    fun convert(type: KtTypeElement, substitutions: SubstitutionMap): JCTree.JCExpression {
+    fun convert(type: KtTypeElement): JCTree.JCExpression {
+        return convert(type, emptyMap())
+    }
+
+    private fun convert(type: KtTypeElement, substitutions: SubstitutionMap): JCTree.JCExpression {
         return when (type) {
             is KtUserType -> convertUserType(type, substitutions)
             is KtNullableType -> convert(type.innerType ?: return defaultType, substitutions)
@@ -144,28 +151,37 @@ class ErrorTypeCorrector(
         val typeReference = PsiTreeUtil.getParentOfType(type, KtTypeReference::class.java, true)
         val kotlinType = bindingContext[BindingContext.TYPE, typeReference] ?: ErrorUtils.createErrorType(ErrorTypeKind.KAPT_ERROR_TYPE)
 
-        val typeSystem = SimpleClassicTypeSystemContext
+        val typeParameters = (target as? ClassifierDescriptor)?.typeConstructor?.parameters
+        return treeMaker.TypeApply(
+            baseExpression,
+            SimpleClassicTypeSystemContext.convertTypeArguments(arguments, typeParameters, kotlinType, substitutions),
+        )
+    }
+
+    private fun TypeSystemCommonBackendContext.convertTypeArguments(
+        arguments: List<KtTypeProjection>,
+        typeParameters: List<TypeParameterMarker>?,
+        type: KotlinTypeMarker,
+        substitutions: SubstitutionMap,
+    ): JavacList<JCTree.JCExpression> = mapJListIndexed(arguments) { index, projection ->
         val typeMappingMode = when (typeKind) {
             //TODO figure out if the containing method is an annotation method
-            RETURN_TYPE -> typeSystem.getOptimalModeForReturnType(kotlinType, false)
-            METHOD_PARAMETER_TYPE -> typeSystem.getOptimalModeForValueParameter(kotlinType)
+            RETURN_TYPE -> getOptimalModeForReturnType(type, false)
+            METHOD_PARAMETER_TYPE -> getOptimalModeForValueParameter(type)
             SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
             ANNOTATION -> TypeMappingMode.DEFAULT // see genAnnotation in org/jetbrains/kotlin/codegen/AnnotationCodegen.java
-        }.updateArgumentModeFromAnnotations(kotlinType, typeSystem)
+        }.updateArgumentModeFromAnnotations(type, this)
 
-        val typeParameters = (target as? ClassifierDescriptor)?.typeConstructor?.parameters
-        return treeMaker.TypeApply(baseExpression, mapJListIndexed(arguments) { index, projection ->
-            val typeParameter = typeParameters?.getOrNull(index)
-            val typeArgument = kotlinType.arguments.getOrNull(index)
-
-            val variance = if (typeArgument != null && typeParameter != null) {
-                KotlinTypeMapper.getVarianceForWildcard(typeParameter, typeArgument, typeMappingMode)
-            } else {
-                null
+        val typeParameter = typeParameters?.getOrNull(index)
+        val typeArgument = type.getArguments().getOrNull(index)
+        val variance = if (typeArgument != null && typeParameter != null && !typeArgument.isStarProjection()) {
+            with(KotlinTypeMapper) {
+                getVarianceForWildcard(typeParameter, typeArgument, typeMappingMode)
             }
-
-            convertTypeProjection(projection, variance, substitutions)
-        })
+        } else {
+            null
+        }
+        convertTypeProjection(projection, variance, substitutions)
     }
 
     private fun convertTypeProjection(
