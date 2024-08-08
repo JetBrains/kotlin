@@ -55,8 +55,8 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
                 needToReport = true
             }
         } else if (assignmentSource is KtLightSourceElement) {
-            val lValueLightTree = lValue.source!!.lighterASTNode
-            val rValueLightTree = rValue.source!!.lighterASTNode
+            val lValueLightTree = lValue.source!!.lighterASTNode.takeIf { it.tokenType == KtNodeTypes.REFERENCE_EXPRESSION } ?: return
+            val rValueLightTree = rValue.source!!.lighterASTNode.takeIf { it.tokenType == KtNodeTypes.BINARY_EXPRESSION } ?: return
             if (lightTreeMatcher(lValueLightTree, rValueLightTree, assignmentSource)) {
                 needToReport = true
             }
