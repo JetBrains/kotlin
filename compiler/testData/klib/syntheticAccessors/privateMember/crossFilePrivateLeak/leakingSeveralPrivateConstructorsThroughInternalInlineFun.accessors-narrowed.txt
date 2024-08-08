@@ -1,0 +1,22 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    /* TARGET declaration */ private constructor(s: String) /* primary */
+    public constructor()
+        /* TARGET use-site */ A(s = "")
+    /* TARGET declaration */ private constructor(a: String, b: String)
+        /* TARGET use-site */ A(s = a.plus(other = b))
+    /* TARGET declaration */ private constructor(a: Char)
+        /* TARGET use-site */ A(s = a.toString())
+    internal inline fun complexCopy(s: String): A
+        /* ACCESSOR use-site */ access$<init>(s = s)
+        /* ACCESSOR use-site */ access$<init>(a = ' ')
+        /* ACCESSOR use-site */ access$<init>(a = s, b = s)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<init>(s: String): A
+        /* TARGET use-site */ A(s = s)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<init>(a: String, b: String): A
+        /* TARGET use-site */ A(a = a, b = b)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<init>(a: Char): A
+        /* TARGET use-site */ A(a = a)
