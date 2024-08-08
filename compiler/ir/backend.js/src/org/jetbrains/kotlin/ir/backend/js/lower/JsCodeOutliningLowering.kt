@@ -60,7 +60,7 @@ import java.io.File
  * fun foo(x: Int): Int {
  *
  *   @kotlin.js.JsFun(
- *     code = "function (x,theAnswer) {return x+theAnswer}",
+ *     code = "function (x, theAnswer) { return x + theAnswer; }",
  *     sourceMap = """
  *     {
  *       "version": 3
@@ -272,7 +272,7 @@ private class JsCodeOutlineTransformer(
     }
 
     private fun printJsCodeWithDebugInfo(jsFunction: JsFunction): Pair<String, String> {
-        val jsCode = TextOutputImpl(/*compact*/true)
+        val jsCode = TextOutputImpl()
         val sourceMapBuilder = SourceMap3Builder(
             generatedFile = null,
             getCurrentOutputColumn = jsCode::getColumn,
