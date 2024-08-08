@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.tooling.core.extrasReadWriteProperty
 
 
 private const val SHORTCUTS_DEPRECATION_MESSAGE = "Use applyDefaultHierarchyTemplate() instead. " +
-        "Deprecated since 1.9.20, scheduled for removal in 2.0"
+        "Deprecated since 1.9.20, scheduled for removal in 2.2"
 
 @KotlinGradlePluginPublicDsl
 @Deprecated(SHORTCUTS_DEPRECATION_MESSAGE)
