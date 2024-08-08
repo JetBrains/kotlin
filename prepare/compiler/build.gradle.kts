@@ -217,7 +217,9 @@ dependencies {
 
     buildNumber(project(":prepare:build.version", configuration = "buildVersion"))
 
-    fatJarContents(kotlinBuiltins())
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        fatJarContents(kotlinBuiltins())
+    }
     fatJarContents(commonDependency("javax.inject"))
     fatJarContents(commonDependency("org.jline", "jline"))
     fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
