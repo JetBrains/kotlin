@@ -204,6 +204,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                         KonanTarget.LINUX_ARM64,
                         KonanTarget.LINUX_X64,
                         KonanTarget.IOS_ARM64,
+                        KonanTarget.IOS_SIMULATOR_ARM64,
                         KonanTarget.IOS_X64,
                         KonanTarget.MACOS_X64,
                         KonanTarget.MINGW_X64
@@ -220,6 +221,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                             KonanTarget.LINUX_ARM64,
                             KonanTarget.LINUX_X64,
                             KonanTarget.IOS_ARM64,
+                            KonanTarget.IOS_SIMULATOR_ARM64,
                             KonanTarget.IOS_X64,
                             KonanTarget.MACOS_X64
                         )
@@ -233,6 +235,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                         CommonizerTarget(
                             KonanTarget.IOS_ARM64,
                             KonanTarget.IOS_X64,
+                            KonanTarget.IOS_SIMULATOR_ARM64,
                             KonanTarget.MACOS_X64
                         )
                     )
@@ -244,7 +247,8 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                     .assertTargetOnAllDependencies(
                         CommonizerTarget(
                             KonanTarget.IOS_ARM64,
-                            KonanTarget.IOS_X64
+                            KonanTarget.IOS_X64,
+                            KonanTarget.IOS_SIMULATOR_ARM64,
                         )
                     )
             }
@@ -273,6 +277,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                         KonanTarget.LINUX_X64,
                         KonanTarget.IOS_ARM64,
                         KonanTarget.IOS_X64,
+                        KonanTarget.IOS_SIMULATOR_ARM64,
                         KonanTarget.MACOS_X64,
                         KonanTarget.MINGW_X64
                     )
@@ -289,6 +294,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
                             KonanTarget.LINUX_X64,
                             KonanTarget.IOS_ARM64,
                             KonanTarget.IOS_X64,
+                            KonanTarget.IOS_SIMULATOR_ARM64,
                             KonanTarget.MACOS_X64,
                         )
                     )
@@ -297,7 +303,13 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
             listOf("iosMain", "iosTest").forEach { sourceSetName ->
                 getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies(defaultBuildOptions.konanDataDir!!)
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
-                    .assertTargetOnAllDependencies(CommonizerTarget(KonanTarget.IOS_ARM64, KonanTarget.IOS_X64))
+                    .assertTargetOnAllDependencies(
+                        CommonizerTarget(
+                            KonanTarget.IOS_ARM64,
+                            KonanTarget.IOS_X64,
+                            KonanTarget.IOS_SIMULATOR_ARM64
+                        )
+                    )
             }
         }
     }
@@ -404,7 +416,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     }
 
     private fun TestProject.testUpToDateOnChangingConsumerTargets(
-        dependencyMode: String
+        dependencyMode: String,
     ) {
         build(":p2:transformCommonMainCInteropDependenciesMetadata", dependencyMode)
 

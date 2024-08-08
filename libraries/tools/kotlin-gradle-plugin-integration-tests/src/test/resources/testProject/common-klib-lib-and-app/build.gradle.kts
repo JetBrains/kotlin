@@ -13,8 +13,9 @@ kotlin {
 	linuxX64()
 	linuxArm64()
 
-	// macOS-specific targets - created by the ios() shortcut:
-	ios()
+	iosX64()
+	iosArm64()
+	iosSimulatorArm64()
 
 	mingwX64()
 

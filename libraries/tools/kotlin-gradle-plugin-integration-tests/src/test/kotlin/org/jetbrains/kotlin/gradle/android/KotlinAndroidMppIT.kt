@@ -999,7 +999,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                         }
                 """.trimIndent()
             )
-            build("assemble")
+            build("assemble", "-Pmobile.multiplatform.useIosShortcut=false")
         }
     }
 

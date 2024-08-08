@@ -12,8 +12,8 @@ repositories {
 }
 
 kotlin {
-    ios("iosLib")
-    ios("iosLib") {
+    iosX64("iosLib")
+    iosX64("iosLib") {
         println("Configuring ${this.name}")
     }
 }
