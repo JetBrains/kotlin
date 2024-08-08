@@ -34,12 +34,14 @@ import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAM
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.backend.FirAnnotationSourceElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
@@ -55,6 +57,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
@@ -169,6 +172,27 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private var done = false
 
     private val treeMakerImportMethod = TreeMaker::class.java.declaredMethods.single { it.name == "Import" }
+
+    internal val typeReferenceToFirType = mutableMapOf<KtTypeReference, ConeKotlinType>().apply {
+        for (file in kaptContext.firFiles) {
+            file.accept(object : FirDefaultVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+                    val psi = resolvedTypeRef.psi
+                    if (psi is KtTypeReference) {
+                        this@apply[psi] = resolvedTypeRef.coneType
+                    }
+                }
+
+                override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
+                    visitResolvedTypeRef(errorTypeRef)
+                }
+            })
+        }
+    }
 
     fun convert(): List<KaptStub> {
         if (kaptContext.logger.isVerbose) {

@@ -10,7 +10,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class Child extends AbstractList<String> implements Parent<String, Int>, List<String> {
+public final class Child extends kotlin.collections.AbstractList<java.lang.String> implements test.Parent<java.lang.String, java.lang.Integer>, java.util.List<java.lang.String> {
 
     public Child() {
         super();
@@ -82,7 +82,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class Generics1 extends Foo<String> {
+public final class Generics1 extends Foo<java.lang.String> {
 
     public Generics1() {
     }
@@ -102,7 +102,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class Generics2 implements Foo<String> {
+public final class Generics2 implements Foo<java.lang.String> {
 
     public Generics2() {
     }
@@ -122,7 +122,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, List<?>>, String> {
+public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, java.util.List<?>>, java.lang.String> {
 
     public Generics3() {
     }
@@ -163,7 +163,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class MappedList<R extends java.lang.Object> extends AbstractList<R> implements List<R> {
+public final class MappedList<R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R> {
 
     public MappedList() {
         super();
@@ -209,7 +209,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TBarBazCl extends Cl implements Bar, Baz {
+public final class TBarBazCl extends test.Cl implements Bar, Baz {
 
     public TBarBazCl() {
     }
@@ -229,7 +229,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TClBarBaz extends Cl implements Bar, Baz {
+public final class TClBarBaz extends test.Cl implements Bar, Baz {
 
     public TClBarBaz() {
         super();
@@ -255,7 +255,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TFooBar extends Foo implements Intf, Bar {
+public final class TFooBar extends Foo implements test.Intf, Bar {
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
@@ -444,7 +444,7 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TxFooxBarxBaz extends x.Foo implements Intf, x.Bar, x.Baz {
+public final class TxFooxBarxBaz extends x.Foo implements test.Intf, x.Bar, x.Baz {
 
     public TxFooxBarxBaz() {
     }
