@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 internal val SourcesChanges.asChangedFiles
     get() = when (this) {
         is SourcesChanges.Known -> ChangedFiles.Known(modifiedFiles, removedFiles)
-        is SourcesChanges.ToBeCalculated -> ChangedFiles.Unknown() // TODO: add proper support for SourcesChanges.ToBeCalculated
+        is SourcesChanges.ToBeCalculated -> null
         is SourcesChanges.Unknown -> ChangedFiles.Unknown()
     }
 
