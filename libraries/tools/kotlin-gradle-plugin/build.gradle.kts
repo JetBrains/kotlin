@@ -172,7 +172,6 @@ dependencies {
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0
         "mainEmbedded"(project(":kotlin-build-tools-enum-compat"))
-        "gradle70Embedded"(project(":kotlin-build-tools-enum-compat"))
         "gradle71Embedded"(project(":kotlin-build-tools-enum-compat"))
         "gradle74Embedded"(project(":kotlin-build-tools-enum-compat"))
         "gradle75Embedded"(project(":kotlin-build-tools-enum-compat"))
