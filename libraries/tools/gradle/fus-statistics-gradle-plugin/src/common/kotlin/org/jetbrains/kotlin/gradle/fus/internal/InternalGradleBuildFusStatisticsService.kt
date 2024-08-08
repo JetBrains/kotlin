@@ -46,6 +46,7 @@ abstract class InternalGradleBuildFusStatisticsService : GradleBuildFusStatistic
             log.warn("Failed to create directory '$reportDir' for FUS report. FUS report won't be created", e)
             return
         }
+        log.warn("US report will be created in '$reportDir'")
         val reportFile = reportDir.resolve(buildId)
         reportFile.createNewFile()
         FileOutputStream(reportFile, true).bufferedWriter().use {
