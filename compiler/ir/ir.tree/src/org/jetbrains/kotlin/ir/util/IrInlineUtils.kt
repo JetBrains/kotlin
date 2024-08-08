@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
 
 /**
- * There is some compiler info from IR inliner that could not be available in non-jvm backend due to serialization in KLib.
- * For example, for in JVM it is safe to check the original call of an inlined function.
- * To discourage other backends from using such API, this opt-in annotation was introduced.
+ * There is some compiler info from IR inliner that may not be available in non-JVM backends due to serialization in KLIBs.
+ * For example, in the JVM backend it is safe to check the original call of an inlined function, and on other backends it's not.
+ * To discourage usages of such APIs in non-JVM backends, this opt-in annotation was introduced.
  */
 @RequiresOptIn(
     message = "This API is supposed to be used only inside JVM backend.",
