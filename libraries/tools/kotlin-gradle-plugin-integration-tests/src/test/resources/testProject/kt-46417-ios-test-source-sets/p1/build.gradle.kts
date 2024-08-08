@@ -4,5 +4,7 @@ plugins {
 
 kotlin {
     jvm()
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 }

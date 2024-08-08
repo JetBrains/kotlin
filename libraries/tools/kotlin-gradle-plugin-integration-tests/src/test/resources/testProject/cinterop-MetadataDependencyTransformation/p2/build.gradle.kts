@@ -20,7 +20,9 @@ kotlin {
     linuxArm64()
 
     macosX64("macos")
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     mingwX64("windowsX64")
 
@@ -41,8 +43,14 @@ kotlin {
     val appleTest by sourceSets.creating
     val macosMain by sourceSets.getting
     val macosTest by sourceSets.getting
-    val iosMain by sourceSets.getting
-    val iosTest by sourceSets.getting
+    val iosMain by sourceSets.creating
+    val iosTest by sourceSets.creating
+    val iosX64Main by sourceSets.getting
+    val iosArm64Main by sourceSets.getting
+    val iosSimulatorArm64Main by sourceSets.getting
+    val iosX64Test by sourceSets.getting
+    val iosArm64Test by sourceSets.getting
+    val iosSimulatorArm64Test by sourceSets.getting
     val windowsX64Main by sourceSets.getting
     val windowsX64Test by sourceSets.getting
 
@@ -51,7 +59,11 @@ kotlin {
         -nativeMain {
             -appleAndLinuxMain {
                 -appleMain {
-                    -iosMain
+                    -iosMain {
+                        -iosX64Main
+                        -iosArm64Main
+                        -iosSimulatorArm64Main
+                    }
                     -macosMain
                 }
                 -linuxMain {
@@ -68,7 +80,11 @@ kotlin {
         -nativeTest {
             -appleAndLinuxTest {
                 -appleTest {
-                    -iosTest
+                    -iosTest {
+                        -iosX64Test
+                        -iosArm64Test
+                        -iosSimulatorArm64Test
+                    }
                     -macosTest
                 }
                 -linuxTest {
