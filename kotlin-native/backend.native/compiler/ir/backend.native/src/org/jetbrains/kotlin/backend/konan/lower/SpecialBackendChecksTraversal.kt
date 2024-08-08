@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
-import org.jetbrains.kotlin.backend.konan.optimizations.escapesAt
-import org.jetbrains.kotlin.backend.konan.optimizations.escapesMask
-import org.jetbrains.kotlin.backend.konan.optimizations.isValidEscapesMask
-import org.jetbrains.kotlin.backend.konan.optimizations.isValidPointsToElement
+import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.ClassKind

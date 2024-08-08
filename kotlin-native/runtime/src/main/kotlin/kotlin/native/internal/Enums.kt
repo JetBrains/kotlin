@@ -5,8 +5,6 @@
 
 package kotlin.native.internal
 
-import kotlin.native.internal.escapeAnalysis.Escapes
-
 @TypedIntrinsic(IntrinsicType.ENUM_VALUES)
 @PublishedApi
 internal external fun <T : Enum<T>> enumValuesIntrinsic(): Array<T>
