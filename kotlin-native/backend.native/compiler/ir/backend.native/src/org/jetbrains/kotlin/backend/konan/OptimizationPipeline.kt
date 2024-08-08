@@ -215,6 +215,7 @@ abstract class LlvmOptimizationPipeline(
             config.inlineThreshold?.let { threshold ->
                 LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
             }
+            LLVMPassBuilderOptionsSetMaxDevirtIterations(options, 0)
             if (config.timePasses) {
                 LLVMSetTimePasses(1)
             }
