@@ -137,6 +137,37 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
     }
 }
 
+private fun IrFunction.collectExtractableLocalClassesInto(classesToExtract: MutableSet<IrClass>) {
+    if (!isInline) return
+    // Conservatively assume that functions with reified type parameters must be copied.
+    if (typeParameters.any { it.isReified }) return
+
+    val crossinlineParameters = valueParameters.filter { it.isCrossinline }.toSet()
+    acceptChildrenVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            var canExtract = true
+            if (crossinlineParameters.isNotEmpty()) {
+                declaration.acceptVoid(object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitGetValue(expression: IrGetValue) {
+                        if (expression.symbol.owner in crossinlineParameters)
+                            canExtract = false
+                    }
+                })
+            }
+            if (canExtract)
+                classesToExtract.add(declaration)
+        }
+    })
+}
+
 class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
@@ -144,35 +175,8 @@ class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) :
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val function = container as? IrFunction ?: return
-        if (!function.isInline) return
-        // Conservatively assume that functions with reified type parameters must be copied.
-        if (function.typeParameters.any { it.isReified }) return
-
-        val crossinlineParameters = function.valueParameters.filter { it.isCrossinline }.toSet()
         val classesToExtract = mutableSetOf<IrClass>()
-        function.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                var canExtract = true
-                if (crossinlineParameters.isNotEmpty()) {
-                    declaration.acceptVoid(object : IrElementVisitorVoid {
-                        override fun visitElement(element: IrElement) {
-                            element.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitGetValue(expression: IrGetValue) {
-                            if (expression.symbol.owner in crossinlineParameters)
-                                canExtract = false
-                        }
-                    })
-                }
-                if (canExtract)
-                    classesToExtract.add(declaration)
-            }
-        })
+        function.collectExtractableLocalClassesInto(classesToExtract)
         if (classesToExtract.isEmpty())
             return
 
@@ -187,35 +191,7 @@ class LocalClassesExtractionFromInlineFunctionsLowering(
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val function = container as? IrFunction ?: return
-        if (!function.isInline) return
-        // Conservatively assume that functions with reified type parameters must be copied.
-        if (function.typeParameters.any { it.isReified }) return
-
-        val crossinlineParameters = function.valueParameters.filter { it.isCrossinline }.toSet()
-
-        function.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                var canExtract = true
-                if (crossinlineParameters.isNotEmpty()) {
-                    declaration.acceptVoid(object : IrElementVisitorVoid {
-                        override fun visitElement(element: IrElement) {
-                            element.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitGetValue(expression: IrGetValue) {
-                            if (expression.symbol.owner in crossinlineParameters)
-                                canExtract = false
-                        }
-                    })
-                }
-                if (canExtract)
-                    classesToExtract.add(declaration)
-            }
-        })
+        function.collectExtractableLocalClassesInto(classesToExtract)
         if (classesToExtract.isEmpty())
             return
 
