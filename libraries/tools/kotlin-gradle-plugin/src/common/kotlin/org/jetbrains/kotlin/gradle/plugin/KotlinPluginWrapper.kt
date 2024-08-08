@@ -202,11 +202,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            SourceSetCompatibilityHelper.SourceSetCompatibilityHelperVariantFactory::class,
-            DefaultSourceSetCompatibilityHelperVariantFactory()
-        )
-
-        factories.putIfAbsent(
             AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory::class,
             DefaultAttributeConfigurationHelperVariantFactory()
         )
