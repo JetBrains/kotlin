@@ -1,4 +1,5 @@
 // WITH_EXPERIMENTAL_CHECKERS
+// WITH_EXTRA_CHECKERS
 
 class Test {
     var number: Int = 10
@@ -6,5 +7,5 @@ class Test {
 
 fun Test.foo() {
     val number = 20
-    this.number <!CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT!>=<!> number + 1
+    this.number = number + 1
 }

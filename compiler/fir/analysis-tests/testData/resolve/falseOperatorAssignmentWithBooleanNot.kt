@@ -4,5 +4,5 @@
 
 fun foo() {
     var boolean = false
-    boolean <!CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT!>=<!> boolean.not()
+    boolean = boolean.not()
 }

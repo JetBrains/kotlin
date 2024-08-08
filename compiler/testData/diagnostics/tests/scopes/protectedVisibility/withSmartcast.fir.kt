@@ -1,3 +1,5 @@
+// DIAGNOSTICS: -CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
+
 open class Base {
     open protected fun foo() {}
     open protected fun bar() {}

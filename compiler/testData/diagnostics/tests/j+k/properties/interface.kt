@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// DIAGNOSTICS: -CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
 // FILE: A.java
 
 public interface A extends B {
