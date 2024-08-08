@@ -659,8 +659,11 @@ private class BackendChecker(
     val IrFunction.isLoweredIntrinsic: Boolean
         get() = tryGetIntrinsicType(this)?.mustBeLowered == true
 
-    val IrType.isPrimitiveForEA: Boolean
+    val IrType.cannotEscape: Boolean
         get() = isUnit() || isNothing() || computeBinaryType() is BinaryType.Primitive
+
+    val IrType.mustEscape: Boolean
+        get() = this.getClass()?.annotations?.hasAnnotation(NativeRuntimeNames.Annotations.HasFinalizer) ?: false
 
     data class FunctionSignatureElement(val name: String, val type: IrType)
 
@@ -673,16 +676,20 @@ private class BackendChecker(
         }
 
     private fun checkEscapesAnnotationValue(declaration: IrFunction, signatureElements: List<FunctionSignatureElement>, value: Int) {
-        if (value == 0)
-            return
         val escapesName = NativeRuntimeNames.Annotations.Escapes.asFqNameString()
         if (!value.isValidEscapesMask(signatureElements.size)) {
             reportNonFatalError(declaration, "@$escapesName value 0b${value.toString(2)} is not valid: must not be negative and not have bits higher than ${signatureElements.size}")
             return
         }
         signatureElements.forEachIndexed { index, element ->
-            if (value.escapesAt(index) && element.type.isPrimitiveForEA) {
-                reportNonFatalError(declaration, "${element.name} is marked as escaping by @$escapesName, but is not of a reference type")
+            if (value.escapesAt(index)) {
+                if (element.type.cannotEscape) {
+                    reportNonFatalError(declaration, "${element.name} is marked as escaping by @$escapesName, but the type cannot escape to the heap")
+                }
+            } else {
+                if (element.type.mustEscape) {
+                    reportNonFatalError(declaration, "${element.name} is not marked as escaping by @$escapesName, but the type must always escape to the heap")
+                }
             }
         }
     }
@@ -695,8 +702,8 @@ private class BackendChecker(
             reportNonFatalError(declaration, "@$pointsToName value 0x${value.toString(16)} for ${targetSignatureElement.name} is not valid: must not be negative and not have nibbles higher than ${signatureElements.size}")
             return
         }
-        if (targetSignatureElement.type.isPrimitiveForEA) {
-            reportNonFatalError(declaration, "@$pointsToName value 0x${value.toString(16)} for ${targetSignatureElement.name} is not zero, but ${targetSignatureElement.name} is not of a reference type")
+        if (targetSignatureElement.type.cannotEscape) {
+            reportNonFatalError(declaration, "@$pointsToName value 0x${value.toString(16)} for ${targetSignatureElement.name} is not zero, but the type of ${targetSignatureElement.name} cannot escape to the heap")
             return
         }
         signatureElements.forEachIndexed { index, element ->
@@ -704,8 +711,8 @@ private class BackendChecker(
             if (kind > 4) {
                 reportNonFatalError(declaration, "@$pointsToName makes ${targetSignatureElement.name} point to ${element.name} with invalid kind ${kind.toString(16)}, expected 0-4")
             }
-            if (kind != 0 && element.type.isPrimitiveForEA) {
-                reportNonFatalError(declaration, "@$pointsToName makes ${targetSignatureElement.name} point to ${element.name} with kind ${kind.toString(16)}, but ${element.name} is not of a reference type")
+            if (kind != 0 && element.type.cannotEscape) {
+                reportNonFatalError(declaration, "@$pointsToName makes ${targetSignatureElement.name} point to ${element.name} with kind ${kind.toString(16)}, but the type of ${element.name} cannot escape to the heap")
             }
         }
     }
@@ -752,7 +759,7 @@ private class BackendChecker(
 
         val signatureElements = declaration.signatureElements
 
-        warnUnusedIf(signatureElements.all { it.type.isPrimitiveForEA }) { "function has neither reference parameters nor a reference return value" } ?: return
+        warnUnusedIf(signatureElements.all { it.type.cannotEscape }) { "all of function parameters, receivers and the return value types cannot escape to the heap" } ?: return
 
         // All the unused checks have passed.
         // This also means, that we now know the declaration is external, in the correct package and so on.
@@ -760,7 +767,10 @@ private class BackendChecker(
             reportNonFatalError(declaration, "Conflicting @$escapesName and @$escapesNothingName")
         }
         if (!hasEscapes && !hasEscapesNothing && !hasPointsTo) {
-            reportNonFatalError(declaration, "External function with reference parameters requires @$escapesName or @$escapesNothingName or @$pointsToName")
+            reportNonFatalError(declaration, "External function with parameters that may escape requires @$escapesName or @$escapesNothingName or @$pointsToName")
+        }
+        if (!hasEscapes && signatureElements.any { it.type.mustEscape }) {
+            reportNonFatalError(declaration, "External function with parameters that must always escape is not marked by @$escapesName")
         }
 
         declaration.escapesMask?.let { checkEscapesAnnotationValue(declaration, signatureElements, it) }

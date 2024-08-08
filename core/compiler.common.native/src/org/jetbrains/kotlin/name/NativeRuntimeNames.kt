@@ -25,5 +25,6 @@ object NativeRuntimeNames {
         val PointsTo = ClassId(kotlinNativeInternalPackage.child(Name.identifier("escapeAnalysis")), Name.identifier("PointsTo"))
         val Escapes = ClassId(kotlinNativeInternalPackage.child(Name.identifier("escapeAnalysis")), Name.identifier("Escapes"))
         val EscapesNothing = Escapes.createNestedClassId(Name.identifier("Nothing"))
+        val HasFinalizer = ClassId(kotlinNativeInternalPackage, Name.identifier("HasFinalizer"))
     }
 }

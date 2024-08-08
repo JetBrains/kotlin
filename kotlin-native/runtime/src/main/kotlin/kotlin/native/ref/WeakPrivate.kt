@@ -42,7 +42,7 @@ internal class RegularWeakReferenceImpl(
     val referred: COpaquePointer, // TODO: This exists only for the ExtraObjectData's sake. Refactor and remove.
 ) : WeakReferenceImpl() {
     @GCUnsafeCall("Konan_RegularWeakReferenceImpl_get")
-    @Escapes.Nothing
+    @Escapes(0b01) // RegularWeakReferenceImpl must always escape to the heap (because of finalizers)
     external override fun get(): Any?
 }
 
