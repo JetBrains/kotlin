@@ -1504,6 +1504,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("renderConstructorWithIntersection.kt")
+    public void testRenderConstructorWithIntersection() {
+      runTest("compiler/testData/diagnostics/tests/renderConstructorWithIntersection.kt");
+    }
+
+    @Test
     @TestMetadata("renderingOfTypesWithSameName.kt")
     public void testRenderingOfTypesWithSameName() {
       runTest("compiler/testData/diagnostics/tests/renderingOfTypesWithSameName.kt");

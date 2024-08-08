@@ -1,0 +1,6 @@
+/Main.kt:21:18: error: type mismatch: inferred type is {A & B}! but Int was expected
+    val a: Int = Flexier.flexify(if (true) O1 else O2)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Main.kt:21:26: error: type mismatch: inferred type is {A & B}! but Int! was expected
+    val a: Int = Flexier.flexify(if (true) O1 else O2)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
