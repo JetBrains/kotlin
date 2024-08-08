@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirCliSession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -163,6 +164,8 @@ abstract class FirAbstractSessionFactory {
     private fun FirSymbolProvider.flatten(): List<FirSymbolProvider> {
         val originalSession = session.takeIf { it.kind == FirSession.Kind.Source }
         val result = mutableListOf<FirSymbolProvider>()
+        var commonLibProvider: FirSymbolProvider? = null
+        var combinedArtefactProvider: FirSymbolProvider? = null
 
         fun FirSymbolProvider.collectProviders() {
             when {
@@ -176,16 +179,28 @@ abstract class FirAbstractSessionFactory {
                 // Make sure only source symbol providers from the same session as the original symbol provider are flattened. A composite
                 // symbol provider can contain source symbol providers from multiple sessions that may represent dependency symbol providers
                 // which should not be propagated transitively.
-                originalSession != null && session.kind == FirSession.Kind.Source && session == originalSession ||
-                        originalSession == null && session.kind == FirSession.Kind.Library ||
-                        this is KlibBasedSymbolProvider -> {
+                originalSession != null && session.kind == FirSession.Kind.Source && session == originalSession -> {
                     result.add(this)
+                }
+
+                originalSession == null && session.kind == FirSession.Kind.Library -> {
+                    result.add(this)
+                    if (this is JvmClassFileBasedSymbolProvider) {
+                        combinedArtefactProvider = this
+                    }
+                }
+
+                this is KlibBasedSymbolProvider -> {
+                    commonLibProvider = this
                 }
             }
         }
 
         collectProviders()
 
+        if (commonLibProvider != null && combinedArtefactProvider != null && result.remove(combinedArtefactProvider)) {
+            result.add(CommonAndPlatformDeduplicatingSysmbolProvider(combinedArtefactProvider!!.session, commonLibProvider!!, combinedArtefactProvider!!))
+        }
         return result
     }
 }
