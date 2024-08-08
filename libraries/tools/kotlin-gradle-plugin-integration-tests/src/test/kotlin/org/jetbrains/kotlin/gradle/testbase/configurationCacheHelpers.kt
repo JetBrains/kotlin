@@ -22,7 +22,7 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
 
     val executedTask: List<String> = executedTaskNames ?: buildArguments.toList()
 
-    build(*buildArguments, buildOptions = buildOptions, enableGradleDebug = true) {
+    build(*buildArguments, buildOptions = buildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
         if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
             assertOutputContains(
