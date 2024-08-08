@@ -7873,6 +7873,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("nestedTryFinallyLambda.kt")
+      public void testNestedTryFinallyLambda() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/nestedTryFinallyLambda.kt");
+      }
+
+      @Test
       @TestMetadata("nonLocalReturnUnreachable.kt")
       public void testNonLocalReturnUnreachable() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/nonLocalReturnUnreachable.kt");

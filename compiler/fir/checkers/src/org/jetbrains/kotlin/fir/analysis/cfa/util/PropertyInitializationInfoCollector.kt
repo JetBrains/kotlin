@@ -93,13 +93,6 @@ class PropertyInitializationInfoCollector(
         data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val result = super.visitEdge(from, to, metadata, data)
-        if (metadata.label == CapturedByValue) {
-            // Remove properties from data that are not captured by value.
-            val invalidProperties = data.flatMapTo(hashSetOf()) { it.value.keys }.filter { !it.isCapturedByValue }
-            return invalidProperties.fold(result) { filteredData, symbol ->
-                filteredData.removeRange(symbol)
-            }
-        }
         if (!metadata.kind.isBack) return result
         val declaredVariableSymbolsInCapturedScope = when {
             from is PostponedLambdaExitNode -> declaredVariablesInLoop[from.fir.anonymousFunction]
