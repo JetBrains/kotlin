@@ -15,7 +15,7 @@
 using namespace kotlin;
 
 void checkContentsEquality(KConstRef actual, const char16_t* expected) {
-    size_t size = StringRawSize(actual) / sizeof(char16_t);
+    size_t size = StringRawSize(actual, nullptr) / sizeof(char16_t);
     EXPECT_THAT(size, std::char_traits<char16_t>::length(expected));
     const char16_t* data = reinterpret_cast<const char16_t*>(StringRawData(actual));
     for (size_t i=0; i<size; i++) {

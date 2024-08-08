@@ -64,9 +64,9 @@ auto encodingAware(KConstRef string, F&& impl) {
     auto header = StringHeaderOf(string);
     switch (header ? header->encoding() : StringHeader::ENCODING_UTF16) {
     case StringHeader::ENCODING_UTF16:
-        return impl(UTF16String{reinterpret_cast<const KChar*>(StringRawData(string)), StringRawSize(string) / sizeof(KChar)});
+        return impl(UTF16String{reinterpret_cast<const KChar*>(StringRawData(string)), StringRawSize(string, false) / sizeof(KChar)});
     case StringHeader::ENCODING_LATIN1:
-        return impl(Latin1String{StringRawData(string), StringRawSize(string) - ((header->flags_ & StringHeader::IGNORE_LAST_BYTE) != 0)});
+        return impl(Latin1String{StringRawData(string), StringRawSize(string, header->ignoreLastByte())});
     default: ThrowIllegalArgumentException();
     }
 }
@@ -187,7 +187,7 @@ extern "C" void DisposeCString(char* cstring) {
     if (cstring) std::free(cstring);
 }
 
-extern "C" KConstRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
+extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
     // Note: this function can be called in "Native" thread state. But this is fine:
     //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
     //   because the accessed object is off-heap, imitating permanent static objects.
@@ -552,7 +552,7 @@ extern "C" const KChar* Kotlin_String_utf16pointer(KConstRef message) {
 extern "C" KInt Kotlin_String_utf16length(KConstRef message) {
     RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
     Kotlin_String_ensureUTF16(message);
-    return StringRawSize(message);
+    return StringRawSize(message, false);
 }
 
 extern "C" KConstNativePtr Kotlin_Arrays_getStringAddressOfElement(KConstRef thiz, KInt index) {
