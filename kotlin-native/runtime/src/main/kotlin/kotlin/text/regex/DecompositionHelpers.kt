@@ -19,7 +19,7 @@ internal actual external fun hasSingleCodepointDecompositionInternal(ch: Int): B
 
 /** Returns a decomposition for a given codepoint. */
 @GCUnsafeCall("Kotlin_text_regex_getDecompositionInternal")
-@Escapes(0b10) // The return value is explicitly allocated on the heap.
+@Escapes.Nothing
 internal external fun getDecompositionInternal(ch: Int): IntArray?
 
 /**

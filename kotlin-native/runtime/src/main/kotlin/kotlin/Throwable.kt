@@ -147,11 +147,11 @@ public open class Throwable(public open val message: String?, public open val ca
 }
 
 @GCUnsafeCall("Kotlin_getCurrentStackTrace")
-@Escapes(0b1) // The return value is explicitly allocated on heap.
+@Escapes.Nothing
 private external fun getCurrentStackTrace(): NativePtrArray
 
 @GCUnsafeCall("Kotlin_getStackTraceStrings")
-@Escapes(0b1) // The return value is explicitly allocated on heap.
+@Escapes.Nothing
 private external fun getStackTraceStrings(stackTrace: NativePtrArray): Array<String>
 
 /**

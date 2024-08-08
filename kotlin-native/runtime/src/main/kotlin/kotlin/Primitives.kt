@@ -431,7 +431,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Byte_toString")
-    @Escapes(0b10)
+    @Escapes.Nothing
     public external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -863,7 +863,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Short_toString")
-    @Escapes(0b10)
+    @Escapes.Nothing
     public external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1348,7 +1348,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Int_toString")
-    @Escapes(0b10)
+    @Escapes.Nothing
     public external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1836,7 +1836,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Long_toString")
-    @Escapes(0b10)
+    @Escapes.Nothing
     public external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation

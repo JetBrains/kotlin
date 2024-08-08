@@ -60,7 +60,7 @@ public actual fun readln(): String = readlnOrNull() ?: throw ReadAfterEOFExcepti
  */
 @SinceKotlin("1.6")
 @GCUnsafeCall("Kotlin_io_Console_readlnOrNull")
-@Escapes(0b1) // The return value is explicitly allocated on heap.
+@Escapes.Nothing
 public actual external fun readlnOrNull(): String?
 
 /**
@@ -69,5 +69,5 @@ public actual external fun readlnOrNull(): String?
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
 @GCUnsafeCall("Kotlin_io_Console_readLine")
-@Escapes(0b1) // The return value is explicitly allocated on heap.
+@Escapes.Nothing
 public external fun readLine(): String?

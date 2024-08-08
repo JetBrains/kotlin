@@ -122,7 +122,7 @@ public class Char private constructor() : Comparable<Char> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Char_toString")
-    @Escapes(0b10)
+    @Escapes.Nothing
     public external override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation

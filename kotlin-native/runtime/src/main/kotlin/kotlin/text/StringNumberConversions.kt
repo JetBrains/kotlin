@@ -29,7 +29,7 @@ public actual inline fun Short.toString(radix: Int): String = this.toInt().toStr
 
 @GCUnsafeCall("Kotlin_Int_toStringRadix")
 @PublishedApi
-@Escapes(0b100) // The return value is explicitly allocated on the heap.
+@Escapes.Nothing
 external internal fun intToString(value: Int, radix: Int): String
 
 /**
@@ -43,7 +43,7 @@ public actual inline fun Int.toString(radix: Int): String = intToString(this, ch
 
 @GCUnsafeCall("Kotlin_Long_toStringRadix")
 @PublishedApi
-@Escapes(0b100) // The return value is explicitly allocated on the heap.
+@Escapes.Nothing
 external internal fun longToString(value: Long, radix: Int): String
 
 /**

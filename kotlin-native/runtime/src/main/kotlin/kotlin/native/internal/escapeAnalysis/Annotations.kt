@@ -45,6 +45,21 @@ private object EscapeAnalysisAnnotations // A hack to have a place for file-leve
  * ```
  * So, the dispatch receiver `this@C`, `p0` and the return value escape, the extension receiver `this@Array<Any>` and `p1` do not.
  *
+ * Return value is considered escaping if it internally gets stored in a global. Non-escaping return value even if it's heap-allocated
+ * can be taken advantage of by the escape analysis. For example:
+ * ```
+ * class A(var x: Any?)
+ * fun f(): A = A(null)
+ * fun g() {
+ *     val a = f()
+ *     a.x = Any()
+ * }
+ * ```
+ * `Any()` may be stack-allocated, because it gets stored in `a` that is non-escaping. This works fine, because once we leave `g()`
+ * `a` is lost from the root set and so its fields won't be scanned by the GC and it's fine that `a.x` is garbage.
+ * Note: this doesn't work if `A` is marked with [@HasFinalizer][kotlin.native.internal.HasFinalizer], such types must always be
+ * heap-allocated.
+ *
  * @param who bitmask of parameters/receivers + the return value where set bits indicate escaping
  * @see Escapes.Nothing
  * @see EscapeAnalysisAnnotations

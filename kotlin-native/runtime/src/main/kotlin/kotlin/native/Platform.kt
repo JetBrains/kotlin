@@ -170,7 +170,7 @@ private external fun Platform_getCleanersLeakChecker(): Boolean
 private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit
 
 @GCUnsafeCall("Konan_Platform_getAvailableProcessorsEnv")
-@Escapes(0b1) // The return value is explicitly allocated on heap.
+@Escapes.Nothing
 private external fun Platform_getAvailableProcessorsEnv(): String?
 
 @GCUnsafeCall("Konan_Platform_getAvailableProcessors")

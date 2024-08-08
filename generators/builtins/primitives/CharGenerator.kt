@@ -689,7 +689,7 @@ class NativeCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
 
     override fun MethodBuilder.modifyGeneratedToString() {
         annotations += "GCUnsafeCall(\"Kotlin_Char_toString\")"
-        annotations += "Escapes(0b10)"
+        annotations += "Escapes.Nothing"
         modifySignature { isExternal = true }
     }
 

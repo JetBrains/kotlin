@@ -167,7 +167,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
         } else {
             modifySignature { isExternal = true }
             annotations += "GCUnsafeCall(\"Kotlin_${thisKind.capitalized}_toString\")"
-            annotations += "Escapes(0b10)"
+            annotations += "Escapes.Nothing"
         }
     }
 
