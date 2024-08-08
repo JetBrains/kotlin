@@ -12,6 +12,7 @@ dependencies {
     testApi(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testApi(project(":kotlin-compiler-runner-unshaded"))
     testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-integration"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(project(":native:kotlin-native-utils"))

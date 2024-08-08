@@ -53,11 +53,35 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
     generateTestGroupSuite(args, mainClassName) {
-        testGroup("compiler/tests-gen", "compiler/testData") {
+        testGroup("compiler/tests-integration/tests-gen", "compiler/testData") {
             testClass<AbstractMultiPlatformIntegrationTest> {
                 model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
             }
 
+            testClass<AbstractCustomScriptCodegenTest> {
+                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM)
+            }
+
+            testClass<AbstractIrCustomScriptCodegenTest> {
+                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractReplInterpreterTest> {
+                model("repl", extension = "repl")
+            }
+
+            testClass<AbstractCliTest> {
+                model("cli/jvm/readingConfigFromEnvironment", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/plugins", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/hmpp", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/sourceFilesAndDirectories", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
+                model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
+            }
+        }
+
+        testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractResolveTest> {
                 model("resolve", extension = "resolve")
             }
@@ -104,14 +128,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM, excludedPattern = excludedCustomTestdataPattern)
-            }
-
-            testClass<AbstractCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractIrCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractTopLevelMembersInvocationTest> {
@@ -225,20 +241,6 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractWriteSignatureTest> {
                 model("writeSignature")
-            }
-
-            testClass<AbstractCliTest> {
-                model("cli/jvm/readingConfigFromEnvironment", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/plugins", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/hmpp", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm/sourceFilesAndDirectories", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
-                model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
-                model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
-            }
-
-            testClass<AbstractReplInterpreterTest> {
-                model("repl", extension = "repl")
             }
 
             testClass<AbstractAntTaskTest> {

@@ -5,11 +5,18 @@
 
 package org.jetbrains.kotlin.jvm.compiler.fir
 
-import org.jetbrains.kotlin.jvm.compiler.ir.IrJvmIrLinkageModeTest
+import org.jetbrains.kotlin.jvm.compiler.JvmIrLinkageModeTest
 import org.jetbrains.kotlin.test.FirParser
 
-@Suppress("JUnitTestCaseWithNoTests")
-class FirPsiJvmIrLinkageModeTest : IrJvmIrLinkageModeTest() {
+class FirLightTreeLinkageModeTest : JvmIrLinkageModeTest() {
+    override val useFir: Boolean
+        get() = true
+
+    override val firParser: FirParser
+        get() = FirParser.LightTree
+}
+
+class FirPsiLinkageModeTest : JvmIrLinkageModeTest() {
     override val useFir: Boolean
         get() = true
 

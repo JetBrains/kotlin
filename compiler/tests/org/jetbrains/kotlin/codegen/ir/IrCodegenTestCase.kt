@@ -253,15 +253,6 @@ open class IrReflectionClassLoaderTest : ReflectionClassLoaderTest() {
         get() = JVM_IR
 }
 
-open class IrCustomScriptCodegenTest : CustomScriptCodegenTest() {
-    override val backend: TargetBackend
-        get() = JVM_IR
-
-    override fun testAnnotatedDefinition() {
-        // Discussing
-    }
-}
-
 open class IrSourceInfoGenTest : SourceInfoGenTest() {
     override val backend: TargetBackend
         get() = JVM_IR

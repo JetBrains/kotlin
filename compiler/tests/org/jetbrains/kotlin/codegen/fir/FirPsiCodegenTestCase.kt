@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.codegen.fir
 
 import org.jetbrains.kotlin.codegen.ir.*
-import org.jetbrains.kotlin.jvm.compiler.JvmIrLinkageModeTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.FirParser.Psi
 
@@ -139,14 +138,6 @@ class FirPsiCustomBytecodeTextTest : IrCustomBytecodeTextTest() {
         get() = Psi
 }
 
-class FirPsiCustomScriptCodegenTest : IrCustomScriptCodegenTest() {
-    override val useFir: Boolean
-        get() = true
-
-    override val firParser: FirParser
-        get() = Psi
-}
-
 class FirPsiGenerateNotNullAssertionsTest : IrGenerateNotNullAssertionsTest() {
     override val useFir: Boolean
         get() = true
@@ -156,14 +147,6 @@ class FirPsiGenerateNotNullAssertionsTest : IrGenerateNotNullAssertionsTest() {
 }
 
 class FirPsiSourceInfoGenTest : IrSourceInfoGenTest() {
-    override val useFir: Boolean
-        get() = true
-
-    override val firParser: FirParser
-        get() = Psi
-}
-
-class FirPsiLinkageModeTest : JvmIrLinkageModeTest() {
     override val useFir: Boolean
         get() = true
 
