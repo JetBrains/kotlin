@@ -24,7 +24,7 @@ typealias InlineFunctionInfo = Nothing?
 
 class KlibSyntheticAccessorGenerator(
     context: CommonBackendContext
-) : SyntheticAccessorGenerator<CommonBackendContext, InlineFunctionInfo>(context) {
+) : SyntheticAccessorGenerator<CommonBackendContext, InlineFunctionInfo>(context, generateConstructorAsStaticFun = true) {
 
     private data class OuterThisAccessorKey(val innerClass: IrClass)
 
