@@ -183,24 +183,3 @@ class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) :
         LocalDeclarationsLowering(context).lower(function, function, classesToExtract)
     }
 }
-
-class LocalClassesExtractionFromInlineFunctionsLowering(
-    context: CommonBackendContext,
-) : LocalClassPopupLowering(context) {
-    private val classesToExtract = mutableSetOf<IrClass>()
-
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val function = container as? IrFunction ?: return
-        function.collectExtractableLocalClassesInto(classesToExtract)
-        if (classesToExtract.isEmpty())
-            return
-
-        super.lower(irBody, container)
-
-        classesToExtract.clear()
-    }
-
-    override fun shouldPopUp(klass: IrClass, currentScope: ScopeWithIr?): Boolean {
-        return classesToExtract.contains(klass)
-    }
-}

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
@@ -119,14 +118,6 @@ private val localClassesInInlineFunctionsPhase = makeIrModulePhase(
     name = "LocalClassesInInlineFunctionsPhase",
     description = "Extract local classes from inline functions",
 )
-
-private val localClassesExtractionFromInlineFunctionsPhase = makeIrModulePhase(
-    { context -> LocalClassesExtractionFromInlineFunctionsLowering(context) },
-    name = "localClassesExtractionFromInlineFunctionsPhase",
-    description = "Move local classes from inline functions into nearest declaration container",
-    prerequisite = setOf(localClassesInInlineFunctionsPhase)
-)
-
 
 private val wrapInlineDeclarationsWithReifiedTypeParametersPhase = makeIrModulePhase(
     ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
@@ -645,7 +636,6 @@ val loweringList = listOf(
     sharedVariablesLoweringPhase,
     localClassesInInlineLambdasPhase,
     localClassesInInlineFunctionsPhase,
-    localClassesExtractionFromInlineFunctionsPhase,
 
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
