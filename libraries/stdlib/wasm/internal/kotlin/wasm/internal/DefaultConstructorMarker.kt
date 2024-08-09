@@ -5,5 +5,4 @@
 
 package kotlin.wasm.internal
 
-@PublishedApi
 internal object DefaultConstructorMarker
