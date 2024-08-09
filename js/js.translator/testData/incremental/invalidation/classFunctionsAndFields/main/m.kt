@@ -32,7 +32,7 @@ fun box(stepId: Int): String {
             isEqual(Demo("test2").foo_inline(), "inline foo test2 update") ?: return "Fail inline function"
             isEqual(Demo("test3").field1, null) ?: return "Fail field"
         }
-        else -> return "Unkown"
+        else -> return "Unknown"
     }
     return "OK"
 }
