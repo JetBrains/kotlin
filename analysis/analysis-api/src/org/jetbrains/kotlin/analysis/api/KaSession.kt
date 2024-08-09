@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
  * - It should not be accessed from the event dispatch thread or outside a read action.
  * - It should not be leaked outside the read action it was created in. To ensure that an analysis session isn't leaked, there are
  *   additional conventions, explained further below.
+ * - It should not be accessed in [the dumb mode][com.intellij.openapi.project.DumbService].
  * - All entities retrieved from an analysis session should not be leaked outside the read action the analysis session was created in.
  *
  * To pass a symbol from one read action to another, use [KaSymbolPointer], which can be created from a symbol by [KaSymbol.createPointer].
