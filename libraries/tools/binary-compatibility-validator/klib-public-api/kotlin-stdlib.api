@@ -11371,9 +11371,6 @@ final object kotlin.native.internal/Debugging { // kotlin.native.internal/Debugg
 }
 
 // Targets: [native]
-final object kotlin.native.internal/DefaultConstructorMarker // kotlin.native.internal/DefaultConstructorMarker|null[0]
-
-// Targets: [native]
 final object kotlin.native.internal/GC { // kotlin.native.internal/GC|null[0]
     final val lastGCInfo // kotlin.native.internal/GC.lastGCInfo|{}lastGCInfo[0]
         final fun <get-lastGCInfo>(): kotlin.native.internal.gc/GCInfo? // kotlin.native.internal/GC.lastGCInfo.<get-lastGCInfo>|<get-lastGCInfo>(){}[0]
@@ -13854,9 +13851,6 @@ final value class kotlin.wasm.unsafe/Pointer { // kotlin.wasm.unsafe/Pointer|nul
 }
 
 // Targets: [wasmJs, wasmWasi]
-final object kotlin.wasm.internal/DefaultConstructorMarker // kotlin.wasm.internal/DefaultConstructorMarker|null[0]
-
-// Targets: [wasmJs, wasmWasi]
 final val kotlin.wasm.internal/EmptyContinuation // kotlin.wasm.internal/EmptyContinuation|{}EmptyContinuation[0]
     final fun <get-EmptyContinuation>(): kotlin.coroutines/Continuation<kotlin/Any?> // kotlin.wasm.internal/EmptyContinuation.<get-EmptyContinuation>|<get-EmptyContinuation>(){}[0]
 
@@ -14348,9 +14342,6 @@ open class kotlin/UninitializedPropertyAccessException : kotlin/RuntimeException
     constructor <init>(kotlin/String?, kotlin/Throwable?) // kotlin/UninitializedPropertyAccessException.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0]
     constructor <init>(kotlin/Throwable?) // kotlin/UninitializedPropertyAccessException.<init>|<init>(kotlin.Throwable?){}[0]
 }
-
-// Targets: [js]
-final object kotlin.js/DefaultConstructorMarker // kotlin.js/DefaultConstructorMarker|null[0]
 
 // Targets: [js]
 final object kotlin.js/JSON { // kotlin.js/JSON|null[0]
