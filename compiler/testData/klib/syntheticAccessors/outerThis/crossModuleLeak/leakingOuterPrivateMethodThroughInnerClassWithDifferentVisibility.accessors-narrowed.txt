@@ -10,7 +10,7 @@ public open class OuterOnlyInternal
             /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterOnlyInternal
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ internal fun access$<outer-this-0>($this: Inner): OuterOnlyInternal
+        /* ACCESSOR declaration */ internal /* static */ fun access$<outer-this-0>($this: Inner): OuterOnlyInternal
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: OuterOnlyInternal
 public open class OuterInternalAndPublic
@@ -21,7 +21,7 @@ public open class OuterInternalAndPublic
             /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterInternalAndPublic
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterInternalAndPublic
+        /* ACCESSOR declaration */ public /* static */ fun access$<outer-this-0>($this: Inner): OuterInternalAndPublic
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: OuterInternalAndPublic
 public open class OuterInternalAndProtected
@@ -32,7 +32,7 @@ public open class OuterInternalAndProtected
             /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterInternalAndProtected
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterInternalAndProtected
+        /* ACCESSOR declaration */ public /* static */ fun access$<outer-this-0>($this: Inner): OuterInternalAndProtected
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: OuterInternalAndProtected
 public open class OuterInternalAndInternalPA
@@ -43,7 +43,7 @@ public open class OuterInternalAndInternalPA
             /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterInternalAndInternalPA
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterInternalAndInternalPA
+        /* ACCESSOR declaration */ public /* static */ fun access$<outer-this-0>($this: Inner): OuterInternalAndInternalPA
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: OuterInternalAndInternalPA
 public open class OuterOnlyPublic
@@ -54,7 +54,7 @@ public open class OuterOnlyPublic
             /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterOnlyPublic
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterOnlyPublic
+        /* ACCESSOR declaration */ public /* static */ fun access$<outer-this-0>($this: Inner): OuterOnlyPublic
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: OuterOnlyPublic
 public open class OuterOnlyProtected
@@ -65,7 +65,7 @@ public open class OuterOnlyProtected
             /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterOnlyProtected
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterOnlyProtected
+        /* ACCESSOR declaration */ public /* static */ fun access$<outer-this-0>($this: Inner): OuterOnlyProtected
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: OuterOnlyProtected
 public open class OuterOnlyInternalPA
@@ -76,7 +76,7 @@ public open class OuterOnlyInternalPA
             /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterOnlyInternalPA
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterOnlyInternalPA
+        /* ACCESSOR declaration */ public /* static */ fun access$<outer-this-0>($this: Inner): OuterOnlyInternalPA
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: OuterOnlyInternalPA
 public open class OuterAllEffectivelyPublic
@@ -89,6 +89,6 @@ public open class OuterAllEffectivelyPublic
             /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
         /* ACCESSOR declaration */ private fun <outer-this-0>(): OuterAllEffectivelyPublic
             /* TARGET use-site */ <this>
-        /* ACCESSOR declaration */ public fun access$<outer-this-0>($this: Inner): OuterAllEffectivelyPublic
+        /* ACCESSOR declaration */ public /* static */ fun access$<outer-this-0>($this: Inner): OuterAllEffectivelyPublic
             /* ACCESSOR use-site */ $this.<outer-this-0>()
     /* TARGET declaration */ <this>: OuterAllEffectivelyPublic

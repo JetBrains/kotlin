@@ -21,7 +21,7 @@ public class A
             /* ACCESSOR use-site */ access$<get-privateVar>($this = this)
         internal inline fun <set-inlineVar>(value: Int)
             /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* ACCESSOR declaration */ public fun access$<get-privateVar>($this: A): Int
+    /* ACCESSOR declaration */ public /* static */ fun access$<get-privateVar>($this: A): Int
         /* TARGET use-site */ $this.<get-privateVar>()
-    /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: A, <set-?>: Int)
+    /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
         /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)

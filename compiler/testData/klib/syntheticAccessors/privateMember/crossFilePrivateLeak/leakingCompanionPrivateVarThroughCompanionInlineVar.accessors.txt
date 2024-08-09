@@ -12,7 +12,7 @@ public class A
                 /* ACCESSOR use-site */ access$<get-privateVar>($this = <this>)
             internal inline fun <set-inlineCompanionVar>(value: Int)
                 /* ACCESSOR use-site */ access$<set-privateVar>($this = <this>, <set-?> = value)
-        /* ACCESSOR declaration */ public fun access$<get-privateVar>($this: Companion): Int
+        /* ACCESSOR declaration */ public /* static */ fun access$<get-privateVar>($this: Companion): Int
             /* TARGET use-site */ $this.<get-privateVar>()
-        /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: Companion, <set-?>: Int)
+        /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: Companion, <set-?>: Int)
             /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)

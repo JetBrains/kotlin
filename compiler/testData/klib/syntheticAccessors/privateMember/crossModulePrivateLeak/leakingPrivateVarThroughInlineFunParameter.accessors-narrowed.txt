@@ -13,7 +13,7 @@ public class A
     internal inline fun executorFunctional(noinline block: Function0<Int>): Int
         noinline block: Function0<Int>
             /* ACCESSOR use-site */ access$<get-privateValFunctional>($this = <this>)
-    /* ACCESSOR declaration */ internal fun access$<get-privateVal>($this: A): Int
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-privateVal>($this: A): Int
         /* TARGET use-site */ $this.<get-privateVal>()
-    /* ACCESSOR declaration */ internal fun access$<get-privateValFunctional>($this: A): Function0<Int>
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-privateValFunctional>($this: A): Function0<Int>
         /* TARGET use-site */ $this.<get-privateValFunctional>()

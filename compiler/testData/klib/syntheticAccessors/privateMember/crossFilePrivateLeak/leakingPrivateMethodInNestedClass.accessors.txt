@@ -7,5 +7,5 @@ public class A
         /* TARGET declaration */ private fun privateMethod(): String
         internal inline fun internalInlineMethod(): String
             /* ACCESSOR use-site */ access$privateMethod($this = <this>)
-        /* ACCESSOR declaration */ public fun access$privateMethod($this: Nested): String
+        /* ACCESSOR declaration */ public /* static */ fun access$privateMethod($this: Nested): String
             /* TARGET use-site */ $this.privateMethod()

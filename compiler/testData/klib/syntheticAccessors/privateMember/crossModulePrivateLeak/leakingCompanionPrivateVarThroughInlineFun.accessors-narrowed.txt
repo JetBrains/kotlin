@@ -7,9 +7,9 @@ public class A
         private var privateVar: Int
             /* TARGET declaration */ private fun <get-privateVar>(): Int
             /* TARGET declaration */ private fun <set-privateVar>(<set-?>: Int)
-        /* ACCESSOR declaration */ internal fun access$<get-privateVar>($this: Companion): Int
+        /* ACCESSOR declaration */ internal /* static */ fun access$<get-privateVar>($this: Companion): Int
             /* TARGET use-site */ $this.<get-privateVar>()
-        /* ACCESSOR declaration */ internal fun access$<set-privateVar>($this: Companion, <set-?>: Int)
+        /* ACCESSOR declaration */ internal /* static */ fun access$<set-privateVar>($this: Companion, <set-?>: Int)
             /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)
     internal inline fun customSetVar(value: Int)
         /* ACCESSOR use-site */ access$<set-privateVar>($this = Companion, <set-?> = value)

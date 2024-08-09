@@ -15,11 +15,11 @@ enum class MyEnum : Enum<MyEnum> {
 
   }
 
-  fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
 
-  val entries: EnumEntries<MyEnum>
+  /* static */ val entries: EnumEntries<MyEnum>
     get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }

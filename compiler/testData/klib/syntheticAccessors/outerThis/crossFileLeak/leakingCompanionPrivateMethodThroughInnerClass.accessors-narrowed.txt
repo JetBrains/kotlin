@@ -5,7 +5,7 @@
 public class Outer
     public companion object Companion
         /* TARGET declaration */ private fun privateMethod(): String
-        /* ACCESSOR declaration */ internal fun access$privateMethod($this: Companion): String
+        /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod($this: Companion): String
             /* TARGET use-site */ $this.privateMethod()
     public inner class Inner
         internal inline fun internalMethod(): String

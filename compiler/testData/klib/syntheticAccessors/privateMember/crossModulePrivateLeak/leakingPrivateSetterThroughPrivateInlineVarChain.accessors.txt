@@ -14,5 +14,5 @@ public class A
     internal var inlineVar: Int
         internal inline fun <set-inlineVar>(value: Int)
             /* ACCESSOR use-site */ access$<set-privateVar>($this = this, <set-?> = value)
-    /* ACCESSOR declaration */ public fun access$<set-privateVar>($this: A, <set-?>: Int)
+    /* ACCESSOR declaration */ public /* static */ fun access$<set-privateVar>($this: A, <set-?>: Int)
         /* TARGET use-site */ $this.<set-privateVar>(<set-?> = <set-?>)

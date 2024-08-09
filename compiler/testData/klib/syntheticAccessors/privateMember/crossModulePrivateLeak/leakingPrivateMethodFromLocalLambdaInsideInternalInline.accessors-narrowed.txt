@@ -8,5 +8,5 @@ public class A
         internal inline fun <get-internalInlineVal>(): Function0<String>
             local fun <anonymous>(): String
                 /* ACCESSOR use-site */ access$privateMethod($this = <this>)
-    /* ACCESSOR declaration */ internal fun access$privateMethod($this: A): String
+    /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod($this: A): String
         /* TARGET use-site */ $this.privateMethod()

@@ -6,5 +6,5 @@ public class A
     /* TARGET declaration */ private operator fun plus(increment: Int): String
     internal inline fun internalInlineMethod(): String
         /* ACCESSOR use-site */ access$plus($this = <this>, increment = 1)
-    /* ACCESSOR declaration */ internal fun access$plus($this: A, increment: Int): String
+    /* ACCESSOR declaration */ internal /* static */ fun access$plus($this: A, increment: Int): String
         /* TARGET use-site */ $this.plus(increment = increment)
