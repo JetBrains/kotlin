@@ -45,12 +45,13 @@ static constexpr const uint32_t MAX_STRING_SIZE =
 /*
  * The interface is as follows:
  *   class EncodingAwareString {
+ *     typename unit;
  *     Iterator begin();
  *     Iterator end();
  *     Iterator at(const UnitType*); // in variable-length encodings, rewinds to the last valid unit boundary
- *     size_t sizeInBytes();
  *     size_t sizeInUnits(); // in the smallest units of this encoding, e.g. 32-bit integers for UTF-32 and 8-bit ones for UTF-8
  *     size_t sizeInChars(); // in UTF-16 equivalent, counting surrogate pairs as 2 characters; may not be constant-time
+ *     static bool canEncode(KChar);
  *     static OBJ_GETTER(createUninitialized, size_t sizeInUnits);
  *   }
  *   class Iterator : BidirectionalIterator<KChar> {
@@ -63,13 +64,26 @@ static constexpr const uint32_t MAX_STRING_SIZE =
 template <typename F>
 auto encodingAware(KConstRef string, F&& impl) {
     auto header = StringHeaderOf(string);
+    auto data = StringRawData(string);
+    auto size = StringRawSize(string, header && header->ignoreLastByte());
     switch (header ? header->encoding() : StringHeader::ENCODING_UTF16) {
     case StringHeader::ENCODING_UTF16:
-        return impl(UTF16String{reinterpret_cast<const KChar*>(StringRawData(string)), StringRawSize(string, false) / sizeof(KChar)});
+        return impl(UTF16String{reinterpret_cast<const KChar*>(data), size / sizeof(KChar)});
     case StringHeader::ENCODING_LATIN1:
-        return impl(Latin1String{StringRawData(string), StringRawSize(string, header->ignoreLastByte())});
+        return impl(Latin1String{reinterpret_cast<const uint8_t*>(data), size});
     default: ThrowIllegalArgumentException();
     }
+}
+
+void setLatin1Flags(KRef string, size_t lengthBytes) {
+    const_cast<StringHeader*>(StringHeaderOf(string))->flags_ =
+        (StringHeader::ENCODING_LATIN1 << StringHeader::ENCODING_OFFSET) |
+        (lengthBytes % 2 ? StringHeader::IGNORE_LAST_BYTE : 0);
+}
+
+bool utf8StringIsASCII(const char* utf8, size_t lengthBytes) {
+    // TODO: there are easy vectorized ways to do this check REALLY FAST, will std::all_of use them?..
+    return std::all_of(utf8, utf8 + lengthBytes, [](char c) { return c >= 0; });
 }
 
 template <typename String1, typename String2>
@@ -82,21 +96,38 @@ bool isInSurrogatePair(String&& string, It&& it) {
     return string.at(it.ptr()) != it;
 }
 
-template <typename F /*= void(KChar*) */>
-OBJ_GETTER(createUTF16String, uint32_t lengthChars, F&& initializer) {
-    if (lengthChars == 0) RETURN_RESULT_OF0(TheEmptyString);
-    auto result = CreateUninitializedUtf16String(lengthChars, OBJ_RESULT);
-    initializer(reinterpret_cast<KChar*>(StringRawData(result)));
+template <typename String, typename F /*= void(UnitType*) */>
+OBJ_GETTER(createString, uint32_t lengthUnits, F&& initializer) {
+    if (lengthUnits == 0) RETURN_RESULT_OF0(TheEmptyString);
+    auto result = String::createUninitialized(lengthUnits, OBJ_RESULT);
+    initializer(reinterpret_cast<typename String::unit*>(StringRawData(result)));
     return result;
 }
 
 template <typename String, typename F /*= void(KChar*) */>
 OBJ_GETTER(createWithEncodingOf, String&& other, uint32_t lengthUnits, F&& initializer) {
-    if (lengthUnits == 0) RETURN_RESULT_OF0(TheEmptyString);
-    using unit_type = std::decay_t<decltype(other.begin().ptr()[0])>;
-    auto result = std::decay_t<String>::createUninitialized(lengthUnits, OBJ_RESULT);
-    initializer(reinterpret_cast<unit_type*>(StringRawData(result)));
-    return result;
+    RETURN_RESULT_OF(createString<std::decay_t<String>>, lengthUnits, std::forward<F>(initializer));
+}
+
+OBJ_GETTER(createStringFromUTF8, const char* utf8, uint32_t lengthBytes, bool ensureValid) {
+    if (utf8 == nullptr) RETURN_OBJ(nullptr);
+    if (lengthBytes == 0) RETURN_RESULT_OF0(TheEmptyString);
+    if (utf8StringIsASCII(utf8, lengthBytes)) {
+        RETURN_RESULT_OF(createString<Latin1String>, lengthBytes, [=](uint8_t* out) { std::copy_n(utf8, lengthBytes, out); })
+    }
+    size_t lengthChars;
+    try {
+        lengthChars = ensureValid
+            ? utf8::utf16_length(utf8, utf8 + lengthBytes)
+            : utf8::with_replacement::utf16_length(utf8, utf8 + lengthBytes);
+    } catch (...) {
+        ThrowCharacterCodingException();
+    }
+    RETURN_RESULT_OF(createString<UTF16String>, lengthChars, [=](KChar* out) {
+        return ensureValid
+            ? utf8::unchecked::utf8to16(utf8, utf8 + lengthBytes, out) // already known to be valid
+            : utf8::with_replacement::utf8to16(utf8, utf8 + lengthBytes, out);
+    });
 }
 
 OBJ_GETTER(unsafeConvertToUTF8, KConstRef thiz, KStringConversionMode mode, KInt start, KInt size) {
@@ -137,29 +168,16 @@ extern "C" OBJ_GETTER(CreateStringFromCString, const char* cstring) {
 }
 
 extern "C" OBJ_GETTER(CreateStringFromUtf8, const char* utf8, uint32_t lengthBytes) {
-    if (utf8 == nullptr) RETURN_OBJ(nullptr);
-    if (lengthBytes == 0) RETURN_RESULT_OF0(TheEmptyString);
-    RETURN_RESULT_OF(createUTF16String, utf8::with_replacement::utf16_length(utf8, utf8 + lengthBytes),
-        [=](KChar* out) { return utf8::with_replacement::utf8to16(utf8, utf8 + lengthBytes, out); });
+    RETURN_RESULT_OF(createStringFromUTF8, utf8, lengthBytes, false);
 }
 
 extern "C" OBJ_GETTER(CreateStringFromUtf8OrThrow, const char* utf8, uint32_t lengthBytes) {
-    if (utf8 == nullptr) RETURN_OBJ(nullptr);
-    if (lengthBytes == 0) RETURN_RESULT_OF0(TheEmptyString);
-    size_t lengthChars;
-    try {
-        lengthChars = utf8::utf16_length(utf8, utf8 + lengthBytes);
-    } catch (...) {
-        ThrowCharacterCodingException();
-    }
-    RETURN_RESULT_OF(createUTF16String, lengthChars,
-        [=](KChar* out) { utf8::unchecked::utf8to16(utf8, utf8 + lengthBytes, out); });
+    RETURN_RESULT_OF(createStringFromUTF8, utf8, lengthBytes, true);
 }
 
 extern "C" OBJ_GETTER(CreateStringFromUtf16, const KChar* utf16, uint32_t lengthChars) {
     if (utf16 == nullptr) RETURN_OBJ(nullptr);
-    RETURN_RESULT_OF(createUTF16String, lengthChars,
-        [=](KChar* out) { std::copy(utf16, utf16 + lengthChars, out); });
+    RETURN_RESULT_OF(createString<UTF16String>, lengthChars, [=](KChar* out) { std::copy_n(utf16, lengthChars, out); });
 }
 
 extern "C" OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars) {
@@ -170,9 +188,7 @@ extern "C" OBJ_GETTER(CreateUninitializedUtf16String, uint32_t lengthChars) {
 extern "C" OBJ_GETTER(CreateUninitializedLatin1String, uint32_t lengthBytes) {
     if (lengthBytes == 0) RETURN_RESULT_OF0(TheEmptyString);
     auto result = AllocArrayInstance(theStringTypeInfo, (lengthBytes + 1) / 2 + STRING_HEADER_SIZE, OBJ_RESULT);
-    const_cast<StringHeader*>(StringHeaderOf(result))->flags_ =
-        (StringHeader::ENCODING_LATIN1 << StringHeader::ENCODING_OFFSET) |
-        (lengthBytes % 2 ? StringHeader::IGNORE_LAST_BYTE : 0);
+    setLatin1Flags(result, lengthBytes);
     return result;
 }
 
@@ -188,21 +204,32 @@ extern "C" void DisposeCString(char* cstring) {
     if (cstring) std::free(cstring);
 }
 
+static KRef allocatePermanentString(size_t sizeInChars) {
+    size_t headerSize = alignUp(sizeof(ArrayHeader), alignof(KChar));
+    size_t arraySize = headerSize + sizeInChars * sizeof(KChar);
+    auto obj = reinterpret_cast<ObjHeader*>(std::calloc(arraySize, 1));
+    obj->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT_CONTAINER);
+    obj->array()->count_ = sizeInChars;
+    return obj;
+}
+
 extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
     // Note: this function can be called in "Native" thread state. But this is fine:
     //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
     //   because the accessed object is off-heap, imitating permanent static objects.
-    const char* end = nullTerminatedUTF8 + strlen(nullTerminatedUTF8);
-    size_t count = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
-    if (count > STRING_HEADER_SIZE) count += STRING_HEADER_SIZE;
-    size_t headerSize = alignUp(sizeof(ArrayHeader), alignof(char16_t));
-    size_t arraySize = headerSize + count * sizeof(char16_t);
-
-    auto header = (ObjHeader*)std::calloc(arraySize, 1);
-    header->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT_CONTAINER);
-    header->array()->count_ = count;
-    utf8::with_replacement::utf8to16(nullTerminatedUTF8, end, reinterpret_cast<KChar*>(StringRawData(header)));
-    return header;
+    auto sizeInBytes = strlen(nullTerminatedUTF8);
+    if (sizeInBytes > 0 && utf8StringIsASCII(nullTerminatedUTF8, sizeInBytes)) {
+        auto result = allocatePermanentString((sizeInBytes + 1) / 2 + STRING_HEADER_SIZE);
+        setLatin1Flags(result, sizeInBytes);
+        std::copy_n(nullTerminatedUTF8, sizeInBytes, StringRawData(result));
+        return result;
+    } else {
+        auto end = nullTerminatedUTF8 + sizeInBytes;
+        auto sizeInChars = utf8::with_replacement::utf16_length(nullTerminatedUTF8, end);
+        auto result = allocatePermanentString(sizeInChars + (sizeInChars > STRING_HEADER_SIZE ? STRING_HEADER_SIZE : 0));
+        utf8::with_replacement::utf8to16(nullTerminatedUTF8, end, reinterpret_cast<KChar*>(StringRawData(result)));
+        return result;
+    }
 }
 
 extern "C" void FreePermanentStringForTests(KConstRef header) {
@@ -214,9 +241,14 @@ extern "C" KInt Kotlin_String_getStringLength(KConstRef thiz) {
     return encodingAware(thiz, [](auto thiz) { return thiz.sizeInChars(); });
 }
 
-extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thiz, KChar oldChar, KChar newChar) {
-    return encodingAware(thiz, [=](auto thiz) {
-        RETURN_RESULT_OF(createUTF16String, thiz.sizeInChars(),
+extern "C" OBJ_GETTER(Kotlin_String_replace, KConstRef thizPtr, KChar oldChar, KChar newChar) {
+    return encodingAware(thizPtr, [=](auto thiz) {
+        if (!thiz.canEncode(oldChar)) RETURN_OBJ(const_cast<KRef>(thizPtr));
+        if (isLatin1(thiz) && thiz.canEncode(newChar)) {
+            RETURN_RESULT_OF(createString<Latin1String>, thiz.sizeInUnits(),
+                [=](uint8_t* out) { std::replace_copy(thiz.begin().ptr(), thiz.end().ptr(), out, oldChar, newChar); })
+        }
+        RETURN_RESULT_OF(createString<UTF16String>, thiz.sizeInChars(),
             [=](KChar* out) { std::replace_copy(thiz.begin(), thiz.end(), out, oldChar, newChar); });
     });
 }
@@ -238,16 +270,16 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
             }
 
             if (isSameEncoding(thiz, other) &&
-                // In non-UTF-16 encodings, the total size in bytes could still overflow, e.g.
+                // In non-UTF-16 encodings, the total size in units could still overflow, e.g.
                 // UTF-8 has characters that encode to 3 bytes while only needing 2 in UTF-16.
-                (isUTF16(thiz) || thiz.sizeInBytes() < std::numeric_limits<size_t>::max() - other.sizeInBytes())
+                (isUTF16(thiz) || thiz.sizeInUnits() < std::numeric_limits<size_t>::max() - other.sizeInUnits())
             ) {
                 RETURN_RESULT_OF(createWithEncodingOf, thiz, thiz.sizeInUnits() + other.sizeInUnits(), [=](auto* out) {
                     auto halfway = std::copy(thiz.begin().ptr(), thiz.end().ptr(), out);
                     std::copy(other.begin().ptr(), other.end().ptr(), halfway);
                 });
             } else {
-                RETURN_RESULT_OF(createUTF16String, thiz.sizeInChars() + other.sizeInChars(), [=](KChar* out) {
+                RETURN_RESULT_OF(createString<UTF16String>, thiz.sizeInChars() + other.sizeInChars(), [=](KChar* out) {
                     auto halfway = std::copy(thiz.begin(), thiz.end(), out);
                     std::copy(other.begin(), other.end(), halfway);
                 });
@@ -258,7 +290,7 @@ extern "C" OBJ_GETTER(Kotlin_String_plusImpl, KConstRef thiz, KConstRef other) {
 
 extern "C" OBJ_GETTER(Kotlin_String_unsafeStringFromCharArray, KConstRef thiz, KInt start, KInt size) {
     RuntimeAssert(thiz->type_info() == theCharArrayTypeInfo, "Must use a char array");
-    RETURN_RESULT_OF(createUTF16String, size,
+    RETURN_RESULT_OF(createString<UTF16String>, size,
         [=](KChar* out) { std::copy_n(CharArrayAddressOfElementAt(thiz->array(), start), size, out); });
 }
 

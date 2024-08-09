@@ -16,10 +16,10 @@ struct Latin1StringIterator {
     using reference = const KChar&;
     using iterator_category = std::bidirectional_iterator_tag;
 
-    const char* p_;
+    const uint8_t* p_;
 
-    const char* ptr() const { return p_; }
-    KChar operator*() const { return static_cast<uint8_t>(*p_); }
+    const uint8_t* ptr() const { return p_; }
+    KChar operator*() const { return *p_; }
     Latin1StringIterator& operator++() { ++p_; return *this; }
     Latin1StringIterator& operator--() { --p_; return *this; }
     Latin1StringIterator operator++(int) { return {p_++}; }
@@ -31,15 +31,18 @@ struct Latin1StringIterator {
 };
 
 struct Latin1String {
-    const char* data_;
+    using unit = uint8_t;
+
+    const uint8_t* data_;
     const size_t size_;
 
     Latin1StringIterator begin() const { return {data_}; }
     Latin1StringIterator end() const { return {data_ + size_}; }
-    Latin1StringIterator at(const char* ptr) const { return {ptr}; }
-    size_t sizeInBytes() const { return size_; }
+    Latin1StringIterator at(const uint8_t* ptr) const { return {ptr}; }
     size_t sizeInUnits() const { return size_; }
     size_t sizeInChars() const { return size_; }
+
+    static bool canEncode(KChar c) { return c < 256; }
 
     static OBJ_GETTER(createUninitialized, size_t sizeInUnits) {
         RETURN_RESULT_OF(CreateUninitializedLatin1String, sizeInUnits);
