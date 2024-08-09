@@ -35,7 +35,7 @@ object GeneratorsFileUtil {
             }
             if (parentFile.mkdirs()) {
                 println("Directory created: " + parentFile.absolutePath)
-            } else {
+            } else if (!parentFile.exists()) {
                 throw IllegalStateException("Cannot create directory: $parentFile")
             }
         }
