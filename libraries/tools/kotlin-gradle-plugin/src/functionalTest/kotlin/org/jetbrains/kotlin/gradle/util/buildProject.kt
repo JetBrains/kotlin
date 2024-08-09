@@ -104,11 +104,11 @@ fun Project.applyCocoapodsPlugin() {
 }
 
 fun KotlinMultiplatformExtension.cocoapods(code: CocoapodsExtension.() -> Unit) {
-    getExtension<CocoapodsExtension>("cocoapods")!!.apply(code)
+    requireNotNull(getExtension<CocoapodsExtension>("cocoapods")).apply(code)
 }
 
 fun KotlinMultiplatformExtension.swiftExport(code: SwiftExportExtension.() -> Unit) {
-    getExtension<SwiftExportExtension>("swiftExport")!!.apply(code)
+    requireNotNull(getExtension<SwiftExportExtension>("swiftExport")).apply(code)
 }
 
 val Project.propertiesExtension: ExtraPropertiesExtension
