@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCo
 
 internal val DeprecatedMppGradlePropertiesMigrationSetupAction = KotlinProjectSetupAction {
     checkAndReportDeprecatedMppProperties(project)
-    handleHierarchicalStructureFlagsMigration(project)
 }
 
 /**
@@ -29,9 +28,6 @@ private fun checkAndReportDeprecatedMppProperties(project: Project) {
     val projectProperties = project.kotlinPropertiesProvider
 
     val usedProperties = deprecatedMppProperties.mapNotNull { propertyName ->
-        if (propertyName in propertiesSetByPlugin && projectProperties.mpp13XFlagsSetByPlugin)
-            return@mapNotNull null
-
         propertyName.takeIf { projectProperties.property(propertyName).orNull != null }
     }
 
@@ -49,8 +45,4 @@ internal val deprecatedMppProperties: List<String> = listOf(
     KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT,
     KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT,
     KOTLIN_NATIVE_DEPENDENCY_PROPAGATION,
-)
-
-private val propertiesSetByPlugin: Set<String> = setOf(
-    KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA,
 )

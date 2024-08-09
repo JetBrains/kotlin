@@ -71,7 +71,6 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, KotlinArtifactsExtensionSetupAction)
             register(project, MultiplatformPublishingSetupAction)
             register(project, LanguageSettingsSetupAction)
-            register(project, GlobalProjectStructureMetadataStorageSetupAction)
             register(project, IdeMultiplatformImportSetupAction)
             register(project, IdeResolveDependenciesTaskSetupAction)
             register(project, CInteropCommonizedCInteropApiElementsConfigurationsSetupAction)
@@ -90,6 +89,8 @@ internal fun Project.registerKotlinPluginExtensions() {
             if (isKmpProjectIsolationEnabled) {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
                 register(project, MetadataApiElementsSecondaryVariantsSetupAction)
+            } else {
+                register(project, GlobalProjectStructureMetadataStorageSetupAction)
             }
         }
 
