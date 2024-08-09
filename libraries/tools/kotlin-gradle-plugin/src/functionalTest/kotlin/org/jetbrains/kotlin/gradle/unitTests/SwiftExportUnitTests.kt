@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportDSLConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
@@ -255,20 +257,17 @@ class SwiftExportUnitTests {
         assertEquals(arm64SimLib.freeCompilerArgs.single(), "-opt-in=some.value")
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val modules = swiftExportTask.parameters.swiftModules.get()
+        val actualModules = swiftExportTask.parameters.swiftModules.get()
+
+        val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
+            add(SwiftExportModuleForAssertion("Subproject", "subproject.klib"))
+            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib"))
+        }
 
         assertEquals(
-            listOf("Subproject", "KotlinxCoroutinesCore"),
-            modules.map { it.moduleName },
+            expectedModules,
+            actualModules.toModulesForAssertion(),
         )
-
-        val subProject = modules.single { it.moduleName == "Subproject" }
-        assertEquals(subProject.moduleName, "Subproject")
-        assertEquals(subProject.artifact.name, "subproject.klib")
-
-        val kotlinXCoroutines = modules.single { it.moduleName == "KotlinxCoroutinesCore" }
-        assertEquals(kotlinXCoroutines.moduleName, "KotlinxCoroutinesCore")
-        assertEquals(kotlinXCoroutines.artifact.name, "kotlinx-coroutines-core.klib")
     }
 
     @Test
@@ -290,14 +289,19 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val modules = swiftExportTask.parameters.swiftModules.get()
+        val actualModules = swiftExportTask.parameters.swiftModules.get()
 
-        val decompose = modules.single { it.moduleName == "Decompose" }
-        assertEquals(decompose.moduleName, "Decompose")
-        assertEquals(decompose.artifact.name, "decompose.klib")
+        val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
+            add(SwiftExportModuleForAssertion("Decompose", "decompose.klib"))
+        }
 
-        val KotlinXDatetime = modules.singleOrNull { it.moduleName == "KotlinxDatetime" }
-        assertNull(KotlinXDatetime, "Transitive dependency kotlinx-datetime should not be exported")
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+
+        val kotlinXDatetime = actualModules.singleOrNull { it.moduleName == "KotlinxDatetime" }
+        assertNull(kotlinXDatetime, "Transitive dependency kotlinx-datetime should not be exported")
     }
 
     @Test
@@ -311,13 +315,18 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val modules = swiftExportTask.parameters.swiftModules.get()
+        val actualModules = swiftExportTask.parameters.swiftModules.get()
 
-        val decompose = modules.single { it.moduleName == "Decompose" }
-        assertEquals(decompose.moduleName, "Decompose")
-        assertEquals(decompose.artifact.name, "decompose.klib")
+        val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
+            add(SwiftExportModuleForAssertion("Decompose", "decompose.klib"))
+        }
 
-        val kotlinXCoroutines = modules.singleOrNull { it.moduleName == "KotlinxCoroutinesCore" }
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+
+        val kotlinXCoroutines = actualModules.singleOrNull { it.moduleName == "KotlinxCoroutinesCore" }
         assertNull(kotlinXCoroutines, "Transitive dependency kotlinx-coroutines-core should not be exported")
     }
 
@@ -339,11 +348,19 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val modules = swiftExportTask.parameters.swiftModules.get()
+        val actualModules = swiftExportTask.parameters.swiftModules.get()
 
-        val kotlinXCoroutines = modules.single { it.moduleName == "KotlinxCoroutinesCore" }
-        assertEquals(kotlinXCoroutines.moduleName, "KotlinxCoroutinesCore")
-        assertEquals(kotlinXCoroutines.artifact.name, "kotlinx-coroutines-core.klib")
+        val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
+            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib"))
+        }
+
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+
+        val kotlinXCoroutines = actualModules.single()
+
         assertContains("/1.9.0-RC/", kotlinXCoroutines.artifact.path)
         assertNotContains("/1.8.0/", kotlinXCoroutines.artifact.path)
     }
@@ -361,11 +378,16 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val modules = swiftExportTask.parameters.swiftModules.get()
+        val actualModules = swiftExportTask.parameters.swiftModules.get()
 
-        val decompose = modules.single { it.moduleName == "CustomDecompose" }
-        assertEquals(decompose.moduleName, "CustomDecompose")
-        assertEquals(decompose.artifact.name, "decompose.klib")
+        val expectedModules = buildSmartList<SwiftExportModuleForAssertion> {
+            add(SwiftExportModuleForAssertion("CustomDecompose", "decompose.klib"))
+        }
+
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
     }
 
     @Test
@@ -465,6 +487,13 @@ private fun ProjectInternal.subProject(
             multiplatform()
         }
     }
+)
+
+private fun List<SwiftExportedModule>.toModulesForAssertion() = map { SwiftExportModuleForAssertion(it.moduleName, it.artifact.name) }
+
+private data class SwiftExportModuleForAssertion(
+    val moduleName: String,
+    val artifactName: String,
 )
 
 private val <T : KotlinCompilation<*>> NamedDomainObjectCollection<out T>.swiftExport: T get() = getByName("swiftExportMain")
