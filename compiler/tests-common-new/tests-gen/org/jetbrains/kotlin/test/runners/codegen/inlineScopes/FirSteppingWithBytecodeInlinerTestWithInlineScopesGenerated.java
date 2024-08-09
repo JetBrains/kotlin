@@ -25,6 +25,12 @@ public class FirSteppingWithBytecodeInlinerTestWithInlineScopesGenerated extends
   }
 
   @Test
+  @TestMetadata("annotatedFunction.kt")
+  public void testAnnotatedFunction() {
+    runTest("compiler/testData/debug/stepping/annotatedFunction.kt");
+  }
+
+  @Test
   @TestMetadata("anonymousFunction.kt")
   public void testAnonymousFunction() {
     runTest("compiler/testData/debug/stepping/anonymousFunction.kt");

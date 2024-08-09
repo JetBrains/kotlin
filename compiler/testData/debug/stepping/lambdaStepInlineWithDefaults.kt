@@ -1,6 +1,8 @@
 
 // FILE: test.kt
-inline fun foo(stringMaker: () -> String = { "OK" }): String {
+inline fun foo(
+    stringMaker: () -> String = { "OK" }
+): String {
     return stringMaker()
 }
 
@@ -18,17 +20,15 @@ fun box(): String {
 }
 
 // EXPECTATIONS JVM_IR
-// test.kt:15 box
-// test.kt:3 box
-// test.kt:4 box
-// test.kt:3 box
-// test.kt:4 box
-// test.kt:16 box
-// test.kt:7 box
-// test.kt:11 box
-// test.kt:8 box
-// test.kt:11 box
 // test.kt:17 box
+// test.kt:6 box
+// test.kt:4 box
+// test.kt:6 box
+// test.kt:18 box
+// test.kt:13 box
+// test.kt:10 box
+// test.kt:13 box
+// test.kt:19 box
 
 // EXPECTATIONS JS_IR
 // test.kt:17 box
