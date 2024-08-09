@@ -20,13 +20,13 @@ import java.io.File
 import java.io.IOException
 
 fun File.isJavaFile() =
-        extension.equals("java", ignoreCase = true)
+    extension.equals("java", ignoreCase = true)
 
 fun File.isKotlinFile(sourceFilesExtensions: Collection<String>): Boolean =
     !isJavaFile() && sourceFilesExtensions.any { it.equals(extension, ignoreCase = true) }
 
 fun File.isClassFile(): Boolean =
-        extension.equals("class", ignoreCase = true)
+    extension.equals("class", ignoreCase = true)
 
 /**
  * Deletes the contents of this directory (not the directory itself).
