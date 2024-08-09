@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginExtension
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 
@@ -37,3 +39,9 @@ internal val Project.distsDirectory
 
 internal val Project.konanDistribution: KonanDistribution
     get() = KonanDistribution(nativeProperties.actualNativeHomeDirectory.get())
+
+internal val Project.javaSourceSets: SourceSetContainer
+    get() = extensions.getByType<JavaPluginExtension>().sourceSets
+
+internal val Project.javaSourceSetsIfAvailable
+    get() = extensions.findByType<JavaPluginExtension>()?.sourceSets

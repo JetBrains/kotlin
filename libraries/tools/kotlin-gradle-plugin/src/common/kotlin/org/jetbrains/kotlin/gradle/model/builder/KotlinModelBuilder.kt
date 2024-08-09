@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.gradle.model.impl.CompilerArgumentsImpl
 import org.jetbrains.kotlin.gradle.model.impl.KotlinProjectImpl
 import org.jetbrains.kotlin.gradle.model.impl.SourceSetImpl
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.utils.javaSourceSetsIfAvailable
 
 /**
  * [ToolingModelBuilder] for [KotlinProject] models.
@@ -76,10 +76,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
         private fun Project.pathOrName() = if (path == ":") name else path
 
         private fun AbstractKotlinCompile<*>.createSourceSet(project: Project, projectType: KotlinProject.ProjectType): SourceSet? {
-            val javaSourceSet = project
-                .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                .getInstance(project)
-                .sourceSetsIfAvailable
+            val javaSourceSet = project.javaSourceSetsIfAvailable
                 ?.find { it.name == sourceSetName.get() }
             @Suppress("DEPRECATION") val kotlinSourceSet: SourceDirectorySet? = javaSourceSet
                 ?.getExtension(if (projectType == KotlinProject.ProjectType.PLATFORM_JS) KOTLIN_JS_DSL_NAME else KOTLIN_DSL_NAME)

@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.javaSourceSetsIfAvailable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.setAttribute
@@ -59,10 +59,7 @@ class ScriptingGradleSubplugin : Plugin<Project> {
         project.plugins.apply(ScriptingKotlinGradleSubplugin::class.java)
 
         project.afterEvaluate {
-            val javaSourceSets = project
-                .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                .getInstance(project)
-                .sourceSetsIfAvailable
+            val javaSourceSets = project.javaSourceSetsIfAvailable
             if (javaSourceSets?.isEmpty() == false) {
 
                 val configureAction: (KotlinCompile) -> (Unit) = ca@{ task ->

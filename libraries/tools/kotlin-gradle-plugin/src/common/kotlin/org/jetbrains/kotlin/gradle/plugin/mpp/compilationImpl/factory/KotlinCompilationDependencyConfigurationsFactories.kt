@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureResourcesPublicationAttributes
-import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_PATH
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
