@@ -112,7 +112,8 @@ def construct_cmake_flags(
         '-DLLVM_OPTIMIZED_TABLEGEN=ON',
         '-DLLVM_ENABLE_IDE=OFF',
         '-DLLVM_BUILD_UTILS=ON',
-        '-DLLVM_INSTALL_UTILS=ON'
+        '-DLLVM_INSTALL_UTILS=ON',
+        '-DBUG_REPORT_URL=https://youtrack.jetbrains.com/newIssue?project=KT',
     ]
     if not host_is_windows(): # TODO(KT-70399): Enable for all hosts when Windows builder gets zlib.
         cmake_args.append("-DLLVM_ENABLE_ZLIB=FORCE_ON")
