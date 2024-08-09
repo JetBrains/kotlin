@@ -451,7 +451,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                 )
             ),
             givenDependencies = setOf(TestModule.Given(library.klibFile), TestModule.Given(noEnumEntries.klibFile)),
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5), // objcexport is a test suite on its own, increase the default timeout
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings, listOf(noEnumEntries)).result.assertSuccess()
 
