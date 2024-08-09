@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.JavaPluginExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
 import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
+import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 import kotlin.test.*
 
 class JvmSecondaryOutgoingVariantsTest {

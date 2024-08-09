@@ -34,11 +34,9 @@ import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.statistics.CompilerArgumentMetrics
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
@@ -286,7 +284,7 @@ internal open class GradleCompilerRunner(
                  */
                 val multiplatformExtension = try {
                     project.multiplatformExtensionOrNull
-                } catch (e: IsolatedKotlinClasspathClassCastException) {
+                } catch (_: IsolatedKotlinClasspathClassCastException) {
                     null
                 }
 
@@ -380,9 +378,7 @@ internal open class GradleCompilerRunner(
             project: Project,
             sourceSetName: String,
         ): File? {
-            val sourceSets = project.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
-                .getInstance(project)
-                .sourceSetsIfAvailable ?: return null
+            val sourceSets = project.javaSourceSetsIfAvailable ?: return null
             val sourceSet = sourceSets.findByName(sourceSetName) ?: return null
 
             val jarTask = project.tasks.findByName(sourceSet.jarTaskName) as? Jar
