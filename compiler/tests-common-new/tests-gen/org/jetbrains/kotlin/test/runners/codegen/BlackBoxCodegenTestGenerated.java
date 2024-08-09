@@ -2858,6 +2858,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Test
+    @TestMetadata("internalMethodFakeOverrideInFriendModule.kt")
+    public void testInternalMethodFakeOverrideInFriendModule() {
+      runTest("compiler/testData/codegen/box/bridges/internalMethodFakeOverrideInFriendModule.kt");
+    }
+
+    @Test
     @TestMetadata("internalMethodOverrideInFriendModule.kt")
     public void testInternalMethodOverrideInFriendModule() {
       runTest("compiler/testData/codegen/box/bridges/internalMethodOverrideInFriendModule.kt");

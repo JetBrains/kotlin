@@ -2702,6 +2702,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/bridges/innerClassTypeParameters.kt");
     }
 
+    @TestMetadata("internalMethodFakeOverrideInFriendModule.kt")
+    public void testInternalMethodFakeOverrideInFriendModule() {
+      runTest("compiler/testData/codegen/box/bridges/internalMethodFakeOverrideInFriendModule.kt");
+    }
+
     @TestMetadata("internalMethodOverrideInFriendModule.kt")
     public void testInternalMethodOverrideInFriendModule() {
       runTest("compiler/testData/codegen/box/bridges/internalMethodOverrideInFriendModule.kt");
