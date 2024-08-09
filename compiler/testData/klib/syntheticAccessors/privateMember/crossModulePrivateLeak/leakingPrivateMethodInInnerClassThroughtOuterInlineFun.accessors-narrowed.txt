@@ -7,7 +7,7 @@ public class A
         /* TARGET declaration */ private fun privateMethod(): Int
         internal inline fun internalInlineMethod(): Int
             /* ACCESSOR use-site */ access$privateMethod($this = <this>)
-        /* ACCESSOR declaration */ internal fun access$privateMethod($this: Inner): Int
+        /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod($this: Inner): Int
             /* TARGET use-site */ $this.privateMethod()
     internal inline fun internalInlineMethodInOuterClass(): Int
         /* ACCESSOR use-site */ access$privateMethod($this = <this>.Inner())

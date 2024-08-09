@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -628,9 +628,16 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
         if (declaration.isExpect && !options.printExpectDeclarations) return
+        val keyword = buildString {
+            if (declaration.isStatic) {
+                append(customModifier("static"))
+                append(' ')
+            }
+            append("fun ")
+        }
         declaration.printSimpleFunction(
             data,
-            "fun ",
+            keyword,
             declaration.name.asString(),
             printTypeParametersAndExtensionReceiver = true,
             printSignatureAndBody = true,
@@ -837,6 +844,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO we can omit type for set parameter
 
         p(declaration.isConst, "const")
+        p(declaration.getter?.isStatic == true, customModifier("static"))
         p.printWithNoIndent(if (declaration.isVar) "var" else "val")
         p.printWithNoIndent(" ")
 
@@ -903,13 +911,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     private fun IrSimpleFunction.printAccessor(s: String, property: IrDeclaration) {
-        val isDefaultAccessor = origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+        val isCustomAccessor = origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
         printSimpleFunction(
             property,
             keyword = "",
             name = s,
             printTypeParametersAndExtensionReceiver = false,
-            printSignatureAndBody = isDefaultAccessor,
+            printSignatureAndBody = isCustomAccessor,
             printExtraTrailingNewLine = false,
         )
     }

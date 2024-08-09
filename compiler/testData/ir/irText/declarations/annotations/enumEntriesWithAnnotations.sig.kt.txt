@@ -153,7 +153,7 @@ open enum class TestEnum : Enum<TestEnum> {
   //   Mangled name: TestEnum#valueOf#static(kotlin.String){}
   //   Public signature: /TestEnum.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
-  fun valueOf(value: String): TestEnum
+  /* static */ fun valueOf(value: String): TestEnum
 
   // CHECK JVM_IR:
   //   Mangled name: TestEnum#values#static(){}kotlin.Array<TestEnum>
@@ -163,7 +163,7 @@ open enum class TestEnum : Enum<TestEnum> {
   //   Mangled name: TestEnum#values#static(){}
   //   Public signature: /TestEnum.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
-  fun values(): Array<TestEnum>
+  /* static */ fun values(): Array<TestEnum>
 
   // CHECK JVM_IR:
   //   Mangled name: TestEnum#compareTo(TestEnum){}kotlin.Int
@@ -209,7 +209,7 @@ open enum class TestEnum : Enum<TestEnum> {
   //   Mangled name: TestEnum#static{}entries
   //   Public signature: /TestEnum.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<TestEnum>
+  /* static */ val entries: EnumEntries<TestEnum>
     // CHECK JVM_IR:
     //   Mangled name: TestEnum#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnum>
     //   Public signature: /TestEnum.entries.<get-entries>|6962221716588245012[0]

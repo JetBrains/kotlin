@@ -19,13 +19,13 @@ abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
 
   }
 
-  fun valueOf(value: String): TestAbstractEnum1 /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): TestAbstractEnum1 /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<TestAbstractEnum1> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<TestAbstractEnum1> /* Synthetic body for ENUM_VALUES */
 
   abstract fun foo()
 
-  val entries: EnumEntries<TestAbstractEnum1>
+  /* static */ val entries: EnumEntries<TestAbstractEnum1>
     get(): EnumEntries<TestAbstractEnum1> /* Synthetic body for ENUM_ENTRIES */
 
 }
@@ -51,11 +51,11 @@ abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
 
   }
 
-  fun valueOf(value: String): TestAbstractEnum2 /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): TestAbstractEnum2 /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<TestAbstractEnum2> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<TestAbstractEnum2> /* Synthetic body for ENUM_VALUES */
 
-  val entries: EnumEntries<TestAbstractEnum2>
+  /* static */ val entries: EnumEntries<TestAbstractEnum2>
     get(): EnumEntries<TestAbstractEnum2> /* Synthetic body for ENUM_ENTRIES */
 
 }
@@ -69,11 +69,11 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
 
   }
 
-  fun valueOf(value: String): TestFinalEnum1 /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): TestFinalEnum1 /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<TestFinalEnum1> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<TestFinalEnum1> /* Synthetic body for ENUM_VALUES */
 
-  val entries: EnumEntries<TestFinalEnum1>
+  /* static */ val entries: EnumEntries<TestFinalEnum1>
     get(): EnumEntries<TestFinalEnum1> /* Synthetic body for ENUM_ENTRIES */
 
 }
@@ -91,11 +91,11 @@ enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
 
   }
 
-  fun valueOf(value: String): TestFinalEnum2 /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): TestFinalEnum2 /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<TestFinalEnum2> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<TestFinalEnum2> /* Synthetic body for ENUM_VALUES */
 
-  val entries: EnumEntries<TestFinalEnum2>
+  /* static */ val entries: EnumEntries<TestFinalEnum2>
     get(): EnumEntries<TestFinalEnum2> /* Synthetic body for ENUM_ENTRIES */
 
 }
@@ -109,14 +109,14 @@ enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
 
   }
 
-  fun valueOf(value: String): TestFinalEnum3 /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): TestFinalEnum3 /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<TestFinalEnum3> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<TestFinalEnum3> /* Synthetic body for ENUM_VALUES */
 
   fun doStuff() {
   }
 
-  val entries: EnumEntries<TestFinalEnum3>
+  /* static */ val entries: EnumEntries<TestFinalEnum3>
     get(): EnumEntries<TestFinalEnum3> /* Synthetic body for ENUM_ENTRIES */
 
 }
@@ -143,11 +143,11 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
 
   }
 
-  fun valueOf(value: String): TestOpenEnum1 /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): TestOpenEnum1 /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<TestOpenEnum1> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<TestOpenEnum1> /* Synthetic body for ENUM_VALUES */
 
-  val entries: EnumEntries<TestOpenEnum1>
+  /* static */ val entries: EnumEntries<TestOpenEnum1>
     get(): EnumEntries<TestOpenEnum1> /* Synthetic body for ENUM_ENTRIES */
 
 }
@@ -173,14 +173,14 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
 
   }
 
-  fun valueOf(value: String): TestOpenEnum2 /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): TestOpenEnum2 /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<TestOpenEnum2> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<TestOpenEnum2> /* Synthetic body for ENUM_VALUES */
 
   open fun foo() {
   }
 
-  val entries: EnumEntries<TestOpenEnum2>
+  /* static */ val entries: EnumEntries<TestOpenEnum2>
     get(): EnumEntries<TestOpenEnum2> /* Synthetic body for ENUM_ENTRIES */
 
 }

@@ -13,7 +13,7 @@ public class A
     internal var inlineVarB: Int
         internal inline fun <set-inlineVarB>(value: Int)
             /* ACCESSOR use-site */ access$<set-privateSetterVarB>($this = <this>, value = value)
-    /* ACCESSOR declaration */ public fun access$<set-privateSetterVarA>($this: A, <set-?>: Int)
+    /* ACCESSOR declaration */ public /* static */ fun access$<set-privateSetterVarA>($this: A, <set-?>: Int)
         /* TARGET use-site */ $this.<set-privateSetterVarA>(<set-?> = <set-?>)
-    /* ACCESSOR declaration */ public fun access$<set-privateSetterVarB>($this: A, value: Int)
+    /* ACCESSOR declaration */ public /* static */ fun access$<set-privateSetterVarB>($this: A, value: Int)
         /* TARGET use-site */ $this.<set-privateSetterVarB>(value = value)

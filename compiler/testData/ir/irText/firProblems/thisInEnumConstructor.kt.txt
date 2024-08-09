@@ -11,11 +11,11 @@ enum class EE : Enum<EE> {
 
   }
 
-  fun valueOf(value: String): EE /* Synthetic body for ENUM_VALUEOF */
+  /* static */ fun valueOf(value: String): EE /* Synthetic body for ENUM_VALUEOF */
 
-  fun values(): Array<EE> /* Synthetic body for ENUM_VALUES */
+  /* static */ fun values(): Array<EE> /* Synthetic body for ENUM_VALUES */
 
-  val entries: EnumEntries<EE>
+  /* static */ val entries: EnumEntries<EE>
     get(): EnumEntries<EE> /* Synthetic body for ENUM_ENTRIES */
 
 }

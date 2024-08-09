@@ -7,5 +7,5 @@ public class Outer
     public class Nested
         internal inline fun internalInlineMethod(): String
             /* ACCESSOR use-site */ access$privateMethod($this = Outer())
-    /* ACCESSOR declaration */ internal fun access$privateMethod($this: Outer): String
+    /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod($this: Outer): String
         /* TARGET use-site */ $this.privateMethod()

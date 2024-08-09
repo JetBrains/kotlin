@@ -109,7 +109,7 @@ abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
   //   Mangled name: TestAbstractEnum1#valueOf#static(kotlin.String){}
   //   Public signature: /TestAbstractEnum1.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
-  fun valueOf(value: String): TestAbstractEnum1
+  /* static */ fun valueOf(value: String): TestAbstractEnum1
 
   // CHECK JVM_IR:
   //   Mangled name: TestAbstractEnum1#values#static(){}kotlin.Array<TestAbstractEnum1>
@@ -119,7 +119,7 @@ abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
   //   Mangled name: TestAbstractEnum1#values#static(){}
   //   Public signature: /TestAbstractEnum1.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
-  fun values(): Array<TestAbstractEnum1>
+  /* static */ fun values(): Array<TestAbstractEnum1>
 
   // CHECK JVM_IR:
   //   Mangled name: TestAbstractEnum1#compareTo(TestAbstractEnum1){}kotlin.Int
@@ -171,7 +171,7 @@ abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
   //   Mangled name: TestAbstractEnum1#static{}entries
   //   Public signature: /TestAbstractEnum1.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<TestAbstractEnum1>
+  /* static */ val entries: EnumEntries<TestAbstractEnum1>
     // CHECK JVM_IR:
     //   Mangled name: TestAbstractEnum1#<get-entries>#static(){}kotlin.enums.EnumEntries<TestAbstractEnum1>
     //   Public signature: /TestAbstractEnum1.entries.<get-entries>|-62644859580206762[0]
@@ -325,7 +325,7 @@ abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
   //   Mangled name: TestAbstractEnum2#valueOf#static(kotlin.String){}
   //   Public signature: /TestAbstractEnum2.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
-  fun valueOf(value: String): TestAbstractEnum2
+  /* static */ fun valueOf(value: String): TestAbstractEnum2
 
   // CHECK JVM_IR:
   //   Mangled name: TestAbstractEnum2#values#static(){}kotlin.Array<TestAbstractEnum2>
@@ -335,7 +335,7 @@ abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
   //   Mangled name: TestAbstractEnum2#values#static(){}
   //   Public signature: /TestAbstractEnum2.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
-  fun values(): Array<TestAbstractEnum2>
+  /* static */ fun values(): Array<TestAbstractEnum2>
 
   // CHECK JVM_IR:
   //   Mangled name: TestAbstractEnum2#compareTo(TestAbstractEnum2){}kotlin.Int
@@ -387,7 +387,7 @@ abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
   //   Mangled name: TestAbstractEnum2#static{}entries
   //   Public signature: /TestAbstractEnum2.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<TestAbstractEnum2>
+  /* static */ val entries: EnumEntries<TestAbstractEnum2>
     // CHECK JVM_IR:
     //   Mangled name: TestAbstractEnum2#<get-entries>#static(){}kotlin.enums.EnumEntries<TestAbstractEnum2>
     //   Public signature: /TestAbstractEnum2.entries.<get-entries>|8627121999159520047[0]
@@ -453,7 +453,7 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
   //   Mangled name: TestFinalEnum1#valueOf#static(kotlin.String){}
   //   Public signature: /TestFinalEnum1.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
-  fun valueOf(value: String): TestFinalEnum1
+  /* static */ fun valueOf(value: String): TestFinalEnum1
 
   // CHECK JVM_IR:
   //   Mangled name: TestFinalEnum1#values#static(){}kotlin.Array<TestFinalEnum1>
@@ -463,7 +463,7 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
   //   Mangled name: TestFinalEnum1#values#static(){}
   //   Public signature: /TestFinalEnum1.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
-  fun values(): Array<TestFinalEnum1>
+  /* static */ fun values(): Array<TestFinalEnum1>
 
   // CHECK JVM_IR:
   //   Mangled name: TestFinalEnum1#compareTo(TestFinalEnum1){}kotlin.Int
@@ -509,7 +509,7 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
   //   Mangled name: TestFinalEnum1#static{}entries
   //   Public signature: /TestFinalEnum1.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<TestFinalEnum1>
+  /* static */ val entries: EnumEntries<TestFinalEnum1>
     // CHECK JVM_IR:
     //   Mangled name: TestFinalEnum1#<get-entries>#static(){}kotlin.enums.EnumEntries<TestFinalEnum1>
     //   Public signature: /TestFinalEnum1.entries.<get-entries>|7793286316162597646[0]
@@ -590,7 +590,7 @@ enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
   //   Mangled name: TestFinalEnum2#valueOf#static(kotlin.String){}
   //   Public signature: /TestFinalEnum2.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
-  fun valueOf(value: String): TestFinalEnum2
+  /* static */ fun valueOf(value: String): TestFinalEnum2
 
   // CHECK JVM_IR:
   //   Mangled name: TestFinalEnum2#values#static(){}kotlin.Array<TestFinalEnum2>
@@ -600,7 +600,7 @@ enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
   //   Mangled name: TestFinalEnum2#values#static(){}
   //   Public signature: /TestFinalEnum2.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
-  fun values(): Array<TestFinalEnum2>
+  /* static */ fun values(): Array<TestFinalEnum2>
 
   // CHECK JVM_IR:
   //   Mangled name: TestFinalEnum2#compareTo(TestFinalEnum2){}kotlin.Int
@@ -646,7 +646,7 @@ enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
   //   Mangled name: TestFinalEnum2#static{}entries
   //   Public signature: /TestFinalEnum2.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<TestFinalEnum2>
+  /* static */ val entries: EnumEntries<TestFinalEnum2>
     // CHECK JVM_IR:
     //   Mangled name: TestFinalEnum2#<get-entries>#static(){}kotlin.enums.EnumEntries<TestFinalEnum2>
     //   Public signature: /TestFinalEnum2.entries.<get-entries>|7934736600478259880[0]
@@ -712,7 +712,7 @@ enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
   //   Mangled name: TestFinalEnum3#valueOf#static(kotlin.String){}
   //   Public signature: /TestFinalEnum3.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
-  fun valueOf(value: String): TestFinalEnum3
+  /* static */ fun valueOf(value: String): TestFinalEnum3
 
   // CHECK JVM_IR:
   //   Mangled name: TestFinalEnum3#values#static(){}kotlin.Array<TestFinalEnum3>
@@ -722,7 +722,7 @@ enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
   //   Mangled name: TestFinalEnum3#values#static(){}
   //   Public signature: /TestFinalEnum3.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
-  fun values(): Array<TestFinalEnum3>
+  /* static */ fun values(): Array<TestFinalEnum3>
 
   // CHECK JVM_IR:
   //   Mangled name: TestFinalEnum3#compareTo(TestFinalEnum3){}kotlin.Int
@@ -774,7 +774,7 @@ enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
   //   Mangled name: TestFinalEnum3#static{}entries
   //   Public signature: /TestFinalEnum3.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<TestFinalEnum3>
+  /* static */ val entries: EnumEntries<TestFinalEnum3>
     // CHECK JVM_IR:
     //   Mangled name: TestFinalEnum3#<get-entries>#static(){}kotlin.enums.EnumEntries<TestFinalEnum3>
     //   Public signature: /TestFinalEnum3.entries.<get-entries>|-3503795261994851998[0]
@@ -922,7 +922,7 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
   //   Mangled name: TestOpenEnum1#valueOf#static(kotlin.String){}
   //   Public signature: /TestOpenEnum1.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
-  fun valueOf(value: String): TestOpenEnum1
+  /* static */ fun valueOf(value: String): TestOpenEnum1
 
   // CHECK JVM_IR:
   //   Mangled name: TestOpenEnum1#values#static(){}kotlin.Array<TestOpenEnum1>
@@ -932,7 +932,7 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
   //   Mangled name: TestOpenEnum1#values#static(){}
   //   Public signature: /TestOpenEnum1.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
-  fun values(): Array<TestOpenEnum1>
+  /* static */ fun values(): Array<TestOpenEnum1>
 
   // CHECK JVM_IR:
   //   Mangled name: TestOpenEnum1#compareTo(TestOpenEnum1){}kotlin.Int
@@ -978,7 +978,7 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
   //   Mangled name: TestOpenEnum1#static{}entries
   //   Public signature: /TestOpenEnum1.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<TestOpenEnum1>
+  /* static */ val entries: EnumEntries<TestOpenEnum1>
     // CHECK JVM_IR:
     //   Mangled name: TestOpenEnum1#<get-entries>#static(){}kotlin.enums.EnumEntries<TestOpenEnum1>
     //   Public signature: /TestOpenEnum1.entries.<get-entries>|-4208283468290053503[0]
@@ -1132,7 +1132,7 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
   //   Mangled name: TestOpenEnum2#valueOf#static(kotlin.String){}
   //   Public signature: /TestOpenEnum2.valueOf|-4683474617854611729[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}
-  fun valueOf(value: String): TestOpenEnum2
+  /* static */ fun valueOf(value: String): TestOpenEnum2
 
   // CHECK JVM_IR:
   //   Mangled name: TestOpenEnum2#values#static(){}kotlin.Array<TestOpenEnum2>
@@ -1142,7 +1142,7 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
   //   Mangled name: TestOpenEnum2#values#static(){}
   //   Public signature: /TestOpenEnum2.values|-8715569000920726747[0]
   //   Public signature debug description: values#static(){}
-  fun values(): Array<TestOpenEnum2>
+  /* static */ fun values(): Array<TestOpenEnum2>
 
   // CHECK JVM_IR:
   //   Mangled name: TestOpenEnum2#compareTo(TestOpenEnum2){}kotlin.Int
@@ -1194,7 +1194,7 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
   //   Mangled name: TestOpenEnum2#static{}entries
   //   Public signature: /TestOpenEnum2.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<TestOpenEnum2>
+  /* static */ val entries: EnumEntries<TestOpenEnum2>
     // CHECK JVM_IR:
     //   Mangled name: TestOpenEnum2#<get-entries>#static(){}kotlin.enums.EnumEntries<TestOpenEnum2>
     //   Public signature: /TestOpenEnum2.entries.<get-entries>|7144795131978512560[0]

@@ -178,13 +178,13 @@ enum class E : Enum<E> {
   //   Mangled name: E#valueOf#static(kotlin.String){}E
   //   Public signature: /E.valueOf|-1984843552149141556[0]
   //   Public signature debug description: valueOf#static(kotlin.String){}E
-  fun valueOf(value: String): E
+  /* static */ fun valueOf(value: String): E
 
   // CHECK JVM_IR:
   //   Mangled name: E#values#static(){}kotlin.Array<E>
   //   Public signature: /E.values|4921695905454219855[0]
   //   Public signature debug description: values#static(){}kotlin.Array<E>
-  fun values(): Array<E>
+  /* static */ fun values(): Array<E>
 
   // CHECK JVM_IR:
   //   Mangled name: E#compareTo(E){}kotlin.Int
@@ -214,7 +214,7 @@ enum class E : Enum<E> {
   //   Mangled name: E#static{}entries
   //   Public signature: /E.entries|-5134227801081826149[0]
   //   Public signature debug description: #static{}entries
-  val entries: EnumEntries<E>
+  /* static */ val entries: EnumEntries<E>
     // CHECK JVM_IR:
     //   Mangled name: E#<get-entries>#static(){}kotlin.enums.EnumEntries<E>
     //   Public signature: /E.entries.<get-entries>|2481970109947815388[0]
@@ -244,3 +244,4 @@ enum class E : Enum<E> {
     /* fake */ override get(): Int
 
 }
+

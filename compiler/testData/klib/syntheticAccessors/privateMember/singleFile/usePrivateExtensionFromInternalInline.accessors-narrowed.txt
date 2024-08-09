@@ -9,7 +9,7 @@ public class A
         /* ACCESSOR use-site */ access$<get-privateExtensionVar>($this = <this>, $receiver = 21)
     private val Int.privateExtensionVar: Int
         /* TARGET declaration */ private fun Int.<get-privateExtensionVar>(): Int
-    /* ACCESSOR declaration */ internal fun access$<get-privateExtensionVar>($this: A, $receiver: Int): Int
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-privateExtensionVar>($this: A, $receiver: Int): Int
         /* TARGET use-site */ ($this, $receiver).<get-privateExtensionVar>()
 /* TARGET declaration */ private fun A.privateExtension(): Int
 /* ACCESSOR declaration */ internal fun access$privateExtension$tUsePrivateExtensionFromInternalInlineKt($receiver: A): Int

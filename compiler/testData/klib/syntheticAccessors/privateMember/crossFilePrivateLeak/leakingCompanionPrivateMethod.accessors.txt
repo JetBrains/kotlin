@@ -7,7 +7,7 @@ public class A
         /* TARGET declaration */ private fun privateMethod(): String
         internal inline fun internalInlineCompanionMethod(): String
             /* ACCESSOR use-site */ access$privateMethod($this = <this>)
-        /* ACCESSOR declaration */ public fun access$privateMethod($this: Companion): String
+        /* ACCESSOR declaration */ public /* static */ fun access$privateMethod($this: Companion): String
             /* TARGET use-site */ $this.privateMethod()
     internal inline fun internalInlineMethod(): String
         /* ACCESSOR use-site */ access$privateMethod($this = Companion)
