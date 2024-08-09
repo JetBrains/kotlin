@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -141,6 +142,8 @@ fun IrFunction.getAdapteeFromAdaptedForReferenceFunction() : IrFunction? {
         }
         is IrReturn -> statement.value
         else -> statement
+    }.let {
+        if (it is IrBlock && it.origin == LoweredStatementOrigins.INLINE_ARGS_CONTAINER) it.statements.lastOrNull() else it
     }
     if (call is IrReturnableBlock) return call.inlineFunction ?: unknownStructure()
     if (call !is IrFunctionAccessExpression) unknownStructure()
