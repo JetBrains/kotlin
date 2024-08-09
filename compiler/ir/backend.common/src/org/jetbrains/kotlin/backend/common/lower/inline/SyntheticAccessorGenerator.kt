@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.name.Name
  */
 abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
     protected val context: Context,
-    private val generateConstructorAsStaticFun: Boolean = false
 ) {
     private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
@@ -131,17 +130,15 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         val functionMap = function.syntheticAccessors ?: hashMapOf<AccessorKey, IrFunction>().also { function.syntheticAccessors = it }
         return functionMap.getOrPut(AccessorKey(parent, superQualifierSymbol)) {
             when (function) {
-                is IrConstructor ->
-                    if (generateConstructorAsStaticFun) function.makeConstructorAccessorAsStaticFun() else function.makeConstructorAccessor()
-                is IrSimpleFunction ->
-                    function.makeSimpleFunctionAccessor(superQualifierSymbol, dispatchReceiverType, parent, scopeInfo)
+                is IrConstructor -> function.makeConstructorAccessor()
+                is IrSimpleFunction -> function.makeSimpleFunctionAccessor(superQualifierSymbol, dispatchReceiverType, parent, scopeInfo)
             }
         }
     }
 
-    protected fun IrConstructor.makeConstructorAccessor(
+    protected open fun IrConstructor.makeConstructorAccessor(
         originForConstructorAccessor: IrDeclarationOrigin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
-    ): IrConstructor {
+    ): IrFunction {
         val source = this
 
         return factory.buildConstructor {
@@ -169,13 +166,22 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
 
             accessor.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                listOf(createDelegatedConstructorCall(accessor, source.symbol))
+                listOf(createDelegatingConstructorCall(accessor, source.symbol))
             )
         }
     }
 
-    private fun createDelegatedConstructorCall(accessor: IrFunction, targetSymbol: IrConstructorSymbol) =
+    private fun createDelegatingConstructorCall(accessor: IrFunction, targetSymbol: IrConstructorSymbol) =
         IrDelegatingConstructorCallImpl.fromSymbolOwner(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            context.irBuiltIns.unitType,
+            targetSymbol, targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
+        ).also {
+            copyAllParamsToArgs(it, accessor)
+        }
+
+    protected fun createConstructorCall(accessor: IrFunction, targetSymbol: IrConstructorSymbol) =
+        IrConstructorCallImpl.fromSymbolOwner(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             context.irBuiltIns.unitType,
             targetSymbol, targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
@@ -219,41 +225,6 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
             accessor.returnType,
             targetSymbol, targetSymbol.owner.typeParameters.size,
             superQualifierSymbol = superQualifierSymbol
-        ).also {
-            copyAllParamsToArgs(it, accessor)
-        }
-
-    private fun IrConstructor.makeConstructorAccessorAsStaticFun(): IrSimpleFunction {
-        val source = this
-
-        return factory.buildFun {
-            startOffset = parent.startOffset
-            endOffset = parent.startOffset
-            origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = source.accessorNameForStaticConstructor()
-            visibility = DescriptorVisibilities.PUBLIC
-            modality = source.constructedClass.modality
-        }.also { accessor ->
-            accessor.parent = parent
-
-            accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
-
-            accessor.body = context.irFactory.createBlockBody(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                listOf(createConstructorCall(accessor, source.symbol))
-            )
-
-            require(accessor.isStatic) { "Generated accessor function for constructor must be static" }
-        }
-    }
-
-    private fun createConstructorCall(accessor: IrFunction, targetSymbol: IrConstructorSymbol) =
-        IrConstructorCallImpl.fromSymbolOwner(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType,
-            targetSymbol, targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
         ).also {
             copyAllParamsToArgs(it, accessor)
         }
@@ -446,15 +417,6 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
     private fun IrField.accessorNameForSetter(superQualifierSymbol: IrClassSymbol?): Name =
         AccessorNameBuilder().apply { buildFieldSetterName(this@accessorNameForSetter, superQualifierSymbol) }.build()
 
-    private fun AccessorNameBuilder.buildStaticConstructorName(
-        constructor: IrConstructor
-    ) {
-        contribute(constructor.name.asString())
-    }
-
-    private fun IrConstructor.accessorNameForStaticConstructor(): Name =
-        AccessorNameBuilder().apply { buildStaticConstructorName(this@accessorNameForStaticConstructor) }.build()
-
     /**
      * Produces a call to the synthetic accessor [accessorSymbol] to replace the call expression [oldExpression].
      *
@@ -498,31 +460,10 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         oldExpression: IrFunctionAccessExpression,
         accessorSymbol: IrFunctionSymbol
     ): IrFunctionAccessExpression {
-        // TODO extract all IR constructors into local funs
-        fun generateCall(): IrCall = IrCallImpl.fromSymbolOwner(
-            oldExpression.startOffset, oldExpression.endOffset,
-            oldExpression.type,
-            accessorSymbol as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
-            origin = oldExpression.origin
-        )
-
         val newExpression = when (oldExpression) {
-            is IrCall -> generateCall()
-            is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                oldExpression.startOffset, oldExpression.endOffset,
-                context.irBuiltIns.unitType,
-                accessorSymbol as IrConstructorSymbol, oldExpression.typeArgumentsCount
-            )
-            is IrConstructorCall ->
-                if (generateConstructorAsStaticFun) {
-                    generateCall()
-                } else {
-                    IrConstructorCallImpl.fromSymbolOwner(
-                        oldExpression.startOffset, oldExpression.endOffset,
-                        oldExpression.type,
-                        accessorSymbol as IrConstructorSymbol
-                    )
-                }
+            is IrCall -> accessorSymbol.produceCallToSyntheticFunction(oldExpression)
+            is IrDelegatingConstructorCall -> accessorSymbol.produceCallToSyntheticDelegatingConstructor(oldExpression)
+            is IrConstructorCall -> accessorSymbol.produceCallToSyntheticConstructor(oldExpression)
             is IrEnumConstructorCall -> compilationException(
                 "Generating synthetic accessors for IrEnumConstructorCall is not supported",
                 oldExpression,
@@ -537,6 +478,37 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
             newExpression.putValueArgument(receiverAndArgs.size, createAccessorMarkerArgument())
         }
         return newExpression
+    }
+
+    protected fun IrFunctionSymbol.produceCallToSyntheticFunction(
+        oldExpression: IrFunctionAccessExpression
+    ): IrCall {
+        return IrCallImpl.fromSymbolOwner(
+            oldExpression.startOffset, oldExpression.endOffset,
+            oldExpression.type,
+            this as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
+            origin = oldExpression.origin
+        )
+    }
+
+    protected fun IrFunctionSymbol.produceCallToSyntheticDelegatingConstructor(
+        oldExpression: IrFunctionAccessExpression
+    ): IrDelegatingConstructorCall {
+        return IrDelegatingConstructorCallImpl.fromSymbolOwner(
+            oldExpression.startOffset, oldExpression.endOffset,
+            context.irBuiltIns.unitType,
+            this as IrConstructorSymbol, oldExpression.typeArgumentsCount
+        )
+    }
+
+    protected open fun IrFunctionSymbol.produceCallToSyntheticConstructor(
+        oldExpression: IrFunctionAccessExpression
+    ): IrFunctionAccessExpression {
+        return IrConstructorCallImpl.fromSymbolOwner(
+            oldExpression.startOffset, oldExpression.endOffset,
+            oldExpression.type,
+            this as IrConstructorSymbol
+        )
     }
 
     fun createAccessorMarkerArgument() =

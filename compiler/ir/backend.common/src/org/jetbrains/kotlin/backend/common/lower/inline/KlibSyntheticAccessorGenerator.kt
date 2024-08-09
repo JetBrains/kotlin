@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.copyTo
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.parents
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
 // TODO: use some class to bear information about the inline function where the accessor is needed
@@ -24,7 +25,7 @@ typealias InlineFunctionInfo = Nothing?
 
 class KlibSyntheticAccessorGenerator(
     context: CommonBackendContext
-) : SyntheticAccessorGenerator<CommonBackendContext, InlineFunctionInfo>(context, generateConstructorAsStaticFun = true) {
+) : SyntheticAccessorGenerator<CommonBackendContext, InlineFunctionInfo>(context) {
 
     private data class OuterThisAccessorKey(val innerClass: IrClass)
 
@@ -34,6 +35,38 @@ class KlibSyntheticAccessorGenerator(
         private var IrValueParameter.outerThisSyntheticAccessors: MutableMap<OuterThisAccessorKey, IrSimpleFunction>? by irAttribute(
             followAttributeOwner = false
         )
+    }
+
+    override fun IrConstructor.makeConstructorAccessor(originForConstructorAccessor: IrDeclarationOrigin): IrFunction {
+        return makeConstructorAccessorAsStaticFun()
+    }
+
+    private fun IrConstructor.makeConstructorAccessorAsStaticFun(): IrSimpleFunction {
+        val source = this
+
+        return factory.buildFun {
+            startOffset = parent.startOffset
+            endOffset = parent.startOffset
+            origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+            name = source.accessorNameForStaticConstructor()
+            visibility = DescriptorVisibilities.PUBLIC
+            modality = Modality.FINAL
+        }.also { accessor ->
+            accessor.parent = parent
+
+            accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
+
+            accessor.body = context.irFactory.createExpressionBody(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                createConstructorCall(accessor, source.symbol)
+            )
+        }
+    }
+
+    override fun IrFunctionSymbol.produceCallToSyntheticConstructor(oldExpression: IrFunctionAccessExpression): IrCall {
+        return this.produceCallToSyntheticFunction(oldExpression)
     }
 
     override fun accessorModality(parent: IrDeclarationParent) = Modality.FINAL
@@ -66,6 +99,13 @@ class KlibSyntheticAccessorGenerator(
         contribute("<set-${field.name}>")
         contribute(PROPERTY_MARKER)
     }
+
+    private fun AccessorNameBuilder.buildStaticConstructorName(constructor: IrConstructor) {
+        contribute(constructor.name.asString())
+    }
+
+    private fun IrConstructor.accessorNameForStaticConstructor(): Name =
+        AccessorNameBuilder().apply { buildStaticConstructorName(this@accessorNameForStaticConstructor) }.build()
 
     /**
      * This is a special kind of _private_ non-static accessor specifically for accessing "outer this"

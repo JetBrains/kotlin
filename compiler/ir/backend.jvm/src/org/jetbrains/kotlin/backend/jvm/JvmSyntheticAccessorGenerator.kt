@@ -142,7 +142,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
                 declaration.annotations = emptyList()
                 declaration.valueParameters.forEach { it.annotations = emptyList() }
             }
-        }
+        } as IrConstructor
 
     fun isOrShouldBeHiddenSinceHasMangledParams(constructor: IrConstructor): Boolean {
         if (constructor.hiddenConstructorMangledParams != null) return true
