@@ -30,7 +30,9 @@ native {
     val cxxflags = mutableListOf("--std=c++17", "-g",
                           "-Isrc/main/include",
                           "-I$llvmDir/include",
-                          "-DLLVM_DISABLE_ABI_BREAKING_CHECKS_ENFORCING=1")
+                          "-DLLVM_DISABLE_ABI_BREAKING_CHECKS_ENFORCING=1",
+                          "-D_Float16=short",
+    )
     if (libclangextEnabled) {
         cxxflags += "-DLIBCLANGEXT_ENABLE=1"
     }
