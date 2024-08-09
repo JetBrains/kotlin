@@ -1,3 +1,56 @@
+## 2.0.20-RC2
+
+### Backend. Wasm
+
+- [`KT-70591`](https://youtrack.jetbrains.com/issue/KT-70591) To much sources that don't exist inside SourceMap file
+
+### Compiler
+
+- [`KT-70186`](https://youtrack.jetbrains.com/issue/KT-70186) Kotlin 2.0.20-Beta2: Unexpected number of type arguments: 0
+- [`KT-69835`](https://youtrack.jetbrains.com/issue/KT-69835) K2 / Native: kotlin.native.binary.gc=cms throws library cached but its dependency isn't error
+- [`KT-70417`](https://youtrack.jetbrains.com/issue/KT-70417) DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE leads to NPE in BE
+- [`KT-69964`](https://youtrack.jetbrains.com/issue/KT-69964) K2: Returning from an in-place lambda doesn't compile
+- [`KT-69995`](https://youtrack.jetbrains.com/issue/KT-69995) K2: Slow compilation when star projecting mutually recursive bounds from java
+- [`KT-69773`](https://youtrack.jetbrains.com/issue/KT-69773) K2: "Overload resolution ambiguity between candidate" with arrays
+- [`KT-70238`](https://youtrack.jetbrains.com/issue/KT-70238) K2: false negative VOLATILE_ON_VALUE for constructor properties
+- [`KT-69766`](https://youtrack.jetbrains.com/issue/KT-69766) K2: False negative: Internal setter of generic class is accessible from another module
+- [`KT-69898`](https://youtrack.jetbrains.com/issue/KT-69898) K2: Performance degradation in fir2ir caused by changes around intersection types
+
+### Compose compiler
+
+- [`b/357878245`](https://issuetracker.google.com/issues/357878245) Disallow open @Composable functions with default params to fix binary compatibility issues.
+
+### JavaScript
+
+- [`KT-70592`](https://youtrack.jetbrains.com/issue/KT-70592) "Error: HttpClientCall expected" on HTTP request when targeting es2015 with KTOR
+- [`KT-67355`](https://youtrack.jetbrains.com/issue/KT-67355) KJS / ES6: 'super' in lambda with enabled `-Xir-generate-inline-anonymous-functions` leads to JS errors
+
+### Libraries
+
+- [`KT-70196`](https://youtrack.jetbrains.com/issue/KT-70196) Introduce ExperimentalUuidApi annotation for marking Uuid API
+
+### Native
+
+- [`KT-70166`](https://youtrack.jetbrains.com/issue/KT-70166) Native: EXC_BAD_ACCESS on watchOS when using Dispatchers
+- [`KT-69246`](https://youtrack.jetbrains.com/issue/KT-69246) K2: linkPodDebugFrameworkIosArm64 takes  15 (!!) times longer
+
+### Native. Runtime
+
+- [`KT-70043`](https://youtrack.jetbrains.com/issue/KT-70043) Native: EXC_BAD_ACCESS on watchOS when using Random
+
+### Tools. Compiler plugins. Serialization
+
+- [`KT-70516`](https://youtrack.jetbrains.com/issue/KT-70516) KxSerialization: `@KeepGeneratedSerializer` and sealed class cause initialization error
+
+### Tools. Gradle. JS
+
+- [`KT-70077`](https://youtrack.jetbrains.com/issue/KT-70077) [2.0.20-Beta2] KGP reports confusing warnings about js/wasmJS source sets
+
+### Tools. Wasm
+
+- [`KT-70220`](https://youtrack.jetbrains.com/issue/KT-70220) K/Wasm: Upgrade NPM dependencies
+
+
 ## 2.0.20-RC
 
 ### Analysis. API
