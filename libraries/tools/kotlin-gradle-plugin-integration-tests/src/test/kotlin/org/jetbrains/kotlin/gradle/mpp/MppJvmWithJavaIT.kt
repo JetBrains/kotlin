@@ -64,8 +64,8 @@ class MppJvmWithJavaIT : KGPBaseTest() {
             }
 
             buildGradle.replaceText(
-                """//id("io.github.goooler.shadow")""",
-                """id("io.github.goooler.shadow") version "${TestVersions.ThirdPartyDependencies.SHADOW_PLUGIN_VERSION}"""",
+                """//id("com.gradleup.shadow")""",
+                """id("com.gradleup.shadow") version "${TestVersions.ThirdPartyDependencies.SHADOW_PLUGIN_VERSION}"""",
             )
             buildGradle.replaceText(
                 """//id("application")""",
