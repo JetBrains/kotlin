@@ -137,6 +137,7 @@ private fun Project.registerSwiftExportRun(
         task.group = taskGroup
 
         task.inputs.files(exportConfiguration)
+        task.inputs.files(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         // Input
         task.swiftExportClasspath.from(maybeCreateSwiftExportClasspathResolvableConfiguration())
@@ -150,10 +151,10 @@ private fun Project.registerSwiftExportRun(
         task.mainModuleInput.moduleName.set(swiftApiModuleName)
         task.mainModuleInput.flattenPackage.set(swiftApiFlattenPackage)
         task.kotlinNativeProvider.set(
-            mainCompilation.compileTaskProvider.map { it.kotlinNativeProvider.get() }
+            mainCompilation.compileTaskProvider.flatMap { it.kotlinNativeProvider }
         )
         task.mainModuleInput.artifact.fileProvider(
-            mainCompilation.compileTaskProvider.map { it.outputFile.get() }
+            mainCompilation.compileTaskProvider.flatMap { it.outputFile }
         )
 
         // Output
