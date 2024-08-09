@@ -152,11 +152,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            BasePluginConfiguration.BasePluginConfigurationVariantFactory::class,
-            DefaultBasePluginConfigurationVariantFactory()
-        )
-
-        factories.putIfAbsent(
             IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class,
             DefaultIdeaSyncDetectorVariantFactory()
         )
