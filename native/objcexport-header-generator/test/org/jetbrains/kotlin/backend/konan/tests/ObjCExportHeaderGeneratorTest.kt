@@ -496,15 +496,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("interfaceExtension"))
     }
 
-    /**
-     * Disabled because K1 implementation loses method generic parameters types: KT-70363
-     */
-    @Test
-    @TodoAnalysisApi
-    fun `test - generic function parameters`() {
-        doTest(headersTestDataDir.resolve("genericFunctionParameters"))
-    }
-
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

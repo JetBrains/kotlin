@@ -134,6 +134,8 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
                 val upperBound = definingSymbol.typeParameters.firstOrNull()?.upperBounds?.firstOrNull()
                 if (upperBound != null) {
                     return mapToReferenceTypeIgnoringNullability(upperBound)
+                } else {
+                    return ObjCIdType
                 }
 
             }

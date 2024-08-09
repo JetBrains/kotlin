@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.tests
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
-import org.jetbrains.kotlin.backend.konan.testUtils.TodoAnalysisApi
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -422,11 +421,7 @@ class ObjCExportTypeTranslationTest(
         assertEquals("A<B *> *", header.renderTypesOfSymbol("foo"))
     }
 
-    /**
-     * Disabled because K1 implementation loses method generic parameters types: KT-70363
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - generic function`() {
         val header = header(
             """
