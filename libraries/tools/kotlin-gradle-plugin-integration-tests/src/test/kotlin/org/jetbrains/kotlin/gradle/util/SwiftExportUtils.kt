@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.util
 
-import java.nio.file.Path
-import kotlin.io.path.appendText
-import kotlin.io.path.createFile
-import kotlin.io.path.exists
-
 internal const val DSL_REPLACE_PLACEHOLDER = "/*REPLACE_ME*/"
 
 internal object SimpleSwiftExportProperties {
@@ -17,16 +12,4 @@ internal object SimpleSwiftExportProperties {
     const val DSL_PLACEHOLDER = "swiftexport.dsl.placeholder"
     const val DSL_CUSTOM_NAME = "swiftexport.dsl.customName"
     const val DSL_FLATTEN_PACKAGE = "swiftexport.dsl.flattenPackage"
-    const val DSL_FULL_SAMPLE = "swiftexport.dsl.fullSample"
-}
-
-internal fun Path.enableSwiftExport() {
-    resolve("local.properties")
-        .also { if (!it.exists()) it.createFile() }
-        .appendText(
-            """
-            
-            kotlin.experimental.swift-export.enabled=true
-            """.trimIndent()
-        )
 }

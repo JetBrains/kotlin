@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.enableSwiftExport
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
@@ -26,9 +25,16 @@ class SwiftExportXCIT : KGPBaseTest() {
                 boot()
             }
 
-            nativeProject("simpleSwiftExport", gradleVersion) {
-                projectPath.enableSwiftExport()
-
+            nativeProject(
+                "simpleSwiftExport",
+                gradleVersion,
+                buildOptions = defaultBuildOptions.copy(
+                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                    nativeOptions = BuildOptions.NativeOptions().copy(
+                        swiftExportEnabled = true,
+                    )
+                )
+            ) {
                 buildXcodeProject(
                     xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
                     destination = "platform=iOS Simulator,id=${simulator.udid}",

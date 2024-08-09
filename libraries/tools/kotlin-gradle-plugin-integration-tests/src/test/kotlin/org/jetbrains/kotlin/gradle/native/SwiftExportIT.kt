@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.NativeOptions
 import org.jetbrains.kotlin.gradle.util.SimpleSwiftExportProperties
-import org.jetbrains.kotlin.gradle.util.enableSwiftExport
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.DisplayName
@@ -33,16 +33,17 @@ class SwiftExportIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertTasksExecuted(":shared:iosArm64DebugSwiftExport")
                 assertTasksExecuted(":shared:iosArm64MainKlibrary")
@@ -75,15 +76,16 @@ class SwiftExportIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             build(
                 ":shared:embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
             }
@@ -134,16 +136,17 @@ class SwiftExportIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, listOf("arm64", "x86_64"), "iphonesimulator"),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
             ) {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
             }
@@ -173,16 +176,17 @@ class SwiftExportIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
                 assertDirectoryInProjectExists("shared/build/SwiftExport/iosArm64/Debug")
@@ -210,16 +214,17 @@ class SwiftExportIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, listOf("arm64", "x86_64"), "iphonesimulator"),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
             ) {
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
             }

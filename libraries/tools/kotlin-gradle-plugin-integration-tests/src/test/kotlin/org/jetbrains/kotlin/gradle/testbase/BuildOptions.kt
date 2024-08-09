@@ -100,6 +100,7 @@ data class BuildOptions(
         val cocoapodsPlatform: String? = null,
         val cocoapodsConfiguration: String? = null,
         val cocoapodsArchs: String? = null,
+        val swiftExportEnabled: Boolean? = null,
         val distributionType: String? = null,
         val distributionDownloadFromMaven: Boolean? = true,
         val reinstall: Boolean? = null,
@@ -281,7 +282,9 @@ data class BuildOptions(
         nativeOptions.cocoapodsConfiguration?.let {
             arguments.add("-Pkotlin.native.cocoapods.configuration=${it}")
         }
-
+        nativeOptions.swiftExportEnabled?.let {
+            arguments.add("-Pkotlin.experimental.swift-export.enabled=${it}")
+        }
         nativeOptions.distributionDownloadFromMaven?.let {
             arguments.add("-Pkotlin.native.distribution.downloadFromMaven=${it}")
         }
