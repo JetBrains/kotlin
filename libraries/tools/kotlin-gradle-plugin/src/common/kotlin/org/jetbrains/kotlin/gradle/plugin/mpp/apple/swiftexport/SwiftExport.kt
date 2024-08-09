@@ -249,7 +249,7 @@ private fun Project.registerSPMPackageBuild(
 
         // Input
         task.configuration.set(configuration)
-        task.packageRoot.set(packageGenerationTask.map { it.packagePath.get() })
+        task.packageRoot.set(packageGenerationTask.flatMap { it.packagePath })
         task.swiftApiModuleName.set(swiftApiModuleName)
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.target.set(target.konanTarget)
