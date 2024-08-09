@@ -42,7 +42,7 @@ internal fun LazyResolvedConfiguration.swiftExportedModules(
             .filterNotCinteropKlibs()
             .filterKlibsPassedToSwiftExport()
 
-        if (dependencyArtifacts.isEmpty() || dependencyArtifacts.size > 1) {
+        check(dependencyArtifacts.isNotEmpty() && dependencyArtifacts.size == 1) {
             throw AssertionError(
                 "Component $component ${
                     if (dependencyArtifacts.isEmpty())
@@ -72,8 +72,7 @@ private fun findAndCreateSwiftExportedModule(
     resolvedComponent: ResolvedComponentResult,
     artifact: File,
 ): SwiftExportedModule {
-    val resolvedModule = resolvedComponent.moduleVersion
-        ?: throw AssertionError("Missing module version for component: $resolvedComponent")
+    val resolvedModule = requireNotNull(resolvedComponent.moduleVersion)
 
     val module = exportedModules.single {
         resolvedModule.name == it.moduleVersion.name &&

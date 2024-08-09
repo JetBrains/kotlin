@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAM
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 /**
@@ -111,3 +112,8 @@ internal class KotlinNativeProvider(
             }
         )
 }
+
+internal val KotlinNativeProvider.konanDistribution
+    get() = bundleDirectory.map {
+        Distribution(it.asFile.canonicalPath)
+    }
