@@ -191,20 +191,17 @@ private class KtObjCExportHeaderGenerator(
             .flatMap { child -> child.throwsAnnotationClassIds.orEmpty() }
 
         classDeque += stub.closureSequence()
-            .mapNotNull { childStub ->
+            .flatMap { childStub ->
                 when (childStub) {
                     is ObjCMethod -> listOf(childStub.returnType)
                     is ObjCParameter -> listOf(childStub.type)
                     is ObjCProperty -> listOf(childStub.type)
                     is ObjCInterface -> childStub.superClassGenerics
-                    is ObjCTopLevel -> null
+                    is ObjCTopLevel -> emptyList()
                 }
-            }
-            .flatMap { types ->
-                types.flatMap { type ->
-                    val typeArguments = if (type is ObjCClassType) type.typeArguments else emptyList()
-                    typeArguments + type
-                }
+            }.flatMap { type ->
+                val typeArguments = if (type is ObjCClassType) type.typeArguments else emptyList()
+                typeArguments + type
             }
             .filterIsInstance<ObjCReferenceType>()
             .onEach { type ->
