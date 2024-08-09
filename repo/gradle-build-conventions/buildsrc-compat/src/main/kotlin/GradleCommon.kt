@@ -57,8 +57,7 @@ enum class GradlePluginVariant(
     val gradleApiVersion: String,
     val gradleApiJavadocUrl: String,
 ) {
-    GRADLE_MIN("main", "7.0", "7.0", "https://docs.gradle.org/7.0.2/javadoc/"),
-    GRADLE_71("gradle71", "7.1", "7.1", "https://docs.gradle.org/7.1.1/javadoc/"),
+    GRADLE_MIN("main", "7.1", "7.1", "https://docs.gradle.org/7.1.1/javadoc/"),
     GRADLE_74("gradle74", "7.4", "7.4", "https://docs.gradle.org/7.4.2/javadoc/"),
     GRADLE_75("gradle75", "7.5", "7.5", "https://docs.gradle.org/7.5.1/javadoc/"),
     GRADLE_76("gradle76", "7.6", "7.6", "https://docs.gradle.org/7.6.1/javadoc/"),

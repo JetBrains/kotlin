@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.build.androidsdkprovisioner.AndroidSdkProvisionerExtension
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -173,7 +172,6 @@ dependencies {
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0
         "mainEmbedded"(project(":kotlin-build-tools-enum-compat"))
-        "gradle71Embedded"(project(":kotlin-build-tools-enum-compat"))
         "gradle74Embedded"(project(":kotlin-build-tools-enum-compat"))
         "gradle75Embedded"(project(":kotlin-build-tools-enum-compat"))
         "gradle76Embedded"(project(":kotlin-build-tools-enum-compat"))
@@ -296,17 +294,19 @@ gradlePlugin {
 // Gradle plugins functional tests
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
+    val gradlePluginVariantForFunctionalTests = GradlePluginVariant.GRADLE_85
     val functionalTestSourceSet = sourceSets.create("functionalTest") {
-        compileClasspath += mainSourceSet.output
-        runtimeClasspath += mainSourceSet.output
+        val gradlePluginVariantSourceSet = sourceSets.getByName(gradlePluginVariantForFunctionalTests.sourceSetName)
+        compileClasspath += gradlePluginVariantSourceSet.output
+        runtimeClasspath += gradlePluginVariantSourceSet.output
 
         configurations.getByName(implementationConfigurationName) {
-            extendsFrom(configurations.getByName(mainSourceSet.implementationConfigurationName))
+            extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.implementationConfigurationName))
             extendsFrom(configurations.getByName(testSourceSet.implementationConfigurationName))
         }
 
         configurations.getByName(runtimeOnlyConfigurationName) {
-            extendsFrom(configurations.getByName(mainSourceSet.runtimeOnlyConfigurationName))
+            extendsFrom(configurations.getByName(gradlePluginVariantSourceSet.runtimeOnlyConfigurationName))
             extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
         }
     }
@@ -321,7 +321,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
         }
     }
-    functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("main"))
+    functionalTestCompilation.associateWith(kotlin.target.compilations.getByName(gradlePluginVariantForFunctionalTests.sourceSetName))
     functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 
     tasks.register<Test>("functionalTest")

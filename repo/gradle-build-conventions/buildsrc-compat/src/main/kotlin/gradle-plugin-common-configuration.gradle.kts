@@ -67,13 +67,6 @@ tasks.named("jar") {
 
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
-    // Used for Gradle 7.1+ versions
-    val gradle71SourceSet = createGradlePluginVariant(
-        GradlePluginVariant.GRADLE_71,
-        commonSourceSet = commonSourceSet
-    )
-    publishShadowedJar(gradle71SourceSet, commonSourceSet)
-
     // Used for Gradle 7.4+ versions
     val gradle74SourceSet = createGradlePluginVariant(
         GradlePluginVariant.GRADLE_74,
