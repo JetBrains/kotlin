@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.NativeOptions
 import org.jetbrains.kotlin.gradle.util.DSL_REPLACE_PLACEHOLDER
 import org.jetbrains.kotlin.gradle.util.SimpleSwiftExportProperties
-import org.jetbrains.kotlin.gradle.util.enableSwiftExport
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -33,15 +33,16 @@ class SwiftExportDslIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             build(
                 ":shared:embedSwiftExportForXcode",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
@@ -70,16 +71,17 @@ class SwiftExportDslIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_EXPORT}",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
@@ -116,16 +118,17 @@ class SwiftExportDslIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_CUSTOM_NAME}",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
@@ -158,16 +161,17 @@ class SwiftExportDslIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_FLATTEN_PACKAGE}",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 val sharedSwiftPath = projectPath.resolve("shared/build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
                 assert(
@@ -193,14 +197,16 @@ class SwiftExportDslIT : KGPBaseTest() {
         // Publish dependency
         val multiplatformLibrary = nativeProject(
             "multiplatformLibrary",
-            gradleVersion
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
             build(
-                "build",
-                "publishAllPublicationsToMavenRepository",
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
+                "publishAllPublicationsToMavenRepository"
             ) {
                 assertTasksExecuted(":compileKotlinIosArm64", ":compileKotlinIosSimulatorArm64", ":compileKotlinIosX64")
                 assertTasksExecuted(":publishKotlinMultiplatformPublicationToMavenRepository")
@@ -213,14 +219,17 @@ class SwiftExportDslIT : KGPBaseTest() {
         nativeProject(
             "simpleSwiftExport",
             gradleVersion,
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf(mavenUrl.absolutePathString()))
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf(mavenUrl.absolutePathString())),
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
+                nativeOptions = NativeOptions().copy(
+                    swiftExportEnabled = true,
+                )
+            )
         ) {
-            projectPath.enableSwiftExport()
-
             projectPath.resolve("shared/build.gradle.kts").replaceText(
                 DSL_REPLACE_PLACEHOLDER,
                 """
-                |       @OptIn(org.jetbrains.kotlin.swiftexport.ExperimentalSwiftExportDsl::class)
                 |       swiftExport {
                 |           export("$mavenDependency")
                 |           export(project(":subproject"))
@@ -231,10 +240,7 @@ class SwiftExportDslIT : KGPBaseTest() {
             build(
                 ":shared:embedSwiftExportForXcode",
                 "-P${SimpleSwiftExportProperties.DSL_PLACEHOLDER}",
-                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED,
-                )
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 val buildProductsDir = this@nativeProject.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
