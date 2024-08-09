@@ -31,15 +31,18 @@ struct UTF16StringIterator {
 };
 
 struct UTF16String {
+    using unit = KChar;
+
     const KChar* data_;
     const size_t size_;
 
     UTF16StringIterator begin() const { return {data_}; }
     UTF16StringIterator end() const { return {data_ + size_}; }
     UTF16StringIterator at(const KChar* ptr) const { return {ptr}; }
-    size_t sizeInBytes() const { return size_ * sizeof(KChar); }
     size_t sizeInUnits() const { return size_; }
     size_t sizeInChars() const { return size_; }
+
+    static bool canEncode(KChar c) { return true; }
 
     static OBJ_GETTER(createUninitialized, size_t sizeInUnits) {
         RETURN_RESULT_OF(CreateUninitializedUtf16String, sizeInUnits);
