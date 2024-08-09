@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.java.TargetJvmEnvironment
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.runKotlinCompilationSideEffects
@@ -61,8 +60,8 @@ internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
     attributes.setAttribute(KotlinPlatformType.attribute, target.platformType)
 
     when (target.platformType) {
-        KotlinPlatformType.jvm -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "standard-jvm")
-        KotlinPlatformType.androidJvm -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "android")
+        KotlinPlatformType.jvm -> setJavaTargetEnvironmentAttribute(target.project, "standard-jvm")
+        KotlinPlatformType.androidJvm -> setJavaTargetEnvironmentAttribute(target.project, "android")
         /**
          *  We set this attribute even for non-JVM-like targets (JS, Native) to avoid issues with Gradle variant-aware dependency resolution
          *  treating variants which don't have a particular attribute more preferable than those having it in those cases when Gradle failed
@@ -74,7 +73,7 @@ internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
          *  Note that this attribute is not published to avoid issues with older Kotlin versions combined with newer Gradle
          *  see [org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext.filterOutNonPublishableAttributes]
          */
-        else -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "non-jvm")
+        else -> setJavaTargetEnvironmentAttribute(target.project, "non-jvm")
     }
 
     val publishJsCompilerAttribute = target.project.kotlinPropertiesProvider.publishJsCompilerAttribute
@@ -96,13 +95,14 @@ internal fun <T : HasAttributes> T.setUsesPlatformOf(target: KotlinTarget): T {
     return this
 }
 
-private fun HasAttributes.setJavaTargetEnvironmentAttributeIfSupported(project: Project, value: String) {
-    if (GradleVersion.current() >= GradleVersion.version("7.0")) {
-        attributes.setAttribute(
-            TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-            project.objects.named(value)
-        )
-    }
+private fun HasAttributes.setJavaTargetEnvironmentAttribute(
+    project: Project,
+    value: String
+) {
+    attributes.setAttribute(
+        TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+        project.objects.named(value)
+    )
 }
 
 internal val Project.commonKotlinPluginClasspath get() = configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
