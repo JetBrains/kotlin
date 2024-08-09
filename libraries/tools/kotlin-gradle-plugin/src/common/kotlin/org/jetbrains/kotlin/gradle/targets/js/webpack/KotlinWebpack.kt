@@ -12,6 +12,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -131,8 +132,7 @@ constructor(
     internal var resolveFromModulesFirst: Boolean = false
 
     @get:OutputFile
-    open val configFile: Provider<File> =
-        npmProjectDir.map { it.resolve("webpack.config.js") }
+    abstract val configFile: RegularFileProperty
 
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
@@ -274,7 +274,7 @@ constructor(
         return KotlinWebpackRunner(
             npmProject,
             logger,
-            configFile.get(),
+            configFile.get().asFile,
             execHandleFactory,
             bin,
             webpackArgs,
@@ -293,7 +293,7 @@ constructor(
         val runner = createRunner()
 
         if (generateConfigOnly) {
-            runner.config.save(configFile.get())
+            runner.config.save(configFile.get().asFile)
             return
         }
 
