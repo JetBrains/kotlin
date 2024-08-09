@@ -7,5 +7,5 @@ public open class Parent
 public class Child : Parent
     internal inline fun internalInlineMethod(): String
         /* ACCESSOR use-site */ access$x($this = <this>)
-    /* ACCESSOR declaration */ public fun access$x($this: Child): String
+    /* ACCESSOR declaration */ public /* static */ fun access$x($this: Child): String
         /* TARGET use-site */ super<Parent>.x()
