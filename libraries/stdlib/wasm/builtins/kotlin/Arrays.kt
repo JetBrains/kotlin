@@ -76,13 +76,6 @@ internal fun byteArrayIterator(array: ByteArray) = object : ByteIterator() {
     override fun nextByte() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createByteArray(size: Int, init: (Int) -> Byte): ByteArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmByteArray(size)
-    result.fill(size, init)
-    return ByteArray(result)
-}
-
 /**
  * An array of chars.
  * @constructor Creates a new array of the specified [size], with all elements initialized to null char (`\u0000').
@@ -142,13 +135,6 @@ internal fun charArrayIterator(array: CharArray) = object : CharIterator() {
     var index = 0
     override fun hasNext() = index != array.size
     override fun nextChar() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
-}
-
-internal inline fun createCharArray(size: Int, init: (Int) -> Char): CharArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmCharArray(size)
-    result.fill(size, init)
-    return CharArray(result)
 }
 
 /**
@@ -212,13 +198,6 @@ internal fun shortArrayIterator(array: ShortArray) = object : ShortIterator() {
     override fun nextShort() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createShortArray(size: Int, init: (Int) -> Short): ShortArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmShortArray(size)
-    result.fill(size, init)
-    return ShortArray(result)
-}
-
 /**
  * An array of ints.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
@@ -278,13 +257,6 @@ internal fun intArrayIterator(array: IntArray) = object : IntIterator() {
     var index = 0
     override fun hasNext() = index != array.size
     override fun nextInt() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
-}
-
-internal inline fun createIntArray(size: Int, init: (Int) -> Int): IntArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmIntArray(size)
-    result.fill(size, init)
-    return IntArray(result)
 }
 
 /**
@@ -348,13 +320,6 @@ internal fun longArrayIterator(array: LongArray) = object : LongIterator() {
     override fun nextLong() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createLongArray(size: Int, init: (Int) -> Long): LongArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmLongArray(size)
-    result.fill(size, init)
-    return LongArray(result)
-}
-
 /**
  * An array of floats.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
@@ -416,13 +381,6 @@ internal fun floatArrayIterator(array: FloatArray) = object : FloatIterator() {
     override fun nextFloat() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
 }
 
-internal inline fun createFloatArray(size: Int, init: (Int) -> Float): FloatArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmFloatArray(size)
-    result.fill(size, init)
-    return FloatArray(result)
-}
-
 /**
  * An array of doubles.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
@@ -482,13 +440,6 @@ internal fun doubleArrayIterator(array: DoubleArray) = object : DoubleIterator()
     var index = 0
     override fun hasNext() = index != array.size
     override fun nextDouble() = if (index != array.size) array[index++] else throw NoSuchElementException("$index")
-}
-
-internal inline fun createDoubleArray(size: Int, init: (Int) -> Double): DoubleArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmDoubleArray(size)
-    result.fill(size, init)
-    return DoubleArray(result)
 }
 
 /**
@@ -555,12 +506,3 @@ internal fun booleanArrayIterator(array: BooleanArray) = object : BooleanIterato
 @WasmNoOpCast
 private fun Boolean.reinterpretAsByte(): Byte =
     implementedAsIntrinsic
-
-internal inline fun createBooleanArray(size: Int, init: (Int) -> Boolean): BooleanArray {
-    if (size < 0) throw IllegalArgumentException("Negative array size")
-    val result = WasmByteArray(size)
-    result.fill(size) {
-        init(it).reinterpretAsByte()
-    }
-    return BooleanArray(result)
-}
