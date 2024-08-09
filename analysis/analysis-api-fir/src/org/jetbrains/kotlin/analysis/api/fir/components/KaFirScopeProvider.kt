@@ -165,7 +165,7 @@ internal class KaFirScopeProvider(
             firJavaClass,
             useSiteSession,
             scopeSession,
-            memberRequiredPhase = FirResolvePhase.TYPES,
+            memberRequiredPhase = FirResolvePhase.STATUS,
         )
 
         fun getStaticScope() = JavaScopeProvider.getStaticScope(firJavaClass, useSiteSession, scopeSession)
