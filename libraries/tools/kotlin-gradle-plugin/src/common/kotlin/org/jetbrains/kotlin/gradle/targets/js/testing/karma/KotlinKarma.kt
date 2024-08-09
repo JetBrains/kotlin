@@ -101,6 +101,7 @@ class KotlinKarma(
 
     init {
         requiredDependencies.add(versions.karma)
+        requiredDependencies.add(versions.kotlinWebHelpers)
 
         useKotlinReporter()
         useWebpackOutputPlugin()
@@ -152,11 +153,11 @@ class KotlinKarma(
             it.appendLine(
                 """
                 config.plugins = config.plugins || [];
-                config.plugins.push('kotlin-test-js-runner/karma-kotlin-reporter.js');
+                config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-reporter.js');
                 
                 config.loggers = [
                     {
-                        type: 'kotlin-test-js-runner/tc-log-appender.js',
+                        type: 'kotlin-web-helpers/dist/tc-log-appender.js',
                         //default layout
                         layout: { type: 'pattern', pattern: '%[%d{DATETIME}:%p [%c]: %]%m' }
                     }
@@ -176,7 +177,7 @@ class KotlinKarma(
             it.appendLine(
                 """
                 config.plugins = config.plugins || [];
-                config.plugins.push('kotlin-test-js-runner/karma-webpack-output.js');
+                config.plugins.push('kotlin-web-helpers/dist/karma-webpack-output.js');
             """.trimIndent()
             )
         }
@@ -312,7 +313,7 @@ class KotlinKarma(
                 ${
                     """
                     // https://github.com/webpack/webpack/issues/12951
-                    const PatchSourceMapSource = require('kotlin-test-js-runner/webpack-5-debug');
+                    const PatchSourceMapSource = require('kotlin-web-helpers/dist/webpack-5-debug');
                     config.plugins.push(new PatchSourceMapSource())
                     """
                 }
@@ -358,7 +359,7 @@ class KotlinKarma(
         val file = task.inputFileProperty.getFile()
         val fileString = file.toString()
 
-        config.files.add(npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js"))
+        config.files.add(npmProject.require("kotlin-web-helpers/dist/kotlin-test-karma-runner.js"))
         if (!debug) {
             if (platformType == KotlinPlatformType.wasm) {
                 val wasmFile = file.parentFile.resolve("${file.nameWithoutExtension}.wasm")
@@ -375,8 +376,8 @@ class KotlinKarma(
                     createLoadWasm(npmProject.dir.getFile(), file).normalize().absolutePath
                 )
 
-                config.customContextFile = npmProject.require("kotlin-test-js-runner/static/context.html")
-                config.customDebugFile = npmProject.require("kotlin-test-js-runner/static/debug.html")
+                config.customContextFile = npmProject.require("kotlin-web-helpers/dist/static/context.html")
+                config.customDebugFile = npmProject.require("kotlin-web-helpers/dist/static/debug.html")
             } else {
                 config.files.add(fileString)
             }
@@ -394,7 +395,7 @@ class KotlinKarma(
                             config.plugins.push('karma-*'); // default
                         }
                         
-                        config.plugins.push('kotlin-test-js-runner/karma-kotlin-debug-plugin.js');
+                        config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-debug-plugin.js');
                     """.trimIndent()
                 )
             }
@@ -470,7 +471,7 @@ class KotlinKarma(
         val karmaConfigAbsolutePath = karmaConfJs.absolutePath
         val args = if (debug) {
             nodeJsArgs + listOf(
-                npmProject.require("kotlin-test-js-runner/karma-debug-runner.js"),
+                npmProject.require("kotlin-web-helpers/dist/karma-debug-runner.js"),
                 karmaConfigAbsolutePath
             )
         } else {

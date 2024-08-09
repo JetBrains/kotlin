@@ -29,6 +29,7 @@ val npmPackages = listOf(
     NpmPackage("karma-webpack"),
     NpmPackage("karma-sourcemap-loader"),
     NpmPackage("typescript"),
+    NpmPackage("kotlin-web-helpers"),
 )
 
 data class NpmPackage(
