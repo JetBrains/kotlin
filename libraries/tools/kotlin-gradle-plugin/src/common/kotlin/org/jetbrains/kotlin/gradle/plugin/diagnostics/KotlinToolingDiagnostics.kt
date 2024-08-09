@@ -1032,7 +1032,7 @@ object KotlinToolingDiagnostics {
             In your Xcode project, navigate to "Build Setting",
             and under "Build Options" set "User script sandboxing" (ENABLE_USER_SCRIPT_SANDBOXING) to "NO".
             Then, run "./gradlew --stop" to stop the Gradle daemon
-            For more information, see documentation: https://jb.gg/ltd9e6
+            For more information, see documentation: https://kotl.in/iq4uke
             """.trimIndent()
         )
     }
