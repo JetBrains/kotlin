@@ -217,7 +217,7 @@ extern "C" KRef CreatePermanentStringFromCString(const char* nullTerminatedUTF8)
     //   while it indeed manipulates Kotlin objects, it doesn't in fact access _Kotlin heap_,
     //   because the accessed object is off-heap, imitating permanent static objects.
     auto sizeInBytes = strlen(nullTerminatedUTF8);
-    if (utf8StringIsASCII(nullTerminatedUTF8, sizeInBytes)) {
+    if (sizeInBytes > 0 && utf8StringIsASCII(nullTerminatedUTF8, sizeInBytes)) {
         auto result = allocatePermanentString((sizeInBytes + 1) / 2, true);
         setLatin1Flags(result, sizeInBytes);
         std::copy_n(nullTerminatedUTF8, sizeInBytes, StringRawData(result));
