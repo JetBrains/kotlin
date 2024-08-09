@@ -79,6 +79,7 @@ object CompilerTestUtil {
             .replace(KtTestUtil.getJdk8Home().absolutePath.replace("\\", "/"), "\$JDK_1_8")
             .replace(KtTestUtil.getJdk11Home().absolutePath.replace("\\", "/"), "\$JDK_11")
             .replace(KtTestUtil.getJdk17Home().absolutePath.replace("\\", "/"), "\$JDK_17")
+            .replace(KtTestUtil.getJdk21Home().absolutePath.replace("\\", "/"), "\$JDK_21")
             .replace("info: executable production duration: \\d+ms".toRegex(), "info: executable production duration: [time]")
             .replace(KotlinCompilerVersion.VERSION, "\$VERSION$")
             .replace(System.getProperty("java.runtime.version"), "\$JVM_VERSION$")
