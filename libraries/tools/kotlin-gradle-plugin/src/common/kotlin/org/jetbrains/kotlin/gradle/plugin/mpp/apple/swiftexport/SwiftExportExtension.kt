@@ -46,6 +46,9 @@ interface SwiftExportedModuleVersionMetadata : SwiftExportedModuleMetadata {
     val moduleVersion: ModuleVersionIdentifier
 }
 
+internal fun ObjectFactory.SwiftExportExtension(dependencies: DependencyHandler): SwiftExportExtension =
+    newInstance(SwiftExportExtension::class.java, dependencies)
+
 @ExperimentalSwiftExportDsl
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API
 abstract class SwiftExportExtension @Inject constructor(

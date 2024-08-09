@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.supportedAppleTargets
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.addExtension
@@ -19,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBui
 import org.jetbrains.kotlin.gradle.plugin.mpp.StaticLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironment
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedSwiftExportTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.swiftexport.ExperimentalSwiftExportDsl
 
 internal object SwiftExportDSLConstants {
@@ -32,7 +28,7 @@ internal object SwiftExportDSLConstants {
 internal val SetUpSwiftExportAction = KotlinProjectSetupAction {
     if (!kotlinPropertiesProvider.swiftExportEnabled) return@KotlinProjectSetupAction
     warnAboutExperimentalSwiftExportFeature()
-    val swiftExportExtension = objects.swiftExportExtension(dependencies)
+    val swiftExportExtension = objects.SwiftExportExtension(dependencies)
 
     multiplatformExtension.addExtension(
         SwiftExportDSLConstants.SWIFT_EXPORT_EXTENSION_NAME,
@@ -47,9 +43,6 @@ private fun Project.warnAboutExperimentalSwiftExportFeature() {
         KotlinToolingDiagnostics.ExperimentalFeatureWarning("Swift Export", "https://kotl.in/1cr522")
     )
 }
-
-private fun ObjectFactory.swiftExportExtension(dependencies: DependencyHandler): SwiftExportExtension =
-    newInstance(SwiftExportExtension::class.java, dependencies)
 
 private fun Project.registerSwiftExportPipeline(
     swiftExportExtension: SwiftExportExtension,
