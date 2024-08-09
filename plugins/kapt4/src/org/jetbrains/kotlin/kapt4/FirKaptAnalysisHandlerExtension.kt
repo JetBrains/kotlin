@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.kapt4
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.GroupedKtSources
@@ -104,8 +106,13 @@ open class FirKaptAnalysisHandlerExtension(
 
         val disposable = Disposer.newDisposable("K2KaptSession.project")
         try {
+            val coreEnvironment =
+                KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
             val projectEnvironment =
-                createProjectEnvironment(updatedConfiguration, disposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
+                VfsBasedProjectEnvironment(
+                    project,
+                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+                ) { coreEnvironment.createPackagePartProvider(it) }
             if (messageCollector.hasErrors()) {
                 return false
             }

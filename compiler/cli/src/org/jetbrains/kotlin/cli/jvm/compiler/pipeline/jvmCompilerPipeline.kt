@@ -153,10 +153,15 @@ fun convertAnalyzedFirToIr(
 ): ModuleCompilerIrBackendInput {
     val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
 
-    val irGenerationExtensions =
+    val kaptMode = configuration.getBoolean(JVMConfigurationKeys.SKIP_BODIES)
+
+    val irGenerationExtensions = if (!kaptMode) {
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
+    } else {
+        emptyList()
+    }
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         analysisResults.convertToIrAndActualizeForJvm(
             extensions, configuration, environment.diagnosticsReporter, irGenerationExtensions,
