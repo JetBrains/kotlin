@@ -1,0 +1,4 @@
+/extensionShadowedByMember.kt:11:30: warning: extension is shadowed by a member: public final fun get(key: Any): Int
+inline fun <reified T> Cache.get(key: Any) = getTyped(key, T::class.java)
+                             ^^^
+
