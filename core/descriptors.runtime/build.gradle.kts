@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm")
@@ -23,6 +25,15 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+tasks.named<KotlinCompile>("compileTestKotlin").configure {
+    kotlinJavaToolchain.toolchain.use(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+    compilerOptions.jvmTarget = JvmTarget.JVM_11
+}
+tasks.named<JavaCompile>("compileTestJava").configure {
+    configureTaskToolchain(JdkMajorVersion.JDK_11_0)
+    targetCompatibility = "11"
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")

@@ -34,3 +34,5 @@ dependencies {
     api("com.jetbrains.intellij.java:java-psi-impl:$intellijVersion") { isTransitive = false }
     runtimeOnly("com.jetbrains.intellij.platform:diagnostic:$intellijVersion") { isTransitive = false }
 }
+
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
