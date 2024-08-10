@@ -4,6 +4,8 @@ description = 'Kotlin Standard Library JDK 8 extension'
 
 apply plugin: 'kotlin'
 
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
+
 RepoArtifacts.publish(project)
 RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
@@ -58,6 +60,8 @@ artifacts {
 
 compileKotlin {
     kotlinOptions.moduleName = project.name
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.freeCompilerArgs = [ "-Xjdk-release=8" ]
 }
 
 compileTestKotlin {

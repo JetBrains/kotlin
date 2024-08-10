@@ -43,3 +43,8 @@
     <fields>;
     **[] values();
 }
+
+# For compatibility with JDK 11
+-dontwarn java.lang.invoke.StringConcatFactory
+-dontwarn java.nio.ByteBuffer
+-dontwarn java.nio.MappedByteBuffer

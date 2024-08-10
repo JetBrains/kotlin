@@ -24,7 +24,7 @@ enum class JdkMajorVersion(
     val envName = name
 }
 
-val DEFAULT_JVM_TOOLCHAIN = JdkMajorVersion.JDK_1_8
+val DEFAULT_JVM_TOOLCHAIN = JdkMajorVersion.JDK_11_0
 
 fun Project.configureJvmDefaultToolchain() {
     configureJvmToolchain(DEFAULT_JVM_TOOLCHAIN)
