@@ -7,7 +7,7 @@ plugins {
     id("jps-compatible")
 }
 
-project.updateJvmTarget("1.8")
+//project.updateJvmTarget("1.8")
 
 publish()
 

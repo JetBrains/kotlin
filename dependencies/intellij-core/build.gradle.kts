@@ -38,3 +38,5 @@ dependencies {
     runtimeOnly("com.jetbrains.intellij.platform:util-coroutines:$intellijVersion") { isTransitive = false }
     runtimeOnly(libs.opentelemetry.api) { isTransitive = false }
 }
+
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)

@@ -401,3 +401,6 @@
 -keep class it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap {
     public java.lang.Object computeIfAbsent(java.lang.Object, it.unimi.dsi.fastutil.objects.Object2ObjectFunction);
 }
+
+# For compatibility with JDK 11
+-dontwarn java.**
