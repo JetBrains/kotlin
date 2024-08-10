@@ -107,6 +107,7 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
             libraryDirectories = listOf(binaryLibrary.libraryFile.parentFile),
             libraries = listOf(libraryName),
             additionalClangFlags = testRunSettings.getKindSpecificClangFlags(binaryLibrary) + listOf("-Wall", "-Werror"),
+            fmodules = false,
         ).assertSuccess()
 
         val testExecutable = TestExecutable(
