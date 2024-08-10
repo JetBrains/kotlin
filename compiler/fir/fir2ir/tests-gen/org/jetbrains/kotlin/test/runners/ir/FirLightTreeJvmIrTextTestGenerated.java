@@ -838,6 +838,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
       }
 
       @Test
+      @TestMetadata("specialAnnotationsMetadata.kt")
+      public void testSpecialAnnotationsMetadata() {
+        runTest("compiler/testData/ir/irText/declarations/annotations/specialAnnotationsMetadata.kt");
+      }
+
+      @Test
       @TestMetadata("spreadOperatorInAnnotationArguments.kt")
       public void testSpreadOperatorInAnnotationArguments() {
         runTest("compiler/testData/ir/irText/declarations/annotations/spreadOperatorInAnnotationArguments.kt");
