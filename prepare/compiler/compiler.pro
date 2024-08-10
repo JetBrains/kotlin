@@ -366,3 +366,6 @@
 }
 # Uses a ClassLoader method from JDK 9+
 -dontwarn org.jetbrains.kotlin.buildtools.internal.ClassLoaderUtilsKt
+
+# For compatibility with JDK 11
+-dontwarn java.**

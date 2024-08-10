@@ -101,12 +101,12 @@ java {
 }
 
 tasks.compileJava {
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
 }
 
 tasks.compileKotlin {
-    compilerOptions.jvmTarget = JvmTarget.JVM_1_8
+    compilerOptions.jvmTarget = JvmTarget.JVM_11
 }
 
 projectTest(parallel = true) {

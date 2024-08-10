@@ -70,7 +70,7 @@ optInToUnsafeDuringIrConstructionAPI()
 optInToObsoleteDescriptorBasedAPI()
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

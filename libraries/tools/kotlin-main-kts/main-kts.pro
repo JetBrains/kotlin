@@ -43,3 +43,6 @@
     <fields>;
     **[] values();
 }
+
+# For compatibility with JDK 11
+-dontwarn java.**
