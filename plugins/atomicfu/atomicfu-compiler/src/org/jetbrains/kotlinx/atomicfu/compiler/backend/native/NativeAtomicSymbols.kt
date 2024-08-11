@@ -86,7 +86,7 @@ class NativeAtomicSymbols(
     val longPlusOperator = context.referenceFunctions(CallableId(StandardClassIds.Long, Name.identifier("plus")))
         .single { it.owner.valueParameters[0].type.isLong() }
 
-    override fun getAtomicHandlerTypeByAtomicfuType(atomicfuType: IrType): IrType {
+    override fun getAtomicHandlerTypeByAtomicfuType(atomicfuType: IrType): IrClassSymbol {
         TODO("Not yet implemented")
     }
 

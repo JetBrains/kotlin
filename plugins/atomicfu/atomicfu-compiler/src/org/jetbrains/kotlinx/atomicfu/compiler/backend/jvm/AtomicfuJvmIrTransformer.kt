@@ -302,11 +302,12 @@ class AtomicfuJvmIrTransformer(
         return pluginContext.irFactory.buildFun {
             name = Name.identifier(mangledName)
             visibility = DescriptorVisibilities.PUBLIC
-            origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_PROPERTY_ACCESSOR
+            origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
+            //containerSource = ((atomicProperty.parent as IrDeclarationContainer).declarations.filter { it is IrProperty && it.name.asString() == "simpleInt" }.firstOrNull() as? IrProperty)?.containerSource
             containerSource = atomicProperty.containerSource
         }.apply {
             dispatchReceiverParameter = atomicProperty.getter?.dispatchReceiverParameter?.deepCopyWithSymbols(this)
-            returnType = atomicSymbols.getAtomicHandlerTypeByAtomicfuType(atomicProperty.backingField?.type ?: error("Atomic property $atomicProperty should have a backing field: ${atomicProperty.render()}")) // todo remove !!
+            returnType = atomicSymbols.getAtomicHandlerTypeByAtomicfuType(atomicProperty.backingField?.type ?: error("Atomic property $atomicProperty should have a backing field: ${atomicProperty.render()}")).defaultType
             this.parent = atomicProperty.parent
         }
     }
@@ -316,8 +317,9 @@ class AtomicfuJvmIrTransformer(
         return buildExternalAtomicHandlerAccessorSignature(atomicProperty).apply {
             body = with(atomicSymbols.createBuilder(symbol)) {
                 irBlockBody {
+                    val isAtomicArray = (atomicProperty.backingField)?.type?.isAtomicfuAtomicArray() == true
                     +irReturn(
-                        irGetProperty(atomicHandler, dispatchReceiverParameter?.capture())
+                        irGetProperty(atomicHandler, if (isAtomicArray) dispatchReceiverParameter?.capture() else null)
                     )
                 }
             }

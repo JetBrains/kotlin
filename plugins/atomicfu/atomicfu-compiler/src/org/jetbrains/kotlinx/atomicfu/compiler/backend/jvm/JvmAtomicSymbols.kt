@@ -432,7 +432,7 @@ class JvmAtomicSymbols(
     )
 
     // TODO use where applicable
-    override fun getAtomicHandlerTypeByAtomicfuType(atomicfuType: IrType): IrType {
+    override fun getAtomicHandlerTypeByAtomicfuType(atomicfuType: IrType): IrClassSymbol {
         require(atomicfuType.classFqName?.parent()?.asString() == "kotlinx.atomicfu") { "Expected kotlinx.atomicfu type, but got ${atomicfuType.render()}" }
         val shortClassName = atomicfuType.type.classFqName?.shortName()?.asString()
             ?: error("Couldn't extract the classFqName for the kotlinx.atomicfu type: ${atomicfuType.render()}")
@@ -446,7 +446,7 @@ class JvmAtomicSymbols(
             ATOMIC_LONG_ARRAY -> atomicLongArrayClassSymbol
             ATOMIC_ARRAY -> atomicRefArrayClassSymbol
             else -> error("Unexpected name of kotlinx.atomicfu type: ${atomicfuType.render()}")
-        }.defaultType
+        }
     }
 
     // only one constructor is imported for java array types (see values atomicIntArrayConstructor, atomicRefArrayConstructor)

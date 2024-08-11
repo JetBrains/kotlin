@@ -364,7 +364,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                 val arraySize = atomicFactoryCall.getArraySizeArgument()
                 return irAtomicArrayField(
                     atomicArrayField.name,
-                    atomicSymbols.getAtomicArrayClassByAtomicfuArrayType(atomicArrayField.type),
+                    atomicSymbols.getAtomicHandlerTypeByAtomicfuType(atomicArrayField.type),
                     atomicArrayField.isStatic,
                     atomicArrayField.annotations,
                     arraySize,
@@ -380,7 +380,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                 val arraySize = initializer.getArraySizeArgument()
                 return irAtomicArrayField(
                     atomicArrayField.name,
-                    atomicSymbols.getAtomicArrayClassByAtomicfuArrayType(atomicArrayField.type),
+                    atomicSymbols.getAtomicHandlerTypeByAtomicfuType(atomicArrayField.type),
                     atomicArrayField.isStatic,
                     atomicArrayField.annotations,
                     arraySize,
@@ -862,34 +862,31 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
         protected fun getAtomicHandler(atomicCallReceiver: IrExpression, parentFunction: IrFunction?): IrExpression =
             when {
                 atomicCallReceiver is IrCall -> {
-                    val isArrayReceiver = atomicCallReceiver.isArrayElementGetter()
+                    val isArrayReceiver = atomicCallReceiver.isArrayElementGetter() // todo regex match
                     val getAtomicProperty = if (isArrayReceiver) atomicCallReceiver.dispatchReceiver as IrCall else atomicCallReceiver
                     val atomicProperty = getAtomicProperty.getCorrespondingProperty()
-                    val isAccessedFromAnotherFile = atomicProperty.file != parentFunction?.file
-                    val atomicHandlerProperty = atomicfuPropertyToAtomicHandler[atomicProperty]
+                    val isAccessedFromAnotherFile = atomicProperty.getPackageFragment() != parentFunction?.getPackageFragment()
                     with(atomicSymbols.createBuilder(atomicCallReceiver.symbol)) {
-                        if (atomicHandlerProperty != null) {
-                            // dispatchReceiver for get-a$FU() is null, because a$FU is a static property
-                            // dispatchReceiver for get-arr'() is equal to the dispatchReceiver of the original getter
-                            irGetProperty(atomicHandlerProperty, if (isArrayReceiver) getAtomicProperty.dispatchReceiver else null) // todo: check this for Native (dispatchReceiver)
-                        } else if (isAccessedFromAnotherFile) {
-                            // 1. get or build fake function symbol
-                            // 2. <get-a>.compareAndSet  TODO
+                        if (isAccessedFromAnotherFile) {
                             val externalAccessorSymbol = buildExternalAtomicHandlerAccessorSignature(atomicProperty)
                             irCall(externalAccessorSymbol.symbol).apply {
-                                dispatchReceiver = getAtomicProperty.dispatchReceiver?.deepCopyWithSymbols()
+                                dispatchReceiver = getAtomicProperty.dispatchReceiver
                             }
                         } else {
-                            error("No atomic handler found for the atomic property ${atomicProperty.render()}, \n" +
-                                         "these properties were registered: ${
-                                             buildString {
-                                                 atomicfuPropertyToAtomicHandler.forEach {
-                                                     appendLine("[ property: ${it.key.render()}, atomicHandler: ${it.value.render()}]")
-                                                 }
-                                             }
-                                         }" + CONSTRAINTS_MESSAGE)
+                            val atomicHandlerProperty = atomicfuPropertyToAtomicHandler[atomicProperty]
+                            if (atomicHandlerProperty != null) {
+                                irGetProperty(atomicHandlerProperty, if (isArrayReceiver) getAtomicProperty.dispatchReceiver else null) // todo: check this for Native (dispatchReceiver)
+                            } else {
+                                error("No atomic handler found for the atomic property ${atomicProperty.render()}, \n" +
+                                              "these properties were registered: ${
+                                                  buildString {
+                                                      atomicfuPropertyToAtomicHandler.forEach {
+                                                          appendLine("[ property: ${it.key.render()}, atomicHandler: ${it.value.render()}]")
+                                                      }
+                                                  }
+                                              }" + CONSTRAINTS_MESSAGE)
+                            }
                         }
-
                     }
                 }
                 atomicCallReceiver.isThisReceiver() -> {
@@ -1173,6 +1170,8 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
     protected fun IrValueParameter.capture(): IrGetValue = IrGetValueImpl(startOffset, endOffset, symbol.owner.type, symbol)
 
     protected fun IrType.isObject() = classOrNull?.owner?.kind == ClassKind.OBJECT
+
+    protected fun IrType.isAtomicfuAtomicArray() = this.classFqName?.shortName()?.asString()?.matches(ATOMIC_ARRAY_REGEX)
 
     protected fun IrProperty.atomicfuRender(): String =
         (if (isVar) "var" else "val") + " " + name.asString() + ": " + backingField?.type?.render()

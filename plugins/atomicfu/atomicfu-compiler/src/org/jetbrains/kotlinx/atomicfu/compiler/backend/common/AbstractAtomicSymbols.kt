@@ -38,6 +38,7 @@ internal const val ATOMIC_INT_ARRAY = "AtomicIntArray"
 internal const val ATOMIC_BOOLEAN_ARRAY = "AtomicBooleanArray"
 internal const val ATOMIC_LONG_ARRAY = "AtomicLongArray"
 internal const val ATOMIC_ARRAY = "AtomicArray"
+internal val ATOMIC_ARRAY_REGEX = "Atomic(Int|Boolean|Long)?Array".toRegex()
 
 abstract class AbstractAtomicSymbols(
     val context: IrPluginContext,
@@ -65,20 +66,11 @@ abstract class AbstractAtomicSymbols(
             atomicRefArrayClassSymbol
         )
 
-    fun isAtomicArrayHandlerType(valueType: IrType) = valueType.classOrNull in ATOMIC_ARRAY_TYPES
+    fun isAtomicArrayHandlerType(atomicHandlerType: IrType) = atomicHandlerType.classOrNull in ATOMIC_ARRAY_TYPES
 
     abstract fun getAtomicArrayConstructor(atomicArrayClassSymbol: IrClassSymbol): IrFunctionSymbol
 
-    abstract fun getAtomicHandlerTypeByAtomicfuType(atomicfuType: IrType): IrType
-
-    fun getAtomicArrayClassByAtomicfuArrayType(atomicfuArrayType: IrType): IrClassSymbol =
-        when (atomicfuArrayType.classFqName?.shortName()?.asString()) {
-            "AtomicIntArray" -> atomicIntArrayClassSymbol
-            "AtomicLongArray" -> atomicLongArrayClassSymbol
-            "AtomicBooleanArray" -> atomicIntArrayClassSymbol
-            "AtomicArray" -> atomicRefArrayClassSymbol
-            else -> error("Unexpected atomicfu array type ${atomicfuArrayType.render()}.")
-        }
+    abstract fun getAtomicHandlerTypeByAtomicfuType(atomicfuType: IrType): IrClassSymbol
 
     fun getAtomicArrayClassByValueType(valueType: IrType): IrClassSymbol =
         when {
