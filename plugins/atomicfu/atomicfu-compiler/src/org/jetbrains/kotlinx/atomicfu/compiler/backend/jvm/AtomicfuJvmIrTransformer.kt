@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymbols
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer
 import kotlin.collections.set
+import org.jetbrains.kotlin.ir.builders.*
 
 private const val ATOMICFU = "atomicfu"
 private const val DISPATCH_RECEIVER = "dispatchReceiver\$$ATOMICFU"
@@ -138,7 +139,7 @@ class AtomicfuJvmIrTransformer(
             functionName: String,
             valueType: IrType,
             castType: IrType?,
-            getPropertyReceiver: IrExpression,
+            propertyGetterCall: IrExpression,
             parentFunction: IrFunction?
         ): IrExpression {
             with(atomicSymbols.createBuilder(expression.symbol)) {
@@ -163,10 +164,10 @@ class AtomicfuJvmIrTransformer(
                  */
                 return callAtomicFieldUpdater(
                     functionName = functionName,
-                    getAtomicHandler = getAtomicHandler(getPropertyReceiver, parentFunction),
+                    getAtomicHandler = getAtomicHandler(propertyGetterCall, parentFunction),
                     valueType = valueType,
                     castType = castType,
-                    obj = getDispatchReceiver(getPropertyReceiver, parentFunction),
+                    obj = getDispatchReceiver(propertyGetterCall, parentFunction),
                     valueArguments = expression.valueArguments
                 )
             }
@@ -174,14 +175,14 @@ class AtomicfuJvmIrTransformer(
 
         override fun generateArgsForAtomicExtension(
             expression: IrCall,
-            getPropertyReceiver: IrExpression,
+            propertyGetterCall: IrExpression,
             isArrayReceiver: Boolean,
             parentFunction: IrFunction
         ): List<IrExpression?> {
-            val dispatchReceiver = getDispatchReceiver(getPropertyReceiver, parentFunction)
-            val getAtomicHandler = getAtomicHandler(getPropertyReceiver, parentFunction)
+            val dispatchReceiver = getDispatchReceiver(propertyGetterCall, parentFunction)
+            val getAtomicHandler = getAtomicHandler(propertyGetterCall, parentFunction)
             return if (isArrayReceiver) {
-                val index = getPropertyReceiver.getArrayElementIndex(parentFunction)
+                val index = propertyGetterCall.getArrayElementIndex(parentFunction)
                 listOf(getAtomicHandler, index)
             } else {
                 listOf(dispatchReceiver, getAtomicHandler)
@@ -293,6 +294,33 @@ class AtomicfuJvmIrTransformer(
             atomicExtension.valueParameters.forEach { addValueParameter(it.name, it.type) }
             returnType = atomicExtension.returnType
             this.parent = atomicExtension.parent
+        }
+    }
+
+    override fun buildExternalAtomicHandlerAccessorSignature(atomicProperty: IrProperty): IrSimpleFunction {
+        val mangledName = mangleExternalAtomicHandlerAccessorName(atomicProperty.name.asString())
+        return pluginContext.irFactory.buildFun {
+            name = Name.identifier(mangledName)
+            visibility = DescriptorVisibilities.PUBLIC
+            origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_PROPERTY_ACCESSOR
+            containerSource = atomicProperty.containerSource
+        }.apply {
+            dispatchReceiverParameter = atomicProperty.getter?.dispatchReceiverParameter?.deepCopyWithSymbols(this)
+            returnType = atomicSymbols.getAtomicHandlerTypeByAtomicfuType(atomicProperty.backingField?.type ?: error("Atomic property $atomicProperty should have a backing field: ${atomicProperty.render()}")) // todo remove !!
+            this.parent = atomicProperty.parent
+        }
+    }
+
+    override fun buildExternalAtomicHandlerAccessor(atomicProperty: IrProperty): IrSimpleFunction {
+        val atomicHandler = atomicfuPropertyToAtomicHandler[atomicProperty] ?: error("Field updater for an atomicfuat property $atomicProperty should've been already generated.")
+        return buildExternalAtomicHandlerAccessorSignature(atomicProperty).apply {
+            body = with(atomicSymbols.createBuilder(symbol)) {
+                irBlockBody {
+                    +irReturn(
+                        irGetProperty(atomicHandler, dispatchReceiverParameter?.capture())
+                    )
+                }
+            }
         }
     }
 

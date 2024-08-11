@@ -86,6 +86,10 @@ class NativeAtomicSymbols(
     val longPlusOperator = context.referenceFunctions(CallableId(StandardClassIds.Long, Name.identifier("plus")))
         .single { it.owner.valueParameters[0].type.isLong() }
 
+    override fun getAtomicHandlerTypeByAtomicfuType(atomicfuType: IrType): IrType {
+        TODO("Not yet implemented")
+    }
+
     // KMutableProperty0<T>
     fun kMutableProperty0Type(typeArg: IrType): IrType =
         buildSimpleType(irBuiltIns.kMutableProperty0Class, listOf(typeArg))

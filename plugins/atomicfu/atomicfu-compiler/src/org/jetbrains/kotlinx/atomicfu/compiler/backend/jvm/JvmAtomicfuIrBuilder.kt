@@ -91,7 +91,7 @@ class JvmAtomicfuIrBuilder internal constructor(
         fieldName: String
     ) = irCall(atomicSymbols.newUpdater(fieldUpdaterClass)).apply {
         putValueArgument(0, atomicSymbols.javaClassReference(parentClass.symbol.starProjectedType)) // tclass
-        if (fieldUpdaterClass == atomicSymbols.atomicRefFieldUpdaterClass) {
+        if (fieldUpdaterClass == atomicSymbols.atomicRefFieldUpdaterClassSymbol) {
             putValueArgument(1, atomicSymbols.javaClassReference(valueType)) // vclass
             putValueArgument(2, irString(fieldName)) // fieldName
         } else {

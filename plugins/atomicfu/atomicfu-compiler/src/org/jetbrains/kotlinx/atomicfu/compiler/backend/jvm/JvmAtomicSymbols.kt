@@ -17,6 +17,14 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.ATOMIC_ARRAY
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.ATOMIC_BOOLEAN
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.ATOMIC_BOOLEAN_ARRAY
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.ATOMIC_INT
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.ATOMIC_INT_ARRAY
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.ATOMIC_LONG
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.ATOMIC_LONG_ARRAY
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.ATOMIC_REF
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymbols
 
 class JvmAtomicSymbols(
@@ -29,13 +37,13 @@ class JvmAtomicSymbols(
     private val javaLangClass: IrClassSymbol = createClass(javaLang, "Class", ClassKind.CLASS, Modality.FINAL)
 
     // java.util.concurrent.AtomicIntegerFieldUpdater
-    val atomicIntFieldUpdaterClass: IrClassSymbol =
+    val atomicIntFieldUpdaterClassSymbol: IrClassSymbol =
         createClass(javaUtilConcurrent, "AtomicIntegerFieldUpdater", ClassKind.CLASS, Modality.FINAL)
 
     val atomicIntNewUpdater: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(
             name = "newUpdater",
-            returnType = atomicIntFieldUpdaterClass.defaultType,
+            returnType = atomicIntFieldUpdaterClassSymbol.defaultType,
             isStatic = true
         ).apply {
             addValueParameter("tclass", javaLangClass.starProjectedType)
@@ -43,75 +51,75 @@ class JvmAtomicSymbols(
         }.symbol
 
     val atomicIntGet: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "get", returnType = irBuiltIns.intType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "get", returnType = irBuiltIns.intType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicIntSet: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "set", returnType = irBuiltIns.unitType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "set", returnType = irBuiltIns.unitType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("newValue", irBuiltIns.intType)
         }.symbol
 
     val atomicIntCompareAndSet: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "compareAndSet", returnType = irBuiltIns.booleanType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "compareAndSet", returnType = irBuiltIns.booleanType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("expect", irBuiltIns.intType)
             addValueParameter("update", irBuiltIns.intType)
         }.symbol
 
     val atomicIntAddAndGet: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "addAndGet", returnType = irBuiltIns.intType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "addAndGet", returnType = irBuiltIns.intType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("delta", irBuiltIns.intType)
         }.symbol
 
     val atomicIntGetAndAdd: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "getAndAdd", returnType = irBuiltIns.intType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "getAndAdd", returnType = irBuiltIns.intType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("delta", irBuiltIns.intType)
         }.symbol
 
     val atomicIntIncrementAndGet: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "incrementAndGet", returnType = irBuiltIns.intType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "incrementAndGet", returnType = irBuiltIns.intType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicIntGetAndIncrement: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "getAndIncrement", returnType = irBuiltIns.intType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "getAndIncrement", returnType = irBuiltIns.intType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicIntDecrementAndGet: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "decrementAndGet", returnType = irBuiltIns.intType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "decrementAndGet", returnType = irBuiltIns.intType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicIntGetAndDecrement: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "getAndDecrement", returnType = irBuiltIns.intType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "getAndDecrement", returnType = irBuiltIns.intType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicIntLazySet: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "lazySet", returnType = irBuiltIns.unitType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "lazySet", returnType = irBuiltIns.unitType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("newValue", irBuiltIns.intType)
         }.symbol
 
     val atomicIntGetAndSet: IrSimpleFunctionSymbol =
-        atomicIntFieldUpdaterClass.owner.addFunction(name = "getAndSet", returnType = irBuiltIns.intType).apply {
+        atomicIntFieldUpdaterClassSymbol.owner.addFunction(name = "getAndSet", returnType = irBuiltIns.intType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("newValue", irBuiltIns.intType)
         }.symbol
 
     // java.util.concurrent.AtomicLongFieldUpdater
-    val atomicLongFieldUpdaterClass: IrClassSymbol =
+    val atomicLongFieldUpdaterClassSymbol: IrClassSymbol =
         createClass(javaUtilConcurrent, "AtomicLongFieldUpdater", ClassKind.CLASS, Modality.FINAL)
 
     val atomicLongNewUpdater: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(
             name = "newUpdater",
-            returnType = atomicLongFieldUpdaterClass.defaultType,
+            returnType = atomicLongFieldUpdaterClassSymbol.defaultType,
             isStatic = true
         ).apply {
             addValueParameter("tclass", javaLangClass.starProjectedType)
@@ -119,75 +127,75 @@ class JvmAtomicSymbols(
         }.symbol
 
     val atomicLongGet: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "get", returnType = irBuiltIns.longType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "get", returnType = irBuiltIns.longType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicLongSet: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "set", returnType = irBuiltIns.unitType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "set", returnType = irBuiltIns.unitType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("newValue", irBuiltIns.longType)
         }.symbol
 
     val atomicLongCompareAndSet: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "compareAndSet", returnType = irBuiltIns.booleanType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "compareAndSet", returnType = irBuiltIns.booleanType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("expect", irBuiltIns.longType)
             addValueParameter("update", irBuiltIns.longType)
         }.symbol
 
     val atomicLongAddAndGet: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "addAndGet", returnType = irBuiltIns.longType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "addAndGet", returnType = irBuiltIns.longType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("delta", irBuiltIns.longType)
         }.symbol
 
     val atomicLongGetAndAdd: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "getAndAdd", returnType = irBuiltIns.longType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "getAndAdd", returnType = irBuiltIns.longType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("delta", irBuiltIns.longType)
         }.symbol
 
     val atomicLongIncrementAndGet: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "incrementAndGet", returnType = irBuiltIns.longType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "incrementAndGet", returnType = irBuiltIns.longType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicLongGetAndIncrement: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "getAndIncrement", returnType = irBuiltIns.longType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "getAndIncrement", returnType = irBuiltIns.longType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicLongDecrementAndGet: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "decrementAndGet", returnType = irBuiltIns.longType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "decrementAndGet", returnType = irBuiltIns.longType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicLongGetAndDecrement: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "getAndDecrement", returnType = irBuiltIns.longType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "getAndDecrement", returnType = irBuiltIns.longType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
         }.symbol
 
     val atomicLongLazySet: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "lazySet", returnType = irBuiltIns.unitType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "lazySet", returnType = irBuiltIns.unitType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("newValue", irBuiltIns.longType)
         }.symbol
 
     val atomicLongGetAndSet: IrSimpleFunctionSymbol =
-        atomicLongFieldUpdaterClass.owner.addFunction(name = "getAndSet", returnType = irBuiltIns.longType).apply {
+        atomicLongFieldUpdaterClassSymbol.owner.addFunction(name = "getAndSet", returnType = irBuiltIns.longType).apply {
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("newValue", irBuiltIns.longType)
         }.symbol
 
     // java.util.concurrent.AtomicReferenceFieldUpdater
-    val atomicRefFieldUpdaterClass: IrClassSymbol =
+    val atomicRefFieldUpdaterClassSymbol: IrClassSymbol =
         createClass(javaUtilConcurrent, "AtomicReferenceFieldUpdater", ClassKind.CLASS, Modality.FINAL)
 
     val atomicRefNewUpdater: IrSimpleFunctionSymbol =
-        atomicRefFieldUpdaterClass.owner.addFunction(
+        atomicRefFieldUpdaterClassSymbol.owner.addFunction(
             name = "newUpdater",
-            returnType = atomicRefFieldUpdaterClass.defaultType,
+            returnType = atomicRefFieldUpdaterClassSymbol.defaultType,
             isStatic = true
         ).apply {
             addValueParameter("tclass", javaLangClass.starProjectedType)
@@ -196,21 +204,21 @@ class JvmAtomicSymbols(
         }.symbol
 
     val atomicRefGet: IrSimpleFunctionSymbol =
-        atomicRefFieldUpdaterClass.owner.addFunction(name = "get", returnType = irBuiltIns.anyNType).apply {
+        atomicRefFieldUpdaterClassSymbol.owner.addFunction(name = "get", returnType = irBuiltIns.anyNType).apply {
             val valueType = addTypeParameter("T", irBuiltIns.anyNType)
             addValueParameter("obj", irBuiltIns.anyType)
             returnType = valueType.defaultType
         }.symbol
 
     val atomicRefSet: IrSimpleFunctionSymbol =
-        atomicRefFieldUpdaterClass.owner.addFunction(name = "set", returnType = irBuiltIns.unitType).apply {
+        atomicRefFieldUpdaterClassSymbol.owner.addFunction(name = "set", returnType = irBuiltIns.unitType).apply {
             val valueType = addTypeParameter("T", irBuiltIns.anyNType)
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("newValue", valueType.defaultType)
         }.symbol
 
     val atomicRefCompareAndSet: IrSimpleFunctionSymbol =
-        atomicRefFieldUpdaterClass.owner.addFunction(name = "compareAndSet", returnType = irBuiltIns.booleanType).apply {
+        atomicRefFieldUpdaterClassSymbol.owner.addFunction(name = "compareAndSet", returnType = irBuiltIns.booleanType).apply {
             val valueType = addTypeParameter("T", irBuiltIns.anyNType)
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("expect", valueType.defaultType)
@@ -218,14 +226,14 @@ class JvmAtomicSymbols(
         }.symbol
 
     val atomicRefLazySet: IrSimpleFunctionSymbol =
-        atomicRefFieldUpdaterClass.owner.addFunction(name = "lazySet", returnType = irBuiltIns.unitType).apply {
+        atomicRefFieldUpdaterClassSymbol.owner.addFunction(name = "lazySet", returnType = irBuiltIns.unitType).apply {
             val valueType = addTypeParameter("T", irBuiltIns.anyNType)
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("newValue", valueType.defaultType)
         }.symbol
 
     val atomicRefGetAndSet: IrSimpleFunctionSymbol =
-        atomicRefFieldUpdaterClass.owner.addFunction(name = "getAndSet", returnType = irBuiltIns.anyNType).apply {
+        atomicRefFieldUpdaterClassSymbol.owner.addFunction(name = "getAndSet", returnType = irBuiltIns.anyNType).apply {
             val valueType = addTypeParameter("T", irBuiltIns.anyNType)
             addValueParameter("obj", irBuiltIns.anyType)
             addValueParameter("newValue", valueType.defaultType)
@@ -418,10 +426,28 @@ class JvmAtomicSymbols(
         }.symbol
 
     private val ATOMIC_FIELD_UPDATER_TYPES: Set<IrClassSymbol> = setOf(
-        atomicIntFieldUpdaterClass,
-        atomicLongFieldUpdaterClass,
-        atomicRefFieldUpdaterClass
+        atomicIntFieldUpdaterClassSymbol,
+        atomicLongFieldUpdaterClassSymbol,
+        atomicRefFieldUpdaterClassSymbol
     )
+
+    // TODO use where applicable
+    override fun getAtomicHandlerTypeByAtomicfuType(atomicfuType: IrType): IrType {
+        require(atomicfuType.classFqName?.parent()?.asString() == "kotlinx.atomicfu") { "Expected kotlinx.atomicfu type, but got ${atomicfuType.render()}" }
+        val shortClassName = atomicfuType.type.classFqName?.shortName()?.asString()
+            ?: error("Couldn't extract the classFqName for the kotlinx.atomicfu type: ${atomicfuType.render()}")
+        return when (shortClassName) {
+            ATOMIC_INT -> atomicIntFieldUpdaterClassSymbol
+            ATOMIC_BOOLEAN -> atomicIntFieldUpdaterClassSymbol
+            ATOMIC_LONG -> atomicLongFieldUpdaterClassSymbol
+            ATOMIC_REF -> atomicRefFieldUpdaterClassSymbol
+            ATOMIC_INT_ARRAY -> atomicIntArrayClassSymbol
+            ATOMIC_BOOLEAN_ARRAY -> atomicIntArrayClassSymbol
+            ATOMIC_LONG_ARRAY -> atomicLongArrayClassSymbol
+            ATOMIC_ARRAY -> atomicRefArrayClassSymbol
+            else -> error("Unexpected name of kotlinx.atomicfu type: ${atomicfuType.render()}")
+        }.defaultType
+    }
 
     // only one constructor is imported for java array types (see values atomicIntArrayConstructor, atomicRefArrayConstructor)
     override fun getAtomicArrayConstructor(atomicArrayClassSymbol: IrClassSymbol): IrFunctionSymbol =
@@ -432,10 +458,10 @@ class JvmAtomicSymbols(
 
     fun javaFUClassSymbol(valueType: IrType): IrClassSymbol =
         when {
-            valueType.isInt() -> atomicIntFieldUpdaterClass
-            valueType.isLong() -> atomicLongFieldUpdaterClass
-            valueType.isBoolean() -> atomicIntFieldUpdaterClass
-            !valueType.isPrimitiveType() -> atomicRefFieldUpdaterClass
+            valueType.isInt() -> atomicIntFieldUpdaterClassSymbol
+            valueType.isLong() -> atomicLongFieldUpdaterClassSymbol
+            valueType.isBoolean() -> atomicIntFieldUpdaterClassSymbol
+            !valueType.isPrimitiveType() -> atomicRefFieldUpdaterClassSymbol
             else -> error("The corresponding Java AtomicFieldUpdater class cannot be found for the given value type ${valueType.render()}")
         }
 

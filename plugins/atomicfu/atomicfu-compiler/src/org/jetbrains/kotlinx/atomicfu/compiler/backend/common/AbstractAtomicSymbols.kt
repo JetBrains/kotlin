@@ -29,6 +29,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
+// TODO replace with these constants everywhere
+internal const val ATOMIC_INT = "AtomicInt"
+internal const val ATOMIC_BOOLEAN = "AtomicBoolean"
+internal const val ATOMIC_LONG = "AtomicLong"
+internal const val ATOMIC_REF = "AtomicRef"
+internal const val ATOMIC_INT_ARRAY = "AtomicIntArray"
+internal const val ATOMIC_BOOLEAN_ARRAY = "AtomicBooleanArray"
+internal const val ATOMIC_LONG_ARRAY = "AtomicLongArray"
+internal const val ATOMIC_ARRAY = "AtomicArray"
+
 abstract class AbstractAtomicSymbols(
     val context: IrPluginContext,
     private val moduleFragment: IrModuleFragment
@@ -58,6 +68,8 @@ abstract class AbstractAtomicSymbols(
     fun isAtomicArrayHandlerType(valueType: IrType) = valueType.classOrNull in ATOMIC_ARRAY_TYPES
 
     abstract fun getAtomicArrayConstructor(atomicArrayClassSymbol: IrClassSymbol): IrFunctionSymbol
+
+    abstract fun getAtomicHandlerTypeByAtomicfuType(atomicfuType: IrType): IrType
 
     fun getAtomicArrayClassByAtomicfuArrayType(atomicfuArrayType: IrType): IrClassSymbol =
         when (atomicfuArrayType.classFqName?.shortName()?.asString()) {

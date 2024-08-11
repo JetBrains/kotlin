@@ -74,7 +74,7 @@ class AtomicfuNativeIrTransformer(
             functionName: String,
             valueType: IrType,
             castType: IrType?,
-            getPropertyReceiver: IrExpression,
+            propertyGetterCall: IrExpression,
             parentFunction: IrFunction?
         ): IrExpression =
             with(atomicSymbols.createBuilder(expression.symbol)) {
@@ -101,7 +101,7 @@ class AtomicfuNativeIrTransformer(
                  *   this.compareAndSet(value, new)  --->   refGetter().compareAndSetField(refGetter().get(), new)
                  * }                                      }
                  */
-                val getPropertyReference = getVolatilePropertyReference(getPropertyReceiver, parentFunction)
+                val getPropertyReference = getVolatilePropertyReference(propertyGetterCall, parentFunction)
                 return irCallAtomicNativeIntrinsic(
                     functionName = functionName,
                     propertyRef = getPropertyReference,
@@ -317,6 +317,14 @@ class AtomicfuNativeIrTransformer(
             returnType = atomicExtension.returnType
             this.parent = atomicExtension.parent
         }
+    }
+
+    override fun buildExternalAtomicHandlerAccessorSignature(atomicProperty: IrProperty): IrSimpleFunction {
+        TODO("Not yet implemented")
+    }
+
+    override fun buildExternalAtomicHandlerAccessor(atomicProperty: IrProperty): IrSimpleFunction {
+        TODO("Not yet implemented")
     }
 
     /**
