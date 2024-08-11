@@ -737,6 +737,7 @@ private class SourceLocationMappingToBinary(
 ) : SourceLocationMapping() {
     override val generatedLocation: SourceLocation.Location by lazy {
         SourceLocation.Location(
+            module = "",
             file = "",
             line = 0,
             column = offsets.sumOf {
