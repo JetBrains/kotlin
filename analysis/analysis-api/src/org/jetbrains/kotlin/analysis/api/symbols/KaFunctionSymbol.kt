@@ -116,6 +116,8 @@ public abstract class KaConstructorSymbol :
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
+    final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+
     abstract override fun createPointer(): KaSymbolPointer<KaConstructorSymbol>
 }
 

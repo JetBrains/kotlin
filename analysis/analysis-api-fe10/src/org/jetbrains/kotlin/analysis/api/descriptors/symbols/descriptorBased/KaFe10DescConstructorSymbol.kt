@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10Desc
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
@@ -35,9 +34,6 @@ internal class KaFe10DescConstructorSymbol(
 
     override val valueParameters: List<KaValueParameterSymbol>
         get() = withValidityAssertion { descriptor.valueParameters.map { KaFe10DescValueParameterSymbol(it, analysisContext) } }
-
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { descriptor.kaSymbolModality }
 
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
