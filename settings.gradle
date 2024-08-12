@@ -662,10 +662,7 @@ if (buildProperties.isKotlinNativeEnabled) {
 }
 
 
-if (buildProperties.inJpsBuildIdeaSync) {
-    include ":kotlin-stdlib:jps-build"
-    project(":kotlin-stdlib:jps-build").projectDir = "$rootDir/libraries/stdlib/jps-build" as File
-} else {
+if (!buildProperties.inJpsBuildIdeaSync) {
     // modules that we are currently cannot compile with jps
     include ":core:builtins",
             ":kotlin-stdlib-common",
