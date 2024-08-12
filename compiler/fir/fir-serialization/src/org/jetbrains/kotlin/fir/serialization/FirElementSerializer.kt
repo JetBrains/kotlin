@@ -164,7 +164,7 @@ class FirElementSerializer private constructor(
         val classId = classSymbol.classId
         if (classId != StandardClassIds.Any && classId != StandardClassIds.Nothing) {
             // Special classes (Any, Nothing) have no supertypes
-            for (superTypeRef in klass.superTypeRefs) {
+            for (superTypeRef in extension.getClassSupertypes(klass)) {
                 if (useTypeTable()) {
                     builder.addSupertypeId(typeId(superTypeRef))
                 } else {

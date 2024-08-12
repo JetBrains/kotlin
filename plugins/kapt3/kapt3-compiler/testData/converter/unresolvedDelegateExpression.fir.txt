@@ -1,5 +1,5 @@
 /**
- * public final class B : error/NonExistentClass {
+ * public final class B : kotlin/Any {
  *
  *   // signature: <init>()V
  *   public constructor()
@@ -20,6 +20,7 @@ public final class B implements NonExisting {
     private final java.lang.String a$delegate = null;
 
     public B() {
+        super();
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -78,7 +79,7 @@ public final class D implements I {
 
 
 /**
- * public final class E : error/NonExistentClass {
+ * public final class E : kotlin/Any {
  *
  *   // signature: <init>()V
  *   public constructor()
@@ -91,6 +92,7 @@ public final class D implements I {
 public final class E implements NonExisting {
 
     public E() {
+        super();
     }
 }
 
