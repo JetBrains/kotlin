@@ -92,9 +92,13 @@ internal class KaFirSymbolProvider(
 
     override val KtProperty.symbol: KaVariableSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.variableBuilder.buildVariableSymbol(
-                resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
-            )
+            if (!isLocal) {
+                KaFirKotlinPropertySymbol(this, analysisSession)
+            } else {
+                firSymbolBuilder.variableBuilder.buildVariableSymbol(
+                    resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
+                )
+            }
         }
 
     override val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol

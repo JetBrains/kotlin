@@ -80,6 +80,9 @@ internal val KtNamedFunction.callableId: CallableId?
 internal val KtEnumEntry.callableId: CallableId?
     get() = callableIdForName(nameAsSafeName)
 
+internal val KtProperty.callableId: CallableId?
+    get() = if (isLocal) null else callableIdForName(nameAsSafeName)
+
 private fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
     val containingClassOrObject = containingClassOrObject
     if (containingClassOrObject != null) {
@@ -113,6 +116,14 @@ internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
         else -> null
     }
 
+internal val KtProperty.kaSymbolModality: KaSymbolModality?
+    get() = kaSymbolModalityByModifiers ?: when {
+
+        // Green code cannot have those modifiers with other modalities
+        hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
+        else -> null
+    }
+
 internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
     get() = when {
         hasModifier(KtTokens.FINAL_KEYWORD) -> KaSymbolModality.FINAL
@@ -129,6 +140,12 @@ internal val KtNamedFunction.visibility: Visibility?
     }
 
 internal val KtClassOrObject.visibility: Visibility?
+    get() = when {
+        isLocal -> Visibilities.Local
+        else -> visibilityByModifiers
+    }
+
+internal val KtProperty.visibility: Visibility?
     get() = when {
         isLocal -> Visibilities.Local
         else -> visibilityByModifiers
