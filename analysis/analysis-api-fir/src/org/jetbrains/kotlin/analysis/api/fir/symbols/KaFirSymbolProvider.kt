@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -106,27 +105,29 @@ internal class KaFirSymbolProvider(
 
     override val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.classifierBuilder.buildAnonymousObjectSymbol(
-                objectDeclaration.resolveToFirSymbolOfType<FirAnonymousObjectSymbol>(firResolveSession)
-            )
+            KaFirAnonymousObjectSymbol(objectDeclaration, analysisSession)
         }
 
     override val KtObjectDeclaration.symbol: KaClassSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(
-                resolveToFirSymbolOfType<FirClassSymbol<*>>(firResolveSession)
-            )
+            if (isObjectLiteral()) {
+                KaFirAnonymousObjectSymbol(this, analysisSession)
+            } else {
+                firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(
+                    resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession)
+                )
+            }
         }
 
     override val KtClassOrObject.classSymbol: KaClassSymbol?
         get() = withValidityAssertion {
-            if (this is KtEnumEntry) {
-                return null
+            when (this) {
+                is KtEnumEntry -> null
+                is KtObjectDeclaration -> symbol
+                else -> firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(
+                    resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession)
+                )
             }
-
-            firSymbolBuilder.classifierBuilder.buildClassOrObjectSymbol(
-                resolveToFirSymbolOfType<FirClassSymbol<*>>(firResolveSession)
-            )
         }
 
     override val KtClassOrObject.namedClassSymbol: KaNamedClassSymbol?

@@ -8,44 +8,52 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
-internal open class KaFirAnonymousObjectSymbol(
-    override val firSymbol: FirAnonymousObjectSymbol,
+internal open class KaFirAnonymousObjectSymbol private constructor(
+    override val backingPsi: KtObjectDeclaration?,
     override val analysisSession: KaFirSession,
-) : KaAnonymousObjectSymbol(), KaFirSymbol<FirAnonymousObjectSymbol> {
-    override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
+    override val lazyFirSymbol: Lazy<FirAnonymousObjectSymbol>,
+) : KaAnonymousObjectSymbol(), KaFirKtBasedSymbol<KtObjectDeclaration, FirAnonymousObjectSymbol> {
+    init {
+        require(backingPsi?.isObjectLiteral() != false)
+    }
+
+    constructor(declaration: KtObjectDeclaration, session: KaFirSession) : this(
+        backingPsi = declaration,
+        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        analysisSession = session,
+    )
+
+    constructor(symbol: FirAnonymousObjectSymbol, session: KaFirSession) : this(
+        backingPsi = symbol.fir.realPsi as? KtObjectDeclaration,
+        lazyFirSymbol = lazyOf(symbol),
+        analysisSession = session,
+    )
+
+    override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.fir.getAllowedPsi() }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
-            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            psiOrSymbolAnnotationList()
         }
 
     override val superTypes: List<KaType> get() = withValidityAssertion { firSymbol.superTypesList(builder) }
-    override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
-    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
-    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
 
     override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaAnonymousObjectSymbol>(this)?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaAnonymousObjectSymbol>()?.let { return it }
 
         throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)
     }
 
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
+    override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
+    override fun hashCode(): Int = psiOrSymbolHashCode()
 }

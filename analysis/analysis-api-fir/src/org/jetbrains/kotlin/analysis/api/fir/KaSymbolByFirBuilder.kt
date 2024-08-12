@@ -51,6 +51,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -129,20 +131,11 @@ internal class KaSymbolByFirBuilder(
         }
 
 
-        fun buildClassLikeSymbol(firSymbol: FirClassLikeSymbol<*>): KaClassLikeSymbol {
-            return when (firSymbol) {
-                is FirClassSymbol<*> -> buildClassOrObjectSymbol(firSymbol)
-                is FirTypeAliasSymbol -> buildTypeAliasSymbol(firSymbol)
-                else -> throwUnexpectedElementError(firSymbol)
-            }
-        }
-
-        fun buildClassOrObjectSymbol(firSymbol: FirClassSymbol<*>): KaClassSymbol {
-            return when (firSymbol) {
-                is FirAnonymousObjectSymbol -> buildAnonymousObjectSymbol(firSymbol)
-                is FirRegularClassSymbol -> buildNamedClassOrObjectSymbol(firSymbol)
-                else -> throwUnexpectedElementError(firSymbol)
-            }
+        fun buildClassLikeSymbol(firSymbol: FirClassLikeSymbol<*>): KaClassLikeSymbol = when (firSymbol) {
+            is FirAnonymousObjectSymbol -> buildAnonymousObjectSymbol(firSymbol)
+            is FirRegularClassSymbol -> buildNamedClassOrObjectSymbol(firSymbol)
+            is FirTypeAliasSymbol -> buildTypeAliasSymbol(firSymbol)
+            else -> throwUnexpectedElementError(firSymbol)
         }
 
         fun buildNamedClassOrObjectSymbol(symbol: FirRegularClassSymbol): KaNamedClassSymbol {

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 internal class KaFe10SymbolProvider(
-    override val analysisSessionProvider: () -> KaFe10Session
+    override val analysisSessionProvider: () -> KaFe10Session,
 ) : KaBaseSymbolProvider<KaFe10Session>(), KaFe10SessionComponent {
     override val rootPackageSymbol: KaPackageSymbol
         get() = withValidityAssertion {
@@ -85,16 +85,19 @@ internal class KaFe10SymbolProvider(
         get() = withValidityAssertion { KaFe10PsiAnonymousObjectSymbol(objectDeclaration, analysisContext) }
 
     override val KtObjectDeclaration.symbol: KaClassSymbol
-        get() = withValidityAssertion { KaFe10PsiNamedClassSymbol(this, analysisContext) }
+        get() = withValidityAssertion {
+            if (isObjectLiteral())
+                KaFe10PsiAnonymousObjectSymbol(this, analysisContext)
+            else
+                KaFe10PsiNamedClassSymbol(this, analysisContext)
+        }
 
     override val KtClassOrObject.classSymbol: KaClassSymbol?
         get() = withValidityAssertion {
-            return if (this is KtEnumEntry) {
-                null
-            } else if (this is KtObjectDeclaration && isObjectLiteral()) {
-                KaFe10PsiAnonymousObjectSymbol(this, analysisContext)
-            } else {
-                KaFe10PsiNamedClassSymbol(this, analysisContext)
+            when (this) {
+                is KtEnumEntry -> null
+                is KtObjectDeclaration -> symbol
+                else -> KaFe10PsiNamedClassSymbol(this, analysisContext)
             }
         }
 

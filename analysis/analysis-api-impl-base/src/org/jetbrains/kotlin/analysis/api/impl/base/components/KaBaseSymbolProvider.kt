@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
@@ -42,7 +41,7 @@ abstract class KaBaseSymbolProvider<T : KaSession> : KaSessionComponent<T>(), Ka
                 is KtEnumEntry -> symbol
                 is KtFunctionLiteral -> symbol
                 is KtProperty -> symbol
-                is KtObjectDeclaration -> (parent as? KtObjectLiteralExpression)?.symbol ?: symbol
+                is KtObjectDeclaration -> symbol
                 is KtClassOrObject -> classSymbol!!
                 is KtPropertyAccessor -> symbol
                 is KtClassInitializer -> symbol
