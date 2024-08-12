@@ -82,7 +82,6 @@ internal class KaSymbolByFirBuilder(
     val functionBuilder = FunctionSymbolBuilder()
     val variableBuilder = VariableSymbolBuilder()
     val callableBuilder = CallableSymbolBuilder()
-    val anonymousInitializerBuilder = AnonymousInitializerBuilder()
     val typeBuilder = TypeBuilder()
 
     fun buildSymbol(fir: FirDeclaration): KaSymbol = buildSymbol(fir.symbol)
@@ -387,12 +386,6 @@ internal class KaSymbolByFirBuilder(
             }
 
             return KaFirReceiverParameterSymbol(firSymbol, analysisSession)
-        }
-    }
-
-    inner class AnonymousInitializerBuilder {
-        fun buildClassInitializer(firSymbol: FirAnonymousInitializerSymbol): KaClassInitializerSymbol {
-            return KaFirClassInitializerSymbol(firSymbol, analysisSession)
         }
     }
 

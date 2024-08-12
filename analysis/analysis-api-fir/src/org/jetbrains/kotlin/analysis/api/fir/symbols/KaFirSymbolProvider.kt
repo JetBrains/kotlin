@@ -144,9 +144,7 @@ internal class KaFirSymbolProvider(
 
     override val KtClassInitializer.symbol: KaClassInitializerSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.anonymousInitializerBuilder.buildClassInitializer(
-                resolveToFirSymbolOfType<FirAnonymousInitializerSymbol>(firResolveSession)
-            )
+            KaFirClassInitializerSymbol(this, analysisSession)
         }
 
     override val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol

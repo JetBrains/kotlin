@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassInitializerSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -30,7 +31,15 @@ public interface KaClassInitializerRenderer {
         ) {
             printer {
                 " ".separated(
-                    { declarationRenderer.keywordsRenderer.renderKeyword(analysisSession, KtTokens.INIT_KEYWORD, symbol, this) },
+                    {
+                        renderAnnotationsModifiersAndContextReceivers(
+                            analysisSession,
+                            symbol,
+                            declarationRenderer,
+                            printer,
+                            KtTokens.INIT_KEYWORD,
+                        )
+                    },
                     { printer.withIndentInBraces {} },
                 )
             }

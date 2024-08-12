@@ -16,6 +16,7 @@ public abstract class KaClassInitializerSymbol : KaDeclarationSymbol,
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
+    final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
 
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }

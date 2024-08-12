@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10Neve
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassInitializerSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -32,9 +31,6 @@ internal class KaFe10PsiClassInitializerSymbol(
                 KaSymbolOrigin.SOURCE
             }
         }
-
-    override val location: KaSymbolLocation
-        get() = withValidityAssertion { KaSymbolLocation.CLASS }
 
     override fun createPointer(): KaSymbolPointer<KaClassInitializerSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaClassInitializerSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
