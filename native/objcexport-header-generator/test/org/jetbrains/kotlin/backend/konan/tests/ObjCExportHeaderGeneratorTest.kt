@@ -151,7 +151,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("classWithHidesFromObjCAnnotation"))
     }
 
+    /**
+     * Disabled because of init constructors order KT-70626
+     */
     @Test
+    @TodoAnalysisApi
     fun `test - functionWithThrowsAnnotation`() {
         doTest(headersTestDataDir.resolve("functionWithThrowsAnnotation"))
     }
