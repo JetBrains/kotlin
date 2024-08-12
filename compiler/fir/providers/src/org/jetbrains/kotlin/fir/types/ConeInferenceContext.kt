@@ -531,7 +531,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return buildList {
             // excluding return type
             for (index in 0 until builtInFunctionType.argumentsCount() - 1) {
-                add(builtInFunctionType.getArgument(index).getType())
+                val type = when (val arg = builtInFunctionType.getArgument(index)) {
+                    is ConeKotlinTypeProjection -> arg.type
+                    else -> StandardClassIds.Any.constructClassLikeType(ConeTypeProjection.EMPTY_ARRAY, isNullable = true)
+                }
+                add(type)
             }
         }
     }
