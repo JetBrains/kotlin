@@ -216,7 +216,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     }
 
     /**
-     * Disabled because K1 implementation loses method generic parameters types: KT-70363
+     * Depends on unimplemented AA deprecation message: KT-67823
      */
     @Test
     @TodoAnalysisApi
