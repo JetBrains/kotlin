@@ -307,6 +307,12 @@ public class FirSteppingWithIrInlinerTestWithInlineScopesGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("inlineOnlyFunction.kt")
+  public void testInlineOnlyFunction() {
+    runTest("compiler/testData/debug/stepping/inlineOnlyFunction.kt");
+  }
+
+  @Test
   @TestMetadata("inlineSimpleCall.kt")
   public void testInlineSimpleCall() {
     runTest("compiler/testData/debug/stepping/inlineSimpleCall.kt");
