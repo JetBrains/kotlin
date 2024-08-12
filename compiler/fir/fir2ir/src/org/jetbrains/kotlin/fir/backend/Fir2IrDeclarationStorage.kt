@@ -96,14 +96,25 @@ class Fir2IrDeclarationStorage(
 
     class PropertyCacheStorage(
         val normal: ConcurrentHashMap<FirProperty, IrPropertySymbol>,
-        val synthetic: ConcurrentHashMap<FirFunction, IrPropertySymbol>
+        val synthetic: ConcurrentHashMap<SyntheticPropertyKey, IrPropertySymbol>
     ) {
         /**
          * Fir synthetic properties are session-dependent, so it can't be used as a cache key
          * That's why, we are using original java function as a key in that case.
          */
-        private val FirSyntheticProperty.cacheKey
-            get() = symbol.getterSymbol!!.delegateFunctionSymbol.fir
+        data class SyntheticPropertyKey(
+            val originalFunction: FirSimpleFunction,
+            val dispatchReceiverLookupTag: ConeClassLikeLookupTag?,
+        )
+
+        private val FirSyntheticProperty.cacheKey: SyntheticPropertyKey
+            get() {
+                val originalFunction = symbol.getterSymbol!!.delegateFunctionSymbol.fir
+                val dispatchReceiverLookupTag = runIf(symbol !is FirSimpleSyntheticPropertySymbol) {
+                    dispatchReceiverType?.classLikeLookupTagIfAny
+                }
+                return SyntheticPropertyKey(originalFunction, dispatchReceiverLookupTag)
+            }
 
         operator fun set(fir: FirProperty, value: IrPropertySymbol) {
             when (fir) {
@@ -1194,7 +1205,7 @@ class Fir2IrDeclarationStorage(
     internal fun fillUnboundSymbols() {
         fillUnboundSymbols(functionCache)
         fillUnboundSymbols(propertyCache.normal)
-        fillUnboundSymbols(propertyCache.synthetic)
+        fillUnboundSymbols(propertyCache.synthetic.mapKeys { it.key.originalFunction })
     }
 
     @LeakedDeclarationCaches
