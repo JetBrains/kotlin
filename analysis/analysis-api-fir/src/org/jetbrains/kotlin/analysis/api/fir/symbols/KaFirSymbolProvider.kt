@@ -113,9 +113,7 @@ internal class KaFirSymbolProvider(
             if (isObjectLiteral()) {
                 KaFirAnonymousObjectSymbol(this, analysisSession)
             } else {
-                firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(
-                    resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession)
-                )
+                KaFirNamedClassSymbol(this, analysisSession)
             }
         }
 
@@ -124,9 +122,7 @@ internal class KaFirSymbolProvider(
             when (this) {
                 is KtEnumEntry -> null
                 is KtObjectDeclaration -> symbol
-                else -> firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(
-                    resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession)
-                )
+                else -> KaFirNamedClassSymbol(this, analysisSession)
             }
         }
 
@@ -136,9 +132,7 @@ internal class KaFirSymbolProvider(
                 return null
             }
 
-            firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(
-                resolveToFirSymbolOfType<FirRegularClassSymbol>(firResolveSession)
-            )
+            KaFirNamedClassSymbol(this, analysisSession)
         }
 
     override val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol

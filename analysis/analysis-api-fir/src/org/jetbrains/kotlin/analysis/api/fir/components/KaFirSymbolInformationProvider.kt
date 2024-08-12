@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -101,8 +100,7 @@ internal class KaFirSymbolInformationProvider(
 
     override val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
         get() = withValidityAssertion {
-            requireIsInstance<KaFirSymbol<*>>(this)
-            if (this !is KaFirNamedClassSymbolBase) return null
+            if (this !is KaFirNamedClassSymbolBase<*>) return null
             if (firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
             return firSymbol.getAllowedAnnotationTargets(analysisSession.firSession)
         }

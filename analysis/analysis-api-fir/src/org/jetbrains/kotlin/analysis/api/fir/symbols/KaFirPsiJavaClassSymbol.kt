@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirPsiJavaClassSymbol(
     override val backingPsi: PsiClass,
     override val analysisSession: KaFirSession,
-) : KaFirNamedClassSymbolBase(), KaFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
+) : KaFirNamedClassSymbolBase<PsiClass>() {
     /**
      * [javaClass] is used to defer some properties to the compiler's view of a Java class.
      */
@@ -125,8 +125,6 @@ internal class KaFirPsiJavaClassSymbol(
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Slow Operations (requiring access to the underlying FIR class symbol)
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    override val hasLazyFirSymbol: Boolean get() = true
-
     override val lazyFirSymbol: Lazy<FirRegularClassSymbol> = lazyPub {
         val module = analysisSession.getModule(backingPsi)
         val provider = analysisSession.firResolveSession.getSessionFor(module).firClassByPsiClassProvider

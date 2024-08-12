@@ -97,6 +97,18 @@ internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
         else -> null
     }
 
+internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
+    get() = kaSymbolModalityByModifiers ?: when {
+        this is KtObjectDeclaration || this is KtEnumEntry -> KaSymbolModality.FINAL
+        this !is KtClass -> null
+        isAnnotation() || isEnum() -> KaSymbolModality.FINAL
+        isInterface() -> KaSymbolModality.ABSTRACT
+
+        // Green code cannot have those modifiers with other modalities
+        isValue() || isInline() -> KaSymbolModality.FINAL
+        else -> null
+    }
+
 internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
     get() = when {
         hasModifier(KtTokens.FINAL_KEYWORD) -> KaSymbolModality.FINAL
@@ -109,6 +121,17 @@ internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
 internal val KtNamedFunction.visibility: Visibility?
     get() = when {
         isLocal -> Visibilities.Local
+        else -> visibilityByModifiers
+    }
+
+internal val KtClassOrObject.visibility: Visibility?
+    get() = when {
+        isLocal -> Visibilities.Local
+        else -> visibilityByModifiers
+    }
+
+internal val KtDeclaration.visibilityByModifiers: Visibility?
+    get() = when {
         hasModifier(KtTokens.PRIVATE_KEYWORD) -> Visibilities.Private
         hasModifier(KtTokens.INTERNAL_KEYWORD) -> Visibilities.Internal
         hasModifier(KtTokens.PROTECTED_KEYWORD) -> Visibilities.Protected
