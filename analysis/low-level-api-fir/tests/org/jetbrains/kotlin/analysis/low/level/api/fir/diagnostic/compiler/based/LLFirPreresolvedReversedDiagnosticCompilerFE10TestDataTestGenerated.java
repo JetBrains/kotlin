@@ -32999,6 +32999,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("functionTypeFromTypeParameterType.kt")
+      public void testFunctionTypeFromTypeParameterType() {
+        runTest("compiler/testData/diagnostics/tests/regressions/functionTypeFromTypeParameterType.kt");
+      }
+
+      @Test
       @TestMetadata("intchar.kt")
       public void testIntchar() {
         runTest("compiler/testData/diagnostics/tests/regressions/intchar.kt");
