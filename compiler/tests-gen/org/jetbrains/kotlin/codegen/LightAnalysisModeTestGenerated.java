@@ -15746,6 +15746,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/enum/manyDefaultParameters.kt");
     }
 
+    @TestMetadata("memberNameInJavaEnum.kt")
+    public void testMemberNameInJavaEnum() {
+      runTest("compiler/testData/codegen/box/enum/memberNameInJavaEnum.kt");
+    }
+
     @TestMetadata("modifierFlags.kt")
     public void testModifierFlags() {
       runTest("compiler/testData/codegen/box/enum/modifierFlags.kt");

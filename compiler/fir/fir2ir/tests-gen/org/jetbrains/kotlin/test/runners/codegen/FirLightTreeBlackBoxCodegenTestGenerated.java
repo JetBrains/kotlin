@@ -19026,6 +19026,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("memberNameInJavaEnum.kt")
+    public void testMemberNameInJavaEnum() {
+      runTest("compiler/testData/codegen/box/enum/memberNameInJavaEnum.kt");
+    }
+
+    @Test
     @TestMetadata("modifierFlags.kt")
     public void testModifierFlags() {
       runTest("compiler/testData/codegen/box/enum/modifierFlags.kt");
