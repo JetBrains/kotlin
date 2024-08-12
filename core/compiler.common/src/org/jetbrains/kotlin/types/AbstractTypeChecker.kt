@@ -138,9 +138,6 @@ open class TypeCheckerState(
 
         deque.push(start)
         while (deque.isNotEmpty()) {
-            if (visitedSupertypes.size > 1000) {
-                error("Too many supertypes for type: $start. Supertypes = ${visitedSupertypes.joinToString()}")
-            }
             val current = deque.pop()
             if (!visitedSupertypes.add(current)) continue
 
