@@ -7,65 +7,64 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDestructuringDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KaFirDestructuringDeclarationSymbol(
-    override val firSymbol: FirVariableSymbol<*>,
+internal class KaFirDestructuringDeclarationSymbol private constructor(
+    override val backingPsi: KtDestructuringDeclaration?,
     override val analysisSession: KaFirSession,
-) : KaDestructuringDeclarationSymbol(), KaFirSymbol<FirVariableSymbol<*>> {
-    init {
-        require(firSymbol is FirErrorPropertySymbol || firSymbol.name == SpecialNames.DESTRUCT)
-    }
+    override val lazyFirSymbol: Lazy<FirVariableSymbol<*>>,
+) : KaDestructuringDeclarationSymbol(), KaFirKtBasedSymbol<KtDestructuringDeclaration, FirVariableSymbol<*>> {
+    constructor(declaration: KtDestructuringDeclaration, session: KaFirSession) : this(
+        backingPsi = declaration,
+        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        analysisSession = session,
+    )
 
     override val psi: KtDestructuringDeclaration
         get() = withValidityAssertion {
-            when (val psi = firSymbol.fir.psi) {
+            backingPsi ?: when (val psi = firSymbol.fir.psi) {
                 is KtDestructuringDeclaration -> psi
                 is KtParameter -> psi.destructuringDeclaration
-                    ?: errorWithAttachment("Expected to find lambda ${KtParameter::class} with ${KtDestructuringDeclaration::class}") {
+                    ?: errorWithAttachment("Expected to find lambda ${KtParameter::class.simpleName} with ${KtDestructuringDeclaration::class.simpleName}") {
                         withPsiEntry("psi", psi)
+                        withFirSymbolEntry("firSymbol", firSymbol)
                     }
-                else -> errorWithAttachment("Expected to find ${KtDestructuringDeclaration::class} or ${KtParameter::class} but ${psi?.let { it::class }} found") {
+                else -> errorWithAttachment("Expected to find ${KtDestructuringDeclaration::class.simpleName} or ${KtParameter::class.simpleName} but ${psi?.let { it::class.simpleName }} found") {
                     withPsiEntry("psi", psi)
+                    withFirSymbolEntry("firSymbol", firSymbol)
                 }
             }
         }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { KaFirAnnotationListForDeclaration.create(firSymbol, builder) }
+        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
 
     override val entries: List<KaVariableSymbol>
         get() = withValidityAssertion {
-            psi.entries.map { entry ->
-                with(analysisSession) { entry.symbol }
+            with(analysisSession) {
+                psi.entries.map { entry ->
+                    entry.symbol
+                }
             }
         }
 
-    override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol> {
-        return KaPsiBasedSymbolPointer.createForSymbolFromSource<KaDestructuringDeclarationSymbol>(this)
+    override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol> = withValidityAssertion {
+        psiBasedSymbolPointerOfTypeIfSource<KaDestructuringDeclarationSymbol>()
             ?: throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(SpecialNames.DESTRUCT.asString())
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        return other is KaFirDestructuringDeclarationSymbol && firSymbol == other.firSymbol
-    }
-
-    override fun hashCode(): Int {
-        return firSymbol.hashCode()
-    }
+    override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
+    override fun hashCode(): Int = psiOrSymbolHashCode()
 }

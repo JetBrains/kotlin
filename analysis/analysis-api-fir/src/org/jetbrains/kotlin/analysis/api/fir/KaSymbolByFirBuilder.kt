@@ -94,11 +94,6 @@ internal class KaSymbolByFirBuilder(
         else -> throwUnexpectedElementError(firSymbol)
     }
 
-
-    fun buildDestructuringDeclarationSymbol(firSymbol: FirVariableSymbol<*>): KaDestructuringDeclarationSymbol {
-        return KaFirDestructuringDeclarationSymbol(firSymbol, analysisSession)
-    }
-
     fun buildEnumEntrySymbol(firSymbol: FirEnumEntrySymbol): KaEnumEntrySymbol = KaFirEnumEntrySymbol(firSymbol, analysisSession)
 
     fun buildFileSymbol(firSymbol: FirFileSymbol): KaFileSymbol = KaFirFileSymbol(firSymbol, analysisSession)

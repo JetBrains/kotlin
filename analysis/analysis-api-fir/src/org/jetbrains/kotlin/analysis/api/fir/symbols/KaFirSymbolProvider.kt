@@ -154,9 +154,7 @@ internal class KaFirSymbolProvider(
 
     override val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.buildDestructuringDeclarationSymbol(
-                resolveToFirSymbolOfType<FirVariableSymbol<*>>(firResolveSession)
-            )
+            KaFirDestructuringDeclarationSymbol(this, analysisSession)
         }
 
     override fun findClass(classId: ClassId): KaClassSymbol? = withValidityAssertion {
