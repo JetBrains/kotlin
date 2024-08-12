@@ -46,7 +46,7 @@ kotlinx-cli = "0.3.6"
 node = "20.16.0"
 
 ## Publishing
-gradlePlugin-shadow = "8.1.1"
+gradlePlugin-shadow = "8.3.0"
 gradlePlugin-gradlePluginPublish = "1.2.1"
 gradlePlugin-gradleNode = "7.0.1"
 
@@ -73,7 +73,7 @@ gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 gradlePlugin-kotlin-klibCommonizerApi = { module = "org.jetbrains.kotlin:kotlin-klib-commonizer-api", version.ref = "gradlePlugin-kotlin" }
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin-android" }
 gradlePlugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "gradlePlugin-dokka" }
-gradlePlugin-shadow = { module = "com.github.johnrengelman:shadow", version.ref = "gradlePlugin-shadow" }
+gradlePlugin-shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "gradlePlugin-shadow" }
 gradlePlugin-gradlePublish = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
 gradlePlugin-gradle-customUserData = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradlePlugin-gradle-customUserData" }
 gradlePlugin-gradle-enterprise = { module = "com.gradle:gradle-enterprise-gradle-plugin", version.ref = "gradlePlugin-gradle-enterprise" }
@@ -144,4 +144,4 @@ kotest-assertionsJson = { module = "io.kotest:kotest-assertions-json" }
 
 kotlinx-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }
 gradleNode = { id = "com.github.node-gradle.node", version.ref = "gradlePlugin-gradleNode" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradlePlugin-shadow" }
+shadow = { id = "com.gradleup.shadow", version.ref = "gradlePlugin-shadow" }
