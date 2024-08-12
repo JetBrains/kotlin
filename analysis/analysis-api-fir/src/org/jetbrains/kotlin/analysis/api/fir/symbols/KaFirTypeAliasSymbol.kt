@@ -8,19 +8,18 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.location
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.asKaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -28,20 +27,43 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 
-internal class KaFirTypeAliasSymbol(
-    override val firSymbol: FirTypeAliasSymbol,
+internal class KaFirTypeAliasSymbol private constructor(
+    override val backingPsi: KtTypeAlias?,
     override val analysisSession: KaFirSession,
-) : KaTypeAliasSymbol(), KaFirSymbol<FirTypeAliasSymbol> {
-    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
-    override val name: Name get() = withValidityAssertion { firSymbol.name }
-    override val classId: ClassId? get() = withValidityAssertion { firSymbol.getClassId() }
+    override val lazyFirSymbol: Lazy<FirTypeAliasSymbol>,
+) : KaTypeAliasSymbol(), KaFirKtBasedSymbol<KtTypeAlias, FirTypeAliasSymbol> {
+    constructor(declaration: KtTypeAlias, session: KaFirSession) : this(
+        backingPsi = declaration,
+        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        analysisSession = session,
+    )
+
+    constructor(symbol: FirTypeAliasSymbol, session: KaFirSession) : this(
+        backingPsi = symbol.fir.realPsi as? KtTypeAlias,
+        lazyFirSymbol = lazyOf(symbol),
+        analysisSession = session,
+    )
+
+    override val psi: PsiElement?
+        get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
+
+    override val name: Name
+        get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
+
+    override val classId: ClassId?
+        get() = withValidityAssertion { backingPsi?.getClassId() ?: firSymbol.getClassId() }
 
     override val visibility: KaSymbolVisibility
         get() = withValidityAssertion {
+            backingPsi?.visibilityByModifiers?.asKaSymbolVisibility ?:
             // TODO: We should use resolvedStatus, because it can be altered by status-transforming compiler plugins. See KT-58572
             when (val possiblyRawVisibility = firSymbol.fir.visibility) {
                 Visibilities.Unknown -> KaSymbolVisibility.PUBLIC
@@ -50,25 +72,28 @@ internal class KaFirTypeAliasSymbol(
         }
 
     override val compilerVisibility: Visibility
-        get() = withValidityAssertion { firSymbol.visibility }
+        get() = withValidityAssertion { backingPsi?.visibilityByModifiers ?: firSymbol.visibility }
 
-    override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
+    override val typeParameters: List<KaTypeParameterSymbol>
+        get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
 
-    override val expandedType: KaType get() = withValidityAssertion { builder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
-    override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
+    override val expandedType: KaType
+        get() = withValidityAssertion { builder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
-            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-        }
+        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
 
-    override val location: KaSymbolLocation get() = withValidityAssertion { getSymbolKind() }
+    override val location: KaSymbolLocation
+        get() = withValidityAssertion { backingPsi?.location ?: getSymbolKind() }
 
-    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
-    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
+    override val isActual: Boolean
+        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.ACTUAL_KEYWORD) ?: firSymbol.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override fun createPointer(): KaSymbolPointer<KaTypeAliasSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaTypeAliasSymbol>(this)?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaTypeAliasSymbol>()?.let { return it }
 
         when (val symbolKind = location) {
             KaSymbolLocation.LOCAL ->
@@ -79,6 +104,6 @@ internal class KaFirTypeAliasSymbol(
         }
     }
 
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
+    override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
+    override fun hashCode(): Int = psiOrSymbolHashCode()
 }

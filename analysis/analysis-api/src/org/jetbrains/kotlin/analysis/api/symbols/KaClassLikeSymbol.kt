@@ -67,6 +67,8 @@ public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(),
     KaNamedSymbol,
     KaTypeParameterOwnerSymbol
 {
+    final override val modality: KaSymbolModality
+        get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     /**
      * Returns type from right-hand site of type alias
