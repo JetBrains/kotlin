@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
+import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvider
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirSymbolProvider(
     override val analysisSessionProvider: () -> KaFirSession,
@@ -34,9 +36,8 @@ internal class KaFirSymbolProvider(
                     psi = this,
                 )
 
-                isLoopParameter || isCatchParameter -> firSymbolBuilder.variableBuilder.buildLocalVariableSymbol(
-                    resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
-                )
+                isLoopParameter || isCatchParameter ->
+                    KaFirLocalVariableSymbol(this, analysisSession)
 
                 else -> firSymbolBuilder.variableBuilder.buildValueParameterSymbol(
                     resolveToFirSymbolOfType<FirValueParameterSymbol>(firResolveSession)
@@ -92,12 +93,10 @@ internal class KaFirSymbolProvider(
 
     override val KtProperty.symbol: KaVariableSymbol
         get() = withValidityAssertion {
-            if (!isLocal) {
-                KaFirKotlinPropertySymbol(this, analysisSession)
+            if (isLocal) {
+                KaFirLocalVariableSymbol(this, analysisSession)
             } else {
-                firSymbolBuilder.variableBuilder.buildVariableSymbol(
-                    resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
-                )
+                KaFirKotlinPropertySymbol(this, analysisSession)
             }
         }
 
@@ -147,9 +146,24 @@ internal class KaFirSymbolProvider(
 
     override val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.variableBuilder.buildVariableSymbol(
-                resolveToFirSymbolOfType<FirVariableSymbol<*>>(firResolveSession)
-            )
+            when (val parent = parent) {
+                is KtDestructuringDeclaration -> {
+                    if (parent.parent?.parent is KtScript) {
+                        firSymbolBuilder.variableBuilder.buildVariableSymbol(resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession))
+                    } else {
+                        KaFirLocalVariableSymbol(this, analysisSession)
+                    }
+                }
+
+                is PsiErrorElement -> {
+                    val destructuringDeclaration = parent.parent as KtDestructuringDeclaration
+                    KaFirErrorVariableSymbol(destructuringDeclaration, analysisSession)
+                }
+
+                else -> errorWithFirSpecificEntries("Unexpected type of parent", psi = this) {
+                    withPsiEntry("parent", parent)
+                }
+            }
         }
 
     override val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol

@@ -309,7 +309,6 @@ internal class KaSymbolByFirBuilder(
         }
 
         fun buildLocalVariableSymbol(firSymbol: FirPropertySymbol): KaLocalVariableSymbol {
-            checkRequirementForBuildingSymbol<KaFirLocalVariableSymbol>(firSymbol, firSymbol.isLocal)
             return KaFirLocalVariableSymbol(firSymbol, analysisSession)
         }
 

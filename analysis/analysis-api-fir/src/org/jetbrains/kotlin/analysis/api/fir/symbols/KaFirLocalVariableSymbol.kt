@@ -9,48 +9,58 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
+import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 
-internal abstract class KaFirLocalOrErrorVariableSymbol<E : FirVariable, S : FirVariableSymbol<E>>(
-    override val firSymbol: S,
-    override val analysisSession: KaFirSession,
-) : KaLocalVariableSymbol(), KaFirSymbol<S> {
-    override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
+internal sealed class KaFirLocalOrErrorVariableSymbol private constructor(
+    final override val backingPsi: KtDeclaration?,
+    final override val analysisSession: KaFirSession,
+    final override val lazyFirSymbol: Lazy<FirVariableSymbol<*>>,
+) : KaLocalVariableSymbol(), KaFirKtBasedSymbol<KtDeclaration, FirVariableSymbol<*>> {
+    constructor(declaration: KtDeclaration, session: KaFirSession) : this(
+        backingPsi = declaration,
+        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        analysisSession = session,
+    )
+
+    constructor(symbol: FirVariableSymbol<*>, session: KaFirSession) : this(
+        backingPsi = symbol.fir.realPsi as? KtDeclaration,
+        lazyFirSymbol = lazyOf(symbol),
+        analysisSession = session,
+    )
+
+    override val psi: PsiElement?
+        get() = withValidityAssertion { backingPsi ?: firSymbol.fir.getAllowedPsi() }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
-            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-        }
+        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
 
-    override val name: Name get() = withValidityAssertion { firSymbol.name }
-    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
-    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
-    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
+    override val returnType: KaType
+        get() = withValidityAssertion { firSymbol.returnType(builder) }
+
     override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaLocalVariableSymbol>(this)?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaLocalVariableSymbol>()?.let { return it }
 
         if (firSymbol.fir.source?.kind == KtFakeSourceElementKind.ScriptParameter) {
             return KaFirScriptParameterSymbolPointer(name, analysisSession.createOwnerPointer(this))
@@ -59,23 +69,75 @@ internal abstract class KaFirLocalOrErrorVariableSymbol<E : FirVariable, S : Fir
         throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
     }
 
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
+    override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
+    override fun hashCode(): Int = psiOrSymbolHashCode()
 }
 
-internal class KaFirLocalVariableSymbol(firSymbol: FirPropertySymbol, analysisSession: KaFirSession) :
-    KaFirLocalOrErrorVariableSymbol<FirProperty, FirPropertySymbol>(firSymbol, analysisSession) {
-    init {
-        assert(firSymbol.isLocal)
+internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
+    constructor(declaration: KtProperty, session: KaFirSession) : super(declaration, session) {
+        assert(declaration.isLocal)
     }
 
-    override val isVal: Boolean get() = withValidityAssertion { firSymbol.isVal }
+    constructor(declaration: KtParameter, session: KaFirSession) : super(declaration, session) {
+        assert(declaration.isLoopParameter || declaration.isCatchParameter)
+    }
+
+    constructor(declaration: KtDestructuringDeclarationEntry, session: KaFirSession) : super(declaration, session) {
+        val parent = declaration.parent
+
+        // to be sure that the entry is correct
+        assert(parent is KtDestructuringDeclaration)
+
+        // to be sure that the entry is not treated as non-local
+        assert(parent.parent?.parent !is KtScript)
+    }
+
+    constructor(symbol: FirPropertySymbol, session: KaFirSession) : super(symbol, session) {
+        assert(symbol.isLocal)
+    }
+
+    override val name: Name
+        get() = withValidityAssertion {
+            when (val backingPsi = backingPsi) {
+                null -> firSymbol.name
+                is KtProperty -> backingPsi.nameAsSafeName
+                is KtParameter -> backingPsi.parameterName
+                is KtDestructuringDeclaration -> SpecialNames.DESTRUCT
+                is KtDestructuringDeclarationEntry ->
+                    if (backingPsi.isSingleUnderscore) SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else backingPsi.nameAsSafeName
+
+                else -> errorWithFirSpecificEntries("Unexpected PSI ${backingPsi::class.simpleName}", fir = firSymbol.fir)
+            }
+        }
+
+    override val isVal: Boolean
+        get() = withValidityAssertion {
+            when (backingPsi) {
+                null -> firSymbol.isVal
+                is KtProperty -> !backingPsi.isVar
+                is KtParameter -> !backingPsi.isMutable
+                is KtDestructuringDeclaration -> !backingPsi.isVar
+                is KtDestructuringDeclarationEntry -> !backingPsi.isVar
+                else -> errorWithFirSpecificEntries("Unexpected PSI ${backingPsi::class.simpleName}", fir = firSymbol.fir)
+            }
+        }
 }
 
-internal class KaFirErrorVariableSymbol(
-    firSymbol: FirErrorPropertySymbol,
-    analysisSession: KaFirSession,
-) : KaFirLocalOrErrorVariableSymbol<FirErrorProperty, FirErrorPropertySymbol>(firSymbol, analysisSession),
-    KaFirSymbol<FirErrorPropertySymbol> {
-    override val isVal: Boolean get() = withValidityAssertion { firSymbol.fir.isVal }
+internal class KaFirErrorVariableSymbol : KaFirLocalOrErrorVariableSymbol {
+    constructor(symbol: FirErrorPropertySymbol, session: KaFirSession) : super(symbol, session)
+
+    /**
+     * In inapplicable places FIR creates [FirErrorPropertySymbol] with [KtDestructuringDeclaration] as a source
+     */
+    constructor(declaration: KtDestructuringDeclaration, session: KaFirSession) : super(declaration, session)
+
+    override val name: Name
+        get() = withValidityAssertion { FirErrorPropertySymbol.NAME }
+
+    /**
+     * Technically, the error PSI may have `var` modifier, but FIR doesn't propagate this information
+     * and all [org.jetbrains.kotlin.fir.declarations.FirErrorProperty] has `val` modifier.
+     */
+    override val isVal: Boolean
+        get() = withValidityAssertion { true }
 }

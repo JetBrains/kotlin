@@ -1,7 +1,7 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
+  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isExpect: false
@@ -15,7 +15,7 @@ KaLocalVariableSymbol:
   returnType: KaErrorType:
     annotations: []
     type: ERROR_TYPE
-  visibility: PUBLIC
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(topLevelDestructuringDeclarationEntry.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"

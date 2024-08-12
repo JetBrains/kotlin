@@ -104,6 +104,13 @@ internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
         else -> null
     }
 
+internal val KtParameter.parameterName: Name
+    get() = when {
+        destructuringDeclaration != null -> SpecialNames.DESTRUCT
+        isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        else -> nameAsSafeName
+    }
+
 internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
     get() = kaSymbolModalityByModifiers ?: when {
         this is KtObjectDeclaration || this is KtEnumEntry -> KaSymbolModality.FINAL

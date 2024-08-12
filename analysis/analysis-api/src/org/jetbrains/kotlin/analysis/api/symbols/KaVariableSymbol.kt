@@ -259,6 +259,12 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol(),
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
+    final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+    final override val isActual: Boolean get() = withValidityAssertion { false }
+    final override val isExpect: Boolean get() = withValidityAssertion { false }
+
+    @KaExperimentalApi
+    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 
     abstract override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol>
 }
