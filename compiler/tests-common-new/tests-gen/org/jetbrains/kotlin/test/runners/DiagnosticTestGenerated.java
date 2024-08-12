@@ -19340,6 +19340,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("semifixOuterVariable.kt")
+        public void testSemifixOuterVariable() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/semifixOuterVariable.kt");
+        }
+
+        @Test
         @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
         public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
