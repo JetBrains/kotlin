@@ -33,12 +33,11 @@ import java.io.FileInputStream
 class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     private fun doTest(fileName: String) {
         val source = "compiler/testData/serialization/builtinsSerializer/$fileName"
-        BuiltInsSerializer.analyzeAndSerialize(
+        FirBuiltInsSerializer.analyzeAndSerialize(
             tmpdir,
             srcDirs = listOf(File(source)),
             extraClassPath = listOf(ForTestCompileRuntime.runtimeJarForTests()),
-            dependOnOldBuiltIns = true,
-            onComplete = { _, _ -> }
+            onComplete = { _, _ -> },
         )
 
         val module = KotlinTestUtils.createEmptyModule("<module>", DefaultBuiltIns.Instance)
