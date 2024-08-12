@@ -4,10 +4,10 @@ CODE FRAGMENT: {
     }
 
     local final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Unit| {
-        R|/foo|(Int(1), String(foo))
+        R|<local>/foo|(Int(1), String(foo))
     }
 
-    R|/bar|()
+    R|<local>/bar|()
 }
 
 AFTER MODIFICATION:

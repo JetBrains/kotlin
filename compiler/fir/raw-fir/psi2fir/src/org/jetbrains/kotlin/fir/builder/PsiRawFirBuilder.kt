@@ -41,9 +41,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -1360,14 +1358,14 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun convertCodeFragment(file: KtCodeFragment): FirCodeFragment {
-            return buildCodeFragment {
-                source = file.toFirSourceElement()
-                moduleData = baseModuleData
-                origin = FirDeclarationOrigin.Source
-                symbol = FirCodeFragmentSymbol()
-                withContainerSymbol(symbol) {
-                    block = buildOrLazyBlock {
+        private fun convertCodeFragment(file: KtCodeFragment): FirCodeFragment = buildCodeFragment {
+            source = file.toFirSourceElement()
+            moduleData = baseModuleData
+            origin = FirDeclarationOrigin.Source
+            symbol = FirCodeFragmentSymbol()
+            withContainerSymbol(symbol) {
+                block = buildOrLazyBlock {
+                    withForcedLocalContext {
                         when (file) {
                             is KtExpressionCodeFragment -> file.getContentElement()?.toFirBlock() ?: buildEmptyExpressionBlock()
                             is KtBlockCodeFragment -> configureBlockWithoutBuilding(file.getContentElement()).build()

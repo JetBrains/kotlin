@@ -9,7 +9,7 @@ KtNameReferenceExpression(152,155): 'bar'
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
-          symbol = /bar(): kotlin.Unit
+          symbol = bar(): kotlin.Unit
           valueParameters = []
-          callableId = /bar
+          callableId = null
       typeArgumentsMapping = {}
