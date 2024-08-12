@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.copyTo
+import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
@@ -78,11 +80,11 @@ internal class KFunctionState(
             val newFunctionToInvoke = createTempFunction(
                 OperatorNameConventions.INVOKE, irFunction.returnType, TEMP_FUNCTION_FOR_INTERPRETER
             ).apply impl@{
+                copyTypeParametersFrom(irFunction)
                 parent = functionClass
                 overriddenSymbols = listOf(invokeFunction.symbol)
 
                 dispatchReceiverParameter = invokeFunction.dispatchReceiverParameter?.deepCopyWithSymbols(initialParent = this)
-                val newValueParameters = mutableListOf<IrValueParameter>()
 
                 val call = when (irFunction) {
                     is IrSimpleFunction -> irFunction.createCall()
@@ -91,21 +93,23 @@ internal class KFunctionState(
                     val dispatchParameter = irFunction.dispatchReceiverParameter
                     val extensionParameter = irFunction.extensionReceiverParameter
 
+                    fun IrValueParameter.copy(): IrValueParameter =
+                        this.copyTo(this@impl).apply { valueParameters += this }
+
                     if (dispatchParameter != null) {
-                        dispatchReceiver = dispatchParameter.createGetValue()
-                        if (!hasDispatchReceiver) newValueParameters += dispatchParameter
+                        val newParam = if (!hasDispatchReceiver) dispatchParameter.copy() else dispatchParameter
+                        dispatchReceiver = newParam.createGetValue()
                     }
                     if (extensionParameter != null) {
-                        extensionReceiver = extensionParameter.createGetValue()
-                        if (!hasExtensionReceiver) newValueParameters += extensionParameter
+                        val newParam = if (!hasExtensionReceiver) extensionParameter.copy() else extensionParameter
+                        extensionReceiver = newParam.createGetValue()
                     }
-                    irFunction.valueParameters.forEach {
-                        putArgument(it, it.createGetValue())
-                        newValueParameters += it
+                    irFunction.valueParameters.forEach { oldParam ->
+                        val newParam = oldParam.copy()
+                        putArgument(oldParam, newParam.createGetValue())
                     }
                 }
 
-                valueParameters = newValueParameters
                 body = listOf(this.createReturn(call)).wrapWithBlockBody()
             }
             functionClass.declarations += newFunctionToInvoke
