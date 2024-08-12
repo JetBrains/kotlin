@@ -23,6 +23,12 @@ class KotlinWithJavaCompilationOutput internal constructor(
     override val resourcesDir: File
         get() = javaSourceSetOutput.resourcesDir!!
 
+    @Deprecated(
+        "Changing resource output for Kotlin compilation is deprecated. " +
+                "Please either use 'resourcesDir' to get the resource location or 'KotlinSourceSet.resources' to configure additional " +
+                "resources location for compilation.",
+        replaceWith = ReplaceWith("resourcesDir"),
+    )
     override var resourcesDirProvider: Any
         get() = javaSourceSetOutput.resourcesDir!!
         set(value) {

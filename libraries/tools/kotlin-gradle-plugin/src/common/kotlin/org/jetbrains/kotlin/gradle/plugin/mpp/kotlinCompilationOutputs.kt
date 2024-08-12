@@ -14,6 +14,12 @@ import java.util.concurrent.Callable
 
 class DefaultKotlinCompilationOutput(
     private val project: Project,
+    @Deprecated(
+        "Changing resource output for Kotlin compilation is deprecated. " +
+                "Please either use 'resourcesDir' to get the resource location or 'KotlinSourceSet.resources' to configure additional " +
+                "resources location for compilation.",
+        replaceWith = ReplaceWith("resourcesDir"),
+    )
     override var resourcesDirProvider: Any
 ) : KotlinCompilationOutput, Callable<FileCollection> {
 
@@ -21,9 +27,13 @@ class DefaultKotlinCompilationOutput(
 
     override val allOutputs: ConfigurableFileCollection = project.files().apply {
         from(classesDirs)
-        from(Callable { resourcesDirProvider })
+        from(Callable {
+            @Suppress("DEPRECATION")
+            resourcesDirProvider
+        })
     }
 
+    @Suppress("DEPRECATION")
     override val resourcesDir: File
         get() = project.file(resourcesDirProvider)
 

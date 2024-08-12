@@ -159,7 +159,10 @@ abstract class KotlinJvmTarget @Inject constructor(
                 compilation.output.classesDirs.minus(javaClasses)
             )
 
-            javaSourceSet.output.setResourcesDir(Callable { compilation.output.resourcesDirProvider })
+            javaSourceSet.output.setResourcesDir(Callable {
+                @Suppress("DEPRECATION")
+                compilation.output.resourcesDirProvider
+            })
 
             setupDependenciesCrossInclusionForJava(compilation, javaSourceSet)
         }

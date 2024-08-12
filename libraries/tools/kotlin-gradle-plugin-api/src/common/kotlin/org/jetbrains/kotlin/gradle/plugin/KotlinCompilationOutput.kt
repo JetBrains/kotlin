@@ -17,6 +17,12 @@ interface KotlinCompilationOutput {
     /**
      * @suppress
      */
+    @Deprecated(
+        "Changing resource output for Kotlin compilation is deprecated. " +
+                "Please either use 'resourcesDir' to get the resource location or 'KotlinSourceSet.resources' to configure additional " +
+                "resources location for compilation.",
+        replaceWith = ReplaceWith("resourcesDir"),
+    )
     var resourcesDirProvider: Any
 
     /**
