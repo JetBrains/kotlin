@@ -190,8 +190,9 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                 val getArraySymbol = arrayClass.functions.single { it.name == OperatorNameConventions.GET }
                 val inc = context.irBuiltIns.intType.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
                 +irWhile().also { loop ->
-                    loop.condition = comparison
                     loop.body = irBlock {
+                        +irBreakIf(loop, comparison)
+
                         val tempIndex = createTmpVariable(irGet(index))
 
                         val getArray = irCall(getArraySymbol).apply {

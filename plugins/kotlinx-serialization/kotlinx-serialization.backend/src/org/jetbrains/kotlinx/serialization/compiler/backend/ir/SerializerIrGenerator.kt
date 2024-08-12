@@ -467,8 +467,8 @@ open class SerializerIrGenerator(
         }
 
         val byIndexPart: IrExpression = irWhile().also { loop ->
-            loop.condition = flagVar.get()
             loop.body = irBlock {
+                +irBreakIf(loop, flagVar.get())
                 val readElementF = inputClass.functionByName(CallingConventions.decodeElementIndex)
                 +irSet(indexVar.symbol, irInvoke(localInput.get(), readElementF, localSerialDesc.get()))
                 +irWhen {

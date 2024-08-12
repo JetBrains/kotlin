@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -1172,7 +1171,7 @@ class ExpressionCodegen(
         }
     }
 
-    override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): PromisedValue {
+    override fun visitLoop(loop: IrLoop, data: BlockInfo): PromisedValue {
         // Spill the stack in case the loop contains inline functions that break/continue
         // out of it. (The case where a loop is entered with a non-empty stack is rare, but
         // possible; basically, you need to either use `Array(n) { ... }` or put a `when`
@@ -1183,76 +1182,21 @@ class ExpressionCodegen(
         // Mark the label as having 0 stack depth, so that `break`/`continue` inside
         // expressions pop all elements off it before jumping.
         mv.fakeAlwaysFalseIfeq(endLabel)
-        loop.condition.markLineNumber(true)
-        loop.condition.accept(this, data).coerceToBoolean().jumpIfFalse(endLabel)
+
         data.withBlock(LoopInfo(loop, continueLabel, endLabel)) {
             loop.body?.accept(this, data)?.discard()
         }
         mv.goTo(continueLabel)
+
+        endUnreferencedLocals(data, loop, continueLabel)
         mv.mark(endLabel)
+
         addInlineMarker(mv, false)
+
         return unitValue
     }
 
-    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: BlockInfo): PromisedValue {
-        // See comments in `visitWhileLoop`
-        addInlineMarker(mv, true)
-        val entry = markNewLabel()
-        val endLabel = linkedLabel()
-        val continueLabel = linkedLabel()
-
-        val loopInfo = LoopInfo(loop, continueLabel, endLabel)
-
-        // If we have a 'for' loop transformed into a 'do-while' loop,
-        // then corresponding loop variable initialization should happen before we mark loop end and loop continue labels,
-        // because loop variable can be used in the loop condition,
-        // and corresponding slot might contain arbitrary garbage left over from previous computations (see KT-47492).
-        // TODO consider adding special intrinsics for loop body markers instead of generating them manually.
-        if (loop.origin == IrStatementOrigin.FOR_LOOP_INNER_WHILE) {
-            val body = loop.body
-            if (body is IrComposite && body.origin == IrStatementOrigin.FOR_LOOP_INNER_WHILE && body.statements.isNotEmpty()) {
-                val forLoopNext = body.statements[0]
-                if (forLoopNext is IrComposite && forLoopNext.origin == IrStatementOrigin.FOR_LOOP_NEXT) {
-                    // We have a 'for' loop transformed into a 'do-while' loop.
-                    // Generate it's loop variable initialization,
-                    // then mark loop end and loop continue labels,
-                    // then generate the for loop body.
-                    val forLoopBody = IrCompositeImpl(
-                        body.startOffset, body.endOffset, body.type, body.origin,
-                        body.statements.subList(1, body.statements.size)
-                    )
-                    data.withBlock(loopInfo) {
-                        forLoopNext.accept(this, data).discard()
-                        mv.fakeAlwaysFalseIfeq(continueLabel)
-                        mv.fakeAlwaysFalseIfeq(endLabel)
-                        forLoopBody.accept(this, data).discard()
-                        mv.visitLabel(continueLabel)
-                        loop.condition.markLineNumber(true)
-                        loop.condition.accept(this, data).coerceToBoolean().jumpIfTrue(entry)
-                    }
-                    mv.mark(endLabel)
-                    addInlineMarker(mv, false)
-                    return unitValue
-                }
-            }
-        }
-
-        // We have a regular 'do-while' loop. Proceed as usual.
-        mv.fakeAlwaysFalseIfeq(continueLabel)
-        mv.fakeAlwaysFalseIfeq(endLabel)
-
-        data.withBlock(loopInfo) {
-            loop.body?.accept(this, data)?.discard()
-            mv.visitLabel(continueLabel)
-            loop.condition.markLineNumber(true)
-            loop.condition.accept(this, data).coerceToBoolean().jumpIfTrue(entry)
-            endUnreferencedDoWhileLocals(data, loop, continueLabel)
-        }
-        mv.mark(endLabel)
-        addInlineMarker(mv, false)
-        return unitValue
-    }
-
+    // TODO: Fix the kdoc
     // Locals introduced in the body of a do-while loop are not necessarily declared when the condition is
     // reached. For example, there could be a continue from the body before the local is declared:
     //
@@ -1269,16 +1213,24 @@ class ExpressionCodegen(
     // that are *not* referenced in the condition, we have to be conservative and make sure that
     // they do not end up in the local variable table. Otherwise, the debugger and other build tools
     // such as D8 will see locals information that makes no sense.
-    private fun endUnreferencedDoWhileLocals(blockInfo: BlockInfo, loop: IrDoWhileLoop, continueLabel: Label) {
+    private fun endUnreferencedLocals(blockInfo: BlockInfo, loop: IrLoop, continueLabel: Label) {
         val referencedValues = hashSetOf<IrValueSymbol>()
-        loop.condition.acceptVoid(object : IrElementVisitorVoid {
+        var mayBeUnreferenced = false
+        loop.body?.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
 
             override fun visitGetValue(expression: IrGetValue) {
-                referencedValues.add(expression.symbol)
+                if (!mayBeUnreferenced) {
+                    referencedValues.add(expression.symbol)
+                }
                 super.visitGetValue(expression)
+            }
+
+            override fun visitBreak(jump: IrBreak) {
+                mayBeUnreferenced = true
+                super.visitBreak(jump)
             }
         })
         blockInfo.variables.forEach {

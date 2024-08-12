@@ -133,6 +133,9 @@ fun IrBuilderWithScope.irIfThenReturnTrue(condition: IrExpression) =
 fun IrBuilderWithScope.irIfThenReturnFalse(condition: IrExpression) =
     irIfThen(context.irBuiltIns.unitType, condition, irReturnFalse())
 
+fun IrBuilderWithScope.irBreakIf(loop: IrLoop, condition: IrExpression, origin: IrStatementOrigin? = null) =
+    irIfThen(context.irBuiltIns.unitType, condition, irBreak(loop), origin)
+
 fun IrBuilderWithScope.irGet(type: IrType, variable: IrValueSymbol) =
     IrGetValueImpl(startOffset, endOffset, type, variable)
 

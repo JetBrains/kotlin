@@ -245,40 +245,14 @@ class StateMachineBuilder(
 
         tryLoopStack.push(loop)
 
-        transformer(loop, loopHeadState, loopExitState)
+        loop.body?.acceptVoid(this)
+        doDispatch(loopHeadState)
 
         tryLoopStack.pop().also { assert(it === loop) }
 
         loopMap.remove(loop)
 
         updateState(loopExitState)
-    }
-
-    override fun visitWhileLoop(loop: IrWhileLoop) = transformLoop(loop) { l, head, exit ->
-        l.condition.acceptVoid(this)
-
-        transformLastExpression {
-            val exitCond = JsIrBuilder.buildCall(booleanNotSymbol).apply { dispatchReceiver = it }
-            val irBreak = buildDispatchBlock(exit)
-            JsIrBuilder.buildIfElse(unit, exitCond, irBreak)
-        }
-
-        l.body?.acceptVoid(this)
-
-        doDispatch(head)
-    }
-
-    override fun visitDoWhileLoop(loop: IrDoWhileLoop) = transformLoop(loop) { l, head, exit ->
-        l.body?.acceptVoid(this)
-
-        l.condition.acceptVoid(this)
-
-        transformLastExpression {
-            val irContinue = buildDispatchBlock(head)
-            JsIrBuilder.buildIfElse(unit, it, irContinue)
-        }
-
-        doDispatch(exit)
     }
 
     private fun implicitCast(value: IrExpression, toType: IrType) = JsIrBuilder.buildImplicitCast(value, toType)

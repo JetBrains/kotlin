@@ -98,7 +98,6 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
             unit,
             JsStatementOrigins.COROUTINE_ROOT_LOOP,
         ).also {
-            it.condition = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
             it.body = rootTry
             it.label = "\$sm"
         }
