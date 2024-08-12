@@ -2787,6 +2787,12 @@ internal class MethodOfAnyImplementedInInterfaceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MethodOfAnyImplementedInInterface
 
+internal class ExtensionShadowedByMemberImpl(
+    override val member: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ExtensionShadowedByMember
+
 internal class LocalObjectNotAllowedImpl(
     override val objectName: Name,
     firDiagnostic: KtPsiDiagnostic,

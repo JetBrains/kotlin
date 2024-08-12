@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Test {
     fun invoke()
     operator fun invoke(i: Int): Int

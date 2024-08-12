@@ -1171,6 +1171,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("declaration")
         }
         val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE by error<PsiElement>()
+        val EXTENSION_SHADOWED_BY_MEMBER by warning<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableSymbol<*>>("member")
+        }
     }
 
     val INVALID_LOCAL_DECLARATIONS by object : DiagnosticGroup("Invalid local declarations") {

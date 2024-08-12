@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Command() {}
 
 fun parse(cmd: String): Command? { return null  }

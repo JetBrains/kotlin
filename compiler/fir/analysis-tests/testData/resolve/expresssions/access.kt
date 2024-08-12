@@ -11,12 +11,12 @@ class Bar {
     val x = ""
 
     // NB: unused
-    fun Foo.abc() = x
+    fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>abc<!>() = x
 
     fun bar(): Bar = this
 
     // NB: unused
-    operator fun String.plus(bar: Bar): String {
+    operator fun String.<!EXTENSION_SHADOWED_BY_MEMBER!>plus<!>(bar: Bar): String {
         return ""
     }
 

@@ -51,7 +51,7 @@ import outer.*
           val foo : Int = 0
         }
 
-        fun Any.equals(other : Any?) : Boolean = true
+        fun Any.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(other : Any?) : Boolean = true
         fun Any?.equals1(other : Any?) : Boolean = true
         fun Any.equals2(other : Any?) : Boolean = true
 

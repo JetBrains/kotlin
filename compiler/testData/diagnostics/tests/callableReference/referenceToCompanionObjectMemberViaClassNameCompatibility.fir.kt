@@ -17,7 +17,7 @@ class B {
     }
 }
 
-fun B.foo(): Double = 0.0
+fun B.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(): Double = 0.0
 
 fun call(a: Any) {}
 

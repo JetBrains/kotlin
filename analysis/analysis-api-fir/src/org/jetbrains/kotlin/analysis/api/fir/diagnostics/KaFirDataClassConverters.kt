@@ -3292,6 +3292,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXTENSION_SHADOWED_BY_MEMBER) { firDiagnostic ->
+        ExtensionShadowedByMemberImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.LOCAL_OBJECT_NOT_ALLOWED) { firDiagnostic ->
         LocalObjectNotAllowedImpl(
             firDiagnostic.a,

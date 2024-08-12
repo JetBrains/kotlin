@@ -28,6 +28,7 @@ public typealias KtAnnotated = KaAnnotated
  *
  * @see [KaAnnotationList.annotations]
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @Deprecated("Use the 'annotations' the member property instead.")
 public val KaAnnotated.annotations: List<KaAnnotation>
     get() = annotations

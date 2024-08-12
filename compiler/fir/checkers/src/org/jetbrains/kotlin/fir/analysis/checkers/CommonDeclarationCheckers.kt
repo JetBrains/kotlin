@@ -46,6 +46,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirKClassWithIncorrectTypeArgumentChecker,
             FirImplicitNothingReturnTypeChecker,
             FirDynamicReceiverChecker,
+            FirExtensionShadowedByMemberChecker,
         )
 
     override val functionCheckers: Set<FirFunctionChecker>

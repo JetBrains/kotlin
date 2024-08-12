@@ -593,6 +593,7 @@ object FirErrors {
     val PACKAGE_CONFLICTS_WITH_CLASSIFIER: KtDiagnosticFactory1<ClassId> = KtDiagnosticFactory1("PACKAGE_CONFLICTS_WITH_CLASSIFIER", ERROR, SourceElementPositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION, KtPackageDirective::class)
     val EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE", ERROR, SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME, KtNamedDeclaration::class)
     val METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val EXTENSION_SHADOWED_BY_MEMBER: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("EXTENSION_SHADOWED_BY_MEMBER", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
 
     // Invalid local declarations
     val LOCAL_OBJECT_NOT_ALLOWED: KtDiagnosticFactory1<Name> = KtDiagnosticFactory1("LOCAL_OBJECT_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class)

@@ -16,7 +16,7 @@ fun String.repeat(n: Int) = 1
 fun String.describeConstable() = 1
 fun String.resolveConstantDesc(lookup: MethodHandles.Lookup) = 1
 
-fun <E : Enum<E>> Enum<E>.describeConstable() = 1
+fun <E : Enum<E>> Enum<E>.<!EXTENSION_SHADOWED_BY_MEMBER!>describeConstable<!>() = 1
 
 enum class MyEnum { E }
 

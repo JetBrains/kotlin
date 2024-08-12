@@ -23,7 +23,7 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
         return !(isEquallyOrMoreSpecific(sigA, sigB) && isEquallyOrMoreSpecific(sigB, sigA))
     }
 
-    private fun isEquallyOrMoreSpecific(
+    override fun isEquallyOrMoreSpecific(
         sigA: FlatSignature<FirCallableSymbol<*>>,
         sigB: FlatSignature<FirCallableSymbol<*>>,
     ): Boolean = createEmptyConstraintSystem().isSignatureEquallyOrMoreSpecific(
@@ -33,7 +33,7 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
         session.typeSpecificityComparatorProvider?.typeSpecificityComparator ?: TypeSpecificityComparator.NONE,
     )
 
-    private fun createSignature(declaration: FirCallableSymbol<*>): FlatSignature<FirCallableSymbol<*>> {
+    override fun createSignature(declaration: FirCallableSymbol<*>): FlatSignature<FirCallableSymbol<*>> {
         val valueParameters = (declaration as? FirFunctionSymbol<*>)?.valueParameterSymbols.orEmpty()
 
         return FlatSignature(
@@ -48,6 +48,25 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
             contextReceiverCount = declaration.resolvedContextReceivers.size,
             hasVarargs = valueParameters.any { it.isVararg },
             numDefaults = 0,
+            isExpect = declaration.isExpect,
+            isSyntheticMember = declaration.origin is FirDeclarationOrigin.Synthetic
+        )
+    }
+
+    /**
+     * See [org.jetbrains.kotlin.resolve.calls.results.createForPossiblyShadowedExtension]
+     */
+    override fun createSignatureForPossiblyShadowedExtension(declaration: FirCallableSymbol<*>): FlatSignature<FirCallableSymbol<*>> {
+        val valueParameters = (declaration as? FirFunctionSymbol<*>)?.valueParameterSymbols.orEmpty()
+
+        return FlatSignature(
+            origin = declaration,
+            typeParameters = declaration.typeParameterSymbols.map { it.toLookupTag() },
+            valueParameterTypes = valueParameters.map { it.resolvedReturnType },
+            hasExtensionReceiver = false,
+            contextReceiverCount = 0,
+            hasVarargs = valueParameters.any { it.isVararg },
+            numDefaults = valueParameters.count { it.hasDefaultValue },
             isExpect = declaration.isExpect,
             isSyntheticMember = declaration.origin is FirDeclarationOrigin.Synthetic
         )
