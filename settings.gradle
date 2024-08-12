@@ -205,7 +205,6 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":plugins:fir-plugin-prototype",
         ":plugins:fir-plugin-prototype:plugin-annotations",
         ":plugins:fir-plugin-prototype:fir-plugin-ic-test",
-        ":kotlin-test-js-runner",
         ":kotlin-metadata",
         ":kotlin-metadata-jvm",
         ":kotlinx-metadata-klib",
@@ -707,7 +706,6 @@ include ":compiler:android-tests"
 rootProject.name = "kotlin"
 
 project(':kotlin-script-runtime').projectDir = "$rootDir/libraries/tools/script-runtime" as File
-project(':kotlin-test-js-runner').projectDir = "$rootDir/libraries/tools/kotlin-test-js-runner" as File
 project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
 project(':kotlin-reflect-api').projectDir = "$rootDir/libraries/reflect/api" as File
 project(':kotlin-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" as File

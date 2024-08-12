@@ -43,6 +43,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
         get() = setOf(
             versions.mocha,
             versions.sourceMapSupport,
+            versions.kotlinWebHelpers,
         )
 
     override fun getPath() = "$basePath:kotlinMocha"
@@ -85,8 +86,8 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
             add(mocha)
             add(file)
             addAll(cliArgs.toList())
-            addAll(cliArg("--reporter", "kotlin-test-js-runner/mocha-kotlin-reporter.js"))
-            addAll(cliArg("--require", npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-runner.js")))
+            addAll(cliArg("--reporter", "kotlin-web-helpers/dist/mocha-kotlin-reporter.js"))
+            addAll(cliArg("--require", npmProject.require("kotlin-web-helpers/dist/kotlin-test-nodejs-runner.js")))
             if (debug) {
                 add(NO_TIMEOUT_ARG)
             } else {
@@ -104,7 +105,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsIrCompilation, pr
                 add(mocha)
                 add(file)
                 addAll(cliArgs.toList())
-                addAll(cliArg("--require", npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-empty-runner.js")))
+                addAll(cliArg("--require", npmProject.require("kotlin-web-helpers/dist/kotlin-test-nodejs-empty-runner.js")))
             }
         }
 

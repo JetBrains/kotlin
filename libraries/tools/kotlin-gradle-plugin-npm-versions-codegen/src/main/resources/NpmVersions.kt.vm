@@ -15,6 +15,4 @@ class $class : Serializable {
 #foreach( $dep in $dependencies )
     val $dep.camelize() = NpmPackageVersion("$dep.name", "$dep.version")
 #end
-
-    val kotlinJsTestRunner = KotlinGradleNpmPackage("test-js-runner")
 }
