@@ -6,15 +6,19 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class RelocatableCachesTest : TestWithWorkingDir() {
+class RelocatableCachesTest {
+
+    @TempDir
+    lateinit var workingDir: File
+
     @Test
     fun testLookupStorageAddAllReversedFiles() {
         val originalRoot = workingDir.resolve("original")
