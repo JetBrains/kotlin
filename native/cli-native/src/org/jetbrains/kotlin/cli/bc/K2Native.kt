@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FIRST
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.ALL
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
@@ -122,7 +122,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
             DuplicatedUniqueNameStrategies.FlagValues.byFlagValue(
                 arguments.duplicatedUniqueNameStrategy,
-                default = if (arguments.metadataKlib) FIRST else DENY
+                default = if (arguments.metadataKlib) ALL else DENY
             )
         )
 

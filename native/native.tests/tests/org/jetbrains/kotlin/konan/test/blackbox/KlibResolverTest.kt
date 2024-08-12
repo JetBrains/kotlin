@@ -211,11 +211,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun testWarningAboutDuplicatedUniqueNamesWithoutCLIParamInMetadataCompilation() {
-        testDuplicatedKlibDependency(cliFlagValue = null, expectedMessagePrefix = "warning", freeCompilerArgs = listOf("-Xmetadata-klib"))
-    }
-
-    @Test
     fun testErrorAboutDuplicatedUniqueNamesInMetadataCompilation() {
         testDuplicatedKlibDependency(cliFlagValue = DENY, expectedMessagePrefix = "error", freeCompilerArgs = listOf("-Xmetadata-klib"))
     }
@@ -285,6 +280,11 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     fun testAllKlibsUsedDespiteWarningAboutDuplicatedUniqueNamesInMetadataCompilation() {
         testAllKlibsUsed(listOf("-Xklib-duplicated-unique-name-strategy=$ALL", "-Xmetadata-klib"))
+    }
+
+    @Test
+    fun testAllKlibsUsedDespiteWarningAboutDuplicatedUniqueNamesInMetadataCompilationWithoutCLIParam() {
+        testAllKlibsUsed(listOf("-Xmetadata-klib"))
     }
 
     private fun testAllKlibsUsed(extraCmdLineParams: List<String>) {
