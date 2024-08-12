@@ -2405,6 +2405,12 @@ public class FirPsiNativeIrTextTestGenerated extends AbstractFirPsiNativeIrTextT
     }
 
     @Test
+    @TestMetadata("capturedTypeInFakeOverride.kt")
+    public void testCapturedTypeInFakeOverride() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/capturedTypeInFakeOverride.kt");
+    }
+
+    @Test
     @TestMetadata("setterVisibliity.kt")
     public void testSetterVisibliity() {
       runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliity.kt");

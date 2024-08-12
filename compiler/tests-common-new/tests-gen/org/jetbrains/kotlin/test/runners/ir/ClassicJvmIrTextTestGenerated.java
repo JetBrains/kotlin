@@ -2765,6 +2765,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Test
+    @TestMetadata("capturedTypeInFakeOverride.kt")
+    public void testCapturedTypeInFakeOverride() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/capturedTypeInFakeOverride.kt");
+    }
+
+    @Test
     @TestMetadata("fakeOverrideOfRaw.kt")
     public void testFakeOverrideOfRaw() {
       runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRaw.kt");
