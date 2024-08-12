@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.ALL
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.FIRST
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.ALL
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.DENY
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.FIRST
 
 abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -79,10 +79,4 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }
-}
-
-object DuplicatedUniqueNameStrategies {
-    const val DENY = "deny"
-    const val ALL = "allow-all-with-warning"
-    const val FIRST = "allow-first-with-warning"
 }

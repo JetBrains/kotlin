@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.ALL
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.FIRST
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.ALL
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.DENY
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.FIRST
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
@@ -267,11 +267,11 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
             fail { "Normally unreachable code" }
         } catch (cte: CompilationToolException) {
-            val compileroOutputLines = cte.reason.lines()
-            assertTrue(compileroOutputLines.any {
+            val compilerOutputLines = cte.reason.lines()
+            assertTrue(compilerOutputLines.any {
                 it.startsWith("$expectedMessagePrefix: KLIB resolver: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
             })
-            assertTrue(cliFlagValue != FIRST || compileroOutputLines.any {
+            assertTrue(cliFlagValue != FIRST || compilerOutputLines.any {
                 it.contains("error: unresolved reference")
             })
         }

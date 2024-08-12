@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -24,7 +25,7 @@ object CommonKLibResolver {
         zipAccessor: ZipFileSystemAccessor? = null,
         lenient: Boolean = false,
         knownIrProviders: List<String> = listOf(),
-        duplicatedUniqueNameStrategy: String = DENY,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategies = DENY,
     ): KotlinLibraryResolveResult =
         resolveWithoutDependencies(
             libraries,
@@ -41,7 +42,7 @@ object CommonKLibResolver {
         zipAccessor: ZipFileSystemAccessor?,
         lenient: Boolean = false,
         knownIrProviders: List<String> = listOf(),
-        duplicatedUniqueNameStrategy: String,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategies,
     ): KLibResolution {
         val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, lenient) }
         val libraryAbsolutePaths = libraries.map { File(it).absolutePath }

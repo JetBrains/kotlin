@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.ALL
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.FIRST
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.ALL
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.DENY
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FlagValues.FIRST
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.JUnit4Assertions

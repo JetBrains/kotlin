@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.ALL
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.FIRST
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.ALL
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FIRST
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
@@ -39,7 +40,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         noStdLib: Boolean,
         noDefaultLibs: Boolean,
         noEndorsedLibs: Boolean,
-        duplicatedUniqueNameStrategy: String,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategies,
     ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
         .leaveDistinct()
         .omitDuplicateNames(duplicatedUniqueNameStrategy)
@@ -87,7 +88,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
      *  - Overall, we should not do any resolve inside the compiler (such as skipping KLIBs that happen to have repeated `unique_name`).
      *    This is an opaque process which better should be performed by the build system (e.g. Gradle). To be fixed in KT-64169
      */
-    private fun List<KotlinLibrary>.omitDuplicateNames(duplicatedUniqueNameStrategy: String) : List<KotlinLibrary> {
+    private fun List<KotlinLibrary>.omitDuplicateNames(duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategies) : List<KotlinLibrary> {
         val deduplicatedLibs = groupBy { it.uniqueName }.let { groupedByUniqName ->
             val librariesWithDuplicatedUniqueNames = groupedByUniqName.filterValues { it.size > 1 }
             librariesWithDuplicatedUniqueNames.entries.sortedBy { it.key }.forEach { (uniqueName, libraries) ->

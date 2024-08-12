@@ -34,6 +34,21 @@ object KlibConfigurationKeys {
         )
 
     @JvmField
-    val DUPLICATED_UNIQUE_NAME_STRATEGY: CompilerConfigurationKey<String> =
+    val DUPLICATED_UNIQUE_NAME_STRATEGY: CompilerConfigurationKey<DuplicatedUniqueNameStrategies> =
         CompilerConfigurationKey.create("Duplicated KLIB dependencies handling strategy")
+}
+
+enum class DuplicatedUniqueNameStrategies(val flagValue: String) {
+    DENY(FlagValues.DENY),
+    ALL(FlagValues.ALL),
+    FIRST(FlagValues.FIRST)
+    ;
+
+    object FlagValues {
+        const val DENY = "deny"
+        const val ALL = "allow-all-with-warning"
+        const val FIRST = "allow-first-with-warning"
+        fun byFlagValue(flagValue: String?, default: DuplicatedUniqueNameStrategies): DuplicatedUniqueNameStrategies =
+            entries.singleOrNull { it.flagValue == flagValue } ?: default
+    }
 }

@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.library.metadata.resolver
 
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.UnresolvedLibrary
@@ -19,7 +20,7 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
         noStdLib: Boolean = false,
         noDefaultLibs: Boolean = false,
         noEndorsedLibs: Boolean = false,
-        duplicatedUniqueNameStrategy: String = DENY,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategies = DENY,
     ): KotlinLibraryResolveResult =
         resolveWithoutDependencies(
             unresolvedLibraries,
@@ -34,7 +35,7 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
         noStdLib: Boolean = false,
         noDefaultLibs: Boolean = false,
         noEndorsedLibs: Boolean = false,
-        duplicatedUniqueNameStrategy: String,
+        duplicatedUniqueNameStrategy: DuplicatedUniqueNameStrategies,
     ): List<KotlinLibrary>
 
     fun List<KotlinLibrary>.resolveDependencies(): KotlinLibraryResolveResult

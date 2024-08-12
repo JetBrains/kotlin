@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.DENY
-import org.jetbrains.kotlin.cli.common.arguments.DuplicatedUniqueNameStrategies.FIRST
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
@@ -22,6 +20,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.FIRST
+import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategies.DENY
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
@@ -118,8 +118,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             KlibConfigurationKeys.SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY,
             arguments.narrowedSyntheticAccessorsVisibility
         )
-        val duplicatedUniqueNameStrategy = arguments.duplicatedUniqueNameStrategy ?: if (arguments.metadataKlib) FIRST else DENY
-        configuration.put(KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY, duplicatedUniqueNameStrategy)
+        configuration.put(
+            KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
+            DuplicatedUniqueNameStrategies.FlagValues.byFlagValue(
+                arguments.duplicatedUniqueNameStrategy,
+                default = if (arguments.metadataKlib) FIRST else DENY
+            )
+        )
 
         return environment
     }
