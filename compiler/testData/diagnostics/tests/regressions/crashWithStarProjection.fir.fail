@@ -1,0 +1,2 @@
+java.lang.IllegalArgumentException: No type for StarProjection
+	at org.jetbrains.kotlin.fir.types.ConeTypeContext.getType(ConeTypeContext.kt:230)

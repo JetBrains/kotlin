@@ -32927,6 +32927,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("crashWithStarProjection.kt")
+      public void testCrashWithStarProjection() {
+        runTest("compiler/testData/diagnostics/tests/regressions/crashWithStarProjection.kt");
+      }
+
+      @Test
       @TestMetadata("delegationWithReceiver.kt")
       public void testDelegationWithReceiver() {
         runTest("compiler/testData/diagnostics/tests/regressions/delegationWithReceiver.kt");
