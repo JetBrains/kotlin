@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
@@ -46,8 +45,11 @@ internal class KaFirSyntheticJavaPropertySymbol(
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
 
+    override val isExtension: Boolean
+        get() = withValidityAssertion { false }
 
-    override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
+    override val origin: KaSymbolOrigin
+        get() = super<KaSyntheticJavaPropertySymbol>.origin
 
     override val initializer: KaInitializerValue? get() = withValidityAssertion { firSymbol.getKtConstantInitializer(builder) }
 
@@ -80,19 +82,13 @@ internal class KaFirSyntheticJavaPropertySymbol(
 
     override val setter: KaPropertySetterSymbol?
         get() = withValidityAssertion {
-            firSymbol.setterSymbol?.let { builder.functionBuilder.buildPropertyAccessorSymbol(it) } as? KaPropertySetterSymbol
+            firSymbol.setterSymbol?.let { builder.functionBuilder.buildSetterSymbol(it) }
         }
 
-    override val backingFieldSymbol: KaBackingFieldSymbol?
-        get() = null
-
-    override val isFromPrimaryConstructor: Boolean get() = withValidityAssertion { false }
     override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
 
     override val hasSetter: Boolean get() = withValidityAssertion { firSymbol.setterSymbol != null }
-
-    override val origin: KaSymbolOrigin get() = withValidityAssertion { KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
 
     override fun createPointer(): KaSymbolPointer<KaSyntheticJavaPropertySymbol> = withValidityAssertion {
         KaFirJavaSyntheticPropertySymbolPointer(

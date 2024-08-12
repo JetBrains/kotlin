@@ -235,7 +235,9 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
 
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
-
+    final override val backingFieldSymbol: KaBackingFieldSymbol? get() = withValidityAssertion { null }
+    final override val isFromPrimaryConstructor: Boolean get() = withValidityAssertion { false }
+    override val origin: KaSymbolOrigin get() = withValidityAssertion { KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
 
     abstract override val getter: KaPropertyGetterSymbol
 

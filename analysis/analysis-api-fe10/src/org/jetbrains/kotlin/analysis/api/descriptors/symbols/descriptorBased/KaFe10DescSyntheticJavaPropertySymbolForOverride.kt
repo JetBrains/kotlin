@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
 import org.jetbrains.kotlin.name.CallableId
@@ -31,9 +30,6 @@ internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
 ) : KaSyntheticJavaPropertySymbol(), KaFe10DescSymbol<JavaForKotlinOverridePropertyDescriptor> {
     override val name: Name
         get() = withValidityAssertion { descriptor.name }
-
-    override val isFromPrimaryConstructor: Boolean
-        get() = withValidityAssertion { descriptor.containingDeclaration is ConstructorDescriptor }
 
     override val isOverride: Boolean
         get() = withValidityAssertion { descriptor.isExplicitOverride }
@@ -58,6 +54,9 @@ internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
 
     override val isExtension: Boolean
         get() = withValidityAssertion { descriptor.isExtension }
+
+    override val origin: KaSymbolOrigin
+        get() = super<KaSyntheticJavaPropertySymbol>.origin
 
     override val getter: KaPropertyGetterSymbol
         get() = withValidityAssertion {
@@ -86,9 +85,6 @@ internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
             val setter = descriptor.setter ?: return KaFe10DescDefaultPropertySetterSymbol(descriptor, analysisContext)
             KaFe10DescPropertySetterSymbol(setter, analysisContext)
         }
-
-    override val backingFieldSymbol: KaBackingFieldSymbol?
-        get() = withValidityAssertion { null }
 
     override val initializer: KaInitializerValue?
         get() = withValidityAssertion { createKtInitializerValue((psi as? KtProperty)?.initializer, descriptor, analysisContext) }
