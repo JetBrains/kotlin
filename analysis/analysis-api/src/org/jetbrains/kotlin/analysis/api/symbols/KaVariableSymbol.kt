@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
@@ -100,6 +102,12 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol(), @Suppress("DEPRECA
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
     final override val isVal: Boolean get() = withValidityAssertion { true }
+    final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+
+    @KaExperimentalApi
+    final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Public }
+
+    final override val isActual: Boolean get() = withValidityAssertion { false }
 
     /**
      * Returns the enum entry's initializer, or `null` if the enum entry doesn't have a body.

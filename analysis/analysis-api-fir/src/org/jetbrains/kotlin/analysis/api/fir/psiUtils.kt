@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -75,17 +75,21 @@ internal fun FirDeclaration.findReferencePsi(): PsiElement? {
  * Not null [CallableId] for functions which are not local and are not a member of a local class.
  */
 internal val KtNamedFunction.callableId: CallableId?
-    get() {
-        if (isLocal) return null
-        val containingClassOrObject = containingClassOrObject
-        if (containingClassOrObject != null) {
-            return containingClassOrObject.getClassId()?.let { classId ->
-                CallableId(classId = classId, callableName = nameAsSafeName)
-            }
-        }
+    get() = if (isLocal) null else callableIdForName(nameAsSafeName)
 
-        return CallableId(packageName = containingKtFile.packageFqName, callableName = nameAsSafeName)
+internal val KtEnumEntry.callableId: CallableId?
+    get() = callableIdForName(nameAsSafeName)
+
+private fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
+    val containingClassOrObject = containingClassOrObject
+    if (containingClassOrObject != null) {
+        return containingClassOrObject.getClassId()?.let { classId ->
+            CallableId(classId = classId, callableName = callableName)
+        }
     }
+
+    return CallableId(packageName = containingKtFile.packageFqName, callableName = callableName)
+}
 
 internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
     get() = kaSymbolModalityByModifiers ?: when {

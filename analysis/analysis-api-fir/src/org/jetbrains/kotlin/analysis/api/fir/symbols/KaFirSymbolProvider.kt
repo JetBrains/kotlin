@@ -84,9 +84,7 @@ internal class KaFirSymbolProvider(
 
     override val KtEnumEntry.symbol: KaEnumEntrySymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.buildEnumEntrySymbol(
-                resolveToFirSymbolOfType<FirEnumEntrySymbol>(firResolveSession)
-            )
+            KaFirEnumEntrySymbol(this, analysisSession)
         }
 
     override val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
