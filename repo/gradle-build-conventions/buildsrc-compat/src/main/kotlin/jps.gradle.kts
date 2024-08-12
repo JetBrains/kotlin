@@ -89,7 +89,7 @@ fun updateCompilerXml() {
       <component name="CompilerConfiguration">
         <option name="BUILD_PROCESS_HEAP_SIZE" value="2000" />
         <excludeFromCompile>
-          ${excludeEntries}
+          $excludeEntries
         </excludeFromCompile>
       </component>
     </project>
@@ -139,12 +139,12 @@ fun setupGenerateAllTestsRunConfiguration() {
         |    </method>
         |  </configuration>
         |</component>
-    """.trimMargin())
+    """.trimMargin()
+    )
 }
 
 // Needed because of idea.ext plugin doesn't allow to set TEST_SEARCH_SCOPE = moduleWithDependencies
 fun setupFirRunConfiguration() {
-
     val junit = JUnit("_stub").apply { configureForKotlin("4096m") }
     junit.moduleName = "kotlin.compiler.fir.fir2ir.test"
     junit.pattern = """^.*\.FirPsi\w+Test\w*Generated$"""
@@ -211,7 +211,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     ?.mapNotNull { (it as? ProjectDependency)?.dependencyProject }
 
                 dependencies {
-                    dependencyProjects?.forEach {dependencyProject ->
+                    dependencyProjects?.forEach { dependencyProject ->
                         add(jpsBuildTestDependencies.name, project(dependencyProject.path))
                     }
                 }
@@ -220,7 +220,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     rootProject.afterEvaluate {
-
         writeIdeaBuildNumberForTests()
 
         setupFirRunConfiguration()
@@ -256,13 +255,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     runConfigurations {
 
                         defaults<JUnit> {
-                            configureForKotlin()
-                        }
-
-                        // todo: replace `pattern` with `package`, when `com.intellij.execution.junit.JUnitRunConfigurationImporter#process` will be fixed
-                        junit("[JPS] All IDEA Plugin Tests") {
-                            moduleName = "kotlin.idea.test"
-                            pattern = "org.jetbrains.kotlin.*"
                             configureForKotlin()
                         }
 
