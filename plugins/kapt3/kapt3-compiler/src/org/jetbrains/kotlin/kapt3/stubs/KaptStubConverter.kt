@@ -27,6 +27,7 @@ import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
@@ -87,9 +88,9 @@ import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.replaceAnonymousTypeWithSuperType
@@ -1139,7 +1140,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         } else if (isConstructor) {
             // We already checked it in convertClass()
             val declaration = kaptContext.origins[containingClass]?.descriptor as ClassDescriptor
-            val superClass = declaration.getSuperClassOrAny()
+            val superClass = declaration.getNonErrorSuperClassNotAny()
             val superClassConstructor = superClass.constructors.firstOrNull {
                 it.visibility.isVisible(null, it, declaration, useSpecialRulesForPrivateSealedConstructors = true)
             }
@@ -1169,6 +1170,20 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             genericSignature.parameterTypes, genericSignature.exceptionTypes,
             body, defaultValue
         ).keepSignature(lineMappings, method).keepKdocCommentsIfNecessary(method)
+    }
+
+    private fun ClassDescriptor.getNonErrorSuperClassNotAny(): ClassDescriptor {
+        // Based on `ClassDescriptor.getSuperClassNotAny`, but filters out error types because in K2 kapt, FIR classes (and thus IR, and
+        // IR-based descriptors) still have error supertypes, while in K1 kapt they are filtered out on the frontend level.
+        for (supertype in defaultType.constructor.supertypes) {
+            if (!supertype.isError && !KotlinBuiltIns.isAnyOrNullableAny(supertype)) {
+                val superClassifier = supertype.constructor.declarationDescriptor
+                if (DescriptorUtils.isClassOrEnumClass(superClassifier)) {
+                    return superClassifier as ClassDescriptor
+                }
+            }
+        }
+        return builtIns.any
     }
 
     private fun isIgnored(annotations: List<AnnotationNode>?): Boolean {

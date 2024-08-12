@@ -20,7 +20,7 @@ package test;
 
 @Anno()
 /**
- * internal final class test/ClassWithParent : error/NonExistentClass, error/NonExistentClass, error/NonExistentClass, kotlin/CharSequence {
+ * internal final class test/ClassWithParent : kotlin/CharSequence {
  *
  *   // signature: <init>()V
  *   public constructor()
@@ -33,6 +33,7 @@ package test;
 public final class ClassWithParent implements java.lang.CharSequence {
 
     public ClassWithParent() {
+        super();
     }
 
     @java.lang.Override()

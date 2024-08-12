@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -304,6 +306,19 @@ open class FirJvmSerializerExtension(
         }
         return grandParent != null &&
                 (grandParent.classKind == ClassKind.INTERFACE || grandParent.classKind == ClassKind.ANNOTATION_CLASS)
+    }
+
+    override fun getClassSupertypes(klass: FirClass): List<FirTypeRef> {
+        if (classBuilderMode == ClassBuilderMode.KAPT3) {
+            // In K1, error supertypes are filtered on the frontend level in `DescriptorResolver.addValidSupertype`. Doing the same in FIR
+            // would be incorrect because there would be no errors reported on the corresponding FIR types. And not filtering them at all
+            // would lead to differences in metadata in generated stubs. So we fix this difference during metadata serialization.
+            return super.getClassSupertypes(klass)
+                .filterNot { it.coneType is ConeErrorType }
+                .ifEmpty { listOf(session.builtinTypes.anyType) }
+        }
+
+        return super.getClassSupertypes(klass)
     }
 
     override fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {

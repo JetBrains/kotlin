@@ -275,7 +275,7 @@ public final class ErrorInDeclarations {
 import kotlin.reflect.KClass;
 
 /**
- * public final class ErrorInSupertype : error/NonExistentClass {
+ * public final class ErrorInSupertype : kotlin/Any {
  *
  *   // signature: <init>()V
  *   public constructor()
@@ -287,6 +287,7 @@ import kotlin.reflect.KClass;
 public final class ErrorInSupertype implements ABC {
 
     public ErrorInSupertype() {
+        super();
     }
 }
 
@@ -296,7 +297,7 @@ public final class ErrorInSupertype implements ABC {
 import kotlin.reflect.KClass;
 
 /**
- * public final class ErrorInSupertype2 : error/NonExistentClass {
+ * public final class ErrorInSupertype2 : kotlin/Any {
  *
  *   // signature: <init>()V
  *   public constructor()
@@ -308,5 +309,6 @@ import kotlin.reflect.KClass;
 public final class ErrorInSupertype2 extends ABC<java.lang.String> {
 
     public ErrorInSupertype2() {
+        super();
     }
 }
