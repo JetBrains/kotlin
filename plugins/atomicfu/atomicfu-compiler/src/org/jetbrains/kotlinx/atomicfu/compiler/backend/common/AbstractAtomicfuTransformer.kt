@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.typeArguments
@@ -39,11 +38,11 @@ private const val INVOKE = "invoke"
 private const val APPEND = "append"
 private const val GET = "get"
 private const val VOLATILE = "\$volatile"
-private const val VOLATILE_WRAPPER_SUFFIX = "\$VolatileWrapper\$$ATOMICFU"
 private const val LOOP = "loop"
 private const val ACTION = "action\$$ATOMICFU"
 private const val INDEX = "index\$$ATOMICFU"
 private const val UPDATE = "update"
+private const val VOLATILE_WRAPPER_SUFFIX = "\$VolatileWrapper\$$ATOMICFU"
 
 abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
 
@@ -102,6 +101,7 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
         finalTransformationCheck(moduleFragment)
         for (irFile in moduleFragment.files) {
             irFile.patchDeclarationParents()
+            System.err.println(irFile.dump())
         }
     }
 
@@ -165,14 +165,14 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                     } else {
                         (parentContainer as IrClass).addTransformedInClassAtomic(atomicProperty, index)
                     }
-                    parentContainer.declarations.add(buildExternalAtomicHandlerAccessor(atomicProperty))
+                    //parentContainer.declarations.add(buildExternalAtomicHandlerAccessor(atomicProperty))
                     declarationsToBeRemoved.add(atomicProperty)
                 }
                 atomicProperty.isAtomicArray() -> {
                     atomicProperty.checkIsFinal(isArray = true)
                     atomicProperty.checkVisibility(isArray = true)
                     parentContainer.addTransformedAtomicArray(atomicProperty, index)
-                    parentContainer.declarations.add(buildExternalAtomicHandlerAccessor(atomicProperty))
+                    //parentContainer.declarations.add(buildExternalAtomicHandlerAccessor(atomicProperty))
                     declarationsToBeRemoved.add(atomicProperty)
                 }
                 atomicProperty.isDelegatedToAtomic() -> parentContainer.transformDelegatedAtomic(atomicProperty)
@@ -481,16 +481,6 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                                 "public var a: T by _a \n" +
                                 "```\n" else ""
             }
-
-        protected fun IrProperty.getMinVisibility(): DescriptorVisibility {
-            // To protect atomic properties from leaking out of the current sourceSet, they are required to be internal or private,
-            // or the containing class may be internal or private.
-            // This method returns the minimal visibility between the property visibility and the class visibility applied to atomic updaters or volatile wrappers.
-            val classVisibility = if (this.parent is IrClass) parentAsClass.visibility else DescriptorVisibilities.PUBLIC
-            val compare = visibility.compareTo(classVisibility)
-                ?: -1 // in case of non-comparable visibilities (e.g. local and private) return property visibility
-            return if (compare > 0) classVisibility else visibility
-        }
     }
 
     private inner class AtomicExtensionTransformer : IrElementTransformerVoid() {
@@ -865,12 +855,12 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
                     val isArrayReceiver = atomicCallReceiver.isArrayElementGetter() // todo regex match
                     val getAtomicProperty = if (isArrayReceiver) atomicCallReceiver.dispatchReceiver as IrCall else atomicCallReceiver
                     val atomicProperty = getAtomicProperty.getCorrespondingProperty()
-                    val isAccessedFromAnotherFile = atomicProperty.getPackageFragment() != parentFunction?.getPackageFragment()
+                    val isAccessFromAnotherFile = atomicProperty.getPackageFragment() != parentFunction?.getPackageFragment()
                     with(atomicSymbols.createBuilder(atomicCallReceiver.symbol)) {
-                        if (isAccessedFromAnotherFile) {
+                        if (isAccessFromAnotherFile) {
                             val externalAccessorSymbol = buildExternalAtomicHandlerAccessorSignature(atomicProperty)
                             irCall(externalAccessorSymbol.symbol).apply {
-                                dispatchReceiver = getAtomicProperty.dispatchReceiver
+                                //dispatchReceiver = getAtomicProperty.dispatchReceiver
                             }
                         } else {
                             val atomicHandlerProperty = atomicfuPropertyToAtomicHandler[atomicProperty]
@@ -1149,11 +1139,6 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
             else -> error("Unexpected type of atomic array receiver: ${this.render()}, parentFunction = ${parentFunction?.render()}\n" + CONSTRAINTS_MESSAGE)
         }
 
-    // A.kt -> A$VolatileWrapper$atomicfu
-    // B -> B$VolatileWrapper$atomicfu
-    protected fun mangleVolatileWrapperClassName(parent: IrDeclarationContainer): String =
-        ((if (parent is IrFile) parent.name else (parent as IrClass).name.asString())).substringBefore(".") + VOLATILE_WRAPPER_SUFFIX
-
     protected fun mangledAtomicfuLoopName(name: String, isArrayReceiver: Boolean, valueType: IrType) =
         (if (isArrayReceiver) "$name$$ATOMICFU$$ARRAY" else "$name$$ATOMICFU") + "$" + if (valueType.isPrimitiveType()) valueType.classFqName?.shortName() else "Any"
 
@@ -1163,9 +1148,6 @@ abstract class AbstractAtomicfuTransformer(val pluginContext: IrPluginContext) {
     protected fun mangleExternalAtomicHandlerAccessorName(name: String) = "access$$name\$AtomicHandler$$ATOMICFU"
 
     protected fun String.isMangledAtomicArrayExtension() = endsWith("$$ATOMICFU$$ARRAY")
-
-    protected fun IrClass.isVolatileWrapper(v: DescriptorVisibility): Boolean =
-        this.name.asString() == mangleVolatileWrapperClassName(this.parent as IrDeclarationContainer) + "$" + v
 
     protected fun IrValueParameter.capture(): IrGetValue = IrGetValueImpl(startOffset, endOffset, symbol.owner.type, symbol)
 

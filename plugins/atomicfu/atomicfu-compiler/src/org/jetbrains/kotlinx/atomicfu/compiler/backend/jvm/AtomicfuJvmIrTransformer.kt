@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 import org.jetbrains.kotlin.backend.common.extensions.*
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,6 +25,7 @@ private const val ATOMICFU = "atomicfu"
 private const val DISPATCH_RECEIVER = "dispatchReceiver\$$ATOMICFU"
 private const val ATOMIC_HANDLER = "handler\$$ATOMICFU"
 private const val INDEX = "index\$$ATOMICFU"
+private const val VOLATILE_WRAPPER_SUFFIX = "\$VolatileWrapper\$$ATOMICFU"
 
 class AtomicfuJvmIrTransformer(
     pluginContext: IrPluginContext,
@@ -112,22 +114,6 @@ class AtomicfuJvmIrTransformer(
                     atomicfuPropertyToAtomicHandler[from] = it
                 }
                 return volatileProperty
-            }
-        }
-
-        private fun IrDeclarationContainer.getOrBuildVolatileWrapper(atomicProperty: IrProperty): IrClass {
-            val visibility = atomicProperty.getMinVisibility()
-            findDeclaration<IrClass> { it.isVolatileWrapper(visibility) && it.visibility == visibility }?.let { return it }
-            val parentContainer = this
-            return with(atomicSymbols.createBuilder((this as IrSymbolOwner).symbol)) {
-                irClassWithPrivateConstructor(
-                    mangleVolatileWrapperClassName(parentContainer) + "\$${visibility.name}",
-                    visibility,
-                    parentContainer
-                ).also {
-                    val wrapperInstance = buildClassInstance(it, parentContainer, true)
-                    addProperty(wrapperInstance, atomicProperty.getMinVisibility(), isVar = false, isStatic = true)
-                }
             }
         }
     }
@@ -222,7 +208,7 @@ class AtomicfuJvmIrTransformer(
 
         private fun getDispatchReceiver(atomicCallReceiver: IrExpression, parentFunction: IrFunction?) =
             when {
-                atomicCallReceiver is IrCall -> atomicCallReceiver.getDispatchReceiver()
+                atomicCallReceiver is IrCall -> atomicCallReceiver.getDispatchReceiver(parentFunction)
                 atomicCallReceiver.isThisReceiver() -> {
                     if (parentFunction != null && parentFunction.isTransformedAtomicExtension()) {
                         parentFunction.valueParameters[0].capture()
@@ -231,15 +217,34 @@ class AtomicfuJvmIrTransformer(
                 else -> error("Unexpected type of atomic function call receiver: ${atomicCallReceiver.render()}." + CONSTRAINTS_MESSAGE)
             }
 
-        private fun IrCall.getDispatchReceiver(): IrExpression? {
+        private fun IrCall.getDispatchReceiver(parentFunction: IrFunction?): IrExpression? {
             val isArrayReceiver = isArrayElementGetter()
             val getAtomicProperty = if (isArrayReceiver) dispatchReceiver as IrCall else this
             val atomicProperty = getAtomicProperty.getCorrespondingProperty()
             val dispatchReceiver = getAtomicProperty.dispatchReceiver
             // top-level atomics
             if (!isArrayReceiver && (dispatchReceiver == null || dispatchReceiver.type.isObject())) {
-                val volatileProperty = atomicfuPropertyToVolatile[atomicProperty]!!
-                return getStaticVolatileWrapperInstance(volatileProperty.parentAsClass)
+                val isAccessFromAnotherFile = atomicProperty.getPackageFragment() != parentFunction?.getPackageFragment()
+                if (isAccessFromAnotherFile) {
+                    val wrapperClass = (atomicProperty.parent as IrDeclarationContainer).getOrBuildVolatileWrapper(atomicProperty)
+                    // todo: name it as generate fake getter.
+                    with(atomicSymbols.createBuilder(this.symbol)) {
+                        val wrapperGetterSymbol = pluginContext.irFactory.buildFun {
+                            name = Name.special("<get-${wrapperClass.name.asString()}>")
+                            visibility = wrapperClass.visibility
+                            origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_PROPERTY_ACCESSOR
+                            containerSource = atomicProperty.containerSource
+                        }.apply {
+                            returnType = wrapperClass.defaultType
+                            this.parent = wrapperClass
+                        }
+                        return irCall(wrapperGetterSymbol.symbol)
+                    }
+                }
+                val volatileProperty = atomicfuPropertyToVolatile[atomicProperty]
+                if (volatileProperty != null) {
+                    return getStaticVolatileWrapperInstance(volatileProperty.parentAsClass)
+                }
             }
             return dispatchReceiver
         }
@@ -298,33 +303,73 @@ class AtomicfuJvmIrTransformer(
     }
 
     override fun buildExternalAtomicHandlerAccessorSignature(atomicProperty: IrProperty): IrSimpleFunction {
-        val mangledName = mangleExternalAtomicHandlerAccessorName(atomicProperty.name.asString())
+        //val mangledName = mangleExternalAtomicHandlerAccessorName(atomicProperty.name.asString())
+        val mangledName = "<get-topLevel_i\$volatile\$FU>"
         return pluginContext.irFactory.buildFun {
             name = Name.identifier(mangledName)
             visibility = DescriptorVisibilities.PUBLIC
-            origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
-            //containerSource = ((atomicProperty.parent as IrDeclarationContainer).declarations.filter { it is IrProperty && it.name.asString() == "simpleInt" }.firstOrNull() as? IrProperty)?.containerSource
+            origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_PROPERTY_ACCESSOR
             containerSource = atomicProperty.containerSource
         }.apply {
-            dispatchReceiverParameter = atomicProperty.getter?.dispatchReceiverParameter?.deepCopyWithSymbols(this)
+            //dispatchReceiverParameter = atomicProperty.getter?.dispatchReceiverParameter?.deepCopyWithSymbols(this)
             returnType = atomicSymbols.getAtomicHandlerTypeByAtomicfuType(atomicProperty.backingField?.type ?: error("Atomic property $atomicProperty should have a backing field: ${atomicProperty.render()}")).defaultType
-            this.parent = atomicProperty.parent
+            this.parent = (atomicProperty.parent as IrDeclarationContainer).getOrBuildVolatileWrapper(atomicProperty)
         }
     }
 
     override fun buildExternalAtomicHandlerAccessor(atomicProperty: IrProperty): IrSimpleFunction {
         val atomicHandler = atomicfuPropertyToAtomicHandler[atomicProperty] ?: error("Field updater for an atomicfuat property $atomicProperty should've been already generated.")
-        return buildExternalAtomicHandlerAccessorSignature(atomicProperty).apply {
+        return pluginContext.irFactory.buildFun {
+            name = Name.identifier(mangleExternalAtomicHandlerAccessorName(atomicProperty.name.asString()))
+            visibility = DescriptorVisibilities.PUBLIC
+            origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
+            containerSource = atomicProperty.getter?.containerSource
+        }.apply {
+            parent = atomicHandler.parent
             body = with(atomicSymbols.createBuilder(symbol)) {
                 irBlockBody {
-                    val isAtomicArray = (atomicProperty.backingField)?.type?.isAtomicfuAtomicArray() == true
+                    //val isAtomicArray = (atomicProperty.backingField)?.type?.isAtomicfuAtomicArray() == true
                     +irReturn(
-                        irGetProperty(atomicHandler, if (isAtomicArray) dispatchReceiverParameter?.capture() else null)
+                        irGetProperty(atomicHandler, null)
                     )
                 }
             }
         }
     }
+
+    private fun IrDeclarationContainer.getOrBuildVolatileWrapper(atomicProperty: IrProperty): IrClass {
+        val visibility = atomicProperty.getMinVisibility()
+        findDeclaration<IrClass> { it.isVolatileWrapper(visibility) && it.visibility == visibility }?.let { return it }
+        val parentContainer = this
+        return with(atomicSymbols.createBuilder((this as IrSymbolOwner).symbol)) {
+            irClassWithPrivateConstructor(
+                mangleVolatileWrapperClassName(parentContainer) + "\$${visibility.name}",
+                visibility,
+                parentContainer
+            ).also {
+                val wrapperInstance = buildClassInstance(it, parentContainer, true)
+                addProperty(wrapperInstance, atomicProperty.getMinVisibility(), isVar = false, isStatic = true)
+            }
+        }
+    }
+
+    private fun IrProperty.getMinVisibility(): DescriptorVisibility {
+        // To protect atomic properties from leaking out of the current sourceSet, they are required to be internal or private,
+        // or the containing class may be internal or private.
+        // This method returns the minimal visibility between the property visibility and the class visibility applied to atomic updaters or volatile wrappers.
+        val classVisibility = if (this.parent is IrClass) parentAsClass.visibility else DescriptorVisibilities.PUBLIC
+        val compare = visibility.compareTo(classVisibility)
+            ?: -1 // in case of non-comparable visibilities (e.g. local and private) return property visibility
+        return if (compare > 0) classVisibility else visibility
+    }
+
+    // A.kt -> A$VolatileWrapper$atomicfu$internal
+    // B -> B$VolatileWrapper$atomicfu$private
+    private fun mangleVolatileWrapperClassName(parent: IrDeclarationContainer): String =
+        ((if (parent is IrPackageFragment) parent.packageFqName.shortName().asString() else (parent as IrClass).name.asString())).substringBefore(".") + VOLATILE_WRAPPER_SUFFIX + "$"
+
+    private fun IrClass.isVolatileWrapper(v: DescriptorVisibility): Boolean =
+        this.name.asString() == mangleVolatileWrapperClassName(this.parent as IrDeclarationContainer) + "$" + v
 
     /**
      * Adds synthetic value parameters to the transformed atomic extension (custom atomic extension or atomicfu inline update functions).
