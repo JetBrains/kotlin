@@ -1,1 +1,0 @@
-Exception: org.jetbrains.kotlin.util.FileAnalysisException: While analysing program.kt:4:23: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Failed to find functional supertype for class org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
