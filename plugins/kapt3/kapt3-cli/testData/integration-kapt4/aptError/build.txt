@@ -35,5 +35,5 @@ Test.kt
 # after
 Return code: 1
 
-warning: k2 kapt is an experimental feature. Use with caution.
+warning: k2 kapt is in Alpha. Use with caution.
 error: error: NonExistentClass type occurred

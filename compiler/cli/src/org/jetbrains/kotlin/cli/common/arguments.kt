@@ -96,7 +96,7 @@ private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, 
     val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
     when {
         isK2 && isKaptUsed && !arguments.useK2Kapt -> {
-            warn("Kapt currently doesn't support language version 2.0+. Falling back to 1.9.")
+            warn("Support for language version 2.0+ in kapt is in Alpha and must be enabled explicitly. Falling back to 1.9.")
             arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
             if (arguments.apiVersion?.startsWith("2") == true) {
                 arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
@@ -106,7 +106,7 @@ private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, 
             arguments.allowUnstableDependencies = true
         }
         arguments.useK2Kapt -> warn(
-            if (isK2) "K2 kapt is an experimental feature. Use with caution."
+            if (isK2) "K2 kapt is in Alpha. Use with caution."
             else "-Xuse-k2-kapt flag can be only used with language version 2.0+."
         )
     }
