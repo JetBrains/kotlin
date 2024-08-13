@@ -7,27 +7,22 @@ val buildProperties = getKotlinBuildPropertiesForSettings(settings)
 
 val buildScanServer = buildProperties.buildScanServer
 
-if (buildProperties.buildScanServer != null) {
+if (!buildScanServer.isNullOrEmpty()) {
     plugins.apply("com.gradle.common-custom-user-data-gradle-plugin")
 }
 
 develocity {
+    val isTeamCity = buildProperties.isTeamcityBuild
+    if (!buildScanServer.isNullOrEmpty()) {
+        server.set(buildScanServer)
+    }
     buildScan {
-        if (buildScanServer != null) {
-            server = buildScanServer
-
-            capture {
-                buildLogging = true
-                uploadInBackground = true
-            }
-        } else {
-            termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
-            termsOfUseAgree = "yes"
+        capture {
+            uploadInBackground = !isTeamCity
         }
 
         val overriddenUsername = (buildProperties.getOrNull("kotlin.build.scan.username") as? String)?.trim()
         val overriddenHostname = (buildProperties.getOrNull("kotlin.build.scan.hostname") as? String)?.trim()
-        val isTeamCity = buildProperties.isTeamcityBuild
         if (buildProperties.isJpsBuildEnabled) {
             tag("JPS")
         }
@@ -40,6 +35,30 @@ develocity {
                     overriddenUsername.isNullOrEmpty() -> "concealed"
                     overriddenUsername == "<default>" -> originalUsername
                     else -> overriddenUsername
+                }
+            }
+        }
+    }
+}
+
+buildCache {
+    local {
+        isEnabled = buildProperties.localBuildCacheEnabled
+        if (buildProperties.localBuildCacheDirectory != null) {
+            directory = buildProperties.localBuildCacheDirectory
+        }
+    }
+    if (develocity.server.isPresent) {
+        remote(develocity.buildCache) {
+            isPush = buildProperties.pushToBuildCache
+            val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
+            if (!remoteBuildCacheUrl.isNullOrEmpty()) {
+                server = remoteBuildCacheUrl.removeSuffix("/cache/")
+                if (buildProperties.buildCacheUser != null) {
+                    usernameAndPassword(
+                        buildProperties.buildCacheUser,
+                        buildProperties.buildCachePassword
+                    )
                 }
             }
         }

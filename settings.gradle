@@ -19,7 +19,6 @@ pluginManagement {
 
 plugins {
     id "internal-gradle-setup" // it's recommended to apply this plugin at first, as it changes the local.properties file
-    id "build-cache"
     id "develocity"
     id "jvm-toolchain-provisioning"
     id "kotlin-daemon-config"
