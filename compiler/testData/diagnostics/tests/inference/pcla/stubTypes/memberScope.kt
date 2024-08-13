@@ -1,7 +1,6 @@
 // LANGUAGE: +UnrestrictedBuilderInference
 // DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
-// MUTE_LL_FIR: KT-64741
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference
@@ -26,7 +25,6 @@ fun test() {
         <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
         get()?.hashCode()
         get()?.equals(1)
-        // there is `String?.equals` extension
         <!TYPE_MISMATCH("Any; Nothing?")!>get()<!>.equals("")
     }
     val ret2 = build {

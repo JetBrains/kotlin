@@ -14,6 +14,14 @@ fun <F2> select(e1: F2, e: F2): F2 = e
 
 fun main() {
     generate {
+        // No non-trivial constraints, thus cannot be semi-fixed
+        get().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>
+        get().toString()
+
+        prop.call("")
+    }
+
+    generate {
         prop.call("")
     }.length
 

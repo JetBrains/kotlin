@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FIR_DUMP
 // OPT_IN: kotlin.RequiresOptIn
 // DIAGNOSTICS: -UNUSED_PARAMETER
