@@ -72,6 +72,28 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    @DisplayName("Test resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
+    fun testResolvingTransitiveDependenciesRecordedInManifest() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        val modules = createModules(moduleA, moduleB, moduleC)
+
+        var aKlib: KLIB? = null
+        try {
+            modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true) { module, klib ->
+                when (module.name) {
+                    "a" -> aKlib = klib
+                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                }
+            }
+            fail { "Normally unreachable code" }
+        } catch (cte: CompilationToolException) {
+            assertTrue(cte.reason.contains("error: KLIB resolver: Could not find \"a\" in"))
+        }
+    }
+
+    @Test
     fun testWarningAboutRejectedLibraryIsNotSuppressed() {
         val modules = createModules(
             Module("lib1"),
