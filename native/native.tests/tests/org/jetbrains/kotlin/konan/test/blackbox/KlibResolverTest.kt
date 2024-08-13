@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
@@ -81,16 +78,14 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         val modules = createModules(moduleA, moduleB, moduleC)
 
         var aKlib: KLIB? = null
-        try {
-            modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true) { module, successKlib ->
-                when (module.name) {
-                    "a" -> aKlib = successKlib.resultingArtifact
-                    "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                }
+        modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true) { module, successKlib ->
+            when (module.name) {
+                "a" -> aKlib = successKlib.resultingArtifact
+                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                "c" -> assertTrue((successKlib.loggedData as LoggedData.CompilationToolCall).toolOutput.contains(
+                        "warning: KLIB resolver: Could not find \"a\""
+                    ))
             }
-            fail { "Normally unreachable code" }
-        } catch (cte: CompilationToolException) {
-            assertTrue(cte.reason.contains("error: KLIB resolver: Could not find \"a\" in"))
         }
     }
 

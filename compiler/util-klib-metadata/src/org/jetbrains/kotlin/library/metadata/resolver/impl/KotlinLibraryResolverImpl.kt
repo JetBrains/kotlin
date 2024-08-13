@@ -113,7 +113,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         var newDependencies = rootLibraries
         do {
             newDependencies = newDependencies.map { library: KotlinResolvedLibraryImpl ->
-                library.library.unresolvedDependencies(resolveManifestDependenciesLenient).asSequence()
+                library.library.unresolvedDependencies(lenient = true).asSequence()
 
                     .filterNot { searchPathResolver.isProvidedByDefault(it) }
                     .mapNotNull { searchPathResolver.resolve(it)?.let(::KotlinResolvedLibraryImpl) }
