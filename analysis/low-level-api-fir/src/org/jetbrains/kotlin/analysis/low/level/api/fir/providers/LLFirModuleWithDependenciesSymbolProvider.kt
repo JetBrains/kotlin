@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.fir.FirSession
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirNullSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -209,3 +211,9 @@ internal class LLFirDependenciesSymbolProvider(
         facades += newFacades
     }
 }
+
+/**
+ * Every [LLFirSession] has [LLFirModuleWithDependenciesSymbolProvider] as a symbol provider
+ */
+internal val LLFirSession.symbolProvider: LLFirModuleWithDependenciesSymbolProvider
+    get() = (this as FirSession).symbolProvider as LLFirModuleWithDependenciesSymbolProvider
