@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
 import org.jetbrains.kotlin.fir.resolve.transformExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
@@ -262,20 +261,6 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         // TODO: Check if the type of the RHS being null can lead to a bug, see KT-61837
         @OptIn(UnresolvedExpressionTypeAccess::class)
         if (result.rhs.coneTypeOrNull?.isNothing == true) {
-            val lhsType = result.lhs.resolvedType
-            // Converting to non-raw type is necessary to preserver the K1 semantics (see KT-54526)
-            val newReturnType =
-                lhsType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
-                    .convertToNonRawVersion()
-            result.replaceConeTypeOrNull(newReturnType)
-
-            // For regularly resolved synthetic call, this hook is being called on the whole expression,
-            // thus correctly substituting necessary (fixed or fixed-on-demand) type variables.
-            // But it's not expected to do that on the arguments of such calls,
-            // so in `lhsType` (which above is being transferred to `result`) there might be some type variables left.
-            @OptIn(TemporaryInferenceSessionHook::class)
-            context.inferenceSession.updateExpressionReturnTypeWithCurrentSubstitutorInPCLA(result, data)
-
             isLhsNotNull = true
         }
 
