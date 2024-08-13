@@ -87,6 +87,16 @@ class ToDataFrameDefault : AbstractSchemaModificationInterpreter() {
     }
 }
 
+class ToDataFrameColumn : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: FirExpression? by arg(lens = Interpreter.Id)
+    val Arguments.typeArg0 by type()
+    val Arguments.columnName: String by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return PluginDataFrameSchema(listOf(simpleColumnOf(columnName, typeArg0.type)))
+    }
+}
+
 private const val DEFAULT_MAX_DEPTH = 0
 
 class Properties0 : AbstractInterpreter<Unit>() {

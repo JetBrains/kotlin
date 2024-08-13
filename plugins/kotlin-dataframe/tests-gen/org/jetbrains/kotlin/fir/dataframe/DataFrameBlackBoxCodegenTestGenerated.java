@@ -335,6 +335,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("toDataFrame_column.kt")
+  public void testToDataFrame_column() {
+    runTest("testData/box/toDataFrame_column.kt");
+  }
+
+  @Test
   @TestMetadata("toDataFrame_dsl.kt")
   public void testToDataFrame_dsl() {
     runTest("testData/box/toDataFrame_dsl.kt");
