@@ -318,6 +318,11 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractResolveExtensionDisposalAfterModificationEventTest> {
             model("resolveExtensionDisposal")
         }
+
+        testClass<AbstractFirClassByPsiClassProviderTest> {
+            model("firClassByPsiClass")
+        }
+
     }
 
     testGroup("analysis/low-level-api-fir/tests", "analysis/analysis-api/testData") {

@@ -1,0 +1,6 @@
+public/*package*/ open inner class AA : R|kotlin/Any| {
+    public/*package*/ open fun correct(): void
+
+    public/*package*/ Outer.constructor(): R|Outer.AA|
+
+}
