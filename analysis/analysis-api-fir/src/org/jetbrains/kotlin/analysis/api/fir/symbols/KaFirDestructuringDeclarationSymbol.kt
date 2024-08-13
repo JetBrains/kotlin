@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -26,9 +27,8 @@ internal class KaFirDestructuringDeclarationSymbol(
     override val firSymbol: FirVariableSymbol<*>,
     override val analysisSession: KaFirSession,
 ) : KaDestructuringDeclarationSymbol(), KaFirSymbol<FirVariableSymbol<*>> {
-
     init {
-        require(firSymbol.name == SpecialNames.DESTRUCT)
+        require(firSymbol is FirErrorPropertySymbol || firSymbol.name == SpecialNames.DESTRUCT)
     }
 
     override val psi: KtDestructuringDeclaration
