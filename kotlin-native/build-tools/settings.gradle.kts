@@ -15,7 +15,7 @@ pluginManagement {
 
 plugins {
     id("jvm-toolchain-provisioning")
-    id("build-cache")
+    id("develocity")
     id("kotlin-daemon-config")
 }
 
