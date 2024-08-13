@@ -20,17 +20,16 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.*
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.copyWithNewTypeParams
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.hiddenFromObjCClassId
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
@@ -1577,3 +1577,28 @@ inline fun <T> includeFileNameInExceptionTrace(file: IrFile, body: () -> T): T {
 
 fun FqName.topLevelName() =
     asString().substringBefore(".")
+
+internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
+    source: IrFunction,
+    target: IrFunction
+): T {
+    val typeParamsAwareSymbolRemapper = object : DeepCopySymbolRemapper() {
+        init {
+            for ((orig, new) in source.typeParameters.zip(target.typeParameters)) {
+                typeParameters[orig.symbol] = new.symbol
+            }
+        }
+    }
+    val typeRemapper = DeepCopyTypeRemapper(typeParamsAwareSymbolRemapper)
+    val typeParamRemapper = object : TypeRemapper by typeRemapper {
+        override fun remapType(type: IrType): IrType {
+            return typeRemapper.remapType(type.remapTypeParameters(source, target))
+        }
+    }
+
+    val deepCopy = DeepCopyPreservingMetadata(typeParamsAwareSymbolRemapper, typeParamRemapper)
+    typeRemapper.deepCopy = deepCopy
+
+    acceptVoid(typeParamsAwareSymbolRemapper)
+    return transform(deepCopy, null).patchDeclarationParents(target) as T
+}

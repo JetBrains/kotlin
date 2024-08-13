@@ -22,55 +22,18 @@ import androidx.compose.compiler.plugins.kotlin.ComposeNames
 import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.copyWithNewTypeParams
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.didDecoyHaveDefaultForValueParameter
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
-import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoyImplementation
-import kotlin.math.min
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.copyAttributes
-import org.jetbrains.kotlin.ir.declarations.createBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
-import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrLocalDelegatedPropertyReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.createType
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.isMarkedNullable
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.addChild
@@ -79,6 +42,7 @@ import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
@@ -88,23 +52,40 @@ import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.remapTypeParameters
-import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.collections.MutableMap
+import kotlin.collections.any
+import kotlin.collections.emptyList
+import kotlin.collections.get
+import kotlin.collections.indices
+import kotlin.collections.lastOrNull
+import kotlin.collections.listOf
+import kotlin.collections.map
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
+import kotlin.collections.plus
+import kotlin.collections.plusAssign
+import kotlin.collections.set
+import kotlin.collections.sliceArray
+import kotlin.collections.toBooleanArray
+import kotlin.collections.toList
+import kotlin.collections.toMap
+import kotlin.collections.zip
+import kotlin.math.min
 
 class ComposerParamTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     stabilityInferencer: StabilityInferencer,
-    private val decoysEnabled: Boolean,
     metrics: ModuleMetrics,
     featureFlags: FeatureFlags,
 ) :
@@ -354,14 +335,6 @@ class ComposerParamTransformer(
         // transform it further).
         if (transformedFunctionSet.contains(this)) return this
 
-        // if it is a decoy, no need to process
-        if (isDecoy()) return this
-
-        // some functions were transformed during previous compilations or in other modules
-        if (this.externallyTransformed()) {
-            return this
-        }
-
         // if not a composable fn, nothing we need to do
         if (!this.hasComposableAnnotation()) {
             return this
@@ -480,23 +453,19 @@ class ComposerParamTransformer(
         // expression. Note that if this is a "fake override" method, then only the overridden
         // symbols will have the default value expressions
         valueParameters.any { it.defaultValue != null } ||
-            overriddenSymbols.any { it.owner.requiresDefaultParameter() }
+                overriddenSymbols.any { it.owner.requiresDefaultParameter() }
 
     private fun IrSimpleFunction.hasDefaultExpressionDefinedForValueParameter(index: Int): Boolean {
         // checking for default value isn't enough, you need to ensure that none of the overrides
         // have it as well...
         if (valueParameters[index].defaultValue != null) return true
 
-        if (context.platform.isJs() && this.isDecoyImplementation()) {
-            if (didDecoyHaveDefaultForValueParameter(index)) return true
-        }
-
         return overriddenSymbols.any {
             // ComposableFunInterfaceLowering copies extension receiver as a value
             // parameter, which breaks indices for overrides. fun interface cannot
             // have parameters defaults, however, so we can skip here if mismatch is detected.
             it.owner.valueParameters.size == valueParameters.size &&
-                it.owner.hasDefaultExpressionDefinedForValueParameter(index)
+                    it.owner.hasDefaultExpressionDefinedForValueParameter(index)
         }
     }
 
@@ -675,22 +644,6 @@ class ComposerParamTransformer(
             else -> type.makeNullable()
         }
     }
-
-    /**
-     * With klibs, composable functions are always deserialized from IR instead of being restored
-     *
-     * In this case, we need to avoid transforming those functions twice (because synthetic
-     * parameters are being added). We know however, that all the other modules were compiled
-     * before, so if the function comes from other [IrModuleFragment], we must skip it.
-     *
-     * NOTE: [ModuleDescriptor] will not work here, as incremental compilation of the same module
-     * can contain some functions that were transformed during previous compilation in a
-     * different module fragment with the same [ModuleDescriptor]
-     */
-    private fun IrFunction.externallyTransformed(): Boolean =
-        decoysEnabled && valueParameters.firstOrNull {
-            it.name == ComposeNames.COMPOSER_PARAMETER
-        } != null
 
     /**
      * Creates stubs for @Composable function with value class parameters that have a default and
