@@ -1,3 +1,4 @@
+// LANGUAGE: -InferenceEnhancementsIn21
 // ISSUE: KT-69170
 
 interface OuterController<T1 : Any>
@@ -40,7 +41,7 @@ fun main() {
             }
 
             // Base <: E4v
-            add(<!ARGUMENT_TYPE_MISMATCH!>Base()<!>)
+            add(<!TYPE_MISMATCH!>Base()<!>)
         }
     }
 }

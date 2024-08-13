@@ -1,3 +1,4 @@
+// LANGUAGE: -InferenceEnhancementsIn21
 // ISSUE: KT-69170
 
 interface OuterController<T1 : Any>
@@ -36,11 +37,11 @@ fun main() {
                 // Trying to look into a member scope of E4v.
                 // E4v has only ClassWithParamInMemberScope lower constraint.
                 // But potentially there might be a different one added later, thus we're not ready to fix it
-                x.param // OK in K1, Error in K2, should it be OK?
+                x.<!UNRESOLVED_REFERENCE!>param<!> // OK in K1, Error in K2, should it be OK?
             }
 
             // Base <: E4v
-            add(<!ARGUMENT_TYPE_MISMATCH!>Base()<!>)
+            add(Base())
         }
     }
 }

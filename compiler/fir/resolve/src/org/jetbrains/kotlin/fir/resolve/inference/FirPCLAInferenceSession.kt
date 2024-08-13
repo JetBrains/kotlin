@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
@@ -168,7 +170,10 @@ class FirPCLAInferenceSession(
         val variableWithConstraints = myCs.notFixedTypeVariables[coneTypeVariableTypeConstructor] ?: return null
         val c = myCs.getBuilder()
 
-        if (coneTypeVariableTypeConstructor in myCs.outerTypeVariables.orEmpty()) {
+        if (coneTypeVariableTypeConstructor in myCs.outerTypeVariables.orEmpty()
+            // Since 2.1 we do not differentiate outer variables in terms of semi-fixation
+            && !inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.InferenceEnhancementsIn21)
+        ) {
             // For outer TV, we don't allow semi-fixing them (adding the new equality constraints),
             // but if there's already some proper EQ constraint, it's safe & sound to use it as a representative
             c.prepareContextForTypeVariableForSemiFixation(coneTypeVariableTypeConstructor) {

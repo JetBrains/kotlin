@@ -340,6 +340,7 @@ enum class LanguageFeature(
     // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes
     // See the single usage at org.jetbrains.kotlin.fir.types.ConeTypeApproximator.fastPathSkipApproximation
     AvoidApproximationOfRecursiveCapturedTypesWithNoReason(KOTLIN_2_1, kind = OTHER), // KT-69995
+    InferenceEnhancementsIn21(KOTLIN_2_1, kind = OTHER), // KT-69170
 
     // 2.2
 

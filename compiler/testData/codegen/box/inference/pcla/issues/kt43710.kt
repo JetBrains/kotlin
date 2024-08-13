@@ -1,7 +1,7 @@
 // ISSUE: KT-43710
 
 // IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND: ANY
+// IGNORE_BACKEND_K1: ANY
 // REASON: red code (see corresponding diagnostic test)
 
 fun box(): String {

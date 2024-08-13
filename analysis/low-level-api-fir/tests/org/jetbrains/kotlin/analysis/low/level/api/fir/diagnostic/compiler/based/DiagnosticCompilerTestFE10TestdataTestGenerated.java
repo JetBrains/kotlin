@@ -19204,6 +19204,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("semifixOuterVariableFeatureDisabled.kt")
+        public void testSemifixOuterVariableFeatureDisabled() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/semifixOuterVariableFeatureDisabled.kt");
+        }
+
+        @Test
         @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
         public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
