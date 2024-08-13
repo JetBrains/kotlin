@@ -173,7 +173,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
             accessor.startOffset,
             accessor.endOffset,
             accessor.returnType,
-            targetSymbol, targetSymbol.owner.typeParameters.size,
+            targetSymbol,
             superQualifierSymbol = superQualifierSymbol
         ).also {
             copyAllParamsToArgs(it, accessor)
@@ -436,7 +436,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         return IrCallImpl.fromSymbolOwner(
             oldExpression.startOffset, oldExpression.endOffset,
             oldExpression.type,
-            this as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
+            this as IrSimpleFunctionSymbol,
             origin = oldExpression.origin
         )
     }
@@ -447,7 +447,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         return IrDelegatingConstructorCallImpl.fromSymbolOwner(
             oldExpression.startOffset, oldExpression.endOffset,
             context.irBuiltIns.unitType,
-            this as IrConstructorSymbol, oldExpression.typeArgumentsCount
+            this as IrConstructorSymbol
         )
     }
 
