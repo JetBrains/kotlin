@@ -71,6 +71,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
             this is FirValueParameter && this.containingFunctionSymbol.origin is FirDeclarationOrigin.Synthetic -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
             this is FirSyntheticProperty || this is FirSyntheticPropertyAccessor -> KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
             origin is FirDeclarationOrigin.Synthetic.ForwardDeclaration -> KaSymbolOrigin.NATIVE_FORWARD_DECLARATION
+            origin is FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer -> KaSymbolOrigin.SOURCE
 
             else -> errorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
                 withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
