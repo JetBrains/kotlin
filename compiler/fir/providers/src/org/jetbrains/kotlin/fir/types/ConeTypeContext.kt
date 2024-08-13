@@ -313,7 +313,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeParameterMarker.upperBoundCount(): Int {
         require(this is ConeTypeParameterLookupTag)
-        return this.bounds().size
+        return this.symbol.fir.bounds.size
     }
 
     override fun TypeParameterMarker.getUpperBound(index: Int): KotlinTypeMarker {
@@ -557,7 +557,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun ConeTypeParameterLookupTag.bounds(): List<FirTypeRef> = symbol.fir.bounds
+    private inline fun ConeTypeParameterLookupTag.bounds(): List<FirTypeRef> = symbol.resolvedBounds
 
     override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? {
         require(this is ConeKotlinType)

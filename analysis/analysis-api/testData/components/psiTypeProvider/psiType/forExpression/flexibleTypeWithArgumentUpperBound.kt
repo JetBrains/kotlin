@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // FILE: main.kt
 package pkg
 
