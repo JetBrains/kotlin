@@ -296,7 +296,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)
 
     internal val resolve = KonanLibrariesResolveSupport(
-            configuration, target, distribution, resolveManifestDependenciesLenient = metadataKlib
+            configuration, target, distribution, resolveManifestDependenciesLenient = true
     )
 
     val resolvedLibraries get() = resolve.resolvedLibraries
