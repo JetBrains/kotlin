@@ -364,8 +364,13 @@ class FunctionCallTransformer(
                                 resolvedSymbol = parameterSymbol
                             }
                         }
+                        if (callDispatchReceiver != null) {
+                            call.replaceDispatchReceiver(itPropertyAccess)
+                        }
                         call.replaceExplicitReceiver(itPropertyAccess)
-                        call.replaceExtensionReceiver(itPropertyAccess)
+                        if (callExtensionReceiver != null) {
+                            call.replaceExtensionReceiver(itPropertyAccess)
+                        }
                         result = call
                         this.target = target
                     }
@@ -403,9 +408,9 @@ class FunctionCallTransformer(
                 }
                 variance = Variance.INVARIANT
             }
-            dispatchReceiver = callDispatchReceiver
+            dispatchReceiver = null
             this.explicitReceiver = callExplicitReceiver
-            extensionReceiver = callExtensionReceiver
+            extensionReceiver = callExtensionReceiver ?: callDispatchReceiver
             argumentList = buildResolvedArgumentList(original = null, linkedMapOf(argument to parameter.fir))
             calleeReference = buildResolvedNamedReference {
                 source = call.calleeReference.source

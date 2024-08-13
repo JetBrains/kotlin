@@ -65,6 +65,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("dataFrameOf_vararg.kt")
+  public void testDataFrameOf_vararg() {
+    runTest("testData/box/dataFrameOf_vararg.kt");
+  }
+
+  @Test
   @TestMetadata("dataRowSchemaApi.kt")
   public void testDataRowSchemaApi() {
     runTest("testData/box/dataRowSchemaApi.kt");
