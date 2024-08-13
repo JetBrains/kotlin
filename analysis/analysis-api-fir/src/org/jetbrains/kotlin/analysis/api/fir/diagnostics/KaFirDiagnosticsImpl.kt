@@ -2793,6 +2793,13 @@ internal class ExtensionShadowedByMemberImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ExtensionShadowedByMember
 
+internal class ExtensionFunctionShadowedByMemberPropertyWithInvokeImpl(
+    override val member: KaCallableSymbol,
+    override val invokeOperator: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ExtensionFunctionShadowedByMemberPropertyWithInvoke
+
 internal class LocalObjectNotAllowedImpl(
     override val objectName: Name,
     firDiagnostic: KtPsiDiagnostic,

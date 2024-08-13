@@ -41,7 +41,7 @@ val Test.<!EXTENSION_SHADOWED_BY_MEMBER!>internalVal<!>: Int get() = 42
 val Test.protectedVal: Int get() = 42
 val Test.privateVal: Int get() = 42
 
-fun Test.withPublicInvoke() {}
+fun Test.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>withPublicInvoke<!>() {}
 fun Test.wihtInternalInvoke() {}
 fun Test.withProtectedInvoke() {}
 fun Test.withPrivateInvoke() {}

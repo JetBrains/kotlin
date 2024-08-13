@@ -280,6 +280,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPE_PARA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD
@@ -1992,6 +1993,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, "Interfaces cannot implement a method of 'Any'.")
         map.put(EXTENSION_SHADOWED_BY_MEMBER, "This extension is shadowed by a member: {0}.", SYMBOL_WITH_CONTAINING_DECLARATION)
+        map.put(
+            EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE,
+            "This extension function is shadowed by a member property ''{0}'' with ''{1}''.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+        )
 
         // Invalid local declarations
         map.put(

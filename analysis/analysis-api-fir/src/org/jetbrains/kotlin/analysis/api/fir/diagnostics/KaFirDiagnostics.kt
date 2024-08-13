@@ -2331,6 +2331,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val member: KaCallableSymbol
     }
 
+    interface ExtensionFunctionShadowedByMemberPropertyWithInvoke : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ExtensionFunctionShadowedByMemberPropertyWithInvoke::class
+        val member: KaCallableSymbol
+        val invokeOperator: KaCallableSymbol
+    }
+
     interface LocalObjectNotAllowed : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = LocalObjectNotAllowed::class
         val objectName: Name
