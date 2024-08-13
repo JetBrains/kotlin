@@ -234,8 +234,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                     val producerInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                             executeImplProducerInvoke.returnType,
                             executeImplProducerInvoke.symbol,
-                            executeImplProducerInvoke.symbol.owner.typeParameters.size,
-                            executeImplProducerInvoke.symbol.owner.valueParameters.size,
                             STATEMENT_ORIGIN_PRODUCER_INVOCATION)
                     producerInvocation.dispatchReceiver = expression.getValueArgument(2)
 
@@ -246,8 +244,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                     val jobInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                             jobFunctionReference.symbol.owner.returnType,
                             jobFunctionReference.symbol as IrSimpleFunctionSymbol,
-                            jobFunctionReference.symbol.owner.typeParameters.size,
-                            jobFunctionReference.symbol.owner.valueParameters.size,
                             STATEMENT_ORIGIN_JOB_INVOCATION)
                     jobInvocation.putValueArgument(0, producerInvocation)
 
@@ -281,8 +277,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 val objcObjGetter = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                         objCObjectRawValueGetter.owner.returnType,
                         objCObjectRawValueGetter,
-                        objCObjectRawValueGetter.owner.typeParameters.size,
-                        objCObjectRawValueGetter.owner.valueParameters.size
                 ).apply {
                     extensionReceiver = expression.argument
                 }

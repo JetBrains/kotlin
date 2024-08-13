@@ -1054,12 +1054,10 @@ fun IrCallImpl.Companion.fromSymbolOwner(
     endOffset: Int,
     type: IrType,
     symbol: IrSimpleFunctionSymbol,
-    typeArgumentsCount: Int = symbol.owner.typeParameters.size,
-    valueArgumentsCount: Int = symbol.owner.valueParameters.size,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null,
 ): IrCallImpl =
-    IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol)
+    IrCallImpl(startOffset, endOffset, type, symbol, origin = origin, superQualifierSymbol = superQualifierSymbol)
 
 fun IrCallImpl.Companion.fromSymbolOwner(
     startOffset: Int,

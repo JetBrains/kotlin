@@ -320,8 +320,6 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
                 endOffset,
                 target.returnType,
                 target.symbol,
-                typeArgumentsCount = target.typeParameters.size,
-                valueArgumentsCount = target.valueParameters.size,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
         ).apply {
             bridge.dispatchReceiverParameter?.let { dispatchReceiver = irGet(it) }
