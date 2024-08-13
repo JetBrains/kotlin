@@ -23,7 +23,7 @@ tasks.withType<Test>().configureEach {
     maxParallelForks = if (System.getenv("GITHUB_ACTIONS") != null) {
         Runtime.getRuntime().availableProcessors()
     } else {
-        (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
+        (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
     }
 
     javaLauncher = javaToolchains.launcherFor {

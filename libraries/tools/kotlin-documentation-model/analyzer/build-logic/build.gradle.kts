@@ -13,7 +13,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.gradlePlugin.dokka)
     implementation(libs.gradlePlugin.kotlin)
     implementation(libs.gradlePlugin.shadow)
     implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
