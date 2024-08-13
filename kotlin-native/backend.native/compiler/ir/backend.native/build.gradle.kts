@@ -35,6 +35,7 @@ dependencies {
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":native:objcexport-header-generator"))
     implementation(project(":native:objcexport-header-generator-k1"))
+    implementation(project(":native:swift:swift-export-compiler-config"))
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

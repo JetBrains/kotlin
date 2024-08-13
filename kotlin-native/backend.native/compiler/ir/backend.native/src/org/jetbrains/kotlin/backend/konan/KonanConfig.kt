@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.swiftexport.compilerconfig.CompilerConfig
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
@@ -359,6 +360,21 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val swiftExport by lazy {
         configuration.get(BinaryOptions.swiftExport) ?: false
+    }
+
+    val swiftExportCompilerConfig by lazy {
+        configuration.get(BinaryOptions.swiftExportConfigs)?.let {
+            if (!swiftExport) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "swiftExportConfigs option is not used when swiftExport is disabled")
+            }
+            try {
+                val configs = it.map { path -> CompilerConfig.parseFromFile(java.io.File(path)) }
+                SwiftExportCompilerConfig.mergeConfigs(configs)
+            } catch (e: Exception) {
+                configuration.report(CompilerMessageSeverity.ERROR, "invalid swiftExportConfigs value: ${e.message}")
+                null
+            }
+        }
     }
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
