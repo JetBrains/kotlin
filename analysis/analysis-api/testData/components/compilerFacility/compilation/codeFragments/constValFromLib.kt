@@ -1,7 +1,3 @@
-// Currently fails with:
-//   Error occurred while optimizing an expression:
-//   CALL 'private final fun <get-a> (): kotlin.Int declared in lib.ContextKt' type=kotlin.Int origin=GET_PROPERTY
-
 // MODULE: context
 
 // FILE: context.kt

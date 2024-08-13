@@ -996,6 +996,10 @@ internal fun IrDeclarationParent?.isExternalParent(): Boolean {
         returns(true) implies (this@isExternalParent != null)
     }
     return this is Fir2IrLazyClass || this is IrExternalPackageFragment
+            // This check is required when compiling in the debugger.
+            // We eagerly wrap declarations into facade class while we still have info about the file.
+            // See Fir2IrDeclarationStorage.findIrParent
+            || (this is IrDeclaration && this.isFileClass)
 }
 
 internal fun FirCallableDeclaration?.shouldParametersBeAssignable(c: Fir2IrComponents): Boolean {
