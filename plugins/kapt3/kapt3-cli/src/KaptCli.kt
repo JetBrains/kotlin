@@ -107,7 +107,7 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
             }
             KaptCliOption.APT_MODE_OPTION -> aptModePassed = true
             KaptCliOption.VERBOSE_MODE_OPTION -> kaptVerboseModePassed = true
-            KaptCliOption.USE_K2 -> transformed.add("-Xuse-kapt4")
+            KaptCliOption.USE_K2 -> transformed.add("-Xuse-k2-kapt")
             else -> {}
         }
 
@@ -115,7 +115,7 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
     }
 
     if (!aptModePassed) {
-        val isK2 = "-Xuse-kapt4" in transformed && (transformed.any { it.startsWith("-language-version=2") } ||
+        val isK2 = "-Xuse-k2-kapt" in transformed && (transformed.any { it.startsWith("-language-version=2") } ||
                 transformed.lastIndexOf("-language-version").takeIf { it >= 0 }
                     ?.let { transformed.getOrNull(it + 1)?.startsWith('2') } == true)
 

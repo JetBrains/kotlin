@@ -75,7 +75,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.useFastJarFileSystem = from.useFastJarFileSystem
     to.useInlineScopesNumbers = from.useInlineScopesNumbers
     to.useJavac = from.useJavac
-    to.useKapt4 = from.useKapt4
+    to.useK2Kapt = from.useK2Kapt
     to.useOldBackend = from.useOldBackend
     to.useOldClassFilesReading = from.useOldClassFilesReading
     to.useOldInlineClassesManglingScheme = from.useOldInlineClassesManglingScheme

@@ -3,7 +3,7 @@ output/stubs
 
 # kapt
 -language-version 2.0
--Xuse-kapt4
+-Xuse-k2-kapt
 -Kapt-mode=stubs
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes

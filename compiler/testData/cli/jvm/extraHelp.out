@@ -141,7 +141,7 @@ where advanced options include:
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
   -Xuse-javac                Use javac for Java source and class file analysis.
-  -Xuse-kapt4                Enable the experimental KAPT 4.
+  -Xuse-k2-kapt              Enable the experimental support for K2 KAPT.
   -Xuse-old-backend          Use the old JVM backend.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
