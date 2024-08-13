@@ -6,8 +6,8 @@ plugins {
     id("dokkabuild.base")
 }
 
-val publishedIncludedBuilds = listOf("runner-cli", "runner-gradle-plugin-classic", "runner-maven-plugin")
-val gradlePluginIncludedBuilds = listOf("runner-gradle-plugin-classic")
+val publishedIncludedBuilds = listOf("runner-cli", "dokka-gradle-plugin", "runner-maven-plugin")
+val gradlePluginIncludedBuilds = listOf("dokka-gradle-plugin")
 
 addDependencyOnSameTasksOfIncludedBuilds("assemble", "build", "clean", "check")
 
@@ -18,7 +18,7 @@ registerParentGroupTasks(
         "publishAllPublicationsToSnapshotRepository",
         "publishAllPublicationsToSpaceDevRepository",
         "publishAllPublicationsToSpaceTestRepository",
-        "publishToMavenLocal"
+        "publishToMavenLocal",
     )
 ) {
     it.name in publishedIncludedBuilds
@@ -27,7 +27,7 @@ registerParentGroupTasks(
 registerParentGroupTasks(
     "gradle plugin", taskNames = listOf(
         "publishPlugins",
-        "validatePlugins"
+        "validatePlugins",
     )
 ) {
     it.name in gradlePluginIncludedBuilds
@@ -37,7 +37,7 @@ registerParentGroupTasks(
     "bcv", taskNames = listOf(
         "apiDump",
         "apiCheck",
-        "apiBuild"
+        "apiBuild",
     )
 ) {
     it.name in publishedIncludedBuilds
@@ -45,7 +45,7 @@ registerParentGroupTasks(
 
 registerParentGroupTasks(
     "verification", taskNames = listOf(
-        "test"
+        "test",
     )
 )
 
