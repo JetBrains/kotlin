@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -18,17 +17,11 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.platform.TargetPlatform
-
-// ---
 
 data class ModuleCompilerInput(
     val targetId: TargetId,
     val groupedSources: GroupedKtSources,
-    val commonPlatform: TargetPlatform,
-    val platform: TargetPlatform,
     val configuration: CompilerConfiguration,
-    val friendFirModules: Collection<FirModuleData> = emptyList()
 )
 
 data class ModuleCompilerEnvironment(

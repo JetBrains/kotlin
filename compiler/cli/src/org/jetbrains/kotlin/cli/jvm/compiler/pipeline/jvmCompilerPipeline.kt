@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
@@ -67,8 +66,6 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvid
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -106,19 +103,11 @@ fun compileModulesUsingFrontendIrAndLightTree(
         return false
     }
 
-    val compilerInput = ModuleCompilerInput(
-        TargetId(module),
-        groupedSources,
-        CommonPlatforms.defaultCommonPlatform,
-        JvmPlatforms.unspecifiedJvmPlatform,
-        moduleConfiguration
-    )
-
     val renderDiagnosticNames = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
 
     val analysisResults = compileModuleToAnalyzedFir(
-        compilerInput,
+        ModuleCompilerInput(TargetId(module), groupedSources, moduleConfiguration),
         projectEnvironment,
         emptyList(),
         null,
@@ -139,7 +128,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
     }
 
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
-    val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
+    val irInput = convertAnalyzedFirToIr(moduleConfiguration, TargetId(module), analysisResults, compilerEnvironment)
 
     val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
@@ -157,11 +146,12 @@ fun compileModulesUsingFrontendIrAndLightTree(
 }
 
 fun convertAnalyzedFirToIr(
-    input: ModuleCompilerInput,
+    configuration: CompilerConfiguration,
+    targetId: TargetId,
     analysisResults: FirResult,
     environment: ModuleCompilerEnvironment
 ): ModuleCompilerIrBackendInput {
-    val extensions = JvmFir2IrExtensions(input.configuration, JvmIrDeserializerImpl())
+    val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
 
     val irGenerationExtensions =
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
@@ -169,12 +159,12 @@ fun convertAnalyzedFirToIr(
         } ?: emptyList()
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         analysisResults.convertToIrAndActualizeForJvm(
-            extensions, input.configuration, environment.diagnosticsReporter, irGenerationExtensions,
+            extensions, configuration, environment.diagnosticsReporter, irGenerationExtensions,
         )
 
     return ModuleCompilerIrBackendInput(
-        input.targetId,
-        input.configuration,
+        targetId,
+        configuration,
         extensions,
         moduleFragment,
         components,

@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
@@ -321,32 +319,22 @@ private fun doCompileWithK2(
 
     registerPackageFragmentProvidersIfNeeded(getScriptConfiguration(sourceFiles.first()), context.environment)
 
-    val kotlinCompilerConfiguration = context.environment.configuration
+    val configuration = context.environment.configuration
 
     val targetId = TargetId(
-        kotlinCompilerConfiguration[CommonConfigurationKeys.MODULE_NAME] ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME,
+        configuration[CommonConfigurationKeys.MODULE_NAME] ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME,
         "java-production"
     )
 
-    val renderDiagnosticName = kotlinCompilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    val renderDiagnosticName = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
-
-    val sources = sourceFiles.map { KtPsiSourceFile(it) }
-
-    val compilerInput = ModuleCompilerInput(
-        targetId,
-        GroupedKtSources(platformSources = sources, commonSources = emptySet(), sourcesByModuleName = emptyMap()),
-        CommonPlatforms.defaultCommonPlatform,
-        JvmPlatforms.unspecifiedJvmPlatform,
-        kotlinCompilerConfiguration
-    )
 
     val projectEnvironment = context.environment.toAbstractProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
     val incrementalCompilationScope = createIncrementalCompilationScope(
-        compilerInput.configuration,
+        configuration,
         projectEnvironment,
         incrementalExcludesScope = null
     )?.also { librariesScope -= it }
@@ -357,16 +345,16 @@ private fun doCompileWithK2(
     val rootModuleName = targetId.name
     val libraryList = createLibraryListForJvm(
         rootModuleName,
-        kotlinCompilerConfiguration,
+        configuration,
         friendPaths = emptyList()
     )
     val session = prepareJvmSessions(
-        sourceFiles, kotlinCompilerConfiguration, projectEnvironment, Name.special("<$rootModuleName>"), extensionRegistrars,
+        sourceFiles, configuration, projectEnvironment, Name.special("<$rootModuleName>"), extensionRegistrars,
         librariesScope, libraryList, isCommonSourceForPsi, { false },
         fileBelongsToModuleForPsi,
         createProviderAndScopeForIncrementalCompilation = { files ->
             createContextForIncrementalCompilation(
-                compilerInput.configuration,
+                configuration,
                 projectEnvironment,
                 compilerEnvironment.projectEnvironment.getSearchScopeBySourceFiles(files.map { KtPsiSourceFile(it) }),
                 emptyList(),
@@ -429,7 +417,7 @@ private fun doCompileWithK2(
         return failure(messageCollector)
     }
 
-    val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
+    val irInput = convertAnalyzedFirToIr(configuration, targetId, analysisResults, compilerEnvironment)
 
     val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
