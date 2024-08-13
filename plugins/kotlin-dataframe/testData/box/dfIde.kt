@@ -10,7 +10,7 @@ interface Schema {
 }
 
 fun main(args: Array<String>) {
-    val df = dataFrameOf("i")(1, 2, 3).cast<Schema>()
+    val df = dataFrameOf("i", "fff")(1, "321").cast<Schema>()
     println(df.i)
 
     val df1 = df.add("ca") { 423 }

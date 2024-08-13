@@ -71,6 +71,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.All0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsAtAnyDepth0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColsOf1
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDefault
@@ -177,6 +179,8 @@ internal inline fun <reified T> String.load(): T {
         "toDataFrameDsl" -> ToDataFrameDsl()
         "toDataFrame" -> ToDataFrame()
         "toDataFrameDefault" -> ToDataFrameDefault()
+        "DataFrameOf0" -> DataFrameOf0()
+        "DataFrameBuilderInvoke0" -> DataFrameBuilderInvoke0()
         else -> error("$this")
     } as T
 }
