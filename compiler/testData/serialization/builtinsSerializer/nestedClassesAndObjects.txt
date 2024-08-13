@@ -5,17 +5,17 @@ public final class ClassA {
 
     public companion object Companion {
         private constructor Companion()
-        public final val stat: kotlin.Int = 250
+        public final val stat: kotlin.Int
 
         public final class D {
             public constructor D()
-            public final val memberFromD: kotlin.Int = 275
+            public final val memberFromD: kotlin.Int
         }
     }
 
     public object ObjA {
         private constructor ObjA()
-        public final val memberFromObjA: kotlin.Int = 300
+        public final val memberFromObjA: kotlin.Int
     }
 
     public final class classB {
