@@ -42,8 +42,6 @@ import org.jetbrains.kotlin.kapt3.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
@@ -225,14 +223,7 @@ open class FirKaptAnalysisHandlerExtension(
             // Ignore all FE errors
             val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
             val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
-            val compilerInput = ModuleCompilerInput(
-                TargetId(module),
-                GroupedKtSources(emptyList(), emptyList(), emptyMap()),
-                CommonPlatforms.defaultCommonPlatform,
-                JvmPlatforms.unspecifiedJvmPlatform,
-                configuration,
-            )
-            val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
+            val irInput = convertAnalyzedFirToIr(configuration, TargetId(module), analysisResults, compilerEnvironment)
 
             generateCodeFromIr(irInput, compilerEnvironment)
         }
