@@ -75,6 +75,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameBuilderInvoke0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.DataFrameOf0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameDsl
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToDataFrameFrom
@@ -181,6 +182,7 @@ internal inline fun <reified T> String.load(): T {
         "toDataFrameDefault" -> ToDataFrameDefault()
         "DataFrameOf0" -> DataFrameOf0()
         "DataFrameBuilderInvoke0" -> DataFrameBuilderInvoke0()
+        "ToDataFrameColumn" -> ToDataFrameColumn()
         else -> error("$this")
     } as T
 }
