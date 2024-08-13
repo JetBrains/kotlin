@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDENCY_VERSION
@@ -81,9 +82,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
         var aKlib: KLIB? = null
         try {
-            modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true) { module, klib ->
+            modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true) { module, successKlib ->
                 when (module.name) {
-                    "a" -> aKlib = klib
+                    "a" -> aKlib = successKlib.resultingArtifact
                     "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
                 }
             }
@@ -111,9 +112,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             modules.compileModules(
                 produceUnpackedKlibs = true,
                 useLibraryNamesInCliArguments = false
-            ) { module, klib ->
+            ) { module, successKlib ->
                 if (module.name == "lib1") {
-                    patchManifestToBumpAbiVersion(JUnit5Assertions, klib.klibFile)
+                    patchManifestToBumpAbiVersion(JUnit5Assertions, successKlib.resultingArtifact.klibFile)
                 }
             }
 
@@ -168,18 +169,18 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         modules.compileModules(
             produceUnpackedKlibs = true,
             useLibraryNamesInCliArguments = false,
-        ) { module, klib ->
+        ) { module, successKlib ->
             when (module.name) {
                 "liba" -> {
                     // set the library version = 1.0
-                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                         @Suppress("DEPRECATION")
                         properties[KLIB_PROPERTY_LIBRARY_VERSION] = "1.0"
                     }
                 }
                 "libb" -> {
                     // pretend it depends on liba v2.0
-                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                         // first, check:
                         val dependencyVersionPropertyNames: Set<String> =
                             properties.keys.filter { @Suppress("DEPRECATION") it.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }.toSet()
@@ -214,18 +215,18 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         modules.compileModules(
             produceUnpackedKlibs = true,
             useLibraryNamesInCliArguments = false,
-        ) { module, klib ->
+        ) { module, successKlib ->
             when (module.name) {
                 "liba" -> {
                     // set the library version = 1.0
-                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                         @Suppress("DEPRECATION")
                         properties[KLIB_PROPERTY_LIBRARY_VERSION] = "1.0"
                     }
                 }
                 "libb" -> {
                     // check that dependency version is set
-                    patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                         val dependencyVersionPropertyNames: Set<String> =
                             properties.keys.filter { @Suppress("DEPRECATION") it.startsWith(KLIB_PROPERTY_DEPENDENCY_VERSION) }.toSet()
 
@@ -298,7 +299,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     private fun List<Module>.compileModules(
         produceUnpackedKlibs: Boolean,
         useLibraryNamesInCliArguments: Boolean,
-        transform: ((module: Module, klib: KLIB) -> Unit)? = null
+        transform: ((module: Module, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
     ) {
         val klibFilesDir = buildDir.resolve(
             listOf(
@@ -339,7 +340,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                     expectedArtifact = KLIB(klibFilesDir.resolve(module.computeArtifactPath()))
                 )
 
-                val klib = compilation.result.assertSuccess().resultingArtifact
+                val klib = compilation.result.assertSuccess()
                 transform?.invoke(module, klib)
             }
         }
