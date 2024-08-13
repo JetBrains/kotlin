@@ -76,7 +76,7 @@ fun main() {
     val list6 = buildList {
         add("one")
 
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get(0)<!>.bar()
+        get(0).bar()
     }
     val list7 = buildList {
         add("one")
@@ -168,7 +168,7 @@ fun main() {
     val list18 = buildList {
         add("one")
 
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get(0)<!>.foo0003(0f, <!ARGUMENT_TYPE_MISMATCH!>get(0)<!>)
+        get(0).foo0003(0f, <!ARGUMENT_TYPE_MISMATCH!>get(0)<!>)
     }
 
     val map1 = buildMap {

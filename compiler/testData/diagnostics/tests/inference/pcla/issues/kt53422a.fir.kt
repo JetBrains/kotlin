@@ -4,7 +4,7 @@
 fun test() {
     val buildee = buildFromValue(
         innerBuild { setInnerTypeVariable(TargetType()) },
-        { <!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>.placeholderExtensionInvokeOnInnerBuildee() }
+        { it.placeholderExtensionInvokeOnInnerBuildee() }
     )
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

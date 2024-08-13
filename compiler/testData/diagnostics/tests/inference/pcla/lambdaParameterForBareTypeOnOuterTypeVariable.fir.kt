@@ -15,6 +15,6 @@ interface B<G> : A<G>
 fun main(a: A<*>) {
     generate {
         yield(a)
-        t is <!NO_TYPE_ARGUMENTS_ON_RHS!>B<!>
+        t is B
     }.a
 }

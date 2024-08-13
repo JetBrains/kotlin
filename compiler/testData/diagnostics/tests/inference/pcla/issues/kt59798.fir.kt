@@ -1,15 +1,14 @@
 // ISSUE: KT-59798
+// CHECK_TYPE_WITH_EXACT
 
-// IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND_K1: ANY
-// REASON: red code (see corresponding diagnostic test)
-
-fun box(): String {
-    build {
+fun test() {
+    val buildee = build {
         setTypeVariable(TargetType())
         getTypeVariable().let {}
     }
-    return "OK"
+    // exact type equality check — turns unexpected compile-time behavior into red code
+    // considered to be non-user-reproducible code for the purposes of these tests
+    checkExactType<Buildee<TargetType>>(buildee)
 }
 
 
@@ -20,7 +19,7 @@ class TargetType
 class Buildee<TV> {
     fun setTypeVariable(value: TV) { storage = value }
     fun getTypeVariable(): TV = storage
-    private var storage: TV = TargetType() as TV
+    private var storage: TV = null!!
 }
 
 fun <PTV> build(instructions: Buildee<PTV>.() -> Unit): Buildee<PTV> {

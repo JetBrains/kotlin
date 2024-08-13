@@ -4,7 +4,7 @@
 fun test() {
     val buildee = build {
         setTypeVariable(TargetType())
-        letForTypeVariable { <!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>.extensionProduceConcreteType() }
+        letForTypeVariable { it.extensionProduceConcreteType() }
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

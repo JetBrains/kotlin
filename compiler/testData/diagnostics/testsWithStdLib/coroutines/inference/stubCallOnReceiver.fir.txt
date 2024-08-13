@@ -1,4 +1,4 @@
-FILE: stubCallOnReceiver.fir.kt
+FILE: stubCallOnReceiver.kt
     public final class TypeDefinition<KotlinType : R|kotlin/Any|> : R|kotlin/Any| {
         public constructor<KotlinType : R|kotlin/Any|>(): R|TypeDefinition<KotlinType>| {
             super<R|kotlin/Any|>()
@@ -22,8 +22,8 @@ FILE: stubCallOnReceiver.fir.kt
                 ^ R|<local>/it|.R|kotlin/text/toInt|()
             }
             )
-            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun <ERROR TYPE REF: Cannot infer type for receiver parameter>.<anonymous>(): R|kotlin/Any?| <inline=NoInline>  {
-                ^ this@R|special/anonymous|.R|kotlin/toString|()
+            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Any?| <inline=NoInline>  {
+                ^ this@R|special/anonymous|.R|kotlin/Int.toString|()
             }
             )
         }
@@ -35,8 +35,8 @@ FILE: stubCallOnReceiver.fir.kt
                 ^ R|<local>/it|.R|kotlin/text/toInt|()
             }
             )
-            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun <ERROR TYPE REF: Cannot infer type for receiver parameter>.<anonymous>(): R|kotlin/Any?| <inline=NoInline>  {
-                ^ this@R|special/anonymous|.R|kotlin/toString|()
+            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Any?| <inline=NoInline>  {
+                ^ this@R|special/anonymous|.R|kotlin/Int.toString|()
             }
             )
         }

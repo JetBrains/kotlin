@@ -14,6 +14,14 @@ fun <F2> select(e1: F2, e: F2): F2 = e
 
 fun main() {
     generate {
+        // No non-trivial constraints, thus cannot be semi-fixed
+        get().<!UNRESOLVED_REFERENCE!>length<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.toString()
+
+        prop.call("")
+    }
+
+    generate {
         prop.call("")
     }.length
 
@@ -24,7 +32,7 @@ fun main() {
     generate {
         prop.call("")
 
-        get().<!UNRESOLVED_REFERENCE!>length<!>
+        get().length
 
         id(get()).length
     }.length

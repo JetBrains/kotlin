@@ -1,4 +1,4 @@
-FILE: stubCallOnVariable.fir.kt
+FILE: stubCallOnVariable.kt
     public final class TypeDefinition<KotlinType : R|kotlin/Any|> : R|kotlin/Any| {
         public constructor<KotlinType : R|kotlin/Any|>(): R|TypeDefinition<KotlinType>| {
             super<R|kotlin/Any|>()
@@ -24,7 +24,7 @@ FILE: stubCallOnVariable.fir.kt
             )
             this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Any?| <inline=NoInline>  {
                 lval i: R|kotlin/Int| = R|<local>/it|
-                ^ R|<local>/i|.R|kotlin/toString<Inapplicable(RESOLVED_WITH_ERROR): kotlin/toString>#|()
+                ^ R|<local>/i|.R|kotlin/Int.toString|()
             }
             )
         }
