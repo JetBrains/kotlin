@@ -100,7 +100,7 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
             }
         }
         val constantInitializer = descriptor.compileTimeInitializer ?: return
-        if (constantInitializer !is NullValue) {
+        if (constantInitializer !is NullValue && descriptor.isConst) {
             proto.setExtension(protocol.compileTimeValue, annotationSerializer.valueProto(constantInitializer).build())
         }
     }
