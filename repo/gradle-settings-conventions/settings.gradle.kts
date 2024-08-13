@@ -30,15 +30,12 @@ dependencyResolutionManagement {
     }
 }
 
-include(":build-cache")
 include(":develocity")
 include(":jvm-toolchain-provisioning")
 include(":kotlin-daemon-config")
 include(":internal-gradle-setup")
 
-// Unfortunately it is not possible to apply build-cache.settings.gradle.kts as script compilation
-// could not then find types from "kotlin-build-gradle-plugin"
-// Sync below to the content of settings plugin
+// Sync below to the content of develocity settings plugin
 val buildProperties = getKotlinBuildPropertiesForSettings(settings)
 
 develocity {
