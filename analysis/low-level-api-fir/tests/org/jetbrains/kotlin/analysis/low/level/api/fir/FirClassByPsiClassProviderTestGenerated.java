@@ -30,8 +30,20 @@ public class FirClassByPsiClassProviderTestGenerated extends AbstractFirClassByP
   }
 
   @Test
+  @TestMetadata("nestedConflictInLibraryDifferentRoots.kt")
+  public void testNestedConflictInLibraryDifferentRoots() {
+    runTest("analysis/low-level-api-fir/testData/firClassByPsiClass/nestedConflictInLibraryDifferentRoots.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelClassesConflict.kt")
   public void testTopLevelClassesConflict() {
     runTest("analysis/low-level-api-fir/testData/firClassByPsiClass/topLevelClassesConflict.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelConflictInLibraryDifferentRoots.kt")
+  public void testTopLevelConflictInLibraryDifferentRoots() {
+    runTest("analysis/low-level-api-fir/testData/firClassByPsiClass/topLevelConflictInLibraryDifferentRoots.kt");
   }
 }

@@ -36,8 +36,8 @@ private object KtStdlibSourceTestModuleFactory : KtTestModuleFactory {
         val libraryJar = ForTestCompileRuntime.runtimeJarForTests().toPath()
         val librarySourcesJar = ForTestCompileRuntime.runtimeSourcesJarForTests().toPath()
         return createKtLibrarySourceModule(
-            libraryJar = libraryJar,
-            librarySourcesJar = librarySourcesJar,
+            libraryJars = listOf(libraryJar),
+            librarySourcesJars = listOf(librarySourcesJar),
             testModule = testModule,
             project = project,
             testServices = testServices,
