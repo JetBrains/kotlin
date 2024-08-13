@@ -989,7 +989,7 @@ abstract class FirDataFlowAnalyzer(
         // contracts has no effect on non-body resolve stages
         if (!components.transformer.baseTransformerPhase.isBodyResolve) return
 
-        val callee = when (qualifiedAccess) {
+        val callee: FirFunction = when (qualifiedAccess) {
             is FirFunctionCall -> qualifiedAccess.calleeReference.symbol?.fir as? FirSimpleFunction
             is FirQualifiedAccessExpression -> qualifiedAccess.calleeReference.symbol?.let { it.fir as? FirProperty }?.getter
             is FirVariableAssignment -> qualifiedAccess.calleeReference?.symbol?.let { it.fir as? FirProperty }?.setter

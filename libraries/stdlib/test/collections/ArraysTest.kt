@@ -290,7 +290,7 @@ class ArraysTest {
             assertFalse(check(array, array2), "Modified array should be different: original $list, modified $list2m")
         }
 
-        checkArray(arrayOf("a", 1, null), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
+        checkArray(arrayOf<Any?>("a", 1, null), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
         checkArray(byteArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
         checkArray(intArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
         checkArray(longArrayOf(1, 2, 3), { copyOf() }, { toList() }, { a1, a2 -> a1 contentEquals a2 }, { reverse() })
@@ -334,7 +334,7 @@ class ArraysTest {
     }
 
     @Test fun contentToString() {
-        arrayOf("a", 1, null).let { arr -> assertEquals(arr.asList().toString(), arr.contentToString()) }
+        arrayOf<Any?>("a", 1, null).let { arr -> assertEquals(arr.asList().toString(), arr.contentToString()) }
         charArrayOf('a', 'b', 'd').let { arr -> assertEquals(arr.asList().toString(), arr.contentToString()) }
         intArrayOf(1, 10, 42).let { arr -> assertEquals(arr.asList().toString(), arr.contentToString()) }
         longArrayOf(1L, 5L, Long.MAX_VALUE).let { arr -> assertEquals(arr.asList().toString(), arr.contentToString()) }

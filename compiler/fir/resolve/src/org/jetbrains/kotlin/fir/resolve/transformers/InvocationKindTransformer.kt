@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
@@ -34,7 +31,7 @@ fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
     val isInline = function.isInline || symbol.isArrayConstructorWithLambda
 
     // Candidate could be a substitution or intersection fake override; unwrap and get the effects of the base function.
-    val effects = function.unwrapFakeOverrides().contractDescription?.effects
+    val effects = (function.unwrapFakeOverrides<FirFunction>() as? FirContractDescriptionOwner)?.contractDescription?.effects
 
     val byParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()
     effects?.forEach { fir ->
