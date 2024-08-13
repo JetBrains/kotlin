@@ -80,6 +80,9 @@ public interface ClassBuilder {
 
     void visitInnerClass(@NotNull String name, @Nullable String outerName, @Nullable String innerName, int access);
 
+    default void appendDebugInfo(@NotNull String info) {
+    }
+
     @NotNull
     String getThisName();
 }

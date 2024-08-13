@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -186,6 +187,20 @@ class ClassCodegen private constructor(
         generateAnnotations()
 
         visitor.visitSMAP(smap, !config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+
+
+        visitor.appendDebugInfo(buildString {
+            append("DebuggerVisibleGetters\n")
+            for (function in irClass.functions) {
+                if (function.isGetter &&
+                    function.isPropertyAccessor &&
+                    function.origin != IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR &&
+                    function.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+                    val name = methodSignatureMapper.mapSignatureWithGeneric(function)
+                    append("$name\n")
+                }
+            }
+        })
 
         reifiedTypeParametersUsages.mergeAll(irClass.reifiedTypeParameters)
 

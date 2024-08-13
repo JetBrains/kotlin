@@ -109,6 +109,11 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     }
 
     @Override
+    public void appendDebugInfo(@NotNull String info) {
+        getDelegate().appendDebugInfo(info);
+    }
+
+    @Override
     public void visitOuterClass(@NotNull String owner, @Nullable String name, @Nullable String desc) {
         getDelegate().visitOuterClass(owner, name, desc);
     }

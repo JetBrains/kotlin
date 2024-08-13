@@ -161,6 +161,15 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
     }
 
     @Override
+    public void appendDebugInfo(@NotNull String info) {
+        if (debugInfo == null) {
+            debugInfo = info;
+        } else {
+            debugInfo += info;
+        }
+    }
+
+    @Override
     public void visitOuterClass(@NotNull String owner, @Nullable String name, @Nullable String desc) {
         getVisitor().visitOuterClass(owner, name, desc);
     }
