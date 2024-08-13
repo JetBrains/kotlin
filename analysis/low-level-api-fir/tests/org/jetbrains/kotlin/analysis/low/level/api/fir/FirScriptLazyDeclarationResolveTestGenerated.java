@@ -223,6 +223,12 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   }
 
   @Test
+  @TestMetadata("entryInScriptDestructuringDeclarationMutable.kts")
+  public void testEntryInScriptDestructuringDeclarationMutable() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/entryInScriptDestructuringDeclarationMutable.kts");
+  }
+
+  @Test
   @TestMetadata("enumEntriesScript.kts")
   public void testEnumEntriesScript() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/enumEntriesScript.kts");
@@ -520,6 +526,12 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   @TestMetadata("scriptArgument.kts")
   public void testScriptArgument() {
     runTest("analysis/low-level-api-fir/testData/lazyResolve/scriptArgument.kts");
+  }
+
+  @Test
+  @TestMetadata("scriptDestructuringDeclarationMutable.kts")
+  public void testScriptDestructuringDeclarationMutable() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolve/scriptDestructuringDeclarationMutable.kts");
   }
 
   @Test
