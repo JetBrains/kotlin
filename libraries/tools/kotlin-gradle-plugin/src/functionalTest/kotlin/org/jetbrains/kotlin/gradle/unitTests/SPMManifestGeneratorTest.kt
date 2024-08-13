@@ -24,6 +24,7 @@ class SPMManifestGeneratorTest {
                 GradleSwiftExportFiles(
                     File(""),
                     File(""),
+                    File(""),
                     File("")
                 ),
                 "SharedBridge",
@@ -86,6 +87,7 @@ class SPMManifestGeneratorTest {
                 GradleSwiftExportFiles(
                     File(""),
                     File(""),
+                    File(""),
                     File("")
                 ),
                 "SharedBridge",
@@ -114,6 +116,7 @@ class SPMManifestGeneratorTest {
             ),
             GradleSwiftExportModule.BridgesToKotlin(
                 GradleSwiftExportFiles(
+                    File(""),
                     File(""),
                     File(""),
                     File("")

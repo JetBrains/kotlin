@@ -6,17 +6,26 @@
 package org.jetbrains.kotlin.swiftexport.standalone.writer
 
 import org.jetbrains.kotlin.sir.bridge.*
+import org.jetbrains.kotlin.swiftexport.compilerconfig.CompilerConfig
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportFiles
 import java.io.File
+import java.io.FileOutputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 
-internal fun dumpTextAtPath(
+internal fun dumpResultToFiles(
     swift: Sequence<String>,
     bridges: BridgeSources,
-    output: SwiftExportFiles
+    compilerConfig: CompilerConfig,
+    output: SwiftExportFiles,
 ) {
     dumpTextAtFile(bridges.ktSrc, output.kotlinBridges.toFile())
     dumpTextAtFile(bridges.cSrc, output.cHeaderBridges.toFile())
     dumpTextAtFile(swift, output.swiftApi.toFile())
+    output.compilerConfig.toFile().run {
+        ensureExists()
+        compilerConfig.writeToFile(this)
+    }
 }
 
 internal fun generateBridgeSources(
@@ -41,11 +50,15 @@ internal fun generateBridgeSources(
     return BridgeSources(ktSrc = actualKotlinSrc, cSrc = actualCHeader)
 }
 
-internal fun dumpTextAtFile(text: Sequence<String>, file: File) {
-    if (!file.exists()) {
-        file.parentFile.mkdirs()
-        file.createNewFile()
+private fun File.ensureExists() {
+    if (!exists()) {
+        parentFile.mkdirs()
+        createNewFile()
     }
+}
+
+internal fun dumpTextAtFile(text: Sequence<String>, file: File) {
+    file.ensureExists()
     val writer = file.printWriter()
     for (t in text) {
         writer.println(t)

@@ -36,4 +36,5 @@ internal data class GradleSwiftExportFiles(
     val swiftApi: File,
     val kotlinBridges: File,
     val cHeaderBridges: File,
+    val compilerConfig: File,
 ) : Serializable

@@ -87,5 +87,5 @@ private fun SwiftExportModule.toKGPModule(): GradleSwiftExportModule {
 }
 
 private fun SwiftExportFiles.toKGPFiles(): GradleSwiftExportFiles {
-    return GradleSwiftExportFiles(swiftApi.toFile(), kotlinBridges.toFile(), cHeaderBridges.toFile())
+    return GradleSwiftExportFiles(swiftApi.toFile(), kotlinBridges.toFile(), cHeaderBridges.toFile(), compilerConfig.toFile())
 }

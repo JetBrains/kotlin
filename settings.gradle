@@ -470,6 +470,7 @@ include ":native:swift:sir",
         ":native:swift:sir-printer",
         ":native:swift:sir-compiler-bridge",
         ":native:swift:sir-providers",
+        ":native:swift:swift-export-compiler-config",
         ":native:swift:swift-export-standalone",
         ":native:swift:swift-export-embeddable",
         ":generators:sir-tests-generator"

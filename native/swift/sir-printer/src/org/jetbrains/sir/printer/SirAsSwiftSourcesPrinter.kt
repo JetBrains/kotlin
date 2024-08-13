@@ -7,6 +7,7 @@ package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.Comparators
+import org.jetbrains.kotlin.sir.util.objCClassName
 import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
@@ -82,6 +83,7 @@ public class SirAsSwiftSourcesPrinter(
         if (this is SirDeclaration) {
             printDocumentation()
             if (this is SirClass) {
+                printObjCName()
                 printModifiers()
             } else {
                 printVisibility()
@@ -324,6 +326,8 @@ public class SirAsSwiftSourcesPrinter(
             SirCallableKind.STATIC_METHOD -> "static "
         }
     )
+
+    private fun SirClass.printObjCName() = print("@objc($objCClassName)")
 }
 
 private val SirVisibility.swift

@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":native:swift:sir-compiler-bridge"))
     implementation(project(":native:swift:sir-light-classes"))
     implementation(project(":native:swift:sir-printer"))
+    implementation(project(":native:swift:swift-export-compiler-config"))
 
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-standalone"))

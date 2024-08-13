@@ -72,3 +72,6 @@ val SirFunction.swiftFqName: String
 
 val SirVariable.swiftFqName: String
     get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name
+
+val SirClass.objCClassName: String
+    get() = swiftFqName.replace(".", "")

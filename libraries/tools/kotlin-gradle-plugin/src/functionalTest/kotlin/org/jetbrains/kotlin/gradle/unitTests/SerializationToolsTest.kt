@@ -85,7 +85,8 @@ class SerializationToolsTest {
             "files": {
               "swiftApi": "/A/SwiftFile.swift",
               "kotlinBridges": "/A/KotlinBridge.kt",
-              "cHeaderBridges": "/A/Header.h"
+              "cHeaderBridges": "/A/Header.h",
+              "compilerConfig": "/A/CompilerConfig.bin",
             },
             "bridgeName": "Bridge_A",
             "name": "Module_A",
@@ -101,7 +102,8 @@ class SerializationToolsTest {
             "files": {
               "swiftApi": "\\A\\SwiftFile.swift",
               "kotlinBridges": "\\A\\KotlinBridge.kt",
-              "cHeaderBridges": "\\A\\Header.h"
+              "cHeaderBridges": "\\A\\Header.h",
+              "compilerConfig": "\\A\\CompilerConfig.bin",
             },
             "bridgeName": "Bridge_A",
             "name": "Module_A",
@@ -116,7 +118,8 @@ class SerializationToolsTest {
             GradleSwiftExportFiles(
                 File("/A/SwiftFile.swift"),
                 File("/A/KotlinBridge.kt"),
-                File("/A/Header.h")
+                File("/A/Header.h"),
+                File("/A/CompilerConfig.bin")
             ),
             "Bridge_A",
             "Module_A",
@@ -139,7 +142,8 @@ class SerializationToolsTest {
             "files": {
               "swiftApi": "/A/SwiftFile.swift",
               "kotlinBridges": "/A/KotlinBridge.kt",
-              "cHeaderBridges": "/A/Header.h"
+              "cHeaderBridges": "/A/Header.h",
+              "compilerConfig": "/A/CompilerConfig.bin"
             },
             "bridgeName": "Bridge_A",
             "name": "Module_A",
@@ -153,7 +157,8 @@ class SerializationToolsTest {
             "files": {
               "swiftApi": "/B/SwiftFile.swift",
               "kotlinBridges": "/B/KotlinBridge.kt",
-              "cHeaderBridges": "/B/Header.h"
+              "cHeaderBridges": "/B/Header.h",
+              "compilerConfig": "/B/CompilerConfig.bin"
             },
             "bridgeName": "Bridge_B",
             "name": "Module_B",
@@ -189,7 +194,8 @@ class SerializationToolsTest {
             GradleSwiftExportFiles(
                 File("/A/SwiftFile.swift"),
                 File("/A/KotlinBridge.kt"),
-                File("/A/Header.h")
+                File("/A/Header.h"),
+                File("/A/CompilerConfig.bin")
             ),
             "Bridge_A",
             "Module_A",
@@ -199,7 +205,8 @@ class SerializationToolsTest {
             GradleSwiftExportFiles(
                 File("/B/SwiftFile.swift"),
                 File("/B/KotlinBridge.kt"),
-                File("/B/Header.h")
+                File("/B/Header.h"),
+                File("/B/CompilerConfig.bin")
             ),
             "Bridge_B",
             "Module_B",
@@ -235,7 +242,8 @@ class SerializationToolsTest {
             "files": {
               "swiftApi": "/A/SwiftFile.swift",
               "kotlinBridges": "/A/KotlinBridge.kt",
-              "cHeaderBridges": "/A/Header.h"
+              "cHeaderBridges": "/A/Header.h",
+              "compilerConfig": "/A/CompilerConfig.bin"
             },
             "bridgeName": "Bridge_A",
             "name": "Module_A",
@@ -248,7 +256,8 @@ class SerializationToolsTest {
             "files": {
               "swiftApi": "/B/SwiftFile.swift",
               "kotlinBridges": "/B/KotlinBridge.kt",
-              "cHeaderBridges": "/B/Header.h"
+              "cHeaderBridges": "/B/Header.h",
+              "compilerConfig": "/B/CompilerConfig.bin"
             },
             "bridgeName": "Bridge_B",
             "name": "Module_B",
@@ -287,7 +296,8 @@ class SerializationToolsTest {
             GradleSwiftExportFiles(
                 File("/A/SwiftFile.swift"),
                 File("/A/KotlinBridge.kt"),
-                File("/A/Header.h")
+                File("/A/Header.h"),
+                File("/A/CompilerConfig.bin")
             ),
             "Bridge_A",
             "Module_A",
@@ -297,7 +307,8 @@ class SerializationToolsTest {
             GradleSwiftExportFiles(
                 File("/B/SwiftFile.swift"),
                 File("/B/KotlinBridge.kt"),
-                File("/B/Header.h")
+                File("/B/Header.h"),
+                File("/A/CompilerConfig.bin")
             ),
             "Bridge_B",
             "Module_B",

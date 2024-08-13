@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isValidSwiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.kotlin.swiftexport.compilerconfig.CompilerConfig
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
+import org.jetbrains.kotlin.swiftexport.standalone.builders.buildCompilerConfig
 import org.jetbrains.kotlin.swiftexport.standalone.builders.createModuleWithScopeProviderFromBinary
 import org.jetbrains.kotlin.swiftexport.standalone.builders.initializeSirModule
 import org.jetbrains.kotlin.swiftexport.standalone.writer.*
@@ -153,6 +155,7 @@ public data class SwiftExportFiles(
     val swiftApi: Path,
     val kotlinBridges: Path,
     val cHeaderBridges: Path,
+    val compilerConfig: Path,
 ) : Serializable
 
 /**
@@ -227,12 +230,15 @@ private fun translateModule(module: InputModule, dependencies: Set<InputModule>)
 
     val bridges = generateBridgeSources(module.config.bridgeGenerator, bridgeRequests, true)
 
+    val compilerConfig = buildCompilerConfig(buildResult.module)
+
     return TranslationResult(
         packages = buildResult.packages,
         sirModule = buildResult.module,
         bridgeSources = bridges,
         config = module.config,
         bridgesModuleName = module.bridgesModuleName,
+        compilerConfig = compilerConfig,
     )
 }
 
@@ -245,6 +251,7 @@ private class TranslationResult(
     val bridgeSources: BridgeSources,
     val config: SwiftExportConfig,
     val bridgesModuleName: String,
+    val compilerConfig: CompilerConfig,
 )
 
 private fun Collection<TranslationResult>.createModuleForPackages(): SirModule = buildModule {
@@ -287,12 +294,14 @@ private fun TranslationResult.writeModule(): SwiftExportModule {
     val outputFiles = SwiftExportFiles(
         swiftApi = (config.outputPath / sirModule.name / "${sirModule.name}.swift"),
         kotlinBridges = (config.outputPath / sirModule.name / "${sirModule.name}.kt"),
-        cHeaderBridges = (config.outputPath / sirModule.name / "${sirModule.name}.h")
+        cHeaderBridges = (config.outputPath / sirModule.name / "${sirModule.name}.h"),
+        compilerConfig = (config.outputPath / sirModule.name / "${sirModule.name}.compilerconfig.bin")
     )
 
-    dumpTextAtPath(
+    dumpResultToFiles(
         swiftSources,
         bridgeSources,
+        compilerConfig,
         outputFiles
     )
 
