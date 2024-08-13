@@ -404,7 +404,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         whileAnalysing(session, safeCallExpression) {
             withContainingSafeCallExpression(safeCallExpression) {
                 safeCallExpression.transformAnnotations(this, ResolutionMode.ContextIndependent)
-                safeCallExpression.transformReceiver(this, ResolutionMode.ContextIndependent)
+
+                safeCallExpression.transformReceiver(this, ResolutionMode.ReceiverResolution)
+                safeCallExpression.transformReceiver(components.integerLiteralAndOperatorApproximationTransformer, null)
 
                 val receiver = safeCallExpression.receiver
 
