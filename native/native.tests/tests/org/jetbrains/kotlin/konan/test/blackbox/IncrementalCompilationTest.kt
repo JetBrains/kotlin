@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.test.blackbox.CachesAutoBuildTest.Companion.TEST_SUITE_PATH
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependency
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
@@ -204,7 +205,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             "externalLib/file1.kt" copyTo "file1.kt"
             "externalLib/file2.kt" copyTo "file2.kt"
         }
-        val userLib = compileLibrary("userLib", externalLib) {
+        val userLib = compileLibrary("userLib", externalLib.asLibraryDependency()) {
             "userLib/file1.kt" copyTo "file1.kt"
             "userLib/file2.kt" copyTo "file2.kt"
         }
@@ -283,7 +284,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     @TestMetadata("fileDependencies2")
     fun testFileDependencies2() = withRootDir(File("$TEST_SUITE_PATH/fileDependencies2")) {
         val lib1 = compileLibrary("lib1") { "lib1/lib1.kt" copyTo "lib1.kt" }
-        val lib2 = compileLibrary("lib2", lib1) {
+        val lib2 = compileLibrary("lib2", lib1.asLibraryDependency()) {
             "lib2/lib2.file1.kt" copyTo "file1.kt"
             "lib2/lib2.file2.kt" copyTo "file2.kt"
         }
@@ -304,7 +305,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
         // Check, <lib2>'s file2 cache will be recompiled after changing lib1/lib1.kt.
         val lib11 = compileLibrary("lib1") { "lib1/lib1.1.kt" copyTo "lib1.kt" }
-        val lib21 = compileLibrary("lib2", lib11) {
+        val lib21 = compileLibrary("lib2", lib11.asLibraryDependency()) {
             "lib2/lib2.file1.kt" copyTo "file1.kt"
             "lib2/lib2.file2.kt" copyTo "file2.kt"
         }
@@ -323,7 +324,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     @TestMetadata("addMethodToOpenClass1")
     fun addMethodToOpenClass1() = withRootDir(File("$TEST_SUITE_PATH/addMethodToOpenClass1")) {
         val lib1 = compileLibrary("lib1") { "lib1/lib1.kt" copyTo "lib1.kt" }
-        val lib2 = compileLibrary("lib2", lib1) { "lib2/lib2.kt" copyTo "lib2.kt" }
+        val lib2 = compileLibrary("lib2", lib1.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main = compileToExecutable("main", lib1, lib2) { "main/main.kt" copyTo "main.kt" }
 
         // Check, <lib> has been compiled to cache.
@@ -338,7 +339,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
         // Check, <lib2>'s cache won't be recompiled after changing lib1/lib1.kt.
         val lib11 = compileLibrary("lib1") { "lib1/lib1.1.kt" copyTo "lib1.kt" }
-        val lib21 = compileLibrary("lib2", lib11) { "lib2/lib2.kt" copyTo "lib2.kt" }
+        val lib21 = compileLibrary("lib2", lib11.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main1 = compileToExecutable("main", lib11, lib21) { "main/main.kt" copyTo "main.kt" }
         assertTrue(main1.executableFile.exists())
         assertTrue(lib1KtCacheDir.exists())
@@ -355,7 +356,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             "lib1/lib1.file1.kt" copyTo "lib1.file1.kt"
             "lib1/lib1.file2.kt" copyTo "lib1.file2.kt"
         }
-        val lib2 = compileLibrary("lib2", lib1) { "lib2/lib2.kt" copyTo "lib2.kt" }
+        val lib2 = compileLibrary("lib2", lib1.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main = compileToExecutable("main", lib1, lib2) { "main/main.kt" copyTo "main.kt" }
 
         // Check, <lib> has been compiled to cache.
@@ -376,7 +377,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             "lib1/lib1.file1.1.kt" copyTo "lib1.file1.kt"
             "lib1/lib1.file2.kt" copyTo "lib1.file2.kt"
         }
-        val lib21 = compileLibrary("lib2", lib11) { "lib2/lib2.kt" copyTo "lib2.kt" }
+        val lib21 = compileLibrary("lib2", lib11.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main1 = compileToExecutable("main", lib11, lib21) { "main/main.kt" copyTo "main.kt" }
         assertTrue(main1.executableFile.exists())
         assertTrue(lib1File1KtCacheDir.exists())
@@ -392,7 +393,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     @TestMetadata("addMethodToInterface1")
     fun addMethodToInterface1() = withRootDir(File("$TEST_SUITE_PATH/addMethodToInterface1")) {
         val lib1 = compileLibrary("lib1") { "lib1/lib1.kt" copyTo "lib1.kt" }
-        val lib2 = compileLibrary("lib2", lib1) { "lib2/lib2.kt" copyTo "lib2.kt" }
+        val lib2 = compileLibrary("lib2", lib1.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main = compileToExecutable("main", lib1, lib2) { "main/main.kt" copyTo "main.kt" }
 
         // Check, <lib> has been compiled to cache.
@@ -407,7 +408,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
 
         // Check, <lib2>'s cache won't be recompiled after changing lib1/lib1.kt.
         val lib11 = compileLibrary("lib1") { "lib1/lib1.1.kt" copyTo "lib1.kt" }
-        val lib21 = compileLibrary("lib2", lib11) { "lib2/lib2.kt" copyTo "lib2.kt" }
+        val lib21 = compileLibrary("lib2", lib11.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main1 = compileToExecutable("main", lib11, lib21) { "main/main.1.kt" copyTo "main.kt" }
         assertTrue(main1.executableFile.exists())
         assertTrue(lib1KtCacheDir.exists())
@@ -424,7 +425,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             "lib1/lib1.file1.kt" copyTo "lib1.file1.kt"
             "lib1/lib1.file2.kt" copyTo "lib1.file2.kt"
         }
-        val lib2 = compileLibrary("lib2", lib1) { "lib2/lib2.kt" copyTo "lib2.kt" }
+        val lib2 = compileLibrary("lib2", lib1.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main = compileToExecutable("main", lib1, lib2) { "main/main.kt" copyTo "main.kt" }
 
         // Check, <lib> has been compiled to cache.
@@ -445,7 +446,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             "lib1/lib1.file1.1.kt" copyTo "lib1.file1.kt"
             "lib1/lib1.file2.kt" copyTo "lib1.file2.kt"
         }
-        val lib21 = compileLibrary("lib2", lib11) { "lib2/lib2.kt" copyTo "lib2.kt" }
+        val lib21 = compileLibrary("lib2", lib11.asLibraryDependency()) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main1 = compileToExecutable("main", lib11, lib21) { "main/main.1.kt" copyTo "main.kt" }
         assertTrue(main1.executableFile.exists())
         assertTrue(lib1File1KtCacheDir.exists())
@@ -462,7 +463,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     private inner class RootDirHolder(val rootDir: File) {
         inline fun compileLibrary(
             targetSrc: String,
-            vararg dependencies: TestCompilationArtifact.KLIB,
+            vararg dependencies: TestCompilationDependency<*>,
             block: LibraryBuilder.() -> Unit
         ) = with(LibraryBuilder(this@IncrementalCompilationTest, rootDir, targetSrc, dependencies.asList())) {
             block()
@@ -473,7 +474,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
         inline fun compileToExecutable(
             targetSrc: String,
-            vararg dependencies: TestCompilationArtifact.KLIB,
+            vararg dependencies: TestCompilationDependency<*>,
             block: ExecutableBuilder.() -> Unit
         ) = with(ExecutableBuilder(this@IncrementalCompilationTest, rootDir, targetSrc, false, dependencies.asList())) {
             externalLibsDir.mkdirs()
@@ -487,6 +488,12 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             block()
             build()
         }
+
+        inline fun compileToExecutable(
+            targetSrc: String,
+            vararg klibs: TestCompilationArtifact.KLIB,
+            block: ExecutableBuilder.() -> Unit
+        ) = compileToExecutable(targetSrc, dependencies = klibs.map { it.asLibraryDependency() }.toTypedArray(), block)
     }
 
     private val externalLibsDir: File get() = buildDir.resolve("external")
