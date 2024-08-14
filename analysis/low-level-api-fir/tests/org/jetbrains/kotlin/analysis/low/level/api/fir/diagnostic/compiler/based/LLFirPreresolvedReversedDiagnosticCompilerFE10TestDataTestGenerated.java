@@ -14617,6 +14617,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("noInconsistentTypeParameterBoundsWithStarProjections.kt")
+      public void testNoInconsistentTypeParameterBoundsWithStarProjections() {
+        runTest("compiler/testData/diagnostics/tests/generics/noInconsistentTypeParameterBoundsWithStarProjections.kt");
+      }
+
+      @Test
       @TestMetadata("nullableTypeParameterScope.kt")
       public void testNullableTypeParameterScope() {
         runTest("compiler/testData/diagnostics/tests/generics/nullableTypeParameterScope.kt");
