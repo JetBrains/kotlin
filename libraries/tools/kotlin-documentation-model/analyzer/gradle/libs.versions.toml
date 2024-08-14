@@ -52,9 +52,9 @@ gradlePlugin-shadow = "8.3.0"
 gradlePlugin-gradlePluginPublish = "1.2.1"
 gradlePlugin-gradleNode = "7.0.1"
 
-## Gradle enterprise
-gradlePlugin-gradle-customUserData = "1.13"
-gradlePlugin-gradle-enterprise = "3.16.2"
+## Gradle Develocity
+gradlePlugin-gradle-customUserData = "2.0.2"
+gradlePlugin-gradle-develocity = "3.17.6"
 
 ## Test
 junit = "5.9.3"
@@ -83,7 +83,7 @@ gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref 
 gradlePlugin-shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "gradlePlugin-shadow" }
 gradlePlugin-gradlePublish = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
 gradlePlugin-gradle-customUserData = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradlePlugin-gradle-customUserData" }
-gradlePlugin-gradle-enterprise = { module = "com.gradle:gradle-enterprise-gradle-plugin", version.ref = "gradlePlugin-gradle-enterprise" }
+gradlePlugin-gradle-develocity = { module = "com.gradle:develocity-gradle-plugin", version.ref = "gradlePlugin-gradle-develocity" }
 
 gradlePlugin-androidApi = { module = "com.android.tools.build:gradle-api", version.ref = "gradlePlugin-android" }
 
