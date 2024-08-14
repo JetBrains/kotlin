@@ -13,6 +13,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.gradlePlugin.gradle.enterprise)
+    implementation(libs.gradlePlugin.gradle.develocity)
     implementation(libs.gradlePlugin.gradle.customUserData)
 }
