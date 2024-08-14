@@ -35,7 +35,8 @@ val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
         is IrPropertyReference -> element.symbol.owner
         else -> throw AssertionError("Not supported ir element for inlining ${element.dump()}")
     }
-private val IrInlinedFunctionBlock.inlineFunction: IrFunction?
+
+val IrInlinedFunctionBlock.inlineFunction: IrFunction?
     get() = when (val element = inlinedElement) {
         is IrFunction -> element
         is IrFunctionExpression -> element.function

@@ -342,8 +342,8 @@ internal class CodeGeneratorVisitor(
     private inline fun <R> switchSymbolizationContextTo(symbol: IrFunctionSymbol, block: () -> R): R? {
         val functionContext = findCodeContext(symbol.owner, currentCodeContext) {
             val declaration = (this as? FunctionScope)?.declaration
-            val returnableBlock = (this as? ReturnableBlockScope)?.returnableBlock
-            val inlinedFunction = returnableBlock?.inlineFunction
+            val inlinedBlock = (this as? InlinedBlockScope)?.inlinedBlock
+            val inlinedFunction = inlinedBlock?.inlineFunction
             declaration == it || inlinedFunction == it
         } ?: return null
 
@@ -953,6 +953,7 @@ internal class CodeGeneratorVisitor(
             is IrThrow               -> return evaluateThrow                  (value)
             is IrTry                 -> return evaluateTry                    (value)
             is IrReturnableBlock     -> return evaluateReturnableBlock        (value, resultSlot)
+            is IrInlinedFunctionBlock-> return evaluateInlinedBlock           (value, resultSlot)
             is IrContainerExpression -> return evaluateContainerExpression    (value, resultSlot)
             is IrWhileLoop           -> return evaluateWhileLoop              (value)
             is IrDoWhileLoop         -> return evaluateDoWhileLoop            (value)
@@ -1981,28 +1982,55 @@ internal class CodeGeneratorVisitor(
     }
 
     //-------------------------------------------------------------------------//
-    private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlock, val resultSlot: LLVMValueRef?) :
-            FileScope(returnableBlock.inlineFunction?.let {
+
+    private inner class InlinedBlockScope(val inlinedBlock: IrInlinedFunctionBlock) :
+            FileScope(inlinedBlock.inlineFunction?.let {
                 require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
                 generationState.inlineFunctionOrigins[it]?.irFile ?: it.fileOrNull
             }
                     ?: (currentCodeContext.fileScope() as? FileScope)?.file
                     ?: error("returnable block should belong to current file at least")) {
 
-        var bbExit : LLVMBasicBlockRef? = null
-        var resultPhi : LLVMValueRef? = null
         private val functionScope by lazy {
-            returnableBlock.inlineFunction?.let {
+            inlinedBlock.inlineFunction?.let {
                 require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
                 it.scope(file().fileEntry.line(generationState.inlineFunctionOrigins[it]?.startOffset ?: it.startOffset))
             }
         }
 
+        override fun location(offset: Int): LocationInfo? {
+            return if (inlinedBlock.inlineFunction != null) {
+                val diScope = functionScope ?: return null
+                val inlinedAt = outerContext.location(inlinedBlock.startOffset) ?: return null
+                val (line, column) = file.fileEntry.lineAndColumn(offset)
+                LocationInfo(diScope, line, column, inlinedAt)
+            } else {
+                outerContext.location(offset)
+            }
+        }
+
+        /**
+         * Note: DILexicalBlocks aren't nested, they should be scoped with the parent function.
+         */
+        private val scope by lazy {
+            if (!context.shouldContainLocationDebugInfo() || inlinedBlock.startOffset == UNDEFINED_OFFSET)
+                return@lazy null
+            val lexicalBlockFile = DICreateLexicalBlockFile(debugInfo.builder, functionScope()!!.scope(), super.file.diFileScope())
+            val (line, column) = inlinedBlock.startLineAndColumn()
+            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.file.diFileScope(), line, column)!!
+        }
+
+        override fun scope() = scope
+    }
+
+    //-------------------------------------------------------------------------//
+    private inner class ReturnableBlockScope(val returnableBlock: IrReturnableBlock, val resultSlot: LLVMValueRef?) : InnerScopeImpl() {
+
+        var bbExit : LLVMBasicBlockRef? = null
+        var resultPhi : LLVMValueRef? = null
+
         private fun getExit(): LLVMBasicBlockRef {
-            val location = returnableBlock.inlineFunction?.let {
-                require(it is IrSimpleFunction) { "Inline constructors should've been lowered: ${it.render()}" }
-                location(generationState.inlineFunctionOrigins[it]?.endOffset ?: it.endOffset)
-            } ?: returnableBlock.statements.lastOrNull()?.let {
+            val location = returnableBlock.statements.lastOrNull()?.let {
                 location(it.endOffset)
             }
             if (bbExit == null) bbExit = functionGenerationContext.basicBlock("returnable_block_exit", location)
@@ -2041,31 +2069,6 @@ internal class CodeGeneratorVisitor(
         }
 
         override fun returnableBlockScope(): CodeContext? = this
-
-        override fun location(offset: Int): LocationInfo? {
-            return if (returnableBlock.inlineFunction != null) {
-                val diScope = functionScope ?: return null
-                val inlinedAt = outerContext.location(returnableBlock.startOffset) ?: return null
-                val (line, column) = file.fileEntry.lineAndColumn(offset)
-                LocationInfo(diScope, line, column, inlinedAt)
-            } else {
-                outerContext.location(offset)
-            }
-        }
-
-        /**
-         * Note: DILexicalBlocks aren't nested, they should be scoped with the parent function.
-         */
-        private val scope by lazy {
-            if (!context.shouldContainLocationDebugInfo() || returnableBlock.startOffset == UNDEFINED_OFFSET)
-                return@lazy null
-            val lexicalBlockFile = DICreateLexicalBlockFile(debugInfo.builder, functionScope()!!.scope(), super.file.diFileScope())
-            val (line, column) = returnableBlock.startLineAndColumn()
-            DICreateLexicalBlock(debugInfo.builder, lexicalBlockFile, super.file.diFileScope(), line, column)!!
-        }
-
-        override fun scope() = scope
-
     }
 
     //-------------------------------------------------------------------------//
@@ -2110,7 +2113,6 @@ internal class CodeGeneratorVisitor(
         context.log{"evaluateReturnableBlock         : ${value.statements.forEach { ir2string(it) }}"}
 
         val returnableBlockScope = ReturnableBlockScope(value, resultSlot)
-        generateDebugTrambolineIf("inline", value)
         using(returnableBlockScope) {
             using(VariableScope()) {
                 value.statements.forEach {
@@ -2131,6 +2133,19 @@ internal class CodeGeneratorVisitor(
             codegen.theUnitInstanceRef.llvm
         } else {
             LLVMGetUndef(value.type.toLLVMType(llvm))!!
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateInlinedBlock(value: IrInlinedFunctionBlock, resultSlot: LLVMValueRef?): LLVMValueRef {
+        context.log{"evaluateInlinedBlock         : ${value.statements.forEach { ir2string(it) }}"}
+
+        val inlinedBlockScope = InlinedBlockScope(value)
+        generateDebugTrambolineIf("inline", value)
+
+        return using(inlinedBlockScope) {
+            evaluateContainerExpression(value, resultSlot)
         }
     }
 
