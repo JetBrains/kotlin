@@ -16,6 +16,7 @@ abstract class SirSetter : SirAccessor() {
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
+    abstract override val attributes: MutableList<SirAttribute>
     abstract override val kind: SirCallableKind
     abstract override var body: SirFunctionBody?
     abstract val parameterName: String

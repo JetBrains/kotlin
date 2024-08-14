@@ -19,6 +19,7 @@ class SirClassBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
+    val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
     var superClass: SirType? = null
@@ -29,6 +30,7 @@ class SirClassBuilder {
             origin,
             visibility,
             documentation,
+            attributes,
             name,
             declarations,
             superClass,
@@ -55,6 +57,7 @@ inline fun buildClassCopy(original: SirClass, init: SirClassBuilder.() -> Unit):
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
+    copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
     copyBuilder.superClass = original.superClass
