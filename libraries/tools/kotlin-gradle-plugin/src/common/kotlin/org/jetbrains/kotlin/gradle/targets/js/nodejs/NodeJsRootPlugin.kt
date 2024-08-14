@@ -13,8 +13,6 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -263,10 +261,8 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         extension.platform.value(
             project.providers.systemProperty("os.name")
-                .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
                 .zip(
                     project.providers.systemProperty("os.arch")
-                        .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
                 ) { name, arch ->
                     parsePlatform(name, arch, uname)
                 }

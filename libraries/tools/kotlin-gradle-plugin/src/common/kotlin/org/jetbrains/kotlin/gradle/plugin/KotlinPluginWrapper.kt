@@ -152,11 +152,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class,
-            DefaultConfigurationTimePropertiesAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
             MppTestReportHelper.MppTestReportHelperVariantFactory::class,
             DefaultMppTestReportHelperVariantFactory()
         )

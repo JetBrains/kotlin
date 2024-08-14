@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 
 
 /**
@@ -41,7 +39,7 @@ internal object OverriddenKotlinNativeHomeChecker : KotlinGradleProjectChecker {
             it.parameters.overriddenKotlinNativeHome.fileProvider(
                 project.nativeProperties.userProvidedNativeHome.map { nativeHome -> project.file(nativeHome) }
             )
-        }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
+        }
 
     internal abstract class StdlibExistenceCheckerValueSource :
         ValueSource<Boolean, StdlibExistenceCheckerValueSource.Params> {

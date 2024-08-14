@@ -10,8 +10,6 @@ import org.gradle.api.file.*
 import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.CustomPropertiesFileValueSource
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -140,7 +138,6 @@ internal val Project.localProperties: Provider<Map<String, String>>
                 project.rootDir.resolve("local.properties")
             )
         }
-        .usedAtConfigurationTime(configurationTimePropertiesAccessor)
 
 /**
  * Returns file collection [this] excluding files from [excludes] if not null

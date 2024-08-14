@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.binaryen
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenPlatform.Companion.parseBinaryenPlatform
@@ -57,10 +55,8 @@ open class BinaryenRootPlugin : Plugin<Project> {
 
         extension.platform.value(
             project.providers.systemProperty("os.name")
-                .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
                 .zip(
                     project.providers.systemProperty("os.arch")
-                        .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
                 ) { name, arch ->
                     parseBinaryenPlatform(name.toLowerCaseAsciiOnly(), arch, uname)
                 }

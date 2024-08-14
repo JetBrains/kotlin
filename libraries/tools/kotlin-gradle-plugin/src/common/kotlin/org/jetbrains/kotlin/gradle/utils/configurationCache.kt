@@ -10,12 +10,10 @@ import org.gradle.api.Task
 import org.gradle.api.internal.StartParameterInternal
 import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 
 internal fun Project.readSystemPropertyAtConfigurationTime(key: String): Provider<String> {
-    return providers.systemProperty(key).usedAtConfigurationTime(configurationTimePropertiesAccessor)
+    return providers.systemProperty(key)
 }
 
 fun Task.notCompatibleWithConfigurationCacheCompat(reason: String) {

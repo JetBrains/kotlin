@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.utils.konanDistribution
 
@@ -47,7 +45,7 @@ internal object MissingNativeStdlibChecker : KotlinGradleProjectChecker {
             it.parameters.kotlinNativeToolchainEnabled.set(project.nativeProperties.isToolchainEnabled)
             it.parameters.stdlib.setFrom(project.konanDistribution.stdlib)
             it.parameters.overriddenKotlinNativeHome.set(project.nativeProperties.userProvidedNativeHome)
-        }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
+        }
 
     internal abstract class StdlibExistenceCheckerValueSource :
         ValueSource<Boolean, StdlibExistenceCheckerValueSource.Params> {
