@@ -87,13 +87,37 @@ open class FirSwitchableExtensionDeclarationsSymbolProvider protected constructo
 
     @FirSymbolProviderInternals
     fun disable() {
+        require(!disabled) {
+            "Attempt to disable already disabled ${FirSwitchableExtensionDeclarationsSymbolProvider::class}"
+        }
+
         disabled = true
     }
 
     @FirSymbolProviderInternals
     fun enable() {
+        require(disabled) {
+            "Attempt to enable already enabled ${FirSwitchableExtensionDeclarationsSymbolProvider::class}"
+        }
+
         disabled = false
     }
+
+    @FirSymbolProviderInternals
+    internal fun isDisabled(): Boolean = disabled
 }
 
 val FirSession.generatedDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider? by FirSession.nullableSessionComponentAccessor()
+
+@FirSymbolProviderInternals
+fun FirSession.withGeneratedDeclarationsSymbolProviderDisabled(action: () -> Unit) {
+    val enabledProvider = generatedDeclarationsSymbolProvider?.takeUnless { it.isDisabled() }
+
+    enabledProvider?.disable()
+
+    try {
+        action()
+    } finally {
+        enabledProvider?.enable()
+    }
+}

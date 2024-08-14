@@ -1091,4 +1091,14 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
 }
