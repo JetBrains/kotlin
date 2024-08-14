@@ -12,9 +12,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
             FirJvmProtectedInSuperClassCompanionCallChecker,
-            FirJvmReflectionApiCallChecker,
-            FirJvmMissingBuiltInDeclarationChecker
-        )
+            FirJvmReflectionApiCallChecker)
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
         get() = setOf(
