@@ -26,7 +26,7 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
-                "org.jetbrains.kotlin.swiftexport.ExperimentalSwiftExportDsl"
+                "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl"
             )
         )
     }

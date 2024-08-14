@@ -17,10 +17,9 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import javax.inject.Inject
 
 interface SwiftExportedModuleMetadata {
