@@ -167,11 +167,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class,
-            DefaultArtifactTypeAttributeAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
             ProjectIsolationStartParameterAccessor.Factory::class,
             DefaultProjectIsolationStartParameterAccessor.Factory()
         )

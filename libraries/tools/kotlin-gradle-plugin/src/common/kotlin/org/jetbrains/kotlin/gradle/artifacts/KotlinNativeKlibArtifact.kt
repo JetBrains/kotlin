@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.artifacts
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
@@ -15,7 +16,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat
-import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -31,7 +31,7 @@ internal val KotlinNativeKlibArtifact = KotlinTargetArtifact { target, apiElemen
         it.description = "Assembles outputs for target '${target.name}'."
     }
 
-    apiElements.outgoing.attributes.setAttribute(target.project.artifactTypeAttribute, NativeArtifactFormat.KLIB)
+    apiElements.outgoing.attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
 
     target.compilations.getByName(MAIN_COMPILATION_NAME).let { mainCompilation ->
         artifactsTask.dependsOn(mainCompilation.compileTaskProvider)
@@ -63,7 +63,7 @@ internal fun createKlibArtifact(
         }
         compilation.project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
         artifacts.add(klibArtifact)
-        attributes.setAttribute(compilation.project.artifactTypeAttribute, NativeArtifactFormat.KLIB)
+        attributes.setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, NativeArtifactFormat.KLIB)
     }
 }
 

@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.native
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -79,7 +79,7 @@ private fun Configuration.applyBinaryFrameworkGroupAttributes(
 ) {
     with(attributes) {
         setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        setAttribute(project.artifactTypeAttribute, KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK)
+        setAttribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK)
         setAttribute(KotlinNativeTarget.kotlinNativeBuildTypeAttribute, frameworkDescription.buildType.name)
         setAttribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, frameworkDescription.frameworkName)
         setAttributeProvider(project, Framework.frameworkTargets) {
