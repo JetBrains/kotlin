@@ -1,4 +1,4 @@
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__)
 #include <dlfcn.h>
 #if defined(__linux__)
 #include <link.h>
@@ -107,4 +107,4 @@ static void initSignalChaining() {
   checkSignalChaining();
 }
 
-#endif // defined(__linux__) || defined(__APPLE__)
+#endif // defined(__linux__)
