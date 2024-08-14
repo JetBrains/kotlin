@@ -30,6 +30,12 @@ public class SwiftExportExecutionTestGenerated extends AbstractNativeSwiftExport
   }
 
   @Test
+  @TestMetadata("binaryTypeName")
+  public void testBinaryTypeName() {
+    runTest("native/native.tests/testData/SwiftExport/binaryTypeName/");
+  }
+
+  @Test
   @TestMetadata("char")
   public void testChar() {
     runTest("native/native.tests/testData/SwiftExport/char/");

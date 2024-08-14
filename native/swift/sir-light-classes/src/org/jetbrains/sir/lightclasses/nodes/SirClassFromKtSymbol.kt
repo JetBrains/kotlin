@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.computeIsOverrideForDesignatedInit
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -50,6 +51,10 @@ internal class SirClassFromKtSymbol(
     }
     override val name: String by lazy {
         ktSymbol.name.asString()
+    }
+    override val binaryName: String? by lazy {
+        // Alternatively, implement Swift mangling https://github.com/swiftlang/swift/blob/main/docs/ABI/Mangling.rst
+        "SE${swiftFqName.replace(".", "_")}"
     }
 
     override var parent: SirDeclarationParent

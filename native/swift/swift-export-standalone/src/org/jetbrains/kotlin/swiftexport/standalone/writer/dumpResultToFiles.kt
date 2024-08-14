@@ -7,16 +7,19 @@ package org.jetbrains.kotlin.swiftexport.standalone.writer
 
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportFiles
+import org.jetbrains.kotlin.swiftexport.standalone.builders.TypeMapping
 import java.io.File
 
 internal fun dumpTextAtPath(
     swift: Sequence<String>,
     bridges: BridgeSources,
+    typeMapping: List<TypeMapping>,
     output: SwiftExportFiles
 ) {
     dumpTextAtFile(bridges.ktSrc, output.kotlinBridges.toFile())
     dumpTextAtFile(bridges.cSrc, output.cHeaderBridges.toFile())
     dumpTextAtFile(swift, output.swiftApi.toFile())
+    dumpTextAtFile(typeMapping.asSequence().map { it.toString() }, output.typeMappings.toFile())
 }
 
 internal fun generateBridgeSources(

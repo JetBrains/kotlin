@@ -95,6 +95,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
         +field("superClass", typeType, nullable = true)
         +field("modality", modalityKind)
+        +field("binaryName", string, nullable = true)
     }
 
     val `typealias`: Element by element {

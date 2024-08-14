@@ -39,10 +39,12 @@ abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest(
                     val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
                     val expectedCHeader = expectedFiles / it.name / "${it.name}.h"
                     val expectedKotlinBridge = expectedFiles / it.name / "${it.name}.kt"
+                    val expectedTypeMappings = expectedFiles / it.name / "${it.name}.type-mappings.txt"
 
                     KotlinTestUtils.assertEqualsToFile(expectedSwift, files.swiftApi.readText())
                     KotlinTestUtils.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText())
                     KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText())
+                    KotlinTestUtils.assertEqualsToFile(expectedTypeMappings, files.typeMappings.readText())
                 }
                 is SwiftExportModule.SwiftOnly -> {
                     val expectedFiles = testPathFull.toPath() / "golden_result/"

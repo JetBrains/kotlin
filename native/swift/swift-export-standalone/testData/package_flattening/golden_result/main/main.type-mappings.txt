@@ -1,0 +1,2 @@
+kotlin.Any`KotlinBase
+org.kotlin.foo.Clazz`SEExportedKotlinPackages_org_kotlin_foo_Clazz

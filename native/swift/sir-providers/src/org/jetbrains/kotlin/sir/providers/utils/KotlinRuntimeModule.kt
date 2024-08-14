@@ -30,6 +30,7 @@ public object KotlinRuntimeModule : SirModule() {
     public val kotlinBase: SirClass by lazy {
         buildClass {
             name = "KotlinBase"
+            binaryName = "KotlinBase"
             origin = KotlinRuntimeElement()
             declarations += buildInit {
                 origin = KotlinRuntimeElement()

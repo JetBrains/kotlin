@@ -82,6 +82,7 @@ public class SirAsSwiftSourcesPrinter(
         if (this is SirDeclaration) {
             printDocumentation()
             if (this is SirClass) {
+                printObjCName()
                 printModifiers()
             } else {
                 printVisibility()
@@ -324,6 +325,10 @@ public class SirAsSwiftSourcesPrinter(
             SirCallableKind.STATIC_METHOD -> "static "
         }
     )
+
+    private fun SirClass.printObjCName() = binaryName?.let {
+        print("@objc($it) ")
+    }
 }
 
 private val SirVisibility.swift

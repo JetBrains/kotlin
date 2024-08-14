@@ -1,8 +1,8 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
-public final class Foo : KotlinRuntime.KotlinBase {
-    public final class Nested : KotlinRuntime.KotlinBase {
+@objc(SEmain_Foo) public final class Foo : KotlinRuntime.KotlinBase {
+    @objc(SEmain_Foo_Nested) public final class Nested : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = Foo_Nested_init_allocate()
             super.init(__externalRCRef: __kt)

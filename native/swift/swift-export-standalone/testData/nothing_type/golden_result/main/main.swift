@@ -2,7 +2,7 @@
 import KotlinRuntime
 
 public typealias Foo = Swift.Never
-public final class Bar : KotlinRuntime.KotlinBase {
+@objc(SEmain_Bar) public final class Bar : KotlinRuntime.KotlinBase {
     public var p: Swift.Never {
         get {
             return Bar_p_get(self.__externalRCRef())

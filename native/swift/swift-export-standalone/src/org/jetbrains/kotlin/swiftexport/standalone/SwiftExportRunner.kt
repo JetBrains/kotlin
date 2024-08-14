@@ -23,8 +23,11 @@ import org.jetbrains.kotlin.sir.providers.utils.*
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isValidSwiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.kotlin.swiftexport.standalone.builders.TypeMapping
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
+import org.jetbrains.kotlin.swiftexport.standalone.builders.buildTypeMappings
 import org.jetbrains.kotlin.swiftexport.standalone.builders.createModuleWithScopeProviderFromBinary
+import org.jetbrains.kotlin.swiftexport.standalone.builders.buildRuntimeTypeMappings
 import org.jetbrains.kotlin.swiftexport.standalone.builders.initializeSirModule
 import org.jetbrains.kotlin.swiftexport.standalone.writer.*
 import org.jetbrains.kotlin.swiftexport.standalone.writer.generateBridgeSources
@@ -153,6 +156,7 @@ public data class SwiftExportFiles(
     val swiftApi: Path,
     val kotlinBridges: Path,
     val cHeaderBridges: Path,
+    val typeMappings: Path,
 ) : Serializable
 
 /**
@@ -227,12 +231,15 @@ private fun translateModule(module: InputModule, dependencies: Set<InputModule>)
 
     val bridges = generateBridgeSources(module.config.bridgeGenerator, bridgeRequests, true)
 
+    val typeMappings = (buildRuntimeTypeMappings() + buildTypeMappings(buildResult.module)).toList()
+
     return TranslationResult(
         packages = buildResult.packages,
         sirModule = buildResult.module,
         bridgeSources = bridges,
         config = module.config,
         bridgesModuleName = module.bridgesModuleName,
+        typeMappings = typeMappings,
     )
 }
 
@@ -245,6 +252,7 @@ private class TranslationResult(
     val bridgeSources: BridgeSources,
     val config: SwiftExportConfig,
     val bridgesModuleName: String,
+    val typeMappings: List<TypeMapping>,
 )
 
 private fun Collection<TranslationResult>.createModuleForPackages(): SirModule = buildModule {
@@ -287,12 +295,14 @@ private fun TranslationResult.writeModule(): SwiftExportModule {
     val outputFiles = SwiftExportFiles(
         swiftApi = (config.outputPath / sirModule.name / "${sirModule.name}.swift"),
         kotlinBridges = (config.outputPath / sirModule.name / "${sirModule.name}.kt"),
-        cHeaderBridges = (config.outputPath / sirModule.name / "${sirModule.name}.h")
+        cHeaderBridges = (config.outputPath / sirModule.name / "${sirModule.name}.h"),
+        typeMappings = (config.outputPath / sirModule.name / "${sirModule.name}.type-mappings.txt"),
     )
 
     dumpTextAtPath(
         swiftSources,
         bridgeSources,
+        typeMappings,
         outputFiles
     )
 

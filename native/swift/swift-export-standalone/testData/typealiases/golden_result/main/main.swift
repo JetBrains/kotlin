@@ -7,7 +7,7 @@ public typealias RegularInteger = Swift.Int32
 public typealias ShouldHaveNoAnnotation = Swift.Int32
 public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
 public typealias never = Swift.Never
-public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
+@objc(SEmain_DATA_OBJECT_WITH_PACKAGE) public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
     public static var shared: main.DATA_OBJECT_WITH_PACKAGE {
         get {
             return main.DATA_OBJECT_WITH_PACKAGE(__externalRCRef: __root___DATA_OBJECT_WITH_PACKAGE_get())
@@ -52,7 +52,7 @@ public func increment(
 public extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo
     public typealias LargeInteger = Swift.Int64
-    public final class Bar : KotlinRuntime.KotlinBase {
+    @objc(SEExportedKotlinPackages_typealiases_inner_Bar) public final class Bar : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = typealiases_inner_Bar_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -68,7 +68,7 @@ public extension ExportedKotlinPackages.typealiases.inner {
 public extension ExportedKotlinPackages.typealiases {
     public typealias Bar = ExportedKotlinPackages.typealiases.inner.Bar
     public typealias SmallInteger = Swift.Int16
-    public final class Foo : KotlinRuntime.KotlinBase {
+    @objc(SEExportedKotlinPackages_typealiases_Foo) public final class Foo : KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = typealiases_Foo_init_allocate()
             super.init(__externalRCRef: __kt)

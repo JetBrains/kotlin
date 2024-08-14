@@ -1,0 +1,3 @@
+kotlin.Any`KotlinBase
+Foo`SEmain_Foo
+Foo.Nested`SEmain_Foo_Nested

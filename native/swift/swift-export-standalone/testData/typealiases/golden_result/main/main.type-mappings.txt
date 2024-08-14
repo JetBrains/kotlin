@@ -1,0 +1,4 @@
+kotlin.Any`KotlinBase
+DATA_OBJECT_WITH_PACKAGE`SEmain_DATA_OBJECT_WITH_PACKAGE
+typealiases.Foo`SEExportedKotlinPackages_typealiases_Foo
+typealiases.inner.Bar`SEExportedKotlinPackages_typealiases_inner_Bar

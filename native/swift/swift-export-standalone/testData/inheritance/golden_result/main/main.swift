@@ -1,7 +1,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
-open class Foo : KotlinRuntime.KotlinBase {
+@objc(SEmain_Foo) open class Foo : KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRef: __kt)
