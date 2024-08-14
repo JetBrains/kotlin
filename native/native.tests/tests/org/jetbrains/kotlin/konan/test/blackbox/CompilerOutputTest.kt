@@ -37,9 +37,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             "KT-64822: the test flaks, to be investigated"
         )
 
-        // We intentionally use JS testdata, because the compilers should behave the same way in such a test.
-        // To be refactored later, after CompileKotlinAgainstCustomBinariesTest.testReleaseCompilerAgainstPreReleaseLibraryJs is fixed.
-        val rootDir = File("compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs")
+        val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseLibrary")
 
         // Debug output for KT-64822 investigation
         println("${MessageRenderer.PROPERTY_KEY}=${System.getProperty(MessageRenderer.PROPERTY_KEY)}")
@@ -210,7 +208,7 @@ internal fun TestCompilationResult<*>.toOutput(): String {
 }
 
 private fun normalizeOutput(output: String, exitCode: ExitCode): String {
-    val dir = "compiler/testData/compileKotlinAgainstCustomBinaries/"
+    val dir = "native/native.tests/testData/compilerOutput/"
     return AbstractCliTest.getNormalizedCompilerOutput(
         output,
         exitCode,
