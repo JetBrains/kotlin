@@ -456,6 +456,7 @@ internal class CodeGeneratorVisitor(
         runAndProcessInitializers(null) {
             // Note: it is here because it also generates some bitcode.
             generationState.objCExport.generate(codegen)
+            generationState.swiftExport?.generate(codegen)
 
             codegen.objCDataGenerator?.finishModule()
 

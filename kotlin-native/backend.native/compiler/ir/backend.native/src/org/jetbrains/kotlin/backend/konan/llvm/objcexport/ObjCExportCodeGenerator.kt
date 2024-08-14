@@ -461,7 +461,7 @@ internal class ObjCExportCodeGenerator(
 
             if (irClass != null) {
                 if (!generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
-                    setObjCExportTypeInfo(irClass, typeAdapter = typeAdapter)
+                    codegen.setWritableTypeInfo(irClass, typeAdapter = typeAdapter)
                 } else {
                     // Optimization: avoid generating huge initializers;
                     // handled with "Kotlin_ObjCExport_initTypeAdapters" below.
@@ -641,60 +641,6 @@ internal class ObjCExportCodeGenerator(
 
 }
 
-private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
-        irClass: IrClass,
-        convertToRetained: ConstPointer? = null,
-        objCClass: ConstPointer? = null,
-        typeAdapter: ConstPointer? = null
-) {
-    val writableTypeInfoValue = buildWritableTypeInfoValue(
-            convertToRetained = convertToRetained,
-            objCClass = objCClass,
-            typeAdapter = typeAdapter
-    )
-
-    if (codegen.isExternal(irClass)) {
-        // Note: this global replaces the external one with common linkage.
-        codegen.replaceExternalWeakOrCommonGlobal(
-                irClass.writableTypeInfoSymbolName,
-                writableTypeInfoValue,
-                irClass
-        )
-    } else {
-        setOwnWritableTypeInfo(irClass, writableTypeInfoValue)
-    }
-}
-
-private fun ObjCExportCodeGeneratorBase.setOwnWritableTypeInfo(irClass: IrClass, writableTypeInfoValue: Struct) {
-    require(!codegen.isExternal(irClass))
-    val writeableTypeInfoGlobal = generationState.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal!!
-    writeableTypeInfoGlobal.setLinkage(LLVMLinkage.LLVMExternalLinkage)
-    writeableTypeInfoGlobal.setInitializer(writableTypeInfoValue)
-}
-
-private fun ObjCExportCodeGeneratorBase.buildWritableTypeInfoValue(
-        convertToRetained: ConstPointer? = null,
-        objCClass: ConstPointer? = null,
-        typeAdapter: ConstPointer? = null
-): Struct {
-    if (convertToRetained != null) {
-        val expectedType = pointerType(functionType(llvm.int8PtrType, false, codegen.kObjHeaderPtr))
-        assert(convertToRetained.llvmType == expectedType) {
-            "Expected: ${LLVMPrintTypeToString(expectedType)!!.toKString()} " +
-                    "found: ${LLVMPrintTypeToString(convertToRetained.llvmType)!!.toKString()}"
-        }
-    }
-
-    val objCExportAddition = Struct(runtime.typeInfoObjCExportAddition,
-            convertToRetained?.bitcast(llvm.int8PtrType),
-            objCClass,
-            typeAdapter
-    )
-
-    val writableTypeInfoType = runtime.writableTypeInfoType!!
-    return Struct(writableTypeInfoType, objCExportAddition)
-}
-
 private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LlvmFunctionSignature
     get() = LlvmFunctionSignature(
             LlvmRetType(llvm.int8PtrType, isObjectType = false),
@@ -749,7 +695,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
         ret(genSendMessage(returnType, valueParameterTypes, instance, nsNumberInitSelector, value))
     }
 
-    setObjCExportTypeInfo(boxClass, converter.toConstPointer())
+    codegen.setWritableTypeInfo(boxClass, converter.toConstPointer())
 }
 
 private fun ObjCExportCodeGenerator.generateContinuationToRetainedCompletionConverter(
@@ -801,9 +747,8 @@ private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
     require(generationState.shouldDefineFunctionClasses)
     mappedFunctionNClasses.forEach { functionClass ->
         val convertToRetained = kotlinFunctionToRetainedBlockConverter(BlockPointerBridge(functionClass.arity, returnsVoid = false))
-
-        val writableTypeInfoValue = buildWritableTypeInfoValue(convertToRetained = convertToRetained.toConstPointer())
-        setOwnWritableTypeInfo(functionClass.irClass, writableTypeInfoValue)
+        require(!codegen.isExternal(functionClass.irClass))
+        codegen.setWritableTypeInfo(functionClass.irClass, convertToRetained = convertToRetained.toConstPointer())
     }
 }
 
@@ -833,7 +778,7 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
 }
 
 private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
-    setObjCExportTypeInfo(
+    codegen.setWritableTypeInfo(
             symbols.string.owner,
             llvm.Kotlin_ObjCExport_CreateRetainedNSStringFromKString.toConstPointer()
     )
@@ -848,32 +793,32 @@ private fun ObjCExportCodeGenerator.emitCollectionConverters() {
     fun importConverter(name: String): ConstPointer =
             llvm.externalNativeRuntimeFunction(name, kotlinToObjCFunctionType).toConstPointer()
 
-    setObjCExportTypeInfo(
+    codegen.setWritableTypeInfo(
             symbols.list.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSArrayFromKList")
     )
 
-    setObjCExportTypeInfo(
+    codegen.setWritableTypeInfo(
             symbols.mutableList.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSMutableArrayFromKList")
     )
 
-    setObjCExportTypeInfo(
+    codegen.setWritableTypeInfo(
             symbols.set.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSSetFromKSet")
     )
 
-    setObjCExportTypeInfo(
+    codegen.setWritableTypeInfo(
             symbols.mutableSet.owner,
             importConverter("Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet")
     )
 
-    setObjCExportTypeInfo(
+    codegen.setWritableTypeInfo(
             symbols.map.owner,
             importConverter("Kotlin_Interop_CreateRetainedNSDictionaryFromKMap")
     )
 
-    setObjCExportTypeInfo(
+    codegen.setWritableTypeInfo(
             symbols.mutableMap.owner,
             importConverter("Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap")
     )

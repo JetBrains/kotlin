@@ -90,6 +90,10 @@ abstract class AbstractNativeSwiftExportTest {
         val kotlinFiles = modulesToExport.flatMapToSet { it.files.map { it.location } }
         val kotlinBinaryLibraryName = testPathFull.name + "Kotlin"
 
+        val typeMappings = swiftExportOutputs.mapNotNull {
+            (it as? SwiftExportModule.BridgesToKotlin)?.files?.typeMappings?.toFile()
+        }
+
         val resultingTestCase = generateSwiftExportTestCase(
             testPathFull,
             kotlinBinaryLibraryName,
@@ -98,6 +102,7 @@ abstract class AbstractNativeSwiftExportTest {
                 .flatMapToSet {
                     it.allRegularDependencies.filterIsInstance<TestModule.Exclusive>().toSet()
                 } - modulesToExport,
+            typeMappings = typeMappings,
         )
 
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
@@ -249,6 +254,7 @@ abstract class AbstractNativeSwiftExportTest {
         testName: String = testPathFull.name,
         sources: List<File>,
         dependencies: Set<TestModule.Exclusive>,
+        typeMappings: List<File>,
     ): TestCase {
         val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
@@ -271,6 +277,7 @@ abstract class AbstractNativeSwiftExportTest {
                     "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
                     "-opt-in", "kotlin.native.internal.InternalForKotlinNative", // for uninitialized object instance manipulation, and ExternalRCRef.
                     "-Xbinary=swiftExport=true",
+                    "-Xbinary=swiftExportTypeMappings=${typeMappings.joinToString(separator = ":") { it.absolutePath }}"
                 )
             ),
             nominalPackageName = PackageName(testName),

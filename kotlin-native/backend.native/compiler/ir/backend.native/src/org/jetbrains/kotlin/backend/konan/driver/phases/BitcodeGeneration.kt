@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodeGeneratorVisitor
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.RTTIGeneratorVisitor
 import org.jetbrains.kotlin.backend.konan.llvm.createLlvmDeclarations
+import org.jetbrains.kotlin.backend.konan.llvm.swiftexport.SwiftExportCodeGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -72,6 +73,11 @@ internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState
                     context.objCExportedInterface,
                     context.objCExportCodeSpec
             )
+            context.config.swiftExportTypeMappings.let {
+                if (it.isNotEmpty()) {
+                    generationState.swiftExport = SwiftExportCodeGenerator(generationState, it)
+                }
+            }
 
             input.irModule.acceptVoid(CodeGeneratorVisitor(generationState, input.irModule.irBuiltins, input.lifetimes))
 

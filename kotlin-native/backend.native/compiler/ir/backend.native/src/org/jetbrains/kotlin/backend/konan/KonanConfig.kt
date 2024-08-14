@@ -361,6 +361,17 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.swiftExport) ?: false
     }
 
+    val swiftExportTypeMappings by lazy {
+        run {
+            if (!swiftExport) {
+                configuration.report(CompilerMessageSeverity.WARNING, "swiftExportTypeMappings switch has no effect without swiftExport")
+                null
+            } else {
+                configuration.get(BinaryOptions.swiftExportTypeMappings)
+            }
+        } ?: emptyList()
+    }
+
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         if (debug) add("debug.bc")
         add("runtime.bc")

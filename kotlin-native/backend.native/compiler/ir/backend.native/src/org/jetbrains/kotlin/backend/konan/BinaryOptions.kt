@@ -87,6 +87,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val swiftExport by booleanOption()
 
+    val swiftExportTypeMappings by listOption(StringValueParser, separator = ":") // pathnames cannot contain `:`
+
     val genericSafeCasts by booleanOption()
 
     val smallBinary by booleanOption()
@@ -116,41 +118,30 @@ open class BinaryOptionRegistry {
 
     fun getByName(name: String): BinaryOption<*>? = registeredOptionsByName[name]
 
-    protected fun booleanOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<Boolean>>> =
+    protected fun <T : Any> propertyDelegateProvider(
+            valueParser: BinaryOption.ValueParser<T>
+    ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<T>>> =
             PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, BooleanValueParser)
+                val option = BinaryOption(property.name, valueParser)
                 register(option)
                 ReadOnlyProperty { _, _ ->
                     option.compilerConfigurationKey
                 }
             }
 
-    protected fun uintOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<UInt>>> =
-            PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, UIntValueParser)
-                register(option)
-                ReadOnlyProperty { _, _ ->
-                    option.compilerConfigurationKey
-                }
-            }
+    protected fun booleanOption() = propertyDelegateProvider(BooleanValueParser)
+    protected fun uintOption() = propertyDelegateProvider(UIntValueParser)
+    protected fun stringOption() = propertyDelegateProvider(StringValueParser)
 
-    protected fun stringOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<String>>> =
-            PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, StringValueParser)
-                register(option)
-                ReadOnlyProperty { _, _ ->
-                    option.compilerConfigurationKey
-                }
-            }
+    protected inline fun <reified T : Enum<T>> option(
+            noinline shortcut : (T) -> String? = { null },
+            noinline hideValue: (T) -> Boolean = { false }
+    ) = propertyDelegateProvider(EnumValueParser(enumValues<T>().toList(), shortcut, hideValue))
 
-    protected inline fun <reified T : Enum<T>> option(noinline shortcut : (T) -> String? = { null }, noinline hideValue: (T) -> Boolean = { false }): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<T>>> =
-            PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, EnumValueParser(enumValues<T>().toList(), shortcut, hideValue))
-                register(option)
-                ReadOnlyProperty { _, _ ->
-                    option.compilerConfigurationKey
-                }
-            }
+    protected fun <T : Any> listOption(
+            valueParser: BinaryOption.ValueParser<T>,
+            separator: String = ","
+    ) = propertyDelegateProvider(ListValueParser(valueParser, separator))
 }
 
 private object BooleanValueParser : BinaryOption.ValueParser<Boolean> {
@@ -170,7 +161,7 @@ private object UIntValueParser : BinaryOption.ValueParser<UInt> {
 private object StringValueParser : BinaryOption.ValueParser<String> {
     override fun parse(value: String) = value
     override val validValuesHint: String?
-        get() = null
+        get() = "string"
 }
 
 @PublishedApi
@@ -191,4 +182,16 @@ internal class EnumValueParser<T : Enum<T>>(
                 "$fullName (or: $short)"
             } ?: fullName
         }.joinToString("|")
+}
+
+private class ListValueParser<T : Any>(
+        private val valueParser: BinaryOption.ValueParser<T>,
+        private val separator: String,
+) : BinaryOption.ValueParser<List<T>> {
+    override fun parse(value: String): List<T>? = value.split(separator).map {
+        valueParser.parse(it) ?: return null
+    }
+
+    override val validValuesHint: String?
+        get() = "list of `${valueParser.validValuesHint}` values separated by `$separator`"
 }

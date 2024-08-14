@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.swiftexport.SwiftExportCodeGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
@@ -104,6 +105,8 @@ internal class NativeGenerationState(
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()
 
     lateinit var objCExport: ObjCExport
+
+    var swiftExport: SwiftExportCodeGenerator? = null
 
     fun hasDebugInfo() = debugInfoDelegate.isInitialized()
 
