@@ -5,6 +5,8 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import com.intellij.util.containers.addIfNotNull
+import com.intellij.util.containers.toMutableSmartList
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.sir.*
@@ -17,6 +19,7 @@ import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.sirCallableKind
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.createAvailableAttributeIfNeeded
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 
 internal class SirVariableFromKtSymbol(
@@ -63,6 +66,12 @@ internal class SirVariableFromKtSymbol(
             ktSymbol.getSirParent(useSiteSession)
         }
         set(_) = Unit
+
+    override val attributes: MutableList<SirAttribute> by lazyWithSessions {
+        buildList {
+            addIfNotNull(createAvailableAttributeIfNeeded(ktSymbol))
+        }.toMutableSmartList()
+    }
 
     private val accessorKind by lazy {
         ktSymbol.sirCallableKind

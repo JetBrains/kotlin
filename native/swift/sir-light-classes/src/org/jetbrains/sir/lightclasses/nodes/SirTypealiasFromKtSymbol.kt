@@ -5,6 +5,8 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import com.intellij.util.containers.addIfNotNull
+import com.intellij.util.containers.toMutableSmartList
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -16,6 +18,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.createAvailableAttributeIfNeeded
 
 internal class SirTypealiasFromKtSymbol(
     override val ktSymbol: KaTypeAliasSymbol,
@@ -40,6 +43,12 @@ internal class SirTypealiasFromKtSymbol(
             reportUnsupportedType = { error("Can't translate ${ktSymbol.render()} type: it is not supported") },
             processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
         )
+    }
+
+    override val attributes: MutableList<SirAttribute> by lazyWithSessions {
+        buildList {
+            addIfNotNull(createAvailableAttributeIfNeeded(ktSymbol))
+        }.toMutableSmartList()
     }
 
     override var parent: SirDeclarationParent

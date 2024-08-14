@@ -87,13 +87,20 @@ private fun SirInit.constructBridgeRequests(generator: BridgeGenerator): List<Br
     )
 }
 
+private fun SirDeclaration.isUnavailable(): Boolean {
+    if (attributes.filterIsInstance<SirAttribute.Available>().any { it.obsoleted != null || it.deprecated }) {
+        return true
+    }
+    return this.parent is SirDeclaration && (this.parent as SirDeclaration).isUnavailable()
+}
+
 private fun SirCallable.patchCallableBodyAndGenerateRequest(
     generator: BridgeGenerator,
     fqName: List<String>,
 ): BridgeRequest? {
 
-    attributes.filterIsInstance<SirAttribute.Available>().firstOrNull { it.obsoleted || it.deprecated }?.let { availableAttr ->
-        body = SirFunctionBody(listOf("fatalError(\"${availableAttr.message}\")"))
+    if (this.isUnavailable()) {
+        body = SirFunctionBody(listOf("fatalError(\"unavailable\")"))
         return null
     }
 

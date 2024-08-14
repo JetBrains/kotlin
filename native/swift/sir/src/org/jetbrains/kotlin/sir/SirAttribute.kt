@@ -16,7 +16,7 @@ public sealed interface SirAttribute {
     class Available(
         val message: String,
         val deprecated: Boolean,
-        val obsoleted: Boolean,
+        val obsoleted: String? = null,
     ) : SirAttribute {
 
         val platform: String

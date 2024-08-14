@@ -113,8 +113,8 @@ public class SirAsSwiftSourcesPrinter(
                     if (it.deprecated) {
                         print(", deprecated")
                     }
-                    if (it.obsoleted) {
-                        print(", obsoleted")
+                    if (it.obsoleted != null) {
+                        print(", obsoleted: ${it.obsoleted}")
                     }
                     print(", message: \"${it.message}\"")
                     println(")")

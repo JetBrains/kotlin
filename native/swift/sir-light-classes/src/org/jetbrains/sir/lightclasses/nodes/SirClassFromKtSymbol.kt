@@ -5,11 +5,17 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import com.intellij.util.containers.addIfNotNull
+import com.intellij.util.containers.toMutableSmartList
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
@@ -24,6 +30,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.createAvailableAttributeIfNeeded
 
 internal class SirClassFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
@@ -44,6 +51,13 @@ internal class SirClassFromKtSymbol(
             KaSymbolModality.SEALED, KaSymbolModality.ABSTRACT -> SirClassModality.UNSPECIFIED
         }
     }
+
+    override val attributes: MutableList<SirAttribute> by lazyWithSessions {
+        buildList {
+            addIfNotNull(createAvailableAttributeIfNeeded(ktSymbol))
+        }.toMutableSmartList()
+    }
+
 
     override val documentation: String? by lazy {
         ktSymbol.documentation()

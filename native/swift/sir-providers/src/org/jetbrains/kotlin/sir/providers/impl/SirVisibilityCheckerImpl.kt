@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
@@ -20,7 +19,7 @@ public class SirVisibilityCheckerImpl(
 
     override fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility = with(ktAnalysisSession) {
         val ktSymbol = this@sirVisibility
-        val isConsumable = isPublic() && !isDeprecatedHiddenOrError(ktSymbol) && when (ktSymbol) {
+        val isConsumable = isPublic() && when (ktSymbol) {
             is KaNamedClassSymbol -> {
                 ktSymbol.isConsumableBySirBuilder(ktAnalysisSession)
             }
@@ -108,12 +107,6 @@ public class SirVisibilityCheckerImpl(
 
     @OptIn(KaExperimentalApi::class)
     private fun KaDeclarationSymbol.isPublic(): Boolean = compilerVisibility.isPublicAPI
-
-    @OptIn(KaExperimentalApi::class)
-    private fun KaSession.isDeprecatedHiddenOrError(declaration: KaDeclarationSymbol): Boolean {
-        val deprecationLevel = declaration.deprecationStatus?.deprecationLevel ?: return false
-        return deprecationLevel == DeprecationLevelValue.ERROR || deprecationLevel == DeprecationLevelValue.HIDDEN
-    }
 }
 
 private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)
