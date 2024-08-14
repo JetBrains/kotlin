@@ -152,11 +152,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class,
-            DefaultKotlinTestReportCompatibilityHelperVariantFactory()
-        )
-
-        factories.putIfAbsent(
             ProjectIsolationStartParameterAccessor.Factory::class,
             DefaultProjectIsolationStartParameterAccessor.Factory()
         )
