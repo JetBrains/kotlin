@@ -147,11 +147,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         val factories = VariantImplementationFactoriesConfigurator.get(project.gradle)
 
         factories.putIfAbsent(
-            IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class,
-            DefaultIdeaSyncDetectorVariantFactory()
-        )
-
-        factories.putIfAbsent(
             MppTestReportHelper.MppTestReportHelperVariantFactory::class,
             DefaultMppTestReportHelperVariantFactory()
         )

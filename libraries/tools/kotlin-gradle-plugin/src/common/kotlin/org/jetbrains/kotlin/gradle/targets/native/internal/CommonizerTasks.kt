@@ -122,7 +122,7 @@ internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<Cop
                 ideaImportDependsOn(this)
 
                 /* Older IDEs will still call 'runCommonizer' -> 'commonize'  tasks */
-                if (isInIdeaSync) {
+                if (isInIdeaSync.get()) {
                     commonizeTask.dependsOn(this)
                 }
             },

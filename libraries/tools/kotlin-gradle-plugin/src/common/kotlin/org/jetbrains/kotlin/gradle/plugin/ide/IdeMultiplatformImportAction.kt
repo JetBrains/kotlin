@@ -48,7 +48,7 @@ fun interface IdeMultiplatformImportAction {
 }
 
 internal val IdeMultiplatformImportActionSetupAction = KotlinProjectSetupCoroutine {
-    if (!isInIdeaSync) return@KotlinProjectSetupCoroutine
+    if (!isInIdeaSync.get()) return@KotlinProjectSetupCoroutine
     KotlinPluginLifecycle.Stage.ReadyForExecution.await()
     IdeMultiplatformImportAction.extensionPoint[this].forEach { action ->
         action.prepareIdeImport(this)

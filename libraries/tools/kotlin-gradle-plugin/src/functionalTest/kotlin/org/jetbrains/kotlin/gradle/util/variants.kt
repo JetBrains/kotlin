@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.invocation.Gradle
-import org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactoriesConfigurator
-import org.jetbrains.kotlin.gradle.plugin.internal.*
-import org.jetbrains.kotlin.gradle.plugin.internal.IdeaSyncDetector
-
 
 /**
  * Configures some default factories that are usually automatically registered in
@@ -19,10 +15,4 @@ import org.jetbrains.kotlin.gradle.plugin.internal.IdeaSyncDetector
  * some parts of its code
  */
 fun Gradle.registerMinimalVariantImplementationFactoriesForTests() {
-    // Diagnostics need to know if we're in IDEA sync in order to decide whether the stacktrace
-    // should be reported
-    VariantImplementationFactoriesConfigurator.get(gradle).putIfAbsent(
-        IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class,
-        DefaultIdeaSyncDetectorVariantFactory()
-    )
 }

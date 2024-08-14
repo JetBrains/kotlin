@@ -1261,7 +1261,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
         addBuildMetricsForTaskAction(buildMetrics, languageVersion = null) {
             outputFileProvider.get().parentFile.mkdirs()
             createExecutionContext(
-                isInIdeaSync = isInIdeaSync,
+                isInIdeaSync = isInIdeaSync.get(),
                 cinteropRunner = cinteropRunner,
             ).runWithContext {
                 runTool(

@@ -26,7 +26,7 @@ internal class ToolingDiagnosticRenderingOptions(
 
                     // IDEA launches sync with `--stacktrace` option, but we don't want to
                     // spam stacktraces in build toolwindow
-                    project.isInIdeaSync -> false
+                    project.isInIdeaSync.get() -> false
 
                     else -> project.gradle.startParameter.showStacktrace > ShowStacktrace.INTERNAL_EXCEPTIONS
                 }
