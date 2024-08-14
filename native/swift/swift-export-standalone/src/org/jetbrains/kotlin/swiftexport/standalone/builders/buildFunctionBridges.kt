@@ -91,6 +91,12 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
     generator: BridgeGenerator,
     fqName: List<String>,
 ): BridgeRequest? {
+
+    attributes.filterIsInstance<SirAttribute.Available>().firstOrNull { it.obsoleted || it.deprecated }?.let { availableAttr ->
+        body = SirFunctionBody(listOf("fatalError(\"${availableAttr.message}\")"))
+        return null
+    }
+
     val typesUsed = listOf(returnType) + allParameters.map { it.type }
     if (typesUsed.any { !it.isSupported })
         return null
