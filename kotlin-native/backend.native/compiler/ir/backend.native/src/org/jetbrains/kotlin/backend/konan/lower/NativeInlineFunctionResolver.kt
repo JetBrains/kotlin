@@ -133,7 +133,7 @@ internal class NativeInlineFunctionResolver(
                     }
         }
         override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
-            return builder.irKType(nonSubstitutedTypeArgument, leaveReifiedForLater = true)
+            return builder.irKType(nonSubstitutedTypeArgument)
         }
     }
 }

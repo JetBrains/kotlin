@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal fun IrBuilderWithScope.toNativeConstantReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit = {}) = NativeConstantReflectionIrBuilder(
         context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound
@@ -41,7 +42,7 @@ internal class NativeRuntimeReflectionIrBuilder(
         startOffset: Int, endOffset: Int,
         symbols: KonanSymbols,
         onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit,
-) : NativeReflectionIrBuilderBase<IrExpression>(context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound) {
+) : NativeReflectionIrBuilderBase<IrExpression>(context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound, isReifiedTypeOfSupported = true) {
     override fun irKClass(symbol: IrClassSymbol): IrExpression {
         val kClassType = symbols.kClassImpl.typeWith(symbol.defaultType)
         return IrClassReferenceImpl(startOffset, endOffset, kClassType, symbol, kClassType)
@@ -99,9 +100,9 @@ internal class NativeConstantReflectionIrBuilder(
         startOffset: Int, endOffset: Int,
         symbols: KonanSymbols,
         onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit,
-) : NativeReflectionIrBuilderBase<IrConstantValue>(context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound) {
+) : NativeReflectionIrBuilderBase<IrConstantValue>(context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound, isReifiedTypeOfSupported = false) {
 
-    override fun irKTypeOfReified(type: IrType): IrConstantValue = irConstantObject(symbols.kTypeImplIntrinsicConstructor, emptyList(), listOf(type))
+    override fun irKTypeOfReified(type: IrType): IrConstantValue = shouldNotBeCalled()
 
     private fun irKClassUnsupported(symbols: KonanSymbols, message: String) =
             irConstantObject(symbols.kClassUnsupportedImpl.owner, mapOf(
@@ -151,10 +152,10 @@ internal abstract class NativeReflectionIrBuilderBase<E: IrExpression>(
         startOffset: Int, endOffset: Int,
         val symbols: KonanSymbols,
         val onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit,
+        val isReifiedTypeOfSupported: Boolean,
 ) : IrBuilderWithScope(context, scope, startOffset, endOffset) {
-
-    fun irKType(type: IrType, leaveReifiedForLater: Boolean = false) : E =
-            irKType(type, leaveReifiedForLater, mutableSetOf())
+    fun irKType(type: IrType) : E =
+            irKType(type, leaveReifiedForLater = isReifiedTypeOfSupported, mutableSetOf())
 
     private class RecursiveBoundsException(message: String) : Throwable(message)
 
@@ -169,7 +170,6 @@ internal abstract class NativeReflectionIrBuilderBase<E: IrExpression>(
                     kClassifier = null,
                     irTypeArguments = emptyList(),
                     isMarkedNullable = false,
-                    type = type,
             )
         }
         try {
@@ -196,7 +196,6 @@ internal abstract class NativeReflectionIrBuilderBase<E: IrExpression>(
                         }
                     },
                     isMarkedNullable = type.isMarkedNullable(),
-                    type = type,
             )
         } catch (t: RecursiveBoundsException) {
             onRecursiveUpperBound(t.message!!)
@@ -233,12 +232,11 @@ internal abstract class NativeReflectionIrBuilderBase<E: IrExpression>(
             kClassifier: E?,
             irTypeArguments: List<Pair<Variance, E>?>,
             isMarkedNullable: Boolean,
-            type: IrType,
     ): E = irCreateInstance(symbols.kTypeImpl.owner, mapOf(
             "classifier" to (kClassifier ?: irConstantNull()),
             "arguments" to irKTypeProjectionsList(irTypeArguments),
             "isMarkedNullable" to irConstantBoolean(isMarkedNullable),
-    ), listOf(type))
+    ), emptyList())
 
     private fun irKTypeProjectionsList(
             irTypeArguments: List<Pair<Variance, E>?>,

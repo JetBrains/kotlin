@@ -116,7 +116,6 @@ internal enum class IntrinsicType {
 internal enum class ConstantConstructorIntrinsicType {
     KCLASS_IMPL,
     OBJC_KCLASS_IMPL,
-    KTYPE_IMPL,
 }
 
 // Explicit and single interface between Intrinsic Generator and IrToBitcode.
@@ -306,8 +305,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 val objcClassPtr = codegen.objCDataGenerator!!.genClassRef(binaryName)
                 listOf(objcClassPtr)
             }
-            ConstantConstructorIntrinsicType.KTYPE_IMPL ->
-                reportNonLoweredIntrinsic(intrinsicType)
         }
     }
 
