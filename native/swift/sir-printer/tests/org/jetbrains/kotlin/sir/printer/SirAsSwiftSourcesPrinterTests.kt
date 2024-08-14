@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
@@ -986,6 +987,60 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/modality"
+        )
+    }
+
+    @Test
+    fun `attributes`() {
+
+        val clazz = buildClass {
+            name = "OPEN_INTERNAL"
+            origin = SirOrigin.Unknown
+            attributes += SirAttribute.Available(message = "Deprecated class", deprecated = true, obsoleted = false)
+            declarations += buildFunction {
+                origin = SirOrigin.Unknown
+                kind = SirCallableKind.FUNCTION
+                visibility = SirVisibility.PUBLIC
+                name = "method"
+                returnType = SirNominalType(SirSwiftModule.bool)
+                documentation = "// Check that nested attributes handled properly"
+                attributes += SirAttribute.Available(message = "Available method", deprecated = false, obsoleted = false)
+            }
+        }
+
+        val module = buildModule {
+            name = "Test"
+        }.apply {
+            addChild {
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    kind = SirCallableKind.FUNCTION
+                    visibility = SirVisibility.PUBLIC
+                    name = "foo"
+                    returnType = SirNominalType(SirSwiftModule.bool)
+                    attributes += SirAttribute.Available(message = "Oh no", deprecated = true, obsoleted = true)
+                }
+            }
+            addChild {
+                buildVariable {
+                    name = "myVariable"
+                    type = SirNominalType(SirSwiftModule.bool)
+                    getter = buildGetter {
+                        kind = SirCallableKind.INSTANCE_METHOD
+                    }
+                    documentation = """
+                            /// Example docstring
+                        """.trimIndent()
+                    attributes += SirAttribute.Available(message = "Obsolete variable", deprecated = false, obsoleted = true)
+                }
+            }
+            addChild {
+                clazz
+            }
+        }
+        runTest(
+            module,
+            "testData/attributes"
         )
     }
 }

@@ -71,6 +71,7 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirTypealias.print() {
         printDocumentation()
+        printAttributes()
         printVisibility()
         print("typealias ")
         printName()
@@ -81,6 +82,7 @@ public class SirAsSwiftSourcesPrinter(
     private fun SirDeclarationContainer.print() {
         if (this is SirDeclaration) {
             printDocumentation()
+            printAttributes()
             if (this is SirClass) {
                 printModifiers()
             } else {
@@ -100,6 +102,25 @@ public class SirAsSwiftSourcesPrinter(
             printChildren()
         }
         println("}")
+    }
+
+    private fun SirDeclaration.printAttributes() {
+        attributes.forEach {
+            when (it) {
+                is SirAttribute.Available -> {
+                    print("@available(")
+                    print(it.platform)
+                    if (it.deprecated) {
+                        print(", deprecated")
+                    }
+                    if (it.obsoleted) {
+                        print(", obsoleted")
+                    }
+                    print(", message: \"${it.message}\"")
+                    println(")")
+                }
+            }
+        }
     }
 
     private fun SirDeclarationContainer.printChildren() {
@@ -133,6 +154,7 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirVariable.print() {
         printDocumentation()
+        printAttributes()
         printVisibility()
         kind.print()
         print(
@@ -151,6 +173,7 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirCallable.print() {
         printDocumentation()
+        printAttributes()
         printVisibility()
         printOverride()
         printPreNameKeywords()

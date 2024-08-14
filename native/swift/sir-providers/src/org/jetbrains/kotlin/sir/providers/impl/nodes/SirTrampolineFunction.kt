@@ -20,6 +20,8 @@ public class SirTrampolineFunction(
     override val name: String get() = source.name
     override val returnType: SirType get() = source.returnType
 
+    override val attributes: MutableList<SirAttribute> get() = source.attributes
+
     override val parameters: List<SirParameter> by lazy {
         source.parameters.mapIndexed { index, element ->
             if (element.argumentName == null && element.parameterName == null) {
