@@ -231,7 +231,7 @@ class NativeCompilerDownloader(
             it.parameters.classPath.setFrom(
                 project.objects.nativeCompilerClasspath(
                     project.nativeProperties.actualNativeHomeDirectory,
-                    project.nativeProperties.isUseEmbeddableCompilerJar,
+                    project.nativeProperties.shouldUseEmbeddableCompilerJar,
                 )
             )
         }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor).get()

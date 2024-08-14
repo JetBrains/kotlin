@@ -25,7 +25,7 @@ internal interface NativeProperties {
     val konanDataDir: Provider<File?>
     val downloadFromMaven: Provider<Boolean>
     val isToolchainEnabled: Provider<Boolean>
-    val isUseEmbeddableCompilerJar: Provider<Boolean>
+    val shouldUseEmbeddableCompilerJar: Provider<Boolean>
 
     /**
      * Value of 'kotlin.native.home' property.
@@ -117,7 +117,7 @@ private class NativePropertiesLoader(private val project: Project) : NativePrope
                 )
         )
 
-    override val isUseEmbeddableCompilerJar: Provider<Boolean> = propertiesService.flatMap {
+    override val shouldUseEmbeddableCompilerJar: Provider<Boolean> = propertiesService.flatMap {
         it.property(NATIVE_USE_EMBEDDABLE_COMPILER_JAR, project)
     }
 

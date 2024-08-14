@@ -230,7 +230,7 @@ abstract class AbstractKotlinNativeCompile<
     val artifactVersion = project.version.toString()
 
     @get:Input
-    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.isUseEmbeddableCompilerJar
+    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.shouldUseEmbeddableCompilerJar
 
     @get:Internal
     open val outputFile: Provider<File>
@@ -421,7 +421,6 @@ internal constructor(
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
-    private val isUseEmbeddableCompilerJar = project.nativeProperties.isUseEmbeddableCompilerJar
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
@@ -434,7 +433,7 @@ internal constructor(
             classLoadersCachingService,
             forceDisableRunningInProcess,
             useXcodeMessageStyle,
-            isUseEmbeddableCompilerJar,
+            useEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
             konanPropertiesService
@@ -1131,7 +1130,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.map { it.bundleDirectory.get().asFile.absolutePath }
 
-    private val isUseEmbeddableCompilerJar = project.nativeProperties.isUseEmbeddableCompilerJar
+    private val shouldUseEmbeddableCompilerJar = project.nativeProperties.shouldUseEmbeddableCompilerJar
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
@@ -1139,7 +1138,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
         get() = objectFactory.KotlinNativeCInteropRunner(
             metrics,
             classLoadersCachingService,
-            isUseEmbeddableCompilerJar,
+            shouldUseEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
             useXcodeMessageStyle,

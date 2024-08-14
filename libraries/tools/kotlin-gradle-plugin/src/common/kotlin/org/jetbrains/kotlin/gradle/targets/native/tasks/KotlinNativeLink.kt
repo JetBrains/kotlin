@@ -122,7 +122,7 @@ constructor(
 
     @Suppress("unused")
     @get:Input
-    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.isUseEmbeddableCompilerJar
+    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.shouldUseEmbeddableCompilerJar
 
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(
@@ -381,7 +381,6 @@ constructor(
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
-    private val isUseEmbeddableCompilerJar = project.nativeProperties.isUseEmbeddableCompilerJar
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
@@ -394,7 +393,7 @@ constructor(
             classLoadersCachingService,
             forceDisableRunningInProcess,
             useXcodeMessageStyle,
-            isUseEmbeddableCompilerJar,
+            useEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
             konanPropertiesService

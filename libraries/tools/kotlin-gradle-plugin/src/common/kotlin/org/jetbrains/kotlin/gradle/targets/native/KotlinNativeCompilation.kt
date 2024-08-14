@@ -49,7 +49,7 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
         get() = compilation.compilerOptions as DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
 
     internal val useGenericPluginArtifact: Boolean
-        get() = project.nativeProperties.isUseEmbeddableCompilerJar.get()
+        get() = project.nativeProperties.shouldUseEmbeddableCompilerJar.get()
 }
 
 open class KotlinNativeCompilation @Inject internal constructor(

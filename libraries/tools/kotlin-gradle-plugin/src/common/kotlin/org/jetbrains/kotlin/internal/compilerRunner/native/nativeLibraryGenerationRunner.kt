@@ -38,7 +38,7 @@ private fun ObjectFactory.kotlinToolSpec(
     optionalToolName = property("generatePlatformLibraries"),
     mainClass = nativeMainClass,
     daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
-    classpath = nativeCompilerClasspath(nativeProperties.actualNativeHomeDirectory, nativeProperties.isUseEmbeddableCompilerJar),
+    classpath = nativeCompilerClasspath(nativeProperties.actualNativeHomeDirectory, nativeProperties.shouldUseEmbeddableCompilerJar),
     jvmArgs = listProperty<String>().value(nativeProperties.jvmArgs),
     shouldPassArgumentsViaArgFile = property(false),
     systemProperties = nativeExecSystemProperties(useXcodeMessageStyle),

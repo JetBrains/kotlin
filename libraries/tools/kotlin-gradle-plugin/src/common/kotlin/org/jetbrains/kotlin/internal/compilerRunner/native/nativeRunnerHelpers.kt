@@ -16,8 +16,8 @@ internal fun Provider<Boolean>.nativeDaemonEntryPoint() = map { useXcodeMessageS
 }
 
 private fun Provider<File>.kotlinNativeCompilerJar(
-    isUseEmbeddableCompilerJar: Provider<Boolean>
-) = zip(isUseEmbeddableCompilerJar) { nativeHomeDir, useJar ->
+    shouldUseEmbeddableCompilerJar: Provider<Boolean>
+) = zip(shouldUseEmbeddableCompilerJar) { nativeHomeDir, useJar ->
     if (useJar) {
         nativeHomeDir.resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
     } else {
@@ -27,9 +27,9 @@ private fun Provider<File>.kotlinNativeCompilerJar(
 
 internal fun ObjectFactory.nativeCompilerClasspath(
     nativeHomeDirectory: Provider<File>,
-    isUseEmbeddableCompilerJar: Provider<Boolean>,
+    shouldUseEmbeddableCompilerJar: Provider<Boolean>,
 ) = fileCollection().from(
-    nativeHomeDirectory.kotlinNativeCompilerJar(isUseEmbeddableCompilerJar),
+    nativeHomeDirectory.kotlinNativeCompilerJar(shouldUseEmbeddableCompilerJar),
     nativeHomeDirectory.map { it.resolve("konan/lib/trove4j.jar") },
 )
 
