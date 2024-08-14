@@ -15187,7 +15187,10 @@ final class kotlin.js/JsBoolean : kotlin.js/JsAny // kotlin.js/JsBoolean|null[0]
 
 // Targets: [wasmJs]
 final class kotlin.js/JsException : kotlin/Throwable { // kotlin.js/JsException|null[0]
-    constructor <init>() // kotlin.js/JsException.<init>|<init>(){}[0]
+    final val message // kotlin.js/JsException.message|{}message[0]
+        final fun <get-message>(): kotlin/String // kotlin.js/JsException.message.<get-message>|<get-message>(){}[0]
+    final val thrownValue // kotlin.js/JsException.thrownValue|{}thrownValue[0]
+        final fun <get-thrownValue>(): kotlin.js/JsAny? // kotlin.js/JsException.thrownValue.<get-thrownValue>|<get-thrownValue>(){}[0]
 }
 
 // Targets: [wasmJs]

@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 
 fun throwSomeJsException(): Int = js("{ throw new Error('Test'); }")
 fun throwSomeJsPrimitive(): Int = js("{ throw null; }")

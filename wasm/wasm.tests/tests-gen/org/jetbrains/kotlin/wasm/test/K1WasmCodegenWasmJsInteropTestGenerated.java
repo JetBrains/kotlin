@@ -103,6 +103,24 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("jsExceptionNewProposal.kt")
+  public void testJsExceptionNewProposal() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionNewProposal.kt");
+  }
+
+  @Test
+  @TestMetadata("jsExceptionNewProposalWithThrownValueAttached.kt")
+  public void testJsExceptionNewProposalWithThrownValueAttached() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionNewProposalWithThrownValueAttached.kt");
+  }
+
+  @Test
+  @TestMetadata("jsExceptionWithThrownValueAttached.kt")
+  public void testJsExceptionWithThrownValueAttached() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExceptionWithThrownValueAttached.kt");
+  }
+
+  @Test
   @TestMetadata("jsExport.kt")
   public void testJsExport() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");

@@ -20,7 +20,7 @@ repositories {
     ivy {
         url = URI("https://archive.mozilla.org/pub/firefox/nightly/")
         patternLayout {
-            artifact("2024/03/[revision]/[artifact]-[classifier].[ext]")
+            artifact("2024/05/[revision]/[artifact]-[classifier].[ext]")
         }
         metadataSources { artifact() }
         content { includeModule("org.mozilla", "jsshell") }
@@ -61,7 +61,7 @@ val currentOsType = run {
 }
 
 
-val jsShellVersion = "2024-03-26-09-52-07-mozilla-central"
+val jsShellVersion = "2024-05-07-09-13-07-mozilla-central"
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"

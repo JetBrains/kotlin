@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -397,7 +398,10 @@ class WasmSymbols(
         val kExternalClassImpl: IrClassSymbol = getInternalClass("KExternalClassImpl")
 
         val jsException = getIrClass(FqName("kotlin.js.JsException"))
-        val throwJsException = getInternalFunction("throwJsException")
+        val jsExceptionThrownValue
+            get() = jsException.fields.single { it.owner.name == Name.identifier("thrownValue") }.owner
+
+        val createJsException = getInternalFunction("createJsException")
     }
 
     private val wasmExportClass = getIrClass(FqName("kotlin.wasm.WasmExport"))

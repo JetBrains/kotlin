@@ -1041,6 +1041,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("catchParameter", variable)
         +field("result", expression)
+        +field("origin", statementOriginType, nullable = true)
     }
     val typeOperatorCall: Element by element(Expression) {
         nameInVisitorMethod = "TypeOperator"

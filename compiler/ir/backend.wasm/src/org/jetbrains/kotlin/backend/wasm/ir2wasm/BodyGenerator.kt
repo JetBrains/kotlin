@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.ir.returnType
+import org.jetbrains.kotlin.backend.common.lower.SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
-import org.jetbrains.kotlin.backend.wasm.lower.JsExceptionRevealOrigin
+import org.jetbrains.kotlin.backend.wasm.lower.SYNTHETIC_JS_EXCEPTION_HANDLER_TO_SUPPORT_CATCH_THROWABLE
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -137,16 +139,45 @@ class BodyGenerator(
 
     override fun visitThrow(expression: IrThrow) {
         generateExpression(expression.value)
+
         if (context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
             body.buildUnreachable(SourceLocation.NoLocation("Unreachable is inserted instead of a `throw` instruction"))
             return
         }
 
-        body.buildThrow(functionContext.tagIdx, expression.getSourceLocation())
+        val sourceLocation = expression.getSourceLocation()
+
+        if (!context.backendContext.isWasmJsTarget || !context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)) {
+            body.buildThrow(functionContext.context.throwableTagIndex, sourceLocation)
+            return
+        }
+
+        when (expression.type) {
+            wasmSymbols.jsRelatedSymbols.jsException.defaultType -> {
+                generateInstanceFieldAccess(wasmSymbols.jsRelatedSymbols.jsExceptionThrownValue, expression.value.getSourceLocation())
+                body.buildThrow(functionContext.context.jsExceptionTagIndex, sourceLocation)
+            }
+            irBuiltIns.throwableType -> {
+                val tmp = functionContext.referenceLocal(functionContext.defineTmpVariable(context.transformType(irBuiltIns.throwableType)))
+                body.buildSetLocal(tmp, SourceLocation.NoLocation)
+                body.buildGetLocal(tmp, SourceLocation.NoLocation)
+                body.buildRefTestStatic(context.referenceGcType(wasmSymbols.jsRelatedSymbols.jsException), sourceLocation)
+                body.buildIf("is_js_exception")
+                body.buildGetLocal(tmp, SourceLocation.NoLocation)
+                body.buildRefCastStatic(context.referenceGcType(wasmSymbols.jsRelatedSymbols.jsException), SourceLocation.NoLocation)
+                generateInstanceFieldAccess(wasmSymbols.jsRelatedSymbols.jsExceptionThrownValue, expression.value.getSourceLocation())
+                body.buildThrow(functionContext.context.jsExceptionTagIndex, sourceLocation)
+                body.buildElse()
+                body.buildGetLocal(tmp, SourceLocation.NoLocation)
+                body.buildThrow(functionContext.context.throwableTagIndex, sourceLocation)
+                body.buildEnd()
+            }
+            else -> body.buildThrow(functionContext.context.throwableTagIndex, sourceLocation)
+        }
     }
 
     override fun visitTry(aTry: IrTry) {
-        assert(aTry.isCanonical(irBuiltIns)) { "expected canonical try/catch" }
+        assert(aTry.isCanonical(context.backendContext)) { "expected canonical try/catch" }
 
         if (context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
             generateExpression(aTry.tryResult)
@@ -187,31 +218,108 @@ class BodyGenerator(
      *
      */
     private fun generateTryFollowingNewProposal(aTry: IrTry) {
+        val canUseJsTag = context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
+
+        val lastCatchBlock = aTry.catches.last()
+        val firstCatchBlock = aTry.catches.first()
+        val hasOnlySingleCatchBlock = lastCatchBlock === firstCatchBlock
+
         val resultType = context.transformBlockResultType(aTry.type)
+        val needCatchAllOnly = lastCatchBlock.origin === SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
+        val areTwoCatchWithTheSameBody =
+            context.backendContext.isWasmJsTarget && firstCatchBlock.origin === SYNTHETIC_JS_EXCEPTION_HANDLER_TO_SUPPORT_CATCH_THROWABLE
 
-        val catchBlock = aTry.catches.single()
-        val exceptionType = context.transformBlockResultType(catchBlock.catchParameter.type)
+        val topLevelCatchLabel = body.buildBlock(resultType)
 
-        body.buildBlock("CATCH_BLOCK", resultType) { catchBlockLabel ->
-            body.buildBlock("TRY_BLOCK", exceptionType) { tryBlockLabel ->
-                body.buildTryTable(
-                    null,
-                    listOf(body.createNewCatch(functionContext.tagIdx, tryBlockLabel)),
-                    exceptionType
+        val firstCatchParameterIsJsException = context.backendContext.isWasmJsTarget &&
+                firstCatchBlock.catchParameter.type == wasmSymbols.jsRelatedSymbols.jsException.defaultType
+
+        val nestedCatchLabel = runIf(!hasOnlySingleCatchBlock || (firstCatchParameterIsJsException && !canUseJsTag)) {
+            body.buildBlock(context.transformBlockResultType(irBuiltIns.throwableType))
+        }
+
+        val tryBlockType = when {
+            needCatchAllOnly -> WasmExnRefType
+            firstCatchParameterIsJsException -> if (canUseJsTag) WasmExternRef else null
+            else -> context.transformBlockResultType(irBuiltIns.throwableType)
+        }
+
+        val tryBlockLabel = body.buildBlock(tryBlockType)
+
+        val catchList = when {
+            needCatchAllOnly -> listOf(body.createNewCatchAllRef(tryBlockLabel))
+            nestedCatchLabel != null -> listOf(
+                body.createNewCatch(context.throwableTagIndex, nestedCatchLabel),
+                if (canUseJsTag) body.createNewCatch(context.jsExceptionTagIndex, tryBlockLabel)
+                else body.createNewCatchAll(tryBlockLabel)
+            )
+            else -> listOf(
+                body.createNewCatch(
+                    if (tryBlockType === WasmExternRef) context.jsExceptionTagIndex else context.throwableTagIndex,
+                    tryBlockLabel
                 )
-                generateExpression(aTry.tryResult)
-                body.buildBr(catchBlockLabel, SourceLocation.NoLocation(""))
-                body.buildEnd()
+            )
+        }
+
+        body.buildTryTable(null, catchList, tryBlockType)
+        generateExpression(aTry.tryResult)
+        body.buildBr(topLevelCatchLabel, SourceLocation.NoLocation(""))
+        body.buildEnd()
+
+        body.buildEnd() // tryBlockLabel
+
+        if (needCatchAllOnly) {
+            val composite = lastCatchBlock.result as IrComposite
+            assert(composite.statements.last().isSimpleRethrowing(lastCatchBlock)) { "Last throw is not rethrowing" }
+            composite.statements.dropLast(1).forEach(::generateStatement)
+            body.buildThrowRef(SourceLocation.NoLocation)
+            body.buildEnd() // topLevelCatchLabel
+            return
+        }
+
+        if (nestedCatchLabel != null) {
+            if (!canUseJsTag) {
+                body.buildRefNull(WasmHeapType.Simple.Extern, SourceLocation.NoLocation(""))
             }
 
-            with(catchBlock.catchParameter.symbol) {
-                functionContext.defineLocal(this)
-                body.buildSetLocal(functionContext.referenceLocal(this), owner.getSourceLocation())
+            firstCatchBlock.wrapJsThrownValueIntoJsException()
+
+            if (!areTwoCatchWithTheSameBody) {
+                firstCatchBlock.initializeCatchParameter()
+                generateExpression(firstCatchBlock.result)
+                body.buildBr(topLevelCatchLabel, SourceLocation.NoLocation(""))
             }
 
-            generateExpression(catchBlock.result)
+            body.buildEnd() // nestedCatchLabel
+
+            if (hasOnlySingleCatchBlock && !canUseJsTag) {
+                body.buildThrow(functionContext.context.throwableTagIndex, SourceLocation.NoLocation(""))
+                body.buildEnd() // topLevelCatchLabel
+                return
+            }
+        } else if (tryBlockType === WasmExternRef) {
+            lastCatchBlock.wrapJsThrownValueIntoJsException()
+        }
+
+        lastCatchBlock.initializeCatchParameter()
+        generateExpression(lastCatchBlock.result)
+
+        body.buildEnd() // topLevelCatchLabel
+    }
+
+    private fun IrCatch.initializeCatchParameter() {
+        with(catchParameter.symbol) {
+            functionContext.defineLocal(this)
+            body.buildSetLocal(functionContext.referenceLocal(this), owner.getSourceLocation())
         }
     }
+
+    private fun IrCatch.wrapJsThrownValueIntoJsException() {
+        body.buildCall(context.referenceFunction(wasmSymbols.jsRelatedSymbols.createJsException), catchParameter.getSourceLocation())
+    }
+
+    private fun IrStatement.isSimpleRethrowing(catchBlock: IrCatch): Boolean =
+        ((this as IrThrow).value as IrGetValue).symbol == catchBlock.catchParameter.symbol
 
     /**
      * The typical Kotlin try/catch:
@@ -236,21 +344,77 @@ class BodyGenerator(
      *
      */
     private fun generateTryFollowingOldProposal(aTry: IrTry) {
-        val resultType = context.transformBlockResultType(aTry.type)
+        val canUseJsTag = context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
 
-        body.buildTry(null, resultType)
+        val lastCatchBlock = aTry.catches.last()
+        val firstCatchBlock = aTry.catches.first()
+        val hasOnlySingleCatchBlock = lastCatchBlock === firstCatchBlock
+
+        val resultType = context.transformBlockResultType(aTry.type)
+        var topLevelBlockLabel: Int? = null
+        val areTwoCatchWithTheSameBody = context.backendContext.isWasmJsTarget && (
+                lastCatchBlock.origin === SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION ||
+                        firstCatchBlock.origin === SYNTHETIC_JS_EXCEPTION_HANDLER_TO_SUPPORT_CATCH_THROWABLE
+                )
+
+        val lastCatchParameterIsJsException = context.backendContext.isWasmJsTarget &&
+                lastCatchBlock.catchParameter.type == wasmSymbols.jsRelatedSymbols.jsException.defaultType
+
+        if (areTwoCatchWithTheSameBody) {
+            topLevelBlockLabel = body.buildBlock(resultType)
+        }
+
+        val tryResultType = when {
+            areTwoCatchWithTheSameBody -> context.transformBlockResultType(irBuiltIns.throwableType)
+            else -> resultType
+        }
+
+        body.buildTry(null, tryResultType)
         generateExpression(aTry.tryResult)
 
-        body.buildCatch(functionContext.tagIdx)
+        topLevelBlockLabel?.let { body.buildBr(it, SourceLocation.NoLocation("")) }
 
-        // Exception object is on top of the stack, store it into the local
-        aTry.catches.single().catchParameter.symbol.let {
-            functionContext.defineLocal(it)
-            body.buildSetLocal(functionContext.referenceLocal(it), it.owner.getSourceLocation())
+        val tag = if (!lastCatchParameterIsJsException || !canUseJsTag)
+            functionContext.context.throwableTagIndex
+        else
+            functionContext.context.jsExceptionTagIndex
+
+        body.buildCatch(tag)
+
+        if (tag == functionContext.context.jsExceptionTagIndex) {
+            lastCatchBlock.wrapJsThrownValueIntoJsException()
         }
-        generateExpression(aTry.catches.single().result)
 
-        body.buildEnd()
+        if (lastCatchParameterIsJsException && !canUseJsTag) {
+            body.buildThrow(functionContext.context.throwableTagIndex, SourceLocation.NoLocation(""))
+        } else if (!areTwoCatchWithTheSameBody) {
+            lastCatchBlock.initializeCatchParameter()
+            generateExpression(lastCatchBlock.result)
+        }
+
+        if (!hasOnlySingleCatchBlock || (lastCatchParameterIsJsException && !canUseJsTag) || areTwoCatchWithTheSameBody) {
+            if (canUseJsTag) {
+                body.buildCatch(functionContext.context.jsExceptionTagIndex)
+            } else {
+                body.buildCatchAll()
+                body.buildRefNull(WasmHeapType.Simple.Extern, SourceLocation.NoLocation(""))
+            }
+
+            firstCatchBlock.wrapJsThrownValueIntoJsException()
+
+            if (!areTwoCatchWithTheSameBody) {
+                firstCatchBlock.initializeCatchParameter()
+                generateExpression(firstCatchBlock.result)
+            }
+        }
+
+        body.buildEnd() // try
+
+        if (areTwoCatchWithTheSameBody) {
+            lastCatchBlock.initializeCatchParameter()
+            generateExpression(lastCatchBlock.result)
+            body.buildEnd() // topLevelBlockLabel
+        }
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
@@ -798,91 +962,7 @@ class BodyGenerator(
             return
         }
 
-        if (context.backendContext.isWasmJsTarget && expression.origin == JsExceptionRevealOrigin.JS_EXCEPTION_REVEAL) {
-            if (context.backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)) {
-                generateTryCatchAllFollowingNewProposal(expression)
-            } else {
-                generateTryCatchAllFollowingOldProposal(expression)
-            }
-        } else {
-            processContainerExpression(expression)
-        }
-    }
-
-    /**
-     *
-     * ```wat
-     * block $catch_block (TRANSLATED_CONTAINER_EXPRESSION_TYPE)
-     *     block $catch_all_block (THROWABLE_TYPE)
-     *         block $try_block
-     *             try_table (THROWABLE_TYPE) catch $catch_all_block catch_all $try_block
-     *                 TRANSLATED_CONTAINER_EXPRESSION
-     *                 br $catch_block
-     *             end
-     *         end
-     *         call $throwJsException
-     *         unreachable
-     *     end
-     *     throw 0
-     * end
-     * ```
-    */
-    private fun generateTryCatchAllFollowingNewProposal(expression: IrContainerExpression) {
-        val resultType = context.transformBlockResultType(expression.type)
-        val throwableType = context.transformBlockResultType(context.backendContext.irBuiltIns.throwableType)
-        val revealLocation = SourceLocation.NoLocation("JS exception reveal")
-
-        body.buildBlock("CATCH_BLOCK", resultType) { catchBlockLabel ->
-            body.buildBlock("CATCH_ALL_BLOCK", throwableType) { catchAllBlockLabel ->
-                body.buildBlock("TRY_BLOCK") { tryBlockLabel ->
-                    body.buildTryTable(
-                        null,
-                        listOf(
-                            body.createNewCatch(functionContext.tagIdx, catchAllBlockLabel),
-                            body.createNewCatchAll(tryBlockLabel)
-                        )
-                    )
-                    processContainerExpression(expression)
-                    body.buildBr(catchBlockLabel, SourceLocation.NoLocation(""))
-                    body.buildEnd()
-                }
-
-                body.buildCall(
-                    symbol = context.referenceFunction(context.backendContext.wasmSymbols.jsRelatedSymbols.throwJsException),
-                    location = revealLocation
-                )
-                body.buildUnreachable(revealLocation)
-            }
-            body.buildThrow(functionContext.tagIdx, revealLocation)
-        }
-    }
-
-    /**
-     *
-     * ```wast
-     * try (TRANSLATED_CONTAINER_EXPRESSION_TYPE)
-     *     TRANSLATED_CONTAINER_EXPRESSION
-     * catch IDX
-     *     rethrow
-     * catch_all
-     *     call $throwJsException
-     *     unreachable
-     * end
-     * ```
-     */
-    private fun generateTryCatchAllFollowingOldProposal(expression: IrContainerExpression) {
-        body.buildTry(null, context.transformBlockResultType(expression.type))
         processContainerExpression(expression)
-        val revealLocation = SourceLocation.NoLocation("JS exception reveal")
-        body.buildCatch(functionContext.tagIdx)
-        body.buildInstr(WasmOp.RETHROW, revealLocation, WasmImmediate.LabelIdx(0))
-        body.buildCatchAll()
-        body.buildCall(
-            symbol = context.referenceFunction(context.backendContext.wasmSymbols.jsRelatedSymbols.throwJsException),
-            location = revealLocation
-        )
-        body.buildUnreachable(revealLocation)
-        body.buildEnd()
     }
 
     override fun visitBreak(jump: IrBreak) {

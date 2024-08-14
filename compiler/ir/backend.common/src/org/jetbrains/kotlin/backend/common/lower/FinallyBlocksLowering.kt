@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 val FINALLY_EXPRESSION by IrStatementOriginImpl
+val SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION by IrStatementOriginImpl
 
 class FinallyBlocksLowering(val context: CommonBackendContext, private val throwableType: IrType): FileLoweringPass, IrElementTransformerVoidWithContext() {
 
@@ -221,14 +222,15 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
             val syntheticTry = IrTryImpl(
                 startOffset = startOffset,
                 endOffset = endOffset,
-                type = context.irBuiltIns.nothingType
+                type = context.irBuiltIns.nothingType,
             ).apply {
                 this.catches += irCatch(
                     catchParameter,
                     irComposite {
                         +copy(finallyExpression)
                         +irThrow(irGet(catchParameter))
-                    }
+                    },
+                    SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
                 )
 
                 this.finallyExpression = null

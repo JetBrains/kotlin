@@ -15,14 +15,18 @@ import kotlin.wasm.internal.jsToKotlinStringAdapter
  * @param message the detail message string.
  * @param cause the cause of this throwable.
  */
-public open class Throwable(public open val message: String?, public open val cause: kotlin.Throwable?) {
+public open class Throwable internal constructor(
+    public open val message: String?,
+    public open val cause: kotlin.Throwable?,
+    internal open val jsStack: ExternalInterfaceType
+) {
+    public constructor(message: String?, cause: kotlin.Throwable?) : this(message, cause, captureStackTrace())
+
     public constructor(message: String?) : this(message, null)
 
     public constructor(cause: Throwable?) : this(cause?.toString(), cause)
 
     public constructor() : this(null, null)
-
-    internal val jsStack: ExternalInterfaceType = captureStackTrace()
 
     private var _stack: String? = null
     internal val stack: String
@@ -54,5 +58,5 @@ internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
 
 internal actual val Throwable.stack: String get() = this.stack
 
-private fun captureStackTrace(): ExternalInterfaceType =
+internal fun captureStackTrace(): ExternalInterfaceType =
     js("new Error().stack")

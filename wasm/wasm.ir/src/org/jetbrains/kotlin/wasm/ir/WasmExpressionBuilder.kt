@@ -128,6 +128,10 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.THROW, location, WasmImmediate.TagIdx(tagIdx))
     }
 
+    fun buildThrowRef(location: SourceLocation) {
+        buildInstr(WasmOp.THROW_REF, location)
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun buildTry(label: String?, resultType: WasmType? = null) {
         numberOfNestedBlocks++
@@ -154,6 +158,9 @@ abstract class WasmExpressionBuilder {
 
     fun createNewCatchAll(absoluteBlockLevel: Int) =
         createNewCatchImmediate(WasmImmediate.Catch.CatchType.CATCH_ALL, absoluteBlockLevel)
+
+    fun createNewCatchAllRef(absoluteBlockLevel: Int) =
+        createNewCatchImmediate(WasmImmediate.Catch.CatchType.CATCH_ALL_REF, absoluteBlockLevel)
 
     private fun createNewCatchImmediate(
         catchType: WasmImmediate.Catch.CatchType,

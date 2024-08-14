@@ -18,7 +18,11 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val USE_NEW_EXCEPTION_HANDLING_PROPOSAL by directive(
-        description = "Generate wasm the updated EH proposal and test in runtime with EH turned on",
+        description = "Generate wasm with the updated EH proposal turned on",
+    )
+
+    val USE_JS_TAG by directive(
+        description = "Generate wasm with usage of WebAssembly.JSTag inside a EH proposal",
     )
 
     // Next directives are used only inside test system and must not be present in test file

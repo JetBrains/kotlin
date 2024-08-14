@@ -466,7 +466,6 @@ class WasmIrToBinary(
             b.writeString(t.importPair.moduleName)
             b.writeString(t.importPair.declarationName)
             b.writeByte(4)
-            return
         }
         b.writeByte(0) // attribute
         assert(t.type.id != null) { "Unlinked tag id" }

@@ -1,4 +1,6 @@
 // TARGET_BACKEND: WASM
+// USE_JS_TAG
+// USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 
 fun throwSomeJsException(): Int = js("{ throw new Error('Test'); }")
 fun throwSomeJsPrimitive(): Int = js("{ throw null; }")
@@ -18,7 +20,10 @@ fun jsExceptionWithThrowable(): Boolean {
         throwSomeJsException()
         return false
     } catch (e: Throwable) {
-        return e.message == "Exception was thrown while running JavaScript code"
+        val stacktrace = e.stackTraceToString()
+        return stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>.jsExceptionWithThrowable") &&
+                stacktrace.contains("<main>.box")
     }
     return false
 }
@@ -28,7 +33,10 @@ fun jsExceptionWithJsException(): Boolean {
         throwSomeJsException()
         return false
     } catch (e: JsException) {
-        return e.thrownValue == null && e.message == "Exception was thrown while running JavaScript code"
+        val stacktrace = e.stackTraceToString()
+        return stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>.jsExceptionWithJsException") &&
+                stacktrace.contains("<main>.box")
     }
     return false
 }
