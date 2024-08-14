@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.FirParser.LightTree
+import org.jetbrains.kotlin.test.FirParser.Psi
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TargetBackend.JVM_IR
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
@@ -24,6 +28,33 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
+
+open class IrCustomScriptCodegenTest : CustomScriptCodegenTest() {
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM
+
+    override fun testAnnotatedDefinition() {
+        // Discussing
+    }
+}
+
+@Suppress("JUnitTestCaseWithNoTests")
+class FirLightTreeCustomScriptCodegenTest : IrCustomScriptCodegenTest() {
+    override val useFir: Boolean
+        get() = true
+
+    override val firParser: FirParser
+        get() = LightTree
+}
+
+@Suppress("JUnitTestCaseWithNoTests")
+class FirPsiCustomScriptCodegenTest : IrCustomScriptCodegenTest() {
+    override val useFir: Boolean
+        get() = true
+
+    override val firParser: FirParser
+        get() = Psi
+}
 
 open class CustomScriptCodegenTest : CodegenTestCase() {
     open fun testAnnotatedDefinition() {
