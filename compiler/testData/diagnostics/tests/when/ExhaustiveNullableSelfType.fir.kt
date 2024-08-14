@@ -1,14 +1,15 @@
+// LANGUAGE: +ImprovedExhaustivenessChecksIn21
 // ISSUE: KT-70672, KT-70673
-fun testNullableBoolean(arg: Boolean?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableBoolean(arg: Boolean?) = when (arg) {
     null -> 1
     <!USELESS_IS_CHECK!>is Boolean<!> -> 2
 }
 
-fun testNullableBoolean2(arg: Boolean?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableBoolean2(arg: Boolean?) = when (arg) {
     <!USELESS_IS_CHECK!>is Boolean?<!> -> 2
 }
 
-fun testNullableBooleanAgainstAny(arg: Boolean?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableBooleanAgainstAny(arg: Boolean?) = when (arg) {
     null -> 1
     <!USELESS_IS_CHECK!>is Any<!> -> 2
 }

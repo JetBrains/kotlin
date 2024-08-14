@@ -1,3 +1,4 @@
+// LANGUAGE: +ImprovedExhaustivenessChecksIn21
 // ISSUE: KT-70672, KT-70673
 fun testNullableBoolean(arg: Boolean?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
     null -> 1

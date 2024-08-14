@@ -273,8 +273,14 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
-        destination: MutableCollection<WhenMissingCase>
+        destination: MutableCollection<WhenMissingCase>,
     ) {
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21) &&
+            WhenSelfTypeExhaustivenessChecker.isExhaustiveThroughSelfTypeCheck(whenExpression, subjectType, session)
+        ) {
+            return
+        }
+
         val flags = Flags()
         whenExpression.accept(ConditionChecker, flags)
         if (!flags.containsTrue) {
