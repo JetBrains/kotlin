@@ -55,8 +55,8 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
             val testFile = KtPsiFactory(project).createFile(test)
             val bindingContext = JvmResolveUtil.analyze(testFile, environment).bindingContext
             val functions = bindingContext.getSliceContents(BindingContext.FUNCTION)
-            val functionFoo = functions.values.firstOrNull { it.name.asString() == "foo" } ?:
-                              throw AssertionError("Function 'foo' is not declared")
+            val functionFoo = functions.values.firstOrNull { it.name.asString() == "foo" }
+                ?: throw AssertionError("Function 'foo' is not declared")
             Pair(bindingContext, functionFoo)
         }
 
@@ -73,12 +73,16 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
             val t = typeParameters[0]
             val r = typeParameters[1]
             if (oneTypeVariable)
-                listOf(mapOf(t to TypeProjectionImpl(IN_VARIANCE, intType)),
-                       mapOf(t to TypeProjectionImpl(OUT_VARIANCE, intType)))
+                listOf(
+                    mapOf(t to TypeProjectionImpl(IN_VARIANCE, intType)),
+                    mapOf(t to TypeProjectionImpl(OUT_VARIANCE, intType))
+                )
             else {
-                listOf(mapOf(
+                listOf(
+                    mapOf(
                         t to TypeProjectionImpl(IN_VARIANCE, intType),
-                        r to TypeProjectionImpl(OUT_VARIANCE, stringType))
+                        r to TypeProjectionImpl(OUT_VARIANCE, stringType)
+                    )
                 )
             }
         }
@@ -113,8 +117,9 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
 
                     val (lower, upper) = approximateCapturedTypes(typeWithCapturedType)
                     val substitution =
-                            approximateCapturedTypesIfNecessary(
-                                    TypeProjectionImpl(INVARIANT, typeWithCapturedType), approximateContravariant = false)
+                        approximateCapturedTypesIfNecessary(
+                            TypeProjectionImpl(INVARIANT, typeWithCapturedType), approximateContravariant = false
+                        )
 
                     append("  ")
                     for (typeParameter in testSubstitution.keys) {

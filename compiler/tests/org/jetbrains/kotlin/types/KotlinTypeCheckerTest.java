@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
+import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.TypeResolver;
@@ -291,7 +294,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertSubtype("MDerived_T<Int>", "Base_T<in Int>");
         assertSubtype("ArrayList<Int>", "InvList<in Int>");
 
-//        assertSubtype("java.lang.Integer", "java.lang.Comparable<java.lang.Integer>?");
+        // assertSubtype("java.lang.Integer", "java.lang.Comparable<java.lang.Integer>?");
     }
 
     public void testNullable() {
@@ -335,7 +338,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     public void testThis() {
         assertType("Derived_T<Int>", "this", "Derived_T<Int>");
-//        assertType("Derived_T<Int>", "super<Base_T>", "Base_T<Int>");
+        // assertType("Derived_T<Int>", "super<Base_T>", "Base_T<Int>");
     }
 
     public void testLoops() {
@@ -452,9 +455,9 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertType("true && false", "Boolean");
         assertType("true || false", "Boolean");
         assertType("null ?: false", "Boolean");
-//        assertType("WithPredicate()?isValid()", "WithPredicate?");
-//        assertType("WithPredicate()?isValid(1)", "WithPredicate?");
-//        assertType("WithPredicate()?p", "WithPredicate?");
+        // assertType("WithPredicate()?isValid()", "WithPredicate?");
+        // assertType("WithPredicate()?isValid(1)", "WithPredicate?");
+        // assertType("WithPredicate()?p", "WithPredicate?");
     }
 
     public void testSupertypes() {
@@ -478,7 +481,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         assertSubtype("Base_inT<out Any?>", "Base_inT<out Int>");
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void assertSupertypes(String typeStr, String... supertypeStrings) {
         Set<KotlinType> allSupertypes = TypeUtils.getAllSupertypes(makeType(scopeWithImports, typeStr));
@@ -504,7 +507,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
             typesToIntersect.add(makeType(type));
         }
         KotlinType result = TypeIntersector.intersectTypes(typesToIntersect);
-//        assertNotNull("Intersection is null for " + typesToIntersect, result);
+        // assertNotNull("Intersection is null for " + typesToIntersect, result);
         assertEquals(makeType(expected), result);
     }
 
