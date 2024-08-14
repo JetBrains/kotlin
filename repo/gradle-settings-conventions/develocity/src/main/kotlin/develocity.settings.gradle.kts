@@ -52,6 +52,7 @@ buildCache {
         remote(develocity.buildCache) {
             isPush = buildProperties.pushToBuildCache
             val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
+            isEnabled = remoteBuildCacheUrl != "" // explicit "" disables it
             if (!remoteBuildCacheUrl.isNullOrEmpty()) {
                 server = remoteBuildCacheUrl.removeSuffix("/cache/")
             }
