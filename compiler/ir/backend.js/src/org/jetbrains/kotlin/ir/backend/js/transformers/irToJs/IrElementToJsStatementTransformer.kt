@@ -37,30 +37,32 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return JsBlock(body.statements.map { it.accept(this, context) }.toSmartList()).withSource(body, context, container = context.currentFunction)
     }
 
-    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
-        val newContext = (expression as? IrReturnableBlock)?.inlineFunction?.let {
+    override fun visitReturnableBlock(expression: IrReturnableBlock, context: JsGenerationContext): JsStatement {
+        val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
+        val newContext = inlinedBlock?.inlineFunction?.let {
             context.newFile(it.file, context.currentFunction, context.localNames)
         } ?: context
 
-        val container = expression.innerInlinedBlockOrThis.statements
+        val container = inlinedBlock?.statements ?: expression.statements
         val statements = container.map { it.accept(this, newContext) }.toSmartList()
 
-        return if (expression is IrReturnableBlock) {
-            val label = context.getNameForReturnableBlock(expression)
-            val wrappedStatements = statements.wrapInCommentsInlineFunctionCall(expression)
+        val label = context.getNameForReturnableBlock(expression)
+        val wrappedStatements = statements.wrapInCommentsInlineFunctionCall(inlinedBlock)
 
-            if (label != null) {
-                JsLabel(label, JsBlock(wrappedStatements))
-            } else {
-                JsCompositeBlock(wrappedStatements)
-            }
+        return if (label != null) {
+            JsLabel(label, JsBlock(wrappedStatements))
         } else {
-            JsBlock(statements)
+            JsCompositeBlock(wrappedStatements)
         }.withSource(expression, context)
     }
 
-    private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(expression: IrReturnableBlock): List<JsStatement> {
-        val inlineFunction = expression.inlineFunction ?: return this
+    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
+        val statements = expression.statements.map { it.accept(this, context) }.toSmartList()
+        return JsBlock(statements).withSource(expression, context)
+    }
+
+    private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(inlinedBlock: IrInlinedFunctionBlock?): List<JsStatement> {
+        val inlineFunction = inlinedBlock?.inlineFunction ?: return this
         val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
         val owner = correspondingProperty?.owner ?: inlineFunction
         val funName = owner.fqNameWhenAvailable ?: owner.name

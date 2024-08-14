@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
 
@@ -54,10 +53,6 @@ fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
 
 val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
     get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
-val IrReturnableBlock.inlineFunction: IrFunction?
-    get() = (this.statements.singleOrNull() as? IrInlinedFunctionBlock)?.inlineFunction
-val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
-    get() = inlineFunction?.fileOrNull?.symbol
 
 fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
     index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())

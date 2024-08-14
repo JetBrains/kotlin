@@ -719,15 +719,15 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         }
     }
 
-    override fun visitBlock(expression: IrBlock): IrExpression {
-        if (expression is IrReturnableBlock && expression.inlineFunction?.isAutoreleasepool() == true) {
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+        if (inlinedBlock.inlineFunction?.isAutoreleasepool() == true) {
             // Prohibit calling suspend functions from `autoreleasepool {}` block.
             // See https://youtrack.jetbrains.com/issue/KT-50786 for more details.
             // Note: we can't easily check this in frontend, because we need to prohibit indirect cases like
             ///    inline fun <T> myAutoreleasepool(block: () -> T) = autoreleasepool(block)
             ///    myAutoreleasepool { suspendHere() }
 
-            expression.acceptVoid(object : IrElementVisitorVoid {
+            inlinedBlock.acceptVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
@@ -746,7 +746,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                 }
             })
         }
-        return super.visitBlock(expression)
+        return super.visitInlinedFunctionBlock(inlinedBlock)
     }
 
     private fun IrFunction.isAutoreleasepool(): Boolean {
