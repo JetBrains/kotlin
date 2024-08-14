@@ -64,7 +64,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         private fun ConeKotlinType.unwrapTypeParameterAndIntersectionTypes(session: FirSession): Collection<ConeKotlinType> {
             return when {
                 this is ConeIntersectionType -> intersectedTypes
-                this is ConeTypeParameterType && session.languageVersionSettings.supportsFeature(LanguageFeature.ExhaustivenessChecksOnTypeParameterBounds)
+                this is ConeTypeParameterType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
                     -> lookupTag.typeParameterSymbol.resolvedBounds.flatMap { it.coneType.unwrapTypeParameterAndIntersectionTypes(session) }
                 else -> listOf(this)
             }
