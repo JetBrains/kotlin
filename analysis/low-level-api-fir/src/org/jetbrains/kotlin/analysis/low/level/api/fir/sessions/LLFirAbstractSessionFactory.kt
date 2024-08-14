@@ -341,7 +341,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             val syntheticFunctionInterfaceProvider =
                 FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(this, moduleData, scopeProvider)
             val switchableExtensionDeclarationsSymbolProvider =
-                FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)?.also {
+                LLFirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)?.also {
                     register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it)
                 }
 
@@ -577,7 +577,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             val syntheticFunctionInterfaceProvider = FirExtensionSyntheticFunctionInterfaceProvider
                 .createIfNeeded(this, moduleData, scopeProvider)
 
-            val switchableExtensionDeclarationsSymbolProvider = FirSwitchableExtensionDeclarationsSymbolProvider
+            val switchableExtensionDeclarationsSymbolProvider = LLFirSwitchableExtensionDeclarationsSymbolProvider
                 .createIfNeeded(this)
                 ?.also { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
 
