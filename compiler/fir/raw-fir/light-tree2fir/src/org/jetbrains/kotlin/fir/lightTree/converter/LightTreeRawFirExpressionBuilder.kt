@@ -497,7 +497,7 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        val result = firExpression ?: buildErrorExpression(null, ConeNotAnnotationContainer("???"))
+        val result = firExpression ?: buildErrorExpression(annotatedExpression.toFirSourceElement(), ConeNotAnnotationContainer("???"))
         require(result is FirAnnotationContainer)
         result.replaceAnnotations(result.annotations.smartPlus(firAnnotationList))
         return result
