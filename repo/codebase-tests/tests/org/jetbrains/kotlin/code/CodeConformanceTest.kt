@@ -231,8 +231,7 @@ class CodeConformanceTest : TestCase() {
                 """.trimMargin(),
                 allowedFiles = listOf(
                     "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/utils/gradleAttributesContainerUtils.kt",
-                    "libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG71.kt",
-                    "libraries/tools/kotlin-gradle-plugin/src/gradle74/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG74.kt",
+                    "libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG74.kt",
                     "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/native/GeneralNativeIT.kt",
                     "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinGradlePluginIT.kt",
                     "repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/plugins/CustomVariantPublishingDsl.kt",

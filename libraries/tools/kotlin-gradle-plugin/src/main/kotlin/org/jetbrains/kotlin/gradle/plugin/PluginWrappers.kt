@@ -10,14 +10,13 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.*
-import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessorG71
-import org.jetbrains.kotlin.gradle.plugin.internal.IdeaSyncDetectorG71
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import javax.inject.Inject
 
-private const val PLUGIN_VARIANT_NAME = "gradle71"
+private const val PLUGIN_VARIANT_NAME = "gradle74"
 
 open class KotlinPluginWrapper @Inject constructor(
     registry: ToolingModelBuilderRegistry
@@ -129,7 +128,6 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
 }
 
 open class KotlinApiPlugin : KotlinBaseApiPlugin() {
-
     override fun apply(project: Project) {
         project.registerVariantImplementations()
         super.apply(project)
@@ -138,22 +136,15 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
 private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
-    factories[IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class] =
-        IdeaSyncDetectorG71.IdeaSyncDetectorVariantFactoryG71()
-    factories[ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class] =
-        ConfigurationTimePropertiesAccessorG71.ConfigurationTimePropertiesAccessorVariantFactoryG71()
     factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
-        MppTestReportHelperG71.MppTestReportHelperVariantFactoryG71()
-    factories[KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class] =
-        KotlinTestReportCompatibilityHelperG71.KotlinTestReportCompatibilityHelperVariantFactoryG71()
-    factories[ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class] =
-        ArtifactTypeAttributeAccessorG71.ArtifactTypeAttributeAccessorVariantFactoryG71()
+        MppTestReportHelperG74.MppTestReportHelperVariantFactoryG74()
     factories[ProjectIsolationStartParameterAccessor.Factory::class] =
-        ProjectIsolationStartParameterAccessorG71.Factory()
+        ProjectIsolationStartParameterAccessorG74.Factory()
     factories[CompatibilityConventionRegistrar.Factory::class] =
-        CompatibilityConventionRegistrarG71.Factory()
+        CompatibilityConventionRegistrarG74.Factory()
     factories[UnameExecutor.UnameExecutorVariantFactory::class] =
-        UnameExecutorG71.UnameExecutorVariantFactoryG71()
-    factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG71.Factory()
-    factories[AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory::class] = AttributeConfigurationHelperVariantFactoryG71()
+        UnameExecutorG74.UnameExecutorVariantFactoryG74()
+    factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG74.Factory()
+    factories[AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory::class] =
+        AttributeConfigurationHelperVariantFactoryG74()
 }

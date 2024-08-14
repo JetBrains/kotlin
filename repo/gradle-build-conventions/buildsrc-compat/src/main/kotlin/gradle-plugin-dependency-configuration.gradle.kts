@@ -20,13 +20,6 @@ extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 val commonSourceSet = createGradleCommonSourceSet()
 reconfigureMainSourcesSetForGradlePlugin(commonSourceSet)
 
-// Used for Gradle 7.4+ versions
-createGradlePluginVariant(
-    GradlePluginVariant.GRADLE_74,
-    commonSourceSet = commonSourceSet,
-    isGradlePlugin = false
-)
-
 // Used for Gradle 7.5+ versions
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_75,
