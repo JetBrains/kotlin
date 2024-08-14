@@ -24,9 +24,21 @@ public class FirClassByPsiClassProviderTestGenerated extends AbstractFirClassByP
   }
 
   @Test
+  @TestMetadata("classWithDollarInName.kt")
+  public void testClassWithDollarInName() {
+    runTest("analysis/low-level-api-fir/testData/firClassByPsiClass/classWithDollarInName.kt");
+  }
+
+  @Test
   @TestMetadata("nestedAndTopLevelClassesConflict.kt")
   public void testNestedAndTopLevelClassesConflict() {
     runTest("analysis/low-level-api-fir/testData/firClassByPsiClass/nestedAndTopLevelClassesConflict.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassWithDollarInName.kt")
+  public void testNestedClassWithDollarInName() {
+    runTest("analysis/low-level-api-fir/testData/firClassByPsiClass/nestedClassWithDollarInName.kt");
   }
 
   @Test
