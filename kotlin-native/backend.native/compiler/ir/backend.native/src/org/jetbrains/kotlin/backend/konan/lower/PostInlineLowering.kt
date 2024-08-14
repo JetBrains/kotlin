@@ -9,25 +9,22 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.llvm.ConstantConstructorIntrinsicType
-import org.jetbrains.kotlin.backend.konan.llvm.tryGetConstantConstructorIntrinsicType
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
-import org.jetbrains.kotlin.backend.konan.reportCompilationError
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
-import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * This pass runs after inlining and performs the following additional transformations over some operations:
+ *     - Convert expanded typeOf calls to IrConstantValue nodes as performance optimization
  *     - Convert immutableBlobOf() arguments to special IrConst.
  *     - Convert `obj::class` and `Class::class` to calls.
  */
@@ -37,6 +34,12 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irFile = container.file
+        val classesToTransformToConstants = listOf(
+                symbols.kTypeImpl,
+                symbols.kTypeProjectionList,
+                symbols.kTypeParameterImpl,
+                symbols.kTypeImplForTypeParametersWithRecursiveBounds
+        )
         irBody.transformChildren(object : IrElementTransformer<IrBuilderWithScope> {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope) =
                     super.visitDeclaration(declaration,
@@ -53,6 +56,28 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 } else {
                     data.toNativeConstantReflectionBuilder(symbols).at(expression).irKClass(irClassSymbol)
                 }
+            }
+
+            override fun visitConstructorCall(expression: IrConstructorCall, data: IrBuilderWithScope): IrElement {
+                super.visitConstructorCall(expression, data)
+                val clazz = expression.symbol.owner.constructedClass
+                if (clazz.symbol in classesToTransformToConstants) {
+                    fun IrElement.isConvertibleToConst() : Boolean = this is IrConstantValue || this is IrConst || (this is IrVararg  && elements.all { it.isConvertibleToConst() })
+                    fun IrElement.convertToConst() : IrConstantValue = when (this) {
+                        is IrConstantValue -> this
+                        is IrConst -> data.irConstantPrimitive(this)
+                        is IrVararg -> data.irConstantArray(type, elements.map { e -> e.convertToConst() })
+                        else -> shouldNotBeCalled()
+                    }
+                    val arguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it)!! }
+                    if (arguments.all { it.isConvertibleToConst() }) {
+                        return data.at(expression).irConstantObject(expression.symbol,
+                                arguments.map { it.convertToConst() },
+                                (0 until expression.typeArgumentsCount).map { expression.getTypeArgument(it)!! }
+                        )
+                    }
+                }
+                return expression
             }
 
             override fun visitGetClass(expression: IrGetClass, data: IrBuilderWithScope): IrExpression {
