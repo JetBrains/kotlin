@@ -52,6 +52,43 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(JUnit4Assertions, result.output, missingLibrary = "/v2/lib1", tmpdir)
     }
 
+    fun testResolvingTransitiveDependenciesRecordedInManifest() {
+        val moduleA = Module("a")
+        val moduleB = Module("b", "a")
+        val moduleC = Module("c", "b")
+        createModules(moduleA, moduleB, moduleC)
+
+        val aKlib = tmpdir.resolve("a.klib").also { it.mkdirs() }
+        val resultA = compileKlib(moduleA.sourceFile, dependency = null, outputFile = aKlib)
+        assertEquals(ExitCode.OK, resultA.exitCode)
+
+        val bKlib = tmpdir.resolve("b.klib").also { it.mkdirs() }
+        val resultB = compileKlib(moduleB.sourceFile, dependency = aKlib, outputFile = bKlib)
+        assertEquals(ExitCode.OK, resultB.exitCode)
+
+        // remove transitive dependency `a`, to check that subsequent compilation of `c` would not fail,
+        // since resolve on 1-st stage is performed without dependencies
+        aKlib.deleteRecursively()
+        val cKlib = tmpdir.resolve("c.klib").also { it.mkdirs() }
+        val resultC = compileKlib(moduleC.sourceFile, dependency = bKlib, outputFile = cKlib)
+        assertEquals(ExitCode.OK, resultC.exitCode)
+
+        val resultJS = compileToJs(cKlib, dependency = bKlib, outputFile = cKlib)
+        assertEquals(ExitCode.COMPILATION_ERROR, resultJS.exitCode)
+        assertTrue(resultJS.output.startsWith("error: KLIB resolver: Could not find \"a\" in "))
+    }
+
+    private data class Module(val name: String, val dependencyNames: List<String>) {
+        constructor(name: String, vararg dependencyNames: String) : this(name, dependencyNames.asList())
+
+        lateinit var dependencies: List<Module>
+        lateinit var sourceFile: File
+
+        fun initDependencies(resolveDependency: (String) -> Module) {
+            dependencies = dependencyNames.map(resolveDependency)
+        }
+    }
+
     private fun createKlibDir(name: String, version: Int): File =
         tmpdir.resolve("v$version").resolve(name).apply(File::mkdirs)
 
@@ -67,6 +104,29 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
             K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
             K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
             sourceFile.absolutePath
+        )
+
+        val compilerXmlOutput = ByteArrayOutputStream()
+        val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
+            K2JSCompiler().execFullPathsInMessages(printStream, args)
+        }
+
+        return CompilationResult(exitCode, compilerXmlOutput.toString())
+    }
+
+    private fun compileToJs(entryModuleKlib: File, dependency: File?, outputFile: File): CompilationResult {
+        val libraries = listOfNotNull(
+            StandardLibrariesPathProviderForKotlinProject.fullJsStdlib(),
+            dependency
+        ).joinToString(File.pathSeparator) { it.absolutePath }
+
+        val args = arrayOf(
+            "-Xir-produce-js",
+            "-Xinclude=${entryModuleKlib.absolutePath}",
+            "-libraries", libraries,
+            "-ir-output-dir", outputFile.absolutePath,
+            "-ir-output-name", outputFile.nameWithoutExtension,
+            "-target", "es2015",
         )
 
         val compilerXmlOutput = ByteArrayOutputStream()
@@ -93,5 +153,35 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
                 appendLine(output)
             }
         }
+    }
+
+    private fun createModules(vararg modules: Module): List<Module> {
+        val mapping: Map<String, Module> = modules.groupBy(Module::name).mapValues {
+            it.value.singleOrNull() ?: error("Duplicated modules: ${it.value}")
+        }
+
+        modules.forEach { it.initDependencies(mapping::getValue) }
+
+        val generatedSourcesDir = tmpdir.resolve("generated-sources")
+        generatedSourcesDir.mkdirs()
+
+        modules.forEach { module ->
+            module.sourceFile = generatedSourcesDir.resolve(module.name + ".kt")
+            module.sourceFile.writeText(
+                buildString {
+                    appendLine("package ${module.name}")
+                    appendLine()
+                    appendLine("fun ${module.name}(indent: Int) {")
+                    appendLine("    repeat(indent) { print(\"  \") }")
+                    appendLine("    println(\"${module.name}\")")
+                    module.dependencyNames.forEach { dependencyName ->
+                        appendLine("    $dependencyName.$dependencyName(indent + 1)")
+                    }
+                    appendLine("}")
+                }
+            )
+        }
+
+        return modules.asList()
     }
 }
