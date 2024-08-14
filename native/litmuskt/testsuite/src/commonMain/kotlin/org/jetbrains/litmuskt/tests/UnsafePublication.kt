@@ -3,6 +3,8 @@ package org.jetbrains.litmuskt.tests
 import org.jetbrains.litmuskt.autooutcomes.LitmusIOutcome
 import org.jetbrains.litmuskt.LitmusTestContainer
 import org.jetbrains.litmuskt.autooutcomes.accept
+import org.jetbrains.litmuskt.autooutcomes.forbid
+import org.jetbrains.litmuskt.autooutcomes.interesting
 import org.jetbrains.litmuskt.litmusTest
 import kotlin.concurrent.Volatile
 
@@ -60,6 +62,7 @@ object UnsafePublication {
         spec {
             accept(1)
             accept(-1)
+            interesting(0) // seeing the default value
         }
     }
 
@@ -93,11 +96,19 @@ object UnsafePublication {
         }
         thread {
             val t = h
-            r1 = t?.ref?.x ?: -1
+            r1 = if (t != null) {
+                val ref = t.ref
+                // Despite what IDEA says, this `if` can fail because the default value for a reference is null.
+                // Also, this `if` is not removed by the compiler even in release mode.
+                if (ref != null) ref.x else 0
+            } else -1
         }
         spec {
             accept(1)
             accept(-1)
+            // Before the question about full construction guarantee is settled, keep the null outcome
+            // as forbidden so that it shows up in CI runs.
+            forbid(0)
         }
     }
 

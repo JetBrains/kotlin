@@ -11,7 +11,7 @@ class JvmThreadRunner : LitmusRunner() {
         barrierProducer: BarrierProducer,
         syncPeriod: Int,
         affinityMap: AffinityMap?
-    ): () -> LitmusResult {
+    ): BlockingFuture<LitmusResult> {
         val barrier = barrierProducer(test.threadCount)
 
         val threads = List(test.threadCount) { threadIndex ->
@@ -25,7 +25,7 @@ class JvmThreadRunner : LitmusRunner() {
         }
         threads.forEach { it.start() }
 
-        return {
+        return BlockingFuture {
             threads.forEach { it.join() }
             calcStats(states.asIterable(), test.outcomeSpec, test.outcomeFinalizer)
         }

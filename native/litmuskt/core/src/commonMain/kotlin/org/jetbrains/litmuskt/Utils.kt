@@ -52,3 +52,10 @@ fun IntRange.splitEqual(n: Int): List<IntRange> {
         }
     }
 }
+
+/**
+ * A future that blocks on calling [await].
+ */
+fun interface BlockingFuture<T> {
+    fun await(): T
+}

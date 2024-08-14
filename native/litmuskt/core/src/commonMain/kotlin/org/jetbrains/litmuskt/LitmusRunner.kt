@@ -15,13 +15,13 @@ abstract class LitmusRunner {
         barrierProducer: BarrierProducer,
         syncPeriod: Int,
         affinityMap: AffinityMap?,
-    ): () -> LitmusResult
+    ): BlockingFuture<LitmusResult>
 
     /**
      * Entry point for running tests. This method can be overridden in case that particular runner
      * does not need to allocate states.
      */
-    open fun <S : Any> startTest(test: LitmusTest<S>, params: LitmusRunParams): () -> LitmusResult {
+    open fun <S : Any> startTest(test: LitmusTest<S>, params: LitmusRunParams): BlockingFuture<LitmusResult> {
         val states = TypedArray(params.batchSize) { test.stateProducer() }
         return startTest(test, states, params.barrierProducer, params.syncPeriod, params.affinityMap)
     }
@@ -38,7 +38,7 @@ abstract class LitmusRunner {
         test: LitmusTest<S>,
         params: LitmusRunParams,
         instances: Int,
-    ): List<() -> LitmusResult> {
+    ): List<BlockingFuture<LitmusResult>> {
         // separated due to allocations severely impacting threads
         val allStates = List(instances) {
             TypedArray(params.batchSize) { test.stateProducer() }
@@ -113,7 +113,7 @@ fun <S : Any> LitmusRunner.runSingleTestParallel(
     timeLimit: Duration = Duration.ZERO,
     instances: Int = cpuCount() / test.threadCount,
 ): LitmusResult = repeatFor(timeLimit) {
-    startTestParallel(test, params, instances).map { it() }.mergeResults()
+    startTestParallel(test, params, instances).map { it.await() }.mergeResults()
 }.mergeResults()
 
 /**
@@ -126,7 +126,7 @@ fun LitmusRunner.runTests(
     params: LitmusRunParams,
     timeLimit: Duration = Duration.ZERO,
 ): List<LitmusResult> = tests.map { test ->
-    repeatFor(timeLimit) { startTest(test, params).invoke() }.mergeResults()
+    repeatFor(timeLimit) { startTest(test, params).await() }.mergeResults()
 }
 
 // guaranteed to run [f] at least once

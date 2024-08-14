@@ -14,7 +14,7 @@ class WorkerThreadlike : Threadlike {
         val threadFunction: (A) -> Unit,
     )
 
-    override fun <A : Any> start(args: A, function: (A) -> Unit): BlockingFuture {
+    override fun <A : Any> start(args: A, function: (A) -> Unit): BlockingFuture<Unit> {
         val context = WorkerContext(args, function)
         val future = worker.execute(
             TransferMode.SAFE /* ignored */,

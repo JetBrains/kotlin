@@ -6,23 +6,19 @@ package org.jetbrains.litmuskt
  */
 interface Threadlike {
     /**
-     * Start running the function in a "thread". Note that the function should be non-capturing.
+     * Start running the function in a "thread".
      *
-     * This function should be only called once.
+     * Notes:
+     * 1. This function should be only called once.
+     * 1. [function] should be non-capturing.
+     * 1. Since returning a value is not currently supported, the resulting future returns a stub (Unit).
      *
      * @return a "future" handle that will block when called until the "thread" has completed.
      */
-    fun <A : Any> start(args: A, function: (A) -> Unit): BlockingFuture
+    fun <A : Any> start(args: A, function: (A) -> Unit): BlockingFuture<Unit>
 
     /**
      * Dispose of any resources the "thread" has allocated. Blocks until the resources are cleaned.
      */
     fun dispose()
-}
-
-/**
- * A future that blocks on calling [await] and returns nothing.
- */
-fun interface BlockingFuture {
-    fun await()
 }

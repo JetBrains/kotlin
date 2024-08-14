@@ -13,7 +13,7 @@ class PthreadThreadlike : Threadlike {
 
     private class ThreadData<A : Any>(val args: A, val function: (A) -> Unit)
 
-    override fun <A : Any> start(args: A, function: (A) -> Unit): BlockingFuture {
+    override fun <A : Any> start(args: A, function: (A) -> Unit): BlockingFuture<Unit> {
         val threadData = ThreadData(args, function)
         val threadDataRef = StableRef.create(threadData)
 

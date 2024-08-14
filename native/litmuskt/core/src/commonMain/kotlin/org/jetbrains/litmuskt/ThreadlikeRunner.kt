@@ -14,7 +14,7 @@ abstract class ThreadlikeRunner : LitmusRunner() {
         rangeResult = calcStats(states.view(resultCalcRange), test.outcomeSpec, test.outcomeFinalizer)
     }
 
-    private data class ThreadContext<S : Any>(
+    private class ThreadContext<S : Any>(
         val states: Array<S>,
         val test: LitmusTest<S>,
         val threadIndex: Int,
@@ -30,7 +30,7 @@ abstract class ThreadlikeRunner : LitmusRunner() {
         barrierProducer: BarrierProducer,
         syncPeriod: Int,
         affinityMap: AffinityMap?
-    ): () -> LitmusResult {
+    ): BlockingFuture<LitmusResult> {
 
         val threads = List(test.threadCount) { threadlikeProducer() }
 
@@ -54,7 +54,7 @@ abstract class ThreadlikeRunner : LitmusRunner() {
             }
         }
 
-        return {
+        return BlockingFuture {
             futures.forEach { it.await() } // await all results
             threads.forEach { it.dispose() } // stop all "threads"
             contexts.map { it.rangeResult!! }.mergeResults()
