@@ -74,8 +74,8 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             subjectType: ConeKotlinType,
             session: FirSession
         ): List<WhenExhaustivenessChecker> {
-            return buildList {
-                exhaustivenessCheckers.filterTo<WhenExhaustivenessChecker, MutableCollection<in WhenExhaustivenessChecker>>(this) {
+            return buildList<WhenExhaustivenessChecker> {
+                exhaustivenessCheckers.filterTo(this) {
                     it.isApplicable(subjectType, session)
                 }
                 if (isNotEmpty() && subjectType.isMarkedNullable) {
@@ -228,11 +228,15 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
         session: FirSession,
         destination: MutableCollection<WhenMissingCase>
     ) {
-        val flags = Flags()
-        whenExpression.accept(ConditionChecker, flags)
-        if (!flags.containsNull) {
+        if (isNullBranchMissing(whenExpression)) {
             destination.add(WhenMissingCase.NullIsMissing)
         }
+    }
+
+    fun isNullBranchMissing(whenExpression: FirWhenExpression): Boolean {
+        val flags = Flags()
+        whenExpression.accept(ConditionChecker, flags)
+        return !flags.containsNull
     }
 
     private class Flags {
@@ -309,10 +313,8 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
         destination: MutableCollection<WhenMissingCase>
     ) {
         val enumClass = (subjectType.toSymbol(session) as FirRegularClassSymbol).fir
-        val allEntries = enumClass.declarations.mapNotNullTo(mutableSetOf()) { it as? FirEnumEntry }
-        val checkedEntries = mutableSetOf<FirEnumEntry>()
-        whenExpression.accept(ConditionChecker, checkedEntries)
-        val notCheckedEntries = allEntries - checkedEntries
+        val notCheckedEntries = enumClass.declarations.mapNotNullTo(mutableSetOf()) { it as? FirEnumEntry }
+        whenExpression.accept(ConditionChecker, notCheckedEntries)
         notCheckedEntries.mapTo(destination) { WhenMissingCase.EnumCheckIsMissing(it.symbol.callableId) }
     }
 
@@ -324,7 +326,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
             @OptIn(UnsafeExpressionUtility::class)
             val symbol = argument.toResolvedCallableReferenceUnsafe()?.resolvedSymbol as? FirVariableSymbol<*> ?: return
             val checkedEnumEntry = symbol.fir as? FirEnumEntry ?: return
-            data.add(checkedEnumEntry)
+            data.remove(checkedEnumEntry)
         }
     }
 }
@@ -461,6 +463,18 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
         // This checker should only be used when no other missing cases are being reported.
         if (destination.isNotEmpty()) return
 
+        if (!isExhaustiveThroughSelfTypeCheck(whenExpression, subjectType, session)) {
+            // If there are no cases that check for self-type or super-type, report an Unknown missing case,
+            // since we do not want to suggest this sort of check.
+            destination.add(WhenMissingCase.Unknown)
+        }
+    }
+
+    fun isExhaustiveThroughSelfTypeCheck(
+        whenExpression: FirWhenExpression,
+        subjectType: ConeKotlinType,
+        session: FirSession,
+    ): Boolean {
         /**
          * If the subject type is nullable and one of the branches allows for a nullable type, the subject can be converted to a non-null
          * type, so a non-null self-type case is still considered exhaustive.
@@ -473,17 +487,10 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
          * }
          * ```
          */
-        val reported = buildSet {
-            if (WhenOnNullableExhaustivenessChecker.isApplicable(subjectType, session)) {
-                WhenOnNullableExhaustivenessChecker.computeMissingCases(whenExpression, subjectType, session, this)
-            }
-        }
-
-        // If NullIsMissing was reported, this indicates the subject type is a nullable type and no cases handle nullable types.
-        // Thus, the cases are not exhaustive, so exit early with an Unknown missing case.
-        if (reported.isNotEmpty()) {
-            destination.add(WhenMissingCase.Unknown)
-            return
+        if (WhenOnNullableExhaustivenessChecker.isApplicable(subjectType, session) &&
+            WhenOnNullableExhaustivenessChecker.isNullBranchMissing(whenExpression)
+        ) {
+            return false
         }
 
         // If NullIsMissing was *not* reported, the subject can safely be converted to a not-null type.
@@ -491,11 +498,10 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
 
         val checkedTypes = mutableSetOf<ConeKotlinType>()
         whenExpression.accept(ConditionChecker, checkedTypes)
-        if (checkedTypes.none { convertedSubjectType.isSubtypeOf(it, session) }) {
-            // If there are no cases that check for self-type or super-type, report an Unknown missing case,
-            // since we do not want to suggest this sort of check.
-            destination.add(WhenMissingCase.Unknown)
-        }
+
+        // If there are no cases that check for self-type or super-type, report an Unknown missing case,
+        // since we do not want to suggest this sort of check.
+        return checkedTypes.any { convertedSubjectType.isSubtypeOf(it, session) }
     }
 
     private object ConditionChecker : AbstractConditionChecker<MutableSet<ConeKotlinType>>() {
