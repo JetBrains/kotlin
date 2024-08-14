@@ -124,9 +124,9 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
             }
 
             Assert.assertEquals(
-                    "After evaluation of: $code",
-                    StringUtil.convertLineSeparators(expected).replaceFirst(TRAILING_NEWLINE_REGEX, ""),
-                    StringUtil.convertLineSeparators(actual).replaceFirst(TRAILING_NEWLINE_REGEX, "")
+                "After evaluation of: $code",
+                StringUtil.convertLineSeparators(expected).replaceFirst(TRAILING_NEWLINE_REGEX, ""),
+                StringUtil.convertLineSeparators(actual).replaceFirst(TRAILING_NEWLINE_REGEX, "")
             )
         }
     }

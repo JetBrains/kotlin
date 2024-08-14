@@ -22,7 +22,7 @@ class LauncherReplTest : TestCaseWithTmpdir() {
         vararg inputsToExpectedOutputs: Pair<String?, String>,
         expectedExitCode: Int = 0,
         workDirectory: File? = null,
-        compilationClasspath: List<File> = emptyList()
+        compilationClasspath: List<File> = emptyList(),
     ) {
         val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
 
@@ -41,9 +41,8 @@ class LauncherReplTest : TestCaseWithTmpdir() {
             }
         }
         val process = processBuilder.start()
-        data class ExceptionContainer(
-            var value: Throwable? = null
-        )
+
+        data class ExceptionContainer(var value: Throwable? = null)
 
         fun InputStream.captureStream(): Triple<Thread, ExceptionContainer, ArrayList<String>> {
             val out = ArrayList<String>()
@@ -132,7 +131,11 @@ class LauncherReplTest : TestCaseWithTmpdir() {
 
         while (true) {
             if (inputsToExpectedOutputsIter.hasNext() && !actualIter.hasNext()) {
-                Assert.fail("missing output for expected patterns:\n${inputsToExpectedOutputsIter.asSequence().joinToString("\n") { it.second } }")
+                Assert.fail(
+                    "missing output for expected patterns:\n${
+                        inputsToExpectedOutputsIter.asSequence().joinToString("\n") { it.second }
+                    }"
+                )
             }
             if (!inputsToExpectedOutputsIter.hasNext() || !actualIter.hasNext()) break
             var (input, expectedPattern) = inputsToExpectedOutputsIter.next()

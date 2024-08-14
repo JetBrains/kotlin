@@ -47,7 +47,7 @@ class GenericReplTest : KtUsefulTestCase() {
             val state = repl.createState()
 
             val res1 = repl.replCompiler.check(state, ReplCodeLine(0, 0, "val x ="))
-            TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCheckResult.Incomplete)
+            assertTrue("Unexpected check results: $res1", res1 is ReplCheckResult.Incomplete)
 
             assertEvalResult(repl, state, "val l1 = listOf(1 + 2)\nl1.first()", 3)
 
@@ -63,7 +63,7 @@ class GenericReplTest : KtUsefulTestCase() {
             repl.compileAndEval(state, repl.nextCodeLine("val x = 10"))
 
             val res = repl.compileAndEval(state, repl.nextCodeLine("java.util.fish"))
-            TestCase.assertTrue("Expected compile error", res.first is ReplCompileResult.Error)
+            assertTrue("Expected compile error", res.first is ReplCompileResult.Error)
 
             val result = repl.compileAndEval(state, repl.nextCodeLine("x"))
             assertEquals(res.second.toString(), 10, (result.second as? ReplEvalResult.ValueResult)?.value)
@@ -77,7 +77,7 @@ class GenericReplTest : KtUsefulTestCase() {
             val codeLine0 = ReplCodeLine(0, 0, "val l1 = 1\r\nl1\r\n")
             val res0 = repl.replCompiler.check(state, codeLine0)
             val res0c = res0 as? ReplCheckResult.Ok
-            TestCase.assertNotNull("Unexpected compile result: $res0", res0c)
+            assertNotNull("Unexpected compile result: $res0", res0c)
         }
     }
 
@@ -116,7 +116,7 @@ class GenericReplTest : KtUsefulTestCase() {
 
             val evals = 256
             for (i in 1..evals) {
-                repl.compileAndEval(state, ReplCodeLine(i, 0, "val x$i = x${i-1} + 1"))
+                repl.compileAndEval(state, ReplCodeLine(i, 0, "val x$i = x${i - 1} + 1"))
             }
 
             val res = repl.compileAndEval(state, ReplCodeLine(evals + 1, 0, "x$evals"))
@@ -161,41 +161,41 @@ class GenericReplTest : KtUsefulTestCase() {
 
         val evalResult = repl.compiledEvaluator.eval(state, compiledClasses!!)
         val unitResult = evalResult as? ReplEvalResult.UnitResult
-        TestCase.assertNotNull("Unexpected eval result: $evalResult", unitResult)
+        assertNotNull("Unexpected eval result: $evalResult", unitResult)
     }
 
-    private fun<R> assertEvalResult(repl: TestRepl, state: IReplStageState<*>, line: String, expectedResult: R) {
+    private fun <R> assertEvalResult(repl: TestRepl, state: IReplStageState<*>, line: String, expectedResult: R) {
         val compiledClasses = checkCompile(repl, state, line)
 
         val evalResult = repl.compiledEvaluator.eval(state, compiledClasses!!)
         val valueResult = evalResult as? ReplEvalResult.ValueResult
-        TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-        TestCase.assertEquals(expectedResult, valueResult!!.value)
+        assertNotNull("Unexpected eval result: $evalResult", valueResult)
+        assertEquals(expectedResult, valueResult!!.value)
     }
 
-    private inline fun<reified R> assertEvalResultIs(repl: TestRepl, state: IReplStageState<*>, line: String) {
+    private inline fun <reified R> assertEvalResultIs(repl: TestRepl, state: IReplStageState<*>, line: String) {
         val compiledClasses = checkCompile(repl, state, line)
 
         val evalResult = repl.compiledEvaluator.eval(state, compiledClasses!!)
         val valueResult = evalResult as? ReplEvalResult.ValueResult
-        TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-        TestCase.assertTrue(valueResult!!.value is R)
+        assertNotNull("Unexpected eval result: $evalResult", valueResult)
+        assertTrue(valueResult!!.value is R)
     }
 
     private fun checkCompile(repl: TestRepl, state: IReplStageState<*>, line: String): ReplCompileResult.CompiledClasses? {
         val codeLine = repl.nextCodeLine(line)
         val compileResult = repl.replCompiler.compile(state, codeLine)
         val compiledClasses = compileResult as? ReplCompileResult.CompiledClasses
-        TestCase.assertNotNull("Unexpected compile result: $compileResult", compiledClasses)
+        assertNotNull("Unexpected compile result: $compileResult", compiledClasses)
         return compiledClasses
     }
 }
 
 
 internal class TestRepl(
-        templateClasspath: List<File> = listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar")),
-        templateClassName: String = "kotlin.script.templates.standard.ScriptTemplateWithArgs",
-        repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE
+    templateClasspath: List<File> = listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar")),
+    templateClassName: String = "kotlin.script.templates.standard.ScriptTemplateWithArgs",
+    repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE,
 ) : Closeable {
     val application = ApplicationManager.getApplication()
 
@@ -203,10 +203,11 @@ internal class TestRepl(
 
     val emptyScriptArgs = ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class))
 
-    private val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, *templateClasspath.toTypedArray()).apply {
-        put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
-        loadScriptingPlugin(this)
-    }
+    private val configuration =
+        KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, *templateClasspath.toTypedArray()).apply {
+            put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
+            loadScriptingPlugin(this)
+        }
 
     val baseClasspath: List<File> get() = configuration.jvmClasspathRoots
 
@@ -222,8 +223,13 @@ internal class TestRepl(
 
     private val scriptDef = makeScriptDefinition(templateClasspath, templateClassName)
 
-    val replCompiler : GenericReplCompiler by lazy {
-        GenericReplCompiler(disposable, scriptDef, configuration, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
+    val replCompiler: GenericReplCompiler by lazy {
+        GenericReplCompiler(
+            disposable,
+            scriptDef,
+            configuration,
+            PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
+        )
     }
 
     val compiledEvaluator: ReplEvaluator by lazy {
@@ -231,7 +237,7 @@ internal class TestRepl(
     }
 
     fun createState(lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<*> =
-            AggregatedReplStageState(replCompiler.createState(lock), compiledEvaluator.createState(lock), lock)
+        AggregatedReplStageState(replCompiler.createState(lock), compiledEvaluator.createState(lock), lock)
 
     override fun close() {
         Disposer.dispose(disposable)

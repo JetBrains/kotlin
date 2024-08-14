@@ -38,15 +38,19 @@ import org.jetbrains.kotlin.types.upperIfFlexible
 class MemoryOptimizationsTest : KtUsefulTestCase() {
     fun testBasicFlexibleTypeCase() {
         val moduleDescriptor = JvmResolveUtil.analyze(
-                KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(testRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
+            KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                testRootDisposable,
+                ConfigurationKind.ALL,
+                TestJdkKind.FULL_JDK
+            )
         ).moduleDescriptor
 
         val appendableClass =
-                moduleDescriptor.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("java.lang.Appendable")))!!
+            moduleDescriptor.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("java.lang.Appendable")))!!
 
         val append = appendableClass
-                .unsubstitutedMemberScope
-                .findFirstFunction("append") { it.valueParameters.singleOrNull()?.type?.let(KotlinBuiltIns::isChar) == false }
+            .unsubstitutedMemberScope
+            .findFirstFunction("append") { it.valueParameters.singleOrNull()?.type?.let(KotlinBuiltIns::isChar) == false }
 
         val parameterType = append.valueParameters.single().type
 
@@ -60,7 +64,7 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
 
     fun testSubstitutorDoNotRecreateUnchangedDescriptor() {
         val text =
-                """
+            """
                 |package test
                 |interface A<T> : java.lang.Appendable {
                 |   fun foo(x: T)
@@ -68,30 +72,30 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
                 """.trimMargin()
 
         val environment =
-                KotlinTestUtils
-                        .createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                            testRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
-                        )
+            KotlinTestUtils
+                .createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                    testRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK
+                )
         val moduleDescriptor =
-                JvmResolveUtil.analyze(
-                    KtTestUtil.createFile("main.kt", text, environment.project),
-                    environment
-                ).moduleDescriptor
+            JvmResolveUtil.analyze(
+                KtTestUtil.createFile("main.kt", text, environment.project),
+                environment
+            ).moduleDescriptor
 
         val aClass =
-                moduleDescriptor.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("test.A")))!!
+            moduleDescriptor.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("test.A")))!!
 
         val memberScope =
-                aClass.getMemberScope(
-                        TypeConstructorSubstitution.create(
-                                aClass.typeConstructor, listOf(moduleDescriptor.builtIns.stringType.asTypeProjection())
-                        )
+            aClass.getMemberScope(
+                TypeConstructorSubstitution.create(
+                    aClass.typeConstructor, listOf(moduleDescriptor.builtIns.stringType.asTypeProjection())
                 )
+            )
 
         val append =
-                memberScope.findFirstFunction("append") {
-                    it.valueParameters.singleOrNull()?.type?.let(KotlinBuiltIns::isChar) == false
-                }
+            memberScope.findFirstFunction("append") {
+                it.valueParameters.singleOrNull()?.type?.let(KotlinBuiltIns::isChar) == false
+            }
 
         assertTrue(append.original === append)
 

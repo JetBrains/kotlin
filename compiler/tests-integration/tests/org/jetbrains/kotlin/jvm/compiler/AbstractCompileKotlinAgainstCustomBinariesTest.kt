@@ -551,34 +551,52 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testAgainstFir() {
-        val library = compileLibrary("library", additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString))
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString)
+        )
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
     fun testAgainstFirWithUnstableAbi() {
-        val library2 = compileLibrary("library", additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString, "-Xabi-stability=unstable"))
+        val library2 = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString, "-Xabi-stability=unstable")
+        )
         compileKotlin("source.kt", tmpdir, listOf(library2))
     }
 
     fun testAgainstUnstable() {
-        val library = compileLibrary("library", additionalOptions = listOf("-language-version", "1.9", "-Xabi-stability=unstable"))
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", "1.9", "-Xabi-stability=unstable")
+        )
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
     fun testAgainstFirWithStableAbi() {
-        val library = compileLibrary("library", additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString, "-Xabi-stability=stable"))
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString, "-Xabi-stability=stable")
+        )
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
     fun testAgainstFirWithStableAbiAndNoPrereleaseCheck() {
-        val library = compileLibrary("library", additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString, "-Xabi-stability=stable"))
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString, "-Xabi-stability=stable")
+        )
         compileKotlin(
             "source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "1.9", "-Xskip-prerelease-check")
         )
     }
 
     fun testAgainstFirWithAllowUnstableDependencies() {
-        val library = compileLibrary("library", additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString))
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString)
+        )
         compileKotlin(
             "source.kt", tmpdir, listOf(library),
             additionalOptions = listOf("-Xallow-unstable-dependencies", "-Xskip-metadata-version-check")

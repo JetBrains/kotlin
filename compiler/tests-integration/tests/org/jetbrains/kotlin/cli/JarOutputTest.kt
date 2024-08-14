@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.cli
 
-import java.io.File
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil.DOS_EPOCH
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import java.io.File
 import java.util.jar.JarFile
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class JarOutputTest : TestCaseWithTmpdir() {
 
@@ -34,17 +34,20 @@ class JarOutputTest : TestCaseWithTmpdir() {
         val firstJar = tmpdir.resolve("first.jar")
         AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(fooKt.path, "-d", firstJar.path, "-include-runtime"))
+            listOf(fooKt.path, "-d", firstJar.path, "-include-runtime")
+        )
 
         val secondJar = tmpdir.resolve("second.jar")
         AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(fooKt.path, "-d", secondJar.path, "-include-runtime"))
+            listOf(fooKt.path, "-d", secondJar.path, "-include-runtime")
+        )
 
         assertEquals(
             firstJar.readBytes().toList(),
             secondJar.readBytes().toList(),
-            "jar contents should be identical if compiler command and inputs are the same")
+            "jar contents should be identical if compiler command and inputs are the same"
+        )
         assertAllTimestampsAreReset(firstJar)
         assertAllTimestampsAreReset(secondJar)
     }
@@ -56,7 +59,8 @@ class JarOutputTest : TestCaseWithTmpdir() {
         val jar = tmpdir.resolve("jarWithTimestamps.jar")
         AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(fooKt.path, "-d", jar.path, "-include-runtime", "-Xno-reset-jar-timestamps"))
+            listOf(fooKt.path, "-d", jar.path, "-include-runtime", "-Xno-reset-jar-timestamps")
+        )
 
         assertNoTimestampsAreReset(jar)
     }

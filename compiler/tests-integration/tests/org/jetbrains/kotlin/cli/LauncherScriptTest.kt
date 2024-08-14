@@ -258,7 +258,8 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             expectedExitCode = 3,
             expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
 	at NoInline.<init>(noInline.kts:1)
-""")
+"""
+        )
         runProcess("kotlin", "$testDataDirectory/noInline.kts", expectedStdout = "OK\n")
     }
 
@@ -316,8 +317,13 @@ println(42)
             expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
         )
         runProcess(
-            "kotlin", "-Xallow-any-scripts-in-source-roots", "-howtorun", ".kts", "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 1, expectedStderr = """compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference 'CompilerOptions'.
+            "kotlin",
+            "-Xallow-any-scripts-in-source-roots",
+            "-howtorun",
+            ".kts",
+            "$testDataDirectory/noInline.myscript",
+            expectedExitCode = 1,
+            expectedStderr = """compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference 'CompilerOptions'.
 @file:CompilerOptions("-Xno-inline")
       ^
 """
@@ -327,7 +333,8 @@ println(42)
             expectedExitCode = 3,
             expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline_main
 	at NoInline_main.<init>(noInline.myscript:3)
-""")
+"""
+        )
     }
 
     fun testHowToRunClassFile() {
@@ -525,7 +532,10 @@ println(42)
         val file1kt = tmpdir.resolve("file1.kt").apply {
             writeText("class C")
         }
-        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", tmpdir.absolutePath, "-language-version", "2.0", file1kt.absolutePath))
+        CompilerTestUtil.executeCompilerAssertSuccessful(
+            K2JVMCompiler(),
+            listOf("-d", tmpdir.absolutePath, "-language-version", "2.0", file1kt.absolutePath)
+        )
         val file2kt = tmpdir.resolve("file1.kt").apply {
             writeText("val c = C()")
         }

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.FirParser.LightTree
 import org.jetbrains.kotlin.test.FirParser.Psi
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.TargetBackend.JVM_IR
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR

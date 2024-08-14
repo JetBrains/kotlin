@@ -132,7 +132,8 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
 
     private fun String.removeFirWarning(): String {
         return this.replace(
-            "warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features\n", ""
+            "warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features\n",
+            ""
         )
     }
 

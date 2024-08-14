@@ -63,7 +63,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
     private class TestModule(
         val project: Project,
         val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,
-        val _dependencies: TestModule.() -> List<TestModule>
+        val _dependencies: TestModule.() -> List<TestModule>,
     ) : TrackableModuleInfo {
         override fun createModificationTracker(): ModificationTracker = ModificationTracker.NEVER_CHANGED
 
@@ -132,8 +132,12 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
     }
 
     private fun createEnvironment(moduleDirs: Array<File>): KotlinCoreEnvironment {
-        val configuration =
-                KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), moduleDirs.toList())
+        val configuration = KotlinTestUtils.newConfiguration(
+            ConfigurationKind.JDK_ONLY,
+            TestJdkKind.MOCK_JDK,
+            emptyList(),
+            moduleDirs.toList()
+        )
         return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
@@ -163,8 +167,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
     }
 
     private fun performChecks(resolverForProject: ResolverForProject<TestModule>, modules: List<TestModule>) {
-        modules.forEach {
-            module ->
+        modules.forEach { module ->
             val moduleDescriptor = resolverForProject.descriptorForModule(module)
 
             checkClassInPackage(moduleDescriptor, "test", "Kotlin${module._name.uppercase()}")
@@ -205,13 +208,18 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             checkDescriptor(annotationClassDescriptor, callable)
 
             Assert.assertEquals(
-                    "Annotation value arguments number is not equal to number of parameters in $callable",
-                    annotationClassDescriptor.constructors.single().valueParameters.size, it.allValueArguments.size)
+                "Annotation value arguments number is not equal to number of parameters in $callable",
+                annotationClassDescriptor.constructors.single().valueParameters.size, it.allValueArguments.size
+            )
 
             it.allValueArguments.forEach {
                 val argument = it.value
                 if (argument is EnumValue) {
-                    Assert.assertEquals("Enum entry name should be <module-name>X", "X", argument.enumEntryName.identifier.last().toString())
+                    Assert.assertEquals(
+                        "Enum entry name should be <module-name>X",
+                        "X",
+                        argument.enumEntryName.identifier.last().toString()
+                    )
                 }
             }
         }
@@ -234,8 +242,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val expectedModuleName = "<${descriptorName.lowercase().first()}>"
         val moduleName = referencedDescriptor.module.name.asString()
         Assert.assertEquals(
-                "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",
-                expectedModuleName, moduleName
+            "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",
+            expectedModuleName, moduleName
         )
     }
 
