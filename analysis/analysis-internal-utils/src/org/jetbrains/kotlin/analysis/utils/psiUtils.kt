@@ -24,3 +24,25 @@ public val PsiClass.classId: ClassId?
 
         return ClassId(FqName(packageName), FqName(classNames.joinToString(separator = ".")), isLocal = false)
     }
+
+
+
+public fun PsiClass.isLocalClass(): Boolean {
+    val qualifiedName = this.qualifiedName ?: return true
+    val classId = classId ?: return true
+
+    /*
+    For a local class:
+    qualifiedName: javax.swing.JSlider$1SmartHashtable.LabelUIResource
+    classId.asFqNameString(): javax.swing.JSlider.SmartHashtable.LabelUIResource
+
+    For a nested class with:
+    qualifiedName: pckg.A$B
+    classId.asFqNameString(): pckg.A.B
+
+    For a class with $ in name:
+    qualifiedName: pckg.With$InName
+    classId.asFqNameString(): pckg.With$InName
+     */
+    return classId.asFqNameString().replace('$', '.') != qualifiedName.replace('$', '.')
+}

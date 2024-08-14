@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.analysis.utils.classId
+import org.jetbrains.kotlin.analysis.utils.isLocalClass
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.java.FirJavaAwareSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
@@ -64,8 +65,11 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
             withPsiEntry("psiClass", psiClass, session.ktModule)
         }
 
-        if (psiClass.qualifiedName == null) {
-            return null // not yet supported
+        checkWithAttachment(!psiClass.isLocalClass(), { "${psiClass::class} cannot be created as it's local" }) {
+            withEntry("virtualFilePath", psiClass.containingFile.virtualFile?.path)
+            withPsiEntry("psiClass", psiClass, session.ktModule)
+            withEntry("psiClass.qualifiedName", psiClass.qualifiedName)
+            withEntry("psiClass.classId", psiClass.classId?.asString())
         }
 
         val firClassSymbol = createFirClassFromFirProvider(psiClass)
@@ -80,11 +84,11 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
         return firClassSymbol
     }
 
-    private fun ExceptionAttachmentBuilder.candidateAttachment(name: String, canidate: PsiElement?) {
+    private fun ExceptionAttachmentBuilder.candidateAttachment(name: String, candidate: PsiElement?) {
         withEntryGroup(name) {
-            withClassEntry("psiElementClass", canidate)
-            withEntry("path", canidate?.containingFile?.virtualFile?.path)
-            withEntry("modificationStamp", canidate?.containingFile?.modificationStamp?.toString())
+            withClassEntry("psiElementClass", candidate)
+            withEntry("path", candidate?.containingFile?.virtualFile?.path)
+            withEntry("modificationStamp", candidate?.containingFile?.modificationStamp?.toString())
         }
     }
 
