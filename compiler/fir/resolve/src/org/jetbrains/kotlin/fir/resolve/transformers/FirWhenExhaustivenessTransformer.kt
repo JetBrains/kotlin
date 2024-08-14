@@ -312,6 +312,8 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
         session: FirSession,
         destination: MutableCollection<WhenMissingCase>
     ) {
+        if (WhenSelfTypeExhaustivenessChecker.isExhaustiveThroughSelfTypeCheck(whenExpression, subjectType, session)) return
+
         val enumClass = (subjectType.toSymbol(session) as FirRegularClassSymbol).fir
         val notCheckedEntries = enumClass.declarations.mapNotNullTo(mutableSetOf()) { it as? FirEnumEntry }
         whenExpression.accept(ConditionChecker, notCheckedEntries)

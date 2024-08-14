@@ -31,12 +31,12 @@ enum class MyEnum {
     A, B
 }
 
-fun testNullableEnum(arg: MyEnum?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableEnum(arg: MyEnum?) = when (arg) {
     is MyEnum -> 1
     null -> null
 }
 
-fun testNullableEnum2(arg: MyEnum?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableEnum2(arg: MyEnum?) = when (arg) {
     <!USELESS_IS_CHECK!>is MyEnum?<!> -> 1
 }
 
