@@ -43763,6 +43763,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("ExhaustiveNullableSelfType.kt")
+      public void testExhaustiveNullableSelfType() {
+        runTest("compiler/testData/diagnostics/tests/when/ExhaustiveNullableSelfType.kt");
+      }
+
+      @Test
       @TestMetadata("ExhaustiveOnTypeParameterWithSealedUpperBound.kt")
       public void testExhaustiveOnTypeParameterWithSealedUpperBound() {
         runTest("compiler/testData/diagnostics/tests/when/ExhaustiveOnTypeParameterWithSealedUpperBound.kt");
