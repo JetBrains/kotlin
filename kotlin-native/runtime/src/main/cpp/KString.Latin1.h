@@ -47,6 +47,24 @@ struct Latin1String {
     static OBJ_GETTER(createUninitialized, size_t sizeInUnits) {
         RETURN_RESULT_OF(CreateUninitializedLatin1String, sizeInUnits);
     }
+
+    std::string toUTF8(KStringConversionMode mode, size_t start, size_t size) const {
+        auto it = data_ + start;
+        auto end = size == std::string::npos ? data_ + size_ : it + size;
+        std::string result;
+        result.resize((end - it) + std::count_if(it, end, [](unit c) { return c >= 0x80; }));
+        auto out = result.begin();
+        while (it != end) {
+            auto latin1 = *it++;
+            if (latin1 >= 0x80) {
+                *out++ = 0xC0 | (latin1 >> 6);
+                *out++ = latin1 & 0xBF;
+            } else {
+                *out++ = latin1;
+            }
+        }
+        return result;
+    }
 };
 
 template <typename T>

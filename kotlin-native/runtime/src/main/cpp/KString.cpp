@@ -132,14 +132,7 @@ OBJ_GETTER(createStringFromUTF8, const char* utf8, uint32_t lengthBytes, bool en
 
 OBJ_GETTER(unsafeConvertToUTF8, KConstRef thiz, KStringConversionMode mode, KInt start, KInt size) {
     RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
-
-    std::string utf8;
-    try {
-        utf8 = kotlin::to_string(thiz, mode, static_cast<size_t>(start), static_cast<size_t>(size));
-    } catch (...) {
-        ThrowCharacterCodingException();
-    }
-
+    std::string utf8 = kotlin::to_string(thiz, mode, static_cast<size_t>(start), static_cast<size_t>(size));
     auto result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT);
     std::copy(utf8.begin(), utf8.end(), ByteArrayAddressOfElementAt(result->array(), 0));
     return result;
@@ -324,8 +317,10 @@ extern "C" OBJ_GETTER(Kotlin_String_subSequence, KConstRef thiz, KInt startIndex
 
         auto start = thiz.begin() + startIndex;
         auto end = start + (endIndex - startIndex);
-        // TODO: if this check is true, leading low surrogates cannot be encoded - fall back to (invalid) UTF-16?
-        if (isInSurrogatePair(thiz, start)) ++start;
+        if (isInSurrogatePair(thiz, start) || isInSurrogatePair(thiz, end)) {
+            RETURN_RESULT_OF(createString<UTF16String>, endIndex - startIndex,
+                [=](KChar* out) { std::copy(start, end, out); });
+        }
         RETURN_RESULT_OF(createWithEncodingOf, thiz, end.ptr() - start.ptr(),
             [=](auto* out) { std::copy(start.ptr(), end.ptr(), out); });
     });
@@ -404,41 +399,44 @@ extern "C" KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt
     return from - cstring;
 }
 
-template <typename String1, typename It1, typename String2, typename It2>
-static KBoolean Kotlin_String_equals(String1&& s1, It1 begin1, It1 end1, String2&& s2, It2 begin2, It2 end2) {
-    if constexpr (std::is_same_v<It1, It2>) {
-        // Assuming only one "canonical" encoding, can byte-compare encoded values.
-        // Since ptr() is only well-defined at unit boundaries, low surrogates at the start
-        // should be checked explicitly first, though.
-        bool startsWithUnequalLowSurrogate = isInSurrogatePair(s1, begin1)
-            ? !isInSurrogatePair(s2, begin2) || *begin1++ != *begin2++
-            : isInSurrogatePair(s2, begin2);
-        if (startsWithUnequalLowSurrogate) return false;
-        return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
-    } else {
-        return std::equal(begin1, end1, begin2, end2);
-    }
-}
-
 extern "C" KBoolean Kotlin_String_equals(KConstRef thiz, KConstRef other) {
     if (other == nullptr || other->type_info() != theStringTypeInfo) return false;
     // TODO: if hash code is computed and unequal, then strings are also unequal
     return thiz == other || encodingAware(thiz, [=](auto thiz) {
         return encodingAware(other, [=](auto other) {
-            return Kotlin_String_equals(thiz, thiz.begin(), thiz.end(), other, other.begin(), other.end());
+            if constexpr (isSameEncoding(thiz, other)) {
+                return std::equal(thiz.begin().ptr(), thiz.end().ptr(), other.begin().ptr(), other.end().ptr());
+            } else {
+                return std::equal(thiz.begin(), thiz.end(), other.begin(), other.end());
+            }
         });
     });
 }
 
 // Bounds checks is are performed on Kotlin side
 extern "C" KBoolean Kotlin_String_unsafeRangeEquals(KConstRef thiz, KInt thizOffset, KConstRef other, KInt otherOffset, KInt length) {
-    return encodingAware(thiz, [=](auto thiz) {
+    return length == 0 || encodingAware(thiz, [=](auto thiz) {
         return encodingAware(other, [=](auto other) {
             auto begin1 = thiz.begin() + thizOffset;
             auto begin2 = other.begin() + otherOffset;
             // Questionable moment: in variable-length encodings, is it more efficient to advance the iterator first
             // and then compare the known fixed range, or to decode characters one by one and count while comparing?
-            return Kotlin_String_equals(thiz, begin1, begin1 + length, other, begin2, begin2 + length);
+            auto end1 = begin1 + length;
+            auto end2 = begin2 + length;
+            if constexpr (!isSameEncoding(thiz, other)) {
+                return std::equal(begin1, end1, begin2, end2);
+            }
+            // Assuming only one "canonical" encoding, can byte-compare encoded values.
+            // Since ptr() is only well-defined at unit boundaries, surrogates at ends should be checked separately.
+            bool startsWithUnequalLowSurrogate = isInSurrogatePair(thiz, begin1)
+                ? !isInSurrogatePair(other, begin2) || *begin1++ != *begin2++ // safe because length != 0
+                : isInSurrogatePair(other, begin2);
+            if (startsWithUnequalLowSurrogate) return false;
+            bool endsWithUnequalHighSurrogate = isInSurrogatePair(thiz, end1)
+                ? !isInSurrogatePair(other, end2) || *--end1 != *--end2 // safe because begin1 and begin2 are not in a surrogate pair
+                : isInSurrogatePair(other, end2);
+            if (endsWithUnequalHighSurrogate) return false;
+            return std::equal(begin1.ptr(), end1.ptr(), begin2.ptr(), end2.ptr());
         });
     });
 }
@@ -594,23 +592,5 @@ extern "C" KConstNativePtr Kotlin_Arrays_getStringAddressOfElement(KConstRef thi
 
 std::string kotlin::to_string(KConstRef kstring, KStringConversionMode mode, size_t start, size_t size) {
     RuntimeAssert(kstring->type_info() == theStringTypeInfo, "A Kotlin String expected");
-    return encodingAware(kstring, [=](auto kstring) {
-        // TODO: faster implementations for specific encodings
-        auto utf16 = kstring.begin() + start;
-        auto utf16Size = size == std::string::npos ? kstring.sizeInChars() - start : size;
-        std::string utf8;
-        utf8.reserve(utf16Size);
-        switch (mode) {
-        case KStringConversionMode::UNCHECKED:
-            utf8::unchecked::utf16to8(utf16, utf16 + utf16Size, back_inserter(utf8));
-            break;
-        case KStringConversionMode::CHECKED:
-            utf8::utf16to8(utf16, utf16 + utf16Size, back_inserter(utf8));
-            break;
-        case KStringConversionMode::REPLACE_INVALID:
-            utf8::with_replacement::utf16to8(utf16, utf16 + utf16Size, back_inserter(utf8));
-            break;
-        }
-        return utf8;
-    });
+    return encodingAware(kstring, [=](auto kstring) { return kstring.toUTF8(mode, start, size); });
 }

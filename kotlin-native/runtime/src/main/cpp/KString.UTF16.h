@@ -7,6 +7,8 @@
 
 #include "KString.h"
 
+#include "utf8.h"
+
 namespace {
 
 struct UTF16StringIterator {
@@ -46,6 +48,29 @@ struct UTF16String {
 
     static OBJ_GETTER(createUninitialized, size_t sizeInUnits) {
         RETURN_RESULT_OF(CreateUninitializedUtf16String, sizeInUnits);
+    }
+
+    std::string toUTF8(KStringConversionMode mode, size_t start, size_t size) const {
+        auto it = data_ + start;
+        auto end = size == std::string::npos ? data_ + size_ : it + size;
+        std::string utf8;
+        utf8.reserve(end - it);
+        switch (mode) {
+        case KStringConversionMode::UNCHECKED:
+            utf8::unchecked::utf16to8(it, end, back_inserter(utf8));
+            break;
+        case KStringConversionMode::CHECKED:
+            try {
+                utf8::utf16to8(it, end, back_inserter(utf8));
+            } catch (...) {
+                ThrowCharacterCodingException();
+            }
+            break;
+        case KStringConversionMode::REPLACE_INVALID:
+            utf8::with_replacement::utf16to8(it, end, back_inserter(utf8));
+            break;
+        }
+        return utf8;
     }
 };
 
