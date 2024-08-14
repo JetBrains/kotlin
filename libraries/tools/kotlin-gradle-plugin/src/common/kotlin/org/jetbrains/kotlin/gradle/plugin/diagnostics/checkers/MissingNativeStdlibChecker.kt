@@ -41,7 +41,7 @@ internal object MissingNativeStdlibChecker : KotlinGradleProjectChecker {
     private fun KotlinGradleProjectCheckerContext.checkThatStdlibExists() =
         // we need to wrap this check in ValueSource to prevent Gradle from monitoring the stdlib folder as a build configuration input
         project.providers.of(StdlibExistenceCheckerValueSource::class.java) {
-            it.parameters.noStdlibEnabled.set(project.hasProperty("kotlin.native.nostdlib"))
+            it.parameters.noStdlibEnabled.set(project.extensions.extraProperties.has("kotlin.native.nostdlib"))
             it.parameters.kotlinNativeToolchainEnabled.set(project.nativeProperties.isToolchainEnabled)
             it.parameters.stdlib.setFrom(project.konanDistribution.stdlib)
             it.parameters.overriddenKotlinNativeHome.set(project.nativeProperties.userProvidedNativeHome)
