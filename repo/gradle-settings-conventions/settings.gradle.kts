@@ -81,12 +81,6 @@ buildCache {
             val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
             if (!remoteBuildCacheUrl.isNullOrEmpty()) {
                 server = remoteBuildCacheUrl.removeSuffix("/cache/")
-                if (buildProperties.buildCacheUser != null) {
-                    usernameAndPassword(
-                        buildProperties.buildCacheUser,
-                        buildProperties.buildCachePassword
-                    )
-                }
             }
         }
     }
