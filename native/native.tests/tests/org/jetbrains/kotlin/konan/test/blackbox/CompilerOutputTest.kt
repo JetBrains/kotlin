@@ -31,12 +31,6 @@ import kotlin.test.assertIs
 abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     @Test
     fun testReleaseCompilerAgainstPreReleaseLibrary() {
-        // https://youtrack.jetbrains.com/issue/KT-64822
-        Assumptions.assumeFalse(
-            testRunSettings.get<PipelineType>() == PipelineType.K1,
-            "KT-64822: the test flaks, to be investigated"
-        )
-
         val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseLibrary")
 
         // Debug output for KT-64822 investigation
