@@ -84,3 +84,27 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNa
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     dependsOn(":compiler:generateTestData")
 }
+
+tasks.withType<Test>().configureEach {
+    testLogging {
+        addTestListener(object : TestListener {
+            val tests = mutableListOf<String>()
+
+            override fun afterSuite(testDescriptor: TestDescriptor, result: TestResult) {
+                if (testDescriptor.parent == null) { // will match the outermost suite
+                    println("##teamcity[blockOpened name='Test names list']")
+                    println("Test names list:")
+                    println(tests.joinToString("\n"))
+                }
+            }
+
+            override fun beforeSuite(suite: TestDescriptor) {}
+
+            override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                tests.add("${testDescriptor.className}.${testDescriptor.name}")
+            }
+
+            override fun beforeTest(testDescriptor: TestDescriptor) {}
+        })
+    }
+}
