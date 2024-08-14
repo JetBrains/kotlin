@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.report
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.render
+
+internal fun ErrorReportingContext.reportCompilationError(message: String, compilerMessageLocation: CompilerMessageLocation?): Nothing {
+    messageCollector.report(CompilerMessageSeverity.ERROR, message, compilerMessageLocation)
+    throw KonanCompilationException()
+}
 
 internal fun ErrorReportingContext.reportCompilationError(message: String, irFile: IrFile, irElement: IrElement): Nothing {
     report(CompilerMessageSeverity.ERROR, irElement, irFile, message)

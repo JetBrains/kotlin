@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
@@ -46,6 +46,7 @@ interface CallInlinerStrategy {
      * @return new node to insert instead of typeOf call.
      */
     fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression
+    fun at(scope: Scope, expression: IrExpression) {}
 
     object DEFAULT : CallInlinerStrategy {
         override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
@@ -109,13 +110,11 @@ open class FunctionInlining(
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val produceOuterThisFields: Boolean = true,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
-    private var containerScope: ScopeWithIr? = null
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // TODO container: IrSymbolDeclaration
-        containerScope = createScope(container as IrSymbolOwner)
-        irBody.accept(this, null)
-        containerScope = null
+        withinScope(container) {
+            irBody.accept(this, null)
+        }
 
         irBody.patchDeclarationParents(container as? IrDeclarationParent ?: container.parent)
     }
@@ -133,6 +132,7 @@ open class FunctionInlining(
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(calleeSymbol)
         if (actualCallee?.body == null) {
             if (expression is IrCall && Symbols.isTypeOfIntrinsic(calleeSymbol)) {
+                inlineFunctionResolver.callInlinerStrategy.at(currentScope!!.scope, expression)
                 return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.getTypeArgument(0)!!)
             }
             return expression
@@ -150,11 +150,10 @@ open class FunctionInlining(
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
             ?: allScopes.map { it.irElement }.filterIsInstance<IrDeclaration>().lastOrNull()?.parent
-            ?: containerScope?.irElement as? IrDeclarationParent
-            ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
+        inlineFunctionResolver.callInlinerStrategy.at(currentScope!!.scope, expression)
         val inliner = CallInlining(
-            expression, actualCallee, currentScope ?: containerScope!!, parent,
+            expression, actualCallee, currentScope!!, parent,
             context,
             inlineFunctionResolver,
             insertAdditionalImplicitCasts,

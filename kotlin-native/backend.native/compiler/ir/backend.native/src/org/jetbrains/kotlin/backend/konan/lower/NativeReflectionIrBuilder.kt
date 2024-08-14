@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.Variance
 
-internal fun IrBuilderWithScope.toNativeConstantReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: (String) -> Unit = {}) = NativeConstantReflectionIrBuilder(
+internal fun IrBuilderWithScope.toNativeConstantReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit = {}) = NativeConstantReflectionIrBuilder(
         context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound
 )
 
-internal fun IrBuilderWithScope.toNativeRuntimeReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: (String) -> Unit = {}) = NativeRuntimeReflectionIrBuilder(
+internal fun IrBuilderWithScope.toNativeRuntimeReflectionBuilder(symbols: KonanSymbols, onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit = {}) = NativeRuntimeReflectionIrBuilder(
         context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound
 )
 
@@ -40,7 +40,7 @@ internal class NativeRuntimeReflectionIrBuilder(
         scope: Scope,
         startOffset: Int, endOffset: Int,
         symbols: KonanSymbols,
-        onRecursiveUpperBound: (String) -> Unit,
+        onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit,
 ) : NativeReflectionIrBuilderBase<IrExpression>(context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound) {
     override fun irKClass(symbol: IrClassSymbol): IrExpression {
         val kClassType = symbols.kClassImpl.typeWith(symbol.defaultType)
@@ -98,7 +98,7 @@ internal class NativeConstantReflectionIrBuilder(
         scope: Scope,
         startOffset: Int, endOffset: Int,
         symbols: KonanSymbols,
-        onRecursiveUpperBound: (String) -> Unit,
+        onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit,
 ) : NativeReflectionIrBuilderBase<IrConstantValue>(context, scope, startOffset, endOffset, symbols, onRecursiveUpperBound) {
 
     override fun irKTypeOfReified(type: IrType): IrConstantValue = irConstantObject(symbols.kTypeImplIntrinsicConstructor, emptyList(), listOf(type))
@@ -150,7 +150,7 @@ internal abstract class NativeReflectionIrBuilderBase<E: IrExpression>(
         scope: Scope,
         startOffset: Int, endOffset: Int,
         val symbols: KonanSymbols,
-        val onRecursiveUpperBound: (String) -> Unit,
+        val onRecursiveUpperBound: IrBuilderWithScope.(String) -> Unit,
 ) : IrBuilderWithScope(context, scope, startOffset, endOffset) {
 
     fun irKType(type: IrType, leaveReifiedForLater: Boolean = false) : E =

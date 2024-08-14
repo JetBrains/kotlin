@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -122,11 +124,16 @@ internal class NativeInlineFunctionResolver(
     override val callInlinerStrategy: CallInlinerStrategy = NativeCallInlinerStrategy()
 
     inner class NativeCallInlinerStrategy : CallInlinerStrategy {
-        override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
+        private lateinit var builder: NativeRuntimeReflectionIrBuilder
+        override fun at(scope: Scope, expression: IrExpression) {
             val symbols = this@NativeInlineFunctionResolver.context.ir.symbols
-            return context.createIrBuilder(symbols.interopTypeOf, expression.startOffset, expression.endOffset)
-                    .toNativeRuntimeReflectionBuilder(symbols)
-                    .irKType(nonSubstitutedTypeArgument, leaveReifiedForLater = true)
+            builder = context.createIrBuilder(scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+                    .toNativeRuntimeReflectionBuilder(symbols) { message ->
+                        this@NativeInlineFunctionResolver.context.reportCompilationError(message, getCompilerMessageLocation())
+                    }
+        }
+        override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
+            return builder.irKType(nonSubstitutedTypeArgument, leaveReifiedForLater = true)
         }
     }
 }
