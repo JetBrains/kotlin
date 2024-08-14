@@ -458,6 +458,20 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         runExecutableAndVerify(main1.testCase, main1.testExecutable)
     }
 
+    @Test
+    @TestMetadata("internalMethodFakeOverrideInFriendModule")
+    fun internalMethodFakeOverrideInFriendModule() {
+        withRootDir(File("$TEST_SUITE_PATH/internalMethodFakeOverrideInFriendModule")) {
+            val lib = compileLibrary("lib") {
+                "lib/lib.kt" copyTo "lib.kt"
+            }
+            val main = compileToExecutable("main", lib.asFriendLibraryDependency()) {
+                "main/main.kt" copyTo "main.kt"
+            }
+            runExecutableAndVerify(main.testCase, main.testExecutable)
+        }
+    }
+
     private inline fun withRootDir(rootDir: File, block: RootDirHolder.() -> Unit) = RootDirHolder(rootDir).block()
 
     private inner class RootDirHolder(val rootDir: File) {
