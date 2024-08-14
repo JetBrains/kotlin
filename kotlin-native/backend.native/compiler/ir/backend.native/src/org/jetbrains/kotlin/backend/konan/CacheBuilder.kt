@@ -360,6 +360,7 @@ class CacheBuilder(
             put(KonanConfigKeys.NOSTDLIB, true)
             put(KonanConfigKeys.LIBRARY_FILES, libraries)
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries) {
+                put(KonanConfigKeys.FRIEND_MODULES, konanConfig.friendModuleFiles.map { it.absolutePath })
                 put(KonanConfigKeys.GENERATE_TEST_RUNNER, generateTestRunner)
                 put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(libraryPath))
                 configuration.get(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH)?.let { put(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH, it) }
