@@ -24,7 +24,7 @@ internal class KaFirBackingFieldSymbolPointer(
             propertySymbolPointer.restoreSymbol()
         } ?: return null
 
-        check(propertySymbol is KaFirKotlinPropertySymbol)
+        check(propertySymbol is KaFirKotlinPropertySymbol<*>)
         val backingFieldSymbol = propertySymbol.firSymbol.backingFieldSymbol ?: return null
         return analysisSession.firSymbolBuilder.variableBuilder.buildBackingFieldSymbol(backingFieldSymbol)
     }

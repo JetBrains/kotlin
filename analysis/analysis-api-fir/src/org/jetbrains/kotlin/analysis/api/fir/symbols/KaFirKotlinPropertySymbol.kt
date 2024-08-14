@@ -11,77 +11,56 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.callableId
+import org.jetbrains.kotlin.analysis.api.fir.callableIdForName
+import org.jetbrains.kotlin.analysis.api.fir.entryName
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.fir.kaSymbolModality
+import org.jetbrains.kotlin.analysis.api.fir.kaSymbolModalityByModifiers
 import org.jetbrains.kotlin.analysis.api.fir.location
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
 import org.jetbrains.kotlin.analysis.api.fir.visibility
+import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
+import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KaFirKotlinPropertySymbol private constructor(
-    override val backingPsi: KtProperty?,
-    override val analysisSession: KaFirSession,
-    override val lazyFirSymbol: Lazy<FirPropertySymbol>,
-) : KaKotlinPropertySymbol(), KaFirKtBasedSymbol<KtProperty, FirPropertySymbol> {
-    constructor(declaration: KtProperty, session: KaFirSession) : this(
-        backingPsi = declaration,
-        lazyFirSymbol = lazyFirSymbol(declaration, session),
-        analysisSession = session,
-    )
-
-    constructor(symbol: FirPropertySymbol, session: KaFirSession) : this(
-        backingPsi = symbol.fir.realPsi as? KtProperty,
-        lazyFirSymbol = lazyOf(symbol),
-        analysisSession = session,
-    ) {
-        assert(!firSymbol.isLocal)
-        check(firSymbol !is FirSyntheticPropertySymbol)
-        check(firSymbol.fir !is FirSyntheticProperty)
-    }
-
-    init {
-        require(backingPsi?.isLocal != true)
-    }
-
-    override val isDelegatedProperty: Boolean
-        get() = withValidityAssertion {
-            if (backingPsi != null)
-                backingPsi.hasDelegate()
-            else
-                firSymbol.delegateFieldSymbol != null
-        }
-
+internal sealed class KaFirKotlinPropertySymbol<P : KtNamedDeclaration>(
+    final override val backingPsi: P?,
+    final override val analysisSession: KaFirSession,
+    final override val lazyFirSymbol: Lazy<FirPropertySymbol>,
+) : KaKotlinPropertySymbol(), KaFirKtBasedSymbol<P, FirPropertySymbol> {
     override val psi: PsiElement?
         get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
-
-    override val isVal: Boolean
-        get() = withValidityAssertion {
-            if (backingPsi != null)
-                !backingPsi.isVar
-            else
-                firSymbol.isVal
-        }
 
     override val name: Name
         get() = withValidityAssertion { backingPsi?.nameAsSafeName ?: firSymbol.name }
@@ -101,55 +80,31 @@ internal class KaFirKotlinPropertySymbol private constructor(
     override val initializer: KaInitializerValue?
         get() = withValidityAssertion { firSymbol.getKtConstantInitializer(builder) }
 
-    override val location: KaSymbolLocation
-        get() = withValidityAssertion {
-            when {
-                backingPsi != null -> backingPsi.location
-                firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KaSymbolLocation.CLASS
-                firSymbol.containingClassLookupTag()?.classId == null -> KaSymbolLocation.TOP_LEVEL
-                else -> KaSymbolLocation.CLASS
-            }
-        }
-
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { backingPsi?.kaSymbolModality ?: firSymbol.kaSymbolModality }
-
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
-
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }
-
-    override val callableId: CallableId?
-        get() = withValidityAssertion {
-            if (backingPsi != null)
-                backingPsi.callableId
-            else
-                firSymbol.getCallableId()
-        }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
 
     override val getter: KaPropertyGetterSymbol?
         get() = withValidityAssertion {
-            firSymbol.getterSymbol?.let { builder.functionBuilder.buildPropertyAccessorSymbol(it) } as? KaPropertyGetterSymbol
+            if (backingPsi == null || hasGetter)
+                firSymbol.getterSymbol?.let { builder.functionBuilder.buildGetterSymbol(it) }
+            else
+                null
         }
 
     override val setter: KaPropertySetterSymbol?
         get() = withValidityAssertion {
-            firSymbol.setterSymbol?.let { builder.functionBuilder.buildPropertyAccessorSymbol(it) } as? KaPropertySetterSymbol
+            if (backingPsi == null || hasSetter)
+                firSymbol.setterSymbol?.let { builder.functionBuilder.buildSetterSymbol(it) }
+            else
+                null
         }
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion {
             firSymbol.backingFieldSymbol?.let { builder.variableBuilder.buildBackingFieldSymbol(it) }
-        }
-
-    // NB: `field` in accessors indicates the property should have a backing field. To see that, though, we need BODY_RESOLVE.
-    override val hasBackingField: Boolean
-        get() = withValidityAssertion {
-            firSymbol.hasBackingField
         }
 
     override val isLateInit: Boolean
@@ -158,14 +113,6 @@ internal class KaFirKotlinPropertySymbol private constructor(
                 backingPsi.hasModifier(KtTokens.LATEINIT_KEYWORD)
             else
                 firSymbol.isLateInit
-        }
-
-    override val isFromPrimaryConstructor: Boolean
-        get() = withValidityAssertion {
-            if (backingPsi != null)
-                false
-            else
-                firSymbol.fir.fromPrimaryConstructor == true
         }
 
     override val isOverride: Boolean
@@ -195,17 +142,9 @@ internal class KaFirKotlinPropertySymbol private constructor(
     override val isExpect: Boolean
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
-    override val hasGetter: Boolean
-        get() = withValidityAssertion { firSymbol.getterSymbol != null }
-
-    override val hasSetter: Boolean
-        get() = withValidityAssertion { firSymbol.setterSymbol != null }
-
     override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaKotlinPropertySymbol>()?.let { return it }
-
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaVariableSymbol>(this)?.let { psiPointer ->
-            return KaFirPsiBasedPropertySymbolPointer(psiPointer)
+        psiBasedSymbolPointerOfTypeIfSource<KaVariableSymbol>()?.let {
+            return KaFirPsiBasedPropertySymbolPointer(it)
         }
 
         when (val kind = location) {
@@ -234,5 +173,251 @@ internal class KaFirKotlinPropertySymbol private constructor(
 
     override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
     override fun hashCode(): Int = psiOrSymbolHashCode()
+
+    companion object {
+        operator fun invoke(
+            declaration: KtProperty,
+            session: KaFirSession,
+        ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtPropertyBasedSymbol(declaration, session)
+
+        operator fun invoke(
+            declaration: KtParameter,
+            session: KaFirSession,
+        ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtParameterBasedSymbol(declaration, session)
+
+        operator fun invoke(
+            declaration: KtDestructuringDeclarationEntry,
+            session: KaFirSession,
+        ): KaKotlinPropertySymbol = KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol(declaration, session)
+
+        operator fun invoke(symbol: FirPropertySymbol, session: KaFirSession): KaKotlinPropertySymbol {
+            assert(!symbol.isLocal)
+            check(symbol !is FirSyntheticPropertySymbol)
+            check(symbol.fir !is FirSyntheticProperty)
+
+            return when (val psi = symbol.fir.getAllowedPsi()) {
+                is KtProperty -> this(psi, session)
+                is KtParameter -> this(psi, session)
+                is KtDestructuringDeclarationEntry -> this(psi, session)
+                else -> KaFirKotlinPropertyKtPropertyBasedSymbol(symbol, session)
+            }
+        }
+    }
 }
 
+/**
+ * Represents [KtProperty]-based symbol or [FirPropertySymbol] without any PSI
+ */
+private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymbol<KtProperty> {
+    constructor(symbol: FirPropertySymbol, session: KaFirSession) : super(
+        backingPsi = null,
+        lazyFirSymbol = lazyOf(symbol),
+        analysisSession = session,
+    )
+
+    constructor(declaration: KtProperty, session: KaFirSession) : super(
+        backingPsi = declaration,
+        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        analysisSession = session,
+    ) {
+        require(!declaration.isLocal)
+    }
+
+    override val location: KaSymbolLocation
+        get() = withValidityAssertion {
+            when {
+                backingPsi != null -> backingPsi.location
+                firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KaSymbolLocation.CLASS
+                firSymbol.containingClassLookupTag()?.classId == null -> KaSymbolLocation.TOP_LEVEL
+                else -> KaSymbolLocation.CLASS
+            }
+        }
+
+    override val isDelegatedProperty: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                backingPsi.hasDelegate()
+            else
+                firSymbol.delegateFieldSymbol != null
+        }
+
+    override val isVal: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                !backingPsi.isVar
+            else
+                firSymbol.isVal
+        }
+
+    override val hasGetter: Boolean
+        get() = withValidityAssertion { backingPsi != null || getter != null }
+
+    override val hasSetter: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                backingPsi.isVar || backingPsi.setter != null
+            else
+                setter != null
+        }
+
+    override val modality: KaSymbolModality
+        get() = withValidityAssertion { backingPsi?.kaSymbolModality ?: firSymbol.kaSymbolModality }
+
+    override val compilerVisibility: Visibility
+        get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
+
+    override val callableId: CallableId?
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                backingPsi.callableId
+            else
+                firSymbol.getCallableId()
+        }
+
+    override val isFromPrimaryConstructor: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                false
+            else
+                firSymbol.fir.fromPrimaryConstructor == true
+        }
+
+    // NB: `field` in accessors indicates the property should have a backing field. To see that, though, we need BODY_RESOLVE.
+    override val hasBackingField: Boolean
+        get() = withValidityAssertion { firSymbol.hasBackingField }
+}
+
+/**
+ * Represent a property symbol which is generated from [KtParameter]
+ */
+private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySymbol<KtParameter> {
+    constructor(declaration: KtParameter, session: KaFirSession) : super(
+        backingPsi = declaration,
+        lazyFirSymbol = lazyPub<FirPropertySymbol> {
+            val parameterSymbol = declaration.resolveToFirSymbolOfType<FirValueParameterSymbol>(session.firResolveSession)
+            val propertySymbol = parameterSymbol.fir.correspondingProperty?.symbol
+            requireWithAttachment(
+                propertySymbol != null,
+                { "Corresponding property should not be null for parameter" },
+            ) {
+                withPsiEntry("parameterPsi", declaration)
+                withFirSymbolEntry("parameterSymbol", parameterSymbol)
+            }
+
+            propertySymbol
+        },
+        analysisSession = session,
+    ) {
+        val ownerFunction = declaration.ownerFunction
+        requireWithAttachment(
+            ownerFunction is KtPrimaryConstructor,
+            { "Unexpected owner function: ${ownerFunction?.let { it::class.simpleName }}" },
+        ) {
+            withPsiEntry("declaration", declaration)
+        }
+
+        require(declaration.hasValOrVar())
+    }
+
+    override val location: KaSymbolLocation
+        get() = withValidityAssertion { KaSymbolLocation.CLASS }
+
+    override val isDelegatedProperty: Boolean
+        get() = withValidityAssertion { false }
+
+    override val isVal: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                !backingPsi.isMutable
+            else
+                firSymbol.isVal
+        }
+
+    override val hasGetter: Boolean
+        get() = withValidityAssertion { true }
+
+    override val hasSetter: Boolean
+        get() = withValidityAssertion { !isVal }
+
+    override val modality: KaSymbolModality
+        get() = withValidityAssertion { backingPsi?.kaSymbolModalityByModifiers ?: firSymbol.kaSymbolModality }
+
+    override val compilerVisibility: Visibility
+        get() = withValidityAssertion { backingPsi?.visibilityByModifiers ?: firSymbol.visibility }
+
+    override val callableId: CallableId?
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                backingPsi.callableIdForName(backingPsi.nameAsSafeName)
+            else
+                firSymbol.getCallableId()
+        }
+
+    override val isFromPrimaryConstructor: Boolean
+        get() = withValidityAssertion { true }
+
+    override val hasBackingField: Boolean
+        get() = withValidityAssertion { true }
+}
+
+/**
+ * Represent a property symbol which is generated from [org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry]
+ * on top-level of [org.jetbrains.kotlin.psi.KtScript]
+ */
+private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : KaFirKotlinPropertySymbol<KtDestructuringDeclarationEntry> {
+    constructor(declaration: KtDestructuringDeclarationEntry, session: KaFirSession) : super(
+        backingPsi = declaration,
+        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        analysisSession = session,
+    ) {
+        require(declaration.containingKtFile.isScript())
+    }
+
+    override val location: KaSymbolLocation
+        get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
+
+    override val name: Name
+        get() = withValidityAssertion { backingPsi?.entryName ?: firSymbol.name }
+
+    override val isDelegatedProperty: Boolean
+        get() = withValidityAssertion { false }
+
+    override val isVal: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                !backingPsi.isVar
+            else
+                firSymbol.isVal
+        }
+
+    override val hasGetter: Boolean
+        get() = withValidityAssertion { true }
+
+    override val hasSetter: Boolean
+        get() = withValidityAssertion { !isVal }
+
+    override val modality: KaSymbolModality
+        get() = withValidityAssertion { KaSymbolModality.FINAL }
+
+    override val compilerVisibility: Visibility
+        get() = withValidityAssertion { Visibilities.Public }
+
+    override val callableId: CallableId?
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                backingPsi.callableIdForName(name)
+            else
+                firSymbol.getCallableId()
+        }
+
+    override val isFromPrimaryConstructor: Boolean
+        get() = withValidityAssertion { false }
+
+    /** KT-70766 */
+    override val hasBackingField: Boolean
+        get() = withValidityAssertion { true }
+
+    /** KT-70766 */
+    override val backingFieldSymbol: KaBackingFieldSymbol?
+        get() = withValidityAssertion { null }
+}

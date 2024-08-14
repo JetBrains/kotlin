@@ -149,7 +149,7 @@ internal class KaFirSymbolProvider(
             when (val parent = parent) {
                 is KtDestructuringDeclaration -> {
                     if (parent.parent?.parent is KtScript) {
-                        firSymbolBuilder.variableBuilder.buildVariableSymbol(resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession))
+                        KaFirKotlinPropertySymbol(this, analysisSession)
                     } else {
                         KaFirLocalVariableSymbol(this, analysisSession)
                     }

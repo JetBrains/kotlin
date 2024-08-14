@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.entryName
 import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParameterSymbolPointer
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 
 internal sealed class KaFirLocalOrErrorVariableSymbol private constructor(
     final override val backingPsi: KtDeclaration?,
@@ -103,9 +103,7 @@ internal class KaFirLocalVariableSymbol : KaFirLocalOrErrorVariableSymbol {
                 is KtProperty -> backingPsi.nameAsSafeName
                 is KtParameter -> backingPsi.parameterName
                 is KtDestructuringDeclaration -> SpecialNames.DESTRUCT
-                is KtDestructuringDeclarationEntry ->
-                    if (backingPsi.isSingleUnderscore) SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else backingPsi.nameAsSafeName
-
+                is KtDestructuringDeclarationEntry -> backingPsi.entryName
                 else -> errorWithFirSpecificEntries("Unexpected PSI ${backingPsi::class.simpleName}", fir = firSymbol.fir)
             }
         }

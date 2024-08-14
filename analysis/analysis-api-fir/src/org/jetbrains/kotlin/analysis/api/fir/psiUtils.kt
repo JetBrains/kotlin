@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -83,7 +84,7 @@ internal val KtEnumEntry.callableId: CallableId?
 internal val KtProperty.callableId: CallableId?
     get() = if (isLocal) null else callableIdForName(nameAsSafeName)
 
-private fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
+internal fun KtDeclaration.callableIdForName(callableName: Name): CallableId? {
     val containingClassOrObject = containingClassOrObject
     if (containingClassOrObject != null) {
         return containingClassOrObject.getClassId()?.let { classId ->
@@ -103,6 +104,9 @@ internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
 
         else -> null
     }
+
+internal val KtDestructuringDeclarationEntry.entryName: Name
+    get() = if (isSingleUnderscore) SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else nameAsSafeName
 
 internal val KtParameter.parameterName: Name
     get() = when {
