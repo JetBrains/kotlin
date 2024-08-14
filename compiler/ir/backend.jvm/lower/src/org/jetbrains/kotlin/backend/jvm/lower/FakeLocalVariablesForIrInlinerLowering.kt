@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -23,10 +24,10 @@ import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.util.inlineDeclaration
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.ir.util.isLambdaInlining
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -256,4 +257,39 @@ private fun addInlineScopeInfo(name: String, scopeNumber: Int): String {
 private fun IrInlinedFunctionBlock.getReceiverParameterName(): String {
     val functionName = (inlineDeclaration as? IrDeclarationWithName)?.name
     return functionName?.let { "this$$it" } ?: AsmUtil.RECEIVER_PARAMETER_NAME
+}
+
+private fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(inlinedElement: IrElement): IrDeclaration? {
+    fun IrAttributeContainer.unwrapInlineLambdaIfAny(): IrAttributeContainer = when (this) {
+        is IrBlock -> (statements.lastOrNull() as? IrAttributeContainer)?.unwrapInlineLambdaIfAny() ?: this
+        is IrFunctionReference -> takeIf { it.origin == LoweredStatementOrigins.INLINE_LAMBDA } ?: this
+        else -> this
+    }
+
+    val originalInlinedElement = ((inlinedElement as? IrAttributeContainer)?.attributeOwnerId ?: inlinedElement)
+    for (block in this.filter { it.isFunctionInlining() }) {
+        block.inlineCall!!.getAllArgumentsWithIr().forEach {
+            // pretty messed up thing, this is needed to get the original expression that was inlined
+            // it was changed a couple of times after all lowerings, so we must get `attributeOwnerId` to ensure that this is original
+            val actualArg = if (it.second == null) {
+                val blockWithClass = it.first.defaultValue?.expression?.attributeOwnerId as? IrBlock
+                blockWithClass?.statements?.firstOrNull() as? IrClass
+            } else {
+                it.second?.unwrapInlineLambdaIfAny()
+            }
+
+            val originalActualArg = actualArg?.attributeOwnerId as? IrExpression
+            val extractedAnonymousFunction = if (originalActualArg?.isAdaptedFunctionReference() == true) {
+                (originalActualArg as IrBlock).statements.last() as IrFunctionReference
+            } else {
+                originalActualArg
+            }
+
+            if (extractedAnonymousFunction?.attributeOwnerId == originalInlinedElement) {
+                return block.inlineDeclaration
+            }
+        }
+    }
+
+    return null
 }
