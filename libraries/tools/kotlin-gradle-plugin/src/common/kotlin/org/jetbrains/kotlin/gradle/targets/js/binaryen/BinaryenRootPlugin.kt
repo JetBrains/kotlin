@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.gradle.targets.js.binaryen
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
+import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
+import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenPlatform.Companion.parseBinaryenPlatform
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootExtension.Companion.EXTENSION_NAME
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 open class BinaryenRootPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -25,6 +31,8 @@ open class BinaryenRootPlugin : Plugin<Project> {
         }
 
         val settings = project.extensions.create(EXTENSION_NAME, BinaryenRootExtension::class.java, project)
+
+        addPlatform(project, settings)
 
         project.registerTask<BinaryenSetupTask>(BinaryenSetupTask.NAME) {
             it.group = TASKS_GROUP_NAME
@@ -40,6 +48,23 @@ open class BinaryenRootPlugin : Plugin<Project> {
             it.group = TASKS_GROUP_NAME
             it.description = "Clean unused local binaryen version"
         }
+    }
+
+    private fun addPlatform(project: Project, extension: BinaryenRootExtension) {
+        val uname = project.variantImplementationFactory<UnameExecutor.UnameExecutorVariantFactory>()
+            .getInstance(project)
+            .unameExecResult
+
+        extension.platform.value(
+            project.providers.systemProperty("os.name")
+                .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
+                .zip(
+                    project.providers.systemProperty("os.arch")
+                        .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
+                ) { name, arch ->
+                    parseBinaryenPlatform(name.toLowerCaseAsciiOnly(), arch, uname)
+                }
+        ).disallowChanges()
     }
 
     companion object {
