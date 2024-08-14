@@ -1188,7 +1188,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceS
 	public abstract fun getKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/plugin/LanguageSettingsBuilder;
 	public abstract fun getResources ()Lorg/gradle/api/file/SourceDirectorySet;
-	public abstract fun getRuntimeOnlyMetadataConfigurationName ()Ljava/lang/String;
 	public abstract fun kotlin (Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/file/SourceDirectorySet;
 	public abstract fun kotlin (Lorg/gradle/api/Action;)Lorg/gradle/api/file/SourceDirectorySet;
 	public abstract fun languageSettings (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/LanguageSettingsBuilder;

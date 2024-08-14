@@ -54,10 +54,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override val compileOnlyMetadataConfigurationName: String
         get() = lowerCamelCaseName(compileOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
-    @Deprecated(message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation")
-    override val runtimeOnlyMetadataConfigurationName: String
-        get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
-
     /**
      * Dependencies added to this configuration will not be exposed to any other source set.
      */
