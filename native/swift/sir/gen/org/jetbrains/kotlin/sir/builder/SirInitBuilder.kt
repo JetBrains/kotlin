@@ -19,6 +19,7 @@ class SirInitBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
+    val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var kind: SirCallableKind
     var body: SirFunctionBody? = null
     var isFailable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
@@ -31,6 +32,7 @@ class SirInitBuilder {
             origin,
             visibility,
             documentation,
+            attributes,
             kind,
             body,
             isFailable,
@@ -59,6 +61,7 @@ inline fun buildInitCopy(original: SirInit, init: SirInitBuilder.() -> Unit): Si
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
+    copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.kind = original.kind
     copyBuilder.body = original.body
     copyBuilder.isFailable = original.isFailable

@@ -19,6 +19,7 @@ class SirExtensionBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
+    val attributes: MutableList<SirAttribute> = mutableListOf()
     val declarations: MutableList<SirDeclaration> = mutableListOf()
     lateinit var extendedType: SirType
 
@@ -27,6 +28,7 @@ class SirExtensionBuilder {
             origin,
             visibility,
             documentation,
+            attributes,
             declarations,
             extendedType,
         )
@@ -51,6 +53,7 @@ inline fun buildExtensionCopy(original: SirExtension, init: SirExtensionBuilder.
     copyBuilder.origin = original.origin
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
+    copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.declarations.addAll(original.declarations)
     copyBuilder.extendedType = original.extendedType
     return copyBuilder.apply(init).build()

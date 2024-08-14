@@ -19,6 +19,7 @@ val callableKind = type(BASE_PACKAGE, "SirCallableKind", TypeKind.Class)
 val initKind = type(BASE_PACKAGE, "SirInitializerKind", TypeKind.Class)
 val importType = type(BASE_PACKAGE, "SirImport", TypeKind.Class)
 val modalityKind = type(BASE_PACKAGE, "SirClassModality", TypeKind.Class)
+val attributeType = type(BASE_PACKAGE, "SirAttribute", TypeKind.Class)
 
 val swiftIrImplementationDetailAnnotation = type(BASE_PACKAGE, "SirImplementationDetail", TypeKind.Class)
 val swiftIrBuilderDslAnnotation = type(BASE_PACKAGE, "SirBuilderDsl", TypeKind.Class)
