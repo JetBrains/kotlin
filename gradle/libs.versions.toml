@@ -12,7 +12,7 @@ kotlinx-serialization = "1.5.0"
 # Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA. Intellij IDEA uses 1.6 since 2022.3
 # Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
 kotlinx-coroutines = "1.6.4"
-shadow = "8.1.7" # Should be in sync with version in kotlin-native/
+shadow = "8.3.0" # Should be in sync with version in kotlin-native/
 spdx = "0.8.0-dev-14"
 proguard = "7.4.2"
 ktor = "2.3.7"
@@ -53,7 +53,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadataJvm" }
-shadow-gradlePlugin = { module = "io.github.goooler.shadow:shadow-gradle-plugin", version.ref = "shadow" }
+shadow-gradlePlugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
 proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
 
