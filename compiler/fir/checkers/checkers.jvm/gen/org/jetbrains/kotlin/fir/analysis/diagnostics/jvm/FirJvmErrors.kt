@@ -124,9 +124,9 @@ object FirJvmErrors {
 
     // External Declaration
     val EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT", ERROR, SourceElementPositioningStrategies.ABSTRACT_MODIFIER, KtDeclaration::class)
-    val EXTERNAL_DECLARATION_CANNOT_HAVE_BODY: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_CANNOT_HAVE_BODY", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtDeclaration::class)
-    val EXTERNAL_DECLARATION_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtDeclaration::class)
-    val EXTERNAL_DECLARATION_CANNOT_BE_INLINED: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_CANNOT_BE_INLINED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtDeclaration::class)
+    val EXTERNAL_DECLARATION_CANNOT_HAVE_BODY: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_CANNOT_HAVE_BODY", ERROR, SourceElementPositioningStrategies.EXTERNAL_MODIFIER, KtDeclaration::class)
+    val EXTERNAL_DECLARATION_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.EXTERNAL_MODIFIER, KtDeclaration::class)
+    val EXTERNAL_DECLARATION_CANNOT_BE_INLINED: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXTERNAL_DECLARATION_CANNOT_BE_INLINED", ERROR, SourceElementPositioningStrategies.EXTERNAL_MODIFIER, KtDeclaration::class)
 
     // Repeatable Annotations
     val NON_SOURCE_REPEATED_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NON_SOURCE_REPEATED_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class)

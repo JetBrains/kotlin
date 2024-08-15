@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlin.jvm.*
 
 abstract class C {

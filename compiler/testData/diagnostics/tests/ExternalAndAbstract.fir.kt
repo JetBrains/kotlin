@@ -5,5 +5,5 @@ abstract class A {
 
 interface B {
     val x: Int
-        <!EXTERNAL_DECLARATION_IN_INTERFACE!>external get<!>
+        <!EXTERNAL_DECLARATION_IN_INTERFACE!>external<!> get
 }
