@@ -10,6 +10,7 @@
 #include <optional>
 
 #include "Allocator.hpp"
+#include "CallsChecker.hpp"
 #include "Logging.hpp"
 #include "concurrent/Mutex.hpp"
 #include "Porting.h"
@@ -190,6 +191,8 @@ GCHandle GCHandle::getByEpoch(uint64_t epoch) {
 
 // static
 std::optional<gc::GCHandle> gc::GCHandle::currentEpoch() noexcept {
+    // Should be a fast function: every time the `lock` is taken, it's on a fast section (of reads and writes).
+    CallsCheckerIgnoreGuard callsCheckerIgnorer;
     std::lock_guard guard(lock);
     if (auto epoch = current.epoch) {
         return GCHandle::getByEpoch(*epoch);
@@ -398,6 +401,8 @@ size_t GCHandle::getKeptSizeBytes() noexcept {
 }
 
 void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
+    // Should be a fast function: every time the `lock` is taken, it's on a fast section (of reads and writes).
+    CallsCheckerIgnoreGuard callsCheckerIgnorer;
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         auto& heap = stat->sweepStats.heap;
@@ -413,6 +418,8 @@ void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
 }
 
 void GCHandle::sweptExtraObjects(gc::SweepStats stats) noexcept {
+    // Should be a fast function: every time the `lock` is taken, it's on a fast section (of reads and writes).
+    CallsCheckerIgnoreGuard callsCheckerIgnorer;
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         auto& extra = stat->sweepStats.extra;
