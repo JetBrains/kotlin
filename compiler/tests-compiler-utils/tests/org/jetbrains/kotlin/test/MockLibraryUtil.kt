@@ -9,6 +9,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
@@ -198,15 +200,15 @@ object MockLibraryUtil {
 
         val args = mutableListOf(
             sourcesPath,
-            "-d", outDir.absolutePath,
-            "-classpath", classpath.joinToString(File.pathSeparator)
+            K2JVMCompilerArguments::destination.cliArgument, outDir.absolutePath,
+            K2JVMCompilerArguments::classpath.cliArgument, classpath.joinToString(File.pathSeparator)
         ) + extraOptions
 
         runJvmCompiler(args)
     }
 
     fun compileKotlinModule(buildFilePath: String) {
-        runJvmCompiler(listOf("-no-stdlib", "-Xbuild-file", buildFilePath))
+        runJvmCompiler(listOf(K2JVMCompilerArguments::noStdlib.cliArgument, K2JVMCompilerArguments::buildFile.cliArgument, buildFilePath))
     }
 
     private val compiler2JVMClass: Class<*>

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.cli
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 
@@ -29,12 +31,12 @@ class JavaSourceClassInClassPathTest : TestCaseWithTmpdir() {
         val firstJar = tmpdir.resolve("first.jar")
         val (_, exit) = AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(aKt.path, bKt.path, "-d", firstJar.path, "-include-runtime")
+            listOf(aKt.path, bKt.path, K2JVMCompilerArguments::destination.cliArgument, firstJar.path, K2JVMCompilerArguments::includeRuntime.cliArgument)
         )
         assert(exit == ExitCode.OK)
         val (_, exit2) = AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf("-cp", firstJar.path, aJava.path, bNewKt.path, "-d", firstJar.path, "-include-runtime")
+            listOf("-cp", firstJar.path, aJava.path, bNewKt.path, K2JVMCompilerArguments::destination.cliArgument, firstJar.path, K2JVMCompilerArguments::includeRuntime.cliArgument)
         )
         assert(exit2 == ExitCode.OK)
     }

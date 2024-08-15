@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
@@ -167,12 +169,12 @@ fun runWithK2JVMCompiler(
     expectedExitCode: Int = 0,
     classpath: List<File> = emptyList(),
 ) {
-    val args = arrayListOf("-kotlin-home", "dist/kotlinc").apply {
+    val args = arrayListOf(K2JVMCompilerArguments::kotlinHome.cliArgument, "dist/kotlinc").apply {
         if (classpath.isNotEmpty()) {
-            add("-cp")
+            add(K2JVMCompilerArguments::classpath.cliArgument)
             add(classpath.joinToString(File.pathSeparator))
         }
-        add("-script")
+        add(K2JVMCompilerArguments::script.cliArgument)
         add(scriptPath)
     }
     runWithK2JVMCompiler(args.toTypedArray(), expectedOutPatterns, expectedExitCode)

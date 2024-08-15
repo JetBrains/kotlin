@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
@@ -31,7 +33,10 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @DisplayName("Basic Kotlin/JVM plugin tests")
 @JvmGradlePluginTests
@@ -287,22 +292,22 @@ class KotlinGradleIT : KGPBaseTest() {
 
             // check the arguments are not passed by default (they are inferred by the compiler)
             build("clean", "compileKotlin") {
-                assertOutputDoesNotContain("-language-version")
-                assertOutputDoesNotContain("-api-version")
+                assertOutputDoesNotContain(CommonCompilerArguments::languageVersion.cliArgument)
+                assertOutputDoesNotContain(CommonCompilerArguments::apiVersion.cliArgument)
                 assertNoBuildWarnings()
             }
 
             // check the arguments are always passed if specified explicitly
             updateBuildGradle("1.6", "1.6")
             build("clean", "compileKotlin") {
-                assertOutputContains("-language-version 1.6")
-                assertOutputContains("-api-version 1.6")
+                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} 1.6")
+                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} 1.6")
             }
 
             updateBuildGradle("1.7", "1.7")
             build("clean", "compileKotlin") {
-                assertOutputContains("-language-version 1.7")
-                assertOutputContains("-api-version 1.7")
+                assertOutputContains("${CommonCompilerArguments::languageVersion.cliArgument} 1.7")
+                assertOutputContains("${CommonCompilerArguments::apiVersion.cliArgument} 1.7")
             }
         }
     }

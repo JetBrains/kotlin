@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.jvm.modules
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.AbstractCliTest.getNormalizedCompilerOutput
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
@@ -39,9 +41,9 @@ abstract class AbstractJavaModulesIntegrationTest(
         val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
-            "-jdk-home", jdkHome.path,
-            "-Xmodule-path=$paths",
-            "-language-version", languageVersion.versionString,
+            K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
+            K2JVMCompilerArguments::javaModulePath.cliArgument(paths),
+            K2JVMCompilerArguments::languageVersion.cliArgument, languageVersion.versionString,
         )
         if (addModules.isNotEmpty()) {
             kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
@@ -169,9 +171,9 @@ abstract class AbstractJavaModulesIntegrationTest(
 
         val kotlinOptions = mutableListOf(
             "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
-            "-jdk-home", jdkHome.path,
-            "-Xmodule-path=${a.path}",
-            "-language-version", languageVersion.versionString,
+            K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
+            K2JVMCompilerArguments::javaModulePath.cliArgument(a.path),
+            K2JVMCompilerArguments::languageVersion.cliArgument, languageVersion.versionString,
         )
         compileLibrary(
             "moduleB",

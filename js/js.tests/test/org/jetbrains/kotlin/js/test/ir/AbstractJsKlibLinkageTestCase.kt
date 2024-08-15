@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
@@ -124,22 +126,22 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
 
         runCompilerViaCLI(
             listOf(
-                "-Xir-produce-js",
-                "-Xir-per-module",
-                "-module-kind", "plain",
-                "-Xinclude=${mainModule.libraryFile.absolutePath}",
-                "-ir-output-dir", binariesDir.absolutePath,
-                "-ir-output-name", MAIN_MODULE_NAME,
+                K2JSCompilerArguments::irProduceJs.cliArgument,
+                K2JSCompilerArguments::irPerModule.cliArgument,
+                K2JSCompilerArguments::moduleKind.cliArgument, "plain",
+                K2JSCompilerArguments::includes.cliArgument(mainModule.libraryFile.absolutePath),
+                K2JSCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
+                K2JSCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,
                 // IMPORTANT: Omitting PL arguments here. The default PL mode should be in effect.
                 // "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=INFO",
-                "-Werror"
+                K2JSCompilerArguments::allWarningsAsErrors.cliArgument
             ),
             listOf(
-                "-Xcache-directory",
+                K2JSCompilerArguments::cacheDirectory.cliArgument,
                 buildDir.resolve("libs-cache").absolutePath
             ).takeIf { compilerType.useIc },
             otherDependencies.toCompilerArgs(),
-            listOf("-Xes-classes").takeIf { compilerType.es6Mode }
+            listOf(K2JSCompilerArguments::useEsClasses.cliArgument).takeIf { compilerType.es6Mode }
         )
 
         // All JS files produced during the compiler call.
@@ -175,11 +177,11 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
 
     protected fun Dependencies.toCompilerArgs(): List<String> = buildList {
         if (regularDependencies.isNotEmpty()) {
-            this += "-libraries"
+            this += K2JSCompilerArguments::libraries.cliArgument
             this += regularDependencies.joinToString(File.pathSeparator) { it.libraryFile.absolutePath }
         }
         if (friendDependencies.isNotEmpty()) {
-            this += "-Xfriend-modules=${friendDependencies.joinToString(File.pathSeparator) { it.libraryFile.absolutePath }}"
+            this += K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator) { it.libraryFile.absolutePath })
         }
     }
 

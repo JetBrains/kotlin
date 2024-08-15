@@ -19,6 +19,10 @@ package org.jetbrains.kotlin.cli
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -101,7 +105,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinc",
             "$testDataDirectory/helloWorld.kt",
-            "-d", tmpdir.path
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path
         )
     }
 
@@ -109,7 +113,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinc-jvm",
             "$testDataDirectory/helloWorld.kt",
-            "-d", tmpdir.path
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path
         )
     }
 
@@ -126,14 +130,14 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         val kotlinTestJar = File(PathUtil.kotlinPathsForDistDirectory.homePath, "lib/kotlin-test.jar")
         assertTrue("kotlin-main-kts.jar not found, run dist task: ${kotlinTestJar.absolutePath}", kotlinTestJar.exists())
         kotlincInProcess(
-            "-cp", kotlinTestJar.path,
+            K2JVMCompilerArguments::classpath.cliArgument, kotlinTestJar.path,
             "$testDataDirectory/contextClassLoaderTester.kt",
-            "-d", tmpdir.path
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path
         )
 
         runProcess(
             "kotlin",
-            "-cp", listOf(tmpdir.path, kotlinTestJar.path).joinToString(File.pathSeparator),
+            K2JVMCompilerArguments::classpath.cliArgument, listOf(tmpdir.path, kotlinTestJar.path).joinToString(File.pathSeparator),
             "ContextClassLoaderTester",
             expectedStdout = "${kotlinTestJar.name}\n"
         )
@@ -143,40 +147,40 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinc-js",
             "$testDataDirectory/emptyMain.kt",
-            "-nowarn",
-            "-libraries",
+            K2JSCompilerArguments::suppressWarnings.cliArgument,
+            K2JSCompilerArguments::libraries.cliArgument,
             PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
-            "-Xir-produce-klib-dir",
-            "-Xir-only",
-            "-ir-output-dir",
+            K2JSCompilerArguments::irProduceKlibDir.cliArgument,
+            K2JSCompilerArguments::irOnly.cliArgument,
+            K2JSCompilerArguments::outputDir.cliArgument,
             tmpdir.path,
-            "-ir-output-name",
+            K2JSCompilerArguments::moduleName.cliArgument,
             "out",
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
         )
     }
 
     fun testKotlinNoReflect() {
-        kotlincInProcess("$testDataDirectory/reflectionUsage.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/reflectionUsage.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess(
             "kotlin",
-            "-cp", tmpdir.path,
-            "-no-reflect",
+            K2JVMCompilerArguments::classpath.cliArgument, tmpdir.path,
+            K2JVMCompilerArguments::noReflect.cliArgument,
             "ReflectionUsageKt",
             expectedStdout = "no reflection"
         )
     }
 
     fun testDoNotAppendCurrentDirToNonEmptyClasspath() {
-        kotlincInProcess("$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess("kotlin", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
 
         val emptyDir = KotlinTestUtils.tmpDirForTest(this)
         runProcess(
             "kotlin",
-            "-cp", emptyDir.path,
+            K2JVMCompilerArguments::classpath.cliArgument, emptyDir.path,
             "test.HelloWorldKt",
             expectedStderr = "error: could not find or load main class test.HelloWorldKt\n",
             expectedExitCode = 1,
@@ -199,7 +203,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testRunnerExpressionLanguageVersion20() {
         runProcess(
             "kotlin",
-            "-language-version", "2.0", "-e",
+            CommonCompilerArguments::languageVersion.cliArgument, "2.0", "-e",
             "println(args.joinToString())",
             "-a",
             "b",
@@ -243,18 +247,28 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     fun testLegacyAssert() {
-        kotlincInProcess("$testDataDirectory/legacyAssertDisabled.kt", "-Xassertions=legacy", "-d", tmpdir.path)
+        kotlincInProcess(
+            "$testDataDirectory/legacyAssertDisabled.kt",
+            K2JVMCompilerArguments::assertionsMode.cliArgument("legacy"),
+            K2JVMCompilerArguments::destination.cliArgument,
+            tmpdir.path
+        )
 
         runProcess("kotlin", "LegacyAssertDisabledKt", "-J-da:kotlin._Assertions", workDirectory = tmpdir)
 
-        kotlincInProcess("$testDataDirectory/legacyAssertEnabled.kt", "-Xassertions=legacy", "-d", tmpdir.path)
+        kotlincInProcess(
+            "$testDataDirectory/legacyAssertEnabled.kt",
+            K2JVMCompilerArguments::assertionsMode.cliArgument("legacy"),
+            K2JVMCompilerArguments::destination.cliArgument,
+            tmpdir.path
+        )
 
         runProcess("kotlin", "LegacyAssertEnabledKt", "-J-ea:kotlin._Assertions", workDirectory = tmpdir)
     }
 
     fun testScriptWithXArguments() {
         runProcess(
-            "kotlin", "-Xno-inline", "$testDataDirectory/noInline.kts",
+            "kotlin", K2JVMCompilerArguments::noInline.cliArgument, "$testDataDirectory/noInline.kts",
             expectedExitCode = 3,
             expectedStderr = """java.lang.IllegalAccessError: tried to access method kotlin.io.ConsoleKt.println(Ljava/lang/Object;)V from class NoInline
 	at NoInline.<init>(noInline.kts:1)
@@ -276,7 +290,7 @@ println(42)
     }
 
     fun testProperty() {
-        kotlincInProcess("$testDataDirectory/property.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/property.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess(
             "kotlin", "PropertyKt", "-Dresult=OK",
@@ -318,7 +332,7 @@ println(42)
         )
         runProcess(
             "kotlin",
-            "-Xallow-any-scripts-in-source-roots",
+            K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
             "-howtorun",
             ".kts",
             "$testDataDirectory/noInline.myscript",
@@ -338,7 +352,7 @@ println(42)
     }
 
     fun testHowToRunClassFile() {
-        kotlincInProcess("$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess(
             "kotlin", "-howtorun", "jar", "test.HelloWorldKt", workDirectory = tmpdir,
@@ -351,7 +365,7 @@ println(42)
     fun testKotlincJdk17() {
         val jdk17 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         runProcess(
-            "kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path,
+            "kotlinc", "$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
             environment = jdk17,
         )
 
@@ -365,7 +379,7 @@ println(42)
         runProcess(
             "kotlinc",
             "$testDataDirectory/helloWorld.kt",
-            "-d", tmpdir.path,
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
             "-J", expectedStdout = "error: empty -J argument\n",
             expectedExitCode = 1
         )
@@ -374,7 +388,7 @@ println(42)
     fun testNoClassDefFoundErrorWhenClassInDefaultPackage() {
         val testDir = File("$tmpdir/test")
 
-        kotlincInProcess("$testDataDirectory/defaultPackage.kt", "-d", testDir.path)
+        kotlincInProcess("$testDataDirectory/defaultPackage.kt", K2JVMCompilerArguments::destination.cliArgument, testDir.path)
         assertExists(File("${testDir.path}/DefaultPackageKt.class"))
 
         runProcess(
@@ -390,7 +404,7 @@ println(42)
     fun testNoClassDefFoundErrorWhenClassNotInDefaultPackage() {
         val testDir = File("$tmpdir/test")
 
-        kotlincInProcess("$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
         assertExists(File("${testDir.path}/HelloWorldKt.class"))
 
         runProcess(
@@ -410,7 +424,7 @@ println(42)
         val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
         val testDir = File("$tmpdir/test")
 
-        kotlincInProcess("$testDataDirectory/defaultPackage.kt", "-d", testDir.path)
+        kotlincInProcess("$testDataDirectory/defaultPackage.kt", K2JVMCompilerArguments::destination.cliArgument, testDir.path)
         assertExists(File("${testDir.path}/DefaultPackageKt.class"))
 
         runProcess(
@@ -438,7 +452,7 @@ println(42)
         val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
         val testDir = File("$tmpdir/test")
 
-        kotlincInProcess("$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
+        kotlincInProcess("$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
         assertExists(File("${testDir.path}/HelloWorldKt.class"))
 
         runProcess("kotlin", "test/HelloWorldKt.class", expectedStdout = "Hello!\n", workDirectory = tmpdir)
@@ -474,11 +488,11 @@ println(42)
     fun testKotlinUseJdkModuleFromMainClass() {
         val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
         runProcess(
-            "kotlinc", "$testDataDirectory/jdkModuleUsage.kt", "-d", tmpdir.path,
+            "kotlinc", "$testDataDirectory/jdkModuleUsage.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
             environment = jdk11,
         )
         runProcess(
-            "kotlin", "-cp", tmpdir.path, "test.JdkModuleUsageKt",
+            "kotlin", K2JVMCompilerArguments::classpath.cliArgument, tmpdir.path, "test.JdkModuleUsageKt",
             expectedStdout = "interface java.sql.Driver\n",
             environment = jdk11,
         )
@@ -488,7 +502,7 @@ println(42)
         val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
         val output = tmpdir.resolve("out.jar")
         runProcess(
-            "kotlinc", "$testDataDirectory/jdkModuleUsage.kt", "-d", output.path,
+            "kotlinc", "$testDataDirectory/jdkModuleUsage.kt", K2JVMCompilerArguments::destination.cliArgument, output.path,
             environment = jdk11,
         )
         runProcess(
@@ -500,7 +514,7 @@ println(42)
 
     fun testInterpreterClassLoader() {
         runProcess(
-            "kotlinc", "$testDataDirectory/interpreterClassLoader.kt", "-d", tmpdir.path
+            "kotlinc", "$testDataDirectory/interpreterClassLoader.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path
         )
     }
 
@@ -520,7 +534,7 @@ println(42)
         }
         val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
         runProcess(
-            "kotlinc", moduleInfo.absolutePath, testKt.absolutePath, "-d", tmpdir.path,
+            "kotlinc", moduleInfo.absolutePath, testKt.absolutePath, K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
             environment = jdk11,
             expectedExitCode = 0,
             expectedStdout = "",
@@ -534,14 +548,26 @@ println(42)
         }
         CompilerTestUtil.executeCompilerAssertSuccessful(
             K2JVMCompiler(),
-            listOf("-d", tmpdir.absolutePath, "-language-version", "2.0", file1kt.absolutePath)
+            listOf(
+                K2JVMCompilerArguments::destination.cliArgument,
+                tmpdir.absolutePath,
+                CommonCompilerArguments::languageVersion.cliArgument,
+                "2.0",
+                file1kt.absolutePath
+            )
         )
         val file2kt = tmpdir.resolve("file1.kt").apply {
             writeText("val c = C()")
         }
         runProcess(
             "kotlinc",
-            "-cp", ".", "-d", ".", "-language-version", "2.0", file2kt.absolutePath,
+            K2JVMCompilerArguments::classpath.cliArgument,
+            ".",
+            K2JVMCompilerArguments::destination.cliArgument,
+            ".",
+            CommonCompilerArguments::languageVersion.cliArgument,
+            "2.0",
+            file2kt.absolutePath,
             workDirectory = tmpdir,
             expectedStdout = "",
         )

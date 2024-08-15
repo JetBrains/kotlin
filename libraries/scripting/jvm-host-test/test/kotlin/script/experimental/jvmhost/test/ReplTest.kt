@@ -7,6 +7,8 @@ package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.junit.Assert
@@ -400,7 +402,7 @@ class ReplTest : TestCase() {
             sequenceOf(script),
             sequenceOf(greeting),
             simpleScriptCompilationConfiguration.with {
-                compilerOptions("-Xallow-kotlin-package")
+                compilerOptions(K2JVMCompilerArguments::allowKotlinPackage.cliArgument)
             }
         )
     }

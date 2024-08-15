@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.test.cli
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -90,7 +93,7 @@ abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTe
             testServices.sourceFileProvider.getRealJavaFiles(module).mapTo(this) { it.path }
 
             if (JDK_KIND in module.directives) {
-                add("-jdk-home")
+                add(K2JVMCompilerArguments::jdkHome.cliArgument)
                 add(JavaCompilerFacade.getExplicitJdkHome(module)!!.absolutePath)
             }
 
@@ -98,28 +101,32 @@ abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTe
             // which might be empty because this module does not depend on `:dist`.
             val allDependencies = (dependencies + ForTestCompileRuntime.runtimeJarForTests())
                 .joinToString(separator = File.pathSeparator, transform = File::getPath)
-            add("-no-stdlib")
+            add(K2JVMCompilerArguments::noStdlib.cliArgument)
             if (FORCE_COMPILE_AS_JAVA_MODULE in module.directives || module.files.any { it.isModuleInfoJavaFile }) {
-                add("-Xmodule-path=$allDependencies")
+                add(K2JVMCompilerArguments::javaModulePath.cliArgument(allDependencies))
             } else {
-                add("-classpath")
+                add(K2JVMCompilerArguments::classpath.cliArgument)
                 add(allDependencies)
             }
 
             if (friends.isNotEmpty()) {
-                add("-Xfriend-paths=" + friends.joinToString(separator = File.pathSeparator, transform = File::getPath))
+                add(
+                    K2JVMCompilerArguments::friendPaths.cliArgument(
+                        friends.joinToString(separator = File.pathSeparator, transform = File::getPath)
+                    )
+                )
             }
 
             val jvmTarget = module.directives.singleOrZeroValue(JVM_TARGET)
             if (jvmTarget != null) {
-                add("-jvm-target")
+                add(K2JVMCompilerArguments::jvmTarget.cliArgument)
                 add(jvmTarget.description)
             }
 
-            add("-d")
+            add(K2JVMCompilerArguments::destination.cliArgument)
             add(outputDir.path)
 
-            add("-Xrender-internal-diagnostic-names")
+            add(K2JVMCompilerArguments::renderInternalDiagnosticNames.cliArgument)
 
             addAll(module.directives[KOTLINC_ARGS])
 
@@ -154,7 +161,7 @@ abstract class JvmCliFacade(private val testServices: TestServices) : AbstractTe
 
 class ClassicJvmCliFacade(testServices: TestServices) : JvmCliFacade(testServices) {
     override fun MutableList<String>.addKotlinCompilerArguments() {
-        add("-language-version")
+        add(CommonCompilerArguments::languageVersion.cliArgument)
         add(LanguageVersion.KOTLIN_1_9.versionString)
     }
 }

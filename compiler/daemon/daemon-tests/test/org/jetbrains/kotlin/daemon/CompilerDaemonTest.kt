@@ -10,13 +10,17 @@ import com.intellij.openapi.util.io.FileUtilRt
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.daemon.client.*
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
+import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.ByteArrayOutputStream
@@ -27,7 +31,6 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.nio.charset.Charset
 import java.nio.file.Path
-import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -122,7 +125,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 try {
                     val jar = testTempDir.absolutePath + File.separator + "hello.jar"
                     runDaemonCompilerTwice(flagFile, compilerId, daemonJVMOptions, daemonOptions,
-                                           "-include-runtime", File(getTestBaseDir(), "hello.kt").absolutePath, "-d", jar)
+                                           K2JVMCompilerArguments::includeRuntime.cliArgument, File(getTestBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar)
 
                     KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
                     Thread.sleep(100)
@@ -253,14 +256,14 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     assertTrue(logFile1.length() == 0L && logFile2.length() == 0L)
 
                     val jar1 = testTempDir.absolutePath + File.separator + "hello1.jar"
-                    val res1 = compileOnDaemon(flagFile, compilerId, daemonJVMOptions1, daemonOptions, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar1)
+                    val res1 = compileOnDaemon(flagFile, compilerId, daemonJVMOptions1, daemonOptions, K2JVMCompilerArguments::includeRuntime.cliArgument, File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar1)
                     assertEquals("first compilation failed:\n${res1.out}", 0, res1.resultCode)
 
                     logFile1.assertLogContainsSequence("Starting compilation with args: ")
                     assertEquals("expecting '${logFile2.absolutePath}' to be empty", 0L, logFile2.length())
 
                     val jar2 = testTempDir.absolutePath + File.separator + "hello2.jar"
-                    val res2 = compileOnDaemon(flagFile, compilerId2, daemonJVMOptions2, daemonOptions, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar2)
+                    val res2 = compileOnDaemon(flagFile, compilerId2, daemonJVMOptions2, daemonOptions, K2JVMCompilerArguments::includeRuntime.cliArgument, File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar2)
                     assertEquals("second compilation failed:\n${res2.out}", 0, res1.resultCode)
 
                     logFile2.assertLogContainsSequence("Starting compilation with args: ")
@@ -352,7 +355,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 val jar = testTempDir.absolutePath + File.separator + "hello1.jar"
                 val strm = ByteArrayOutputStream()
                 val code = KotlinCompilerClient.compile(daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM,
-                                                        arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                                                        arrayOf(K2JVMCompilerArguments::includeRuntime.cliArgument, File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar),
                                                         PrintingMessageCollector(PrintStream(strm), MessageRenderer.WITHOUT_PATHS, true),
                                                         reportSeverity = ReportSeverity.DEBUG)
                 assertEquals("compilation failed:\n$strm", 0, code)
@@ -568,7 +571,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                     daemon!!,
                                     CompileService.NO_SESSION,
                                     CompileService.TargetPlatform.JVM,
-                                    arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                                    arrayOf(K2JVMCompilerArguments::includeRuntime.cliArgument, File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar),
                                     PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true),
                                     port = port)
                             synchronized(resultCodes) {
@@ -628,7 +631,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                     compileServiceSession.compileService,
                                     compileServiceSession.sessionId,
                                     CompileService.TargetPlatform.JVM,
-                                    arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                                    arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar),
                                     PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true))
                             }
                             else -> 0 // compilation skipped, assuming - successful

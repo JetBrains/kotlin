@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.cli
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -120,7 +122,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
     }
 
     private fun makeCompilerArgs(sourceFiles: List<File>, jarFile: File): List<String> {
-        return listOf("-include-runtime", "-d", jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
+        return listOf(K2JVMCompilerArguments::includeRuntime.cliArgument, K2JVMCompilerArguments::destination.cliArgument, jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
     }
 
     private fun compileAndCheckMainClass(sourceFiles: List<File>, expectedMainClass: String?, messageRenderer: MessageRenderer? = null) {

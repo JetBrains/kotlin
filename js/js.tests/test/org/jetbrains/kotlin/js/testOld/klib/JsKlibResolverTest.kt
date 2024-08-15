@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.js.testOld.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
@@ -60,10 +62,10 @@ class JsKlibResolverTest : TestCaseWithTmpdir() {
         ).joinToString(File.pathSeparator) { it.absolutePath }
 
         val args = arrayOf(
-            "-Xir-produce-klib-dir",
-            "-libraries", libraries,
-            "-ir-output-dir", outputFile.absolutePath,
-            "-ir-output-name", outputFile.nameWithoutExtension,
+            K2JSCompilerArguments::irProduceKlibDir.cliArgument,
+            K2JSCompilerArguments::libraries.cliArgument, libraries,
+            K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
+            K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
             sourceFile.absolutePath
         )
 

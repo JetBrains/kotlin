@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.cli
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil.DOS_EPOCH
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -34,13 +36,23 @@ class JarOutputTest : TestCaseWithTmpdir() {
         val firstJar = tmpdir.resolve("first.jar")
         AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(fooKt.path, "-d", firstJar.path, "-include-runtime")
+            listOf(
+                fooKt.path,
+                K2JVMCompilerArguments::destination.cliArgument,
+                firstJar.path,
+                K2JVMCompilerArguments::includeRuntime.cliArgument
+            )
         )
 
         val secondJar = tmpdir.resolve("second.jar")
         AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(fooKt.path, "-d", secondJar.path, "-include-runtime")
+            listOf(
+                fooKt.path,
+                K2JVMCompilerArguments::destination.cliArgument,
+                secondJar.path,
+                K2JVMCompilerArguments::includeRuntime.cliArgument
+            )
         )
 
         assertEquals(
@@ -59,7 +71,13 @@ class JarOutputTest : TestCaseWithTmpdir() {
         val jar = tmpdir.resolve("jarWithTimestamps.jar")
         AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(fooKt.path, "-d", jar.path, "-include-runtime", "-Xno-reset-jar-timestamps")
+            listOf(
+                fooKt.path,
+                K2JVMCompilerArguments::destination.cliArgument,
+                jar.path,
+                K2JVMCompilerArguments::includeRuntime.cliArgument,
+                K2JVMCompilerArguments::noResetJarTimestamps.cliArgument
+            )
         )
 
         assertNoTimestampsAreReset(jar)
@@ -75,7 +93,12 @@ class JarOutputTest : TestCaseWithTmpdir() {
         val jar = tmpdir.resolve("jarWithoutModuleInfoClass.jar")
         AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(fooKt.path, "-d", jar.path, "-include-runtime")
+            listOf(
+                fooKt.path,
+                K2JVMCompilerArguments::destination.cliArgument,
+                jar.path,
+                K2JVMCompilerArguments::includeRuntime.cliArgument
+            )
         )
 
         assertNoModuleInfoClass(jar)

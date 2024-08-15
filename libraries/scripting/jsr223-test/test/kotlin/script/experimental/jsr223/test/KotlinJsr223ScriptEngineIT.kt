@@ -5,6 +5,8 @@
 
 package kotlin.script.experimental.jsr223.test
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -459,10 +461,10 @@ obj
                     runtime.absolutePath,
                     "-cp", paths.compilerClasspath.joinToString(File.pathSeparator),
                     K2JVMCompiler::class.java.name,
-                    "-no-stdlib",
-                    "-cp", compileCp.joinToString(File.pathSeparator) { it.path },
-                    "-d", outJar.absolutePath,
-                    "-jvm-target", "17",
+                    K2JVMCompilerArguments::noStdlib.cliArgument,
+                    K2JVMCompilerArguments::classpath.cliArgument, compileCp.joinToString(File.pathSeparator) { it.path },
+                    K2JVMCompilerArguments::destination.cliArgument, outJar.absolutePath,
+                    K2JVMCompilerArguments::jvmTarget.cliArgument, "17",
                     "libraries/scripting/jsr223-test/testData/testJsr223Inlining.kt"
                 ),
                 additionalEnvVars = listOf("JAVA_HOME" to jdk17.absolutePath)

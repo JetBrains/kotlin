@@ -12,6 +12,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
@@ -66,10 +69,10 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
             writeText(src.content)
         }
         val plugin = writePlugin(klass)
-        val args = listOf("-Xplugin=$plugin", mainKt.absolutePath)
+        val args = listOf(K2JVMCompilerArguments::pluginClasspaths.cliArgument(plugin), mainKt.absolutePath)
         val outputPath = listOf(
-            "-language-version", "1.9",
-            "-d", tmpdir.resolve("out").absolutePath
+            CommonCompilerArguments::languageVersion.cliArgument, "1.9",
+            K2JVMCompilerArguments::destination.cliArgument, tmpdir.resolve("out").absolutePath
         )
 
         val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras, messageRenderer)

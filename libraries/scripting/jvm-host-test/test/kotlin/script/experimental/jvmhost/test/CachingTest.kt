@@ -8,6 +8,9 @@ package kotlin.script.experimental.jvmhost.test
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.junit.Assert
@@ -231,8 +234,13 @@ class CachingTest : TestCase() {
         val outStream = ByteArrayOutputStream()
         val compileExitCode = K2JVMCompiler().exec(
             PrintStream(outStream),
-            "-d", outJar.path, "-no-stdlib", "-cp", standardJars.joinToString(File.pathSeparator),
-            "-language-version", if (isK2) "2.0" else "1.9",
+            K2JVMCompilerArguments::destination.cliArgument,
+            outJar.path,
+            K2JVMCompilerArguments::noStdlib.cliArgument,
+            K2JVMCompilerArguments::classpath.cliArgument,
+            standardJars.joinToString(File.pathSeparator),
+            CommonCompilerArguments::languageVersion.cliArgument,
+            if (isK2) "2.0" else "1.9",
             inKt.path
         )
         assertTrue(

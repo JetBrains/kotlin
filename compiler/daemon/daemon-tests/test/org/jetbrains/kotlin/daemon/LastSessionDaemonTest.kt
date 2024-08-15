@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.daemon
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.junit.jupiter.api.DisplayName
@@ -29,7 +31,12 @@ class LastSessionDaemonTest : BaseDaemonSessionTest() {
             compileService,
             sessionId,
             CompileService.TargetPlatform.JVM,
-            arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", outputDirectory.absolutePath),
+            arrayOf(
+                K2JVMCompilerArguments::includeRuntime.cliArgument,
+                File(getHelloAppBaseDir(), "hello.kt").absolutePath,
+                K2JVMCompilerArguments::destination.cliArgument,
+                outputDirectory.absolutePath
+            ),
             testMessageCollector
         )
         assertEquals(0, exitCode)

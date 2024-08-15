@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.js.test.ir
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
@@ -35,22 +37,22 @@ abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : Ab
         // Build KLIB:
         runCompilerViaCLI(
             listOf(
-                "-Xir-produce-klib-file",
-                "-ir-output-dir", klibFile.parentFile.absolutePath,
-                "-ir-output-name", moduleName,
+                K2JSCompilerArguments::irProduceKlibFile.cliArgument,
+                K2JSCompilerArguments::outputDir.cliArgument, klibFile.parentFile.absolutePath,
+                K2JSCompilerArguments::moduleName.cliArgument, moduleName,
                 // Halt on any unexpected warning.
-                "-Werror",
+                K2JSCompilerArguments::allWarningsAsErrors.cliArgument,
                 // Tests suppress the INVISIBLE_REFERENCE check.
                 // However, JS doesn't produce the INVISIBLE_REFERENCE error;
                 // As result, it triggers a suppression error warning about the redundant suppression.
                 // This flag is used to disable the warning.
-                "-Xdont-warn-on-error-suppression"
+                K2JSCompilerArguments::dontWarnOnErrorSuppression.cliArgument
             ),
             dependencies.toCompilerArgs(),
             listOf(
-                "-language-version", "2.0",
+                K2JSCompilerArguments::languageVersion.cliArgument, "2.0",
                 // Don't fail on language version warnings.
-                "-Xsuppress-version-warnings"
+                K2JSCompilerArguments::suppressVersionWarnings.cliArgument
             ).takeIf { compilerType.useFir },
             kotlinSourceFilePaths
         )

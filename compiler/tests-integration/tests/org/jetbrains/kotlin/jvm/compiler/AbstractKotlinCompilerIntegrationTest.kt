@@ -10,6 +10,9 @@ import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
@@ -154,20 +157,20 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         additionalSources.mapTo(args) { File(testDataDirectory, it).path }
 
         if (compiler is K2JSCompiler) {
-            args.add("-libraries")
+            args.add(K2JSCompilerArguments::libraries.cliArgument)
             args.add((classpath + PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath).joinToString(File.pathSeparator))
-            args.add("-Xir-produce-klib-dir")
-            args.add("-Xir-only")
-            args.add("-ir-output-dir")
+            args.add(K2JSCompilerArguments::irProduceKlibDir.cliArgument)
+            args.add(K2JSCompilerArguments::irOnly.cliArgument)
+            args.add(K2JSCompilerArguments::outputDir.cliArgument)
             args.add(output.path)
-            args.add("-ir-output-name")
+            args.add(K2JSCompilerArguments::moduleName.cliArgument)
             args.add("out")
         } else if (compiler is K2JVMCompiler || compiler is K2MetadataCompiler) {
             if (classpath.isNotEmpty()) {
-                args.add("-classpath")
+                args.add(K2JVMCompilerArguments::classpath.cliArgument)
                 args.add(classpath.joinToString(File.pathSeparator))
             }
-            args.add("-d")
+            args.add(K2JVMCompilerArguments::destination.cliArgument)
             args.add(output.path)
         } else {
             throw UnsupportedOperationException(compiler.toString())

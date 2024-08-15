@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.js.test.ir
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerEdition.CURRENT
@@ -38,9 +40,9 @@ abstract class AbstractJsKlibCompatibilityTestCase(compilerType: CompilerType) :
 
         runCompilerViaCLI(
             listOf(
-                "-Xir-produce-klib-file",
-                "-ir-output-dir", klibFile.parentFile.absolutePath,
-                "-ir-output-name", moduleName,
+                K2JSCompilerArguments::irProduceKlibFile.cliArgument,
+                K2JSCompilerArguments::outputDir.cliArgument, klibFile.parentFile.absolutePath,
+                K2JSCompilerArguments::moduleName.cliArgument, moduleName,
             ),
             dependencies.replaceStdlib(compilerEdition).toCompilerArgs(),
             kotlinSourceFilePaths,

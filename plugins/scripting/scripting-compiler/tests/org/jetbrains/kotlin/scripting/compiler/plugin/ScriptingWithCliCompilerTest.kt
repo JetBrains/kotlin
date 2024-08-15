@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.test.linesSplitTrim
@@ -50,12 +53,12 @@ class ScriptingWithCliCompilerTest {
         withTempDir { tmpdir ->
             runWithK2JVMCompiler(
                 arrayOf(
-                    "-d",
+                    K2JVMCompilerArguments::destination.cliArgument,
                     tmpdir.absolutePath,
-                    "-cp",
+                    K2JVMCompilerArguments::classpath.cliArgument,
                     getMainKtsClassPath().joinToString(File.pathSeparator),
-                    "-Xallow-any-scripts-in-source-roots",
-                    "-Xuse-fir-lt=false",
+                    K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                    K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                     "$TEST_DATA_DIR/integration/hello-resolve-junit.main.kts",
                 ),
             )
@@ -89,7 +92,7 @@ class ScriptingWithCliCompilerTest {
         // testing that without specifying default to .main.kts, the annotation is unresolved
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 "-expression=@file:CompilerOptions(\"-Xunknown1\")"
             ),
             expectedExitCode = 1,
@@ -99,8 +102,8 @@ class ScriptingWithCliCompilerTest {
         )
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
-                "-Xdefault-script-extension=.main.kts",
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                K2JVMCompilerArguments::defaultScriptExtension.cliArgument(".main.kts"),
                 "-expression=@file:CompilerOptions(\"-Xunknown1\")"
             ),
             expectedExitCode = 0,
@@ -115,8 +118,8 @@ class ScriptingWithCliCompilerTest {
         // testing that without specifying default to .main.kts the script with extension .txt is not recognized
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
-                "-script",
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
             expectedExitCode = 1,
@@ -126,9 +129,9 @@ class ScriptingWithCliCompilerTest {
         )
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
-                "-Xdefault-script-extension=.main.kts",
-                "-script",
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                K2JVMCompilerArguments::defaultScriptExtension.cliArgument(".main.kts"),
+                K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
             expectedExitCode = 1,
@@ -138,9 +141,9 @@ class ScriptingWithCliCompilerTest {
         )
         runWithK2JVMCompiler(
             arrayOf(
-                "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
-                "-Xdefault-script-extension=main.kts",
-                "-script",
+                K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                K2JVMCompilerArguments::defaultScriptExtension.cliArgument("main.kts"),
+                K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
             expectedExitCode = 1,
@@ -180,7 +183,7 @@ class ScriptingWithCliCompilerTest {
             CLICompiler.doMainNoExit(
                 K2JVMCompiler(),
                 arrayOf(
-                    "-script",
+                    K2JVMCompilerArguments::script.cliArgument,
                     "$TEST_DATA_DIR/integration/exceptionWithCause.kts"
                 )
             )
@@ -208,8 +211,8 @@ class ScriptingWithCliCompilerTest {
                     CLICompiler.doMainNoExit(
                         K2JVMCompiler(),
                         arrayOf(
-                            "-d", tmpdir.path,
-                            "-cp", getMainKtsClassPath().joinToString(File.pathSeparator),
+                            K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+                            K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                             *flags,
                             if (withScriptInstance)
                                 "$TEST_DATA_DIR/compiler/mixedCompilation/simpleScriptInstance.kt"
@@ -229,29 +232,41 @@ class ScriptingWithCliCompilerTest {
         val unresolvedScriptError =
             "simpleScriptInstance.kt:3:13: error: unresolved reference: SimpleScript_main"
 
-        compileVariant("-language-version", "1.7").let { (errLines, exitCode) ->
+        compileVariant(CommonCompilerArguments::languageVersion.cliArgument, "1.7").let { (errLines, exitCode) ->
             Assert.assertTrue(errLines.any { it.startsWith(scriptInSourceRootWarning) })
             Assert.assertEquals(ExitCode.OK, exitCode)
         }
 
-        compileVariant("-language-version", "1.7", "-Xallow-any-scripts-in-source-roots").let { (errLines, exitCode) ->
+        compileVariant(
+            CommonCompilerArguments::languageVersion.cliArgument,
+            "1.7",
+            K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument
+        ).let { (errLines, exitCode) ->
             Assert.assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
             Assert.assertEquals(ExitCode.OK, exitCode)
         }
 
-        compileVariant("-language-version", "1.9").let { (errLines, exitCode) ->
+        compileVariant(CommonCompilerArguments::languageVersion.cliArgument, "1.9").let { (errLines, exitCode) ->
             if (errLines.none { it.endsWith(unresolvedScriptError) }) {
                 Assert.fail("Expecting unresolved reference: SimpleScript_main error, got:\n${errLines.joinToString("\n")}")
             }
             Assert.assertEquals(ExitCode.COMPILATION_ERROR, exitCode)
         }
 
-        compileVariant("-language-version", "1.9", withScriptInstance = false).let { (errLines, exitCode) ->
+        compileVariant(
+            CommonCompilerArguments::languageVersion.cliArgument,
+            "1.9",
+            withScriptInstance = false
+        ).let { (errLines, exitCode) ->
             Assert.assertTrue(errLines.none { it.startsWith(scriptInSourceRootWarning) })
             Assert.assertEquals(ExitCode.OK, exitCode)
         }
 
-        compileVariant("-language-version", "1.9", "-Xallow-any-scripts-in-source-roots").let { (errLines, exitCode) ->
+        compileVariant(
+            CommonCompilerArguments::languageVersion.cliArgument,
+            "1.9",
+            K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument
+        ).let { (errLines, exitCode) ->
             Assert.assertTrue(errLines.none {
                 it.endsWith(unresolvedScriptError) || it.startsWith(scriptInSourceRootWarning)
             })
@@ -268,9 +283,10 @@ class ScriptingWithCliCompilerTest {
                     K2JVMCompiler(),
                     arrayOf(
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
-                        "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path,
-                        "-Xuse-fir-lt=false",
-                        "-Xallow-any-scripts-in-source-roots", "-verbose",
+                        K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator), K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+                        K2JVMCompilerArguments::useFirLT.cliArgument("false"),
+                        K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                        K2JVMCompilerArguments::verbose.cliArgument,
                         "$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt",
                         scriptPath,
                     )
@@ -294,10 +310,11 @@ class ScriptingWithCliCompilerTest {
                     K2JVMCompiler(),
                     arrayOf(
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
-                        "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path,
-                        "-Xuse-fir-lt=false",
-                        "-Xextended-compiler-checks",
-                        "-Xallow-any-scripts-in-source-roots", "-verbose",
+                        K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator), K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
+                        K2JVMCompilerArguments::useFirLT.cliArgument("false"),
+                        K2JVMCompilerArguments::extendedCompilerChecks.cliArgument,
+                        K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                        K2JVMCompilerArguments::verbose.cliArgument,
                         "$TEST_DATA_DIR/compiler/mixedCompilation/nonScriptAccessingScript.kt",
                         SIMPLE_TEST_SCRIPT
                     )
@@ -318,10 +335,16 @@ class ScriptingWithCliCompilerTest {
                     CLICompiler.doMainNoExit(
                         K2JVMCompiler(),
                         arrayOf(
-                            "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
-                            "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path,
-                            "-Xuse-fir-lt=false",
-                            "-Xallow-any-scripts-in-source-roots", "-verbose", fileArg
+                            "-P",
+                            "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
+                            K2JVMCompilerArguments::classpath.cliArgument,
+                            getMainKtsClassPath().joinToString(File.pathSeparator),
+                            K2JVMCompilerArguments::destination.cliArgument,
+                            tmpdir.path,
+                            K2JVMCompilerArguments::useFirLT.cliArgument("false"),
+                            K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
+                            K2JVMCompilerArguments::verbose.cliArgument,
+                            fileArg
                         )
                     )
                 }
