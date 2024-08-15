@@ -47,6 +47,18 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   }
 
   @Test
+  @TestMetadata("catchWithName.kt")
+  public void testCatchWithName() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/catchWithName.kt");
+  }
+
+  @Test
+  @TestMetadata("catchWithoutName.kt")
+  public void testCatchWithoutName() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/catchWithoutName.kt");
+  }
+
+  @Test
   @TestMetadata("ExpandedParameterType.kt")
   public void testExpandedParameterType() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/ExpandedParameterType.kt");
@@ -92,6 +104,18 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   @TestMetadata("getterWithReceiverAndAnnotations.kt")
   public void testGetterWithReceiverAndAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/getterWithReceiverAndAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaParameterWithName.kt")
+  public void testLambdaParameterWithName() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/lambdaParameterWithName.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaParameterWithoutName.kt")
+  public void testLambdaParameterWithoutName() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/lambdaParameterWithoutName.kt");
   }
 
   @Test
