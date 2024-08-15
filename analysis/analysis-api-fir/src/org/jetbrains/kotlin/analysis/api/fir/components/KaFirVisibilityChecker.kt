@@ -49,10 +49,11 @@ internal class KaFirVisibilityChecker(
         require(candidateSymbol is KaFirSymbol<*>)
         require(useSiteFile is KaFirFileSymbol)
 
-        val candidateDeclaration = candidateSymbol.firSymbol.fir as? FirMemberDeclaration ?: return true
         if (candidateSymbol is KaFirPsiJavaClassSymbol) {
             candidateSymbol.isVisibleByPsi(useSiteFile)?.let { return it }
         }
+
+        val candidateDeclaration = candidateSymbol.firSymbol.fir as? FirMemberDeclaration ?: return true
 
         val dispatchReceiverCanBeExplicit = candidateSymbol is KaCallableSymbol && !candidateSymbol.isExtension
         val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) {
