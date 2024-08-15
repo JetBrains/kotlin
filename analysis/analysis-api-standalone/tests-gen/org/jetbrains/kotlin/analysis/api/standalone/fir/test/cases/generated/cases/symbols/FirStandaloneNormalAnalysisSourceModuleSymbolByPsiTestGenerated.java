@@ -317,6 +317,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
   }
 
   @Test
+  @TestMetadata("typeParametersStressTest.kt")
+  public void testTypeParametersStressTest() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/typeParametersStressTest.kt");
+  }
+
+  @Test
   @TestMetadata("varargFunctions.kt")
   public void testVarargFunctions() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/varargFunctions.kt");
