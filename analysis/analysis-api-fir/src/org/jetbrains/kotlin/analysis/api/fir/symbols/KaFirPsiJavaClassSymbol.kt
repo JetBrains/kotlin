@@ -124,13 +124,7 @@ internal class KaFirPsiJavaClassSymbol(
     override val firSymbol: FirRegularClassSymbol by cached {
         val module = analysisSession.getModule(psi)
         val provider = analysisSession.firResolveSession.getSessionFor(module).firClassByPsiClassProvider
-        val firClassSymbol = provider.getFirClass(psi)
-
-        require(firClassSymbol != null) {
-            "A FIR class symbol should be available for ${KaFirPsiJavaClassSymbol::class.simpleName} `$classId`."
-        }
-
-        firClassSymbol
+        provider.getFirClass(psi)
     }
 
     override val annotations: KaAnnotationList

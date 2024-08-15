@@ -60,7 +60,7 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
         val parentClass: FirRegularClassSymbol?,
     )
 
-    fun getFirClass(psiClass: PsiClass): FirRegularClassSymbol? {
+    fun getFirClass(psiClass: PsiClass): FirRegularClassSymbol {
         require(psiClass !is PsiTypeParameter) {
             "${LLFirFirClassByPsiClassProvider::class.simpleName} can create only regular classes"
         }

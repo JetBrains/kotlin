@@ -45,7 +45,7 @@ abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBased
             }
         }
         val resolveSession = LLFirResolveSessionService.getInstance(mainKtModule.project).getFirResolveSessionNoCaching(mainKtModule)
-        val firClass = resolveSession.useSiteFirSession.firClassByPsiClassProvider.getFirClass(psiClassUnderCaret)!!
+        val firClass = resolveSession.useSiteFirSession.firClassByPsiClassProvider.getFirClass(psiClassUnderCaret)
         val rendered = firClass.fir.render()
         testServices.assertions.assertEqualsToTestDataFileSibling(rendered)
     }
