@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.java.FirJavaAwareSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -32,6 +33,18 @@ import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
+/**
+ * Converts [PsiClass] to a [FirRegularClassSymbol]
+ *
+ * Can handle only [PsiClass] from the provided [session].
+ *
+ * In a case where there is no classpath conflict, and there is only a single class available for the [ClassId] provided by [PsiClass],
+ * it uses the corresponding [FirSymbolProvider] to provide the class to ensure symbol equality.
+ *
+ * In a case of a classpath conflict (which cannot be handled by [FirSymbolProvider]) where there are two or more classes available
+ * in [session] with the same [ClassId], it creates a new [FirJavaClass] manually and caches it in [conflictsPsiClassToFirClassCache]
+ * to ensure equal results with later invocations on the same [PsiClass].
+ */
 class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSessionComponent {
     private val conflictsPsiClassToFirClassCache =
         session.firCachesFactory.createCache<PsiClass, FirRegularClassSymbol, ConflictsPsiClassToFirClassCacheContext> { psiClass, (javaFacade, parent) ->
