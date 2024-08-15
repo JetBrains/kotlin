@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeParameter
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
@@ -30,13 +32,22 @@ internal class KaFirPsiJavaTypeParameterSymbol(
     override val analysisSession: KaFirSession,
     origin: KaSymbolOrigin,
     computeFirSymbol: () -> FirTypeParameterSymbol,
-) : KaFirTypeParameterSymbolBase(), KaFirPsiSymbol<PsiTypeParameter, FirTypeParameterSymbol> {
+) : KaFirTypeParameterSymbolBase<PsiTypeParameter>() {
+    override val annotations: KaAnnotationList
+        get() = withValidityAssertion {
+            if (backingPsi.annotations.isEmpty())
+                KaBaseEmptyAnnotationList(token)
+            else
+                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+        }
+
     override val name: Name
         get() = withValidityAssertion {
             backingPsi.name?.let { Name.identifier(it) } ?: SpecialNames.NO_NAME_PROVIDED
         }
 
-    override val psi: PsiElement? get() = withValidityAssertion { backingPsi }
+    override val psi: PsiElement?
+        get() = withValidityAssertion { backingPsi }
 
     override val origin: KaSymbolOrigin by validityAsserted(origin)
 

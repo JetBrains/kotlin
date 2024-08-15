@@ -147,7 +147,7 @@ internal class KaFirNamedClassSymbol private constructor(
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {
-            firSymbol.createRegularKtTypeParameters(builder)
+            createKaTypeParameters() ?: firSymbol.createRegularKtTypeParameters(builder)
         }
 
     override val classKind: KaClassKind

@@ -45,16 +45,16 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal sealed class KaFirKotlinPropertySymbol<P : KtNamedDeclaration>(
+internal sealed class KaFirKotlinPropertySymbol<P : KtTypeParameterListOwner>(
     final override val backingPsi: P?,
     final override val analysisSession: KaFirSession,
     final override val lazyFirSymbol: Lazy<FirPropertySymbol>,
@@ -84,7 +84,9 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtNamedDeclaration>(
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }
 
     override val typeParameters: List<KaTypeParameterSymbol>
-        get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
+        get() = withValidityAssertion {
+            createKaTypeParameters() ?: firSymbol.createKtTypeParameters(builder)
+        }
 
     override val getter: KaPropertyGetterSymbol?
         get() = withValidityAssertion {

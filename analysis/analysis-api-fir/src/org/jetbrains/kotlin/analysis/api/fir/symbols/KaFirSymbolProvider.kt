@@ -67,9 +67,7 @@ internal class KaFirSymbolProvider(
 
     override val KtTypeParameter.symbol: KaTypeParameterSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(
-                resolveToFirSymbolOfType<FirTypeParameterSymbol>(firResolveSession)
-            )
+            KaFirTypeParameterSymbol(this, analysisSession)
         }
 
     override val KtTypeAlias.symbol: KaTypeAliasSymbol

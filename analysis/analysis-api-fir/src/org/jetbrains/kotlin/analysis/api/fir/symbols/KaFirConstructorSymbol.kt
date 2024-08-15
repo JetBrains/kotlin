@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirCallableSignature
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -97,7 +98,12 @@ internal class KaFirConstructorSymbol private constructor(
     override val isExpect: Boolean
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
-    override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }
+    override val typeParameters: List<KaTypeParameterSymbol>
+        get() = withValidityAssertion {
+            with(analysisSession) {
+                backingPsi?.getContainingClassOrObject()?.symbol?.typeParameters ?: firSymbol.createKtTypeParameters(builder)
+            }
+        }
 
     override fun createPointer(): KaSymbolPointer<KaConstructorSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaConstructorSymbol>()?.let { return it }
