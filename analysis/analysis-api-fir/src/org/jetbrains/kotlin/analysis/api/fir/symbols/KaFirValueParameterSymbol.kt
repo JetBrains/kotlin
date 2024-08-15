@@ -9,52 +9,71 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.renderWithType
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.varargElementType
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtParameter
 
-internal class KaFirValueParameterSymbol(
-    override val firSymbol: FirValueParameterSymbol,
+internal class KaFirValueParameterSymbol private constructor(
+    override val backingPsi: KtParameter?,
     override val analysisSession: KaFirSession,
-) : KaValueParameterSymbol(), KaFirSymbol<FirValueParameterSymbol> {
-    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
+    override val lazyFirSymbol: Lazy<FirValueParameterSymbol>,
+) : KaValueParameterSymbol(), KaFirKtBasedSymbol<KtParameter, FirValueParameterSymbol> {
+    constructor(declaration: KtParameter, session: KaFirSession) : this(
+        backingPsi = declaration,
+        lazyFirSymbol = lazyFirSymbol(declaration, session),
+        analysisSession = session,
+    )
 
-    override val name: Name get() = withValidityAssertion { firSymbol.name }
+    constructor(symbol: FirValueParameterSymbol, session: KaFirSession) : this(
+        backingPsi = symbol.fir.realPsi as? KtParameter,
+        lazyFirSymbol = lazyOf(symbol),
+        analysisSession = session,
+    )
 
-    override val isVararg: Boolean get() = withValidityAssertion { firSymbol.isVararg }
+    override val psi: PsiElement?
+        get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
+
+    override val name: Name
+        get() = withValidityAssertion { backingPsi?.parameterName ?: firSymbol.name }
+
+    override val isVararg: Boolean
+        get() = withValidityAssertion { backingPsi?.isVarArg ?: firSymbol.isVararg }
 
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion {
-            firSymbol.source?.kind == KtFakeSourceElementKind.ItLambdaParameter
+            if (backingPsi != null)
+                false
+            else
+                firSymbol.source?.kind == KtFakeSourceElementKind.ItLambdaParameter
         }
 
-    override val isCrossinline: Boolean get() = withValidityAssertion { firSymbol.isCrossinline }
-    override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
-    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
-    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
-    override val isNoinline: Boolean get() = withValidityAssertion { firSymbol.isNoinline }
+    override val isCrossinline: Boolean
+        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.CROSSINLINE_KEYWORD) ?: firSymbol.isCrossinline }
+
+    override val compilerVisibility: Visibility
+        get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
+
+    override val isNoinline: Boolean
+        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.NOINLINE_KEYWORD) ?: firSymbol.isNoinline }
 
     override val returnType: KaType
         get() = withValidityAssertion {
@@ -66,26 +85,28 @@ internal class KaFirValueParameterSymbol(
             }
         }
 
-    override val hasDefaultValue: Boolean get() = withValidityAssertion { firSymbol.hasDefaultValue }
+    override val hasDefaultValue: Boolean
+        get() = withValidityAssertion { backingPsi?.hasDefaultValue() ?: firSymbol.hasDefaultValue }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion {
-            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
-        }
+        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
 
     override val generatedPrimaryConstructorProperty: KaKotlinPropertySymbol?
         get() = withValidityAssertion {
-            val propertySymbol = firSymbol.fir.correspondingProperty?.symbol ?: return@withValidityAssertion null
-            val ktPropertySymbol = builder.variableBuilder.buildPropertySymbol(propertySymbol)
-            check(ktPropertySymbol is KaKotlinPropertySymbol) {
-                "Unexpected symbol for primary constructor property ${ktPropertySymbol.javaClass} for fir: ${firSymbol.fir.renderWithType()}"
+            if (backingPsi != null) {
+                return if (backingPsi.hasValOrVar()) {
+                    KaFirKotlinPropertySymbol(backingPsi, analysisSession)
+                } else {
+                    null
+                }
             }
 
-            ktPropertySymbol
+            val propertySymbol = firSymbol.fir.correspondingProperty?.symbol ?: return null
+            return KaFirKotlinPropertySymbol(propertySymbol, analysisSession)
         }
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaValueParameterSymbol>(this)?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaValueParameterSymbol>()?.let { return it }
 
         val ownerSymbol = with(analysisSession) { containingDeclaration }
             ?: error("Containing function is expected for a value parameter symbol")
@@ -99,6 +120,6 @@ internal class KaFirValueParameterSymbol(
         )
     }
 
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
+    override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
+    override fun hashCode(): Int = psiOrSymbolHashCode()
 }

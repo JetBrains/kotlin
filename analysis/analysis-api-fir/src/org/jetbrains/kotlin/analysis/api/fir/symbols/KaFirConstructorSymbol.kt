@@ -54,7 +54,11 @@ internal class KaFirConstructorSymbol private constructor(
 
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
 
-    override val valueParameters: List<KaValueParameterSymbol> get() = withValidityAssertion { firSymbol.createKtValueParameters(builder) }
+    override val valueParameters: List<KaValueParameterSymbol>
+        get() = withValidityAssertion {
+            createKaValueParameters() ?: firSymbol.createKtValueParameters(builder)
+        }
+
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null) {

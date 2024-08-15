@@ -36,12 +36,8 @@ internal class KaFirSymbolProvider(
                     psi = this,
                 )
 
-                isLoopParameter || isCatchParameter ->
-                    KaFirLocalVariableSymbol(this, analysisSession)
-
-                else -> firSymbolBuilder.variableBuilder.buildValueParameterSymbol(
-                    resolveToFirSymbolOfType<FirValueParameterSymbol>(firResolveSession)
-                )
+                isLoopParameter || isCatchParameter -> KaFirLocalVariableSymbol(this, analysisSession)
+                else -> KaFirValueParameterSymbol(this, analysisSession)
             }
         }
 

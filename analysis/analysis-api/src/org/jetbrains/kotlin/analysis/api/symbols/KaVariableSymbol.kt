@@ -282,6 +282,11 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
     final override val isVal: Boolean get() = withValidityAssertion { true }
+    final override val isExpect: Boolean get() = withValidityAssertion { false }
+    final override val isActual: Boolean get() = withValidityAssertion { false }
+    final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
+
+    abstract override fun createPointer(): KaSymbolPointer<KaParameterSymbol>
 }
 
 @Deprecated("Use 'KaParameterSymbol' instead", ReplaceWith("KaParameterSymbol"))

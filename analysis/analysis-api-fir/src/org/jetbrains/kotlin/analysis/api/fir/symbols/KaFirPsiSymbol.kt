@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtAnnotated
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import kotlin.contracts.ExperimentalContracts
@@ -134,3 +137,27 @@ internal inline fun <reified S : FirBasedSymbol<*>> lazyFirSymbol(
 ): Lazy<S> = lazyPub {
     declaration.resolveToFirSymbolOfType<S>(session.firResolveSession)
 }
+
+/**
+ * This function is a workaround for KT-70728 issue.
+ *
+ * The problem is that library sources share the underlying PSI with binary modules, and
+ * the use site session is not enough to build the correct FIR from PSI.
+ * Hence, we cannot, for instance, use [createKaValueParameters] from a library source PSI as
+ * it may create a FIR from unrelated module, and we will have an inconsistency.
+ */
+@OptIn(ExperimentalContracts::class)
+internal inline fun <R> KaFirPsiSymbol<*, *>.ifNotLibrarySource(action: () -> R): R? {
+    contract {
+        callsInPlace(action, kotlin.contracts.InvocationKind.AT_MOST_ONCE)
+    }
+
+    return if (analysisSession.useSiteModule is KaLibrarySourceModule) null else action()
+}
+
+internal fun KaFirKtBasedSymbol<out KtCallableDeclaration, *>.createKaValueParameters(): List<KaValueParameterSymbol>? =
+    ifNotLibrarySource {
+        with(analysisSession) {
+            backingPsi?.valueParameters?.map { it.symbol as KaValueParameterSymbol }
+        }
+    }

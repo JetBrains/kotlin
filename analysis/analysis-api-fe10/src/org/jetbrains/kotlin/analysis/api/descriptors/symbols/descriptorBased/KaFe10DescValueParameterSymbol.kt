@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KaFe10DescSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.kaSymbolModality
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -43,9 +41,6 @@ internal class KaFe10DescValueParameterSymbol(
             }
         }
 
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { descriptor.kaSymbolModality }
-
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
 
@@ -60,12 +55,6 @@ internal class KaFe10DescValueParameterSymbol(
 
     override val isNoinline: Boolean
         get() = withValidityAssertion { descriptor.isNoinline }
-
-    override val isActual: Boolean
-        get() = withValidityAssertion { false }
-
-    override val isExpect: Boolean
-        get() = withValidityAssertion { false }
 
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion {

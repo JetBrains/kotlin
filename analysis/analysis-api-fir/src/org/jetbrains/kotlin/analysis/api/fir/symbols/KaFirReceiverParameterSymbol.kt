@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -56,20 +55,12 @@ internal class KaFirReceiverParameterSymbol(
             analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol)
         }
 
-    override val origin: KaSymbolOrigin = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
-
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { firSymbol.kaSymbolModality }
+    override val origin: KaSymbolOrigin
+        get() = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
 
     @KaExperimentalApi
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { firSymbol.visibility }
-
-    override val isActual: Boolean
-        get() = withValidityAssertion { false }
-
-    override val isExpect: Boolean
-        get() = withValidityAssertion { false }
 
     override val name: Name
         get() = withValidityAssertion { SpecialNames.RECEIVER }

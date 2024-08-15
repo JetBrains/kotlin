@@ -30,7 +30,7 @@ KaKotlinPropertySymbol:
       isExtension: false
       isVal: true
       location: LOCAL
-      modality: OPEN
+      modality: FINAL
       name: <receiver>
       origin: DELEGATED
       owningCallableSymbol: KaKotlinPropertySymbol(/A.zoo)
@@ -86,7 +86,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: LOCAL
-    modality: OPEN
+    modality: FINAL
     name: <receiver>
     origin: DELEGATED
     owningCallableSymbol: KaKotlinPropertySymbol(/A.zoo)
@@ -159,7 +159,7 @@ KaKotlinPropertySymbol:
       isExtension: false
       isVal: true
       location: LOCAL
-      modality: OPEN
+      modality: FINAL
       name: <receiver>
       origin: DELEGATED
       owningCallableSymbol: KaKotlinPropertySymbol(/A.zoo)
@@ -381,7 +381,7 @@ KaNamedFunctionSymbol:
     isExtension: false
     isVal: true
     location: LOCAL
-    modality: OPEN
+    modality: FINAL
     name: <receiver>
     origin: DELEGATED
     owningCallableSymbol: KaNamedFunctionSymbol(/A.smth)
@@ -608,7 +608,7 @@ KaKotlinPropertySymbol:
       isExtension: false
       isVal: true
       location: LOCAL
-      modality: OPEN
+      modality: FINAL
       name: <receiver>
       origin: DELEGATED
       owningCallableSymbol: KaKotlinPropertySymbol(/A.doo)
@@ -664,7 +664,7 @@ KaKotlinPropertySymbol:
     isExtension: false
     isVal: true
     location: LOCAL
-    modality: OPEN
+    modality: FINAL
     name: <receiver>
     origin: DELEGATED
     owningCallableSymbol: KaKotlinPropertySymbol(/A.doo)

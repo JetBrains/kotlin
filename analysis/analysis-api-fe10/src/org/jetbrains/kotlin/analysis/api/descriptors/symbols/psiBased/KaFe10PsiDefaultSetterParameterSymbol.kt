@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
@@ -65,17 +64,8 @@ internal class KaFe10PsiDefaultSetterParameterSymbol(
     override val returnType: KaType
         get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
 
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { KaSymbolModality.FINAL }
-
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { accessorPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
-
-    override val isActual: Boolean
-        get() = withValidityAssertion { false }
-
-    override val isExpect: Boolean
-        get() = withValidityAssertion { false }
 
     override val psi: PsiElement?
         get() = withValidityAssertion { null }

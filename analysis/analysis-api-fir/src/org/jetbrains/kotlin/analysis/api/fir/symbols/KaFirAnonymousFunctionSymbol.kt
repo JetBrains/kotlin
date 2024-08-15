@@ -61,7 +61,15 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS.visibility }
 
-    override val valueParameters: List<KaValueParameterSymbol> get() = withValidityAssertion { firSymbol.createKtValueParameters(builder) }
+    override val valueParameters: List<KaValueParameterSymbol>
+        get() = withValidityAssertion {
+            // lambda may have an implicit argument, so we cannot check it by PSI
+            if (backingPsi is KtNamedFunction || backingPsi is KtFunctionLiteral && backingPsi.arrow != null) {
+                createKaValueParameters()?.let { return it }
+            }
+
+            firSymbol.createKtValueParameters(builder)
+        }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }

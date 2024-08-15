@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnota
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -35,9 +34,6 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
     override val token: KaLifetimeToken
         get() = owner.token
 
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { KaSymbolModality.FINAL }
-
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { Visibilities.Public }
 
@@ -49,12 +45,6 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaBaseEmptyAnnotationList(token) }
-
-    override val isActual: Boolean
-        get() = withValidityAssertion { false }
-
-    override val isExpect: Boolean
-        get() = withValidityAssertion { false }
 
     override val name: Name
         get() = withValidityAssertion { Name.identifier("args") }
