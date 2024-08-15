@@ -279,7 +279,8 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
             irClass,
             irClass.kotlinFqName,
             origin,
-            forbidDirectFieldAccess = false
+            forbidDirectFieldAccess = false,
+            generateBodies = !configuration.skipBodies,
         ) {
             override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
                 // TODO

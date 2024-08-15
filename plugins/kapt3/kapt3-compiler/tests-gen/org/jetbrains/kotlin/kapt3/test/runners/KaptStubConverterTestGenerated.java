@@ -138,6 +138,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("dataClassWithUnresolvedComponentType.kt")
+  public void testDataClassWithUnresolvedComponentType() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/dataClassWithUnresolvedComponentType.kt");
+  }
+
+  @Test
   @TestMetadata("defaultImpls.kt")
   public void testDefaultImpls() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultImpls.kt");

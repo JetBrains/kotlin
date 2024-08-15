@@ -424,15 +424,25 @@ internal class ClassMemberGenerator(
 
         val firDefaultValue = firValueParameter.defaultValue
         if (firDefaultValue != null) {
-            this.defaultValue =
-                factory.createExpressionBody(
-                    if (configuration.skipBodies && !parent.isAnnotationConstructor)
+            this.defaultValue = when {
+                configuration.skipBodies && parent.isDataClassCopy ->
+                    // Replicate K1 behavior, which removes default values of data class copy parameters in skipBodies (kapt) mode.
+                    null
+                configuration.skipBodies && !parent.isAnnotationConstructor ->
+                    factory.createExpressionBody(
                         IrErrorExpressionImpl(startOffset, endOffset, builtins.nothingType, SKIP_BODIES_ERROR_DESCRIPTION)
-                    else visitor.convertToIrExpression(firDefaultValue)
-                )
+                    )
+                else ->
+                    factory.createExpressionBody(
+                        visitor.convertToIrExpression(firDefaultValue)
+                    )
+            }
         }
     }
 
     private val IrElement.isAnnotationConstructor: Boolean
         get() = this is IrConstructor && parentAsClass.isAnnotationClass
+
+    private val IrElement.isDataClassCopy: Boolean
+        get() = this is IrSimpleFunction && DataClassResolver.isCopy(name) && parent.let { it is IrClass && it.isData }
 }

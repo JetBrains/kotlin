@@ -58,6 +58,7 @@ open class LoweringDataClassMemberGenerator(
         irClass.kotlinFqName,
         origin,
         forbidDirectFieldAccess,
+        generateBodies = true,
     ) {
 
     override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
@@ -82,8 +83,3 @@ open class LoweringDataClassMemberGenerator(
         }
     }
 }
-
-
-
-
-
