@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 
 internal class KaFe10ReceiverParameterSymbol(
     override val descriptor: ReceiverParameterDescriptor,
@@ -40,9 +38,6 @@ internal class KaFe10ReceiverParameterSymbol(
     @KaExperimentalApi
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
-
-    override val name: Name
-        get() = withValidityAssertion { SpecialNames.RECEIVER }
 
     override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaReceiverParameterSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()

@@ -55,7 +55,7 @@ scopes:
           receiverParameter: KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Local
+            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isExpect: false
@@ -76,7 +76,7 @@ scopes:
                   type: <local>/Schema1
               ]
               type: DataFrame<<local>/Schema1>
-            visibility: LOCAL
+            visibility: PUBLIC
           returnType: KaUsualClassType:
             annotations: []
             typeArguments: []
@@ -104,7 +104,7 @@ scopes:
         receiverParameter: KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Local
+          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isExpect: false
@@ -125,7 +125,7 @@ scopes:
                 type: <local>/Schema1
             ]
             type: DataFrame<<local>/Schema1>
-          visibility: LOCAL
+          visibility: PUBLIC
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []

@@ -191,7 +191,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Internal
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -207,7 +207,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: library/api/InternalFakeI
-    visibility: INTERNAL
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: library.api.ExtensionKt
     getContainingModule: KaSourceModule "Sources of main"
@@ -250,7 +250,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -266,7 +266,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: library/api/PrivateFakeI
-    visibility: PRIVATE
+    visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingJvmClassName: library.api.ExtensionKt
     getContainingModule: KaSourceModule "Sources of main"
@@ -476,7 +476,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Internal
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -492,7 +492,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: library/api/InternalC1
-    visibility: INTERNAL
+    visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: library.api.C1Kt
     getContainingModule: KaLibraryModule "Library library"
@@ -535,7 +535,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -551,7 +551,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: library/api/PrivateC1
-    visibility: PRIVATE
+    visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: library.api.C1Kt
     getContainingModule: KaLibraryModule "Library library"
@@ -761,7 +761,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Internal
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -777,7 +777,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: library/api/InternalI
-    visibility: INTERNAL
+    visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: library.api.IKt
     getContainingModule: KaLibraryModule "Library library"
@@ -820,7 +820,7 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
+    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isExpect: false
@@ -836,7 +836,7 @@ KaNamedFunctionSymbol:
       annotations: []
       typeArguments: []
       type: library/api/PrivateI
-    visibility: PRIVATE
+    visibility: PUBLIC
     getContainingFileSymbol: null
     getContainingJvmClassName: library.api.IKt
     getContainingModule: KaLibraryModule "Library library"

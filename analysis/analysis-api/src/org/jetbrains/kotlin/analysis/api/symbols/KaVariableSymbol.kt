@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 
 public sealed class KaVariableSymbol :
     KaCallableSymbol(),
@@ -355,6 +356,9 @@ public abstract class KaReceiverParameterSymbol : KaParameterSymbol() {
      * In terms of the example above -- this is link to the function foo.
      */
     public abstract val owningCallableSymbol: KaCallableSymbol
+
+    final override val name: Name
+        get() = withValidityAssertion { SpecialNames.RECEIVER }
 
     abstract override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol>
 }
