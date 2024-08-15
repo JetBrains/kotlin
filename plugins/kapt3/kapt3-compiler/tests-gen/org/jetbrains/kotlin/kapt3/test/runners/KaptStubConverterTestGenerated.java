@@ -132,6 +132,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("dataClassWithCustomProperty.kt")
+  public void testDataClassWithCustomProperty() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/dataClassWithCustomProperty.kt");
+  }
+
+  @Test
   @TestMetadata("defaultImpls.kt")
   public void testDefaultImpls() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultImpls.kt");

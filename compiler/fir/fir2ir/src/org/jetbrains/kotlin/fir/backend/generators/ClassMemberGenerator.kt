@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -181,31 +182,19 @@ internal class ClassMemberGenerator(
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
                         require(irFunction is IrSimpleFunction)
                         when {
-                            DataClassResolver.isComponentLike(irFunction.name) -> when (val firBody = firFunction?.body) {
+                            DataClassResolver.isComponentLike(irFunction.name) -> when (firFunction?.body) {
                                 null -> dataClassMembersGenerator.registerCopyOrComponentFunction(irFunction)
-                                else -> irFunction.body = visitor.convertToIrBlockBody(firBody)
+                                else -> irFunction.body = convertBody(firFunction)
                             }
-                            DataClassResolver.isCopy(irFunction.name) -> when (val firBody = firFunction?.body) {
+                            DataClassResolver.isCopy(irFunction.name) -> when (firFunction?.body) {
                                 null -> dataClassMembersGenerator.registerCopyOrComponentFunction(irFunction)
-                                else -> irFunction.body = visitor.convertToIrBlockBody(firBody)
+                                else -> irFunction.body = convertBody(firFunction)
                             }
-                            else -> irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
+                            else -> irFunction.body = convertBody(firFunction)
                         }
                     }
                     else -> {
-                        val firBody = firFunction?.body
-                        irFunction.body =
-                            when {
-                                firBody == null -> null
-                                configuration.skipBodies -> factory.createBlockBody(startOffset, endOffset).also { body ->
-                                    val expression =
-                                        IrErrorExpressionImpl(startOffset, endOffset, builtins.nothingType, SKIP_BODIES_ERROR_DESCRIPTION)
-                                    body.statements.add(
-                                        IrReturnImpl(startOffset, endOffset, builtins.nothingType, irFunction.symbol, expression)
-                                    )
-                                }
-                                else -> visitor.convertToIrBlockBody(firBody)
-                            }
+                        irFunction.body = convertBody(firFunction)
                     }
                 }
             }
@@ -215,6 +204,21 @@ internal class ClassMemberGenerator(
             }
         }
         return irFunction
+    }
+
+    private fun IrFunction.convertBody(firFunction: FirFunction?): IrBlockBody? {
+        val firBody = firFunction?.body
+        return when {
+            firBody == null -> null
+            configuration.skipBodies -> factory.createBlockBody(startOffset, endOffset).also { body ->
+                val expression =
+                    IrErrorExpressionImpl(startOffset, endOffset, builtins.nothingType, SKIP_BODIES_ERROR_DESCRIPTION)
+                body.statements.add(
+                    IrReturnImpl(startOffset, endOffset, builtins.nothingType, symbol, expression)
+                )
+            }
+            else -> visitor.convertToIrBlockBody(firBody)
+        }
     }
 
     fun convertPropertyContent(irProperty: IrProperty, property: FirProperty): IrProperty {
