@@ -21,13 +21,8 @@ val nativePlatformVariants = listOf(
 dependencies {
     api(kotlinStdlib())
     compileOnly(project(":daemon-common"))
-    compileOnly(commonDependency("net.rubygrapefruit", "native-platform"))
 
     embedded(project(":daemon-common")) { isTransitive = false }
-    embedded(commonDependency("net.rubygrapefruit", "native-platform"))
-    nativePlatformVariants.forEach {
-        embedded(commonDependency("net.rubygrapefruit", "native-platform", "-$it"))
-    }
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
