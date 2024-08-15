@@ -171,7 +171,7 @@ object LightClassUtil {
         getWrappingClasses(declaration).flatMap { it.methods.asSequence() }
             .filterIsInstance<KtLightMethod>()
             .filter(nameFilter)
-            .filter { it -> it.kotlinOrigin === declaration || it.navigationElement === declaration || declaration.isConstrictorOf(it) }
+            .filter { it -> it.kotlinOrigin === declaration || declaration.isConstrictorOf(it) }
 
     private fun KtDeclaration.isConstrictorOf(lightMethod: KtLightMethod): Boolean {
         if (this is KtPrimaryConstructor && lightMethod.isConstructor) {
