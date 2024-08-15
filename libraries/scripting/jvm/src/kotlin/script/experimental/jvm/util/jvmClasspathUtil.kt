@@ -467,4 +467,15 @@ object KotlinJars {
             scriptRuntimeOrNull,
             reflectOrNull
         ).filterNotNull()
+
+    val scriptingJvmHost: File? by lazy {
+        getLib(
+            "kotlin-scripting-jvm-host-unshaded",
+            "kotlin-scripting-jvm-host-unshaded.jar",
+            "kotlin.script.experimental.jvmhost.repl.k2.K2ReplCompiler" // using a class that is a part of the kotlin-scripting-jvm-host-unshaded.jar
+        )
+    }
+
+    val k2ReplTestsClassPath: List<File>
+        get() = (kotlinScriptStandardJarsWithReflect + scriptingJvmHost).filterNotNull()
 }

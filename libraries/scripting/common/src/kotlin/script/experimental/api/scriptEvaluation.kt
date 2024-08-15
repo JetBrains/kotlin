@@ -131,6 +131,11 @@ fun ScriptEvaluationConfiguration.Builder.refineConfigurationBeforeEvaluate(hand
 }
 
 /**
+ * Track user cell index (which is seperate from snippet index)
+ */
+val ScriptEvaluationConfigurationKeys.cellIndex by PropertiesCollection.key<Int>()
+
+/**
  * The refinement callback function signature
  */
 typealias RefineScriptEvaluationConfigurationHandler =

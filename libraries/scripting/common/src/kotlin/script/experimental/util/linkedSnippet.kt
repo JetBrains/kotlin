@@ -32,3 +32,16 @@ class LinkedSnippetImpl<T>(private val _val: T, override val previous: LinkedSni
 }
 
 fun <T> LinkedSnippetImpl<T>?.add(value: T) = LinkedSnippetImpl(value, this)
+
+fun <T: Any> Iterable<T>.toLinkedSnippets(): LinkedSnippet<T> {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw IllegalArgumentException("Expecting at least one element")
+    val initial = LinkedSnippetImpl(iterator.next(), null)
+    var last = initial
+    iterator.forEachRemaining {
+        last = last.add(it)
+    }
+    return initial
+}
+
+
