@@ -24,6 +24,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("composeNavigationWithDataClass.kt")
+  public void testComposeNavigationWithDataClass() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/composeNavigationWithDataClass.kt");
+  }
+
+  @Test
   @TestMetadata("constExprInitializer.kt")
   public void testConstExprInitializer() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/constExprInitializer.kt");
