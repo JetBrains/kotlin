@@ -10,7 +10,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.CurrentBuildIdentifier
@@ -33,6 +35,8 @@ private constructor(
 ): IMppDependenciesProjectStructureMetadataExtractorFactory {
     override fun create(
         metadataArtifact: ResolvedArtifactResult,
+        dependency: ResolvedDependencyResult,
+        diagnosticsCollector: PreparedKotlinToolingDiagnosticsCollector,
         resolvedMetadataConfiguration: LazyResolvedConfiguration?,
     ): MppDependencyProjectStructureMetadataExtractor {
         val moduleId = metadataArtifact.variant.owner

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.MetadataJsonSerialisationTool
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvableConfiguration
@@ -92,6 +93,7 @@ internal sealed class MetadataDependencyResolution(
 internal class GranularMetadataTransformation(
     val params: Params,
     val parentSourceSetVisibilityProvider: ParentSourceSetVisibilityProvider,
+    val kotlinToolingDiagnosticsCollector: PreparedKotlinToolingDiagnosticsCollector,
 ) {
     private val logger = Logging.getLogger("GranularMetadataTransformation[${params.sourceSetName}]")
 
@@ -118,7 +120,7 @@ internal class GranularMetadataTransformation(
             projectStructureMetadataResolvableConfiguration =
             kotlinSourceSet.internal.projectStructureMetadataResolvableConfiguration?.let { LazyResolvedConfiguration(it) },
             objects = project.objects,
-            kotlinKmpProjectIsolationEnabled = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled
+            kotlinKmpProjectIsolationEnabled = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled,
         )
     }
 
@@ -236,8 +238,11 @@ internal class GranularMetadataTransformation(
         val mppDependencyMetadataExtractor =
             params.projectStructureMetadataExtractorFactory.create(
                 compositeMetadataArtifact,
+                dependency,
+                kotlinToolingDiagnosticsCollector,
                 params.projectStructureMetadataResolvableConfiguration
-            )
+            ) ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
+
         val projectStructureMetadata = mppDependencyMetadataExtractor.getProjectStructureMetadata()
             ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
 

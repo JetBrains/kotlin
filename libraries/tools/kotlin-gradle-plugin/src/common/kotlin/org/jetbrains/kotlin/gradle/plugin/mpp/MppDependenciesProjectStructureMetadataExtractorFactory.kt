@@ -9,7 +9,10 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Usage
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.utils.*
 
 internal val Project.kotlinMppDependencyProjectStructureMetadataExtractorFactory: MppDependenciesProjectStructureMetadataExtractorFactory
@@ -23,19 +26,22 @@ internal data class ProjectPathWithBuildPath(
 internal interface IMppDependenciesProjectStructureMetadataExtractorFactory {
     fun create(
         metadataArtifact: ResolvedArtifactResult,
+        dependency: ResolvedDependencyResult,
+        diagnosticsCollector: PreparedKotlinToolingDiagnosticsCollector,
         resolvedMetadataConfiguration: LazyResolvedConfiguration?,
-    ): MppDependencyProjectStructureMetadataExtractor
+    ): MppDependencyProjectStructureMetadataExtractor?
 }
 
 internal class MppDependenciesProjectStructureMetadataExtractorFactory
 private constructor(
     private val currentBuild: CurrentBuildIdentifier,
-    private val includedBuildsProjectStructureMetadataProviders: Lazy<Map<ProjectPathWithBuildPath, Lazy<KotlinProjectStructureMetadata?>>>,
 ) : IMppDependenciesProjectStructureMetadataExtractorFactory {
     override fun create(
         metadataArtifact: ResolvedArtifactResult,
+        dependency: ResolvedDependencyResult,
+        diagnosticsCollector: PreparedKotlinToolingDiagnosticsCollector,
         resolvedMetadataConfiguration: LazyResolvedConfiguration?,
-    ): MppDependencyProjectStructureMetadataExtractor {
+    ): MppDependencyProjectStructureMetadataExtractor? {
         val moduleId = metadataArtifact.variant.owner
 
         return if (moduleId is ProjectComponentIdentifier) {
@@ -57,23 +63,15 @@ private constructor(
                     */
                     getProjectMppDependencyProjectStructureMetadataExtractorForCompositProject(resolvedMetadataConfiguration, moduleId)
                 } else {
-                    /*
-                    We switched to using 'buildPath' instead of 'buildName' in 1.9.20,
-                    (See: https://youtrack.jetbrains.com/issue/KT-58157/)
-
-                    In order for 1.9.20 projects to consume included builds with lesser KGP versions,
-                    we will still query this 'legacy key' which is the key we expect older KGP versions to use.
-                    */
-                    val pre1920Key = ProjectPathWithBuildPath(moduleId.projectPath, moduleId.build.buildNameCompat)
-                    val key = ProjectPathWithBuildPath(moduleId.projectPath, moduleId.build.buildPathCompat)
-
-                    IncludedBuildMppDependencyProjectStructureMetadataExtractor(
-                        primaryArtifact = metadataArtifact.file,
-                        projectStructureMetadataProvider = {
-                            includedBuildsProjectStructureMetadataProviders.value[key]?.value
-                                ?: includedBuildsProjectStructureMetadataProviders.value[pre1920Key]?.value
-                        }
+                    diagnosticsCollector.report(
+                        KotlinToolingDiagnostics.ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion(
+                            dependency = dependency.requested.toString(),
+                            includedProjectPath = moduleId.buildTreePathCompat
+                        ),
+                        reportOnce = true,
+                        key = dependency.requested.toString()
                     )
+                    return null
                 }
             }
         } else {
@@ -126,8 +124,7 @@ private constructor(
     companion object {
         fun getOrCreate(project: Project): MppDependenciesProjectStructureMetadataExtractorFactory =
             MppDependenciesProjectStructureMetadataExtractorFactory(
-                currentBuild = project.currentBuild,
-                lazy { GlobalProjectStructureMetadataStorage.getProjectStructureMetadataProvidersFromAllGradleBuilds(project) },
+                currentBuild = project.currentBuild
             )
     }
 }

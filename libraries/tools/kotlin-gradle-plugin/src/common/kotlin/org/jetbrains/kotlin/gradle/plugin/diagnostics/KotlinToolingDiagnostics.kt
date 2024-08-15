@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_PORJECT_ISOLATION_ENABLED
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
@@ -1047,6 +1048,17 @@ object KotlinToolingDiagnostics {
             For a complete list of supported targets, refer to the documentation: https://kotl.in/6ixl2f
             """.trimIndent(),
             throwable = trace
+        )
+    }
+
+    object ProjectIsolationIncompatibleWithIncludedBuildsWithOldKotlinVersion: ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(dependency: String, includedProjectPath: String): ToolingDiagnostic = build(
+            """
+                Dependency '$dependency' resolved into included build project '$includedProjectPath'. 
+                However Kotlin Multiplatform can't process such dependency with enabled Project Isolation support.
+                Please consider upgrading Kotlin Version to the latest one in '$includedProjectPath' project.
+                Or disable Project Isolation support by setting gradle property: '$KOTLIN_KMP_PORJECT_ISOLATION_ENABLED=false'
+            """.trimIndent()
         )
     }
 }
