@@ -196,3 +196,12 @@ internal val KtDeclaration.location: KaSymbolLocation
 internal fun KtAnnotated.hasAnnotation(useSiteTarget: AnnotationUseSiteTarget): Boolean = annotationEntries.any {
     it.useSiteTarget?.getAnnotationUseSiteTarget() == useSiteTarget
 }
+
+internal val KtProperty.hasRegularSetter: Boolean
+    get() = isVar && hasDelegate() || setter?.isRegularAccessor == true
+
+internal val KtProperty.hasRegularGetter: Boolean
+    get() = hasDelegate() || getter?.isRegularAccessor == true
+
+private val KtPropertyAccessor.isRegularAccessor: Boolean
+    get() = hasBody() || containingKtFile.isCompiled

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -40,7 +41,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal sealed class KaFirKotlinPropertySymbol<P : KtTypeParameterListOwner>(
+internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
     final override val backingPsi: P?,
     final override val analysisSession: KaFirSession,
     final override val lazyFirSymbol: Lazy<FirPropertySymbol>,
@@ -63,6 +64,9 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtTypeParameterListOwner>(
     override val initializer: KaInitializerValue?
         get() = withValidityAssertion { firSymbol.getKtConstantInitializer(builder) }
 
+    val isInline: Boolean
+        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline }
+
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }
 
@@ -71,21 +75,15 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtTypeParameterListOwner>(
             createKaTypeParameters() ?: firSymbol.createKtTypeParameters(builder)
         }
 
-    override val getter: KaPropertyGetterSymbol?
-        get() = withValidityAssertion {
-            if (backingPsi == null || hasGetter)
-                firSymbol.getterSymbol?.let { builder.functionBuilder.buildGetterSymbol(it) }
-            else
-                null
-        }
+    abstract val compilerVisibilityByPsi: Visibility?
 
-    override val setter: KaPropertySetterSymbol?
-        get() = withValidityAssertion {
-            if (backingPsi == null || hasSetter)
-                firSymbol.setterSymbol?.let { builder.functionBuilder.buildSetterSymbol(it) }
-            else
-                null
-        }
+    override val compilerVisibility: Visibility
+        get() = withValidityAssertion { compilerVisibilityByPsi ?: firSymbol.visibility }
+
+    abstract val modalityByPsi: KaSymbolModality?
+
+    override val modality: KaSymbolModality
+        get() = withValidityAssertion { modalityByPsi ?: firSymbol.kaSymbolModality }
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion { KaFirBackingFieldSymbol(this) }
@@ -238,21 +236,59 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val hasGetter: Boolean
-        get() = withValidityAssertion { backingPsi != null || getter != null }
+        get() = withValidityAssertion { backingPsi != null || firSymbol.getterSymbol != null }
+
+    override val getter: KaPropertyGetterSymbol?
+        get() = withValidityAssertion {
+            when {
+                backingPsi != null ->
+                    if (backingPsi.hasRegularGetter)
+                        KaFirPropertyGetterSymbol(this)
+                    else
+                        KaFirDefaultPropertyGetterSymbol(this)
+
+                firSymbol.getterSymbol != null ->
+                    if (firSymbol.getterSymbol?.fir is FirDefaultPropertyAccessor)
+                        KaFirDefaultPropertyGetterSymbol(this)
+                    else
+                        KaFirPropertyGetterSymbol(this)
+
+                else -> null
+            }
+        }
 
     override val hasSetter: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null)
                 backingPsi.isVar || backingPsi.setter != null
             else
-                setter != null
+                firSymbol.setterSymbol != null
         }
 
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { backingPsi?.kaSymbolModality ?: firSymbol.kaSymbolModality }
+    override val setter: KaPropertySetterSymbol?
+        get() = withValidityAssertion {
+            when {
+                backingPsi != null -> when {
+                    backingPsi.hasRegularSetter -> KaFirPropertySetterSymbol(this)
+                    backingPsi.isVar -> KaFirDefaultPropertySetterSymbol(this)
+                    else -> null
+                }
 
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
+                firSymbol.setterSymbol != null ->
+                    if (firSymbol.setterSymbol?.fir is FirDefaultPropertyAccessor)
+                        KaFirDefaultPropertySetterSymbol(this)
+                    else
+                        KaFirPropertySetterSymbol(this)
+
+                else -> null
+            }
+        }
+
+    override val modalityByPsi: KaSymbolModality?
+        get() = withValidityAssertion { backingPsi?.kaSymbolModality }
+
+    override val compilerVisibilityByPsi: Visibility?
+        get() = withValidityAssertion { backingPsi?.visibility }
 
     override val callableId: CallableId?
         get() = withValidityAssertion {
@@ -327,14 +363,25 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
     override val hasGetter: Boolean
         get() = withValidityAssertion { true }
 
+    override val getter: KaPropertyGetterSymbol?
+        get() = withValidityAssertion { KaFirDefaultPropertyGetterSymbol(this) }
+
     override val hasSetter: Boolean
         get() = withValidityAssertion { !isVal }
 
-    override val modality: KaSymbolModality
-        get() = withValidityAssertion { backingPsi?.kaSymbolModalityByModifiers ?: firSymbol.kaSymbolModality }
+    override val setter: KaPropertySetterSymbol?
+        get() = withValidityAssertion {
+            if (hasSetter)
+                KaFirDefaultPropertySetterSymbol(this)
+            else
+                null
+        }
 
-    override val compilerVisibility: Visibility
-        get() = withValidityAssertion { backingPsi?.visibilityByModifiers ?: firSymbol.visibility }
+    override val modalityByPsi: KaSymbolModality?
+        get() = withValidityAssertion { backingPsi?.kaSymbolModalityByModifiers }
+
+    override val compilerVisibilityByPsi: Visibility?
+        get() = withValidityAssertion { backingPsi?.visibilityByModifiers }
 
     override val callableId: CallableId?
         get() = withValidityAssertion {
@@ -387,13 +434,24 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
     override val hasGetter: Boolean
         get() = withValidityAssertion { true }
 
+    override val getter: KaPropertyGetterSymbol?
+        get() = withValidityAssertion { KaFirDefaultPropertyGetterSymbol(this) }
+
     override val hasSetter: Boolean
         get() = withValidityAssertion { !isVal }
 
-    override val modality: KaSymbolModality
+    override val setter: KaPropertySetterSymbol?
+        get() = withValidityAssertion {
+            if (hasSetter)
+                KaFirDefaultPropertySetterSymbol(this)
+            else
+                null
+        }
+
+    override val modalityByPsi: KaSymbolModality?
         get() = withValidityAssertion { KaSymbolModality.FINAL }
 
-    override val compilerVisibility: Visibility
+    override val compilerVisibilityByPsi: Visibility?
         get() = withValidityAssertion { Visibilities.Public }
 
     override val callableId: CallableId?

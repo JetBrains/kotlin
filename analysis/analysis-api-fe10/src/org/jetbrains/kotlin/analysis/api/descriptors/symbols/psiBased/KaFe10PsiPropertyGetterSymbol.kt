@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KaFe10PsiPropertyGetterSymbol(
     override val psi: KtPropertyAccessor,
-    override val analysisContext: Fe10AnalysisContext
+    override val analysisContext: Fe10AnalysisContext,
 ) : KaPropertyGetterSymbol(), KaFe10PsiSymbol<KtPropertyAccessor, PropertyGetterDescriptor> {
     override val descriptor: PropertyGetterDescriptor? by cached {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
@@ -69,12 +68,6 @@ internal class KaFe10PsiPropertyGetterSymbol(
 
     override val hasBody: Boolean
         get() = withValidityAssertion { psi.hasBody() }
-
-    override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion { psi.valueParameters.map { KaFe10PsiValueParameterSymbol(it, analysisContext) } }
-
-    override val hasStableParameterNames: Boolean
-        get() = withValidityAssertion { true }
 
     override val callableId: CallableId?
         get() = withValidityAssertion { null }

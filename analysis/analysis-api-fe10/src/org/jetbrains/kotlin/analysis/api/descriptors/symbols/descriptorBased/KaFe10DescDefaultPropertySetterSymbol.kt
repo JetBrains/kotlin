@@ -16,11 +16,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10Neve
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -32,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KaFe10DescDefaultPropertySetterSymbol(
     private val propertyDescriptor: PropertyDescriptor,
-    override val analysisContext: Fe10AnalysisContext
+    override val analysisContext: Fe10AnalysisContext,
 ) : KaPropertySetterSymbol(), KaFe10Symbol {
     override val parameter: KaValueParameterSymbol by cached {
         KaDefaultValueParameterSymbol(propertyDescriptor, analysisContext)
@@ -55,9 +51,6 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
 
     override val isExpect: Boolean
         get() = withValidityAssertion { propertyDescriptor.isExpect }
-
-    override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion { listOf(parameter) }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
@@ -92,7 +85,7 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
 
     class KaDefaultValueParameterSymbol(
         private val propertyDescriptor: PropertyDescriptor,
-        override val analysisContext: Fe10AnalysisContext
+        override val analysisContext: Fe10AnalysisContext,
     ) : KaValueParameterSymbol(), KaFe10Symbol {
         val descriptor: ValueParameterDescriptor?
             get() = propertyDescriptor.setter?.valueParameters?.singleOrNull()

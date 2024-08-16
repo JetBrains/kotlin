@@ -32,7 +32,7 @@ abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest(
     }
 
     override fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
-        return with(DebugSymbolRenderer()) { renderForSubstitutionOverrideUnwrappingTest(symbol) }
+        return DebugSymbolRenderer().renderForSubstitutionOverrideUnwrappingTest(this@renderSymbolForComparison, symbol)
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {

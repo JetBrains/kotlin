@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.analysis.api.symbols
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 public sealed class KaPropertyAccessorSymbol :
     KaFunctionSymbol(),
-    @Suppress("DEPRECATION") KaSymbolWithKind {
+    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind {
 
-    final override val isExtension: Boolean get() = withValidityAssertion { false }
+    override val isExtension: Boolean get() = withValidityAssertion { false }
+
+    override val isExpect: Boolean get() = withValidityAssertion { false }
+    override val isActual: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
@@ -34,6 +36,12 @@ public sealed class KaPropertyAccessorSymbol :
 public typealias KtPropertyAccessorSymbol = KaPropertyAccessorSymbol
 
 public abstract class KaPropertyGetterSymbol : KaPropertyAccessorSymbol() {
+    final override val valueParameters: List<KaValueParameterSymbol>
+        get() = withValidityAssertion { emptyList() }
+
+    final override val hasStableParameterNames: Boolean
+        get() = withValidityAssertion { true }
+
     abstract override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol>
 }
 
@@ -42,6 +50,9 @@ public typealias KtPropertyGetterSymbol = KaPropertyGetterSymbol
 
 public abstract class KaPropertySetterSymbol : KaPropertyAccessorSymbol() {
     public abstract val parameter: KaValueParameterSymbol
+
+    final override val valueParameters: List<KaValueParameterSymbol>
+        get() = withValidityAssertion { listOf(parameter) }
 
     abstract override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol>
 }

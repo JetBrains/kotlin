@@ -123,7 +123,36 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    valueParameters: []
+    valueParameters: [
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Internal
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: <set-?>
+        origin: SOURCE_MEMBER_GENERATED
+        receiverParameter: null
+        returnType: KaErrorType:
+          annotations: []
+          type: ERROR_TYPE
+        visibility: INTERNAL
+        getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
+        getContainingJvmClassName: null
+        getContainingModule: KaSourceModule "Sources of main"
+        deprecationStatus: null
+    ]
     visibility: INTERNAL
     getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt

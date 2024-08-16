@@ -17,7 +17,7 @@ KaSyntheticJavaPropertySymbol:
     isActual: false
     isDefault: false
     isExpect: false
-    isExtension: false
+    isExtension: true
     isInline: false
     isOverride: false
     location: PROPERTY
@@ -36,7 +36,7 @@ KaSyntheticJavaPropertySymbol:
       modality: FINAL
       name: <receiver>
       origin: JAVA_SYNTHETIC_PROPERTY
-      owningCallableSymbol: KaSyntheticJavaPropertySymbol(/JavaClass.foo)
+      owningCallableSymbol: KaPropertyGetterSymbol(/JavaClass.getFoo)
       receiverParameter: null
       returnType: KaUsualClassType:
         annotations: []

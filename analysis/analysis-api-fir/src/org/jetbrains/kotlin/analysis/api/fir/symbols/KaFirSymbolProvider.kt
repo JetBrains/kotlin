@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.analysis.api.fir.components.KaFirSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -128,9 +127,11 @@ internal class KaFirSymbolProvider(
 
     override val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
         get() = withValidityAssertion {
-            firSymbolBuilder.functionBuilder.buildPropertyAccessorSymbol(
-                resolveToFirSymbolOfType<FirPropertyAccessorSymbol>(firResolveSession)
-            )
+            if (isGetter) {
+                KaFirPropertyGetterSymbol(this, analysisSession)
+            } else {
+                KaFirPropertySetterSymbol(this, analysisSession)
+            }
         }
 
     override val KtClassInitializer.symbol: KaClassInitializerSymbol

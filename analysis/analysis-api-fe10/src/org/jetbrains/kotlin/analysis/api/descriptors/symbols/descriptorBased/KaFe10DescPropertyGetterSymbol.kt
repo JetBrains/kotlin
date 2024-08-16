@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 
 internal class KaFe10DescPropertyGetterSymbol(
     override val descriptor: PropertyGetterDescriptor,
-    override val analysisContext: Fe10AnalysisContext
+    override val analysisContext: Fe10AnalysisContext,
 ) : KaPropertyGetterSymbol(), KaFe10DescSymbol<PropertyGetterDescriptor> {
     override val isDefault: Boolean
         get() = withValidityAssertion { descriptor.isDefault }
@@ -51,12 +50,6 @@ internal class KaFe10DescPropertyGetterSymbol(
 
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { descriptor.ktVisibility }
-
-    override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion { descriptor.valueParameters.map { KaFe10DescValueParameterSymbol(it, analysisContext) } }
-
-    override val hasStableParameterNames: Boolean
-        get() = withValidityAssertion { true }
 
     override val callableId: CallableId?
         get() = withValidityAssertion { descriptor.correspondingProperty.getterCallableIdIfNotLocal }

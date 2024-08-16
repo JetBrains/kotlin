@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KaFe10PsiPropertySetterSymbol(
     override val psi: KtPropertyAccessor,
-    override val analysisContext: Fe10AnalysisContext
+    override val analysisContext: Fe10AnalysisContext,
 ) : KaPropertySetterSymbol(), KaFe10PsiSymbol<KtPropertyAccessor, PropertySetterDescriptor> {
     override val descriptor: PropertySetterDescriptor? by cached {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
@@ -69,9 +69,6 @@ internal class KaFe10PsiPropertySetterSymbol(
 
     override val hasBody: Boolean
         get() = withValidityAssertion { psi.hasBody() }
-
-    override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion { psi.valueParameters.map { KaFe10PsiValueParameterSymbol(it, analysisContext) } }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -232,37 +233,24 @@ internal class KaSymbolByFirBuilder(
             return KaFirSamConstructorSymbol(firSymbol, analysisSession)
         }
 
-        fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KaPropertyAccessorSymbol = when {
-            firSymbol.isGetter -> buildGetterSymbol(firSymbol)
-            else -> buildSetterSymbol(firSymbol)
-        }
-
-        fun buildGetterSymbol(firSymbol: FirPropertyAccessorSymbol): KaPropertyGetterSymbol {
-            checkRequirementForBuildingSymbol<KaFirPropertyGetterSymbol>(firSymbol, firSymbol.isGetter)
-
-            firSymbol.propertySymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { unwrapped ->
-                val getterSymbol = unwrapped.symbol.getterSymbol ?: errorWithFirSpecificEntries("No getter found", fir = unwrapped) {
-                    withFirEntry("original", firSymbol.fir)
-                }
-
-                return buildGetterSymbol(getterSymbol)
+        fun buildPropertyAccessorSymbol(firSymbol: FirPropertyAccessorSymbol): KaPropertyAccessorSymbol {
+            val propertySymbol = variableBuilder.buildVariableSymbol(firSymbol.propertySymbol)
+            requireWithAttachment(
+                propertySymbol is KaPropertySymbol,
+                { "Unexpected property symbol type: ${propertySymbol::class.simpleName}" },
+            ) {
+                withFirSymbolEntry("propertySymbol", firSymbol.propertySymbol)
             }
 
-            return KaFirPropertyGetterSymbol(firSymbol, analysisSession)
-        }
-
-        fun buildSetterSymbol(firSymbol: FirPropertyAccessorSymbol): KaPropertySetterSymbol {
-            checkRequirementForBuildingSymbol<KaFirPropertySetterSymbol>(firSymbol, firSymbol.isSetter)
-
-            firSymbol.propertySymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let { unwrapped ->
-                val setterSymbol = unwrapped.symbol.setterSymbol ?: errorWithFirSpecificEntries("No setter found", fir = unwrapped) {
-                    withFirEntry("original", firSymbol.fir)
-                }
-
-                return buildSetterSymbol(setterSymbol)
+            val accessorSymbol = if (firSymbol.isGetter) propertySymbol.getter else propertySymbol.setter
+            requireWithAttachment(
+                accessorSymbol != null,
+                { "Inconsistent state: property accessor is null while property symbol is not null" },
+            ) {
+                withFirSymbolEntry("propertySymbol", firSymbol.propertySymbol)
             }
 
-            return KaFirPropertySetterSymbol(firSymbol, analysisSession)
+            return accessorSymbol
         }
     }
 
@@ -334,7 +322,18 @@ internal class KaSymbolByFirBuilder(
                 return buildValueParameterSymbol(unwrappedParameter)
             }
 
-            return KaFirValueParameterSymbol(firSymbol, analysisSession)
+            return if (functionSymbol is FirPropertyAccessorSymbol && functionSymbol.fir is FirDefaultPropertyAccessor) {
+                val owner = functionBuilder.buildPropertyAccessorSymbol(functionSymbol)
+                requireWithAttachment(
+                    owner is KaFirDefaultPropertySetterSymbol,
+                    { "Unexpected owner type: ${owner::class.simpleName}" }
+                ) {
+                    withFirSymbolEntry("function", functionSymbol)
+                }
+
+                KaFirDefaultSetterValueParameter(owner)
+            } else
+                KaFirValueParameterSymbol(firSymbol, analysisSession)
         }
 
 

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KaFe10PsiDefaultPropertySetterSymbol(
     private val propertyPsi: KtProperty,
-    override val analysisContext: Fe10AnalysisContext
+    override val analysisContext: Fe10AnalysisContext,
 ) : KaPropertySetterSymbol(), KaFe10Symbol {
     val descriptor: PropertySetterDescriptor? by cached {
         val bindingContext = analysisContext.analyze(propertyPsi, Fe10AnalysisFacade.AnalysisMode.PARTIAL)
@@ -71,9 +71,6 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
     override val parameter: KaValueParameterSymbol by cached {
         KaDefaultValueParameterSymbol(propertyPsi, descriptor?.valueParameters?.firstOrNull(), analysisContext)
     }
-
-    override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion { listOf(parameter) }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
@@ -123,7 +120,7 @@ internal class KaFe10PsiDefaultPropertySetterSymbol(
     class KaDefaultValueParameterSymbol(
         private val propertyPsi: KtProperty,
         val descriptor: ValueParameterDescriptor?,
-        override val analysisContext: Fe10AnalysisContext
+        override val analysisContext: Fe10AnalysisContext,
     ) : KaValueParameterSymbol(), KaFe10Symbol {
         override val hasDefaultValue: Boolean
             get() = withValidityAssertion { false }

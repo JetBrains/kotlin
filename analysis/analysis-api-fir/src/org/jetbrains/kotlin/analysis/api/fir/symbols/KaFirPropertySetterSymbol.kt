@@ -7,107 +7,170 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePropertySetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
+import org.jetbrains.kotlin.fir.declarations.utils.hasBody
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirPropertySetterSymbol(
-    override val firSymbol: FirPropertyAccessorSymbol,
-    override val analysisSession: KaFirSession,
-) : KaPropertySetterSymbol(), KaFirSymbol<FirPropertyAccessorSymbol> {
+    val owningKaProperty: KaFirKotlinPropertySymbol<KtProperty>,
+) : KaPropertySetterSymbol(), KaFirKtBasedSymbol<KtPropertyAccessor, FirPropertyAccessorSymbol> {
+    override val backingPsi: KtPropertyAccessor? = owningKaProperty.backingPsi?.setter
+
+    override val analysisSession: KaFirSession
+        get() = owningKaProperty.analysisSession
+
+    override val lazyFirSymbol: Lazy<FirPropertyAccessorSymbol>
+        get() = throw UnsupportedOperationException()
+
+    override val firSymbol: FirPropertyAccessorSymbol
+        get() = owningKaProperty.firSymbol.setterSymbol ?: errorWithAttachment("Setter is not found") {
+            withFirSymbolEntry("property", owningKaProperty.firSymbol)
+        }
 
     init {
-        require(firSymbol.isSetter)
+        requireWithAttachment(
+            backingPsi?.property?.hasRegularSetter != false,
+            { "Property setter without a body" },
+        ) {
+            withPsiEntry("propertySetter", backingPsi)
+            withFirSymbolEntry("firSymbol", firSymbol)
+        }
     }
 
-    override val psi: PsiElement? get() = withValidityAssertion { firSymbol.findPsi() }
+    override val psi: PsiElement?
+        get() = withValidityAssertion { backingPsi ?: firSymbol.findPsi() }
 
-    override val isDefault: Boolean get() = withValidityAssertion { firSymbol.fir is FirDefaultPropertyAccessor }
-    override val isInline: Boolean get() = withValidityAssertion { firSymbol.isInline }
-    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
-    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
+    override val isActual: Boolean
+        get() = withValidityAssertion { owningKaProperty.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { owningKaProperty.isExpect }
+
+    override val isDefault: Boolean
+        get() = withValidityAssertion {
+            if (ifSource { backingPsi } != null)
+                false
+            else
+                firSymbol.fir is FirDefaultPropertyAccessor
+        }
+
+    override val isInline: Boolean
+        get() = withValidityAssertion {
+            owningKaProperty.backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline
+        }
 
     override val isOverride: Boolean
         get() = withValidityAssertion {
-            if (firSymbol.isOverride) return true
-            val propertySymbol = firSymbol.fir.propertySymbol
-            if (!propertySymbol.isOverride) return false
-            val session = analysisSession.firSession
-            val containingClassScope = firSymbol.dispatchReceiverType?.scope(
-                session,
-                analysisSession.getScopeSessionFor(session),
-                CallableCopyTypeCalculator.DoNothing,
-                requiredMembersPhase = FirResolvePhase.STATUS,
-            ) ?: return false
+            ifSource { owningKaProperty.backingPsi }?.hasModifier(KtTokens.OVERRIDE_KEYWORD)?.let { hasOverrideKeyword ->
+                // The existence of `override` keyword doesn't guaranty that the setter overrides something
+                // as its base version may have `val`
+                if (!hasOverrideKeyword) {
+                    return false
+                }
+            }
 
-            val overriddenProperties = containingClassScope.getDirectOverriddenProperties(propertySymbol)
-            overriddenProperties.any { it.isVar }
+            firSymbol.isSetterOverride(analysisSession)
         }
 
-    override val hasBody: Boolean get() = withValidityAssertion { firSymbol.fir.hasBody }
 
-    override val modality: KaSymbolModality get() = withValidityAssertion { firSymbol.kaSymbolModality }
-    override val compilerVisibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
+    override val hasBody: Boolean
+        get() = withValidityAssertion {
+            ifSource {
+                backingPsi?.hasBody() == true || backingPsi?.property?.hasDelegate() == true
+            } ?: firSymbol.fir.hasBody
+        }
+
+    override val modality: KaSymbolModality
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                backingPsi.kaSymbolModalityByModifiers ?: owningKaProperty.modality
+            else
+                firSymbol.kaSymbolModality
+        }
+
+    override val compilerVisibility: Visibility
+        get() = withValidityAssertion {
+            if (backingPsi != null)
+                backingPsi.visibilityByModifiers ?: owningKaProperty.compilerVisibility
+            else
+                firSymbol.visibility
+        }
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
-            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            if (backingPsi?.annotationEntries.isNullOrEmpty() &&
+                owningKaProperty.backingPsi?.hasAnnotation(AnnotationUseSiteTarget.PROPERTY_SETTER) == false
+            )
+                KaBaseEmptyAnnotationList(token)
+            else
+                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
-    /**
-     * Returns [CallableId] of the delegated Java method if the corresponding property of this setter is a synthetic Java property.
-     * Otherwise, returns `null`
-     */
     override val callableId: CallableId?
-        get() = withValidityAssertion {
-            val fir = firSymbol.fir
-            if (fir is FirSyntheticPropertyAccessor) {
-                fir.delegate.symbol.callableId
-            } else null
-        }
+        get() = withValidityAssertion { null }
 
     override val parameter: KaValueParameterSymbol
         get() = withValidityAssertion {
-            firSymbol.createKtValueParameters(builder).single()
+            with(analysisSession) {
+                backingPsi?.valueParameters?.firstOrNull()?.symbol as? KaValueParameterSymbol
+            } ?: firSymbol.createKtValueParameters(builder).single()
         }
 
-    override val valueParameters: List<KaValueParameterSymbol> get() = withValidityAssertion { listOf(parameter) }
-
-    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val returnType: KaType
+        get() = withValidityAssertion { firSymbol.returnType(builder) }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
-            builder.variableBuilder.buildVariableSymbol(firSymbol.fir.propertySymbol).receiverParameter
+            owningKaProperty.receiverParameter
         }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
-        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaPropertySetterSymbol>(this)
-            ?: KaBasePropertySetterSymbolPointer(analysisSession.createOwnerPointer(this))
+        psiBasedSymbolPointerOfTypeIfSource<KaPropertySetterSymbol>()
+            ?: KaBasePropertySetterSymbolPointer(owningKaProperty.createPointer())
     }
 
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
+    override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)
+    override fun hashCode(): Int = psiOrSymbolHashCode()
+
+    companion object {
+        operator fun invoke(declaration: KtPropertyAccessor, session: KaFirSession): KaPropertySetterSymbol {
+            val property = declaration.property
+            val owningKaProperty = with(session) {
+                @Suppress("UNCHECKED_CAST")
+                property.symbol as KaFirKotlinPropertySymbol<KtProperty>
+            }
+
+            return if (property.hasRegularSetter) {
+                KaFirPropertySetterSymbol(owningKaProperty)
+            } else {
+                KaFirDefaultPropertySetterSymbol(owningKaProperty)
+            }
+        }
+    }
 }

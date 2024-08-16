@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
+import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirTypeParameterSymbolPointer(
@@ -25,11 +24,10 @@ internal class KaFirTypeParameterSymbolPointer(
     override fun restoreSymbol(analysisSession: KaSession): KaTypeParameterSymbol? {
         require(analysisSession is KaFirSession)
         val ownerSymbol = with(analysisSession) {
-            ownerPointer.restoreSymbol() ?: return null
+            ownerPointer.restoreSymbol()
         }
 
-        val firTypeParameterSymbol = ownerSymbol.firSymbol.typeParameterSymbols?.getOrNull(index)?.takeIf { it.name == name } ?: return null
-        return analysisSession.firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firTypeParameterSymbol)
+        return ownerSymbol?.typeParameters?.getOrNull(index)?.takeIf { it.name == name }
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

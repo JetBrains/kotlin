@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirValueParameterSymbolPointer(
@@ -23,12 +23,10 @@ internal class KaFirValueParameterSymbolPointer(
     override fun restoreSymbol(analysisSession: KaSession): KaValueParameterSymbol? {
         require(analysisSession is KaFirSession)
         val ownerSymbol = with(analysisSession) {
-            ownerPointer.restoreSymbol() ?: return null
+            ownerPointer.restoreSymbol()
         }
 
-        val function = ownerSymbol.firSymbol.fir as? FirFunction ?: return null
-        val firValueParameterSymbol = function.valueParameters.getOrNull(index)?.symbol?.takeIf { it.name == name } ?: return null
-        return analysisSession.firSymbolBuilder.variableBuilder.buildValueParameterSymbol(firValueParameterSymbol)
+        return ownerSymbol?.valueParameters?.getOrNull(index)?.takeIf { it.name == name }
     }
 
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||

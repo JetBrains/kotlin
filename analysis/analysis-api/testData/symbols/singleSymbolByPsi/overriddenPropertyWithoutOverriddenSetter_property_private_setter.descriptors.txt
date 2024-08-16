@@ -131,7 +131,37 @@ KaKotlinPropertySymbol:
       annotations: []
       typeArguments: []
       type: kotlin/Unit
-    valueParameters: []
+    valueParameters: [
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Private
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: <set-?>
+        origin: SOURCE_MEMBER_GENERATED
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Int
+        visibility: PRIVATE
+        getContainingFileSymbol: KaFileSymbol(overriddenPropertyWithoutOverriddenSetter_property_private_setter.kt)
+        getContainingJvmClassName: null
+        getContainingModule: KaSourceModule "Sources of main"
+        deprecationStatus: null
+    ]
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
