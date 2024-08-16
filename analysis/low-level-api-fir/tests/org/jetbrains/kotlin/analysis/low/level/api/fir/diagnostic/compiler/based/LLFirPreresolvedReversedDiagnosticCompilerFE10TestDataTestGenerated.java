@@ -14521,6 +14521,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("conflictingStarAndTypeParameterBounds.kt")
+      public void testConflictingStarAndTypeParameterBounds() {
+        runTest("compiler/testData/diagnostics/tests/generics/conflictingStarAndTypeParameterBounds.kt");
+      }
+
+      @Test
       @TestMetadata("doNotCaptureSupertype.kt")
       public void testDoNotCaptureSupertype() {
         runTest("compiler/testData/diagnostics/tests/generics/doNotCaptureSupertype.kt");
