@@ -273,7 +273,6 @@ tasks {
                 "org.jetbrains.kotlin.gradle.**", // part of the plugin
                 "org.jetbrains.kotlin.project.model.**", // part of the plugin
                 "org.jetbrains.kotlin.statistics.**", // part of the plugin
-                "org.jetbrains.kotlin.swiftexport.ExperimentalSwiftExportDsl", // part of the plugin
                 "org.jetbrains.kotlin.tooling.**", // part of the plugin
                 "org.jetbrains.kotlin.org.**", // already shadowed dependencies
                 "org.jetbrains.kotlin.com.**", // already shadowed dependencies
