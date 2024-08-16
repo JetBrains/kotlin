@@ -524,5 +524,11 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     public void testTopLevelDestructuringDeclarationMutable() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/topLevelDestructuringDeclarationMutable.kt");
     }
+
+    @Test
+    @TestMetadata("valPropertyWithSetter.kt")
+    public void testValPropertyWithSetter() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/valPropertyWithSetter.kt");
+    }
   }
 }
