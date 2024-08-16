@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -29,13 +29,15 @@ fun checkInconsistentTypeParameters(
     for ((typeParameterSymbol, typeAndProjections) in result) {
         val projections = typeAndProjections.projections
         if (projections.size > 1) {
+            // Report `Any?` instead of `*` for star projections because diagnostics renderer doesn't support type projections
+            // Moreover, K1 report `Any?` instead of `*`
             if (isValues) {
                 reporter.reportOn(
                     source,
                     FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES,
                     typeParameterSymbol,
                     typeAndProjections.classSymbol,
-                    projections,
+                    projections.map { it.type ?: StandardTypes.NullableAny },
                     context
                 )
             } else {
@@ -44,7 +46,7 @@ fun checkInconsistentTypeParameters(
                     FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS,
                     typeParameterSymbol,
                     typeAndProjections.classSymbol,
-                    projections,
+                    projections.map { it.type ?: StandardTypes.NullableAny },
                     context
                 )
             }
@@ -57,10 +59,11 @@ private fun buildDeepSubstitutionMultimap(
     context: CheckerContext,
 ): Map<FirTypeParameterSymbol, ClassSymbolAndProjections> {
     val result = mutableMapOf<FirTypeParameterSymbol, ClassSymbolAndProjections>()
-    val substitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-    val visitedSupertypes = mutableSetOf<ConeKotlinType>()
+    val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
     val session = context.session
     val typeContext = session.typeContext
+    val substitutor = FE10LikeConeSubstitutor(substitution, session)
+    val visitedSupertypes = mutableSetOf<ConeKotlinType>()
 
     fun fillInDeepSubstitutor(typeArguments: Array<out ConeTypeProjection>?, classSymbol: FirRegularClassSymbol, context: CheckerContext) {
         if (typeArguments != null) {
@@ -70,16 +73,13 @@ private fun buildDeepSubstitutionMultimap(
             for (index in 0 until count) {
                 val typeArgument = typeArguments[index]
 
-                val substitutedArgument = substitutorByMap(substitution, session)
-                    .substituteArgument(typeArgument, index)
-                    ?: typeArgument
-                val substitutedType = substitutedArgument.type ?: continue
+                val substitutedArgument = substitutor.substituteArgument(typeArgument, index) ?: typeArgument
 
                 val typeParameterSymbol = typeParameterSymbols[index]
 
-                substitution[typeParameterSymbol] = substitutedType
+                substitution[typeParameterSymbol] = substitutedArgument
                 var classSymbolAndProjections = result[typeParameterSymbol]
-                val projections: MutableList<ConeKotlinType>
+                val projections: MutableList<ConeTypeProjection>
                 if (classSymbolAndProjections == null) {
                     projections = mutableListOf()
                     classSymbolAndProjections = ClassSymbolAndProjections(classSymbol, projections)
@@ -88,10 +88,17 @@ private fun buildDeepSubstitutionMultimap(
                     projections = classSymbolAndProjections.projections
                 }
 
-                if (projections.all {
-                        it != substitutedType && !AbstractTypeChecker.equalTypes(typeContext, it, substitutedType)
-                    }) {
-                    projections.add(substitutedType)
+                val substitutedArgumentType = substitutedArgument.type
+                if (projections.none {
+                        when {
+                            // One of them is a star projection
+                            substitutedArgumentType == null || it.type == null -> it === substitutedArgument
+                            // None of them is a star projection
+                            else -> AbstractTypeChecker.equalTypes(typeContext, it.type!!, substitutedArgumentType)
+                        }
+                    }
+                ) {
+                    projections.add(substitutedArgument)
                 }
             }
         }
@@ -116,5 +123,5 @@ private fun buildDeepSubstitutionMultimap(
 
 private data class ClassSymbolAndProjections(
     val classSymbol: FirRegularClassSymbol,
-    val projections: MutableList<ConeKotlinType>
+    val projections: MutableList<ConeTypeProjection>
 )

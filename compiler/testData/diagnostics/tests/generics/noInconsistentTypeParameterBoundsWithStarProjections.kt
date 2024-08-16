@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-70667
 
 interface RootType<T>
