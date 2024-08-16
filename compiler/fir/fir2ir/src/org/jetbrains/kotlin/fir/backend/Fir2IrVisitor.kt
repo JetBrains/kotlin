@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.primitiveOp2
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -1209,12 +1208,18 @@ class Fir2IrVisitor(
             val irBranches = listOf(
                 IrBranchImpl(
                     startOffset, endOffset,
-                    primitiveOp2(
-                        startOffset, endOffset, builtins.eqeqSymbol,
-                        builtins.booleanType, IrStatementOrigin.EQEQ,
-                        irGetLhsValue(),
-                        IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
-                    ),
+                    IrCallImplWithShape(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = builtins.booleanType,
+                        symbol = builtins.eqeqSymbol,
+                        typeArgumentsCount = 0,
+                        valueArgumentsCount = 2,
+                        origin = IrStatementOrigin.EQEQ,
+                    ).apply {
+                        putValueArgument(0, irGetLhsValue())
+                        putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType))
+                    },
                     convertToIrExpression(elvisExpression.rhs)
                         .insertImplicitCast(elvisExpression, elvisExpression.rhs.resolvedType, elvisExpression.resolvedType)
                 ),
@@ -1266,7 +1271,7 @@ class Fir2IrVisitor(
                     flattenElse = origin == IrStatementOrigin.IF,
                 )
                 if (isProperlyExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
-                    val irResult = IrCallImpl(
+                    val irResult = IrCallImplWithShape(
                         startOffset, endOffset, builtins.nothingType,
                         builtins.noWhenBranchMatchedExceptionSymbol,
                         typeArgumentsCount = 0,
@@ -1602,7 +1607,7 @@ class Fir2IrVisitor(
         session, checkNotNullCall
     ) {
         return checkNotNullCall.convertWithOffsets { startOffset, endOffset ->
-            IrCallImpl(
+            IrCallImplWithShape(
                 startOffset, endOffset,
                 checkNotNullCall.resolvedType.toIrType(c),
                 builtins.checkNotNullSymbol,

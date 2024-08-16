@@ -184,7 +184,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
             val descriptor = constructorDescriptor.original
             val constructorSymbol = context.symbolTable.descriptorExtension.referenceConstructor(descriptor)
             val returnType = constructorDescriptor.returnType.toIrType()
-            val irCall = IrEnumConstructorCallImpl(
+            val irCall = IrEnumConstructorCallImplWithShape(
                 startOffset, endOffset, returnType, constructorSymbol, descriptor.typeParametersCount, descriptor.valueParameters.size
             )
             context.callToSubstitutedDescriptorMap[irCall] = constructorDescriptor
@@ -232,7 +232,7 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                         )
                     } else {
                         val getterSymbol = context.symbolTable.descriptorExtension.referenceSimpleFunction(getMethodDescriptor.original)
-                        IrCallImpl(
+                        IrCallImplWithShape(
                             startOffset, endOffset,
                             irType,
                             getterSymbol,

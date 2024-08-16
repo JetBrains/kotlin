@@ -775,7 +775,7 @@ internal class AdapterGenerator(
                         startOffset, endOffset, c.builtins.nothingType, irAdapterFunction.symbol,
                         IrTypeOperatorCallImpl(
                             startOffset, endOffset, irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
-                            IrCallImpl(
+                            IrCallImplWithShape(
                                 startOffset, endOffset, irFunctionType, builtins.checkNotNullSymbol,
                                 typeArgumentsCount = 1, valueArgumentsCount = 1, origin = IrStatementOrigin.EXCLEXCL
                             ).apply {

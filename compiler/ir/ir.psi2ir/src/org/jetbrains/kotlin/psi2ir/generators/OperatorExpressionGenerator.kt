@@ -247,13 +247,17 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
             IrStatementOrigin.IN ->
                 irContainsCall
             IrStatementOrigin.NOT_IN ->
-                primitiveOp1(
-                    expression.startOffsetSkippingComments, expression.endOffset,
-                    context.irBuiltIns.booleanNotSymbol,
-                    context.irBuiltIns.booleanType,
-                    IrStatementOrigin.NOT_IN,
-                    irContainsCall
-                )
+                IrCallImplWithShape(
+                    startOffset = expression.startOffsetSkippingComments,
+                    endOffset = expression.endOffset,
+                    symbol = context.irBuiltIns.booleanNotSymbol,
+                    type = context.irBuiltIns.booleanType,
+                    origin = IrStatementOrigin.NOT_IN,
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = 0,
+                ).apply {
+                    dispatchReceiver = irContainsCall
+                }
             else ->
                 throw AssertionError("Unexpected in-operator $irOperator")
         }
@@ -278,13 +282,17 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
             IrStatementOrigin.EQEQEQ ->
                 irIdentityEquals
             IrStatementOrigin.EXCLEQEQ ->
-                primitiveOp1(
-                    expression.startOffsetSkippingComments, expression.endOffset,
-                    context.irBuiltIns.booleanNotSymbol,
-                    context.irBuiltIns.booleanType,
-                    IrStatementOrigin.EXCLEQEQ,
-                    irIdentityEquals
-                )
+                IrCallImplWithShape(
+                    startOffset = expression.startOffsetSkippingComments,
+                    endOffset = expression.endOffset,
+                    symbol = context.irBuiltIns.booleanNotSymbol,
+                    type = context.irBuiltIns.booleanType,
+                    origin = IrStatementOrigin.EXCLEQEQ,
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = 0,
+                ).apply {
+                    dispatchReceiver = irIdentityEquals
+                }
             else ->
                 throw AssertionError("Unexpected identity operator $irOperator")
         }
@@ -321,13 +329,17 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
             IrStatementOrigin.EQEQ ->
                 irEquals
             IrStatementOrigin.EXCLEQ ->
-                primitiveOp1(
-                    expression.startOffsetSkippingComments, expression.endOffset,
-                    context.irBuiltIns.booleanNotSymbol,
-                    context.irBuiltIns.booleanType,
-                    IrStatementOrigin.EXCLEQ,
-                    irEquals
-                )
+                IrCallImplWithShape(
+                    startOffset = expression.startOffsetSkippingComments,
+                    endOffset = expression.endOffset,
+                    type = context.irBuiltIns.booleanType,
+                    symbol = context.irBuiltIns.booleanNotSymbol,
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = 0,
+                    origin = IrStatementOrigin.EXCLEQ,
+                ).apply {
+                    dispatchReceiver = irEquals
+                }
             else ->
                 throw AssertionError("Unexpected equality operator $irOperator")
         }
