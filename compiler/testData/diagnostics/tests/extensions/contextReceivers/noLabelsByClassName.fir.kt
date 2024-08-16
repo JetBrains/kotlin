@@ -6,7 +6,7 @@ fun Int.f() {
 var Int.p: Int
     get() {
         this<!UNRESOLVED_LABEL!>@Int<!>
-        <!RETURN_NOT_ALLOWED!>return@p<!> 42
+        return<!UNRESOLVED_LABEL!>@p<!> 42
     }
     set(value) {
         this<!UNRESOLVED_LABEL!>@Int<!>
@@ -16,7 +16,7 @@ class X {
     var Int.p: Int
         get() {
             this<!UNRESOLVED_LABEL!>@Int<!>
-            <!RETURN_NOT_ALLOWED!>return@p<!> 42
+            return<!UNRESOLVED_LABEL!>@p<!> 42
         }
         set(value) {
             this<!UNRESOLVED_LABEL!>@Int<!>

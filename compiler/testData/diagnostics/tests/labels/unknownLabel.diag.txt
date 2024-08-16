@@ -1,0 +1,7 @@
+/unknownLabel.kt:7:32: error: unresolved reference: @foo
+    1.bar { if (it == 2) return@foo }
+                               ^^^^
+/unknownLabel.kt:11:40: error: unresolved reference: @foo
+    1.bar { 2.bar { if (it == 2) return@foo } }
+                                       ^^^^
+

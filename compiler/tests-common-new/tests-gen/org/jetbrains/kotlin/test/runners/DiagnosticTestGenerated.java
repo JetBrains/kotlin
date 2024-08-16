@@ -25281,6 +25281,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       public void testQualifiedThisInExtensionProperty() {
         runTest("compiler/testData/diagnostics/tests/labels/qualifiedThisInExtensionProperty.kt");
       }
+
+      @Test
+      @TestMetadata("unknownLabel.kt")
+      public void testUnknownLabel() {
+        runTest("compiler/testData/diagnostics/tests/labels/unknownLabel.kt");
+      }
     }
 
     @Nested
