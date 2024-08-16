@@ -661,6 +661,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("GetOperator.kt")
+    public void testGetOperator() {
+      runTest("plugins/power-assert/testData/codegen/operator/GetOperator.kt");
+    }
+
+    @Test
     @TestMetadata("NegativeContainsFunction.kt")
     public void testNegativeContainsFunction() {
       runTest("plugins/power-assert/testData/codegen/operator/NegativeContainsFunction.kt");

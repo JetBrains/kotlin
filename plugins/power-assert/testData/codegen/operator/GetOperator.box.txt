@@ -1,0 +1,14 @@
+---
+assert(listOf("Hello", "World")[1] == "Hello")
+       |                           |
+       |                           false
+       World
+       [Hello, World]
+---
+---
+assert(listOf("Hello", "World").get(1) == "Hello")
+       |                        |      |
+       |                        |      false
+       |                        World
+       [Hello, World]
+---
