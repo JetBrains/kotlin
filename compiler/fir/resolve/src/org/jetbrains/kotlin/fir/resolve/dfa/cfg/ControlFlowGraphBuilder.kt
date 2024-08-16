@@ -1247,7 +1247,7 @@ class ControlFlowGraphBuilder {
         CFGNode.removeAllOutgoingEdges(node)
         CFGNode.addEdge(node, stub, EdgeKind.DeadForward, propagateDeadness = false)
         for ((to, edge) in edges) {
-            val kind = if (edge.kind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward
+            val kind = if (edge.kind.isBack) EdgeKind.DeadCfgBackward else EdgeKind.DeadForward
             CFGNode.addEdge(stub, to, kind, propagateDeadness = false, label = edge.label)
             to.updateDeadStatus()
             propagateDeadnessForward(to)
@@ -1568,9 +1568,7 @@ class ControlFlowGraphBuilder {
         preferredKind: EdgeKind = EdgeKind.Forward,
         label: EdgeLabel = NormalPath,
     ) {
-        val kind = if (isDead || from.isDead || to.isDead) {
-            if (preferredKind.isBack) EdgeKind.DeadBackward else EdgeKind.DeadForward
-        } else preferredKind
+        val kind = if (isDead || from.isDead || to.isDead) preferredKind.toDead() else preferredKind
         CFGNode.addEdge(from, to, kind, propagateDeadness, label)
     }
 
@@ -1585,7 +1583,7 @@ class ControlFlowGraphBuilder {
     }
 
     private fun addBackEdge(from: CFGNode<*>, to: CFGNode<*>, isDead: Boolean = false, label: EdgeLabel = NormalPath) {
-        val kind = if (isDead || from.isDead || to.isDead) EdgeKind.DeadBackward else EdgeKind.CfgBackward
+        val kind = if (isDead || from.isDead || to.isDead) EdgeKind.DeadCfgBackward else EdgeKind.CfgBackward
         CFGNode.addEdge(from, to, kind, propagateDeadness = false, label = label)
     }
 

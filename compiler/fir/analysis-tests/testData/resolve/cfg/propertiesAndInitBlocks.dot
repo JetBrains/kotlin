@@ -206,7 +206,7 @@ digraph propertiesAndInitBlocks_kt {
     34 -> {35} [style=dotted];
     35 -> {36} [style=dotted];
     36 -> {37} [style=dotted];
-    37 -> {38} [style=dotted];
+    37 -> {38} [color=green style=dotted];
     39 -> {40};
     40 -> {41};
     41 -> {42};
@@ -378,6 +378,6 @@ digraph propertiesAndInitBlocks_kt {
     118 -> {119} [style=dotted];
     119 -> {120} [style=dotted];
     120 -> {121} [style=dotted];
-    121 -> {122} [style=dotted];
+    121 -> {122} [color=green style=dotted];
 
 }
