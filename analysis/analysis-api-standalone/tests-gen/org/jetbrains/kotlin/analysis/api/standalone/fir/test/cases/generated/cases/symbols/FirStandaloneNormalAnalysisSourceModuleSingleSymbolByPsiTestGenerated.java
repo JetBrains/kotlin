@@ -137,6 +137,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerat
   }
 
   @Test
+  @TestMetadata("propertyFromWhenExpression.kt")
+  public void testPropertyFromWhenExpression() {
+    runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyFromWhenExpression.kt");
+  }
+
+  @Test
   @TestMetadata("propertyWithAnnotations.kt")
   public void testPropertyWithAnnotations() {
     runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithAnnotations.kt");
