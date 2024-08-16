@@ -93,7 +93,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
     fun getLambdaMetafactoryArguments(
         reference: IrFunctionReference,
         samType: IrType,
-        plainLambda: Boolean
+        plainLambda: Boolean,
+        forceSerializability: Boolean
     ): MetafactoryArgumentsResult {
         val samClass = samType.getClass()
             ?: throw AssertionError("SAM type is not a class: ${samType.render()}")
@@ -110,7 +111,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             semanticsHazard = true
         }
 
-        if (samClass.isInheritedFromSerializable()) {
+        if (forceSerializability || samClass.isInheritedFromSerializable()) {
             shouldBeSerializable = true
         }
 

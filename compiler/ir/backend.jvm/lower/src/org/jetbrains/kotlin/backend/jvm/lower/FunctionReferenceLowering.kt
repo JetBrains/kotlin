@@ -79,6 +79,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     override fun visitBlock(expression: IrBlock): IrExpression {
+        return processBlock(expression, forceSerializability = false)
+    }
+
+    private fun processBlock(expression: IrBlock, forceSerializability: Boolean): IrExpression {
         if (!expression.origin.isLambda)
             return super.visitBlock(expression)
 
@@ -92,7 +96,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         if (shouldGenerateIndyLambdas) {
             val lambdaMetafactoryArguments =
                 LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
-                    .getLambdaMetafactoryArguments(reference, reference.type, true)
+                    .getLambdaMetafactoryArguments(reference, reference.type, plainLambda = true, forceSerializability)
             if (lambdaMetafactoryArguments is LambdaMetafactoryArguments) {
                 return wrapLambdaReferenceWithIndySamConversion(expression, reference, lambdaMetafactoryArguments)
             }
@@ -105,7 +109,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     private fun wrapLambdaReferenceWithIndySamConversion(
         expression: IrBlock,
         reference: IrFunctionReference,
-        lambdaMetafactoryArguments: LambdaMetafactoryArguments
+        lambdaMetafactoryArguments: LambdaMetafactoryArguments,
     ): IrBlock {
         val indySamConversion = wrapWithIndySamConversion(reference.type, lambdaMetafactoryArguments)
         expression.statements[expression.statements.size - 1] = indySamConversion
@@ -157,14 +161,23 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             val lambdaBlock = SamDelegatingLambdaBuilder(context)
                 .build(invokable, samSuperType, currentScope!!.scope.scopeOwnerSymbol, getDeclarationParentForDelegatingLambda())
             val lambdaMetafactoryArguments = LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
-                .getLambdaMetafactoryArguments(lambdaBlock.ref, samSuperType, false)
+                .getLambdaMetafactoryArguments(lambdaBlock.ref, samSuperType, plainLambda = false, forceSerializability = false)
 
             if (lambdaMetafactoryArguments !is LambdaMetafactoryArguments) {
                 // TODO MetafactoryArgumentsResult.Failure.FunctionHazard?
                 return super.visitTypeOperator(expression)
             }
 
-            invokable.transformChildrenVoid()
+            // This is what IR contains if SAM-converted argument needs additional cast
+            // See ArgumentsGenerationUtilsKt.castArgumentToFunctionalInterfaceForSamType (K1)
+            // or AdapterGenerator.castArgumentToFunctionalInterfaceForSamType (K2)
+            // In this case we should propagate serialization flag from the SAM type regardless of delegating lambda type (see KT-70306)
+            if (invokable is IrTypeOperatorCall && invokable.operator == IrTypeOperator.IMPLICIT_CAST && invokable.argument is IrBlock) {
+                invokable.argument = processBlock(invokable.argument as IrBlock, lambdaMetafactoryArguments.shouldBeSerializable)
+            } else {
+                invokable.transformChildrenVoid()
+            }
+
             return wrapSamDelegatingLambdaWithIndySamConversion(samSuperType, lambdaBlock, lambdaMetafactoryArguments)
         } else {
             return super.visitTypeOperator(expression)
@@ -175,7 +188,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         if (shouldGenerateIndySamConversions) {
             val lambdaMetafactoryArguments =
                 LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
-                    .getLambdaMetafactoryArguments(reference, samSuperType, false)
+                    .getLambdaMetafactoryArguments(reference, samSuperType, plainLambda = false, forceSerializability = false)
             if (lambdaMetafactoryArguments is LambdaMetafactoryArguments) {
                 return wrapSamConversionArgumentWithIndySamConversion(expression) { samType ->
                     wrapWithIndySamConversion(samType, lambdaMetafactoryArguments, expression.startOffset, expression.endOffset)
@@ -185,7 +198,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 val proxyLocalFunBlock = createProxyLocalFunctionForIndySamConversion(reference)
                 val proxyLocalFunRef = proxyLocalFunBlock.statements[proxyLocalFunBlock.statements.size - 1] as IrFunctionReference
                 val proxyLambdaMetafactoryArguments = LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
-                    .getLambdaMetafactoryArguments(proxyLocalFunRef, samSuperType, false)
+                    .getLambdaMetafactoryArguments(proxyLocalFunRef, samSuperType, plainLambda = false, forceSerializability = false)
                 if (proxyLambdaMetafactoryArguments is LambdaMetafactoryArguments) {
                     return wrapSamConversionArgumentWithIndySamConversion(expression) { samType ->
                         proxyLocalFunBlock.statements[proxyLocalFunBlock.statements.size - 1] =
@@ -352,7 +365,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     private fun wrapSamDelegatingLambdaWithIndySamConversion(
         samSuperType: IrType,
         lambdaBlock: SamDelegatingLambdaBlock,
-        lambdaMetafactoryArguments: LambdaMetafactoryArguments
+        lambdaMetafactoryArguments: LambdaMetafactoryArguments,
     ): IrExpression {
         val indySamConversion = wrapWithIndySamConversion(samSuperType, lambdaMetafactoryArguments)
         lambdaBlock.replaceRefWith(indySamConversion)
@@ -361,7 +374,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
     private fun wrapSamConversionArgumentWithIndySamConversion(
         expression: IrTypeOperatorCall,
-        produceSamConversion: (IrType) -> IrExpression
+        produceSamConversion: (IrType) -> IrExpression,
     ): IrExpression {
         val samType = expression.typeOperand
         return when (val argument = expression.argument) {
@@ -376,7 +389,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     private fun wrapFunctionReferenceInsideBlockWithIndySamConversion(
         samType: IrType,
         block: IrBlock,
-        produceSamConversion: (IrType) -> IrExpression
+        produceSamConversion: (IrType) -> IrExpression,
     ): IrExpression {
         val indySamConversion = produceSamConversion(samType)
         block.statements[block.statements.size - 1] = indySamConversion
@@ -652,7 +665,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private fun JvmIrBuilder.generateConstructorCallArguments(
             call: IrFunctionAccessExpression,
-            generateBoundReceiver: IrBuilder.() -> IrExpression
+            generateBoundReceiver: IrBuilder.() -> IrExpression,
         ) {
             if (isFunInterfaceConstructorReference) {
                 val funInterfaceKClassRef = kClassReference(constructedFunInterfaceSymbol!!.owner.defaultType)
@@ -802,7 +815,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private fun inlineAdapterCallIfPossible(
             expression: IrFunctionAccessExpression,
-            invokeMethod: IrSimpleFunction
+            invokeMethod: IrSimpleFunction,
         ): IrExpression {
             val irCall = expression as? IrCall
                 ?: return expression
