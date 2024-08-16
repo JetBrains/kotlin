@@ -182,7 +182,7 @@ abstract class ConstantValueGenerator(
 
         val (startOffset, endOffset) = extractAnnotationOffsets(annotationDescriptor)
 
-        val irCall = IrConstructorCallImpl(
+        val irCall = IrConstructorCallImplWithShape(
             startOffset, endOffset,
             annotationType.toIrType(),
             primaryConstructorSymbol,

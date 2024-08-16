@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -146,7 +147,7 @@ internal class AccessorPropertyLValue(
 
     override fun load(): IrExpression =
         callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
-            IrCallImpl(
+            IrCallImplWithShape(
                 startOffset, endOffset,
                 type,
                 getter!!,
@@ -173,7 +174,7 @@ internal class AccessorPropertyLValue(
                 context.typeTranslator.translateType(it)
             } ?: context.irBuiltIns.unitType
 
-            IrCallImpl(
+            IrCallImplWithShape(
                 startOffset, endOffset,
                 returnType,
                 setter!!,

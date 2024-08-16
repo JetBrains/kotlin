@@ -557,7 +557,7 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
         val constructorSymbol = symbolRemapper.getReferencedConstructor(expression.symbol)
-        return IrConstructorCallImpl(
+        return IrConstructorCallImplWithShape(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             constructorSymbol,
@@ -582,7 +582,7 @@ open class DeepCopyIrTreeWithSymbols(
 
     private fun shallowCopyCall(expression: IrCall): IrCall {
         val newCallee = symbolRemapper.getReferencedSimpleFunction(expression.symbol)
-        return IrCallImpl(
+        return IrCallImplWithShape(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             newCallee,
@@ -610,7 +610,7 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrDelegatingConstructorCall {
         val newConstructor = symbolRemapper.getReferencedConstructor(expression.symbol)
-        return IrDelegatingConstructorCallImpl(
+        return IrDelegatingConstructorCallImplWithShape(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             newConstructor,
@@ -624,7 +624,7 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall {
         val newConstructor = symbolRemapper.getReferencedConstructor(expression.symbol)
-        return IrEnumConstructorCallImpl(
+        return IrEnumConstructorCallImplWithShape(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             newConstructor,
@@ -646,7 +646,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitFunctionReference(expression: IrFunctionReference): IrFunctionReference {
         val symbol = symbolRemapper.getReferencedFunction(expression.symbol)
         val reflectionTarget = expression.reflectionTarget?.let { symbolRemapper.getReferencedFunction(it) }
-        return IrFunctionReferenceImpl(
+        return IrFunctionReferenceImplWithShape(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
             symbol,

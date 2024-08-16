@@ -239,7 +239,7 @@ class IrBodyDeserializer(
 
     private fun deserializeConstructorCall(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrConstructorCall {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
-        return IrConstructorCallImpl(
+        return IrConstructorCallImplWithShape(
             start, end, type,
             symbol, typeArgumentsCount = proto.memberAccess.typeArgumentCount,
             constructorTypeArgumentsCount = proto.constructorTypeArgumentsCount,
@@ -257,7 +257,7 @@ class IrBodyDeserializer(
 
         val call: IrCall =
             // TODO: implement the last three args here.
-            IrCallImpl(
+            IrCallImplWithShape(
                 start, end, type,
                 symbol, proto.memberAccess.typeArgumentCount,
                 proto.memberAccess.valueArgumentList.size,
@@ -285,7 +285,7 @@ class IrBodyDeserializer(
         end: Int
     ): IrDelegatingConstructorCall {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
-        val call = IrDelegatingConstructorCallImpl(
+        val call = IrDelegatingConstructorCallImplWithShape(
             start,
             end,
             builtIns.unitType,
@@ -305,7 +305,7 @@ class IrBodyDeserializer(
         end: Int,
     ): IrEnumConstructorCall {
         val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
-        val call = IrEnumConstructorCallImpl(
+        val call = IrEnumConstructorCallImplWithShape(
             start,
             end,
             builtIns.unitType,
@@ -371,7 +371,7 @@ class IrBodyDeserializer(
             proto.hasReflectionTargetSymbol(),
             fallbackSymbolKind = /* just the first possible option */ FUNCTION_SYMBOL
         ) { proto.reflectionTargetSymbol }
-        val callable = IrFunctionReferenceImpl(
+        val callable = IrFunctionReferenceImplWithShape(
             start,
             end,
             type,

@@ -12,14 +12,12 @@ import org.jetbrains.kotlin.fir.backend.utils.createTemporaryVariableForSafeCall
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.ir.builders.primitiveOp1
-import org.jetbrains.kotlin.ir.builders.primitiveOp2
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -73,14 +71,18 @@ internal class OperatorExpressionGenerator(
             val (symbol, origin) = getSymbolAndOriginForComparison(operation, builtins.intType.classifierOrFail)
             val irCompareToCall = comparisonExpression.compareToCall.accept(visitor, null) as IrCall
             irCompareToCall.origin = origin
-            return primitiveOp2(
-                startOffset, endOffset,
-                symbol!!,
-                builtins.booleanType,
-                origin,
-                irCompareToCall,
-                IrConstImpl.int(startOffset, endOffset, builtins.intType, 0)
-            )
+            return IrCallImplWithShape(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                type = builtins.booleanType,
+                symbol = symbol!!,
+                typeArgumentsCount = 0,
+                valueArgumentsCount = 2,
+                origin = origin,
+            ).apply {
+                putValueArgument(0, irCompareToCall)
+                putValueArgument(1, IrConstImpl.int(startOffset, endOffset, builtins.intType, 0))
+            }
         }
 
         if (comparisonExpression.compareToCall.toResolvedCallableSymbol()?.fir?.receiverParameter != null) {
@@ -93,15 +95,18 @@ internal class OperatorExpressionGenerator(
         val comparisonIrType = typeConverter.classIdToTypeMap[comparisonType.lookupTag.classId] ?: return fallbackToRealCall()
         val (symbol, origin) = getSymbolAndOriginForComparison(operation, comparisonIrType.classifierOrFail)
 
-        return primitiveOp2(
-            startOffset,
-            endOffset,
-            symbol!!,
-            builtins.booleanType,
-            origin,
-            comparisonExpression.left.convertToIrExpression(comparisonInfo, isLeftType = true),
-            comparisonExpression.right.convertToIrExpression(comparisonInfo, isLeftType = false)
-        )
+        return IrCallImplWithShape(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            type = builtins.booleanType,
+            symbol = symbol!!,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 2,
+            origin = origin,
+        ).apply {
+            putValueArgument(0, comparisonExpression.left.convertToIrExpression(comparisonInfo, isLeftType = true))
+            putValueArgument(1,  comparisonExpression.right.convertToIrExpression(comparisonInfo, isLeftType = false))
+        }
     }
 
     private fun getSymbolAndOriginForComparison(
@@ -191,15 +196,18 @@ internal class OperatorExpressionGenerator(
         val eqeqSymbol = comparisonType?.let { typeConverter.classIdToSymbolMap[it.lookupTag.classId] }
             ?.let { builtins.ieee754equalsFunByOperandType[it] } ?: builtins.eqeqSymbol
 
-        val equalsCall = primitiveOp2(
-            startOffset,
-            endOffset,
-            eqeqSymbol,
-            builtins.booleanType,
-            origin,
-            convertedLeft,
-            convertedRight
-        )
+        val equalsCall = IrCallImplWithShape(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            type = builtins.booleanType,
+            symbol = eqeqSymbol,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 2,
+            origin = origin
+        ).apply {
+            putValueArgument(0, convertedLeft)
+            putValueArgument(1, convertedRight)
+        }
         return if (operation == FirOperation.EQ) {
             equalsCall
         } else {
@@ -226,14 +234,19 @@ internal class OperatorExpressionGenerator(
         )?.let {
             return it
         }
-        val identityCall = primitiveOp2(
-            startOffset, endOffset,
-            builtins.eqeqeqSymbol,
-            builtins.booleanType,
-            origin,
-            convertedLeft,
-            convertedRight
-        )
+        val identityCall = IrCallImplWithShape(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            type = builtins.booleanType,
+            symbol = builtins.eqeqeqSymbol,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 2,
+            origin = origin,
+        ).apply {
+            putValueArgument(0, convertedLeft)
+            putValueArgument(1, convertedRight)
+        }
+
         return if (operation == FirOperation.IDENTITY) {
             identityCall
         } else {

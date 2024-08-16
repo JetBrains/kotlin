@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -457,7 +458,7 @@ internal class InsertImplicitCasts(
 
     private fun IrExpression.invokeIntegerCoercionFunction(targetType: KotlinType, coercionFunName: String): IrExpression {
         val coercionFunction = irBuiltIns.intClass.descriptor.unsubstitutedMemberScope.findSingleFunction(Name.identifier(coercionFunName))
-        return IrCallImpl(
+        return IrCallImplWithShape(
             startOffset, endOffset,
             targetType.toIrType(),
             symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),
@@ -479,7 +480,7 @@ internal class InsertImplicitCasts(
                 extensionReceiver != null && extensionReceiver.type.isInt()
             }
             ?: throw AssertionError("Coercion function '$coercionFunName' not found")
-        return IrCallImpl(
+        return IrCallImplWithShape(
             startOffset, endOffset,
             targetType.toIrType(),
             symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),

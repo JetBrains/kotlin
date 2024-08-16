@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irEquals
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.addArgument
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -148,7 +152,19 @@ abstract class DataClassMembersGenerator(
             for (property in properties) {
                 val arg1 = irGetProperty(irThis(), property)
                 val arg2 = irGetProperty(irGet(irType, otherWithCast.symbol), property)
-                +irIfThenReturnFalse(irNotEquals(arg1, arg2))
+                +irIfThenReturnFalse(
+                    IrCallImplWithShape(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = context.irBuiltIns.booleanType,
+                        symbol = context.irBuiltIns.booleanNotSymbol,
+                        typeArgumentsCount = 0,
+                        valueArgumentsCount = 0,
+                        origin = IrStatementOrigin.EXCLEQ,
+                    ).apply<IrCallImpl> {
+                        dispatchReceiver = this@MemberFunctionBuilder.irEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ)
+                    }
+                )
             }
             +irReturnTrue()
         }
@@ -178,7 +194,17 @@ abstract class DataClassMembersGenerator(
 
             for (property in properties.drop(1)) {
                 val shiftedResult = shiftResultOfHashCode(irResultVar)
-                val irRhs = irCallOp(context.irBuiltIns.intPlusSymbol, irIntType, shiftedResult, getHashCodeOfProperty(property))
+                val irRhs = IrCallImplWithShape(
+                    startOffset,
+                    endOffset,
+                    type = irIntType,
+                    symbol = context.irBuiltIns.intPlusSymbol,
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = 1,
+                ).apply {
+                    dispatchReceiver = shiftedResult
+                    putValueArgument(0, getHashCodeOfProperty(property))
+                }
                 +irSet(irResultVar.symbol, irRhs)
             }
 
@@ -232,7 +258,17 @@ abstract class DataClassMembersGenerator(
     }
 
     protected open fun IrBuilderWithScope.shiftResultOfHashCode(irResultVar: IrVariable): IrExpression =
-        irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, irGet(irResultVar), irInt(31))
+        IrCallImplWithShape(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            symbol = context.irBuiltIns.intTimesSymbol,
+            type = context.irBuiltIns.intType,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 1,
+        ).apply {
+            dispatchReceiver = irGet(irResultVar)
+            putValueArgument(0, irInt(31))
+        }
 
     protected open fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression): IrExpression {
         return builder.getHashCodeOf(getHashCodeFunctionInfo(property), irValue)
@@ -241,11 +277,13 @@ abstract class DataClassMembersGenerator(
     protected fun IrBuilderWithScope.getHashCodeOf(hashCodeFunctionInfo: HashCodeFunctionInfo, irValue: IrExpression): IrExpression {
         val hashCodeFunctionSymbol = hashCodeFunctionInfo.symbol
         val hasDispatchReceiver = hashCodeFunctionInfo.hasDispatchReceiver ?: hashCodeFunctionSymbol.hasDispatchReceiver()
-        return irCall(
-            hashCodeFunctionSymbol,
-            context.irBuiltIns.intType,
+        return IrCallImplWithShape(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            symbol = hashCodeFunctionSymbol,
+            type = context.irBuiltIns.intType,
             valueArgumentsCount = if (hasDispatchReceiver) 0 else 1,
-            typeArgumentsCount = 0
+            typeArgumentsCount = 0,
         ).apply {
             if (hasDispatchReceiver) {
                 dispatchReceiver = irValue

@@ -222,13 +222,17 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
             irSubject.loadAt(startOffset, startOffset)
         )
         return if (ktCondition.isNegated)
-            primitiveOp1(
-                ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
-                context.irBuiltIns.booleanNotSymbol,
-                context.irBuiltIns.booleanType,
-                IrStatementOrigin.EXCL,
-                irInstanceOf
-            )
+            IrCallImplWithShape(
+                startOffset = ktCondition.startOffsetSkippingComments,
+                endOffset = ktCondition.endOffset,
+                symbol = context.irBuiltIns.booleanNotSymbol,
+                type = context.irBuiltIns.booleanType,
+                origin = IrStatementOrigin.EXCL,
+                typeArgumentsCount = 0,
+                valueArgumentsCount = 0,
+            ).apply {
+                dispatchReceiver = irInstanceOf
+            }
         else
             irInstanceOf
     }
@@ -246,13 +250,17 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
             IrStatementOrigin.IN ->
                 irInCall
             IrStatementOrigin.NOT_IN ->
-                primitiveOp1(
-                    startOffset, endOffset,
-                    context.irBuiltIns.booleanNotSymbol,
-                    context.irBuiltIns.booleanType,
-                    IrStatementOrigin.EXCL,
-                    irInCall
-                )
+                IrCallImplWithShape(
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    symbol = context.irBuiltIns.booleanNotSymbol,
+                    type = context.irBuiltIns.booleanType,
+                    origin = IrStatementOrigin.EXCL,
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = 0,
+                ).apply {
+                    dispatchReceiver = irInCall
+                }
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")
         }
     }
