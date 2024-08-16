@@ -874,6 +874,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("KotlinActualAnnotationHasNoEffectInKotlin.kt")
+    public void testKotlinActualAnnotationHasNoEffectInKotlin() {
+      runTest("compiler/testData/diagnostics/tests/KotlinActualAnnotationHasNoEffectInKotlin.kt");
+    }
+
+    @Test
     @TestMetadata("kt11167.kt")
     public void testKt11167() {
       runTest("compiler/testData/diagnostics/tests/kt11167.kt");
