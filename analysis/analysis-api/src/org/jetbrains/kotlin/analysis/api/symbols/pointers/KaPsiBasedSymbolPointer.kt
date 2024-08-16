@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Segment
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
@@ -12,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import java.lang.ref.SoftReference
 import kotlin.reflect.KClass
 
 @KaImplementationDetail
@@ -46,7 +52,7 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
             other.expectedClass == expectedClass &&
             other.psiPointer == psiPointer
 
-    public constructor(psi: KtElement, expectedClass: KClass<S>) : this(@Suppress("DEPRECATION") psi.createSmartPointer(), expectedClass)
+    public constructor(psi: KtElement, expectedClass: KClass<S>) : this(createCompatibleSmartPointer(psi), expectedClass)
 
     public companion object {
         @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
@@ -101,6 +107,39 @@ public class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
         @Volatile
         private var disablePsiPointer: Boolean = false
     }
+}
+
+@KaImplementationDetail
+public interface SmartPointerIncompatiblePsiFile
+
+@OptIn(KaImplementationDetail::class)
+private fun createCompatibleSmartPointer(element: KtElement): SmartPsiElementPointer<out KtElement> {
+    val containingFile = element.containingKtFile
+
+    if (containingFile is SmartPointerIncompatiblePsiFile) {
+        return SoftSmartPsiElementPointer(element, containingFile)
+    }
+
+    return SmartPointerManager.getInstance(containingFile.project)
+        .createSmartPsiElementPointer(element, containingFile)
+}
+
+private class SoftSmartPsiElementPointer<T : PsiElement>(
+    element: T,
+    containingFile: PsiFile
+) : SmartPsiElementPointer<T> {
+    private val project = containingFile.project
+    private val elementRef = SoftReference(element)
+    private val containingFileRef = SoftReference(containingFile)
+
+    override fun getElement(): T? = elementRef.get()
+    override fun getContainingFile(): PsiFile? = containingFileRef.get()
+    override fun getVirtualFile(): VirtualFile? = containingFile?.virtualFile
+
+    override fun getProject(): Project = project
+
+    override fun getPsiRange(): Segment? = throw UnsupportedOperationException("Not supported")
+    override fun getRange(): Segment? = throw UnsupportedOperationException("Not supported")
 }
 
 @KaImplementationDetail

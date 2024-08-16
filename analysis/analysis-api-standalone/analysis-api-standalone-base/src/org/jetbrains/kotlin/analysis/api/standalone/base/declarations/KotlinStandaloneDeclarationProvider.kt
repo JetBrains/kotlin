@@ -14,10 +14,12 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
+import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclaration
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.SmartPointerIncompatiblePsiFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
@@ -39,6 +42,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -169,24 +173,27 @@ class KotlinStandaloneDeclarationProviderFactory(
     private fun loadBuiltIns(): Collection<KotlinFileStubImpl> {
         return BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles().mapNotNull { virtualFile ->
             val fileContent = FileContentImpl.createByFile(virtualFile, project)
-            createKtFileStub(psiManager, builtInDecompiler, fileContent)
+            createKtFileStub(fileContent)
         }
     }
 
-    private fun createKtFileStub(
-        psiManager: PsiManager,
-        builtInDecompiler: KotlinBuiltInDecompiler,
-        fileContent: FileContent,
-    ): KotlinFileStubImpl? {
-        val ktFileStub = builtInDecompiler.stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl ?: return null
-        val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, fileContent.file), isCompiled = true) {
-            override fun getStub() = ktFileStub
+    private fun createKtFileStub(fileContent: FileContent): KotlinFileStubImpl? {
+        val stub = builtInDecompiler.stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl ?: return null
+        registerStub(stub, fileContent.file)
+        return stub
+    }
 
+    @OptIn(KaImplementationDetail::class)
+    private fun registerStub(stub: KotlinFileStubImpl, virtualFile: VirtualFile) {
+        val fileViewProvider = KtClassFileViewProvider(psiManager, virtualFile)
+
+        val fakeFile = object : KtFile(fileViewProvider, isCompiled = true), SmartPointerIncompatiblePsiFile {
+            override fun getStub(): KotlinFileStub? = stub
             override fun isPhysical() = false
         }
-        ktFileStub.psi = fakeFile
+
+        stub.psi = fakeFile
         createdFakeKtFiles.add(fakeFile)
-        return ktFileStub
     }
 
     private class KtClassFileViewProvider(
@@ -438,12 +445,7 @@ class KotlinStandaloneDeclarationProviderFactory(
     private fun processCollectedStubs(stubs: Map<VirtualFile, KotlinFileStubImpl>) {
         stubs.forEach { entry ->
             val stub = entry.value
-            val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, entry.key), isCompiled = true) {
-                override fun getStub() = stub
-                override fun isPhysical() = false
-            }
-            stub.psi = fakeFile
-            createdFakeKtFiles.add(fakeFile)
+            registerStub(stub, entry.key)
             processStub(stub)
         }
     }
