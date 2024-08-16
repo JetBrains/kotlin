@@ -222,6 +222,7 @@ tasks {
             ),
             "builtins" to emptyList(),
             "config" to listOf(
+                "org.jetbrains.kotlin.config.ApiVersion**", // used a lot in buildscripts
                 "org.jetbrains.kotlin.config.JvmTarget**", // used a lot in buildscripts
                 "org.jetbrains.kotlin.config.KotlinCompilerVersion", // used a lot in buildscripts
                 "org.jetbrains.kotlin.config.Services**", // required to initialize `CompilerEnvironment`
