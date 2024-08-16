@@ -208,7 +208,10 @@ private fun memberAccessOffset(
 
     if (owner.isInfix || owner.isOperator || owner.origin == IrBuiltIns.BUILTIN_OPERATOR) {
         val lhs = expression.binaryOperatorLhs() ?: return 0
-        return binaryOperatorOffset(lhs, sourceRangeInfo, source)
+        return when (expression.origin) {
+            IrStatementOrigin.GET_ARRAY_ELEMENT -> lhs.endOffset - sourceRangeInfo.startOffset
+            else -> binaryOperatorOffset(lhs, sourceRangeInfo, source)
+        }
     }
 
     return 0

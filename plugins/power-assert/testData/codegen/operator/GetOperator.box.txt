@@ -1,8 +1,8 @@
 ---
 assert(listOf("Hello", "World")[1] == "Hello")
-       |                           |
-       |                           false
-       World
+       |                       |   |
+       |                       |   false
+       |                       World
        [Hello, World]
 ---
 ---
