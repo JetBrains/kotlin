@@ -381,6 +381,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
 
+        val KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN by error<KtElement>()
+
         val OVERRIDE_DEPRECATION by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<Symbol>("overridenSymbol")
             parameter<FirDeprecationInfo>("deprecationInfo")
