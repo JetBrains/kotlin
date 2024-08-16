@@ -1205,7 +1205,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ANONYMOUS_FUNCTION_WITH_NAME by error<KtFunction>()
         val SINGLE_ANONYMOUS_FUNCTION_WITH_NAME by deprecationError<KtFunction>(LanguageFeature.ProhibitSingleNamedFunctionAsExpression)
 
-        // TODO: val ANONYMOUS_FUNCTION_WITH_NAME by error1<PsiElement, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
         val ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE by error<KtParameter>(PositioningStrategy.PARAMETER_DEFAULT_VALUE)
         val USELESS_VARARG_ON_PARAMETER by warning<KtParameter>()
         val MULTIPLE_VARARG_PARAMETERS by error<KtParameter>(PositioningStrategy.PARAMETER_VARARG_MODIFIER)
