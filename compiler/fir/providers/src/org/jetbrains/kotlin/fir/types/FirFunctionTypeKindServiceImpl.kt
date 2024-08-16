@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-class FirFunctionTypeKindServiceImpl(private val session: FirSession) : FirFunctionTypeKindService() {
+class FirFunctionTypeKindServiceImpl(private val session: FirSession, kaptMode: Boolean) : FirFunctionTypeKindService() {
     private val nonReflectKindsFromExtensions = mutableListOf<FunctionTypeKind>()
 
     override val extractor: FunctionTypeKindExtractor = run {
@@ -38,8 +38,10 @@ class FirFunctionTypeKindServiceImpl(private val session: FirSession) : FirFunct
                 }
             }
 
-            for (extension in session.extensionService.functionTypeKindExtensions) {
-                with(extension) { registrar.registerKinds() }
+            if (!kaptMode) {
+                for (extension in session.extensionService.functionTypeKindExtensions) {
+                    with(extension) { registrar.registerKinds() }
+                }
             }
         }.also { kinds ->
             val allNames = kinds.map { "${it.packageFqName}.${it.classNamePrefix}" }

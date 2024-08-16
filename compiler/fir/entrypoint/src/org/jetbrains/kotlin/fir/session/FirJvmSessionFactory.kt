@@ -45,6 +45,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         languageVersionSettings: LanguageVersionSettings,
         predefinedJavaComponents: FirSharableJavaComponents?,
         registerExtraComponents: ((FirSession) -> Unit),
+        kaptMode: Boolean = false,
     ): FirSession {
         val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(scope)
         return createLibrarySession(
@@ -82,7 +83,8 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                         packagePartProvider
                     )
                 )
-            }
+            },
+            kaptMode
         )
     }
 
@@ -103,6 +105,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         needRegisterJavaElementFinder: Boolean,
         registerExtraComponents: ((FirSession) -> Unit),
         init: FirSessionConfigurator.() -> Unit,
+        kaptMode: Boolean = false
     ): FirSession {
         return createModuleBasedSession(
             moduleData,
@@ -144,7 +147,8 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                     *dependencies.toTypedArray(),
                     incrementalCompilationSymbolProviders?.optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                 )
-            }
+            },
+            kaptMode
         ).also {
             if (needRegisterJavaElementFinder) {
                 projectEnvironment.registerAsJavaElementFinder(it)

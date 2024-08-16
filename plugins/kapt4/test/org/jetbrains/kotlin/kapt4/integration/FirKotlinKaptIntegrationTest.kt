@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.test.integration.LoggingMessageCollector
@@ -39,12 +41,14 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
         options: Map<String, String> = emptyMap(),
         expectFailure: Boolean = false,
         additionalPluginExtension: IrGenerationExtension? = null,
+        additionalFirPluginExtension: ((FirSession) -> FirFunctionTypeKindExtension)? = null,
         process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, FirKaptExtensionForTests) -> Unit
     ) {
         val file = File(TEST_DATA_DIR, "$name.kt")
         AbstractFirKotlinKaptIntegrationTestRunner(
             options,
             supportedAnnotations.toList(),
+            additionalFirPluginExtension,
             additionalPluginExtension,
             process
         ).apply {
@@ -258,6 +262,18 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
         additionalPluginExtension = object : IrGenerationExtension {
             override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
                 fail("IR generation extensions should not be run in kapt mode.")
+            }
+        }
+    ) { _, _, _, _ -> }
+
+    @Test
+    fun testFirExtensionIsIgnored() = test(
+        "Simple", "test.MyAnnotation",
+        additionalFirPluginExtension = {
+            object : FirFunctionTypeKindExtension(it) {
+                override fun FunctionTypeKindRegistrar.registerKinds() {
+                    fail("FIR extensions should not be run in kapt mode.")
+                }
             }
         }
     ) { _, _, _, _ -> }

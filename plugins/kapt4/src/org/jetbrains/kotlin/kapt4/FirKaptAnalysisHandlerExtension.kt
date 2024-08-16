@@ -214,7 +214,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         val (analysisTime, analysisResults) = measureTimeMillis {
             val sourceFiles = getSourceFiles(disposable, projectEnvironment, configuration)
-            runFrontendForAnalysis(projectEnvironment, configuration, messageCollector, sourceFiles, null, module)
+            runFrontendForAnalysis(projectEnvironment, configuration, messageCollector, sourceFiles, null, module, true)
         }
 
         logger.info { "Initial analysis took $analysisTime ms" }

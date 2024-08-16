@@ -37,7 +37,8 @@ abstract class FirAbstractSessionFactory {
         extensionRegistrars: List<FirExtensionRegistrar>,
         registerExtraComponents: ((FirSession) -> Unit),
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
-        createProviders: (FirSession, FirModuleData, FirKotlinScopeProvider, FirExtensionSyntheticFunctionInterfaceProvider?) -> List<FirSymbolProvider>
+        createProviders: (FirSession, FirModuleData, FirKotlinScopeProvider, FirExtensionSyntheticFunctionInterfaceProvider?) -> List<FirSymbolProvider>,
+        kaptMode: Boolean = false,
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Library).apply session@{
             moduleDataProvider.allModuleData.forEach {
@@ -59,11 +60,13 @@ abstract class FirAbstractSessionFactory {
             builtinsModuleData.bindSession(this)
 
             FirSessionConfigurator(this).apply {
-                for (extensionRegistrar in extensionRegistrars) {
-                    registerExtensions(extensionRegistrar.configure())
+                if (!kaptMode) {
+                    for (extensionRegistrar in extensionRegistrars) {
+                        registerExtensions(extensionRegistrar.configure())
+                    }
                 }
             }.configure()
-            registerCommonComponentsAfterExtensionsAreConfigured()
+            registerCommonComponentsAfterExtensionsAreConfigured(kaptMode)
 
             val syntheticFunctionInterfaceProvider =
                 FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(this, builtinsModuleData, kotlinScopeProvider)
@@ -91,7 +94,8 @@ abstract class FirAbstractSessionFactory {
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
             dependencies: List<FirSymbolProvider>,
-        ) -> List<FirSymbolProvider>
+        ) -> List<FirSymbolProvider>,
+        kaptMode: Boolean = false
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Source).apply session@{
             moduleData.bindSession(this@session)
@@ -112,12 +116,14 @@ abstract class FirAbstractSessionFactory {
                 registerCommonCheckers()
                 registerExtraCheckers?.invoke(this)
 
-                for (extensionRegistrar in extensionRegistrars) {
-                    registerExtensions(extensionRegistrar.configure())
+                if (!kaptMode) {
+                    for (extensionRegistrar in extensionRegistrars) {
+                        registerExtensions(extensionRegistrar.configure())
+                    }
                 }
                 init()
             }.configure()
-            registerCommonComponentsAfterExtensionsAreConfigured()
+            registerCommonComponentsAfterExtensionsAreConfigured(kaptMode)
 
             val dependencyProviders = computeDependencyProviderList(moduleData)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)

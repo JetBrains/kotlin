@@ -61,6 +61,7 @@ fun <F> prepareJvmSessions(
     isScript: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
     createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
+    kaptMode: Boolean = false
 ): List<SessionWithSources<F>> {
     val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
     val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
@@ -83,6 +84,7 @@ fun <F> prepareJvmSessions(
                 configuration.languageVersionSettings,
                 predefinedJavaComponents = predefinedJavaComponents,
                 registerExtraComponents = {},
+                kaptMode
             )
         },
     ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
@@ -116,6 +118,7 @@ fun <F> prepareJvmSessions(
             needRegisterJavaElementFinder = true,
             registerExtraComponents = {},
             sessionConfigurator,
+            kaptMode
         )
     }
 }

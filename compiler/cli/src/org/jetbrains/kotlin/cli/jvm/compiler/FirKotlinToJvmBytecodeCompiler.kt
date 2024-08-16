@@ -86,6 +86,7 @@ object FirKotlinToJvmBytecodeCompiler {
         allSources: List<KtFile>,
         buildFile: File?,
         module: Module,
+        kaptMode: Boolean
     ): FirResult {
         val targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
         val incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
@@ -105,7 +106,7 @@ object FirKotlinToJvmBytecodeCompiler {
             irGenerationExtensions = IrGenerationExtension.getInstances(project)
         )
         val diagnosticsReporter = createPendingReporter(messageCollector)
-        return context.runFrontend(allSources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths(), true)!!
+        return context.runFrontend(allSources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths(), true, kaptMode)!!
     }
 
     fun compileModulesUsingFrontendIRAndPsi(
@@ -200,6 +201,7 @@ object FirKotlinToJvmBytecodeCompiler {
         rootModuleName: String,
         friendPaths: List<String>,
         ignoreErrors: Boolean = false,
+        kaptMode: Boolean = false
     ): FirResult? {
         val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
         performanceManager?.notifyAnalysisStarted()
@@ -232,7 +234,8 @@ object FirKotlinToJvmBytecodeCompiler {
             isCommonSource = { it.isCommonSource == true },
             isScript = { it.isScript() },
             fileBelongsToModule = { file, moduleName -> file.hmppModuleName == moduleName },
-            createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
+            createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation },
+            kaptMode
         )
 
         val outputs = sessionsWithSources.map { (session, sources) ->
