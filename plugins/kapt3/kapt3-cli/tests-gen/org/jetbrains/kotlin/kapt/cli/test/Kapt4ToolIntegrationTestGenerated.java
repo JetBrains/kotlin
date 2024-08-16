@@ -42,6 +42,12 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
   }
 
   @Test
+  @TestMetadata("compilerPlugins")
+  public void testCompilerPlugins() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/compilerPlugins/");
+  }
+
+  @Test
   @TestMetadata("correctErrorTypesOff")
   public void testCorrectErrorTypesOff() {
     runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/correctErrorTypesOff/");
